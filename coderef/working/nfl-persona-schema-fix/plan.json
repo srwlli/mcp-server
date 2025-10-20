@@ -1,0 +1,1443 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "nfl-persona-schema-fix",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "mcp-expert persona",
+    "generated_date": "2025-10-20",
+    "has_context": false,
+    "has_analysis": false,
+    "update_type": "critical_correction",
+    "severity": "P0_CRITICAL",
+    "description": "Critical database schema knowledge corrections for nfl-scraper-expert persona v1.2.0 → v1.3.0"
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "section_name": "Preparation",
+      "description": "Foundation documents, standards, and reference patterns",
+      "foundation_documents": {
+        "documentation_available": [
+          {
+            "type": "update_request",
+            "path": "user_provided_json",
+            "description": "Comprehensive schema issue documentation with 5 critical issues (SCHEMA-001 through SCHEMA-005)",
+            "relevance": "Primary source for all schema corrections"
+          },
+          {
+            "type": "persona_current_state",
+            "path": "personas-mcp/nfl-scraper-expert/v1.2.0",
+            "description": "Current persona system prompt with incorrect schema knowledge",
+            "relevance": "Baseline for comparison and section updates"
+          }
+        ],
+        "documentation_needed": [
+          {
+            "type": "database_schema_reference",
+            "description": "Actual PostgreSQL schema DDL files or migration files",
+            "reason": "Verify all schema corrections against source of truth"
+          },
+          {
+            "type": "scraper_audit_results",
+            "description": "Results from auditing 5 production scrapers",
+            "reason": "Identify all code locations using incorrect schema knowledge"
+          }
+        ]
+      },
+      "coding_standards": {
+        "existing_standards": [
+          {
+            "standard": "MCP tool design principles",
+            "source": "mcp-expert persona knowledge",
+            "applies_to": ["persona structure", "validation tools", "error handling"]
+          },
+          {
+            "standard": "Persona versioning",
+            "source": "personas-mcp server conventions",
+            "applies_to": ["version bumps", "breaking changes", "deprecation notices"]
+          }
+        ],
+        "standards_to_follow": [
+          "Semantic versioning for persona updates (v1.2.0 → v1.3.0)",
+          "MCP-compliant error response formatting",
+          "Pydantic schema validation for database models",
+          "Comprehensive validation test coverage"
+        ]
+      },
+      "reference_implementations": {
+        "components_to_reference": [
+          {
+            "name": "docs-expert persona",
+            "location": "personas-mcp/docs-expert/v2.0.0",
+            "reason": "Reference implementation for persona structure and comprehensive knowledge sections"
+          },
+          {
+            "name": "Schema validation patterns",
+            "location": "MCP best practices",
+            "reason": "Implement automated schema drift detection"
+          }
+        ],
+        "patterns_to_follow": [
+          "Clear section-based knowledge organization",
+          "Before/after examples for corrections",
+          "Automated validation test suites",
+          "Version control with breaking change documentation"
+        ]
+      },
+      "architecture_patterns": {
+        "current_architecture": {
+          "persona_structure": "Single markdown-based system prompt with expertise areas",
+          "version_control": "Manual version bumping in metadata",
+          "validation": "Manual testing via user interaction"
+        },
+        "patterns_to_apply": [
+          "Database Schema Knowledge section with authoritative schema definitions",
+          "Common Issues and Solutions section with MCP-compliant error responses",
+          "Validation Test Suite section with automated checks",
+          "Known Issues section for temporary warnings (v1.2.0 deprecation)"
+        ]
+      }
+    },
+
+    "1_executive_summary": {
+      "section_name": "Executive Summary",
+      "overview": {
+        "what": "Update nfl-scraper-expert persona from v1.2.0 to v1.3.0 with critical database schema corrections",
+        "why": "Current persona contains incorrect schema knowledge causing 100% query failure rate in production. Five critical schema issues affect all database queries, production scrapers, and new development.",
+        "who": "MCP expert implementing persona update, affects all users of nfl-scraper-expert persona",
+        "when": "Immediate P0 priority - blocks all database-related troubleshooting and development",
+        "where": "personas-mcp server, nfl-scraper-expert persona file"
+      },
+      "goals": {
+        "primary_goal": "Correct all schema knowledge errors to restore persona reliability and enable accurate database query guidance",
+        "secondary_goals": [
+          "Establish automated validation to prevent future schema drift",
+          "Audit and fix 5 production scrapers using incorrect schema patterns",
+          "Implement version control with breaking change documentation",
+          "Create comprehensive test suite for schema validation"
+        ]
+      },
+      "scope": {
+        "in_scope": [
+          "Update persona system prompt with correct schema definitions",
+          "Add Database Schema Knowledge section with composite keys, column names, enums",
+          "Update Common Issues section with schema-related error patterns",
+          "Add validation test queries with expected results",
+          "Document breaking changes from v1.2.0 to v1.3.0",
+          "Audit 5 production scrapers for schema correctness",
+          "Create automated schema validation tools"
+        ],
+        "out_of_scope": [
+          "Modifying actual database schema (schema is correct, persona knowledge is wrong)",
+          "Updating scrapers (separate workorder after persona fix)",
+          "Migrating historical data",
+          "Adding new features to persona beyond schema corrections"
+        ]
+      },
+      "impact": {
+        "users_affected": "All users relying on nfl-scraper-expert for database query guidance",
+        "systems_affected": [
+          "5 production scrapers (game-stats, live-games, injuries, roster-updates, standings)",
+          "Database query patterns in troubleshooting documentation",
+          "Example code in persona knowledge base",
+          "Testing and validation workflows"
+        ],
+        "business_value": "Restores persona reliability, unblocks development, prevents incorrect implementations, reduces debugging time"
+      }
+    },
+
+    "2_risk_assessment": {
+      "section_name": "Risk Assessment",
+      "complexity_score": 6,
+      "complexity_explanation": "Moderate complexity. Schema corrections are well-documented with clear before/after patterns. Main complexity is comprehensive auditing of affected code and ensuring all examples are updated. Low technical risk but high coordination effort across multiple scrapers.",
+      "technical_risks": [
+        {
+          "risk": "Incomplete identification of all schema references in persona",
+          "probability": "medium",
+          "impact": "medium",
+          "mitigation": "Use grep/search to find all instances of incorrect patterns (games.id, home_team, status='completed'). Cross-reference with update request's 5 issues."
+        },
+        {
+          "risk": "Scraper audit reveals additional schema issues beyond documented 5",
+          "probability": "low",
+          "impact": "high",
+          "mitigation": "Perform thorough audit with database schema DDL as source of truth. Document any new findings and extend update scope."
+        },
+        {
+          "risk": "Breaking changes confuse existing users without clear migration guide",
+          "probability": "medium",
+          "impact": "medium",
+          "mitigation": "Add Known Issues section to v1.2.0, provide clear migration patterns in v1.3.0, document all breaking changes in version metadata."
+        }
+      ],
+      "dependencies": {
+        "blocking_dependencies": [
+          {
+            "dependency": "Access to actual database schema DDL or migration files",
+            "required_by": "Schema validation",
+            "mitigation_if_unavailable": "Use database introspection queries (\\d tables in psql) to verify schema"
+          }
+        ],
+        "non_blocking_dependencies": [
+          {
+            "dependency": "Production scraper source code",
+            "required_by": "Scraper audit",
+            "mitigation": "Can proceed with persona update first, audit scrapers second"
+          }
+        ]
+      },
+      "assumptions": [
+        "Database schema is correct and stable (confirmed via direct queries)",
+        "Update request's 5 issues are comprehensive and verified",
+        "Persona structure supports new Database Schema Knowledge section",
+        "Version bump v1.2.0 → v1.3.0 follows semantic versioning",
+        "Users can migrate to v1.3.0 immediately without compatibility issues"
+      ],
+      "constraints": [
+        "Must maintain backward compatibility in MCP tool interface (personas-mcp server)",
+        "Cannot modify database schema (not in scope)",
+        "Must complete within 4 hour timeline",
+        "All changes must be validated before deployment"
+      ]
+    },
+
+    "3_current_state_analysis": {
+      "section_name": "Current State Analysis",
+      "existing_files": {
+        "files_to_modify": [
+          {
+            "file": "personas-mcp/nfl-scraper-expert.md",
+            "current_state": "Contains v1.2.0 system prompt with incorrect schema knowledge",
+            "changes_needed": [
+              "Update version metadata: v1.2.0 → v1.3.0",
+              "Add Database Schema Knowledge section with correct primary keys, column names, enums",
+              "Update NFL Data Model section with composite key documentation",
+              "Expand Common Issues & Solutions with 4 new schema error patterns",
+              "Update all example code replacing incorrect patterns",
+              "Add Known Issues section documenting v1.2.0 deprecation"
+            ],
+            "risk_level": "high",
+            "estimated_lines_changed": "200-300 lines"
+          }
+        ],
+        "files_requiring_review": [
+          {
+            "file": "next-scraper/scripts/scrapers/game-stats-scraper.js",
+            "reason": "May use incorrect column names (home_team vs home_team_id)",
+            "review_focus": "Column references, status enum values, primary key usage"
+          },
+          {
+            "file": "next-scraper/scripts/scrapers/live-games-scraper.js",
+            "reason": "May use status='completed' instead of 'final'",
+            "review_focus": "Status enum values in queries and conditionals"
+          },
+          {
+            "file": "next-scraper/scripts/scrapers/injuries-scraper.js",
+            "reason": "May use incorrect foreign key patterns",
+            "review_focus": "Game and player foreign key references"
+          },
+          {
+            "file": "next-scraper/scripts/scrapers/roster-updates-scraper.js",
+            "reason": "May use incorrect team column names",
+            "review_focus": "Team ID references, foreign keys"
+          },
+          {
+            "file": "next-scraper/scripts/scrapers/standings-scraper.js",
+            "reason": "May use home_team/away_team instead of _id columns",
+            "review_focus": "Team column references in queries"
+          }
+        ]
+      },
+      "new_files": {
+        "files_to_create": [
+          {
+            "file": "personas-mcp/tests/validate-nfl-schema.js",
+            "purpose": "Automated validation tests for schema compliance",
+            "content_description": "3 validation queries from update request (test_1_games_structure, test_2_status_enum, test_3_foreign_keys)",
+            "estimated_size": "100-150 lines"
+          },
+          {
+            "file": "coderef/working/nfl-persona-schema-fix/SCRAPER_AUDIT_REPORT.md",
+            "purpose": "Document findings from 5 scraper audit",
+            "content_description": "List of incorrect patterns found, files affected, priority fixes",
+            "estimated_size": "200-300 lines"
+          }
+        ]
+      },
+      "integration_points": [
+        {
+          "integration": "personas-mcp server tool interface",
+          "current_behavior": "use_persona loads v1.2.0 with incorrect schema",
+          "required_changes": "Deploy v1.3.0, optionally deprecate v1.2.0",
+          "impact": "Users calling use_persona('nfl-scraper-expert') get updated knowledge"
+        },
+        {
+          "integration": "Database query patterns in production",
+          "current_behavior": "Scrapers may use incorrect schema patterns",
+          "required_changes": "Audit findings will drive scraper fixes (separate workorder)",
+          "impact": "Fixes will reference v1.3.0 persona knowledge"
+        }
+      ]
+    },
+
+    "4_key_features": {
+      "section_name": "Key Features",
+      "features": [
+        {
+          "id": "SCHEMA-CORRECTIONS",
+          "name": "Database Schema Knowledge Corrections",
+          "description": "Update persona with authoritative schema definitions for 5 critical issues",
+          "priority": "P0_CRITICAL",
+          "user_value": "Enables accurate database query guidance, prevents 100% query failure rate",
+          "technical_approach": "Add Database Schema Knowledge section with composite keys, correct column names, valid enum values",
+          "acceptance_criteria": [
+            "All 5 schema issues (SCHEMA-001 through SCHEMA-005) documented with correct patterns",
+            "Primary key documented as (game_id, season) composite with no 'id' column",
+            "Column names documented with _id suffix: home_team_id, away_team_id",
+            "Status enum documented as ['scheduled', 'in_progress', 'final'] not 'completed'",
+            "Foreign key relationships document composite key requirements",
+            "Partitioning details documented with season-based ranges"
+          ]
+        },
+        {
+          "id": "ERROR-PATTERNS",
+          "name": "Common Schema Error Patterns",
+          "description": "Document schema-related errors with MCP-compliant fixes",
+          "priority": "P0_CRITICAL",
+          "user_value": "Users can quickly identify and fix schema-related query errors",
+          "technical_approach": "Expand Common Issues section with 4 new error patterns from update request",
+          "acceptance_criteria": [
+            "Error 'column games.id does not exist' documented with fix",
+            "Error 'No results when filtering by status=completed' documented with fix",
+            "Error 'Column home_team does not exist' documented with fix",
+            "Error 'Missing Game Stats Despite Games Being Final' documented with check steps",
+            "All error patterns include cause, fix, and correct example code"
+          ]
+        },
+        {
+          "id": "VALIDATION-TESTS",
+          "name": "Automated Schema Validation Tests",
+          "description": "Create test suite to validate schema knowledge accuracy",
+          "priority": "P1_HIGH",
+          "user_value": "Prevents future schema drift, catches regressions before deployment",
+          "technical_approach": "Implement 3 validation queries as automated tests with expected results",
+          "acceptance_criteria": [
+            "Test 1: games table structure returns 5 final games for 2025 season",
+            "Test 2: status enum query returns ['final', 'scheduled'] not 'completed'",
+            "Test 3: foreign key joins return team stats with nested game data",
+            "Tests can be run via command line or CI/CD pipeline",
+            "Test failures clearly indicate which schema assumption is violated"
+          ]
+        },
+        {
+          "id": "SCRAPER-AUDIT",
+          "name": "Production Scraper Schema Audit",
+          "description": "Audit 5 production scrapers for incorrect schema usage",
+          "priority": "P0_CRITICAL",
+          "user_value": "Identifies all code locations requiring fixes, prevents incorrect implementations",
+          "technical_approach": "Search scrapers for incorrect patterns (games.id, home_team, status='completed'), document findings",
+          "acceptance_criteria": [
+            "All 5 scrapers audited: game-stats, live-games, injuries, roster-updates, standings",
+            "SCRAPER_AUDIT_REPORT.md documents all incorrect patterns found",
+            "Each finding includes file path, line number, incorrect pattern, correct fix",
+            "Findings prioritized by severity (P0: breaks queries, P1: suboptimal performance)",
+            "Report includes summary metrics (total issues, issues per scraper, estimated fix time)"
+          ]
+        },
+        {
+          "id": "VERSION-CONTROL",
+          "name": "Persona Version Control and Breaking Changes",
+          "description": "Document version bump and breaking changes from v1.2.0 to v1.3.0",
+          "priority": "P1_HIGH",
+          "user_value": "Users understand what changed, can migrate safely, know v1.2.0 is deprecated",
+          "technical_approach": "Update metadata, add breaking changes section, add migration guide",
+          "acceptance_criteria": [
+            "Version bumped to v1.3.0 in persona metadata",
+            "Breaking changes section lists 3 critical schema changes",
+            "Migration guide shows before/after patterns for each change",
+            "Known Issues section added to v1.2.0 warning of production-breaking errors",
+            "Previous versions array documents v1.2.0 deprecation reason and date"
+          ]
+        },
+        {
+          "id": "EXAMPLE-CODE-UPDATE",
+          "name": "Update All Example Code Snippets",
+          "description": "Replace all incorrect schema patterns in example code throughout persona",
+          "priority": "P0_CRITICAL",
+          "user_value": "Users see correct patterns in examples, can copy-paste working code",
+          "technical_approach": "Search and replace incorrect patterns with correct patterns from update request",
+          "acceptance_criteria": [
+            "All .select('id') replaced with .select('game_id, season')",
+            "All .eq('id', gameId) replaced with .eq('game_id', gameId).eq('season', 2025)",
+            "All .select('home_team, away_team') replaced with .select('home_team_id, away_team_id')",
+            "All .eq('status', 'completed') replaced with .eq('status', 'final')",
+            "Verification via grep confirms no incorrect patterns remain"
+          ]
+        }
+      ]
+    },
+
+    "5_task_id_system": {
+      "section_name": "Task ID System",
+      "workorder": {
+        "id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+        "name": "NFL Persona Schema Fix",
+        "feature_dir": "coderef/working/nfl-persona-schema-fix"
+      },
+      "task_categories": {
+        "SETUP": "Environment setup and prerequisite validation",
+        "SCHEMA": "Database schema knowledge corrections",
+        "ERROR": "Common error pattern documentation",
+        "TEST": "Validation test suite creation",
+        "AUDIT": "Scraper audit and analysis",
+        "VERSION": "Version control and metadata updates",
+        "EXAMPLE": "Example code corrections",
+        "DEPLOY": "Deployment and verification"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SETUP",
+          "description": "Verify access to database schema source of truth",
+          "details": "Obtain DDL files, migration files, or database introspection access to confirm schema structure",
+          "dependencies": [],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SETUP",
+          "description": "Backup current persona v1.2.0",
+          "details": "Create backup copy of nfl-scraper-expert.md before modifications",
+          "dependencies": [],
+          "estimated_time": "5min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Add Database Schema Knowledge section to persona",
+          "details": "Create new section documenting authoritative schema definitions for games, team_game_stats, player_game_stats tables",
+          "dependencies": ["SETUP-001", "SETUP-002"],
+          "estimated_time": "30min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Document composite primary key (game_id, season)",
+          "details": "Fix SCHEMA-001 issue: Document that games table uses composite PK, no 'id' column exists",
+          "dependencies": ["SCHEMA-001"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Document correct column names with _id suffix",
+          "details": "Fix SCHEMA-002 issue: Document home_team_id, away_team_id (not home_team/away_team)",
+          "dependencies": ["SCHEMA-001"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Document game_status enum values",
+          "details": "Fix SCHEMA-003 issue: Document ['scheduled', 'in_progress', 'final'] not 'completed'",
+          "dependencies": ["SCHEMA-001"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-005",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Document composite foreign key relationships",
+          "details": "Fix SCHEMA-004 issue: Document that foreign keys reference (game_id, season) composite, not single column",
+          "dependencies": ["SCHEMA-001"],
+          "estimated_time": "20min",
+          "priority": "P0"
+        },
+        {
+          "id": "SCHEMA-006",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "SCHEMA",
+          "description": "Document table partitioning strategy",
+          "details": "Fix SCHEMA-005 issue: Document RANGE partitioning by season (2020-2025 individual, pre-2020 historical)",
+          "dependencies": ["SCHEMA-001"],
+          "estimated_time": "15min",
+          "priority": "P1"
+        },
+        {
+          "id": "ERROR-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "ERROR",
+          "description": "Add 'column games.id does not exist' error pattern",
+          "details": "Document cause, fix, and example for primary key error",
+          "dependencies": ["SCHEMA-002"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "ERROR-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "ERROR",
+          "description": "Add 'No results when filtering by status=completed' error pattern",
+          "details": "Document cause, fix, and example for enum value error",
+          "dependencies": ["SCHEMA-004"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "ERROR-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "ERROR",
+          "description": "Add 'Column home_team does not exist' error pattern",
+          "details": "Document cause, fix, and example for column name error",
+          "dependencies": ["SCHEMA-003"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "ERROR-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "ERROR",
+          "description": "Add 'Missing Game Stats Despite Games Being Final' error pattern",
+          "details": "Document troubleshooting steps for common scraper verification scenario",
+          "dependencies": ["SCHEMA-004"],
+          "estimated_time": "10min",
+          "priority": "P1"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "TEST",
+          "description": "Create validation test file structure",
+          "details": "Create personas-mcp/tests/validate-nfl-schema.js with test framework setup",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "15min",
+          "priority": "P1"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "TEST",
+          "description": "Implement test_1_games_structure validation",
+          "details": "Query games table for 5 final games in 2025 season, verify columns and count",
+          "dependencies": ["TEST-001"],
+          "estimated_time": "15min",
+          "priority": "P1"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "TEST",
+          "description": "Implement test_2_status_enum validation",
+          "details": "Query distinct status values, verify ['final', 'scheduled'] returned, 'completed' not present",
+          "dependencies": ["TEST-001"],
+          "estimated_time": "10min",
+          "priority": "P1"
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "TEST",
+          "description": "Implement test_3_foreign_keys validation",
+          "details": "Join team_game_stats with games using composite key, verify nested data returned",
+          "dependencies": ["TEST-001"],
+          "estimated_time": "15min",
+          "priority": "P1"
+        },
+        {
+          "id": "AUDIT-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Audit game-stats-scraper.js for schema issues",
+          "details": "Search for incorrect patterns: games.id, home_team, away_team, status='completed'",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "AUDIT-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Audit live-games-scraper.js for schema issues",
+          "details": "Focus on status enum values and state transition logic",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "AUDIT-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Audit injuries-scraper.js for schema issues",
+          "details": "Check foreign key references to games and players",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "AUDIT-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Audit roster-updates-scraper.js for schema issues",
+          "details": "Check team ID column references",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "AUDIT-005",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Audit standings-scraper.js for schema issues",
+          "details": "Check team column references in complex nesting logic",
+          "dependencies": ["SCHEMA-006"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "AUDIT-006",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "AUDIT",
+          "description": "Generate SCRAPER_AUDIT_REPORT.md",
+          "details": "Compile findings from 5 scraper audits with file paths, line numbers, priorities, estimated fixes",
+          "dependencies": ["AUDIT-001", "AUDIT-002", "AUDIT-003", "AUDIT-004", "AUDIT-005"],
+          "estimated_time": "20min",
+          "priority": "P0"
+        },
+        {
+          "id": "VERSION-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "VERSION",
+          "description": "Update persona version metadata to v1.3.0",
+          "details": "Bump version in META_DOCUMENTATION section, update generated_date",
+          "dependencies": ["SCHEMA-006", "ERROR-004"],
+          "estimated_time": "5min",
+          "priority": "P0"
+        },
+        {
+          "id": "VERSION-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "VERSION",
+          "description": "Add breaking changes documentation",
+          "details": "Create Breaking Changes section listing 3 critical schema changes with migration patterns",
+          "dependencies": ["VERSION-001"],
+          "estimated_time": "20min",
+          "priority": "P1"
+        },
+        {
+          "id": "VERSION-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "VERSION",
+          "description": "Add Known Issues section to v1.2.0",
+          "details": "Document production-breaking errors in v1.2.0 with warning to upgrade immediately",
+          "dependencies": ["VERSION-001"],
+          "estimated_time": "15min",
+          "priority": "P1"
+        },
+        {
+          "id": "EXAMPLE-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "EXAMPLE",
+          "description": "Replace all .select('id') patterns",
+          "details": "Search persona for .select('id') and replace with .select('game_id, season')",
+          "dependencies": ["SCHEMA-002"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "EXAMPLE-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "EXAMPLE",
+          "description": "Replace all .eq('id', ...) patterns",
+          "details": "Replace with .eq('game_id', gameId).eq('season', 2025)",
+          "dependencies": ["SCHEMA-002"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "EXAMPLE-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "EXAMPLE",
+          "description": "Replace all home_team/away_team patterns",
+          "details": "Replace with home_team_id/away_team_id in all examples",
+          "dependencies": ["SCHEMA-003"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "EXAMPLE-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "EXAMPLE",
+          "description": "Replace all status='completed' patterns",
+          "details": "Replace with status='final' in all examples",
+          "dependencies": ["SCHEMA-004"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "EXAMPLE-005",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "EXAMPLE",
+          "description": "Verify no incorrect patterns remain via grep",
+          "details": "Run grep for 'games.id', 'home_team[^_]', \"status.*completed\" to confirm all fixed",
+          "dependencies": ["EXAMPLE-001", "EXAMPLE-002", "EXAMPLE-003", "EXAMPLE-004"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "DEPLOY-001",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "DEPLOY",
+          "description": "Run validation test suite",
+          "details": "Execute all 3 validation tests, verify pass status, capture results",
+          "dependencies": ["TEST-002", "TEST-003", "TEST-004", "EXAMPLE-005"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "DEPLOY-002",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "DEPLOY",
+          "description": "Deploy persona v1.3.0 to personas-mcp server",
+          "details": "Update persona file in personas-mcp server, verify use_persona loads v1.3.0",
+          "dependencies": ["DEPLOY-001"],
+          "estimated_time": "10min",
+          "priority": "P0"
+        },
+        {
+          "id": "DEPLOY-003",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "DEPLOY",
+          "description": "Verify deployment with sample queries",
+          "details": "Test persona guidance with database query scenarios, verify correct schema patterns provided",
+          "dependencies": ["DEPLOY-002"],
+          "estimated_time": "15min",
+          "priority": "P0"
+        },
+        {
+          "id": "DEPLOY-004",
+          "workorder_id": "WO-NFL-PERSONA-SCHEMA-FIX-001",
+          "category": "DEPLOY",
+          "description": "Update CLAUDE.md with schema corrections",
+          "details": "Document schema changes in project documentation for future reference",
+          "dependencies": ["DEPLOY-002"],
+          "estimated_time": "30min",
+          "priority": "P1"
+        }
+      ]
+    },
+
+    "6_implementation_phases": {
+      "section_name": "Implementation Phases",
+      "phases": [
+        {
+          "phase_id": "phase_1",
+          "name": "Setup and Schema Corrections",
+          "description": "Verify prerequisites, backup current state, and implement all 5 critical schema corrections",
+          "priority": "P0",
+          "estimated_duration": "2 hours",
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002",
+            "SCHEMA-001",
+            "SCHEMA-002",
+            "SCHEMA-003",
+            "SCHEMA-004",
+            "SCHEMA-005",
+            "SCHEMA-006"
+          ],
+          "deliverables": [
+            "Database schema source of truth verified",
+            "Backup of v1.2.0 created",
+            "Database Schema Knowledge section added to persona",
+            "All 5 schema issues corrected and documented"
+          ],
+          "success_criteria": [
+            "Composite primary key (game_id, season) documented",
+            "Column names with _id suffix documented",
+            "Status enum ['scheduled', 'in_progress', 'final'] documented",
+            "Composite foreign keys documented",
+            "Partitioning strategy documented"
+          ],
+          "dependencies": [],
+          "risks": [
+            {
+              "risk": "Database schema verification takes longer than expected",
+              "mitigation": "Use database introspection as fallback if DDL files unavailable"
+            }
+          ]
+        },
+        {
+          "phase_id": "phase_2",
+          "name": "Error Patterns and Example Code Updates",
+          "description": "Add common schema error patterns and update all example code with correct patterns",
+          "priority": "P0",
+          "estimated_duration": "1.5 hours",
+          "tasks": [
+            "ERROR-001",
+            "ERROR-002",
+            "ERROR-003",
+            "ERROR-004",
+            "EXAMPLE-001",
+            "EXAMPLE-002",
+            "EXAMPLE-003",
+            "EXAMPLE-004",
+            "EXAMPLE-005"
+          ],
+          "deliverables": [
+            "4 schema error patterns documented in Common Issues section",
+            "All example code updated with correct column names",
+            "All example code updated with correct enum values",
+            "All example code updated with correct primary key usage",
+            "Verification grep confirms no incorrect patterns remain"
+          ],
+          "success_criteria": [
+            "All 4 error patterns include cause, fix, and example",
+            "Zero instances of 'games.id' in example code",
+            "Zero instances of 'home_team' without _id suffix",
+            "Zero instances of status='completed' in examples",
+            "Grep verification passes"
+          ],
+          "dependencies": ["phase_1"],
+          "risks": [
+            {
+              "risk": "Missed incorrect patterns in complex code examples",
+              "mitigation": "Multiple grep passes with different patterns, manual review of all examples"
+            }
+          ]
+        },
+        {
+          "phase_id": "phase_3",
+          "name": "Validation and Scraper Audit",
+          "description": "Create automated validation tests and audit 5 production scrapers for schema issues",
+          "priority": "P0",
+          "estimated_duration": "2 hours",
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003",
+            "TEST-004",
+            "AUDIT-001",
+            "AUDIT-002",
+            "AUDIT-003",
+            "AUDIT-004",
+            "AUDIT-005",
+            "AUDIT-006"
+          ],
+          "deliverables": [
+            "validate-nfl-schema.js test file created",
+            "3 validation tests implemented and passing",
+            "All 5 scrapers audited for schema correctness",
+            "SCRAPER_AUDIT_REPORT.md with comprehensive findings"
+          ],
+          "success_criteria": [
+            "test_1_games_structure returns 5 games with all columns",
+            "test_2_status_enum returns ['final', 'scheduled'] only",
+            "test_3_foreign_keys successfully joins composite keys",
+            "Audit report documents all incorrect patterns found",
+            "Audit report includes priority and estimated fix time per finding"
+          ],
+          "dependencies": ["phase_1"],
+          "risks": [
+            {
+              "risk": "Scraper audit reveals more issues than documented",
+              "mitigation": "Extend scope and timeline if needed, prioritize critical findings"
+            }
+          ]
+        },
+        {
+          "phase_id": "phase_4",
+          "name": "Version Control and Deployment",
+          "description": "Update version metadata, document breaking changes, and deploy v1.3.0",
+          "priority": "P0",
+          "estimated_duration": "1.5 hours",
+          "tasks": [
+            "VERSION-001",
+            "VERSION-002",
+            "VERSION-003",
+            "DEPLOY-001",
+            "DEPLOY-002",
+            "DEPLOY-003",
+            "DEPLOY-004"
+          ],
+          "deliverables": [
+            "Version bumped to v1.3.0",
+            "Breaking Changes section added",
+            "Known Issues section added to v1.2.0 deprecation",
+            "Validation tests pass",
+            "v1.3.0 deployed to personas-mcp server",
+            "Deployment verified with sample queries",
+            "CLAUDE.md updated"
+          ],
+          "success_criteria": [
+            "Persona metadata shows v1.3.0",
+            "All 3 validation tests pass",
+            "use_persona('nfl-scraper-expert') loads v1.3.0",
+            "Sample database queries receive correct guidance",
+            "Documentation updated in project CLAUDE.md"
+          ],
+          "dependencies": ["phase_2", "phase_3"],
+          "risks": [
+            {
+              "risk": "Deployment breaks existing integrations",
+              "mitigation": "Backup v1.2.0, test rollback procedure before deployment"
+            }
+          ]
+        }
+      ],
+      "parallel_opportunities": [
+        {
+          "parallel_group": "Phase 3 Parallelization",
+          "description": "Validation tests and scraper audits can run in parallel",
+          "tasks": ["TEST-001 through TEST-004", "AUDIT-001 through AUDIT-005"],
+          "estimated_time_savings": "30 minutes"
+        }
+      ]
+    },
+
+    "7_testing_strategy": {
+      "section_name": "Testing Strategy",
+      "test_levels": {
+        "unit_tests": {
+          "description": "Test individual schema validation queries",
+          "coverage_target": "100% of validation queries",
+          "tests": [
+            {
+              "test_name": "test_1_games_structure",
+              "test_type": "database_validation",
+              "description": "Verify games table has correct structure with composite PK",
+              "test_cases": [
+                {
+                  "case": "Query games table for final games in 2025",
+                  "expected": "Returns 5 games with game_id, season, home_team_id, away_team_id, status columns"
+                },
+                {
+                  "case": "Count total final games for 2025",
+                  "expected": "Returns 94 games"
+                },
+                {
+                  "case": "Attempt to query games.id column",
+                  "expected": "Error: column games.id does not exist"
+                }
+              ]
+            },
+            {
+              "test_name": "test_2_status_enum",
+              "test_type": "enum_validation",
+              "description": "Verify status enum contains correct values",
+              "test_cases": [
+                {
+                  "case": "Query distinct status values for 2025 season",
+                  "expected": "Returns ['final', 'scheduled'] (may include 'in_progress' if games active)"
+                },
+                {
+                  "case": "Filter by status='completed'",
+                  "expected": "Returns 0 results (invalid enum value)"
+                },
+                {
+                  "case": "Filter by status='final'",
+                  "expected": "Returns 94 results"
+                }
+              ]
+            },
+            {
+              "test_name": "test_3_foreign_keys",
+              "test_type": "relationship_validation",
+              "description": "Verify composite foreign key joins work correctly",
+              "test_cases": [
+                {
+                  "case": "Join team_game_stats with games on (game_id, season)",
+                  "expected": "Returns stats with nested game data (game_date, home_team_id)"
+                },
+                {
+                  "case": "Attempt join on game_id only (missing season)",
+                  "expected": "Error or incorrect results due to incomplete composite key"
+                },
+                {
+                  "case": "Upsert with onConflict: 'player_id,game_id,season'",
+                  "expected": "Successful upsert respecting composite unique constraint"
+                }
+              ]
+            }
+          ]
+        },
+        "integration_tests": {
+          "description": "Test persona guidance accuracy with end-to-end scenarios",
+          "coverage_target": "All 5 critical schema issues covered",
+          "tests": [
+            {
+              "test_name": "Persona Query Guidance Test",
+              "description": "Verify persona provides correct guidance for common database query scenarios",
+              "test_cases": [
+                {
+                  "scenario": "User requests guidance on querying games by ID",
+                  "expected_guidance": "Persona advises using composite key: .eq('game_id', id).eq('season', 2025)"
+                },
+                {
+                  "scenario": "User requests guidance on filtering for completed games",
+                  "expected_guidance": "Persona advises .eq('status', 'final') not 'completed'"
+                },
+                {
+                  "scenario": "User requests guidance on getting home and away teams",
+                  "expected_guidance": "Persona advises .select('home_team_id', 'away_team_id')"
+                }
+              ]
+            },
+            {
+              "test_name": "Error Troubleshooting Test",
+              "description": "Verify persona correctly diagnoses schema-related errors",
+              "test_cases": [
+                {
+                  "error": "column games.id does not exist",
+                  "expected_diagnosis": "Persona identifies composite PK issue, suggests correct pattern"
+                },
+                {
+                  "error": "No results from status='completed' query",
+                  "expected_diagnosis": "Persona identifies enum value error, suggests status='final'"
+                }
+              ]
+            }
+          ]
+        },
+        "regression_tests": {
+          "description": "Ensure v1.3.0 update doesn't break existing correct knowledge",
+          "tests": [
+            {
+              "test_name": "ESPN API Knowledge Unchanged",
+              "description": "Verify ESPN API endpoint and rate limiting knowledge remains correct",
+              "validation": "Persona still documents 6 endpoints, 1 req/sec rate limit, retry logic"
+            },
+            {
+              "test_name": "Scraper Pattern Knowledge Unchanged",
+              "description": "Verify scraper implementation patterns remain correct",
+              "validation": "Persona still documents batch inserts, concurrent handling, error recovery"
+            }
+          ]
+        }
+      },
+      "test_data": {
+        "test_environment": "Supabase PostgreSQL database with 2025 season data",
+        "required_data": [
+          "94 final games for 2025 season",
+          "178 scheduled games for 2025 season",
+          "Team game stats and player game stats for some final games",
+          "Teams, players, stadiums seed data"
+        ],
+        "data_setup": "Use existing production data, no additional seeding required"
+      },
+      "acceptance_testing": {
+        "description": "User acceptance criteria for v1.3.0 deployment",
+        "criteria": [
+          {
+            "criterion": "All validation tests pass",
+            "verification": "Run test suite, confirm 3/3 tests pass"
+          },
+          {
+            "criterion": "No incorrect patterns in example code",
+            "verification": "Grep for games.id, home_team (without _id), status='completed' returns zero matches"
+          },
+          {
+            "criterion": "Persona provides correct guidance for sample queries",
+            "verification": "Test 5 common query scenarios, verify correct patterns suggested"
+          },
+          {
+            "criterion": "Scraper audit identifies all issues",
+            "verification": "SCRAPER_AUDIT_REPORT.md includes findings from all 5 scrapers"
+          },
+          {
+            "criterion": "Breaking changes documented",
+            "verification": "v1.3.0 includes breaking changes section with migration patterns"
+          }
+        ]
+      }
+    },
+
+    "8_success_criteria": {
+      "section_name": "Success Criteria",
+      "must_have": [
+        {
+          "criterion": "All 5 schema issues (SCHEMA-001 through SCHEMA-005) corrected in persona",
+          "measurement": "Database Schema Knowledge section includes correct primary key, column names, enum values, foreign keys, partitioning",
+          "verification": "Manual review of persona content + grep for incorrect patterns returns zero matches"
+        },
+        {
+          "criterion": "4 common schema error patterns documented",
+          "measurement": "Common Issues section includes games.id error, status=completed error, home_team error, missing stats error",
+          "verification": "Manual review confirms all 4 errors documented with cause, fix, example"
+        },
+        {
+          "criterion": "All example code updated with correct patterns",
+          "measurement": "Zero instances of incorrect patterns (games.id, home_team without _id, status='completed') in persona",
+          "verification": "Grep verification: grep -E '(games\\.id|home_team[^_]|status.*completed)' returns no matches"
+        },
+        {
+          "criterion": "Automated validation test suite created and passing",
+          "measurement": "3 validation tests implemented (games structure, status enum, foreign keys)",
+          "verification": "Run test suite: node validate-nfl-schema.js returns 3/3 pass"
+        },
+        {
+          "criterion": "5 production scrapers audited with findings documented",
+          "measurement": "SCRAPER_AUDIT_REPORT.md includes audit results for all 5 scrapers with priorities and estimated fixes",
+          "verification": "Report exists and contains sections for each scraper: game-stats, live-games, injuries, roster-updates, standings"
+        },
+        {
+          "criterion": "Version bumped to v1.3.0 with breaking changes documented",
+          "measurement": "Persona metadata shows v1.3.0, Breaking Changes section lists schema corrections",
+          "verification": "use_persona('nfl-scraper-expert') returns v1.3.0, breaking changes visible in prompt"
+        },
+        {
+          "criterion": "Persona deployment verified with sample queries",
+          "measurement": "Test queries for games, status filtering, team references return correct guidance",
+          "verification": "5 sample query scenarios tested, all receive correct schema patterns in response"
+        }
+      ],
+      "nice_to_have": [
+        {
+          "criterion": "Schema drift detection tool implemented",
+          "measurement": "MCP tool added to personas-mcp for automated schema validation",
+          "verification": "Tool callable via detect_schema_drift('nfl-scraper-expert', db_url)"
+        },
+        {
+          "criterion": "Persona version history tracked",
+          "measurement": "Metadata includes previous_versions array with v1.2.0 deprecation details",
+          "verification": "Persona metadata includes version history with dates and reasons"
+        },
+        {
+          "criterion": "CI/CD integration for persona testing",
+          "measurement": "Validation tests run automatically on persona updates",
+          "verification": "Tests triggered by git commit hook or CI pipeline"
+        }
+      ],
+      "kpis": {
+        "quality_metrics": [
+          {
+            "metric": "Schema Correctness",
+            "target": "100% of schema references correct",
+            "measurement": "Grep verification + validation tests",
+            "current": "0% (v1.2.0 has 5 critical errors)",
+            "target_value": "100%"
+          },
+          {
+            "metric": "Example Code Accuracy",
+            "target": "0 incorrect patterns in examples",
+            "measurement": "Grep count of incorrect patterns",
+            "current": "Unknown (requires audit)",
+            "target_value": "0"
+          },
+          {
+            "metric": "Test Coverage",
+            "target": "100% of critical schema issues have validation tests",
+            "measurement": "Test count / issue count",
+            "current": "0/5 (0%)",
+            "target_value": "3/5 (60%) minimum, 5/5 (100%) ideal"
+          }
+        ],
+        "performance_metrics": [
+          {
+            "metric": "Query Failure Rate",
+            "target": "0% queries fail due to incorrect schema guidance",
+            "measurement": "Test queries using persona guidance",
+            "current": "100% (all queries using v1.2.0 guidance fail)",
+            "target_value": "0%"
+          },
+          {
+            "metric": "Troubleshooting Time",
+            "target": "Reduce time to diagnose schema errors by 80%",
+            "measurement": "Time from error to correct diagnosis",
+            "current": "30-60 minutes (manual debugging)",
+            "target_value": "5-10 minutes (persona provides immediate diagnosis)"
+          }
+        ],
+        "business_metrics": [
+          {
+            "metric": "Persona Reliability",
+            "target": "95%+ user confidence in persona guidance",
+            "measurement": "User feedback / query success rate",
+            "current": "Unknown (v1.2.0 unreliable for database queries)",
+            "target_value": "95%+"
+          },
+          {
+            "metric": "Developer Productivity",
+            "target": "Unblock all database-related development",
+            "measurement": "Development tasks unblocked by v1.3.0",
+            "current": "Blocked (P0 severity)",
+            "target_value": "Unblocked"
+          }
+        ]
+      }
+    },
+
+    "9_implementation_checklist": {
+      "section_name": "Implementation Checklist",
+      "phase_checklists": {
+        "phase_1_setup_and_schema": [
+          {
+            "task": "SETUP-001: Verify database schema source of truth",
+            "status": "pending",
+            "verification": "DDL files obtained OR database introspection access confirmed"
+          },
+          {
+            "task": "SETUP-002: Backup nfl-scraper-expert.md v1.2.0",
+            "status": "pending",
+            "verification": "Backup file created at personas-mcp/backups/nfl-scraper-expert-v1.2.0.md"
+          },
+          {
+            "task": "SCHEMA-001: Add Database Schema Knowledge section",
+            "status": "pending",
+            "verification": "New section visible in persona with table structure subsections"
+          },
+          {
+            "task": "SCHEMA-002: Document composite primary key (game_id, season)",
+            "status": "pending",
+            "verification": "Section documents composite PK, explicitly notes no 'id' column"
+          },
+          {
+            "task": "SCHEMA-003: Document column names with _id suffix",
+            "status": "pending",
+            "verification": "Section documents home_team_id, away_team_id with foreign key references"
+          },
+          {
+            "task": "SCHEMA-004: Document game_status enum values",
+            "status": "pending",
+            "verification": "Section lists ['scheduled', 'in_progress', 'final'], notes 'completed' is incorrect"
+          },
+          {
+            "task": "SCHEMA-005: Document composite foreign key relationships",
+            "status": "pending",
+            "verification": "Section shows (game_id, season) composite FK pattern for stats tables"
+          },
+          {
+            "task": "SCHEMA-006: Document table partitioning strategy",
+            "status": "pending",
+            "verification": "Section lists RANGE partitions by season (2020-2025 individual, pre-2020 historical)"
+          }
+        ],
+        "phase_2_errors_and_examples": [
+          {
+            "task": "ERROR-001: Add 'column games.id does not exist' pattern",
+            "status": "pending",
+            "verification": "Error documented in Common Issues with cause, fix, correct example"
+          },
+          {
+            "task": "ERROR-002: Add 'No results from status=completed' pattern",
+            "status": "pending",
+            "verification": "Error documented with enum value correction to 'final'"
+          },
+          {
+            "task": "ERROR-003: Add 'Column home_team does not exist' pattern",
+            "status": "pending",
+            "verification": "Error documented with _id suffix correction"
+          },
+          {
+            "task": "ERROR-004: Add 'Missing Game Stats' pattern",
+            "status": "pending",
+            "verification": "Error documented with troubleshooting steps"
+          },
+          {
+            "task": "EXAMPLE-001: Replace all .select('id') patterns",
+            "status": "pending",
+            "verification": "grep \"\\.select\\('id'\\)\" returns zero matches"
+          },
+          {
+            "task": "EXAMPLE-002: Replace all .eq('id', ...) patterns",
+            "status": "pending",
+            "verification": "grep \"\\.eq\\('id',\" returns zero matches"
+          },
+          {
+            "task": "EXAMPLE-003: Replace home_team/away_team patterns",
+            "status": "pending",
+            "verification": "grep \"home_team[^_]\" and \"away_team[^_]\" return zero matches"
+          },
+          {
+            "task": "EXAMPLE-004: Replace status='completed' patterns",
+            "status": "pending",
+            "verification": "grep \"status.*'completed'\" returns zero matches"
+          },
+          {
+            "task": "EXAMPLE-005: Run grep verification",
+            "status": "pending",
+            "verification": "All grep checks pass (zero incorrect patterns found)"
+          }
+        ],
+        "phase_3_validation_and_audit": [
+          {
+            "task": "TEST-001: Create validate-nfl-schema.js file",
+            "status": "pending",
+            "verification": "File exists at personas-mcp/tests/validate-nfl-schema.js with framework setup"
+          },
+          {
+            "task": "TEST-002: Implement test_1_games_structure",
+            "status": "pending",
+            "verification": "Test queries games table, verifies 5 final games with correct columns"
+          },
+          {
+            "task": "TEST-003: Implement test_2_status_enum",
+            "status": "pending",
+            "verification": "Test queries distinct status, verifies ['final', 'scheduled'] returned"
+          },
+          {
+            "task": "TEST-004: Implement test_3_foreign_keys",
+            "status": "pending",
+            "verification": "Test joins stats with games on composite key, verifies nested data"
+          },
+          {
+            "task": "AUDIT-001: Audit game-stats-scraper.js",
+            "status": "pending",
+            "verification": "Findings documented: file, lines, incorrect patterns, fixes"
+          },
+          {
+            "task": "AUDIT-002: Audit live-games-scraper.js",
+            "status": "pending",
+            "verification": "Status enum usage audited and documented"
+          },
+          {
+            "task": "AUDIT-003: Audit injuries-scraper.js",
+            "status": "pending",
+            "verification": "Foreign key patterns audited and documented"
+          },
+          {
+            "task": "AUDIT-004: Audit roster-updates-scraper.js",
+            "status": "pending",
+            "verification": "Team ID column usage audited and documented"
+          },
+          {
+            "task": "AUDIT-005: Audit standings-scraper.js",
+            "status": "pending",
+            "verification": "Team column references audited and documented"
+          },
+          {
+            "task": "AUDIT-006: Generate SCRAPER_AUDIT_REPORT.md",
+            "status": "pending",
+            "verification": "Report file created with findings from all 5 scrapers, priorities, estimates"
+          }
+        ],
+        "phase_4_version_and_deploy": [
+          {
+            "task": "VERSION-001: Update version to v1.3.0",
+            "status": "pending",
+            "verification": "Persona metadata shows version: 1.3.0, updated date"
+          },
+          {
+            "task": "VERSION-002: Add Breaking Changes section",
+            "status": "pending",
+            "verification": "Section documents 3 critical schema changes with migration patterns"
+          },
+          {
+            "task": "VERSION-003: Add Known Issues section to v1.2.0",
+            "status": "pending",
+            "verification": "v1.2.0 includes warning about production-breaking schema errors"
+          },
+          {
+            "task": "DEPLOY-001: Run validation test suite",
+            "status": "pending",
+            "verification": "node validate-nfl-schema.js returns 3/3 pass"
+          },
+          {
+            "task": "DEPLOY-002: Deploy v1.3.0 to personas-mcp",
+            "status": "pending",
+            "verification": "use_persona('nfl-scraper-expert') loads v1.3.0"
+          },
+          {
+            "task": "DEPLOY-003: Verify with sample queries",
+            "status": "pending",
+            "verification": "5 test query scenarios receive correct schema guidance"
+          },
+          {
+            "task": "DEPLOY-004: Update CLAUDE.md",
+            "status": "pending",
+            "verification": "Documentation updated with schema corrections reference"
+          }
+        ]
+      },
+      "pre_deployment": {
+        "checklist": [
+          {
+            "item": "All validation tests pass (3/3)",
+            "status": "pending"
+          },
+          {
+            "item": "Grep verification confirms zero incorrect patterns",
+            "status": "pending"
+          },
+          {
+            "item": "v1.2.0 backup exists",
+            "status": "pending"
+          },
+          {
+            "item": "Breaking changes documented",
+            "status": "pending"
+          },
+          {
+            "item": "Scraper audit complete (5/5 scrapers)",
+            "status": "pending"
+          }
+        ]
+      },
+      "post_deployment": {
+        "checklist": [
+          {
+            "item": "use_persona loads v1.3.0",
+            "status": "pending"
+          },
+          {
+            "item": "Sample queries return correct guidance",
+            "status": "pending"
+          },
+          {
+            "item": "SCRAPER_AUDIT_REPORT.md accessible",
+            "status": "pending"
+          },
+          {
+            "item": "CLAUDE.md updated",
+            "status": "pending"
+          },
+          {
+            "item": "v1.2.0 deprecated (optional: remove or archive)",
+            "status": "pending"
+          }
+        ]
+      },
+      "rollback_plan": {
+        "trigger_conditions": [
+          "Validation tests fail after deployment",
+          "Persona provides incorrect guidance for test scenarios",
+          "Critical integration breaks"
+        ],
+        "rollback_steps": [
+          {
+            "step": 1,
+            "action": "Restore v1.2.0 from backup",
+            "command": "cp personas-mcp/backups/nfl-scraper-expert-v1.2.0.md personas-mcp/nfl-scraper-expert.md"
+          },
+          {
+            "step": 2,
+            "action": "Verify rollback successful",
+            "command": "use_persona('nfl-scraper-expert') returns v1.2.0"
+          },
+          {
+            "step": 3,
+            "action": "Document rollback reason",
+            "command": "Add issue to rollback log with root cause analysis"
+          },
+          {
+            "step": 4,
+            "action": "Fix v1.3.0 issues in staging",
+            "command": "Address rollback trigger, re-test, re-deploy"
+          }
+        ],
+        "estimated_rollback_time": "10 minutes"
+      }
+    }
+  }
+}

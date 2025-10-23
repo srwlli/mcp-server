@@ -11,13 +11,12 @@
         h1 { font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; border-bottom: 3px solid #3498db; padding-bottom: 15px; }
         h2 { font-size: 1.8em; color: #34495e; margin-top: 40px; margin-bottom: 20px; padding-left: 15px; border-left: 5px solid #3498db; }
         h3 { font-size: 1.3em; color: #2c3e50; margin-top: 25px; margin-bottom: 15px; font-weight: 600; }
-        .tool-list { list-style: none; margin-left: 0; margin-bottom: 20px; }
-        .tool-list li { padding: 12px 15px; margin: 8px 0; background: #f8f9fa; border-left: 3px solid #3498db; border-radius: 4px; transition: all 0.2s; }
+        .tool-list { list-style: none; margin-left: 0; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tool-list li { padding: 10px 15px; background: #f8f9fa; border-left: 3px solid #3498db; border-radius: 4px; transition: all 0.2s; }
         .tool-list li:hover { background: #e8f4f8; transform: translateX(5px); }
         .slash-list li { border-left-color: #9b59b6; background: #f4f0f8; }
         .slash-list li:hover { background: #e8dff4; }
         .tool-name { font-weight: 600; color: #2c3e50; font-family: 'Courier New', monospace; }
-        .tool-desc { color: #7f8c8d; font-size: 0.95em; margin-left: 10px; }
         .server-card { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 6px; border: 1px solid #e1e8ed; }
         .tag { display: inline-block; background: #3498db; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.85em; margin-left: 10px; }
         .tag.new { background: #e74c3c; }
@@ -35,29 +34,29 @@
         <div class="server-card">
             <h3>MCP Tools</h3>
             <ul class="tool-list">
-                <li><span class="tool-name">use_persona</span><span class="tool-desc">Activate expert persona</span></li>
-                <li><span class="tool-name">get_active_persona</span><span class="tool-desc">Get active persona</span></li>
-                <li><span class="tool-name">clear_persona</span><span class="tool-desc">Deactivate persona</span></li>
-                <li><span class="tool-name">list_personas</span><span class="tool-desc">List personas</span></li>
+                <li><span class="tool-name">use_persona</span></li>
+                <li><span class="tool-name">get_active_persona</span></li>
+                <li><span class="tool-name">clear_persona</span></li>
+                <li><span class="tool-name">list_personas</span></li>
             </ul>
 
             <h3>Available Personas <span class="tag">10</span></h3>
             <ul class="tool-list">
-                <li><span class="tool-name">mcp-expert</span><span class="tool-desc">MCP protocol and server implementation expert</span></li>
-                <li><span class="tool-name">docs-expert</span><span class="tool-desc">Documentation and planning expert (36 docs-mcp tools)</span></li>
-                <li><span class="tool-name">coderef-expert</span><span class="tool-desc">CodeRef-MCP server building expert</span></li>
-                <li><span class="tool-name">nfl-scraper-expert</span><span class="tool-desc">NFL data scraping and next-scraper platform expert</span></li>
-                <li><span class="tool-name">lloyd-expert</span><span class="tool-desc">Multi-agent coordinator and orchestration expert</span></li>
-                <li><span class="tool-name">agent-generalist</span><span class="tool-desc">Generalist execution agent (code, test, docs)</span></li>
-                <li><span class="tool-name">agent-2</span><span class="tool-desc">Generalist execution agent #2</span></li>
-                <li><span class="tool-name">agent-3</span><span class="tool-desc">Generalist execution agent #3</span></li>
-                <li><span class="tool-name">agent-4</span><span class="tool-desc">Generalist execution agent #4</span></li>
+                <li><span class="tool-name">mcp-expert</span></li>
+                <li><span class="tool-name">docs-expert</span></li>
+                <li><span class="tool-name">coderef-expert</span></li>
+                <li><span class="tool-name">nfl-scraper-expert</span></li>
+                <li><span class="tool-name">lloyd-expert</span></li>
+                <li><span class="tool-name">agent-generalist</span></li>
+                <li><span class="tool-name">agent-2</span></li>
+                <li><span class="tool-name">agent-3</span></li>
+                <li><span class="tool-name">agent-4</span></li>
             </ul>
 
             <h3>Slash Commands <span class="tag slash">2</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/use-persona</span><span class="tool-desc">Activate a persona by name</span></li>
-                <li><span class="tool-name">/list-personas</span><span class="tool-desc">List all available personas</span></li>
+                <li><span class="tool-name">/use-persona</span></li>
+                <li><span class="tool-name">/list-personas</span></li>
             </ul>
         </div>
 
@@ -65,95 +64,95 @@
         <div class="server-card">
             <h3>Documentation Generation <span class="tag slash">6</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/generate-docs</span><span class="tool-desc">Generate foundation documentation for current project</span></li>
-                <li><span class="tool-name">/generate-user-guide</span><span class="tool-desc">Generate user guide documentation</span></li>
-                <li><span class="tool-name">/generate-my-guide</span><span class="tool-desc">Generate concise tool reference (60-80 lines)</span></li>
-                <li><span class="tool-name">/generate-quickref</span><span class="tool-desc">Generate quick reference guide</span></li>
-                <li><span class="tool-name">/list-templates</span><span class="tool-desc">List available documentation templates</span></li>
-                <li><span class="tool-name">/get-template</span><span class="tool-desc">Get specific template content</span></li>
+                <li><span class="tool-name">/generate-docs</span></li>
+                <li><span class="tool-name">/generate-user-guide</span></li>
+                <li><span class="tool-name">/generate-my-guide</span></li>
+                <li><span class="tool-name">/generate-quickref</span></li>
+                <li><span class="tool-name">/list-templates</span></li>
+                <li><span class="tool-name">/get-template</span></li>
             </ul>
 
             <h3>Changelog Management <span class="tag slash">4</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/get-changelog</span><span class="tool-desc">Retrieve project changelog</span></li>
-                <li><span class="tool-name">/add-changelog</span><span class="tool-desc">Add new changelog entry</span></li>
-                <li><span class="tool-name">/update-changelog</span><span class="tool-desc">Analyze and update changelog automatically</span></li>
-                <li><span class="tool-name">/update-docs</span><span class="tool-desc">Update all documentation after feature completion (README, CLAUDE, CHANGELOG)</span></li>
+                <li><span class="tool-name">/get-changelog</span></li>
+                <li><span class="tool-name">/add-changelog</span></li>
+                <li><span class="tool-name">/update-changelog</span></li>
+                <li><span class="tool-name">/update-docs</span></li>
             </ul>
 
             <h3>Standards & Consistency <span class="tag slash">3</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/establish-standards</span><span class="tool-desc">Extract UI/UX/behavior standards from current project</span></li>
-                <li><span class="tool-name">/audit-codebase</span><span class="tool-desc">Audit current project for standards compliance</span></li>
-                <li><span class="tool-name">/check-consistency</span><span class="tool-desc">Quick consistency check on modified files (pre-commit gate)</span></li>
+                <li><span class="tool-name">/establish-standards</span></li>
+                <li><span class="tool-name">/audit-codebase</span></li>
+                <li><span class="tool-name">/check-consistency</span></li>
             </ul>
 
             <h3>Planning & Validation <span class="tag slash">6</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/gather-context</span><span class="tool-desc">Gather feature requirements and context (assigns workorder ID)</span></li>
-                <li><span class="tool-name">/analyze-for-planning</span><span class="tool-desc">Analyze project for implementation planning</span></li>
-                <li><span class="tool-name">/get-planning-template</span><span class="tool-desc">Get implementation planning template</span></li>
-                <li><span class="tool-name">/create-plan</span><span class="tool-desc">Create implementation plan (auto-generates DELIVERABLES.md)</span></li>
-                <li><span class="tool-name">/validate-plan</span><span class="tool-desc">Validate implementation plan quality (scores 0-100)</span></li>
-                <li><span class="tool-name">/generate-plan-review</span><span class="tool-desc">Generate human-readable plan review report</span></li>
+                <li><span class="tool-name">/gather-context</span></li>
+                <li><span class="tool-name">/analyze-for-planning</span></li>
+                <li><span class="tool-name">/get-planning-template</span></li>
+                <li><span class="tool-name">/create-plan</span></li>
+                <li><span class="tool-name">/validate-plan</span></li>
+                <li><span class="tool-name">/generate-plan-review</span></li>
             </ul>
 
             <h3>Deliverables Tracking <span class="tag slash">2</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/generate-deliverables</span><span class="tool-desc">Generate DELIVERABLES.md template from plan.json</span></li>
-                <li><span class="tool-name">/update-deliverables</span><span class="tool-desc">Update DELIVERABLES.md with git metrics (LOC, commits, time)</span></li>
+                <li><span class="tool-name">/generate-deliverables</span></li>
+                <li><span class="tool-name">/update-deliverables</span></li>
             </ul>
 
             <h3>Project Inventory <span class="tag slash">7</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/inventory-manifest</span><span class="tool-desc">Generate comprehensive project file inventory</span></li>
-                <li><span class="tool-name">/dependency-inventory</span><span class="tool-desc">Analyze project dependencies with security scanning</span></li>
-                <li><span class="tool-name">/api-inventory</span><span class="tool-desc">Discover API endpoints across multiple frameworks with documentation coverage</span></li>
-                <li><span class="tool-name">/database-inventory</span><span class="tool-desc">Discover database schemas across multiple systems with ORM/migration parsing</span></li>
-                <li><span class="tool-name">/config-inventory</span><span class="tool-desc">Analyze configuration files with security detection</span></li>
-                <li><span class="tool-name">/test-inventory</span><span class="tool-desc">Discover test frameworks and analyze coverage metrics</span></li>
-                <li><span class="tool-name">/documentation-inventory</span><span class="tool-desc">Analyze documentation quality and metrics</span></li>
+                <li><span class="tool-name">/inventory-manifest</span></li>
+                <li><span class="tool-name">/dependency-inventory</span></li>
+                <li><span class="tool-name">/api-inventory</span></li>
+                <li><span class="tool-name">/database-inventory</span></li>
+                <li><span class="tool-name">/config-inventory</span></li>
+                <li><span class="tool-name">/test-inventory</span></li>
+                <li><span class="tool-name">/documentation-inventory</span></li>
             </ul>
 
             <h3>Multi-Agent Coordination <span class="tag slash">5</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/generate-agent-communication</span><span class="tool-desc">Generate communication.json for parallel agents</span></li>
-                <li><span class="tool-name">/assign-agent-task</span><span class="tool-desc">Assign task to specific agent with workorder scoping</span></li>
-                <li><span class="tool-name">/verify-agent-completion</span><span class="tool-desc">Verify agent completion with automated checks</span></li>
-                <li><span class="tool-name">/aggregate-agent-deliverables</span><span class="tool-desc">Combine metrics from multiple agents</span></li>
-                <li><span class="tool-name">/track-agent-status</span><span class="tool-desc">Track agent status across features</span></li>
+                <li><span class="tool-name">/generate-agent-communication</span></li>
+                <li><span class="tool-name">/assign-agent-task</span></li>
+                <li><span class="tool-name">/verify-agent-completion</span></li>
+                <li><span class="tool-name">/aggregate-agent-deliverables</span></li>
+                <li><span class="tool-name">/track-agent-status</span></li>
             </ul>
 
             <h3>Feature Management <span class="tag slash">2</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/archive-feature</span><span class="tool-desc">Archive completed features to archived directory</span></li>
-                <li><span class="tool-name">/execute-plan</span><span class="tool-desc">Generate TodoWrite task list from plan.json</span></li>
+                <li><span class="tool-name">/archive-feature</span></li>
+                <li><span class="tool-name">/execute-plan</span></li>
             </ul>
 
             <h3>Workorder Tracking <span class="tag slash">2</span></h3>
             <ul class="tool-list slash-list">
-                <li><span class="tool-name">/log-workorder</span><span class="tool-desc">Log workorder to global activity log</span></li>
-                <li><span class="tool-name">/get-workorder-log</span><span class="tool-desc">Query global workorder log with filters</span></li>
+                <li><span class="tool-name">/log-workorder</span></li>
+                <li><span class="tool-name">/get-workorder-log</span></li>
             </ul>
         </div>
 
         <h2>coderef-mcp - Code Reference Analysis (6 tools)</h2>
         <div class="server-card">
             <ul class="tool-list">
-                <li><span class="tool-name">mcp__coderef__query</span><span class="tool-desc">Query references</span></li>
-                <li><span class="tool-name">mcp__coderef__analyze</span><span class="tool-desc">Deep analysis</span></li>
-                <li><span class="tool-name">mcp__coderef__validate</span><span class="tool-desc">Validate references</span></li>
-                <li><span class="tool-name">mcp__coderef__batch_validate</span><span class="tool-desc">Batch validation</span></li>
-                <li><span class="tool-name">mcp__coderef__generate_docs</span><span class="tool-desc">Generate docs</span></li>
-                <li><span class="tool-name">mcp__coderef__audit</span><span class="tool-desc">Audit codebase</span></li>
+                <li><span class="tool-name">mcp__coderef__query</span></li>
+                <li><span class="tool-name">mcp__coderef__analyze</span></li>
+                <li><span class="tool-name">mcp__coderef__validate</span></li>
+                <li><span class="tool-name">mcp__coderef__batch_validate</span></li>
+                <li><span class="tool-name">mcp__coderef__generate_docs</span></li>
+                <li><span class="tool-name">mcp__coderef__audit</span></li>
             </ul>
         </div>
 
         <h2>ide - IDE Integration (2 tools)</h2>
         <div class="server-card">
             <ul class="tool-list">
-                <li><span class="tool-name">getDiagnostics</span><span class="tool-desc">VS Code diagnostics</span></li>
-                <li><span class="tool-name">executeCode</span><span class="tool-desc">Execute Python in Jupyter</span></li>
+                <li><span class="tool-name">getDiagnostics</span></li>
+                <li><span class="tool-name">executeCode</span></li>
             </ul>
         </div>
 

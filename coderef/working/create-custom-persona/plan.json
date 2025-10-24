@@ -1,0 +1,834 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "create-custom-persona",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code AI",
+    "generated_at": "2025-10-23T21:05:00Z",
+    "has_context": false,
+    "has_analysis": false,
+    "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+    "estimated_total_hours": 20,
+    "complexity": "high",
+    "project_path": "C:\\Users\\willh\\.mcp-servers"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [
+          "README.md",
+          "CLAUDE.md",
+          "PERSONAS-CREATED.md"
+        ],
+        "missing": [
+          "CUSTOMIZATION-GUIDE.md"
+        ]
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "No specific coding standards document found"
+        ]
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP (Model Context Protocol)",
+        "key_libraries": [
+          "mcp (Anthropic MCP SDK)",
+          "pydantic (data validation)",
+          "jsonschema (validation)"
+        ]
+      },
+      "project_structure": {
+        "organization_pattern": "MCP server with persona management",
+        "main_directories": [
+          "personas/base/",
+          "personas/custom/ (to be created)",
+          "src/",
+          "templates/ (to be created)",
+          ".claude/commands/"
+        ]
+      },
+      "reference_components": [
+        {
+          "name": "PersonaManager",
+          "location": "src/persona_manager.py",
+          "purpose": "Load and manage personas"
+        },
+        {
+          "name": "PersonaDefinition",
+          "location": "src/models.py",
+          "purpose": "Pydantic schema for persona validation"
+        },
+        {
+          "name": "Existing personas",
+          "location": "personas/base/*.json",
+          "purpose": "Reference for persona structure (mcp-expert, docs-expert, etc.)"
+        }
+      ],
+      "gaps_and_risks": [
+        "No template system exists for guided persona creation",
+        "System prompt generation logic needs to be created",
+        "Validation rules for custom personas not defined",
+        "Potential conflict between custom and base personas",
+        "Storage strategy for custom personas needs design"
+      ]
+    },
+    "1_executive_summary": {
+      "goal": "Enable users to create custom personas by providing expertise areas, communication style, and behavior preferences through a guided template workflow, with automatic system prompt generation and validation",
+      "description": "Implement a persona customization system that allows users to define new expert personas without writing JSON manually. Users provide high-level inputs (expertise areas, communication style, tool preferences, use cases) through an interactive guided process, and the system generates a complete persona definition with a comprehensive system prompt. The feature includes validation, template-based generation, storage in personas/custom/, and a /create-persona slash command for easy access.",
+      "business_value": "Empowers users to create domain-specific experts tailored to their unique needs without requiring technical knowledge of persona JSON structure or system prompt engineering",
+      "target_users": [
+        "Power users who need specialized personas for niche domains",
+        "Teams building organization-specific expertise",
+        "Developers extending personas-mcp for custom use cases"
+      ],
+      "success_metrics": [
+        "Users can create valid custom personas in <5 minutes",
+        "Generated system prompts are coherent and contextually appropriate",
+        "Custom personas load and activate without errors",
+        "Validation catches 95%+ of malformed inputs"
+      ]
+    },
+    "2_risk_assessment": {
+      "technical_complexity": "high",
+      "estimated_effort_hours": 20,
+      "key_risks": [
+        {
+          "risk": "System prompt generation quality",
+          "severity": "high",
+          "likelihood": "medium",
+          "mitigation": "Create template-based generation with validated patterns, review generated prompts for coherence, implement quality checks"
+        },
+        {
+          "risk": "User input validation complexity",
+          "severity": "medium",
+          "likelihood": "high",
+          "mitigation": "Define strict JSON schema for inputs, implement multi-stage validation (schema → semantic → quality)"
+        },
+        {
+          "risk": "Custom persona conflicts with base personas",
+          "severity": "medium",
+          "likelihood": "low",
+          "mitigation": "Namespace custom personas, validate uniqueness, prevent overriding base personas"
+        },
+        {
+          "risk": "Template design requires iteration",
+          "severity": "low",
+          "likelihood": "high",
+          "mitigation": "Start with minimal viable template, gather feedback, iterate based on usage"
+        }
+      ],
+      "dependencies": [
+        "Existing PersonaManager and PersonaDefinition classes",
+        "MCP server infrastructure (server.py)",
+        "Pydantic for validation",
+        "JSON schema validation"
+      ],
+      "breaking_changes": false,
+      "rollback_plan": "Feature is additive only - custom personas stored separately from base personas, can be disabled without affecting existing functionality"
+    },
+    "3_current_state_analysis": {
+      "existing_files": [
+        {
+          "path": "src/persona_manager.py",
+          "purpose": "Persona loading and activation logic",
+          "changes_required": "Add support for custom/ directory, implement persona generation logic"
+        },
+        {
+          "path": "src/models.py",
+          "purpose": "PersonaDefinition schema",
+          "changes_required": "Add CustomPersonaInput schema for user inputs, add validation helpers"
+        },
+        {
+          "path": "server.py",
+          "purpose": "MCP server entry point",
+          "changes_required": "Add create_custom_persona tool definition and handler"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "src/persona_generator.py",
+          "purpose": "System prompt generation logic using templates"
+        },
+        {
+          "path": "src/validators.py",
+          "purpose": "Custom persona validation rules (semantic, quality checks)"
+        },
+        {
+          "path": "templates/persona_template.txt",
+          "purpose": "Template for generating system prompts with {{placeholders}}"
+        },
+        {
+          "path": "templates/custom_persona_schema.json",
+          "purpose": "JSON schema for validating CustomPersonaInput"
+        },
+        {
+          "path": ".claude/commands/create-persona.md",
+          "purpose": "Slash command for guided persona creation"
+        },
+        {
+          "path": "personas/custom/.gitkeep",
+          "purpose": "Ensure custom directory exists in git"
+        }
+      ],
+      "architecture_changes": [
+        "Extend PersonaManager to support custom persona directory",
+        "Add persona generation pipeline: Input → Validate → Generate → Save",
+        "Create template rendering system for system prompt generation"
+      ]
+    },
+    "4_key_features": [
+      {
+        "feature_id": "F001",
+        "name": "Guided Persona Creation Workflow",
+        "description": "Interactive workflow that guides users through providing expertise areas, communication style, tool preferences, and use cases using AskUserQuestion for input collection",
+        "priority": "critical",
+        "user_story": "As a user, I want a guided process for creating custom personas so I don't need to understand JSON structure or system prompt engineering"
+      },
+      {
+        "feature_id": "F002",
+        "name": "Template-Based System Prompt Generation",
+        "description": "Automatically generate comprehensive system prompts from user inputs using a template with placeholders for expertise, communication style, tool usage patterns, and example workflows",
+        "priority": "critical",
+        "user_story": "As a user, I want the system to generate a professional system prompt from my inputs so I can create effective personas without writing prompts manually"
+      },
+      {
+        "feature_id": "F003",
+        "name": "Multi-Stage Validation",
+        "description": "Validate custom persona inputs at multiple stages: JSON schema validation (structure), semantic validation (coherence), and quality validation (completeness, best practices)",
+        "priority": "high",
+        "user_story": "As a user, I want validation errors to be caught early with clear feedback so I can fix issues before the persona is created"
+      },
+      {
+        "feature_id": "F004",
+        "name": "Custom Persona Storage",
+        "description": "Save custom personas to personas/custom/ directory with proper namespacing to prevent conflicts with base personas, include metadata (created_at, created_by, version)",
+        "priority": "high",
+        "user_story": "As a user, I want my custom personas stored separately from base personas so they don't get overwritten during updates"
+      },
+      {
+        "feature_id": "F005",
+        "name": "Slash Command Interface",
+        "description": "Provide /create-persona slash command that triggers the guided creation workflow and handles all user interactions",
+        "priority": "medium",
+        "user_story": "As a user, I want a simple command to start creating a persona so I can quickly access the feature"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CREATE-CUSTOM-PERSONA-001",
+        "name": "Create Custom Persona Feature",
+        "feature_dir": "coderef/working/create-custom-persona"
+      },
+      "task_categories": [
+        {
+          "category": "SETUP",
+          "description": "Environment setup and directory structure"
+        },
+        {
+          "category": "MODEL",
+          "description": "Data models and schemas"
+        },
+        {
+          "category": "TEMPLATE",
+          "description": "Template creation and rendering"
+        },
+        {
+          "category": "VALIDATE",
+          "description": "Validation logic"
+        },
+        {
+          "category": "GENERATE",
+          "description": "System prompt generation"
+        },
+        {
+          "category": "HANDLER",
+          "description": "MCP tool handler implementation"
+        },
+        {
+          "category": "CMD",
+          "description": "Slash command creation"
+        },
+        {
+          "category": "TEST",
+          "description": "Testing"
+        },
+        {
+          "category": "DOC",
+          "description": "Documentation"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create personas/custom/ directory structure",
+          "category": "SETUP",
+          "estimated_hours": 0.5,
+          "dependencies": []
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create templates/ directory for persona templates",
+          "category": "SETUP",
+          "estimated_hours": 0.5,
+          "dependencies": []
+        },
+        {
+          "id": "MODEL-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Define CustomPersonaInput Pydantic schema in src/models.py",
+          "category": "MODEL",
+          "estimated_hours": 1.5,
+          "dependencies": ["SETUP-001"]
+        },
+        {
+          "id": "MODEL-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create JSON schema for custom persona input validation in templates/custom_persona_schema.json",
+          "category": "MODEL",
+          "estimated_hours": 1,
+          "dependencies": ["SETUP-002", "MODEL-001"]
+        },
+        {
+          "id": "TEMPLATE-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Design system prompt template with {{placeholders}} in templates/persona_template.txt",
+          "category": "TEMPLATE",
+          "estimated_hours": 2,
+          "dependencies": ["SETUP-002"]
+        },
+        {
+          "id": "TEMPLATE-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create template renderer with {{placeholder}} substitution logic",
+          "category": "TEMPLATE",
+          "estimated_hours": 1.5,
+          "dependencies": ["TEMPLATE-001"]
+        },
+        {
+          "id": "VALIDATE-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement JSON schema validation in src/validators.py",
+          "category": "VALIDATE",
+          "estimated_hours": 1,
+          "dependencies": ["MODEL-002"]
+        },
+        {
+          "id": "VALIDATE-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement semantic validation (expertise coherence, use case relevance)",
+          "category": "VALIDATE",
+          "estimated_hours": 2,
+          "dependencies": ["VALIDATE-001"]
+        },
+        {
+          "id": "VALIDATE-003",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement quality validation (completeness checks, best practices)",
+          "category": "VALIDATE",
+          "estimated_hours": 1.5,
+          "dependencies": ["VALIDATE-002"]
+        },
+        {
+          "id": "VALIDATE-004",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement uniqueness check to prevent name conflicts with base personas",
+          "category": "VALIDATE",
+          "estimated_hours": 1,
+          "dependencies": ["VALIDATE-001"]
+        },
+        {
+          "id": "GENERATE-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create PersonaGenerator class in src/persona_generator.py",
+          "category": "GENERATE",
+          "estimated_hours": 1,
+          "dependencies": ["TEMPLATE-002"]
+        },
+        {
+          "id": "GENERATE-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement system prompt generation using template + user inputs",
+          "category": "GENERATE",
+          "estimated_hours": 2,
+          "dependencies": ["GENERATE-001", "TEMPLATE-002"]
+        },
+        {
+          "id": "GENERATE-003",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement persona metadata generation (version, timestamps, created_by)",
+          "category": "GENERATE",
+          "estimated_hours": 1,
+          "dependencies": ["GENERATE-001"]
+        },
+        {
+          "id": "HANDLER-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Add create_custom_persona tool definition to server.py list_tools()",
+          "category": "HANDLER",
+          "estimated_hours": 0.5,
+          "dependencies": []
+        },
+        {
+          "id": "HANDLER-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement handle_create_custom_persona in server.py with guided workflow",
+          "category": "HANDLER",
+          "estimated_hours": 2.5,
+          "dependencies": ["HANDLER-001", "VALIDATE-003", "GENERATE-002"]
+        },
+        {
+          "id": "HANDLER-003",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Integrate validation pipeline in handler (schema → semantic → quality)",
+          "category": "HANDLER",
+          "estimated_hours": 1,
+          "dependencies": ["HANDLER-002", "VALIDATE-003"]
+        },
+        {
+          "id": "HANDLER-004",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Implement file save logic to personas/custom/{name}.json",
+          "category": "HANDLER",
+          "estimated_hours": 1,
+          "dependencies": ["HANDLER-002"]
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create /create-persona slash command in .claude/commands/create-persona.md",
+          "category": "CMD",
+          "estimated_hours": 0.5,
+          "dependencies": ["HANDLER-002"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Write unit tests for CustomPersonaInput schema validation",
+          "category": "TEST",
+          "estimated_hours": 1,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Write unit tests for template rendering logic",
+          "category": "TEST",
+          "estimated_hours": 1,
+          "dependencies": ["TEMPLATE-002"]
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Write unit tests for validation pipeline (schema, semantic, quality)",
+          "category": "TEST",
+          "estimated_hours": 1.5,
+          "dependencies": ["VALIDATE-003"]
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Write integration test for complete persona creation workflow",
+          "category": "TEST",
+          "estimated_hours": 1.5,
+          "dependencies": ["HANDLER-004"]
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Update README.md with create_custom_persona tool documentation",
+          "category": "DOC",
+          "estimated_hours": 0.5,
+          "dependencies": ["HANDLER-004"]
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Update CLAUDE.md with custom persona creation workflow",
+          "category": "DOC",
+          "estimated_hours": 0.5,
+          "dependencies": ["HANDLER-004"]
+        },
+        {
+          "id": "DOC-003",
+          "workorder_id": "WO-CREATE-CUSTOM-PERSONA-001",
+          "description": "Create CUSTOMIZATION-GUIDE.md with examples and best practices",
+          "category": "DOC",
+          "estimated_hours": 1,
+          "dependencies": ["HANDLER-004"]
+        }
+      ],
+      "total_tasks": 25,
+      "total_estimated_hours": 20
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase_id": "phase_0",
+          "name": "Setup & Foundation",
+          "description": "Create directory structure, define data models, and set up validation schemas",
+          "estimated_hours": 4.5,
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002",
+            "MODEL-001",
+            "MODEL-002"
+          ],
+          "deliverables": [
+            "personas/custom/ directory created",
+            "templates/ directory created",
+            "CustomPersonaInput Pydantic schema",
+            "JSON schema for validation"
+          ]
+        },
+        {
+          "phase_id": "phase_1",
+          "name": "Template & Validation",
+          "description": "Design system prompt template and implement multi-stage validation pipeline",
+          "estimated_hours": 8.5,
+          "tasks": [
+            "TEMPLATE-001",
+            "TEMPLATE-002",
+            "VALIDATE-001",
+            "VALIDATE-002",
+            "VALIDATE-003",
+            "VALIDATE-004"
+          ],
+          "deliverables": [
+            "System prompt template with placeholders",
+            "Template rendering engine",
+            "Multi-stage validation pipeline (schema, semantic, quality)",
+            "Uniqueness validation"
+          ]
+        },
+        {
+          "phase_id": "phase_2",
+          "name": "Generation & Handler",
+          "description": "Implement persona generation logic and MCP tool handler with guided workflow",
+          "estimated_hours": 8.5,
+          "tasks": [
+            "GENERATE-001",
+            "GENERATE-002",
+            "GENERATE-003",
+            "HANDLER-001",
+            "HANDLER-002",
+            "HANDLER-003",
+            "HANDLER-004",
+            "CMD-001"
+          ],
+          "deliverables": [
+            "PersonaGenerator class",
+            "System prompt generation",
+            "Metadata generation",
+            "create_custom_persona MCP tool",
+            "Guided workflow implementation",
+            "/create-persona slash command"
+          ]
+        },
+        {
+          "phase_id": "phase_3",
+          "name": "Testing & Documentation",
+          "description": "Comprehensive testing and documentation for custom persona feature",
+          "estimated_hours": 5.5,
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003",
+            "TEST-004",
+            "DOC-001",
+            "DOC-002",
+            "DOC-003"
+          ],
+          "deliverables": [
+            "Unit tests for schemas and validation",
+            "Integration tests for workflow",
+            "Updated README.md and CLAUDE.md",
+            "CUSTOMIZATION-GUIDE.md"
+          ]
+        }
+      ],
+      "critical_path": [
+        "SETUP-001",
+        "MODEL-001",
+        "TEMPLATE-001",
+        "VALIDATE-003",
+        "GENERATE-002",
+        "HANDLER-002",
+        "TEST-004"
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "component": "CustomPersonaInput schema",
+          "test_file": "tests/test_models.py",
+          "coverage_target": "100%",
+          "key_scenarios": [
+            "Valid inputs pass validation",
+            "Invalid inputs raise validation errors",
+            "Optional fields have correct defaults"
+          ]
+        },
+        {
+          "component": "Template rendering",
+          "test_file": "tests/test_persona_generator.py",
+          "coverage_target": "95%",
+          "key_scenarios": [
+            "Placeholders correctly substituted",
+            "Missing placeholders handled gracefully",
+            "Template syntax errors caught"
+          ]
+        },
+        {
+          "component": "Validation pipeline",
+          "test_file": "tests/test_validators.py",
+          "coverage_target": "95%",
+          "key_scenarios": [
+            "Schema validation catches malformed JSON",
+            "Semantic validation detects incoherent expertise",
+            "Quality validation flags incomplete inputs",
+            "Uniqueness check prevents name conflicts"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "workflow": "Complete persona creation",
+          "test_file": "tests/integration/test_create_custom_persona.py",
+          "scenarios": [
+            "End-to-end: Valid inputs → Generated persona → Saved to custom/",
+            "Error handling: Invalid inputs → Clear error messages",
+            "Conflict detection: Duplicate name → Rejected with suggestion"
+          ]
+        },
+        {
+          "workflow": "Custom persona activation",
+          "test_file": "tests/integration/test_custom_persona_usage.py",
+          "scenarios": [
+            "Custom persona loads via use_persona tool",
+            "System prompt applied correctly",
+            "Custom persona appears in list_personas"
+          ]
+        }
+      ],
+      "manual_testing": [
+        {
+          "scenario": "Create persona via /create-persona slash command",
+          "steps": [
+            "Trigger /create-persona",
+            "Follow guided prompts",
+            "Verify persona created in personas/custom/",
+            "Activate custom persona",
+            "Verify behavior matches inputs"
+          ]
+        }
+      ],
+      "performance_targets": [
+        {
+          "metric": "Persona generation time",
+          "target": "<2 seconds for template rendering + validation"
+        },
+        {
+          "metric": "Validation latency",
+          "target": "<500ms for complete validation pipeline"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "Users can create custom personas via MCP tool",
+          "acceptance": "handle_create_custom_persona accepts inputs and saves valid persona to personas/custom/"
+        },
+        {
+          "criterion": "System prompt generated from template",
+          "acceptance": "Generated system prompt includes all user-provided expertise areas, communication style, and tool preferences"
+        },
+        {
+          "criterion": "Multi-stage validation works",
+          "acceptance": "Invalid inputs rejected at appropriate stage with clear error messages"
+        },
+        {
+          "criterion": "Custom personas activate correctly",
+          "acceptance": "use_persona tool can activate custom personas from personas/custom/ directory"
+        },
+        {
+          "criterion": "Slash command available",
+          "acceptance": "/create-persona command triggers guided persona creation workflow"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "criterion": "Test coverage >= 90%",
+          "acceptance": "pytest --cov shows 90%+ coverage for new code"
+        },
+        {
+          "criterion": "No naming conflicts",
+          "acceptance": "Custom personas cannot override base personas (uniqueness validation)"
+        },
+        {
+          "criterion": "Generated prompts are coherent",
+          "acceptance": "Manual review of 5+ generated personas shows logical structure and clarity"
+        }
+      ],
+      "user_experience_requirements": [
+        {
+          "criterion": "Creation takes <5 minutes",
+          "acceptance": "User can complete guided workflow in under 5 minutes"
+        },
+        {
+          "criterion": "Clear error messages",
+          "acceptance": "Validation errors provide actionable feedback (what's wrong + how to fix)"
+        }
+      ],
+      "documentation_requirements": [
+        {
+          "criterion": "Feature documented in README",
+          "acceptance": "README.md includes create_custom_persona tool usage examples"
+        },
+        {
+          "criterion": "CUSTOMIZATION-GUIDE exists",
+          "acceptance": "CUSTOMIZATION-GUIDE.md provides examples and best practices"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_0_setup_foundation": [
+        {
+          "task_id": "SETUP-001",
+          "description": "Create personas/custom/ directory structure",
+          "status": "pending"
+        },
+        {
+          "task_id": "SETUP-002",
+          "description": "Create templates/ directory for persona templates",
+          "status": "pending"
+        },
+        {
+          "task_id": "MODEL-001",
+          "description": "Define CustomPersonaInput Pydantic schema in src/models.py",
+          "status": "pending"
+        },
+        {
+          "task_id": "MODEL-002",
+          "description": "Create JSON schema for custom persona input validation in templates/custom_persona_schema.json",
+          "status": "pending"
+        }
+      ],
+      "phase_1_template_validation": [
+        {
+          "task_id": "TEMPLATE-001",
+          "description": "Design system prompt template with {{placeholders}} in templates/persona_template.txt",
+          "status": "pending"
+        },
+        {
+          "task_id": "TEMPLATE-002",
+          "description": "Create template renderer with {{placeholder}} substitution logic",
+          "status": "pending"
+        },
+        {
+          "task_id": "VALIDATE-001",
+          "description": "Implement JSON schema validation in src/validators.py",
+          "status": "pending"
+        },
+        {
+          "task_id": "VALIDATE-002",
+          "description": "Implement semantic validation (expertise coherence, use case relevance)",
+          "status": "pending"
+        },
+        {
+          "task_id": "VALIDATE-003",
+          "description": "Implement quality validation (completeness checks, best practices)",
+          "status": "pending"
+        },
+        {
+          "task_id": "VALIDATE-004",
+          "description": "Implement uniqueness check to prevent name conflicts with base personas",
+          "status": "pending"
+        }
+      ],
+      "phase_2_generation_handler": [
+        {
+          "task_id": "GENERATE-001",
+          "description": "Create PersonaGenerator class in src/persona_generator.py",
+          "status": "pending"
+        },
+        {
+          "task_id": "GENERATE-002",
+          "description": "Implement system prompt generation using template + user inputs",
+          "status": "pending"
+        },
+        {
+          "task_id": "GENERATE-003",
+          "description": "Implement persona metadata generation (version, timestamps, created_by)",
+          "status": "pending"
+        },
+        {
+          "task_id": "HANDLER-001",
+          "description": "Add create_custom_persona tool definition to server.py list_tools()",
+          "status": "pending"
+        },
+        {
+          "task_id": "HANDLER-002",
+          "description": "Implement handle_create_custom_persona in server.py with guided workflow",
+          "status": "pending"
+        },
+        {
+          "task_id": "HANDLER-003",
+          "description": "Integrate validation pipeline in handler (schema → semantic → quality)",
+          "status": "pending"
+        },
+        {
+          "task_id": "HANDLER-004",
+          "description": "Implement file save logic to personas/custom/{name}.json",
+          "status": "pending"
+        },
+        {
+          "task_id": "CMD-001",
+          "description": "Create /create-persona slash command in .claude/commands/create-persona.md",
+          "status": "pending"
+        }
+      ],
+      "phase_3_testing_documentation": [
+        {
+          "task_id": "TEST-001",
+          "description": "Write unit tests for CustomPersonaInput schema validation",
+          "status": "pending"
+        },
+        {
+          "task_id": "TEST-002",
+          "description": "Write unit tests for template rendering logic",
+          "status": "pending"
+        },
+        {
+          "task_id": "TEST-003",
+          "description": "Write unit tests for validation pipeline (schema, semantic, quality)",
+          "status": "pending"
+        },
+        {
+          "task_id": "TEST-004",
+          "description": "Write integration test for complete persona creation workflow",
+          "status": "pending"
+        },
+        {
+          "task_id": "DOC-001",
+          "description": "Update README.md with create_custom_persona tool documentation",
+          "status": "pending"
+        },
+        {
+          "task_id": "DOC-002",
+          "description": "Update CLAUDE.md with custom persona creation workflow",
+          "status": "pending"
+        },
+        {
+          "task_id": "DOC-003",
+          "description": "Create CUSTOMIZATION-GUIDE.md with examples and best practices",
+          "status": "pending"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+pyproject.toml
+server.py
+hello_world_mcp.egg-info/PKG-INFO
+hello_world_mcp.egg-info/SOURCES.txt
+hello_world_mcp.egg-info/dependency_links.txt
+hello_world_mcp.egg-info/requires.txt
+hello_world_mcp.egg-info/top_level.txt

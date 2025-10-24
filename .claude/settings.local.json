@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Read(//c/Users/willh/Desktop/projects - current-location/coderef-system/packages/core/**)",
+      "Read(//c/Users/willh/Desktop/projects - current-location/coderef-system/packages/cli/src/**)",
+      "Bash(claude mcp:*)",
+      "mcp__docs-mcp__validate_implementation_plan",
+      "Bash(curl:*)",
+      "mcp__docs-mcp__analyze_project_for_planning",
+      "Bash(for dir in coderef-mcp hello-world-mcp personas-mcp)",
+      "Bash(do echo \"=== $dir ===\")",
+      "Bash(done)",
+      "Bash(git push)",
+      "Read(//c/Users/willh/.claude/commands/**)",
+      "Bash(git add:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(git mv:*)",
+      "Bash(git restore:*)",
+      "Read(//c/c/Users/willh/.mcp-servers/**)",
+      "WebFetch(domain:storybook.js.org)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enabledMcpjsonServers": [
+    "coderef-mcp",
+    "docs-mcp",
+    "personas-mcp",
+    "hello-world-mcp"
+  ]
+}

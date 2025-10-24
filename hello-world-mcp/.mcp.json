@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "hello-world-mcp": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "C:/",
+        "python",
+        "server.py"
+      ],
+      "env": {}
+    }
+  }
+}

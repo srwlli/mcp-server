@@ -30,7 +30,7 @@
     <div class="container">
         <h1>MCP Tools & Commands Quick Reference</h1>
         
-        <h2>personas-mcp - Expert Agent Personas (4 tools, 8 personas available) <span class="tag new">v1.2</span></h2>
+        <h2>personas-mcp - Expert Agent Personas (4 tools, 10 personas available) <span class="tag new">v1.3</span></h2>
         <div class="server-card">
             <h3>MCP Tools</h3>
             <ul class="tool-list">
@@ -40,35 +40,41 @@
                 <li><span class="tool-name">list_personas</span></li>
             </ul>
 
-            <h3>Expert Personas <span class="tag">5</span></h3>
+            <h3>Expert Personas <span class="tag">4</span></h3>
             <ul class="tool-list">
-                <li><span class="tool-name">lloyd-expert</span> - Multi-Agent Coordinator <span class="tag new">v1.2</span></li>
                 <li><span class="tool-name">mcp-expert</span> - MCP Protocol Expert</li>
                 <li><span class="tool-name">docs-expert</span> - Documentation & Planning</li>
                 <li><span class="tool-name">coderef-expert</span> - Code Analysis</li>
                 <li><span class="tool-name">nfl-scraper-expert</span> - NFL Data Scraping</li>
             </ul>
 
-            <h3>Specialist Personas <span class="tag new">3 NEW</span></h3>
+            <h3>Coordinator <span class="tag">1</span></h3>
+            <ul class="tool-list">
+                <li><span class="tool-name">lloyd-expert</span> - Multi-Agent Coordinator <span class="tag new">v1.2</span></li>
+            </ul>
+
+            <h3>Specialist Personas <span class="tag">4</span></h3>
             <ul class="tool-list">
                 <li><span class="tool-name">ava</span> - Frontend Specialist (Agent 2) <span class="tag new">v1.2</span></li>
                 <li><span class="tool-name">marcus</span> - Backend Specialist (Agent 3) <span class="tag new">v1.2</span></li>
                 <li><span class="tool-name">quinn</span> - Testing Specialist (Agent 4) <span class="tag new">v1.2</span></li>
+                <li><span class="tool-name">devon</span> - Project Setup Specialist (Agent 5) <span class="tag new">v1.3</span></li>
             </ul>
 
-            <h3>Base Personas <span class="tag">1</span></h3>
+            <h3>Generalist <span class="tag">1</span></h3>
             <ul class="tool-list">
-                <li><span class="tool-name">taylor</span> - General Purpose Agent (baseline for specialists) <span class="tag new">v1.2</span></li>
+                <li><span class="tool-name">taylor</span> - General Purpose Agent <span class="tag new">v1.2</span></li>
             </ul>
 
-            <h3>Slash Commands <span class="tag slash">9</span></h3>
+            <h3>Slash Commands <span class="tag slash">10</span></h3>
             <ul class="tool-list slash-list">
                 <li><span class="tool-name">/use-persona</span> - Activate any persona</li>
                 <li><span class="tool-name">/lloyd</span> - Activate Lloyd (Coordinator)</li>
-                <li><span class="tool-name">/ava</span> - Activate Ava (Frontend) <span class="tag new">NEW</span></li>
-                <li><span class="tool-name">/marcus</span> - Activate Marcus (Backend) <span class="tag new">NEW</span></li>
-                <li><span class="tool-name">/quinn</span> - Activate Quinn (Testing) <span class="tag new">NEW</span></li>
-                <li><span class="tool-name">/taylor</span> - Activate Taylor (Generalist) <span class="tag new">NEW</span></li>
+                <li><span class="tool-name">/ava</span> - Activate Ava (Frontend) <span class="tag new">v1.2</span></li>
+                <li><span class="tool-name">/marcus</span> - Activate Marcus (Backend) <span class="tag new">v1.2</span></li>
+                <li><span class="tool-name">/quinn</span> - Activate Quinn (Testing) <span class="tag new">v1.2</span></li>
+                <li><span class="tool-name">/devon</span> - Activate Devon (Project Setup) <span class="tag new">v1.3</span></li>
+                <li><span class="tool-name">/taylor</span> - Activate Taylor (Generalist) <span class="tag new">v1.2</span></li>
                 <li><span class="tool-name">/docs-expert</span> - Activate docs expert</li>
                 <li><span class="tool-name">/coderef-expert</span> - Activate coderef expert</li>
                 <li><span class="tool-name">/nfl-scraper-expert</span> - Activate NFL scraper expert</li>
@@ -149,6 +155,11 @@
                 <li><span class="tool-name">/log-workorder</span></li>
                 <li><span class="tool-name">/get-workorder-log</span></li>
             </ul>
+
+            <h3>Agent Handoff <span class="tag slash">1</span></h3>
+            <ul class="tool-list slash-list">
+                <li><span class="tool-name">/handoff</span> - Generate automated handoff context</li>
+            </ul>
         </div>
 
         <h2>coderef-mcp - Code Reference Analysis (6 tools)</h2>
@@ -176,8 +187,10 @@
 
         <div class="footer">
             <p><strong>Active Servers:</strong> personas-mcp, docs-mcp, coderef-mcp, hello-world-mcp, ide</p>
-            <p><strong>Total:</strong> 48 MCP Tools + 37 Slash Commands</p>
-            <p>Last Updated: 2025-10-23</p>
+            <p><strong>Total MCP Tools:</strong> 48 (4 persona + 36 docs + 6 coderef + 2 ide)</p>
+            <p><strong>Total Personas:</strong> 10 (4 expert + 1 coordinator + 4 specialists + 1 generalist)</p>
+            <p><strong>Total Slash Commands:</strong> 56+ (10 personas + 40 docs + 6 coderef)</p>
+            <p>Last Updated: 2025-10-23 (v1.3.0 - Added Devon persona)</p>
         </div>
     </div>
 </body>

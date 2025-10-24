@@ -1,6 +1,6 @@
 # MCP Tools & Commands Quick Reference
 
-## personas-mcp - Expert Agent Personas
+## personas-mcp - Expert Agent Personas (10 personas)
 
 Persona Management:
 - use_persona - Activate expert persona (e.g., 'mcp-expert')
@@ -8,8 +8,23 @@ Persona Management:
 - clear_persona - Deactivate current persona
 - list_personas - List all available personas
 
-Available Personas:
-- mcp-expert (v1.0.0) - Expert in MCP architecture, server implementation, tool design, and best practices
+Expert Personas:
+- mcp-expert (v1.0.0) - MCP Protocol & Server Implementation Expert
+- docs-expert (v1.0.0) - Documentation & Planning Specialist
+- coderef-expert (v1.0.0) - Code Analysis & Architecture Expert
+- nfl-scraper-expert (v1.0.0) - NFL Data Scraping Specialist
+
+Coordinator:
+- lloyd-expert (v1.2.0) - Multi-Agent Coordination & Workorder Management
+
+Specialists:
+- ava (v1.0.0) - Frontend Development Specialist (Agent 2)
+- marcus (v1.0.0) - Backend Development Specialist (Agent 3)
+- quinn (v1.0.0) - Testing & QA Specialist (Agent 4)
+- devon (v1.0.0) - Project Setup & Bootstrap Specialist (Agent 5)
+
+Generalist:
+- taylor (v1.0.0) - General Purpose Implementation Agent
 
 ## docs-mcp - Documentation & Planning Tools
 
@@ -81,6 +96,12 @@ You can manage MCP servers using:
 Persona Management:
 - /use-persona - Activate expert persona
 - /list-personas - List available personas
+- /lloyd - Activate Lloyd (Multi-Agent Coordinator)
+- /ava - Activate Ava (Frontend Specialist)
+- /marcus - Activate Marcus (Backend Specialist)
+- /quinn - Activate Quinn (Testing Specialist)
+- /devon - Activate Devon (Project Setup Specialist)
+- /taylor - Activate Taylor (General Purpose Agent)
 
 Documentation Generation:
 - /generate-docs - Generate foundation documentation for current project
@@ -156,8 +177,13 @@ Workorder Tracking Slash Commands:
 - /log-workorder - Log workorder to global activity log
 - /get-workorder-log - Query global workorder log with filters
 
+Agent Handoff Slash Commands:
+- /handoff - Generate automated agent handoff context for current feature
+
 ---
 
-**Total Tools:** 4 personas + 36 docs + 6 coderef + 2 ide = 48 tools
-**Total Slash Commands:** 37+ commands across all categories
+**Total MCP Tools:** 4 persona-tools + 36 docs-tools + 6 coderef-tools + 2 ide-tools = 48 tools
+**Total Personas:** 10 (4 expert + 1 coordinator + 4 specialists + 1 generalist)
+**Total Slash Commands:** 56+ (10 personas + 40 docs + 6 coderef)
 **Active MCP Servers:** personas-mcp, docs-mcp, coderef-mcp, hello-world-mcp, ide
+**Last Updated:** 2025-10-23 (v1.3.0 - Added Devon persona)

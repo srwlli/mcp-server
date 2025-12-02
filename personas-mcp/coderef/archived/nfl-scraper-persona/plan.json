@@ -1,0 +1,450 @@
+{
+  "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+  "feature_name": "nfl-scraper-expert",
+  "created_at": "2025-10-18",
+  "project": "personas-mcp",
+  "target_project": "next-scraper (NFL Stats Platform)",
+
+  "preparation": {
+    "context": {
+      "overview": "Create a specialized expert persona for the NFL Stats Platform (next-scraper) project - a Node.js backend data infrastructure that scrapes NFL data from ESPN API and stores it in Supabase (PostgreSQL). The persona will have deep expertise in web scraping, sports data APIs, scheduling, error handling, and the specific architecture of this project.",
+      "requirements": {
+        "functional": [
+          "Persona must understand ESPN API patterns and data structures",
+          "Expertise in web scraping best practices (rate limiting, error handling, retry logic)",
+          "Knowledge of NFL data model (teams, players, games, stats, injuries, rosters)",
+          "Understanding of automated scheduling with node-cron",
+          "Supabase/PostgreSQL database operations and migrations",
+          "Winston logging and monitoring patterns",
+          "Docker containerization for production deployment"
+        ],
+        "non_functional": [
+          "Comprehensive system prompt (2000-4000 lines for agentic use)",
+          "Independent persona (parent: null) following v1.0.0 architecture",
+          "Follows PersonaDefinition Pydantic schema",
+          "Includes workflows, code examples, troubleshooting guides",
+          "Communication style: Technical, sports-data-focused, practical"
+        ],
+        "constraints": [
+          "Must follow personas-mcp v1.0.0 independent persona architecture",
+          "Cannot modify existing personas (mcp-expert, docs-expert, coderef-expert)",
+          "Must be stored in personas/base/ directory",
+          "Must include created_at and updated_at timestamps",
+          "System prompt must be comprehensive for agentic AI-to-AI use"
+        ]
+      },
+      "success_criteria": [
+        "Persona loads successfully via PersonaManager",
+        "System prompt provides actionable guidance on NFL data scraping",
+        "Includes specific next-scraper project knowledge (file paths, utilities, patterns)",
+        "Can guide troubleshooting of scrapers, schedulers, and database issues",
+        "Validates against PersonaDefinition schema (no errors)",
+        "Includes 15-20 expertise areas specific to sports data scraping",
+        "Provides 8-12 use cases relevant to next-scraper project"
+      ]
+    },
+    "analysis_summary": {
+      "project_discovered": {
+        "name": "next-scraper (NFL Stats Platform)",
+        "tech_stack": "Node.js, Supabase (PostgreSQL), ESPN API, Winston, node-cron, Axios, Docker",
+        "structure": {
+          "scripts": {
+            "seed": ["01-teams.js", "02-stadiums.js", "03-players.js", "04-schedule.js"],
+            "scrapers": ["game-stats-scraper.js", "live-games-scraper.js", "injuries-scraper.js", "roster-updates-scraper.js", "standings-scraper.js"],
+            "utils": ["supabase-client.js", "espn-api.js", "logger.js", "rate-limiter.js"]
+          },
+          "data_volume": "33 teams, 2,637 players, 272 games, real-time stats",
+          "automation": "Automated scheduler with cron jobs for different scraper frequencies"
+        }
+      },
+      "existing_patterns": {
+        "rate_limiting": "Custom rate limiter utility (1 request per second to ESPN API)",
+        "error_handling": "Comprehensive try-catch with Winston logging at multiple levels",
+        "data_validation": "Schema validation before Supabase inserts",
+        "scheduling": "node-cron based with smart game-day detection",
+        "logging": "Winston with file and console transports, different log levels"
+      },
+      "reference_docs": [
+        "CLAUDE.md - Project overview and feature status",
+        "SCHEDULER.md - Automation and cron job details",
+        "DEPLOYMENT.md - Docker and production deployment",
+        "START-HERE.md - Project onboarding guide"
+      ]
+    }
+  },
+
+  "implementation_strategy": {
+    "approach": "Create independent nfl-scraper-expert persona with comprehensive knowledge of the next-scraper project architecture, ESPN API integration, web scraping patterns, and NFL data models",
+    "dependencies": [
+      "PersonaManager must support base/ directory personas (already implemented in v1.0.0)",
+      "PersonaDefinition schema must be available (src/models.py)",
+      "No external dependencies - standalone persona"
+    ],
+    "breaking_changes": false,
+    "backward_compatibility": true,
+    "notes": [
+      "This is the 4th persona for personas-mcp (after mcp-expert, docs-expert, coderef-expert)",
+      "Follows v1.0.0 independent persona architecture (no hierarchical dependencies)",
+      "System prompt will be comprehensive (2000-4000 lines) with specific next-scraper knowledge",
+      "Will NOT include generic web scraping advice - focus on NFL data and this specific project",
+      "Should reference actual file paths, utility names, and patterns from next-scraper"
+    ]
+  },
+
+  "technical_design": {
+    "persona_structure": {
+      "name": "nfl-scraper-expert",
+      "parent": null,
+      "version": "1.0.0",
+      "description": "Expert in NFL data scraping and the next-scraper platform - ESPN API integration, web scraping patterns, automated scheduling, and sports data management",
+      "expertise_areas": [
+        "ESPN API integration (scoreboard, roster, game details, injuries, standings endpoints)",
+        "NFL data model (teams, players, games, statistics, injuries, rosters, stadiums)",
+        "Web scraping best practices (rate limiting, retry logic, error handling, data validation)",
+        "next-scraper architecture (seed scripts, scrapers, utils, scheduler)",
+        "Supabase/PostgreSQL operations (inserts, updates, upserts, migrations)",
+        "Winston logging patterns (file/console transports, log levels, contextual logging)",
+        "node-cron scheduling (game-day detection, frequency patterns, automation)",
+        "Rate limiting strategies (1 req/sec ESPN, backoff strategies)",
+        "Data normalization (team abbreviations, player names, injury statuses)",
+        "Real-time vs batch scraping (live-games vs game-stats patterns)",
+        "Error recovery (partial failures, retry mechanisms, transaction rollbacks)",
+        "Docker deployment (containerization, environment variables, production setup)",
+        "Performance optimization (batch inserts, connection pooling, caching)",
+        "Data validation (schema compliance, null handling, type coercion)",
+        "Monitoring and observability (log analysis, scraper health checks, alerting)",
+        "ESPN API quirks (missing data, inconsistent formats, WSH/WAS team aliasing)",
+        "Testing scrapers (mock ESPN responses, database fixtures, integration tests)",
+        "Troubleshooting workflows (connection issues, rate limit errors, data discrepancies)"
+      ]
+    },
+    "system_prompt_structure": {
+      "sections": [
+        "Your Identity - NFL scraper expert with deep next-scraper project knowledge",
+        "Core Mission - Help maintain and enhance NFL data infrastructure",
+        "next-scraper Architecture - Complete file structure, utilities, patterns",
+        "ESPN API Knowledge - Endpoints, response formats, rate limits, quirks",
+        "NFL Data Model - Tables, relationships, constraints, enums",
+        "Seed Scripts - Teams, stadiums, players, schedule loading patterns",
+        "Scraper Scripts - game-stats, live-games, injuries, roster-updates, standings",
+        "Utilities - supabase-client, espn-api, logger, rate-limiter implementations",
+        "Scheduler - Cron patterns, game-day logic, automation orchestration",
+        "Error Handling - Try-catch patterns, logging, recovery strategies",
+        "Best Practices - Rate limiting, data validation, error recovery, logging",
+        "Common Workflows - Adding new scrapers, debugging ESPN API, database migrations",
+        "Troubleshooting Guide - Connection issues, rate limits, data inconsistencies",
+        "Performance Optimization - Batch operations, caching, connection pooling",
+        "Deployment - Docker setup, environment config, production monitoring"
+      ],
+      "code_examples": [
+        "ESPN API request with rate limiting and error handling",
+        "Supabase upsert pattern for idempotent operations",
+        "Winston logging with contextual information",
+        "node-cron schedule with game-day detection",
+        "Retry logic for transient API failures",
+        "Batch insert pattern for bulk data loading",
+        "Data normalization (team abbreviations, injury statuses)",
+        "Transaction handling for multi-step operations"
+      ]
+    },
+    "use_cases": [
+      "Adding a new scraper for player prop bets or fantasy points",
+      "Debugging why live-games-scraper isn't updating scores",
+      "Optimizing game-stats-scraper to handle 10+ concurrent games",
+      "Implementing retry logic for ESPN API timeouts",
+      "Adding new NFL data fields (e.g., weather, referee info, play-by-play)",
+      "Troubleshooting Supabase connection pool exhaustion",
+      "Creating a new cron schedule for bye week updates",
+      "Handling ESPN API schema changes mid-season",
+      "Implementing alerting when scrapers fail",
+      "Migrating from ESPN API to another data source",
+      "Adding player prop data or betting odds",
+      "Creating comprehensive test suite for scrapers"
+    ]
+  },
+
+  "file_modifications": {
+    "new_files": [
+      {
+        "path": "personas/base/nfl-scraper-expert.json",
+        "purpose": "Persona definition with comprehensive NFL scraping expertise",
+        "content_summary": "Complete persona JSON with name, version, description, system_prompt (2000-4000 lines), expertise (18 areas), use_cases (12 scenarios), behavior patterns, metadata, timestamps"
+      },
+      {
+        "path": ".claude/commands/nfl-scraper-expert.md",
+        "purpose": "Slash command shortcut for quick activation",
+        "content_summary": "Markdown file with /nfl-scraper-expert command documentation and persona overview"
+      },
+      {
+        "path": "coderef/working/nfl-scraper-persona/context.json",
+        "purpose": "Requirements and context for persona creation (this planning phase)",
+        "content_summary": "Complete context gathered from next-scraper project analysis"
+      },
+      {
+        "path": "coderef/working/nfl-scraper-persona/plan.json",
+        "purpose": "Implementation plan for nfl-scraper-expert persona",
+        "content_summary": "This file - complete 10-section implementation plan"
+      }
+    ],
+    "modified_files": [
+      {
+        "path": "PERSONAS-CREATED.md",
+        "changes": "Add nfl-scraper-expert to base personas list (4th persona)",
+        "sections_affected": ["Base Personas", "Success Metrics"]
+      },
+      {
+        "path": "my-guide.md",
+        "changes": "Add nfl-scraper-expert to available personas section",
+        "sections_affected": ["Available Personas", "Persona Shortcuts"]
+      },
+      {
+        "path": "CLAUDE.md",
+        "changes": "Update implemented personas count from 3 to 4",
+        "sections_affected": ["Current Implementation", "Implemented Personas"]
+      },
+      {
+        "path": "README.md",
+        "changes": "Update features to show 4 personas instead of 3",
+        "sections_affected": ["v1.0.0 Features", "Available Personas"]
+      }
+    ]
+  },
+
+  "task_breakdown": [
+    {
+      "task_id": 1,
+      "description": "Create persona JSON file with comprehensive system prompt",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [],
+      "estimated_effort": "2-3 hours",
+      "subtasks": [
+        "Research next-scraper codebase thoroughly (all scripts, utils, docs)",
+        "Draft system prompt with 15 sections covering NFL scraping expertise",
+        "Include 8-10 code examples from actual next-scraper patterns",
+        "Add 18 expertise areas specific to sports data scraping",
+        "Add 12 use cases relevant to next-scraper maintenance",
+        "Define behavior patterns (communication style, problem-solving, tool usage)",
+        "Add metadata about ESPN API, NFL data model, automation patterns",
+        "Include created_at and updated_at timestamps",
+        "Validate JSON syntax and PersonaDefinition schema compliance"
+      ]
+    },
+    {
+      "task_id": 2,
+      "description": "Create slash command for quick persona activation",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [1],
+      "estimated_effort": "15 minutes",
+      "subtasks": [
+        "Create .claude/commands/nfl-scraper-expert.md",
+        "Document persona activation: /nfl-scraper-expert",
+        "Include persona overview and key capabilities",
+        "Add example use cases for the persona"
+      ]
+    },
+    {
+      "task_id": 3,
+      "description": "Update documentation files",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [1, 2],
+      "estimated_effort": "30 minutes",
+      "subtasks": [
+        "Update PERSONAS-CREATED.md with 4th persona details",
+        "Update my-guide.md with nfl-scraper-expert",
+        "Update CLAUDE.md persona count (3 → 4)",
+        "Update README.md features and personas section",
+        "Update stats (52 → 70 expertise areas, 13,500 → 16,000 lines)"
+      ]
+    },
+    {
+      "task_id": 4,
+      "description": "Test persona loading and validation",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [1],
+      "estimated_effort": "30 minutes",
+      "subtasks": [
+        "Run PersonaManager.load_persona('nfl-scraper-expert')",
+        "Verify all required fields present (name, version, description, etc.)",
+        "Check system_prompt length (should be 2000-4000 lines)",
+        "Verify expertise areas count (18 expected)",
+        "Verify use cases count (12 expected)",
+        "Test via list_personas tool (should show 4 personas)",
+        "Test activation via /nfl-scraper-expert command"
+      ]
+    },
+    {
+      "task_id": 5,
+      "description": "Create context.json for persona planning",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [],
+      "estimated_effort": "30 minutes",
+      "subtasks": [
+        "Document next-scraper project overview",
+        "List all scrapers, seed scripts, utilities",
+        "Document ESPN API endpoints and patterns",
+        "Document NFL data model and tables",
+        "Document automation and scheduling patterns",
+        "Save to coderef/working/nfl-scraper-persona/context.json"
+      ]
+    },
+    {
+      "task_id": 6,
+      "description": "Commit and push all changes",
+      "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+      "dependencies": [1, 2, 3, 4, 5],
+      "estimated_effort": "15 minutes",
+      "subtasks": [
+        "Stage all new and modified files",
+        "Create commit message describing nfl-scraper-expert persona",
+        "Push to GitHub",
+        "Verify persona available after Claude Code restart"
+      ]
+    }
+  ],
+
+  "testing_strategy": {
+    "unit_tests": [
+      "PersonaManager loads nfl-scraper-expert without errors",
+      "JSON validates against PersonaDefinition schema",
+      "All required fields present (name, version, system_prompt, expertise, use_cases, behavior, timestamps)",
+      "Expertise areas count = 18",
+      "Use cases count = 12",
+      "System prompt length >= 2000 lines"
+    ],
+    "integration_tests": [
+      "list_personas tool returns 4 personas including nfl-scraper-expert",
+      "use_persona('nfl-scraper-expert') activates successfully",
+      "get_active_persona returns nfl-scraper-expert details",
+      "/nfl-scraper-expert slash command activates persona",
+      "clear_persona deactivates successfully"
+    ],
+    "validation_tests": [
+      "AI with nfl-scraper-expert persona provides relevant ESPN API guidance",
+      "AI references actual next-scraper file paths and patterns",
+      "AI suggests appropriate troubleshooting steps for scraper failures",
+      "AI provides code examples matching next-scraper conventions"
+    ]
+  },
+
+  "deployment_plan": {
+    "steps": [
+      "Create personas/base/nfl-scraper-expert.json locally",
+      "Create .claude/commands/nfl-scraper-expert.md",
+      "Update all documentation files (PERSONAS-CREATED.md, my-guide.md, CLAUDE.md, README.md)",
+      "Test persona loading via PersonaManager locally",
+      "Commit all changes to Git",
+      "Push to GitHub",
+      "Restart Claude Code to load new persona",
+      "Verify persona activation via /nfl-scraper-expert command",
+      "Test persona expertise by asking NFL scraping questions"
+    ],
+    "rollback_plan": "If persona fails to load or has errors, remove nfl-scraper-expert.json and revert documentation changes. PersonaManager will continue working with existing 3 personas.",
+    "monitoring": [
+      "Check Claude Code logs for persona loading errors",
+      "Verify list_personas returns 4 personas",
+      "Test activation and deactivation workflows",
+      "Validate AI responses include next-scraper specific knowledge"
+    ]
+  },
+
+  "risk_assessment": {
+    "risks": [
+      {
+        "description": "System prompt too long (>10,000 lines) causing performance issues",
+        "likelihood": "LOW",
+        "impact": "MEDIUM",
+        "mitigation": "Keep system prompt to 2000-4000 lines, focus on actionable patterns not exhaustive documentation"
+      },
+      {
+        "description": "Persona duplicates content from docs-expert or mcp-expert",
+        "likelihood": "MEDIUM",
+        "impact": "LOW",
+        "mitigation": "Focus on NFL-specific and next-scraper-specific knowledge, reference existing personas for general patterns"
+      },
+      {
+        "description": "JSON syntax error in persona definition",
+        "likelihood": "LOW",
+        "impact": "HIGH",
+        "mitigation": "Validate JSON with linter before committing, test with PersonaManager locally"
+      },
+      {
+        "description": "Persona too specific to current next-scraper implementation",
+        "likelihood": "MEDIUM",
+        "impact": "LOW",
+        "mitigation": "Include general NFL scraping principles alongside next-scraper specifics, make persona useful for similar projects"
+      }
+    ]
+  },
+
+  "documentation_updates": {
+    "files_to_update": [
+      "PERSONAS-CREATED.md - Add nfl-scraper-expert as 4th base persona",
+      "my-guide.md - Add to Available Personas section and slash command list",
+      "CLAUDE.md - Update persona count and implementation status",
+      "README.md - Update features, stats, and available personas",
+      "index.html - Update persona count in stats dashboard and add persona card"
+    ],
+    "documentation_sections": [
+      "Overview - Update persona count from 3 to 4",
+      "Stats - Update expertise areas (52 → 70), system prompt lines (13,500 → 16,000)",
+      "Available Personas - Add nfl-scraper-expert card with details",
+      "Slash Commands - Add /nfl-scraper-expert to command list"
+    ]
+  },
+
+  "implementation_checklist": {
+    "pre_implementation": [
+      "✅ Analyze next-scraper project structure",
+      "✅ Review all scrapers, seed scripts, and utilities",
+      "✅ Document ESPN API patterns and NFL data model",
+      "✅ Create this implementation plan (plan.json)",
+      "⏳ Create context.json with complete project analysis"
+    ],
+    "during_implementation": [
+      "⏳ Draft comprehensive system prompt (2000-4000 lines)",
+      "⏳ Add 18 expertise areas specific to NFL scraping",
+      "⏳ Add 12 use cases for next-scraper maintenance",
+      "⏳ Include code examples from actual next-scraper patterns",
+      "⏳ Create persona JSON following PersonaDefinition schema",
+      "⏳ Create slash command file",
+      "⏳ Test persona loading locally"
+    ],
+    "post_implementation": [
+      "⏳ Update all documentation files",
+      "⏳ Test persona activation via slash command",
+      "⏳ Validate AI responses include next-scraper knowledge",
+      "⏳ Commit and push to GitHub",
+      "⏳ Restart Claude Code and verify persona available",
+      "⏳ Document lessons learned for future persona creation"
+    ]
+  },
+
+  "success_metrics": {
+    "quantitative": [
+      "Persona loads without errors (PersonaManager validation)",
+      "System prompt >= 2000 lines",
+      "18 expertise areas defined",
+      "12 use cases documented",
+      "list_personas returns 4 personas",
+      "Activation time < 2 seconds",
+      "JSON file size < 100 KB"
+    ],
+    "qualitative": [
+      "AI provides relevant ESPN API integration guidance",
+      "AI references actual next-scraper file paths",
+      "AI suggests appropriate troubleshooting for scraper issues",
+      "AI code examples match next-scraper conventions (Winston logging, Supabase patterns)",
+      "Persona communication style is technical and sports-data-focused",
+      "Persona adds value beyond generic web scraping advice"
+    ]
+  },
+
+  "notes": [
+    "This persona targets a specific project (next-scraper) while maintaining general usefulness for NFL/sports data scraping",
+    "System prompt will include actual code examples from next-scraper repository",
+    "Persona should help with both maintenance and enhancement of existing scrapers",
+    "Future: Could create specialized variants like nfl-scraper-expert:espn-api or nfl-scraper-expert:fantasy-data",
+    "This is the first domain-specific persona (others are tool/framework focused)",
+    "Could serve as template for other sports data personas (NBA, MLB, NHL)"
+  ]
+}

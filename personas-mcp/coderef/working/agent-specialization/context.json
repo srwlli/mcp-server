@@ -1,0 +1,38 @@
+{
+  "feature_name": "agent-specialization",
+  "description": "Implement specialized agent personas (Agent 2: Frontend, Agent 3: Backend, Agent 4: Testing) with strict domain boundaries. Update persona definitions with specialized expertise, enhance Lloyd's task assignment logic to match tasks to agent strengths, add specialization metadata to communication protocol, and update all documentation.",
+  "goal": "Enable comprehensive agent specialization for improved task quality, optimized workflows, and effective parallel work across frontend, backend, and testing domains",
+  "requirements": [
+    "Update agent-2.json with frontend specialization (UI, React, styling, component development)",
+    "Update agent-3.json with backend specialization (API, database, server logic, authentication)",
+    "Update agent-4.json with testing specialization (test coverage, QA, validation, debugging)",
+    "Enhance Lloyd persona with task-to-agent matching logic",
+    "Add agent specialization metadata to communication.json schema",
+    "Update persona system prompts with domain-specific workflows and best practices",
+    "Add specialization validation to assignment workflow",
+    "Document specialization system in CLAUDE.md and my-guide.md"
+  ],
+  "out_of_scope": [
+    "Dynamic specialization changes at runtime",
+    "Agent self-assignment based on task analysis",
+    "Cross-training or skill sharing between agents",
+    "Performance metrics or agent rating systems",
+    "Specialization beyond the 3 core domains (frontend/backend/testing)",
+    "Multi-domain specialists (one agent, multiple specializations)"
+  ],
+  "constraints": [
+    "Must maintain backward compatibility with existing communication.json files",
+    "Specialized agents must refuse tasks outside their domain with clear error messages",
+    "Lloyd must validate agent specialization before assignment",
+    "Specialization must be evident in persona system prompts (not just metadata)",
+    "Must work with existing multi-agent coordination tools (assign_agent_task, verify_agent_completion)",
+    "Documentation must clearly explain when to use each specialist"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-AGENT-SPECIALIZATION-001",
+    "workorder_assigned_at": "2025-10-23T08:00:11.083612+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

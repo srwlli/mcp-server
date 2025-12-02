@@ -1,0 +1,126 @@
+{
+  "feature": "GENERALIST-RENAME-TO-TAYLOR",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-005",
+  "from": "Lloyd (Agent 1 - Coordinator)",
+  "to": "Taylor (General Purpose Agent)",
+  "date": "2025-10-23",
+  "agent_specialization": "generalist",
+  "task": "Rename yourself from 'agent-generalist' to 'Taylor' following the human naming pattern",
+  "instruction": "Implement your own rename by updating persona file, creating slash command, and updating all documentation to reflect your new name 'Taylor'",
+  "precise_steps": [
+    "Step 1: Read coderef/working/generalist-rename/plan.json for complete task list",
+    "Step 2: Read personas/base/agent-generalist.json (your current persona file)",
+    "Step 3: Use git mv to rename: personas/base/agent-generalist.json → personas/base/taylor.json (preserves history)",
+    "Step 4: Update taylor.json metadata: name='taylor', description='Taylor: General Purpose Agent - Balanced code, test, and docs capabilities'",
+    "Step 5: Update taylor.json version and timestamp: version='1.2.0', updated_at='2025-10-23T12:30:00Z'",
+    "Step 6: Create .claude/commands/taylor.md slash command (copy pattern from ava.md, customize for Taylor)",
+    "Step 7: Update my-guide.md: Change 'agent-generalist' to 'Taylor (General Purpose Agent)' with /taylor command",
+    "Step 8: Update README.md: Change 'agent-generalist' references to 'Taylor' with description",
+    "Step 9: Verify CLAUDE.md already updated with Taylor (v1.2.0) at line 170 - Specialist Personas section",
+    "Step 10: Verify index.html already updated with 'taylor' in Base Personas section",
+    "Step 11: Verify index.html already has '/taylor' command (9 total commands)",
+    "Step 12: Verify all changes with grep (no 'agent-generalist' references should remain except in git history)",
+    "Step 13: Commit changes: 'Rename agent-generalist to Taylor (WO-AGENT-SPECIALIZATION-005)'"
+  ],
+  "details": {
+    "work_area": "personas/base/, .claude/commands/, documentation files",
+    "forbidden_files": [
+      "personas/base/lloyd-expert.json - DO NOT MODIFY",
+      "personas/base/ava.json - DO NOT MODIFY",
+      "personas/base/marcus.json - DO NOT MODIFY",
+      "personas/base/quinn.json - DO NOT MODIFY",
+      "personas/base/mcp-expert.json - DO NOT MODIFY",
+      "personas/base/docs-expert.json - DO NOT MODIFY",
+      "personas/base/coderef-expert.json - DO NOT MODIFY",
+      "personas/base/nfl-scraper-expert.json - DO NOT MODIFY"
+    ],
+    "allowed_files": [
+      "personas/base/agent-generalist.json - RENAME to taylor.json using git mv",
+      "personas/base/taylor.json - UPDATE metadata after rename",
+      ".claude/commands/taylor.md - CREATE NEW slash command",
+      "my-guide.md - UPDATE with Taylor references",
+      "README.md - UPDATE with Taylor references",
+      "CLAUDE.md - UPDATE with Taylor references",
+      "index.html - UPDATE with Taylor references and /taylor command"
+    ],
+    "context": {
+      "feature_name": "generalist-rename",
+      "goal": "Rename to Taylor following human naming pattern (Lloyd, Ava, Marcus, Quinn, Taylor)",
+      "naming_pattern": "Human names for all execution agents",
+      "new_name": "Taylor",
+      "new_slash_command": "/taylor"
+    }
+  },
+  "testing_checklist": [
+    "1. Verify taylor.json exists and agent-generalist.json is deleted",
+    "2. Test /taylor slash command activates the persona",
+    "3. Verify my-guide.md mentions Taylor (not agent-generalist)",
+    "4. Verify README.md mentions Taylor (not agent-generalist)",
+    "5. Verify CLAUDE.md mentions Taylor (not agent-generalist)",
+    "6. Verify index.html shows 'taylor' and '/taylor' command",
+    "7. Run grep to confirm no 'agent-generalist' references remain (except git history)",
+    "8. Verify git commit includes WO-AGENT-SPECIALIZATION-005"
+  ],
+  "success_criteria": [
+    "✅ Persona renamed to 'taylor' successfully (git mv used)",
+    "✅ taylor.json metadata updated (name, description, version, timestamp)",
+    "✅ /taylor slash command created and working",
+    "✅ my-guide.md updated with Taylor section",
+    "✅ README.md updated with Taylor description",
+    "✅ CLAUDE.md updated with taylor in Base Personas",
+    "✅ index.html updated with taylor and /taylor command",
+    "✅ No 'agent-generalist' references remain in active files",
+    "✅ Clean git commit created with workorder tracking",
+    "✅ Forbidden files unchanged"
+  ],
+  "agent_status": "COMPLETE",
+  "agent_assigned_at": "2025-10-23T12:30:00Z",
+  "agent_workorder": "WO-AGENT-SPECIALIZATION-005",
+  "agent_completion": {
+    "status": "COMPLETE",
+    "timestamp": "2025-10-23T13:00:00Z",
+    "changes_made": [
+      "personas/base/taylor.json - Renamed from agent-generalist.json, updated metadata (name, version 1.2.0, timestamp)",
+      ".claude/commands/taylor.md - Created slash command for /taylor",
+      "my-guide.md - Added Taylor section with 14 expertise areas and /taylor command",
+      "README.md - Updated to 8 personas, added Taylor description and /taylor shortcut",
+      "CLAUDE.md - Updated Specialist Personas section (3→4), added taylor entry",
+      "index.html - Added taylor persona card and /taylor slash command"
+    ],
+    "verification": {
+      "forbidden_files_unchanged": true,
+      "tests_passing": null,
+      "build_successful": true
+    },
+    "commit_hash": "9fa8e34",
+    "commit_message": "Rename agent-generalist to Taylor (WO-AGENT-SPECIALIZATION-005)"
+  },
+  "agent_1_verification": {
+    "status": "PENDING",
+    "verified_at": null,
+    "verified_by": "Lloyd (Agent 1)",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-23T12:30:00Z",
+    "updated_at": "2025-10-23T12:30:00Z",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

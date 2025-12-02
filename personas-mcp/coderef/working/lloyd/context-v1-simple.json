@@ -1,0 +1,178 @@
+{
+  "feature_name": "lloyd",
+  "version": "1.0-simple",
+  "description": "Lloyd: Your AI project coordinator and assistant. Lloyd works WITH YOU (not other agents) to plan, organize, and execute software development tasks. Simple human-AI collaboration, no multi-agent orchestration in v1.",
+  "goal": "Create an intelligent assistant (Lloyd) that helps YOU manage projects, break down tasks, track progress, and coordinate work. Just you + Lloyd working together.",
+  "core_principle": "Lloyd works with YOU, not with other agents. Keep it simple.",
+
+  "v1_requirements": [
+    "Lloyd persona (lloyd-expert) that understands project coordination",
+    "Works with existing MCP tools (personas-mcp, docs-mcp, CodeRef-MCP)",
+    "Helps YOU break down complex tasks into manageable steps",
+    "Tracks your progress and keeps you organized",
+    "Suggests next steps and unblocks you when stuck",
+    "Uses existing MCP tools on YOUR behalf (not spawning other agents)"
+  ],
+
+  "out_of_scope_v1": [
+    "Multi-agent orchestration (future v2+)",
+    "Spawning other AI agents",
+    "Agent-to-agent communication",
+    "Workflow state machines",
+    "Task queues for multiple agents",
+    "All 12 complex orchestration tools"
+  ],
+
+  "what_lloyd_does_v1": {
+    "role": "Your personal project coordinator and tech lead",
+    "responsibilities": [
+      "Helps you plan features and tasks",
+      "Breaks down complex work into steps",
+      "Tracks your progress (like a todo list manager)",
+      "Suggests what to work on next",
+      "Uses docs-mcp tools to help with planning",
+      "Uses CodeRef-MCP tools to understand your code",
+      "Acts as your Scrum Master + Tech Lead (for you, not a team)"
+    ]
+  },
+
+  "v1_use_cases": [
+    {
+      "scenario": "User: 'I want to implement authentication'",
+      "lloyd_helps": [
+        "Uses docs-mcp to gather context about your project",
+        "Breaks down auth into: user model, login endpoint, JWT tokens, middleware, tests",
+        "Creates a plan with clear steps",
+        "Tracks progress as you complete each step",
+        "Reminds you about testing and documentation"
+      ]
+    },
+    {
+      "scenario": "User: 'I'm stuck on this refactor'",
+      "lloyd_helps": [
+        "Uses CodeRef-MCP to analyze impact",
+        "Suggests approach to tackle the refactor",
+        "Breaks it into smaller changes",
+        "Helps you prioritize what to do first"
+      ]
+    },
+    {
+      "scenario": "User: 'What should I work on next?'",
+      "lloyd_helps": [
+        "Reviews your current progress",
+        "Suggests next logical step",
+        "Prioritizes based on dependencies",
+        "Keeps you moving forward"
+      ]
+    }
+  ],
+
+  "implementation_approach_v1": {
+    "option_1_persona_only": {
+      "description": "Lloyd is JUST a persona (lloyd-expert.json) - no new MCP server needed",
+      "how_it_works": "User activates lloyd-expert persona via personas-mcp, then Claude acts as Lloyd using existing tools",
+      "pros": [
+        "Simplest approach - just create persona file",
+        "Works immediately with existing infrastructure",
+        "No new code to write or maintain",
+        "Lloyd can use all existing MCP tools"
+      ],
+      "cons": [
+        "No custom Lloyd-specific tools",
+        "Relies on persona system prompt only"
+      ],
+      "implementation_time": "1-2 days (just create comprehensive persona)",
+      "recommended": true
+    },
+    "option_2_lightweight_mcp": {
+      "description": "Lloyd MCP server with 3-5 simple helper tools + lloyd-expert persona",
+      "tools": [
+        "create_task_list - Help user break down complex task",
+        "track_progress - Track completion of steps",
+        "suggest_next_step - Recommend what to do next",
+        "analyze_project_state - Understand current project status"
+      ],
+      "pros": [
+        "Custom tools designed for coordination",
+        "Still simple and focused on human-AI collaboration",
+        "Can add more tools later"
+      ],
+      "cons": [
+        "More code to write and maintain",
+        "Adds another MCP server to ecosystem"
+      ],
+      "implementation_time": "1-2 weeks",
+      "recommended": false
+    }
+  },
+
+  "recommended_v1_implementation": {
+    "approach": "Persona-only (Option 1)",
+    "deliverable": "lloyd-expert persona in personas-mcp",
+    "what_to_build": [
+      "Create personas/base/lloyd-expert.json",
+      "Comprehensive system prompt (~2000-3000 lines)",
+      "Expertise: project coordination, task breakdown, progress tracking, technical leadership",
+      "Behavior: Proactive, organized, keeps user focused and unblocked",
+      "Knowledge: How to use docs-mcp tools, CodeRef-MCP tools, planning workflows"
+    ],
+    "how_user_activates": "use_persona('lloyd-expert') or /use-lloyd slash command",
+    "what_happens": "Claude adopts Lloyd persona and helps user with project coordination using existing MCP tools"
+  },
+
+  "lloyd_expert_persona_content": {
+    "expertise_areas": [
+      "Project coordination and planning",
+      "Task decomposition (breaking big tasks into steps)",
+      "Progress tracking and todo management",
+      "Technical leadership and decision-making",
+      "Scrum Master patterns (for individual developer)",
+      "Using docs-mcp tools for planning",
+      "Using CodeRef-MCP tools for code understanding",
+      "Unblocking developers when stuck",
+      "Prioritization and dependency management",
+      "Keeping work organized and moving forward"
+    ],
+    "behavior_patterns": {
+      "proactive": "Suggests next steps before user asks",
+      "organized": "Maintains clear task lists and progress tracking",
+      "focused": "Keeps user on track, prevents scope creep",
+      "helpful": "Unblocks user when stuck, provides guidance",
+      "technical": "Understands code, architecture, and technical decisions"
+    },
+    "communication_style": "Clear, concise, action-oriented. Acts as trusted tech lead and project coordinator.",
+    "tool_usage": "Leverages docs-mcp (30 tools) and CodeRef-MCP (6 tools) effectively on user's behalf"
+  },
+
+  "future_v2_vision": {
+    "description": "Multi-agent orchestration (original vision)",
+    "when": "After v1 proves value of Lloyd as coordinator",
+    "what_changes": "Add lloyd-mcp server with 12 orchestration tools, spawn other agents, coordinate teams",
+    "path": "v1 (persona) → v2 (+ lightweight tools) → v3 (full multi-agent orchestration)"
+  },
+
+  "success_criteria_v1": [
+    "lloyd-expert persona created and operational",
+    "User can activate Lloyd via use_persona('lloyd-expert')",
+    "Lloyd helps user break down tasks effectively",
+    "Lloyd tracks progress and suggests next steps",
+    "Lloyd uses docs-mcp and CodeRef-MCP tools appropriately",
+    "User feels more organized and productive with Lloyd"
+  ],
+
+  "next_steps": [
+    "1. Create lloyd-expert persona (personas/base/lloyd-expert.json)",
+    "2. Write comprehensive system prompt (~2000-3000 lines)",
+    "3. Test Lloyd persona with real project coordination tasks",
+    "4. Create /use-lloyd slash command for easy activation",
+    "5. Document Lloyd in PERSONAS-CREATED.md and my-guide.md",
+    "6. Get user feedback on Lloyd v1",
+    "7. Decide if v2 (lightweight MCP server) is needed"
+  ],
+
+  "estimated_effort": "1-2 days to create comprehensive lloyd-expert persona",
+
+  "gathered_at": "2025-10-18",
+  "updated_at": "2025-10-18",
+  "status": "ready to implement"
+}

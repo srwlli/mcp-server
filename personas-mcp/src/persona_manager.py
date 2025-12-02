@@ -1,0 +1,148 @@
+"""
+Persona management - loading, activation, and state tracking.
+"""
+
+import json
+from pathlib import Path
+from typing import Optional, Dict
+from datetime import datetime
+
+from src.models import PersonaDefinition, PersonaState
+
+
+class PersonaManager:
+    """Manages persona loading and activation."""
+
+    def __init__(self, personas_dir: Path):
+        """
+        Initialize persona manager.
+
+        Args:
+            personas_dir: Root directory containing persona JSON files
+        """
+        self.personas_dir = personas_dir
+        self.state = PersonaState()
+        self._persona_cache: Dict[str, PersonaDefinition] = {}
+
+    def load_persona(self, name: str) -> PersonaDefinition:
+        """
+        Load a persona definition from JSON file.
+
+        Args:
+            name: Persona name (e.g., 'mcp-expert', 'docs-expert', 'coderef-expert')
+
+        Returns:
+            PersonaDefinition object
+
+        Raises:
+            FileNotFoundError: If persona JSON file doesn't exist
+            ValueError: If JSON is invalid or doesn't match schema
+        """
+        # Check cache first
+        if name in self._persona_cache:
+            return self._persona_cache[name]
+
+        # All personas are in base/ directory (no hierarchical structure)
+        persona_file = self.personas_dir / "base" / f"{name}.json"
+
+        if not persona_file.exists():
+            raise FileNotFoundError(
+                f"Persona '{name}' not found in base/ directory. "
+                f"Available personas: {self.list_available_personas()}"
+            )
+
+        # Load and validate JSON
+        try:
+            with open(persona_file, 'r', encoding='utf-8') as f:
+                persona_data = json.load(f)
+
+            # Validate against Pydantic schema
+            persona = PersonaDefinition(**persona_data)
+
+            # Cache for future use
+            self._persona_cache[name] = persona
+
+            return persona
+
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in {persona_file}: {e}")
+        except Exception as e:
+            raise ValueError(f"Failed to load persona '{name}': {e}")
+
+    def activate_persona(self, name: str) -> PersonaDefinition:
+        """
+        Activate a persona (loads if not cached).
+
+        Args:
+            name: Persona name to activate
+
+        Returns:
+            Activated PersonaDefinition
+
+        Raises:
+            FileNotFoundError: If persona doesn't exist
+            ValueError: If persona is invalid
+        """
+        persona = self.load_persona(name)
+        self.state.active_persona = persona
+        self.state.activated_at = datetime.now()
+        return persona
+
+    def get_active_persona(self) -> Optional[PersonaDefinition]:
+        """
+        Get currently active persona.
+
+        Returns:
+            Active PersonaDefinition or None if no persona is active
+        """
+        return self.state.active_persona
+
+    def clear_persona(self):
+        """Reset to no active persona."""
+        self.state.clear()
+
+    def is_persona_active(self) -> bool:
+        """Check if any persona is currently active."""
+        return self.state.is_active()
+
+    def get_active_persona_name(self) -> Optional[str]:
+        """Get the name of the active persona."""
+        return self.state.get_name()
+
+    def list_available_personas(self) -> list[str]:
+        """
+        List all available persona names from base/ directory.
+
+        Returns:
+            List of persona names (e.g., ['coderef-expert', 'docs-expert', 'mcp-expert'])
+        """
+        personas = []
+
+        # All personas are in base/ directory
+        base_dir = self.personas_dir / "base"
+        if base_dir.exists():
+            for file in base_dir.glob("*.json"):
+                # Skip backup files
+                if not file.stem.endswith('.old') and not file.stem.endswith('.backup'):
+                    personas.append(file.stem)
+
+        return sorted(personas)
+
+    def get_persona_info(self, name: str) -> Dict:
+        """
+        Get brief info about a persona without fully activating it.
+
+        Args:
+            name: Persona name
+
+        Returns:
+            Dict with name, description, expertise, use_cases
+        """
+        persona = self.load_persona(name)
+        return {
+            "name": persona.name,
+            "version": persona.version,
+            "description": persona.description,
+            "expertise": persona.expertise,
+            "use_cases": persona.use_cases
+        }

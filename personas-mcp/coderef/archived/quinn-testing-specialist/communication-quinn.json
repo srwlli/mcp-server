@@ -1,0 +1,123 @@
+{
+  "feature": "QUINN-TESTING-SPECIALIST",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-004",
+  "from": "Lloyd (Agent 1 - Coordinator)",
+  "to": "Quinn (Agent 4)",
+  "date": "2025-10-23",
+  "agent_specialization": "testing",
+  "task": "Transform yourself into Quinn, the Testing Specialist",
+  "instruction": "Implement your own testing specialization by creating the 'quinn' persona with comprehensive testing expertise (unit tests, integration tests, QA, debugging, coverage analysis)",
+  "precise_steps": [
+    "Step 1: Read coderef/working/quinn-testing-specialist/plan.json for complete task list",
+    "Step 2: Read personas/base/agent-4.json (current generalist persona)",
+    "Step 3: Read personas/base/lloyd-expert.json to understand workorder (WO) processes, MCP workflows, communication.json protocol, and the 3-server ecosystem (personas-mcp, docs-mcp, coderef-mcp)",
+    "Step 4: Rename persona file: agent-4.json → quinn.json",
+    "Step 5: Update name field to 'quinn' and description to 'Quinn: Testing Specialist - Unit tests, integration tests, QA, debugging, coverage analysis'",
+    "Step 6: Write comprehensive testing system prompt (1500+ lines) covering unit testing (Jest/pytest), integration testing, test-driven development (TDD), mocking/stubbing, code coverage analysis, debugging strategies (Chrome DevTools/pdb), QA workflows, test automation, E2E testing (Playwright/Cypress), performance testing, load testing",
+    "Step 7: Add MCP ecosystem knowledge section to system prompt covering: workorder tracking (WO-{FEATURE}-001), docs-mcp 31 tools, 9-step feature workflow, communication.json protocol, multi-agent coordination",
+    "Step 8: Define 15+ testing expertise areas in expertise array",
+    "Step 9: Add coordination expertise areas: workorder tracking, docs-mcp workflows, communication.json protocol, multi-agent coordination",
+    "Step 10: Add testing-specific use cases (writing unit tests, integration test suites, TDD workflows, debugging failing tests, improving code coverage, E2E scenarios, performance analysis, CI/CD testing)",
+    "Step 11: Update behavior section with testing problem-solving approach",
+    "Step 12: Create .claude/commands/quinn.md slash command",
+    "Step 13: Update my-guide.md with 'Quinn (Testing Specialist)' section",
+    "Step 14: Update README.md with Quinn description",
+    "Step 15: Test your testing specialization with sample tasks",
+    "Step 16: Test workorder understanding: Explain WO-{FEATURE}-001 tracking and docs-mcp workflow",
+    "Step 17: Commit changes: 'Add Quinn testing specialist persona (WO-AGENT-SPECIALIZATION-004)'"
+  ],
+  "details": {
+    "work_area": "personas/base/ and .claude/commands/",
+    "forbidden_files": [
+      "personas/base/lloyd-expert.json - DO NOT MODIFY (Lloyd's coordination persona)",
+      "personas/base/agent-2.json - DO NOT MODIFY (Ava is working on this)",
+      "personas/base/agent-3.json - DO NOT MODIFY (Marcus is working on this)",
+      "personas/base/mcp-expert.json - DO NOT MODIFY (reference only)",
+      "personas/base/docs-expert.json - DO NOT MODIFY (reference only)"
+    ],
+    "allowed_files": [
+      "personas/base/agent-4.json - RENAME to quinn.json and fully rewrite",
+      ".claude/commands/quinn.md - CREATE NEW slash command",
+      "my-guide.md - UPDATE with Quinn section",
+      "README.md - UPDATE with Quinn description"
+    ],
+    "context": {
+      "feature_name": "Quinn Testing Specialist",
+      "goal": "Transform into testing domain expert with comprehensive unit/integration/QA expertise",
+      "dependencies": ["Existing persona JSON structure", "Lloyd pattern for naming"],
+      "references": [
+        "plan-agent4.json (your task list)",
+        "personas/base/lloyd-expert.json (naming pattern reference)",
+        "personas/base/mcp-expert.json (comprehensive system prompt example)"
+      ]
+    }
+  },
+  "testing_checklist": [
+    "1. Test with testing task: 'Write unit tests for authentication module'",
+    "2. Test with testing task: 'Create integration tests for API endpoints'",
+    "3. Test with testing task: 'Analyze and improve test coverage to 80%'",
+    "4. Verify persona has 15+ testing expertise areas defined",
+    "5. Verify system prompt is comprehensive (1500+ lines)",
+    "6. Test slash command: /quinn activates your persona",
+    "7. Verify forbidden files unchanged: git diff personas/base/lloyd-expert.json"
+  ],
+  "success_criteria": [
+    "✅ Persona renamed to 'quinn' successfully",
+    "✅ System prompt covers unit testing, integration testing, TDD, mocking, debugging, QA, automation",
+    "✅ System prompt includes MCP ecosystem knowledge (workorders, docs-mcp tools, communication.json protocol)",
+    "✅ 15+ testing expertise areas defined",
+    "✅ Coordination expertise areas added (workorder tracking, docs-mcp workflows, multi-agent coordination)",
+    "✅ Testing use cases and examples included",
+    "✅ /quinn slash command created and working",
+    "✅ my-guide.md updated with Quinn section",
+    "✅ README.md updated with Quinn description",
+    "✅ Testing specialization tested with real tasks",
+    "✅ Workorder and MCP workflow understanding verified",
+    "✅ Forbidden files unchanged",
+    "✅ Clean git commit created"
+  ],
+  "agent_1_status": "READY - Plan created, awaiting Quinn's self-implementation",
+  "agent_4_status": "ASSIGNED",
+  "agent_4_assigned_at": "2025-10-23T09:00:00Z",
+  "agent_4_workorder": "WO-AGENT-SPECIALIZATION-004",
+  "agent_4_completion": {
+    "status": "NOT_STARTED",
+    "timestamp": null,
+    "changes_made": [],
+    "verification": {
+      "forbidden_files_unchanged": null,
+      "tests_passing": null,
+      "build_successful": null
+    },
+    "commit_hash": null,
+    "commit_message": null
+  },
+  "agent_1_verification": {
+    "status": "PENDING",
+    "verified_at": null,
+    "verified_by": "Lloyd (Agent 1)",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-23T09:00:00Z",
+    "updated_at": "2025-10-23T09:00:00Z",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

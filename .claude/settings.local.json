@@ -21,7 +21,13 @@
       "Read(//c/c/Users/willh/.mcp-servers/**)",
       "WebFetch(domain:storybook.js.org)",
       "WebFetch(domain:ui.shadcn.com)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "mcp__personas-mcp__use_persona",
+      "mcp__docs-mcp__list_templates",
+      "Bash(cat:*)",
+      "Bash(for dir in personas-mcp docs-mcp coderef-mcp)",
+      "Bash(ls:*)",
+      "Read(//c/Users/willh/.claude/**)"
     ],
     "deny": [],
     "ask": []
@@ -30,6 +36,10 @@
     "coderef-mcp",
     "docs-mcp",
     "personas-mcp",
-    "hello-world-mcp"
+    "hello-world-mcp",
+    "personas",
+    "coderef",
+    "docs",
+    "hello-world"
   ]
 }

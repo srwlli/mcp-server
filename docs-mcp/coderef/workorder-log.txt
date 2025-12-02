@@ -1,0 +1,21 @@
+WO-HANDOFF-AUTOMATION-002 | docs-mcp | Implement /handoff command for automated agent context generation | 2025-10-23T07:54:03.097298+00:00
+WO-WORKORDER-LOG-002 | docs-mcp | Update docs for workorder logging (CHANGELOG, v... | 2025-10-21T02:30:00.000000+00:00
+WO-WORKORDER-LOG-001 | docs-mcp | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51.983188+00:00
+WO-EXECUTE-PLAN-001 | docs-mcp | Add execute_plan tool for TodoWrite task list g... | 2025-10-20T18:00:00.000000+00:00
+WO-UPDATE-DOCS-001 | docs-mcp | Add update_all_documentation tool with agentic ... | 2025-10-18T21:00:00.000000+00:00
+WO-ARCHIVE-FEATURE-001 | docs-mcp | Implement archive_feature tool for automated fe... | 2025-10-18T15:00:00.000000+00:00
+WO-AGENTIC-COMMUNICATION-001 | docs-mcp | Multi-agent coordination system (5 tools: gener... | 2025-10-15T20:00:00.000000+00:00
+WO-DELIVERABLES-GENERATOR-001 | docs-mcp | Deliverables tracking system (generate template... | 2025-10-15T14:00:00.000000+00:00
+WO-DEPENDENCY-INVENTORY-001 | docs-mcp | Dependency inventory tool with security scannin... | 2025-10-15T12:00:00.000000+00:00
+WO-API-INVENTORY-001 | docs-mcp | API inventory tool for multi-framework endpoin... | 2025-10-15T10:00:00.000000+00:00
+WO-DATABASE-INVENTORY-001 | docs-mcp | Database inventory tool for multi-database sch... | 2025-10-15T08:00:00.000000+00:00
+WO-TEST-INVENTORY-001 | docs-mcp | Test inventory tool for multi-framework test d... | 2025-10-15T06:00:00.000000+00:00
+WO-CONFIG-INVENTORY-001 | docs-mcp | Config inventory tool with sensitive value det... | 2025-10-15T04:00:00.000000+00:00
+WO-DOC-INVENTORY-001 | docs-mcp | Documentation inventory tool with quality metr... | 2025-10-15T02:00:00.000000+00:00
+WO-FILE-INVENTORY-001 | docs-mcp | File inventory manifest tool with universal ta... | 2025-10-14T20:00:00.000000+00:00
+WO-PLANNING-WORKFLOW-001 | docs-mcp | Planning workflow system (4 tools: analyze, va... | 2025-10-10T18:00:00.000000+00:00
+WO-CONSISTENCY-CHECK-001 | docs-mcp | Check consistency tool for pre-commit quality ... | 2025-10-10T14:00:00.000000+00:00
+WO-AUDIT-CODEBASE-001 | docs-mcp | Audit codebase tool for compliance auditing wi... | 2025-10-10T10:00:00.000000+00:00
+WO-ESTABLISH-STANDARDS-001 | docs-mcp | Establish standards tool for pattern discovery... | 2025-10-10T08:00:00.000000+00:00
+WO-DECORATOR-REFACTOR-001 | docs-mcp | Handler decorator refactor (Phase 1-2: decorat... | 2025-10-16T16:00:00.000000+00:00
+WO-QUICKREF-GENERATOR-001 | docs-mcp | Universal quickref generator with AI interview... | 2025-10-09T20:00:00.000000+00:00

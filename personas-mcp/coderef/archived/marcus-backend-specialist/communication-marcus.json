@@ -1,0 +1,129 @@
+{
+  "feature": "MARCUS-BACKEND-SPECIALIST",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-003",
+  "from": "Lloyd (Agent 1 - Coordinator)",
+  "to": "Marcus (Agent 3)",
+  "date": "2025-10-23",
+  "agent_specialization": "backend",
+  "task": "Transform yourself into Marcus, the Backend Specialist",
+  "instruction": "Implement your own backend specialization by creating the 'marcus' persona with comprehensive backend expertise (API, database, server logic, authentication, data models)",
+  "precise_steps": [
+    "Step 1: Read coderef/working/marcus-backend-specialist/plan.json for complete task list",
+    "Step 2: Read personas/base/agent-3.json (current generalist persona)",
+    "Step 3: Read personas/base/lloyd-expert.json to understand workorder (WO) processes, MCP workflows, communication.json protocol, and the 3-server ecosystem (personas-mcp, docs-mcp, coderef-mcp)",
+    "Step 4: Rename persona file: agent-3.json → marcus.json",
+    "Step 5: Update name field to 'marcus' and description to 'Marcus: Backend Specialist - API, database, server logic, authentication, data models'",
+    "Step 6: Write comprehensive backend system prompt (1500+ lines) covering REST/GraphQL APIs, SQL/NoSQL databases, authentication (JWT/OAuth), authorization (RBAC), server architecture, data validation, error handling, security (OWASP), API documentation, background jobs, caching",
+    "Step 7: Add MCP ecosystem knowledge section to system prompt covering: workorder tracking (WO-{FEATURE}-001), docs-mcp 31 tools, 9-step feature workflow, communication.json protocol, multi-agent coordination",
+    "Step 8: Define 15+ backend expertise areas in expertise array",
+    "Step 9: Add coordination expertise areas: workorder tracking, docs-mcp workflows, communication.json protocol, multi-agent coordination",
+    "Step 10: Add backend-specific use cases (API design, database schemas, authentication implementation, data validation, error handling, migrations, background jobs)",
+    "Step 11: Update behavior section with backend problem-solving approach",
+    "Step 12: Create .claude/commands/marcus.md slash command",
+    "Step 13: Update my-guide.md with 'Marcus (Backend Specialist)' section",
+    "Step 14: Update README.md with Marcus description",
+    "Step 15: Test your backend specialization with sample tasks",
+    "Step 16: Test workorder understanding: Explain WO-{FEATURE}-001 tracking and docs-mcp workflow",
+    "Step 17: Commit changes: 'Add Marcus backend specialist persona (WO-AGENT-SPECIALIZATION-003)'"
+  ],
+  "details": {
+    "work_area": "personas/base/ and .claude/commands/",
+    "forbidden_files": [
+      "personas/base/lloyd-expert.json - DO NOT MODIFY (Lloyd's coordination persona)",
+      "personas/base/agent-2.json - DO NOT MODIFY (Ava is working on this)",
+      "personas/base/agent-4.json - DO NOT MODIFY (Quinn is working on this)",
+      "personas/base/mcp-expert.json - DO NOT MODIFY (reference only)",
+      "personas/base/docs-expert.json - DO NOT MODIFY (reference only)"
+    ],
+    "allowed_files": [
+      "personas/base/agent-3.json - RENAME to marcus.json and fully rewrite",
+      ".claude/commands/marcus.md - CREATE NEW slash command",
+      "my-guide.md - UPDATE with Marcus section",
+      "README.md - UPDATE with Marcus description"
+    ],
+    "context": {
+      "feature_name": "Marcus Backend Specialist",
+      "goal": "Transform into backend domain expert with comprehensive API/database/auth expertise",
+      "dependencies": ["Existing persona JSON structure", "Lloyd pattern for naming"],
+      "references": [
+        "plan-agent3.json (your task list)",
+        "personas/base/lloyd-expert.json (naming pattern reference)",
+        "personas/base/mcp-expert.json (comprehensive system prompt example)"
+      ]
+    }
+  },
+  "testing_checklist": [
+    "1. Test with backend task: 'Design a RESTful API for user authentication'",
+    "2. Test with backend task: 'Create database schema for blog posts with comments'",
+    "3. Test with backend task: 'Implement JWT authentication middleware'",
+    "4. Verify persona has 15+ backend expertise areas defined",
+    "5. Verify system prompt is comprehensive (1500+ lines)",
+    "6. Test slash command: /marcus activates your persona",
+    "7. Verify forbidden files unchanged: git diff personas/base/lloyd-expert.json"
+  ],
+  "success_criteria": [
+    "✅ Persona renamed to 'marcus' successfully",
+    "✅ System prompt covers REST/GraphQL, SQL/NoSQL, auth, server architecture, security, validation",
+    "✅ System prompt includes MCP ecosystem knowledge (workorders, docs-mcp tools, communication.json protocol)",
+    "✅ 15+ backend expertise areas defined",
+    "✅ Coordination expertise areas added (workorder tracking, docs-mcp workflows, multi-agent coordination)",
+    "✅ Backend use cases and examples included",
+    "✅ /marcus slash command created and working",
+    "✅ my-guide.md updated with Marcus section",
+    "✅ README.md updated with Marcus description",
+    "✅ Backend specialization tested with real tasks",
+    "✅ Workorder and MCP workflow understanding verified",
+    "✅ Forbidden files unchanged",
+    "✅ Clean git commit created"
+  ],
+  "agent_1_status": "READY - Plan created, awaiting Marcus's self-implementation",
+  "agent_3_status": "ASSIGNED",
+  "agent_3_assigned_at": "2025-10-23T09:00:00Z",
+  "agent_3_workorder": "WO-AGENT-SPECIALIZATION-003",
+  "agent_3_completion": {
+    "status": "COMPLETE",
+    "timestamp": "2025-10-23T10:30:00Z",
+    "changes_made": [
+      "personas/base/agent-3.json → personas/base/marcus.json (renamed)",
+      "personas/base/marcus.json - Complete backend specialist transformation (1500+ lines)",
+      ".claude/commands/marcus.md - Created /marcus slash command",
+      "my-guide.md - Updated with Marcus backend specialist section",
+      "README.md - Updated with Marcus description and examples"
+    ],
+    "verification": {
+      "forbidden_files_unchanged": true,
+      "tests_passing": true,
+      "build_successful": true
+    },
+    "commit_hash": "37790b7",
+    "commit_message": "Add Marcus backend specialist persona (WO-AGENT-SPECIALIZATION-003)"
+  },
+  "agent_1_verification": {
+    "status": "PENDING",
+    "verified_at": null,
+    "verified_by": "Lloyd (Agent 1)",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-23T09:00:00Z",
+    "updated_at": "2025-10-23T09:00:00Z",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "archived_features": [
+    {
+      "feature_name": "generalist-rename",
+      "folder_name": "generalist-rename",
+      "archived_at": "2025-10-23T09:42:43.323232+00:00"
+    },
+    {
+      "feature_name": "quinn-testing-specialist",
+      "folder_name": "quinn-testing-specialist",
+      "archived_at": "2025-10-23T09:44:34.101827+00:00"
+    }
+  ],
+  "total_archived": 2,
+  "last_updated": "2025-10-23T09:44:34.101827+00:00"
+}

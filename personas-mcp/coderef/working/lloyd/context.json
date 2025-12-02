@@ -1,0 +1,277 @@
+{
+  "feature_name": "lloyd",
+  "description": "Lloyd: Multi-Agent Orchestration MCP server that coordinates multiple AI agents working together on complex tasks, with workflows spanning all MCP servers. Lloyd acts as the Coordinator/Lead Agent (Scrum Master + Tech Lead hybrid) for the entire MCP ecosystem.",
+  "goal": "Enable fully automated feature implementation by coordinating multiple specialized agents (planning, implementation, testing, security, documentation, deployment) working in parallel on complex tasks",
+  "requirements": [
+    "12 core tools across orchestration, agents, and analysis categories",
+    "Orchestration tools: create_workflow, execute_workflow, monitor_workflow, pause_workflow, retry_workflow",
+    "Agent tools: spawn_agent, assign_task, coordinate_agents, aggregate_results",
+    "Analysis tools: analyze_task_complexity, suggest_workflow, optimize_workflow",
+    "Support for spawning and managing agent lifecycle",
+    "Multi-step workflow execution with coordination",
+    "Task decomposition into agent-specific subtasks",
+    "Inter-agent communication and coordination",
+    "Workflow monitoring with pause/resume capability",
+    "Result aggregation from multiple agents",
+    "Integration with all existing MCP servers (personas-mcp, docs-mcp, CodeRef-MCP)",
+    "Support for loading different personas into spawned agents",
+    "Workflow complexity: sequential, parallel, conditional, and retry logic",
+    "State machine for workflow management",
+    "Task queue for agent coordination"
+  ],
+  "out_of_scope": [
+    "Building test-mcp, deploy-mcp, data-mcp, security-mcp (separate projects)",
+    "General-purpose workflow engines (focus on AI agent coordination)",
+    "Human-in-the-loop approvals (initial version is fully automated)",
+    "Building the actual specialized agents (use existing personas)",
+    "Implementing tools from other MCP servers (use existing tools)"
+  ],
+  "constraints": [
+    "Must integrate with Python MCP SDK",
+    "Must follow MCP protocol specification 2024-11-05",
+    "Must use JSON-RPC 2.0 for all tool communication",
+    "Must work with existing personas-mcp architecture (4 personas: mcp-expert, docs-expert, coderef-expert, nfl-scraper-expert)",
+    "Must coordinate with docs-mcp tools (30 tools across 6 categories)",
+    "Must coordinate with CodeRef-MCP tools (6 tools: scan, drift, validate, query, coverage, impact)",
+    "Should use LangChain or AutoGen for agent framework integration",
+    "Must implement state machine for workflow management",
+    "Must implement task queue for agent coordination",
+    "Phase 4 priority (Q3 2026) - build after test-mcp, deploy-mcp, data-mcp, security-mcp",
+    "Must support workflows across all MCP servers in ecosystem",
+    "Agent spawning must support persona activation via personas-mcp"
+  ],
+  "use_cases": [
+    "Complete feature implementation workflow: User requests 'Implement authentication system' → Lloyd coordinates 7 agents (planning, implementation, security, testing, data, documentation, deployment) → Each agent uses appropriate persona and tools → Results aggregated → Feature complete",
+    "Code refactoring with multi-agent impact analysis: Planning agent (docs-expert) creates plan → Implementation agent refactors code → CodeRef agent analyzes impact → Testing agent generates tests → Documentation agent updates docs",
+    "Security audit and automated fixes: Security agent scans vulnerabilities → CodeRef agent locates vulnerable code → Security agent generates patches → Testing agent validates fixes → Documentation agent creates incident report → Deployment agent deploys fixes",
+    "Database migration with validation: Data agent plans schema changes → CodeRef agent finds all code using tables → Data agent generates migration → Testing agent tests migration → Documentation agent documents schema → Deployment agent executes migration",
+    "Multi-stage testing workflows: Testing agent runs unit tests → Testing agent runs integration tests → Testing agent runs e2e tests → Results aggregated with pass/fail status"
+  ],
+  "technical_stack": {
+    "language": "Python",
+    "mcp_sdk": "Python MCP SDK",
+    "agent_framework": "LangChain or AutoGen",
+    "workflow_engine": "Custom state machine + task queue",
+    "communication": "JSON-RPC 2.0 over stdio",
+    "integration": "All MCP servers (personas-mcp, docs-mcp, CodeRef-MCP, test-mcp, deploy-mcp, data-mcp, security-mcp)"
+  },
+  "agent_organizational_structure": {
+    "description": "Three main groups reflecting the full software lifecycle, coordinated by a Lead Agent",
+    "groups": [
+      {
+        "name": "Product & Design Group",
+        "focus": "What to build and how it should look and feel",
+        "roles": [
+          {
+            "name": "Product/UX Agent",
+            "persona": "product-expert",
+            "responsibilities": "Owns user needs, priorities, and success metrics",
+            "mcp_servers": ["docs-mcp"],
+            "status": "future"
+          },
+          {
+            "name": "UI Agent",
+            "persona": "ui-expert",
+            "responsibilities": "Turns product intent into visual and interactive design",
+            "mcp_servers": ["docs-mcp"],
+            "status": "future"
+          },
+          {
+            "name": "Planning Agent",
+            "persona": "docs-expert",
+            "responsibilities": "Translates goals into actionable plans and specs",
+            "mcp_servers": ["docs-mcp"],
+            "status": "operational"
+          }
+        ],
+        "flow": "Product defines why → UI defines how it looks → Planning defines how it gets built"
+      },
+      {
+        "name": "Engineering & Quality Group",
+        "focus": "Building, securing, and testing the product",
+        "roles": [
+          {
+            "name": "Architecture/Review Agent",
+            "persona": "architecture-expert",
+            "responsibilities": "Defines standards and reviews code/architecture",
+            "mcp_servers": ["CodeRef-MCP", "docs-mcp"],
+            "status": "future"
+          },
+          {
+            "name": "Implementation Agent",
+            "persona": "mcp-expert OR domain-specific expert",
+            "responsibilities": "Builds features according to specs",
+            "mcp_servers": ["CodeRef-MCP", "docs-mcp"],
+            "status": "operational"
+          },
+          {
+            "name": "Security Agent",
+            "persona": "security-expert",
+            "responsibilities": "Ensures safe coding and secure deployment",
+            "mcp_servers": ["security-mcp", "CodeRef-MCP"],
+            "status": "future"
+          },
+          {
+            "name": "Testing Agent",
+            "persona": "test-expert",
+            "responsibilities": "Validates behavior and prevents regressions",
+            "mcp_servers": ["test-mcp", "CodeRef-MCP"],
+            "status": "future"
+          },
+          {
+            "name": "Data Agent",
+            "persona": "data-expert",
+            "responsibilities": "Manages schema, migrations, and data consistency",
+            "mcp_servers": ["data-mcp", "CodeRef-MCP"],
+            "status": "future"
+          },
+          {
+            "name": "Documentation Agent",
+            "persona": "docs-expert",
+            "responsibilities": "Maintains internal and external technical docs (shared resource across all groups)",
+            "mcp_servers": ["docs-mcp", "CodeRef-MCP"],
+            "status": "operational"
+          }
+        ],
+        "flow": "Architecture sets foundation → Implementation builds → Testing verifies → Security validates → Docs finalize"
+      },
+      {
+        "name": "Operations & Compliance Group",
+        "focus": "Delivering and maintaining reliable, compliant systems",
+        "roles": [
+          {
+            "name": "Deployment Agent",
+            "persona": "devops-expert",
+            "responsibilities": "Automates release and deployment",
+            "mcp_servers": ["deploy-mcp", "CodeRef-MCP"],
+            "status": "future"
+          },
+          {
+            "name": "Ops/Monitoring Agent",
+            "persona": "sre-expert",
+            "responsibilities": "Handles runtime monitoring, incident response, rollback",
+            "mcp_servers": ["deploy-mcp"],
+            "status": "future"
+          },
+          {
+            "name": "Compliance/Privacy Agent",
+            "persona": "compliance-expert",
+            "responsibilities": "Ensures data and processes meet legal/regulatory standards",
+            "mcp_servers": ["security-mcp", "docs-mcp"],
+            "status": "future"
+          }
+        ],
+        "flow": "Deployment handles release → Ops maintains uptime → Compliance verifies ongoing adherence"
+      }
+    ],
+    "cross_functional_role": {
+      "name": "Coordinator/Lead Agent",
+      "persona": "lloyd-expert",
+      "responsibilities": "Connects all groups, manages communication, priorities, and delivery cadence. Acts as Scrum Master + Tech Lead hybrid. Lloyd is the name of this coordinator agent.",
+      "mcp_servers": ["lloyd-mcp", "docs-mcp", "all MCP servers"],
+      "status": "core"
+    },
+    "workflow_flow": "Product/UX → Planning → Architecture → Implementation ↔ Testing ↔ Security ↔ Data → Deployment → Ops/Monitoring → Compliance (Coordinator ensures sync between groups)",
+    "benefits": [
+      "Clear ownership per lifecycle stage",
+      "Parallel workstreams (product, build, ops)",
+      "Quality and compliance built-in, not bolted on",
+      "Coordinator unblocks dependencies and maintains alignment",
+      "Bidirectional information and feedback loops"
+    ]
+  },
+  "personas_to_add": [
+    {
+      "name": "lloyd-expert",
+      "expertise": "Multi-agent coordination, workflow design, state machines, task decomposition, agent lifecycle management, Scrum Master + Tech Lead patterns. Lloyd is the coordinator agent persona.",
+      "priority": "high",
+      "reason": "Core coordinator role for lloyd-mcp server"
+    },
+    {
+      "name": "automation-expert",
+      "expertise": "Process automation, CI/CD orchestration, workflow optimization, task queue management",
+      "priority": "medium",
+      "reason": "Supports workflow optimization and analysis tools"
+    },
+    {
+      "name": "product-expert",
+      "expertise": "Product management, user needs analysis, priority management, success metrics, roadmap planning",
+      "priority": "low",
+      "reason": "Product & Design Group - defines what to build"
+    },
+    {
+      "name": "ui-expert",
+      "expertise": "UI/UX design, visual design, interaction design, design systems, accessibility",
+      "priority": "low",
+      "reason": "Product & Design Group - defines how it looks"
+    },
+    {
+      "name": "architecture-expert",
+      "expertise": "Software architecture, design patterns, code review, architectural decision records, system design",
+      "priority": "medium",
+      "reason": "Engineering & Quality Group - sets standards and reviews architecture"
+    }
+  ],
+  "expected_impact": {
+    "development_velocity": "60% reduction in feature implementation time",
+    "automation": "Fully automated feature implementation from planning to deployment",
+    "consistency": "Ensures all aspects covered (code, tests, security, docs, deployment)",
+    "quality": "Expert-level execution at each phase via specialized personas"
+  },
+  "synergy_example": {
+    "description": "Complete authentication system implementation",
+    "workflow": [
+      {
+        "step": 1,
+        "agent": "Planning Agent (docs-expert)",
+        "tools": ["mcp__docs-mcp__gather_context", "mcp__docs-mcp__analyze_project_for_planning", "mcp__docs-mcp__create_implementation_plan"]
+      },
+      {
+        "step": 2,
+        "agent": "Implementation Agent (mcp-expert or domain expert)",
+        "tools": ["mcp__coderef-mcp__drift (track changes)"]
+      },
+      {
+        "step": 3,
+        "agent": "Security Agent (security-expert)",
+        "tools": ["mcp__security-mcp__scan_code_security", "mcp__security-mcp__validate_compliance"]
+      },
+      {
+        "step": 4,
+        "agent": "Testing Agent (test-expert)",
+        "tools": ["mcp__test-mcp__generate_unit_tests", "mcp__test-mcp__run_tests", "mcp__test-mcp__analyze_coverage"]
+      },
+      {
+        "step": 5,
+        "agent": "Data Agent (data-expert)",
+        "tools": ["mcp__data-mcp__analyze_schema", "mcp__data-mcp__generate_migration"]
+      },
+      {
+        "step": 6,
+        "agent": "Documentation Agent (docs-expert)",
+        "tools": ["mcp__docs-mcp__generate_technical_doc", "mcp__docs-mcp__update_changelog"]
+      },
+      {
+        "step": 7,
+        "agent": "Deployment Agent (devops-expert)",
+        "tools": ["mcp__deploy-mcp__validate_deployment", "mcp__deploy-mcp__deploy_to_environment"]
+      }
+    ],
+    "result": "Complete feature implementation with all aspects covered"
+  },
+  "implementation_phase": "Phase 4 (Q3 2026)",
+  "dependencies": [
+    "personas-mcp (✅ v1.0.0 operational)",
+    "docs-mcp (✅ operational, 30 tools)",
+    "CodeRef-MCP (⏳ in development, 6 tools)",
+    "test-mcp (❌ not built - Phase 1, Q4 2025)",
+    "deploy-mcp (❌ not built - Phase 2, Q1 2026)",
+    "data-mcp (❌ not built - Phase 3, Q2 2026)",
+    "security-mcp (❌ not built - Phase 3, Q2 2026)"
+  ],
+  "gathered_at": "2025-10-18",
+  "source_documentation": [
+    "MCP-SYNERGY-REPORT.md (lines 274-446: Phase 3 roadmap, integration architecture)",
+    "next5mcp.md (lines 274-446: ai-agent-mcp detailed specification)"
+  ]
+}

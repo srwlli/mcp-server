@@ -1,0 +1,310 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RiskAssessment",
+  "description": "Risk assessment schema for evaluating proposed code changes across multiple dimensions with severity ratings, likelihood scores, and actionable recommendations.",
+  "type": "object",
+  "required": [
+    "assessment_id",
+    "generated_at",
+    "project_path",
+    "proposed_change",
+    "risk_dimensions",
+    "composite_score",
+    "recommendation",
+    "options_analyzed"
+  ],
+  "properties": {
+    "assessment_id": {
+      "type": "string",
+      "description": "Unique identifier for this assessment (format: RA-{timestamp})",
+      "pattern": "^RA-\\d{14}$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when assessment was generated"
+    },
+    "project_path": {
+      "type": "string",
+      "description": "Absolute path to project directory analyzed"
+    },
+    "proposed_change": {
+      "type": "object",
+      "description": "Details of the proposed code change being assessed",
+      "required": ["description", "change_type", "files_affected"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the proposed change"
+        },
+        "change_type": {
+          "type": "string",
+          "enum": ["create", "modify", "delete", "refactor", "migrate"],
+          "description": "Type of change being proposed"
+        },
+        "files_affected": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of file paths that will be modified"
+        },
+        "context": {
+          "type": "object",
+          "description": "Optional additional context for the change",
+          "additionalProperties": true
+        }
+      }
+    },
+    "risk_dimensions": {
+      "type": "object",
+      "description": "Evaluation results across 5 risk dimensions",
+      "required": [
+        "breaking_changes",
+        "security",
+        "performance",
+        "maintainability",
+        "reversibility"
+      ],
+      "properties": {
+        "breaking_changes": {
+          "$ref": "#/definitions/risk_dimension"
+        },
+        "security": {
+          "$ref": "#/definitions/risk_dimension"
+        },
+        "performance": {
+          "$ref": "#/definitions/risk_dimension"
+        },
+        "maintainability": {
+          "$ref": "#/definitions/risk_dimension"
+        },
+        "reversibility": {
+          "$ref": "#/definitions/risk_dimension"
+        }
+      }
+    },
+    "composite_score": {
+      "type": "object",
+      "description": "Overall risk assessment composite score",
+      "required": ["score", "level", "explanation"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Composite risk score (0=lowest risk, 100=highest risk)"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Risk level classification based on score"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "Human-readable explanation of how composite score was calculated"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence level in assessment (0.0-1.0), based on completeness of project context"
+        }
+      }
+    },
+    "recommendation": {
+      "type": "object",
+      "description": "Overall recommendation and decision guidance",
+      "required": ["decision", "rationale"],
+      "properties": {
+        "decision": {
+          "type": "string",
+          "enum": ["go", "no-go", "proceed-with-caution", "needs-review"],
+          "description": "Go/no-go decision based on risk threshold"
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Explanation of why this recommendation was made"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Conditions or prerequisites for proceeding safely"
+        }
+      }
+    },
+    "mitigation_strategies": {
+      "type": "array",
+      "description": "Actionable mitigation strategies for identified risks",
+      "items": {
+        "type": "object",
+        "required": ["risk_dimension", "strategy", "priority"],
+        "properties": {
+          "risk_dimension": {
+            "type": "string",
+            "enum": ["breaking_changes", "security", "performance", "maintainability", "reversibility"],
+            "description": "Which risk dimension this mitigation addresses"
+          },
+          "strategy": {
+            "type": "string",
+            "description": "Specific mitigation action to reduce risk"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Priority level for implementing this mitigation"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "Estimated effort required to implement mitigation"
+          }
+        }
+      }
+    },
+    "options_analyzed": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of alternative options analyzed (1=single option, 2+=comparison mode)"
+    },
+    "comparison": {
+      "type": "object",
+      "description": "Multi-option comparison results (only present when options_analyzed > 1)",
+      "properties": {
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["option_id", "description", "composite_score", "rank"],
+            "properties": {
+              "option_id": {
+                "type": "string",
+                "description": "Unique identifier for this option (e.g., 'option_1')"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of this alternative approach"
+              },
+              "composite_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Composite risk score for this option"
+              },
+              "rank": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Ranking compared to other options (1=best/lowest risk)"
+              },
+              "pros": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Advantages of this option"
+              },
+              "cons": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Disadvantages of this option"
+              }
+            }
+          }
+        },
+        "recommended_option": {
+          "type": "string",
+          "description": "Recommended option ID based on lowest risk score"
+        }
+      }
+    },
+    "project_context": {
+      "type": "object",
+      "description": "Analyzed project context used for risk evaluation",
+      "properties": {
+        "files_analyzed": {
+          "type": "integer",
+          "description": "Number of project files analyzed"
+        },
+        "dependencies_found": {
+          "type": "integer",
+          "description": "Number of dependencies discovered"
+        },
+        "test_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall test coverage percentage (if available)"
+        },
+        "architecture_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Identified architectural patterns in the project"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Missing context or gaps in project analysis"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Assessment metadata and provenance",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Schema version (semantic versioning)"
+        },
+        "tool_version": {
+          "type": "string",
+          "description": "docs-mcp tool version used for assessment"
+        },
+        "duration_ms": {
+          "type": "number",
+          "description": "Time taken to complete assessment (milliseconds)"
+        },
+        "workorder_id": {
+          "type": "string",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "description": "Associated workorder ID (if applicable)"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "risk_dimension": {
+      "type": "object",
+      "description": "Risk evaluation for a single dimension",
+      "required": ["severity", "likelihood", "score", "findings"],
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Severity level if risk materializes"
+        },
+        "likelihood": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Likelihood percentage (0-100%) that risk will occur"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Dimension risk score (severity × likelihood mapped to 0-100)"
+        },
+        "findings": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Specific risks or concerns identified in this dimension"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Evidence or patterns supporting the risk assessment"
+        },
+        "mitigation_available": {
+          "type": "boolean",
+          "description": "Whether mitigation strategies exist for this risk"
+        }
+      }
+    }
+  }
+}

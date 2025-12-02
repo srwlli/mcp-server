@@ -1,0 +1,328 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "clean-templates-structure",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant (docs-expert persona)",
+    "generated_at": "2025-12-02",
+    "has_context": false,
+    "has_analysis": false,
+    "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["CLAUDE.md", "README.md"],
+        "missing": []
+      },
+      "coding_standards": {
+        "available": [],
+        "key_patterns": [
+          "Constants defined in constants.py using class-based enums",
+          "Path validation at boundaries (validation.py)",
+          "Handler decorators for logging and error handling",
+          "TEMPLATES_DIR injected via set_templates_dir() function"
+        ]
+      },
+      "reference_components": {
+        "primary": "tool_handlers.py - Template loading pattern at lines 1891, 2103",
+        "secondary": ["constants.py - Paths class", "server.py - TEMPLATES_DIR initialization"]
+      },
+      "gaps_and_risks": [
+        "BUG: DELIVERABLES_template.md and communication_template.json are in templates/ but code looks in templates/power/",
+        "No tests for template loading paths"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Refactor templates directory structure to separate POWER framework templates from tool-specific templates, fixing path bugs and improving code organization",
+      "business_value": "Fixes FileNotFoundError bugs in generate_deliverables_template and generate_agent_communication tools, improves maintainability",
+      "scope": "Small - 3 files modified, 2 files moved",
+      "complexity": "low",
+      "effort_level": 2
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "low",
+      "scope": "Small - 3 files, moving 2 template files",
+      "risk_factors": {
+        "breaking_changes": "none - internal refactor only",
+        "dependencies": "none - no new dependencies",
+        "file_system": "low - moving files within templates/",
+        "security": "none"
+      },
+      "mitigation_strategies": [
+        "Verify template loading works after move by testing tools",
+        "Update all code references before moving files"
+      ]
+    },
+    "3_current_state_analysis": {
+      "affected_files": {
+        "files_to_modify": [
+          {
+            "path": "constants.py",
+            "changes": "Add TOOL_TEMPLATES_DIR constant to Paths class"
+          },
+          {
+            "path": "server.py",
+            "changes": "Initialize and inject TOOL_TEMPLATES_DIR via new setter"
+          },
+          {
+            "path": "tool_handlers.py",
+            "changes": "Update template paths at lines 1891 and 2103 to use TOOL_TEMPLATES_DIR; add set_tool_templates_dir function"
+          }
+        ],
+        "files_to_move": [
+          {
+            "from": "templates/DELIVERABLES_template.md",
+            "to": "templates/tools/DELIVERABLES_template.md"
+          },
+          {
+            "from": "templates/communication_template.json",
+            "to": "templates/tools/communication_template.json"
+          }
+        ],
+        "directories_to_create": [
+          "templates/tools/"
+        ]
+      },
+      "current_structure": {
+        "templates/": "Root templates directory",
+        "templates/power/": "POWER framework templates (readme.txt, api.txt, etc.)",
+        "templates/handoff/": "Handoff templates",
+        "templates/risk/": "Risk assessment templates",
+        "templates/DELIVERABLES_template.md": "WRONG LOCATION - should be in tools/",
+        "templates/communication_template.json": "WRONG LOCATION - should be in tools/"
+      },
+      "target_structure": {
+        "templates/": "Root templates directory",
+        "templates/power/": "POWER framework templates (unchanged)",
+        "templates/tools/": "Tool-specific templates (NEW)",
+        "templates/handoff/": "Handoff templates (unchanged)",
+        "templates/risk/": "Risk assessment templates (unchanged)"
+      }
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Add TOOL_TEMPLATES_DIR constant for tool-specific templates",
+        "Move DELIVERABLES_template.md to templates/tools/",
+        "Move communication_template.json to templates/tools/",
+        "Update generate_deliverables_template to use correct path",
+        "Update generate_agent_communication to use correct path"
+      ],
+      "secondary_features": [
+        "Create templates/tools/ directory",
+        "Add set_tool_templates_dir() function to tool_handlers.py"
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+        "name": "Clean Templates Structure",
+        "feature_dir": "coderef/working/clean-templates-structure"
+      },
+      "task_breakdown": {
+        "setup_tasks": [
+          {
+            "id": "SETUP-001",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Create templates/tools/ directory",
+            "complexity": "trivial",
+            "effort_level": 1
+          }
+        ],
+        "refactor_tasks": [
+          {
+            "id": "REFACTOR-001",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Add TOOL_TEMPLATES_DIR = 'templates/tools' to Paths class in constants.py",
+            "complexity": "trivial",
+            "effort_level": 1
+          },
+          {
+            "id": "REFACTOR-002",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Add TOOL_TEMPLATES_DIR initialization in server.py after line 46",
+            "complexity": "simple",
+            "effort_level": 1
+          },
+          {
+            "id": "REFACTOR-003",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Add set_tool_templates_dir() function in tool_handlers.py (follow existing set_templates_dir pattern)",
+            "complexity": "simple",
+            "effort_level": 1
+          },
+          {
+            "id": "REFACTOR-004",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Update handle_generate_deliverables_template (line 1891) to use TOOL_TEMPLATES_DIR",
+            "complexity": "simple",
+            "effort_level": 1
+          },
+          {
+            "id": "REFACTOR-005",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Update handle_generate_agent_communication (line 2103) to use TOOL_TEMPLATES_DIR",
+            "complexity": "simple",
+            "effort_level": 1
+          }
+        ],
+        "move_tasks": [
+          {
+            "id": "MOVE-001",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Move templates/DELIVERABLES_template.md to templates/tools/DELIVERABLES_template.md",
+            "complexity": "trivial",
+            "effort_level": 1
+          },
+          {
+            "id": "MOVE-002",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Move templates/communication_template.json to templates/tools/communication_template.json",
+            "complexity": "trivial",
+            "effort_level": 1
+          }
+        ],
+        "test_tasks": [
+          {
+            "id": "TEST-001",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Test generate_deliverables_template tool loads template correctly",
+            "complexity": "simple",
+            "effort_level": 1
+          },
+          {
+            "id": "TEST-002",
+            "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+            "description": "Test generate_agent_communication tool loads template correctly",
+            "complexity": "simple",
+            "effort_level": 1
+          }
+        ]
+      }
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Phase 1: Add Constants and Setters",
+        "description": "Add new constant and injection function without changing existing behavior",
+        "tasks": ["REFACTOR-001", "REFACTOR-002", "REFACTOR-003"],
+        "deliverables": [
+          "TOOL_TEMPLATES_DIR constant in constants.py",
+          "TOOL_TEMPLATES_DIR initialization in server.py",
+          "set_tool_templates_dir() function in tool_handlers.py"
+        ],
+        "completion_criteria": "New constant and setter exist, no runtime errors"
+      },
+      "phase_2": {
+        "name": "Phase 2: Update Tool Handlers",
+        "description": "Update template paths to use new constant",
+        "tasks": ["REFACTOR-004", "REFACTOR-005"],
+        "deliverables": [
+          "handle_generate_deliverables_template uses TOOL_TEMPLATES_DIR",
+          "handle_generate_agent_communication uses TOOL_TEMPLATES_DIR"
+        ],
+        "completion_criteria": "Tool handlers reference TOOL_TEMPLATES_DIR"
+      },
+      "phase_3": {
+        "name": "Phase 3: Move Templates",
+        "description": "Create directory and move template files",
+        "tasks": ["SETUP-001", "MOVE-001", "MOVE-002"],
+        "deliverables": [
+          "templates/tools/ directory exists",
+          "DELIVERABLES_template.md in templates/tools/",
+          "communication_template.json in templates/tools/"
+        ],
+        "completion_criteria": "Templates in new location, old location empty"
+      },
+      "phase_4": {
+        "name": "Phase 4: Verification",
+        "description": "Test that tools work correctly with new paths",
+        "tasks": ["TEST-001", "TEST-002"],
+        "deliverables": [
+          "Both tools successfully load templates",
+          "No FileNotFoundError on tool execution"
+        ],
+        "completion_criteria": "Tools work as expected"
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [
+        {
+          "name": "test_deliverables_template_loads",
+          "description": "Verify DELIVERABLES_template.md loads from templates/tools/",
+          "validation": "Call generate_deliverables_template on existing feature, verify no FileNotFoundError"
+        },
+        {
+          "name": "test_communication_template_loads",
+          "description": "Verify communication_template.json loads from templates/tools/",
+          "validation": "Call generate_agent_communication on existing feature, verify no FileNotFoundError"
+        }
+      ],
+      "manual_verification": [
+        "Run /generate-deliverables on existing feature",
+        "Run /generate-agent-communication on existing feature",
+        "Verify generated files have correct content"
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "TOOL_TEMPLATES_DIR constant exists",
+          "target": "Paths.TOOL_TEMPLATES_DIR = 'templates/tools' in constants.py"
+        },
+        {
+          "criterion": "Templates in correct location",
+          "target": "Both templates exist in templates/tools/"
+        },
+        {
+          "criterion": "generate_deliverables_template works",
+          "target": "Tool executes without FileNotFoundError"
+        },
+        {
+          "criterion": "generate_agent_communication works",
+          "target": "Tool executes without FileNotFoundError"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "criterion": "No hardcoded paths",
+          "target": "All template paths use constants"
+        },
+        {
+          "criterion": "Consistent pattern",
+          "target": "TOOL_TEMPLATES_DIR follows same pattern as TEMPLATES_DIR"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "[ ] Verify current bug exists (templates in wrong location)",
+        "[ ] Review existing set_templates_dir pattern"
+      ],
+      "phase_1_checklist": [
+        "[ ] REFACTOR-001: Add TOOL_TEMPLATES_DIR to constants.py",
+        "[ ] REFACTOR-002: Initialize TOOL_TEMPLATES_DIR in server.py",
+        "[ ] REFACTOR-003: Add set_tool_templates_dir() in tool_handlers.py"
+      ],
+      "phase_2_checklist": [
+        "[ ] REFACTOR-004: Update handle_generate_deliverables_template",
+        "[ ] REFACTOR-005: Update handle_generate_agent_communication"
+      ],
+      "phase_3_checklist": [
+        "[ ] SETUP-001: Create templates/tools/ directory",
+        "[ ] MOVE-001: Move DELIVERABLES_template.md",
+        "[ ] MOVE-002: Move communication_template.json"
+      ],
+      "phase_4_checklist": [
+        "[ ] TEST-001: Test generate_deliverables_template",
+        "[ ] TEST-002: Test generate_agent_communication"
+      ],
+      "finalization": [
+        "[ ] All tests passing",
+        "[ ] Commit with descriptive message",
+        "[ ] Update CLAUDE.md if needed"
+      ]
+    }
+  }
+}

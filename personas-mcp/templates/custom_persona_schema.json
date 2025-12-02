@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CustomPersonaInput",
+  "description": "JSON schema for validating custom persona creation inputs",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "expertise",
+    "use_cases",
+    "communication_style"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique persona name (alphanumeric, hyphens, underscores only)",
+      "pattern": "^[a-z0-9_-]+$",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "string",
+      "description": "One-sentence description of persona's role and expertise",
+      "minLength": 20,
+      "maxLength": 200
+    },
+    "expertise": {
+      "type": "array",
+      "description": "List of expertise areas (3-10 items)",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "minItems": 3,
+      "maxItems": 10,
+      "uniqueItems": true
+    },
+    "use_cases": {
+      "type": "array",
+      "description": "List of use cases where this persona is helpful (3-10 items)",
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 200
+      },
+      "minItems": 3,
+      "maxItems": 10,
+      "uniqueItems": true
+    },
+    "communication_style": {
+      "type": "string",
+      "description": "How this persona communicates",
+      "minLength": 20,
+      "maxLength": 200
+    },
+    "problem_solving": {
+      "type": "string",
+      "description": "Problem-solving approach (optional)",
+      "maxLength": 200
+    },
+    "tool_usage": {
+      "type": "string",
+      "description": "How persona uses tools (optional)",
+      "maxLength": 200
+    },
+    "specializations": {
+      "type": "array",
+      "description": "Optional specialized sub-areas",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 100
+      },
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "key_principles": {
+      "type": "array",
+      "description": "Optional guiding principles",
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 200
+      },
+      "maxItems": 10,
+      "uniqueItems": true
+    },
+    "example_responses": {
+      "type": "object",
+      "description": "Optional example question-answer pairs (max 3)",
+      "patternProperties": {
+        "^.+$": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 500
+        }
+      },
+      "maxProperties": 3,
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

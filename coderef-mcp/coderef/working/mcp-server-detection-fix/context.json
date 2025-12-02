@@ -1,0 +1,59 @@
+{
+  "feature_name": "mcp-server-detection-fix",
+  "created_at": "2025-10-17T21:20:00Z",
+  "goal": "Fix coderef2-mcp server detection so it can be used with Claude Code via slash commands in IDE or terminal",
+
+  "current_problem": {
+    "description": "coderef2-mcp server is not being detected by Claude Code MCP client",
+    "symptoms": [
+      "Server starts successfully when run directly (shows 6 tools available)",
+      "Config file in ~/.claude/.mcp.json matches working docs-mcp pattern exactly",
+      "'claude mcp list' only shows docs-mcp, not coderef2-mcp",
+      "No coderef2-mcp tools available in Claude Code"
+    ]
+  },
+
+  "desired_outcome": {
+    "description": "Enable coderef2-mcp tools to be accessible in Claude Code via slash commands",
+    "success_indicators": [
+      "coderef2-mcp appears in 'claude mcp list' with ✓ Connected status",
+      "All 6 tools available as slash commands in Claude Code IDE/terminal",
+      "Tools can be invoked: mcp__coderef__query, mcp__coderef__analyze, mcp__coderef__validate, mcp__coderef__batch_validate, mcp__coderef__generate_docs, mcp__coderef__audit"
+    ]
+  },
+
+  "scope": {
+    "in_scope": [
+      "Fix coderef2-mcp server code to be properly detected by Claude Code",
+      "Ensure MCP protocol handshake works correctly",
+      "Verify stdio protocol implementation",
+      "Fix any logging conflicts with stdio",
+      "Test all 6 tools are accessible"
+    ],
+    "out_of_scope": [
+      "Modifying Claude Code client",
+      "Changing tool functionality (tools already work when server runs directly)",
+      "Adding new tools or features"
+    ]
+  },
+
+  "environment": {
+    "platform": "Windows (win32)",
+    "working_directory": "C:\\Users\\willh\\.mcp-servers\\coderef2-mcp",
+    "config_file": "C:\\Users\\willh\\.claude\\.mcp.json",
+    "python_version": "3.x",
+    "mcp_sdk": "Installed (used by working docs-mcp)"
+  },
+
+  "reference_implementation": {
+    "working_example": "docs-mcp server",
+    "location": "C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py",
+    "status": "Successfully detected and connected by Claude Code",
+    "pattern_to_match": "python C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py"
+  },
+
+  "user_workflow": {
+    "before_fix": "Cannot access coderef2-mcp tools in Claude Code - server not detected",
+    "after_fix": "Use coderef2-mcp tools via slash commands in Claude Code IDE or terminal for code reference queries, analysis, validation, batch validation, documentation generation, and auditing"
+  }
+}

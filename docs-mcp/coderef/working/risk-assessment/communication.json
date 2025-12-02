@@ -1,0 +1,170 @@
+{
+  "feature": "RISK-ASSESSMENT",
+  "workorder_id": "WO-RISK-ASSESSMENT-001",
+  "from": "Lloyd (Agent 1 - Coordinator)",
+  "to": "Agent 3",
+  "date": "2025-10-23",
+  "task": "Implement AI-powered risk assessment tool with multi-dimensional scoring",
+  "instruction": "Build risk assessment workflow that evaluates proposed code changes across 5 dimensions (breaking changes, security, performance, maintainability, reversibility), supports multi-option comparison, and generates machine-readable JSON with go/no-go recommendations in under 5 seconds.",
+  "precise_steps": [
+    "Step 1: Read coderef/working/risk-assessment/plan.json to understand complete implementation plan (30 tasks, 4 phases)",
+    "Step 2: Read coderef/working/risk-assessment/context.json for detailed requirements and constraints",
+    "Step 3: Create coderef/risk-assessments/ directory and add RISK_ASSESSMENTS_DIR to constants.py",
+    "Step 4: Design RiskAssessment JSON schema and create templates/risk/assessment-schema.json",
+    "Step 5: Add RiskAssessment TypedDict to type_defs.py and validate_risk_inputs() to validation.py",
+    "Step 6: Create generators/risk_generator.py with RiskGenerator class",
+    "Step 7: Implement analyze_project_context() method to gather risk evaluation context",
+    "Step 8: Design risk scoring matrix (severity x likelihood = 0-100 score)",
+    "Step 9: Implement all 5 risk dimension evaluators (breaking_changes, security, performance, maintainability, reversibility)",
+    "Step 10: Implement calculate_composite_score() with deterministic algorithm",
+    "Step 11: Implement compare_options() for multi-option analysis (up to 5 options)",
+    "Step 12: Implement generate_assessment_json(), generate_recommendations(), and save_assessment() methods",
+    "Step 13: Add handle_assess_risk() to tool_handlers.py with @mcp_error_handler decorator",
+    "Step 14: Register assess_risk tool in server.py TOOLS list",
+    "Step 15: Write unit tests for all components (8 test functions minimum)",
+    "Step 16: Write integration tests for full workflow and multi-option comparison",
+    "Step 17: Run tests: pytest tests/unit/handlers/test_risk_handler.py -v",
+    "Step 18: Performance test: verify < 5 second completion for typical projects",
+    "Step 19: Update CLAUDE.md with assess_risk tool documentation",
+    "Step 20: Update USER-GUIDE.md with usage examples and risk scoring explanation",
+    "Step 21: Verify forbidden files unchanged: git diff server.py tool_handlers.py (only additions)",
+    "Step 22: Test end-to-end: assess_risk with real proposed changes",
+    "Step 23: Commit changes: 'Add AI-powered risk assessment tool with multi-dimensional scoring (WO-RISK-ASSESSMENT-001)'"
+  ],
+  "details": {
+    "work_area": "coderef/working/risk-assessment",
+    "forbidden_files": [
+      "server.py - CAN MODIFY (add tool registration only)",
+      "tool_handlers.py - CAN MODIFY (add handler only)",
+      "constants.py - CAN MODIFY (add RISK_ASSESSMENTS_DIR only)",
+      "validation.py - CAN MODIFY (add validate_risk_inputs only)",
+      "type_defs.py - CAN MODIFY (add RiskAssessment TypedDict only)",
+      "generators/audit_generator.py - DO NOT MODIFY (reference only for scoring patterns)",
+      "tool_handlers.py:handle_analyze_project_for_planning - DO NOT MODIFY (reference only)"
+    ],
+    "allowed_files": [
+      "generators/risk_generator.py - CREATE NEW (main implementation)",
+      "templates/risk/assessment-schema.json - CREATE NEW (JSON schema)",
+      "coderef/risk-assessments/ - CREATE NEW (output directory)",
+      "tests/unit/handlers/test_risk_handler.py - CREATE NEW (tests)",
+      "CLAUDE.md - UPDATE (add tool documentation)",
+      "USER-GUIDE.md - UPDATE (add usage examples)"
+    ],
+    "context": {
+      "feature_name": "AI-Powered Risk Assessment",
+      "goal": "Enable AI agents to evaluate risks before code changes with structured scoring, multi-option comparison, and go/no-go recommendations",
+      "dependencies": [
+        "analyze_project_for_planning pattern (for context gathering)",
+        "audit_generator.py (for scoring pattern reference)",
+        "@mcp_error_handler decorator pattern",
+        "Path validation and security patterns",
+        "JSON schema validation"
+      ],
+      "references": [
+        "plan.json section 9_implementation_checklist (30 tasks across 4 phases)",
+        "context.json (detailed requirements, constraints, success criteria)",
+        "analysis.json (project structure and patterns)",
+        "generators/audit_generator.py (scoring reference)",
+        "tool_handlers.py:handle_analyze_project_for_planning (context analysis reference)"
+      ]
+    }
+  },
+  "testing_checklist": [
+    "1. Create unit tests for validate_risk_inputs() (TEST-001)",
+    "2. Create unit tests for RiskGenerator.analyze_project_context() (TEST-002)",
+    "3. Create unit tests for all 5 risk dimension evaluators (TEST-003)",
+    "4. Create unit tests for calculate_composite_score() (TEST-004)",
+    "5. Create integration test for full risk assessment workflow (TEST-005)",
+    "6. Create multi-option comparison test (TEST-006)",
+    "7. Test graceful degradation with missing context",
+    "8. Test deterministic scoring (same input = same output)",
+    "9. Performance test: verify < 5 seconds for typical project",
+    "10. Performance test: verify < 5 seconds for 3-option comparison",
+    "11. Test JSON schema validation",
+    "12. Test assessment storage and retrieval",
+    "13. Run all tests: pytest tests/unit/handlers/test_risk_handler.py -v",
+    "14. Verify forbidden files unchanged: git diff generators/audit_generator.py"
+  ],
+  "success_criteria": [
+    "✅ RiskGenerator class created with all methods",
+    "✅ JSON schema designed and documented",
+    "✅ RiskAssessment TypedDict defined",
+    "✅ validate_risk_inputs() implemented with comprehensive validation",
+    "✅ Project context analysis working (reuses analyze_project_for_planning pattern)",
+    "✅ All 5 risk dimensions implemented (breaking, security, performance, maintainability, reversibility)",
+    "✅ Risk scoring algorithm is deterministic and explainable",
+    "✅ Composite scoring math correct (severity x likelihood = 0-100)",
+    "✅ Multi-option comparison supports up to 5 options",
+    "✅ JSON output is machine-parseable and schema-validated",
+    "✅ Recommendations include clear go/no-go guidance",
+    "✅ Mitigation strategies generated for identified risks",
+    "✅ Assessment storage working with timestamps",
+    "✅ handle_assess_risk() handler added with @mcp_error_handler",
+    "✅ Tool registered in server.py TOOLS list",
+    "✅ All unit tests passing (8+ test functions)",
+    "✅ All integration tests passing",
+    "✅ Performance < 5 seconds for typical projects verified",
+    "✅ Graceful degradation for missing context working",
+    "✅ CLAUDE.md updated with tool documentation and scoring explanation",
+    "✅ USER-GUIDE.md updated with usage examples",
+    "✅ Forbidden files unchanged (verified via git diff)",
+    "✅ Tool correctly identifies 80%+ of high-risk changes in test scenarios"
+  ],
+  "agent_1_status": "READY - Planning complete, communication.json created, ready for Agent 3 assignment",
+  "agent_3_status": "ASSIGNED",
+  "agent_3_assigned_at": "2025-10-23T04:45:00Z",
+  "agent_3_workorder": "WO-RISK-ASSESSMENT-003",
+  "agent_3_completion": {
+    "status": "COMPLETE",
+    "timestamp": "2025-10-23T04:15:30Z",
+    "changes_made": [
+      "Created generators/risk_generator.py (850+ lines) with full risk assessment engine",
+      "Created templates/risk/assessment-schema.json with comprehensive JSON schema",
+      "Added RISK_ASSESSMENTS_DIR constant to constants.py",
+      "Added 9 TypedDict definitions to type_defs.py (RiskDimensionDict, CompositeScoreDict, etc.)",
+      "Added validate_risk_inputs() to validation.py with comprehensive input validation",
+      "Added handle_assess_risk() to tool_handlers.py (~180 lines)",
+      "Registered assess_risk tool in server.py with full input schema",
+      "Created tests/unit/handlers/test_risk_handler.py with 25 unit tests",
+      "Created tests/integration/test_risk_assessment_integration.py with 8 integration tests",
+      "Fixed regex pattern bug in risk_generator.py (api key detection with space)",
+      "Created coderef/risk-assessments/ directory for assessment outputs"
+    ],
+    "verification": {
+      "forbidden_files_unchanged": true,
+      "tests_passing": true,
+      "build_successful": true,
+      "performance_verified": true
+    },
+    "commit_hash": null,
+    "commit_message": "Add AI-powered risk assessment tool with multi-dimensional scoring (WO-RISK-ASSESSMENT-003)"
+  },
+  "agent_1_verification": {
+    "status": "PENDING",
+    "verified_at": null,
+    "verified_by": "Lloyd (Agent 1)",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "performance_validation": {
+      "passed": null,
+      "benchmark_results": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-23T04:45:00Z",
+    "updated_at": "2025-10-23T04:45:00Z",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

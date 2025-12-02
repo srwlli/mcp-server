@@ -1,0 +1,651 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "nfl-persona-context-integration",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": false,
+    "has_analysis": false,
+    "created_at": "2025-10-20T00:00:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "title": "Preparation Phase",
+      "description": "Understand current nfl-scraper-expert persona and integration requirements from nfl-scraper-context.md",
+      "foundation_docs": [
+        "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\base\\nfl-scraper-expert.json (v1.3.0 - current version)",
+        "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\base\\nfl-scraper-context.md (integration source)"
+      ],
+      "coding_standards": [
+        "JSON structure: Maintain valid JSON syntax with proper escaping",
+        "Version management: Semantic versioning (1.3.0 → 1.4.0)",
+        "System prompt: Markdown formatting within JSON string",
+        "Backup strategy: Create timestamped backup before modifications"
+      ],
+      "reference_components": [
+        "agent-2-implementation.json (recent multi-agent persona example)",
+        "docs-expert.json (comprehensive system prompt structure)",
+        "mcp-expert.json (communication style patterns)"
+      ],
+      "integration_patterns": [
+        "Project navigation first (PROJECT-MAP.md guidance)",
+        "Database connection non-persistent (supabase link required)",
+        "Validation scripts with expected outputs",
+        "First-time agent onboarding checklist",
+        "Greeting behavior with setup instructions"
+      ]
+    },
+    "1_executive_summary": {
+      "title": "NFL Scraper Expert Persona - Context Integration (v1.3.0 → v1.4.0)",
+      "description": "Integrate project navigation, onboarding guidance, and operational workflows from nfl-scraper-context.md into nfl-scraper-expert persona. This update addresses user feedback: 'why was it so hard to find how we are integrated with supabase?' by adding comprehensive navigation and setup instructions.",
+      "goal": "Make nfl-scraper-expert persona immediately actionable for new agents by providing clear navigation to PROJECT-MAP.md, database connection instructions, validation scripts, and step-by-step onboarding checklist.",
+      "scope": "Update nfl-scraper-expert.json system_prompt to include 5 new sections (Project Navigation, Database Connection, Validation Scripts, First-Time Agent Checklist, Updated Communication Style) without changing existing schema knowledge or scraper patterns.",
+      "out_of_scope": [
+        "Changes to schema patterns (already correct in v1.3.0)",
+        "Changes to scraper implementation patterns",
+        "Changes to ESPN API integration knowledge",
+        "Creating new personas or modifying other persona files"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity": "LOW",
+      "estimated_effort": "30-45 minutes",
+      "risk_factors": [
+        {
+          "risk": "JSON syntax errors from unescaped characters in markdown",
+          "likelihood": "MEDIUM",
+          "impact": "HIGH",
+          "mitigation": "Carefully escape all backslashes, quotes, and newlines. Test JSON validity before committing."
+        },
+        {
+          "risk": "Breaking existing v1.3.0 schema knowledge",
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "mitigation": "Only add new sections, do not modify existing Database Schema Knowledge section. Create backup before modifications."
+        },
+        {
+          "risk": "System prompt becoming too long (token limits)",
+          "likelihood": "LOW",
+          "impact": "MEDIUM",
+          "mitigation": "Keep additions concise. Total system_prompt should remain under 10,000 characters."
+        },
+        {
+          "risk": "Persona failing to activate after update",
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "mitigation": "Test activation with use_persona() tool immediately after changes. Restore from backup if failure."
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "nfl-scraper-context.md",
+          "type": "DOCUMENTATION",
+          "status": "AVAILABLE",
+          "notes": "Source of all integration content"
+        },
+        {
+          "name": "nfl-scraper-expert.json v1.3.0",
+          "type": "PERSONA_FILE",
+          "status": "AVAILABLE",
+          "notes": "Target file for modifications"
+        },
+        {
+          "name": "personas-mcp server",
+          "type": "MCP_SERVER",
+          "status": "RUNNING",
+          "notes": "Will need restart after modifications"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "title": "Current State",
+      "existing_files": [
+        {
+          "path": "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\base\\nfl-scraper-expert.json",
+          "purpose": "NFL Scraper Expert persona definition (v1.3.0)",
+          "status": "TO_MODIFY",
+          "lines": 60,
+          "notes": "Contains schema corrections from v1.3.0. Will add 5 new sections to system_prompt."
+        },
+        {
+          "path": "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\base\\nfl-scraper-context.md",
+          "purpose": "Integration source with navigation and onboarding guidance",
+          "status": "REFERENCE",
+          "lines": 384,
+          "notes": "Contains all content to be integrated into persona"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\backups\\nfl-scraper-expert-v1.3.0-20251020-2.json",
+          "purpose": "Backup of v1.3.0 before v1.4.0 modifications",
+          "content": "Copy of nfl-scraper-expert.json v1.3.0"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "C:\\Users\\willh\\.mcp-servers\\personas-mcp\\personas\\base\\nfl-scraper-expert.json",
+          "changes": [
+            "system_prompt: Add Project Navigation & Onboarding section after line ~100",
+            "system_prompt: Add Database Connection section after navigation",
+            "system_prompt: Add Validation Scripts section after database connection",
+            "system_prompt: Add First-Time Agent Checklist after validation scripts",
+            "system_prompt: Update Communication Style section with onboarding-first approach",
+            "system_prompt: Add 'Cannot find project ref' to Common Issues & Solutions",
+            "version: 1.3.0 → 1.4.0",
+            "updated_at: Update to current timestamp",
+            "system_prompt: Add v1.4.0 entry to Version History & Breaking Changes"
+          ]
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEATURE-001",
+          "name": "Project Navigation Section",
+          "description": "Add comprehensive navigation guidance directing agents to PROJECT-MAP.md, CLAUDE.md, DATABASE-ACCESS-GUIDE.md, and communication.json in proper order",
+          "priority": "P0_CRITICAL",
+          "complexity": "LOW",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "FEATURE-002",
+          "name": "Database Connection Requirements",
+          "description": "Add explicit instructions for non-persistent supabase link command, project ref location, and .env.local requirements",
+          "priority": "P0_CRITICAL",
+          "complexity": "LOW",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "FEATURE-003",
+          "name": "Validation Scripts Guidance",
+          "description": "Add all 3 validation scripts with commands and expected outputs (check-migrations-applied, validate-data-completeness, verify-phase1-fields)",
+          "priority": "P1_HIGH",
+          "complexity": "LOW",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "FEATURE-004",
+          "name": "First-Time Agent Checklist",
+          "description": "Add 8-step onboarding checklist for agents starting work on next-scraper project",
+          "priority": "P1_HIGH",
+          "complexity": "LOW",
+          "estimated_effort": "3 minutes"
+        },
+        {
+          "id": "FEATURE-005",
+          "name": "Updated Communication Behavior",
+          "description": "Update Communication Style section to include onboarding-first approach with example greeting for new agents",
+          "priority": "P0_CRITICAL",
+          "complexity": "MEDIUM",
+          "estimated_effort": "10 minutes"
+        },
+        {
+          "id": "FEATURE-006",
+          "name": "Troubleshooting Addition",
+          "description": "Add 'Cannot find project ref' error to Common Issues & Solutions section",
+          "priority": "P1_HIGH",
+          "complexity": "LOW",
+          "estimated_effort": "3 minutes"
+        },
+        {
+          "id": "FEATURE-007",
+          "name": "Version Management",
+          "description": "Update version to 1.4.0, timestamp, and add comprehensive v1.4.0 entry to version history",
+          "priority": "P0_CRITICAL",
+          "complexity": "LOW",
+          "estimated_effort": "5 minutes"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+        "name": "NFL Persona Context Integration",
+        "feature_dir": "coderef/working/nfl-persona-context-integration"
+      },
+      "tasks": [
+        {
+          "id": "BACKUP-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "SETUP",
+          "title": "Create v1.3.0 backup",
+          "description": "Copy nfl-scraper-expert.json v1.3.0 to backups directory with timestamp",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "1 minute",
+          "prerequisites": [],
+          "acceptance_criteria": [
+            "Backup file created at personas/backups/nfl-scraper-expert-v1.3.0-20251020-2.json",
+            "Backup contains complete v1.3.0 JSON structure",
+            "Backup file is valid JSON"
+          ]
+        },
+        {
+          "id": "NAV-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "NAVIGATION",
+          "title": "Add Project Navigation & Onboarding section",
+          "description": "Insert comprehensive navigation section after 'Your Expertise' section in system_prompt, directing to PROJECT-MAP.md, CLAUDE.md, DATABASE-ACCESS-GUIDE.md, and communication.json",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "5 minutes",
+          "prerequisites": ["BACKUP-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Section includes 4 files in correct order with absolute paths",
+            "PROJECT-MAP.md listed first with 🎯 emoji",
+            "Each file has location, purpose, and contents description",
+            "Ends with 'Always direct new agents to PROJECT-MAP.md first'"
+          ]
+        },
+        {
+          "id": "DB-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "DATABASE",
+          "title": "Add Database Connection section",
+          "description": "Insert database connection requirements section after navigation, emphasizing non-persistent connection and supabase link command",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "5 minutes",
+          "prerequisites": ["NAV-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Clearly states 'Supabase connection is NOT persistent across sessions'",
+            "Includes supabase link command with project ref: fuzouuxhxluqjmiyabal",
+            "Lists project-ref file location and contents",
+            "Lists .env.local location and required variables",
+            "Notes .env.local is gitignored with instruction to ask user if missing"
+          ]
+        },
+        {
+          "id": "VAL-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "VALIDATION",
+          "title": "Add Validation Scripts section",
+          "description": "Insert validation scripts section with all 3 scripts, commands, and expected outputs",
+          "priority": "P1_HIGH",
+          "estimated_effort": "5 minutes",
+          "prerequisites": ["DB-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Includes check-migrations-applied.js with expected output",
+            "Includes validate-data-completeness.js with expected output",
+            "Includes verify-phase1-fields.js with expected output",
+            "Each script has command and full expected output example"
+          ]
+        },
+        {
+          "id": "CHECK-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "ONBOARDING",
+          "title": "Add First-Time Agent Checklist",
+          "description": "Insert 8-step onboarding checklist for agents starting work on next-scraper",
+          "priority": "P1_HIGH",
+          "estimated_effort": "3 minutes",
+          "prerequisites": ["VAL-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Contains all 8 steps from nfl-scraper-context.md",
+            "Steps in correct order: Read PROJECT-MAP.md → Read CLAUDE.md → Read communication.json → Link database → Verify Phase 1 → Validate data → Read DATABASE-ACCESS-GUIDE.md → Check for new tasks",
+            "Each step has ✅ checkbox emoji",
+            "Database commands included inline"
+          ]
+        },
+        {
+          "id": "COMM-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "BEHAVIOR",
+          "title": "Update Communication Style section",
+          "description": "Rewrite Communication Style section to include onboarding-first approach with example greeting",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "10 minutes",
+          "prerequisites": ["CHECK-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Adds 'Onboarding-First' as first bullet point",
+            "Updates existing bullets to reference PROJECT-MAP.md and DATABASE-ACCESS-GUIDE.md",
+            "Adds 'Documentation-Driven' bullet point",
+            "Includes 'Example Greeting for New Agents' subsection",
+            "Example greeting includes PROJECT-MAP.md path and 3 validation commands"
+          ]
+        },
+        {
+          "id": "TROUBLE-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "TROUBLESHOOTING",
+          "title": "Add 'Cannot find project ref' troubleshooting entry",
+          "description": "Add new error entry to Common Issues & Solutions section for project ref linking",
+          "priority": "P1_HIGH",
+          "estimated_effort": "3 minutes",
+          "prerequisites": ["COMM-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "Error title: 'Cannot find project ref' / 'Not linked to remote project'",
+            "Cause: CLI linking is NOT persistent",
+            "Fix: supabase link command with project ref",
+            "Verify: cat command to check project-ref file",
+            "Note: States this is normal behavior"
+          ]
+        },
+        {
+          "id": "VERSION-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "METADATA",
+          "title": "Update version and metadata",
+          "description": "Update version field from 1.3.0 to 1.4.0, update timestamp, and add v1.4.0 entry to version history",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "5 minutes",
+          "prerequisites": ["TROUBLE-001"],
+          "files_to_modify": ["personas/base/nfl-scraper-expert.json"],
+          "acceptance_criteria": [
+            "version field: '1.3.0' → '1.4.0'",
+            "updated_at field: Current timestamp",
+            "v1.4.0 entry added to Version History & Breaking Changes section",
+            "v1.4.0 entry lists all 6 new features",
+            "v1.4.0 entry includes user feedback quote"
+          ]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "TESTING",
+          "title": "Validate JSON syntax",
+          "description": "Verify nfl-scraper-expert.json is valid JSON with proper escaping",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "2 minutes",
+          "prerequisites": ["VERSION-001"],
+          "acceptance_criteria": [
+            "File parses as valid JSON (no syntax errors)",
+            "All newlines properly escaped as \\n",
+            "All quotes properly escaped",
+            "All backslashes properly escaped"
+          ]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-NFL-PERSONA-CONTEXT-INTEGRATION-001",
+          "category": "TESTING",
+          "title": "Test persona activation",
+          "description": "Activate nfl-scraper-expert persona and verify new sections appear",
+          "priority": "P0_CRITICAL",
+          "estimated_effort": "3 minutes",
+          "prerequisites": ["TEST-001"],
+          "acceptance_criteria": [
+            "list_personas shows nfl-scraper-expert v1.4.0",
+            "use_persona('nfl-scraper-expert') activates successfully",
+            "System prompt includes Project Navigation section",
+            "System prompt includes Database Connection section",
+            "System prompt includes Validation Scripts section",
+            "System prompt includes First-Time Agent Checklist",
+            "System prompt includes updated Communication Style",
+            "clear_persona() works without errors"
+          ]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase_number": 1,
+          "name": "Preparation & Backup",
+          "duration": "5 minutes",
+          "tasks": ["BACKUP-001"],
+          "deliverables": [
+            "v1.3.0 backup file created"
+          ],
+          "dependencies": []
+        },
+        {
+          "phase_number": 2,
+          "name": "Core Content Integration",
+          "duration": "25 minutes",
+          "tasks": ["NAV-001", "DB-001", "VAL-001", "CHECK-001", "COMM-001"],
+          "deliverables": [
+            "Project Navigation section added",
+            "Database Connection section added",
+            "Validation Scripts section added",
+            "First-Time Agent Checklist added",
+            "Communication Style section updated"
+          ],
+          "dependencies": ["Phase 1"]
+        },
+        {
+          "phase_number": 3,
+          "name": "Troubleshooting & Metadata",
+          "duration": "10 minutes",
+          "tasks": ["TROUBLE-001", "VERSION-001"],
+          "deliverables": [
+            "Troubleshooting entry added",
+            "Version updated to 1.4.0",
+            "Version history updated"
+          ],
+          "dependencies": ["Phase 2"]
+        },
+        {
+          "phase_number": 4,
+          "name": "Testing & Validation",
+          "duration": "5 minutes",
+          "tasks": ["TEST-001", "TEST-002"],
+          "deliverables": [
+            "JSON syntax validated",
+            "Persona activation tested",
+            "New sections verified"
+          ],
+          "dependencies": ["Phase 3"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_id": "UT-001",
+          "component": "JSON Syntax",
+          "description": "Verify nfl-scraper-expert.json is valid JSON",
+          "method": "Parse file with JSON.parse() or jq tool",
+          "expected_result": "No syntax errors, file parses successfully"
+        },
+        {
+          "test_id": "UT-002",
+          "component": "Version Field",
+          "description": "Verify version field updated to 1.4.0",
+          "method": "Read version field from JSON",
+          "expected_result": "version === '1.4.0'"
+        },
+        {
+          "test_id": "UT-003",
+          "component": "System Prompt Structure",
+          "description": "Verify all 5 new sections present in system_prompt",
+          "method": "Search system_prompt string for section headers",
+          "expected_result": "Found: 'Project Navigation', 'Database Connection', 'Validation Scripts', 'First-Time Agent Checklist', updated 'Communication Style'"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_id": "IT-001",
+          "component": "Persona Activation",
+          "description": "Verify persona activates via MCP tool",
+          "method": "Call mcp__personas-mcp__use_persona('nfl-scraper-expert')",
+          "expected_result": "Persona activates, system prompt includes all new sections"
+        },
+        {
+          "test_id": "IT-002",
+          "component": "List Personas",
+          "description": "Verify persona appears in list with v1.4.0",
+          "method": "Call mcp__personas-mcp__list_personas()",
+          "expected_result": "nfl-scraper-expert listed with version 1.4.0"
+        },
+        {
+          "test_id": "IT-003",
+          "component": "Clear Persona",
+          "description": "Verify persona can be cleared",
+          "method": "Call mcp__personas-mcp__clear_persona()",
+          "expected_result": "Persona cleared without errors"
+        }
+      ],
+      "acceptance_tests": [
+        {
+          "test_id": "AT-001",
+          "scenario": "New agent reads persona and finds PROJECT-MAP.md guidance",
+          "steps": [
+            "Activate nfl-scraper-expert persona",
+            "Search system prompt for 'PROJECT-MAP.md'",
+            "Verify absolute path is provided",
+            "Verify it's listed first with 🎯 emoji"
+          ],
+          "expected_outcome": "Agent immediately knows to read PROJECT-MAP.md first"
+        },
+        {
+          "test_id": "AT-002",
+          "scenario": "New agent learns database connection is non-persistent",
+          "steps": [
+            "Activate nfl-scraper-expert persona",
+            "Search system prompt for 'NOT persistent'",
+            "Verify supabase link command is provided",
+            "Verify project ref fuzouuxhxluqjmiyabal is included"
+          ],
+          "expected_outcome": "Agent understands connection must be re-established each session"
+        },
+        {
+          "test_id": "AT-003",
+          "scenario": "New agent follows onboarding checklist",
+          "steps": [
+            "Activate nfl-scraper-expert persona",
+            "Search system prompt for 'First-Time Agent Checklist'",
+            "Verify 8 steps are present",
+            "Verify steps are in correct order"
+          ],
+          "expected_outcome": "Agent has clear 8-step onboarding path"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        {
+          "criterion_id": "AC-001",
+          "description": "All 5 integration updates completed successfully",
+          "measurement": "Verify all sections present in system_prompt: Project Navigation, Database Connection, Validation Scripts, First-Time Agent Checklist, Updated Communication Style",
+          "target": "100% (5/5 sections added)"
+        },
+        {
+          "criterion_id": "AC-002",
+          "description": "Version updated to 1.4.0 with complete version history",
+          "measurement": "Check version field and Version History section",
+          "target": "version === '1.4.0' AND v1.4.0 entry in history"
+        },
+        {
+          "criterion_id": "AC-003",
+          "description": "JSON syntax is valid",
+          "measurement": "Parse file with JSON parser",
+          "target": "No syntax errors"
+        },
+        {
+          "criterion_id": "AC-004",
+          "description": "Persona activates successfully",
+          "measurement": "Call use_persona('nfl-scraper-expert') and verify activation",
+          "target": "Activation succeeds, all new sections visible in system prompt"
+        },
+        {
+          "criterion_id": "AC-005",
+          "description": "Backup of v1.3.0 created",
+          "measurement": "Check backups directory for timestamped v1.3.0 file",
+          "target": "Backup file exists and contains valid v1.3.0 JSON"
+        },
+        {
+          "criterion_id": "AC-006",
+          "description": "PROJECT-MAP.md referenced as primary navigation",
+          "measurement": "Search system_prompt for 'PROJECT-MAP.md' and verify it's first in navigation list",
+          "target": "PROJECT-MAP.md mentioned first with 🎯 emoji and absolute path"
+        },
+        {
+          "criterion_id": "AC-007",
+          "description": "Database connection non-persistence clearly stated",
+          "measurement": "Search for 'NOT persistent' in Database Connection section",
+          "target": "Explicitly states connection is NOT persistent across sessions"
+        },
+        {
+          "criterion_id": "AC-008",
+          "description": "All 3 validation scripts included with expected outputs",
+          "measurement": "Count validation script entries in Validation Scripts section",
+          "target": "3 scripts with commands and expected outputs"
+        },
+        {
+          "criterion_id": "AC-009",
+          "description": "8-step onboarding checklist complete",
+          "measurement": "Count steps in First-Time Agent Checklist",
+          "target": "8 steps with ✅ checkboxes in correct order"
+        },
+        {
+          "criterion_id": "AC-010",
+          "description": "Communication Style includes onboarding-first approach",
+          "measurement": "Search Communication Style section for 'Onboarding-First' and example greeting",
+          "target": "Onboarding-First bullet present AND example greeting included"
+        }
+      ],
+      "performance_metrics": [
+        {
+          "metric": "System Prompt Length",
+          "target": "< 15,000 characters",
+          "measurement": "Count characters in system_prompt field",
+          "rationale": "Avoid token limit issues while providing comprehensive guidance"
+        },
+        {
+          "metric": "Persona Activation Time",
+          "target": "< 2 seconds",
+          "measurement": "Time from use_persona() call to activation complete",
+          "rationale": "Ensure persona remains responsive"
+        },
+        {
+          "metric": "JSON File Size",
+          "target": "< 25 KB",
+          "measurement": "Check file size of nfl-scraper-expert.json",
+          "rationale": "Keep persona file manageable"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_preparation": {
+        "tasks": [
+          "✅ Create backup of nfl-scraper-expert.json v1.3.0",
+          "✅ Verify nfl-scraper-context.md is available and complete",
+          "✅ Review current v1.3.0 system_prompt structure"
+        ]
+      },
+      "phase_2_core_integration": {
+        "tasks": [
+          "✅ Add Project Navigation & Onboarding section after 'Your Expertise'",
+          "✅ Add Database Connection section (emphasize non-persistent)",
+          "✅ Add Validation Scripts section (all 3 scripts with outputs)",
+          "✅ Add First-Time Agent Checklist (8 steps)",
+          "✅ Update Communication Style section (onboarding-first + example greeting)"
+        ]
+      },
+      "phase_3_finalization": {
+        "tasks": [
+          "✅ Add 'Cannot find project ref' to Common Issues & Solutions",
+          "✅ Update version field to 1.4.0",
+          "✅ Update updated_at timestamp",
+          "✅ Add v1.4.0 entry to Version History section"
+        ]
+      },
+      "phase_4_testing": {
+        "tasks": [
+          "✅ Validate JSON syntax (no parsing errors)",
+          "✅ Test persona activation via use_persona()",
+          "✅ Verify all 5 new sections visible in system prompt",
+          "✅ Verify version shows 1.4.0 in list_personas",
+          "✅ Test clear_persona() works",
+          "✅ Check system_prompt length < 15,000 characters",
+          "✅ Verify backup exists and is valid"
+        ]
+      },
+      "final_checklist": {
+        "tasks": [
+          "✅ All 10 acceptance criteria met (AC-001 through AC-010)",
+          "✅ All 3 performance metrics within targets",
+          "✅ Git commit created with descriptive message",
+          "✅ Personas-mcp server restarted (if needed for hot reload)",
+          "✅ Final smoke test: Activate persona and verify new greeting appears"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+Generate comprehensive project dependency inventory using the dependency_inventory MCP tool with scan_security=true for the current project directory. Analyzes dependencies across npm, pip, cargo, and composer ecosystems, scans for security vulnerabilities via OSV API, checks for outdated packages, and generates detailed dependency manifest.

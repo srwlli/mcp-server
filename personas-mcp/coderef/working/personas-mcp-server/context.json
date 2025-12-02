@@ -1,0 +1,65 @@
+{
+  "feature_name": "personas-mcp-server",
+  "description": "Implement a working MCP server that provides persona management capabilities. Initial version focuses on the mcp-expert persona with a single tool (use_persona) to activate it. The server loads persona definitions from JSON files and returns system prompts that Claude Code can use to adopt expert behavior.",
+  "goal": "Get a minimal viable MCP server online that can activate the mcp-expert persona in Claude Code, demonstrating the core concept of composable AI expert personas",
+  "requirements": [
+    "MCP server using Python MCP SDK (stdio transport)",
+    "use_persona tool that accepts persona name as parameter",
+    "Persona loader that reads from personas/base/mcp-expert.json",
+    "Return persona system_prompt and metadata when use_persona is called",
+    "Simple in-memory state management (track active persona)",
+    "get_active_persona tool to check current persona",
+    "clear_persona tool to reset to default state",
+    "MCP protocol compliance (JSON-RPC 2.0, proper tool schemas)",
+    "Compatible with Claude Code MCP client",
+    "Error handling for invalid persona names or missing files"
+  ],
+  "out_of_scope": [
+    "Multiple personas or stacking (future phase)",
+    "Specialized personas (mcp-expert:docs-mcp, etc.) - future",
+    "Persistent state across server restarts",
+    "SSE/HTTP transport (stdio only for now)",
+    "Unit tests (manual testing first, then add tests)",
+    "All 5 base personas (just mcp-expert for MVP)"
+  ],
+  "constraints": [
+    "Must follow MCP protocol specification (2024-11-05)",
+    "Must use official MCP Python SDK",
+    "Must work with Claude Code's MCP client implementation",
+    "Keep implementation simple and focused for MVP",
+    "Server must handle errors gracefully without crashing",
+    "Persona JSON schema must match the structure we created"
+  ],
+  "decisions": {
+    "transport": "stdio (local process, simplest for Claude Code)",
+    "state_management": "in-memory only (no persistence needed for MVP)",
+    "persona_scope": "mcp-expert only (validate concept first)",
+    "tools": "3 tools: use_persona, get_active_persona, clear_persona",
+    "testing_approach": "manual testing with Claude Code before unit tests",
+    "project_structure": "server.py (main), src/persona_manager.py (logic), src/models.py (Pydantic)"
+  },
+  "success_criteria": {
+    "functional": [
+      "Server starts successfully via Claude Code MCP config",
+      "use_persona('mcp-expert') returns mcp-expert system prompt",
+      "get_active_persona() shows currently active persona",
+      "clear_persona() resets to no active persona",
+      "Invalid persona name returns helpful error message",
+      "Server doesn't crash on malformed requests"
+    ],
+    "integration": [
+      "Claude Code recognizes the MCP server",
+      "Tools appear in Claude Code's available tools",
+      "Activating mcp-expert changes Claude's behavior noticeably",
+      "Can call use_persona multiple times (replaces current persona)",
+      "Server logs help debug any issues"
+    ],
+    "quality": [
+      "Code follows MCP SDK patterns",
+      "Async handlers implemented correctly",
+      "Error messages are clear and actionable",
+      "Persona loading is robust (handles missing files)",
+      "Ready to extend with more personas later"
+    ]
+  }
+}

@@ -1,0 +1,969 @@
+{
+  "$schema": "./tooling-plan-schema.json",
+  "document_info": {
+    "title": "docs-mcp Tool Expansion Plan",
+    "version": "1.0.0",
+    "last_updated": "2025-10-10",
+    "status": "planning",
+    "description": "Comprehensive plan for expanding docs-mcp from 7 to 13+ tools"
+  },
+  "existing_tools": [
+    {
+      "tool_id": 1,
+      "name": "list_templates",
+      "status": "implemented",
+      "version": "1.0.0",
+      "category": "documentation_generation",
+      "pattern": "direct_action",
+      "description": "Lists all available POWER framework templates"
+    },
+    {
+      "tool_id": 2,
+      "name": "get_template",
+      "status": "implemented",
+      "version": "1.0.0",
+      "category": "documentation_generation",
+      "pattern": "direct_action",
+      "description": "Retrieves content of a specific documentation template"
+    },
+    {
+      "tool_id": 3,
+      "name": "generate_foundation_docs",
+      "status": "implemented",
+      "version": "1.0.0",
+      "category": "documentation_generation",
+      "pattern": "template_provider",
+      "description": "Generate all foundation documentation for a project (returns templates + plan)"
+    },
+    {
+      "tool_id": 4,
+      "name": "generate_individual_doc",
+      "status": "implemented",
+      "version": "1.0.0",
+      "category": "documentation_generation",
+      "pattern": "template_provider",
+      "description": "Generate a single documentation file (returns template + instructions)"
+    },
+    {
+      "tool_id": 5,
+      "name": "get_changelog",
+      "status": "implemented",
+      "version": "1.0.2",
+      "category": "changelog_management",
+      "pattern": "direct_action",
+      "description": "Query changelog history with optional filters (READ operation)"
+    },
+    {
+      "tool_id": 6,
+      "name": "add_changelog_entry",
+      "status": "implemented",
+      "version": "1.0.2",
+      "category": "changelog_management",
+      "pattern": "direct_action",
+      "description": "Add new entry to project changelog (WRITE operation)"
+    },
+    {
+      "tool_id": 7,
+      "name": "update_changelog",
+      "status": "implemented",
+      "version": "1.0.3",
+      "category": "changelog_management",
+      "pattern": "meta_tool",
+      "description": "Agentic workflow tool - instructs AI to analyze changes and update changelog (INSTRUCT operation)"
+    }
+  ],
+  "proposed_tools": [
+    {
+      "tool_id": 8,
+      "name": "establish_standards",
+      "status": "implemented",
+      "priority": "high",
+      "category": "consistency_enforcement",
+      "pattern": "meta_tool",
+      "estimated_effort": "6-8 hours",
+      "description": "Standards Discovery Tool - scans codebase to discover and document existing patterns as official standards",
+      "purpose": "Create comprehensive reference guide documenting how UI elements, interactions, and behaviors SHOULD work in your project",
+      "workflow": [
+        "Step 1: Scan entire codebase for patterns",
+        "Step 2: Identify most common patterns (buttons, colors, spacing, error handling, etc.)",
+        "Step 3: Analyze pattern frequency and consistency",
+        "Step 4: Document discovered patterns as standards",
+        "Step 5: Save standards to coderef/standards/ directory"
+      ],
+      "use_cases": [
+        "Bootstrap design system documentation from existing code",
+        "Establish project conventions before scaling team",
+        "Document tribal knowledge for new developers",
+        "Foundation for consistency enforcement tools"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "focus_areas": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ui_components",
+              "error_handling",
+              "data_validation",
+              "api_patterns",
+              "naming_conventions",
+              "all"
+            ]
+          },
+          "required": false,
+          "default": [
+            "all"
+          ],
+          "description": "Which areas to analyze for standards"
+        },
+        "confidence_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "required": false,
+          "default": 0.7,
+          "description": "Minimum pattern frequency to establish as standard (0.7 = 70% of occurrences)"
+        }
+      },
+      "output": "Standards documents written to coderef/standards/ (e.g., ui-standards.json, api-standards.json)",
+      "benefits": [
+        "Codifies existing best practices",
+        "Creates single source of truth for 'how we do things'",
+        "Enables automated consistency checking",
+        "Onboards new developers faster",
+        "Foundation for design system"
+      ],
+      "implementation_notes": [
+        "Meta-tool returns analysis instructions for AI",
+        "AI scans codebase for patterns (button sizes, color usage, error message formats, etc.)",
+        "Generates standards documents in machine-readable JSON format",
+        "Standards include: pattern, frequency, examples, rationale"
+      ],
+      "real_world_analogy": "Like a fashion designer documenting brand guidelines - 'Our buttons are always blue, 48px tall, with rounded corners' - so everyone knows the rules"
+    },
+    {
+      "tool_id": 9,
+      "name": "audit_codebase",
+      "status": "implemented",
+      "priority": "high",
+      "category": "consistency_enforcement",
+      "pattern": "meta_tool",
+      "estimated_effort": "5-7 hours",
+      "description": "Codebase Consistency Auditor - finds all places in existing code that DON'T follow established standards",
+      "purpose": "Identify existing inconsistencies so they can be fixed systematically",
+      "workflow": [
+        "Step 1: Read standards documents (from establish_standards)",
+        "Step 2: Scan every component, page, and interaction",
+        "Step 3: Compare against standards",
+        "Step 4: Generate violation report with file locations and line numbers",
+        "Step 5: Prioritize violations by severity"
+      ],
+      "use_cases": [
+        "Find all inconsistent button sizes before redesign",
+        "Identify error messages that don't match standard format",
+        "Locate components using deprecated patterns",
+        "Create technical debt backlog"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "standards_path": {
+          "type": "string",
+          "required": false,
+          "description": "Path to standards documents (default: coderef/standards/)"
+        },
+        "focus_areas": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "ui_components",
+              "error_handling",
+              "data_validation",
+              "api_patterns",
+              "naming_conventions",
+              "all"
+            ]
+          },
+          "required": false,
+          "default": [
+            "all"
+          ],
+          "description": "Which standards to audit against"
+        },
+        "severity_filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "critical",
+            "major",
+            "minor"
+          ],
+          "required": false,
+          "default": "all",
+          "description": "Filter violations by severity"
+        }
+      },
+      "output": "Audit report listing all violations with file paths, line numbers, and recommended fixes",
+      "benefits": [
+        "Finds inconsistencies AI/developers might miss",
+        "Provides actionable fix list",
+        "Quantifies technical debt",
+        "Tracks improvement over time"
+      ],
+      "implementation_notes": [
+        "Meta-tool returns audit instructions for AI",
+        "AI reads standards, scans code, compares systematically",
+        "Violations categorized by severity (critical = breaks UX, major = confusing, minor = style)",
+        "Output includes: violation description, location, current value, expected value, fix suggestion"
+      ],
+      "real_world_analogy": "Like a home inspector going through your house with a checklist - 'This outlet isn't up to code, that railing is the wrong height, fix these 23 things'"
+    },
+    {
+      "tool_id": 10,
+      "name": "check_consistency",
+      "status": "proposed",
+      "priority": "high",
+      "category": "consistency_enforcement",
+      "pattern": "validation_tool",
+      "estimated_effort": "4-5 hours",
+      "description": "Pre-Implementation Consistency Checker - validates feature plans against established standards BEFORE code is written",
+      "purpose": "Prevent NEW inconsistencies from being added to codebase (quality gate)",
+      "workflow": [
+        "Step 1: Read feature plan JSON (describes buttons, modals, colors to be used)",
+        "Step 2: Read project standards",
+        "Step 3: Compare plan against standards",
+        "Step 4: Return approval or rejection with specific violations"
+      ],
+      "use_cases": [
+        "Before implementing new feature - validate design plan",
+        "During code review - check new components follow standards",
+        "Pre-commit hook - block non-compliant changes",
+        "Design system compliance checking"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "plan_path": {
+          "type": "string",
+          "required": true,
+          "description": "Path to feature plan JSON file"
+        },
+        "standards_path": {
+          "type": "string",
+          "required": false,
+          "description": "Path to standards documents (default: coderef/standards/)"
+        },
+        "strict_mode": {
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Fail on any violation (true) or only critical ones (false)"
+        }
+      },
+      "output": "Validation result: PASS or FAIL with list of violations and recommended fixes",
+      "benefits": [
+        "Catches design mistakes before coding starts",
+        "Much cheaper to fix plan than implemented code",
+        "Enforces consistency proactively",
+        "Reduces code review friction"
+      ],
+      "implementation_notes": [
+        "Expects feature plans in standardized JSON format",
+        "Plan schema: { ui_elements: [], interactions: [], data_structures: [] }",
+        "Returns actionable feedback: 'Your export button is red but standard requires blue'",
+        "Can be integrated into CI/CD pipeline"
+      ],
+      "real_world_analogy": "Like a building inspector reviewing blueprints before construction - 'Your blueprint shows 30-inch door, code requires 36 inches. Fix plan before building'"
+    },
+    {
+      "tool_id": 11,
+      "name": "update_docs",
+      "status": "proposed",
+      "priority": "medium",
+      "category": "documentation_generation",
+      "pattern": "meta_tool",
+      "estimated_effort": "4-6 hours",
+      "description": "Documentation Refresh Meta-Tool - instructs AI to analyze code changes and systematically update affected documentation",
+      "purpose": "Enable AI to autonomously maintain documentation after code changes",
+      "workflow": [
+        "Step 1: Analyze code changes (AI reviews conversation context)",
+        "Step 2: Identify affected documentation (maps changes to docs)",
+        "Step 3: Review current documentation (finds outdated sections)",
+        "Step 4: Regenerate documentation (uses templates + project context)",
+        "Step 5: Cross-check consistency (validates references)"
+      ],
+      "use_cases": [
+        "After adding new features - updates README, API.md, quickref",
+        "After refactoring - updates ARCHITECTURE.md, COMPONENTS.md",
+        "After API changes - updates API.md with new signatures"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "changed_files": {
+          "type": "array",
+          "items": "string",
+          "required": false,
+          "description": "Optional: List of files changed (AI can infer from context)"
+        }
+      },
+      "output": "Step-by-step workflow instructions for AI to follow autonomously",
+      "benefits": [
+        "Reduces cognitive load - AI does detective work",
+        "Ensures consistency - follows systematic workflow",
+        "Leverages context - AI knows what it just changed",
+        "Self-documenting AI - maintains its own work",
+        "Scalable - works for any project size"
+      ],
+      "implementation_notes": [
+        "Similar pattern to update_changelog (proven meta-tool design)",
+        "Integrates with existing generate_individual_doc tool",
+        "Returns detailed instructions, not actual file modifications",
+        "AI uses conversation context to determine what changed"
+      ]
+    },
+    {
+      "tool_id": 12,
+      "name": "generate_release_notes",
+      "status": "proposed",
+      "priority": "medium",
+      "category": "changelog_management",
+      "pattern": "data_transformer",
+      "estimated_effort": "3-4 hours",
+      "description": "Release Note Compiler - transforms changelog entries into user-friendly release notes",
+      "purpose": "Automate release communication by converting structured changelog data into release notes",
+      "use_cases": [
+        "Generate GitHub release notes from changelog",
+        "Create user-facing release announcements",
+        "Compile version highlights for marketing"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "version": {
+          "type": "string",
+          "required": true,
+          "description": "Version to generate notes for (e.g., '1.0.3')",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "include_types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "bugfix",
+              "enhancement",
+              "feature",
+              "breaking_change",
+              "deprecation",
+              "security"
+            ]
+          },
+          "required": false,
+          "description": "Change types to include (default: all)"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "markdown",
+            "plain",
+            "html"
+          ],
+          "required": false,
+          "default": "markdown",
+          "description": "Output format"
+        }
+      },
+      "output": "Formatted release notes ready for distribution",
+      "benefits": [
+        "Saves time on release communication",
+        "Consistent release note format",
+        "Automatic categorization of changes",
+        "Highlights breaking changes prominently"
+      ],
+      "implementation_notes": [
+        "Reads from CHANGELOG.json via ChangelogGenerator",
+        "Groups changes by category",
+        "Formats according to best practices (security first, breaking changes prominent)",
+        "Supports multiple output formats for different platforms"
+      ]
+    },
+    {
+      "tool_id": 13,
+      "name": "search_changelog",
+      "status": "proposed",
+      "priority": "low",
+      "category": "changelog_management",
+      "pattern": "query_tool",
+      "estimated_effort": "2-3 hours",
+      "description": "Full-text search across changelog entries by keyword, file, or contributor",
+      "purpose": "Enable flexible searching of changelog history beyond simple filters",
+      "use_cases": [
+        "Find all changes related to 'authentication'",
+        "Search for changes by specific contributor",
+        "Locate changes affecting a particular file",
+        "Research feature evolution over time"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "query": {
+          "type": "string",
+          "required": true,
+          "description": "Search term (searches title, description, files, reason, impact)"
+        },
+        "search_field": {
+          "type": "string",
+          "enum": [
+            "all",
+            "title",
+            "description",
+            "files",
+            "contributors"
+          ],
+          "required": false,
+          "default": "all",
+          "description": "Limit search to specific field"
+        }
+      },
+      "output": "List of matching changelog entries with context",
+      "benefits": [
+        "More flexible than change_type filtering",
+        "Enables feature archaeology",
+        "Useful for documentation research",
+        "Helps understand project evolution"
+      ],
+      "implementation_notes": [
+        "Case-insensitive search",
+        "Supports partial matching",
+        "Returns entries sorted by relevance (most recent first)",
+        "Highlights matching text in results"
+      ]
+    },
+    {
+      "tool_id": 14,
+      "name": "compare_versions",
+      "status": "proposed",
+      "priority": "low",
+      "category": "changelog_management",
+      "pattern": "comparison_tool",
+      "estimated_effort": "3-4 hours",
+      "description": "Version Diff Tool - compares two versions in changelog and shows categorized summary",
+      "purpose": "Help users understand what changed between releases",
+      "use_cases": [
+        "Create migration guides between versions",
+        "Understand version jump impact (e.g., 1.0.0 → 1.0.5)",
+        "Generate upgrade documentation",
+        "Review release scope before deployment"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "from_version": {
+          "type": "string",
+          "required": true,
+          "description": "Starting version (e.g., '1.0.0')",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "to_version": {
+          "type": "string",
+          "required": true,
+          "description": "Ending version (e.g., '1.0.5')",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "summary",
+            "detailed",
+            "files_only"
+          ],
+          "required": false,
+          "default": "summary",
+          "description": "Output format"
+        }
+      },
+      "output": "Structured comparison showing all changes between versions",
+      "benefits": [
+        "Clarifies upgrade impact",
+        "Identifies breaking changes in range",
+        "Useful for version skipping scenarios",
+        "Helps plan migrations"
+      ],
+      "implementation_notes": [
+        "Validates version order (from < to)",
+        "Groups changes by type (features, bugfixes, breaking)",
+        "Highlights critical changes (security, breaking)",
+        "Optionally shows file-level changes"
+      ]
+    },
+    {
+      "tool_id": 15,
+      "name": "validate_documentation",
+      "status": "proposed",
+      "priority": "low",
+      "category": "documentation_generation",
+      "pattern": "meta_tool",
+      "estimated_effort": "5-6 hours",
+      "description": "Documentation Quality Checker Meta-Tool - instructs AI to validate docs against current codebase",
+      "purpose": "Quality gate to ensure documentation stays current with code",
+      "workflow": [
+        "Step 1: Read documentation to review",
+        "Step 2: Analyze current codebase",
+        "Step 3: Compare docs to code (find discrepancies)",
+        "Step 4: Check for missing sections per template",
+        "Step 5: Validate cross-references between docs",
+        "Step 6: Generate validation report"
+      ],
+      "use_cases": [
+        "Pre-release quality checks",
+        "Documentation audits",
+        "Identify stale documentation",
+        "Ensure API docs match actual signatures"
+      ],
+      "parameters": {
+        "project_path": {
+          "type": "string",
+          "required": true,
+          "description": "Absolute path to project directory"
+        },
+        "doc_type": {
+          "type": "string",
+          "enum": [
+            "all",
+            "readme",
+            "architecture",
+            "api",
+            "components",
+            "schema",
+            "user-guide"
+          ],
+          "required": false,
+          "default": "all",
+          "description": "Which docs to validate"
+        },
+        "strict": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Strict mode: fail on warnings"
+        }
+      },
+      "output": "Validation report with errors, warnings, and suggestions",
+      "benefits": [
+        "Catches documentation drift",
+        "Enforces quality standards",
+        "Reduces user confusion from stale docs",
+        "Automates quality checks"
+      ],
+      "implementation_notes": [
+        "Meta-tool pattern - returns instructions for AI validation workflow",
+        "AI uses codebase context to verify claims in docs",
+        "Checks for common issues (broken links, outdated examples)",
+        "Severity levels: error (must fix), warning (should fix), info (nice to have)"
+      ]
+    }
+  ],
+  "tool_categories": {
+    "documentation_generation": {
+      "description": "Tools for creating and maintaining project documentation",
+      "tools": [
+        1,
+        2,
+        3,
+        4,
+        11,
+        15
+      ]
+    },
+    "changelog_management": {
+      "description": "Tools for managing structured changelog data",
+      "tools": [
+        5,
+        6,
+        7,
+        12,
+        13,
+        14
+      ]
+    },
+    "consistency_enforcement": {
+      "description": "Tools for establishing, auditing, and enforcing codebase standards",
+      "tools": [
+        8,
+        9,
+        10
+      ]
+    }
+  },
+  "implementation_phases": {
+    "phase_1": {
+      "name": "Consistency Trilogy",
+      "timeline": "Week 1-2",
+      "tools": [
+        8,
+        9,
+        10
+      ],
+      "rationale": "High-priority consistency enforcement tools - establish standards, audit code, prevent violations"
+    },
+    "phase_2": {
+      "name": "Documentation Enhancement",
+      "timeline": "Week 3-4",
+      "tools": [
+        11,
+        12
+      ],
+      "rationale": "Meta-tool for doc updates and release note generation"
+    },
+    "phase_3": {
+      "name": "Advanced Changelog",
+      "timeline": "Week 5-6",
+      "tools": [
+        13,
+        14,
+        15
+      ],
+      "rationale": "Search, comparison, and validation tools for mature projects"
+    }
+  },
+  "design_patterns": {
+    "direct_action": {
+      "description": "Tool performs operation directly and returns result",
+      "examples": [
+        "list_templates",
+        "get_changelog",
+        "add_changelog_entry"
+      ],
+      "characteristics": [
+        "Fixed logic",
+        "Deterministic output",
+        "Limited to provided parameters"
+      ]
+    },
+    "template_provider": {
+      "description": "Tool returns templates/instructions, AI generates actual content",
+      "examples": [
+        "generate_foundation_docs",
+        "generate_individual_doc"
+      ],
+      "characteristics": [
+        "AI fills in project-specific details",
+        "Leverages AI's context understanding",
+        "Produces customized output"
+      ]
+    },
+    "meta_tool": {
+      "description": "Tool instructs AI to perform workflow autonomously using conversation context",
+      "examples": [
+        "update_changelog",
+        "establish_standards",
+        "audit_codebase",
+        "update_docs",
+        "validate_documentation"
+      ],
+      "characteristics": [
+        "Returns step-by-step instructions",
+        "AI uses full conversation context",
+        "Flexible and adaptive",
+        "Self-documenting AI"
+      ]
+    },
+    "data_transformer": {
+      "description": "Tool transforms data from one format to another",
+      "examples": [
+        "generate_release_notes"
+      ],
+      "characteristics": [
+        "Reads structured data",
+        "Applies formatting rules",
+        "Outputs user-friendly format"
+      ]
+    },
+    "query_tool": {
+      "description": "Tool searches/filters data based on criteria",
+      "examples": [
+        "get_changelog",
+        "search_changelog"
+      ],
+      "characteristics": [
+        "Flexible search parameters",
+        "Returns filtered results",
+        "Supports multiple query modes"
+      ]
+    },
+    "comparison_tool": {
+      "description": "Tool compares two or more entities and shows differences",
+      "examples": [
+        "compare_versions"
+      ],
+      "characteristics": [
+        "Analyzes differences",
+        "Categorizes changes",
+        "Provides context for differences"
+      ]
+    },
+    "validation_tool": {
+      "description": "Tool validates data/plans against rules/standards",
+      "examples": [
+        "check_consistency"
+      ],
+      "characteristics": [
+        "Binary result (pass/fail)",
+        "Provides violation details",
+        "Suggests fixes"
+      ]
+    }
+  },
+  "consistency_trilogy": {
+    "description": "The three consistency enforcement tools work together to maintain professional, consistent UX across the entire application",
+    "workflow": {
+      "step_1": {
+        "tool": "establish_standards",
+        "action": "Define the rules",
+        "output": "Reference documents documenting 'how we do things here'"
+      },
+      "step_2": {
+        "tool": "audit_codebase",
+        "action": "Find rule violations",
+        "output": "List of existing inconsistencies to fix"
+      },
+      "step_3": {
+        "action": "Fix the problems",
+        "actor": "Developer/AI",
+        "output": "Codebase brought into compliance"
+      },
+      "step_4": {
+        "tool": "check_consistency",
+        "action": "Prevent future violations",
+        "output": "Quality gate for all new work"
+      }
+    },
+    "value_proposition": {
+      "without_tools": [
+        "New features use different button sizes, colors, patterns",
+        "Inconsistent error messages confuse users",
+        "Design debt accumulates",
+        "App feels janky and unprofessional",
+        "Code reviews focus on style inconsistencies"
+      ],
+      "with_tools": [
+        "Every feature follows the same patterns",
+        "Professional, cohesive user experience",
+        "Standards are documented and enforced",
+        "Agents/developers know exactly what to build",
+        "Code reviews focus on logic, not style"
+      ]
+    }
+  },
+  "meta_tool_trilogy": {
+    "description": "The three meta-tools orchestrate AI workflows for autonomous documentation and quality management",
+    "tools": {
+      "update_changelog": {
+        "tool_id": 7,
+        "purpose": "Document code changes in changelog",
+        "workflow": "Analyze changes → Determine type/severity → Call add_changelog_entry",
+        "pattern": "Self-documenting AI"
+      },
+      "update_docs": {
+        "tool_id": 11,
+        "purpose": "Refresh documentation after code changes",
+        "workflow": "Analyze changes → Identify outdated docs → Regenerate docs",
+        "pattern": "Systematic maintenance"
+      },
+      "validate_documentation": {
+        "tool_id": 15,
+        "purpose": "Quality-check docs against codebase",
+        "workflow": "Read docs → Compare to code → Report discrepancies → Suggest fixes",
+        "pattern": "Automated quality gate"
+      }
+    }
+  },
+  "technical_debt": {
+    "version_mismatch": {
+      "issue": "server.py shows version 1.0.0 but README shows 1.0.9",
+      "priority": "low",
+      "fix": "Update server.py __version__ to match README"
+    },
+    "missing_package_metadata": {
+      "issue": "No pyproject.toml for proper Python packaging",
+      "priority": "medium",
+      "fix": "Create pyproject.toml with dependencies and metadata"
+    },
+    "test_organization": {
+      "issue": "Test files in root directory instead of tests/ folder",
+      "priority": "low",
+      "fix": "Create tests/ directory and reorganize test files"
+    }
+  },
+  "development_conventions": {
+    "description": "Standardized naming and tracking conventions used across the docs-mcp project",
+    "architecture_reference_ids": {
+      "description": "Permanent architecture decision identifiers referenced in code and documentation",
+      "format": "PREFIX-NNN (e.g., ARCH-001, QUA-002, SEC-003)",
+      "categories": {
+        "ARCH": {
+          "name": "Architecture patterns",
+          "examples": [
+            "ARCH-001: ErrorResponse factory",
+            "ARCH-003: Structured logging"
+          ],
+          "referenced_in": [
+            "code comments",
+            "ARCHITECTURE.md",
+            "CLAUDE.md"
+          ],
+          "persistence": "permanent - never removed"
+        },
+        "QUA": {
+          "name": "Quality patterns",
+          "examples": [
+            "QUA-001: TypedDict coverage",
+            "QUA-002: Handler registry",
+            "QUA-003: Enum constants"
+          ],
+          "referenced_in": [
+            "code comments",
+            "ARCHITECTURE.md"
+          ],
+          "persistence": "permanent - never removed"
+        },
+        "REF": {
+          "name": "Refactoring patterns",
+          "examples": [
+            "REF-002: Constants extraction",
+            "REF-003: Input validation at boundaries"
+          ],
+          "referenced_in": [
+            "code comments",
+            "ARCHITECTURE.md"
+          ],
+          "persistence": "permanent - never removed"
+        },
+        "SEC": {
+          "name": "Security patterns",
+          "examples": [
+            "SEC-001: Path traversal protection",
+            "SEC-002: JSON schema validation",
+            "SEC-003: Smart output routing",
+            "SEC-005: Template sanitization"
+          ],
+          "referenced_in": [
+            "code comments",
+            "security documentation"
+          ],
+          "persistence": "permanent - never removed"
+        },
+        "DEP": {
+          "name": "Dependency patterns",
+          "examples": [
+            "DEP-001: Dependency management"
+          ],
+          "referenced_in": [
+            "code comments"
+          ],
+          "persistence": "permanent - never removed"
+        }
+      },
+      "usage": "Reference these IDs in code comments to link implementation to architectural decisions",
+      "example_code_comment": "# Validate inputs at boundary (REF-003)"
+    },
+    "task_tracking_ids": {
+      "description": "Temporary task identifiers used in implementation plans for tracking work items",
+      "format": "PREFIX-NNN (e.g., INFRA-001, SCAN-002, DOC-003)",
+      "introduced_in": "establish-standards-plan.json (Tool #8 implementation plan)",
+      "categories": {
+        "INFRA": {
+          "name": "Infrastructure setup tasks",
+          "examples": [
+            "INFRA-001: Add tool schema to server.py",
+            "INFRA-002: Create handler",
+            "INFRA-006: Add TypedDict definitions"
+          ],
+          "scope": "Foundation work - setting up files, imports, registrations"
+        },
+        "SCAN": {
+          "name": "Scanning/analysis tasks",
+          "examples": [
+            "SCAN-001: Implement codebase scanner",
+            "SCAN-002: Build UI pattern analyzer"
+          ],
+          "scope": "Pattern discovery, code analysis, data collection"
+        },
+        "DOC": {
+          "name": "Documentation generation tasks",
+          "examples": [
+            "DOC-001: Create UI-STANDARDS.md generator",
+            "DOC-002: Create BEHAVIOR-STANDARDS.md generator"
+          ],
+          "scope": "Document generation, template filling, output formatting"
+        },
+        "TEST": {
+          "name": "Testing tasks",
+          "examples": [
+            "TEST-001: Unit tests for scanner",
+            "TEST-002: Integration tests"
+          ],
+          "scope": "Test implementation, validation, edge case handling"
+        }
+      },
+      "referenced_in": [
+        "implementation plan JSON files",
+        "development checklists",
+        "progress tracking"
+      ],
+      "persistence": "temporary - only exists during implementation phase",
+      "benefits": [
+        "Traceability - links tasks to specific plan sections",
+        "Dependencies - shows task ordering and relationships",
+        "Progress tracking - checkbox-style completion tracking",
+        "Cross-referencing - easy to reference in discussions",
+        "Consistency - mirrors architectural pattern naming"
+      ],
+      "usage_pattern": "Use in implementation plans to break down complex features into trackable subtasks",
+      "example_checklist": [
+        "☐ INFRA-001: Tool schema (server.py:232)",
+        "☐ INFRA-002: Handler implementation (tool_handlers.py)",
+        "☐ INFRA-003: Register handler (tool_handlers.py:501)",
+        "☐ SCAN-001: Implement codebase scanner",
+        "☐ DOC-001: Generate standards documents"
+      ],
+      "relationship_to_architecture_ids": "Task IDs are implementation-specific and temporary, while architecture IDs (ARCH/QUA/REF/SEC) are permanent design decisions referenced in code"
+    },
+    "when_to_use_each": {
+      "architecture_ids": [
+        "When documenting a permanent architectural decision",
+        "When implementing a design pattern that should be referenced elsewhere",
+        "When creating security measures that need to be tracked",
+        "When establishing quality standards for the codebase"
+      ],
+      "task_ids": [
+        "When creating implementation plans for new features/tools",
+        "When breaking down complex work into trackable subtasks",
+        "When coordinating multi-phase implementations",
+        "When communicating progress on feature development"
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "agent": "Quinn (Agent 4 - Testing Specialist)",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-004",
+  "feature": "Testing Specialization Implementation",
+  "scope": "Phase 1: Transform into testing specialist + Phase 3: Update documentation",
+  "tasks": [
+    {
+      "id": "AGENT4-001",
+      "description": "Rename persona to 'quinn' and update agent-4.json with testing specialization",
+      "details": "Change name to 'quinn', description to 'Quinn: Testing Specialist - Unit tests, integration tests, QA, debugging, coverage analysis'. Create slash command /quinn",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "AGENT4-002",
+      "description": "Write comprehensive testing system prompt (unit/integration test workflows)",
+      "details": "Write 1500+ line system prompt covering: Unit testing (Jest/pytest), integration testing, test-driven development (TDD), mocking/stubbing, test coverage analysis, debugging strategies, QA workflows, test automation, E2E testing (Playwright/Cypress), performance testing, load testing",
+      "estimated_time": "3 hours"
+    },
+    {
+      "id": "AGENT4-003",
+      "description": "Define 15+ testing expertise areas",
+      "details": "Expertise: Unit testing (Jest/pytest), Integration testing, Test-driven development (TDD), Mocking/stubbing, Code coverage analysis, Debugging (Chrome DevTools/pdb), QA workflows, Test automation, E2E testing (Playwright/Cypress), Performance testing, Load testing, Assertion libraries, Test fixtures, Test data management, CI/CD testing",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "AGENT4-004",
+      "description": "Add testing-specific use cases and examples",
+      "details": "Use cases: Writing unit tests, integration test suites, TDD workflows, debugging failing tests, improving code coverage, E2E test scenarios, performance test analysis, CI/CD test integration",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "DOCS-AGENT4-001",
+      "description": "Update my-guide.md with Agent 4 testing specialist section",
+      "details": "Add section: 'Agent 4 (Testing Specialist) - Use for: Unit tests, integration tests, QA, debugging, coverage analysis, test automation'",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "DOCS-AGENT4-002",
+      "description": "Update README.md with Agent 4 description",
+      "details": "Update Agent 4 description to highlight testing specialization",
+      "estimated_time": "15 min"
+    },
+    {
+      "id": "TEST-AGENT4",
+      "description": "Test testing specialization with real tasks",
+      "details": "Test with: 'Write unit tests for authentication module', 'Create integration tests for API endpoints', 'Analyze and improve test coverage to 80%'. Verify acceptance and quality.",
+      "estimated_time": "1 hour"
+    }
+  ],
+  "deliverables": [
+    "agent-4.json fully specialized for testing",
+    "Comprehensive system prompt (1500+ lines)",
+    "15+ testing expertise areas defined",
+    "Testing use cases and examples",
+    "my-guide.md updated",
+    "README.md updated",
+    "Testing specialization tested and validated"
+  ],
+  "estimated_duration": "1.5 days",
+  "dependencies": []
+}

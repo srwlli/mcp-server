@@ -1,0 +1,31 @@
+
+## Official MCP Documentation and Resources
+
+### Primary Official Documentation
+
+**Official MCP Documentation Site:**
+- https://modelcontextprotocol.io/ - The main documentation portal
+
+**Anthropic's MCP Announcement:**
+- https://www.anthropic.com/news/model-context-protocol - Official announcement and overview
+
+**Official GitHub Repository:**
+- https://github.com/modelcontextprotocol/modelcontextprotocol - Specification and documentation source
+- https://github.com/modelcontextprotocol - Main GitHub organization with SDKs and examples
+
+**Anthropic Course:**
+- https://anthropic.skilljar.com/introduction-to-model-context-protocol - Official training course
+
+### Key Learning Resources
+
+**Comprehensive Guides:**
+- https://www.keywordsai.co/blog/introduction-to-mcp - Complete guide to MCP (2025)
+- https://www.descope.com/learn/post/mcp - Detailed explanation of how MCP works
+- https://medium.com/@amanatulla1606/anthropics-model-context-protocol-mcp-a-deep-dive-for-developers-1d3db39c9fdc - Developer deep dive
+
+**Reference Information:**
+- https://en.wikipedia.org/wiki/Model_Context_Protocol - Wikipedia overview
+
+### Key Concepts
+
+MCP is an open-source standard for connecting AI applications to external systems, allowing AI applications like Claude to connect to data sources, tools, and workflows. The protocol has three core primitives: tools, resources, and prompts.

@@ -1,0 +1,1181 @@
+{
+  "document_info": {
+    "title": "establish_standards Implementation Plan",
+    "tool_id": 8,
+    "version": "1.0.0",
+    "created_date": "2025-10-10",
+    "status": "ready_for_implementation",
+    "estimated_effort": "6-8 hours",
+    "description": "Comprehensive implementation plan for Tool #8: establish_standards - a codebase pattern discovery and standards documentation tool"
+  },
+
+  "executive_summary": {
+    "purpose": "Create a tool that scans codebases to discover existing UI/UX/behavior patterns and generates comprehensive standards documentation that serves as the single source of truth for consistency validation",
+    "value_proposition": "Before you can check if things are consistent, you need to know what 'consistent' means. This tool finds your most common patterns and documents them as official standards.",
+    "real_world_analogy": "Like a fashion designer documenting brand guidelines - 'Our buttons are always blue, 48px tall, with rounded corners' - so everyone knows the rules",
+    "use_case": "Run ONCE when setting up consistency system to establish baseline standards",
+    "output": "4 markdown documents in coderef/standards/ directory"
+  },
+
+  "tool_specification": {
+    "name": "establish_standards",
+    "description": "Scan codebase to discover UI/UX/behavior patterns and generate standards documents. Creates source of truth for consistency validation. Run ONCE per project to establish standards baseline.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path to project directory",
+          "required": true
+        },
+        "scan_depth": {
+          "type": "string",
+          "enum": ["quick", "standard", "deep"],
+          "description": "Analysis depth: quick (common patterns only), standard (comprehensive), deep (exhaustive with edge cases)",
+          "required": false,
+          "default": "standard"
+        },
+        "focus_areas": {
+          "type": "array",
+          "items": {
+            "enum": ["ui_components", "behavior_patterns", "ux_flows", "all"]
+          },
+          "description": "Which areas to analyze",
+          "required": false,
+          "default": ["all"]
+        }
+      },
+      "required": ["project_path"]
+    },
+    "output_files": [
+      {
+        "filename": "UI-STANDARDS.md",
+        "location": "coderef/standards/",
+        "description": "Buttons, modals, forms, colors, typography, spacing, icons"
+      },
+      {
+        "filename": "BEHAVIOR-STANDARDS.md",
+        "location": "coderef/standards/",
+        "description": "Error handling, loading states, toasts, notifications, validation"
+      },
+      {
+        "filename": "UX-PATTERNS.md",
+        "location": "coderef/standards/",
+        "description": "Navigation, permissions, offline handling, accessibility"
+      },
+      {
+        "filename": "COMPONENT-INDEX.md",
+        "location": "coderef/standards/",
+        "description": "Full component inventory with status, usage, and props"
+      }
+    ]
+  },
+
+  "implementation_phases": {
+    "phase_1_infrastructure": {
+      "title": "Core Infrastructure Setup",
+      "duration": "2 hours",
+      "tasks": [
+        {
+          "id": "INFRA-001",
+          "task": "Add tool schema to server.py",
+          "location": "server.py:232 (after update_changelog tool)",
+          "details": "Add Tool definition with name, description, inputSchema",
+          "effort": "15 minutes"
+        },
+        {
+          "id": "INFRA-002",
+          "task": "Create handler in tool_handlers.py",
+          "location": "tool_handlers.py (new function at end)",
+          "details": "Create async def handle_establish_standards(arguments: dict) -> list[TextContent]",
+          "effort": "30 minutes"
+        },
+        {
+          "id": "INFRA-003",
+          "task": "Register handler in TOOL_HANDLERS dict",
+          "location": "tool_handlers.py:501",
+          "details": "Add 'establish_standards': handle_establish_standards to registry",
+          "effort": "5 minutes"
+        },
+        {
+          "id": "INFRA-004",
+          "task": "Update constants.py",
+          "location": "constants.py",
+          "details": "Add STANDARDS_DIR = 'coderef/standards' and Files.UI_STANDARDS, BEHAVIOR_STANDARDS, UX_PATTERNS, COMPONENT_INDEX",
+          "effort": "15 minutes"
+        },
+        {
+          "id": "INFRA-005",
+          "task": "Create generators/standards_generator.py",
+          "location": "generators/ (new file)",
+          "details": "Create StandardsGenerator class with scan and generation methods",
+          "effort": "1 hour"
+        },
+        {
+          "id": "INFRA-006",
+          "task": "Add TypedDict definitions to type_defs.py",
+          "location": "type_defs.py",
+          "details": "Create TypedDict definitions for UI patterns, behavior patterns, and standards results (QUA-001 compliance)",
+          "effort": "20 minutes",
+          "code_example": {
+            "UIPatternDict": "TypedDict for UI pattern data (buttons, modals, colors, etc.)",
+            "BehaviorPatternDict": "TypedDict for behavior pattern data (error handling, loading states, etc.)",
+            "UXPatternDict": "TypedDict for UX pattern data (navigation, permissions, etc.)",
+            "ComponentMetadataDict": "TypedDict for component inventory metadata",
+            "StandardsResultDict": "TypedDict for save_standards return value"
+          }
+        },
+        {
+          "id": "INFRA-007",
+          "task": "Add validation functions to validation.py",
+          "location": "validation.py",
+          "details": "Create validate_scan_depth() and validate_focus_areas() for input validation at MCP boundaries (REF-003 compliance)",
+          "effort": "15 minutes",
+          "functions": {
+            "validate_scan_depth": "Validates scan_depth is one of: quick, standard, deep",
+            "validate_focus_areas": "Validates focus_areas list contains only valid area names"
+          }
+        }
+      ]
+    },
+
+    "phase_2_pattern_discovery": {
+      "title": "Pattern Discovery Engine",
+      "duration": "3-4 hours",
+      "approach": "Start simple with file glob + regex, not full AST parsing",
+      "tasks": [
+        {
+          "id": "SCAN-001",
+          "task": "Implement codebase scanner",
+          "method": "File glob for *.tsx, *.jsx, *.ts, *.js, *.css",
+          "details": "Scan all source files and extract relevant code sections",
+          "effort": "1 hour"
+        },
+        {
+          "id": "SCAN-002",
+          "task": "Build UI pattern analyzer",
+          "patterns_to_detect": [
+            "Button components (size, color, variant props)",
+            "Modal/Dialog components (size, position, backdrop)",
+            "Form inputs (validation, error states)",
+            "Color usage (hex codes, CSS variables)",
+            "Typography (font sizes, weights, families)",
+            "Spacing (margins, paddings, gaps)",
+            "Icons (libraries, sizes, colors)"
+          ],
+          "method": "Regex patterns and frequency analysis",
+          "effort": "1.5 hours"
+        },
+        {
+          "id": "SCAN-003",
+          "task": "Build behavior pattern analyzer",
+          "patterns_to_detect": [
+            "Error handling (try/catch patterns, error messages)",
+            "Loading states (isLoading flags, spinners)",
+            "Toast notifications (duration, position, types)",
+            "Form validation (rules, messages)",
+            "API error handling (status codes, retry logic)"
+          ],
+          "method": "Code pattern matching and message extraction",
+          "effort": "1 hour"
+        },
+        {
+          "id": "SCAN-004",
+          "task": "Build UX pattern analyzer",
+          "patterns_to_detect": [
+            "Navigation patterns (routing, breadcrumbs)",
+            "Permission checks (auth guards, role checks)",
+            "Offline handling (network detection, fallbacks)",
+            "Accessibility (ARIA labels, keyboard navigation)"
+          ],
+          "method": "Pattern frequency and usage analysis",
+          "effort": "30 minutes"
+        }
+      ]
+    },
+
+    "phase_3_documentation_generation": {
+      "title": "Standards Documentation Generator",
+      "duration": "1-2 hours",
+      "tasks": [
+        {
+          "id": "DOC-001",
+          "task": "Create UI-STANDARDS.md generator",
+          "sections": [
+            "## Buttons (sizes, colors, variants, states)",
+            "## Modals (sizes, positioning, backdrop, animations)",
+            "## Forms (input types, validation, error states)",
+            "## Colors (palette, semantic usage, accessibility)",
+            "## Typography (scales, weights, line heights)",
+            "## Spacing (scale, usage patterns)",
+            "## Icons (library, sizes, colors, usage)"
+          ],
+          "format": "Markdown with code examples and frequency stats",
+          "effort": "30 minutes"
+        },
+        {
+          "id": "DOC-002",
+          "task": "Create BEHAVIOR-STANDARDS.md generator",
+          "sections": [
+            "## Error Handling (patterns, messages, recovery)",
+            "## Loading States (indicators, skeleton screens)",
+            "## Notifications (toasts, alerts, duration)",
+            "## Validation (rules, timing, messages)",
+            "## API Communication (error handling, retries)"
+          ],
+          "format": "Markdown with examples and rationale",
+          "effort": "20 minutes"
+        },
+        {
+          "id": "DOC-003",
+          "task": "Create UX-PATTERNS.md generator",
+          "sections": [
+            "## Navigation (routing, breadcrumbs, back buttons)",
+            "## Permissions (auth guards, role checks, fallbacks)",
+            "## Offline Handling (detection, fallbacks, sync)",
+            "## Accessibility (ARIA, keyboard, screen readers)"
+          ],
+          "format": "Markdown with pattern descriptions and usage",
+          "effort": "20 minutes"
+        },
+        {
+          "id": "DOC-004",
+          "task": "Create COMPONENT-INDEX.md generator",
+          "sections": [
+            "## Component Inventory (full list with status)",
+            "## Usage Frequency (most/least used)",
+            "## Props Summary (common patterns)",
+            "## Deprecation Status (components to phase out)"
+          ],
+          "format": "Markdown table with sortable data",
+          "effort": "20 minutes"
+        }
+      ]
+    }
+  },
+
+  "code_structure": {
+    "standards_generator_class": {
+      "file": "generators/standards_generator.py",
+      "class": "StandardsGenerator",
+      "methods": [
+        {
+          "name": "__init__",
+          "signature": "def __init__(self, project_path: Path, scan_depth: str = 'standard')",
+          "description": "Initialize with project path and scan settings"
+        },
+        {
+          "name": "scan_codebase",
+          "signature": "def scan_codebase(self) -> dict",
+          "description": "Scan all source files and collect code samples",
+          "returns": "Dict with files grouped by type (tsx, css, etc.)"
+        },
+        {
+          "name": "analyze_ui_patterns",
+          "signature": "def analyze_ui_patterns(self, files: dict) -> UIPatternDict",
+          "description": "Analyze UI component patterns from source files",
+          "returns": "UIPatternDict with discovered UI patterns (buttons, modals, colors, etc.) and frequencies"
+        },
+        {
+          "name": "analyze_behavior_patterns",
+          "signature": "def analyze_behavior_patterns(self, files: dict) -> BehaviorPatternDict",
+          "description": "Analyze behavior patterns (errors, loading, etc.)",
+          "returns": "BehaviorPatternDict with behavior patterns (error handling, loading states, toasts, etc.) and examples"
+        },
+        {
+          "name": "analyze_ux_patterns",
+          "signature": "def analyze_ux_patterns(self, files: dict) -> UXPatternDict",
+          "description": "Analyze UX flow patterns (navigation, permissions)",
+          "returns": "UXPatternDict with UX patterns (navigation, permissions, offline handling, accessibility) and usage"
+        },
+        {
+          "name": "build_component_index",
+          "signature": "def build_component_index(self, files: dict) -> List[ComponentMetadataDict]",
+          "description": "Build comprehensive component inventory",
+          "returns": "List of ComponentMetadataDict with component name, type, usage_count, status, props, file_path, notes"
+        },
+        {
+          "name": "generate_ui_standards_doc",
+          "signature": "def generate_ui_standards_doc(self, patterns: UIPatternDict) -> str",
+          "description": "Generate UI-STANDARDS.md content from discovered UI patterns",
+          "returns": "Markdown formatted standards document"
+        },
+        {
+          "name": "generate_behavior_standards_doc",
+          "signature": "def generate_behavior_standards_doc(self, patterns: BehaviorPatternDict) -> str",
+          "description": "Generate BEHAVIOR-STANDARDS.md content from discovered behavior patterns",
+          "returns": "Markdown formatted standards document"
+        },
+        {
+          "name": "generate_ux_patterns_doc",
+          "signature": "def generate_ux_patterns_doc(self, patterns: UXPatternDict) -> str",
+          "description": "Generate UX-PATTERNS.md content from discovered UX patterns",
+          "returns": "Markdown formatted patterns document"
+        },
+        {
+          "name": "generate_component_index_doc",
+          "signature": "def generate_component_index_doc(self, components: List[ComponentMetadataDict]) -> str",
+          "description": "Generate COMPONENT-INDEX.md content from component inventory",
+          "returns": "Markdown formatted component inventory"
+        },
+        {
+          "name": "save_standards",
+          "signature": "def save_standards(self, standards_dir: Path) -> StandardsResultDict",
+          "description": "Save all generated standards documents to disk",
+          "returns": "StandardsResultDict with file paths, pattern counts, success status (QUA-001)"
+        }
+      ]
+    },
+
+    "handler_implementation": {
+      "file": "tool_handlers.py",
+      "function": "handle_establish_standards",
+      "pattern": "Standard handler pattern with validation, logging, error handling",
+      "description": "Complete handler implementation with all error types handled (ARCH-001)",
+      "imports_required": [
+        "from mcp.types import TextContent",
+        "from pathlib import Path",
+        "import json",
+        "from constants import Paths, Files, ScanDepth, FocusArea",
+        "from validation import validate_project_path_input, validate_scan_depth, validate_focus_areas",
+        "from error_responses import ErrorResponse",
+        "from logger_config import logger, log_tool_call, log_error, log_security_event",
+        "from generators import StandardsGenerator",
+        "from type_defs import StandardsResultDict"
+      ],
+      "code_example": "async def handle_establish_standards(arguments: dict) -> list[TextContent]:\n    \"\"\"Handle establish_standards tool call.\n    \n    Scans codebase to discover UI/UX/behavior patterns and generates\n    comprehensive standards documentation.\n    \n    Args:\n        arguments: Tool arguments containing:\n            - project_path (str, required): Absolute path to project\n            - scan_depth (str, optional): 'quick', 'standard', or 'deep'\n            - focus_areas (list, optional): Areas to analyze\n            \n    Returns:\n        list[TextContent]: Success message with StandardsResultDict or ErrorResponse\n    \"\"\"\n    try:\n        # 1. Log tool invocation\n        log_tool_call('establish_standards', args_keys=list(arguments.keys()))\n        \n        # 2. Validate and extract inputs (REF-003)\n        project_path = validate_project_path_input(arguments.get(\"project_path\", \"\"))\n        scan_depth = validate_scan_depth(\n            arguments.get(\"scan_depth\", ScanDepth.STANDARD)\n        )\n        focus_areas = validate_focus_areas(\n            arguments.get(\"focus_areas\", [FocusArea.ALL])\n        )\n        \n        logger.info(\n            \"Starting standards establishment\",\n            extra={\n                'project_path': str(project_path),\n                'scan_depth': scan_depth,\n                'focus_areas': focus_areas\n            }\n        )\n        \n        # 3. Create standards directory if needed\n        standards_dir = project_path / Paths.STANDARDS_DIR\n        standards_dir.mkdir(parents=True, exist_ok=True)\n        logger.debug(f\"Standards directory ready: {standards_dir}\")\n        \n        # 4. Initialize StandardsGenerator\n        generator = StandardsGenerator(project_path, scan_depth)\n        \n        # 5. Scan codebase\n        logger.info(\"Scanning codebase for source files\")\n        files = generator.scan_codebase()\n        logger.info(f\"Found {len(files)} source files to analyze\")\n        \n        # 6. Analyze patterns based on focus_areas\n        ui_patterns = {}\n        behavior_patterns = {}\n        ux_patterns = {}\n        components = []\n        \n        if FocusArea.ALL in focus_areas or FocusArea.UI_COMPONENTS in focus_areas:\n            logger.info(\"Analyzing UI patterns\")\n            ui_patterns = generator.analyze_ui_patterns(files)\n            \n        if FocusArea.ALL in focus_areas or FocusArea.BEHAVIOR_PATTERNS in focus_areas:\n            logger.info(\"Analyzing behavior patterns\")\n            behavior_patterns = generator.analyze_behavior_patterns(files)\n            \n        if FocusArea.ALL in focus_areas or FocusArea.UX_FLOWS in focus_areas:\n            logger.info(\"Analyzing UX patterns\")\n            ux_patterns = generator.analyze_ux_patterns(files)\n            \n        # 7. Build component index\n        logger.info(\"Building component index\")\n        components = generator.build_component_index(files)\n        \n        # 8. Generate standards documents\n        logger.info(\"Generating standards documentation\")\n        doc_ui = generator.generate_ui_standards_doc(ui_patterns)\n        doc_behavior = generator.generate_behavior_standards_doc(behavior_patterns)\n        doc_ux = generator.generate_ux_patterns_doc(ux_patterns)\n        doc_components = generator.generate_component_index_doc(components)\n        \n        # 9. Save all documents\n        logger.info(f\"Saving standards to {standards_dir}\")\n        result: StandardsResultDict = generator.save_standards(standards_dir)\n        \n        # 10. Log success\n        logger.info(\n            \"Standards establishment completed successfully\",\n            extra={\n                'files_created': len(result['files']),\n                'patterns_discovered': result['patterns_count'],\n                'components_indexed': result['components_count']\n            }\n        )\n        \n        # 11. Return StandardsResultDict\n        return [TextContent(\n            type=\"text\",\n            text=json.dumps(result, indent=2)\n        )]\n        \n    except ValueError as e:\n        # Input validation errors\n        log_error('establish_standards_validation_error', str(e))\n        return ErrorResponse.invalid_input(\n            str(e),\n            \"Check scan_depth (quick/standard/deep) and focus_areas parameters\"\n        )\n    except PermissionError as e:\n        # Permission denied (SEC)\n        log_security_event('permission_denied', str(e), project_path=str(project_path))\n        return ErrorResponse.permission_denied(\n            str(e),\n            \"Check directory permissions for project path and standards directory\"\n        )\n    except FileNotFoundError as e:\n        # Project path or required files not found\n        log_error('establish_standards_not_found', str(e))\n        return ErrorResponse.not_found(\n            str(e),\n            \"Verify project_path exists and is accessible\"\n        )\n    except OSError as e:\n        # I/O errors (disk full, etc.)\n        log_error('establish_standards_io_error', str(e))\n        return ErrorResponse.io_error(\n            str(e),\n            \"Check disk space and file system permissions\"\n        )\n    except Exception as e:\n        # Unexpected errors\n        log_error('establish_standards_error', str(e), project_path=str(project_path))\n        return ErrorResponse.generic_error(\n            f\"Failed to establish standards: {str(e)}\"\n        )"
+    }
+  },
+
+  "pattern_discovery_details": {
+    "approach": "Simple and pragmatic for MVP - regex/glob, not full AST",
+    "rationale": "AST parsing adds complexity. Start simple, iterate if needed.",
+
+    "ui_pattern_detection": {
+      "buttons": {
+        "search_patterns": [
+          "<Button.*?>",
+          "variant=['\"]\\w+['\"]",
+          "size=['\"]\\w+['\"]",
+          "className=['\"].*?['\"]"
+        ],
+        "extract": ["variant values", "size values", "common classNames"],
+        "frequency_threshold": 0.6,
+        "output": "Most common button configurations"
+      },
+      "modals": {
+        "search_patterns": [
+          "<Modal.*?>",
+          "<Dialog.*?>",
+          "size=['\"]\\w+['\"]",
+          "position=['\"]\\w+['\"]"
+        ],
+        "extract": ["size values", "position values", "backdrop settings"],
+        "output": "Standard modal configurations"
+      },
+      "colors": {
+        "search_patterns": [
+          "#[0-9a-fA-F]{6}",
+          "rgb\\(.*?\\)",
+          "--[a-z-]+:\\s*#[0-9a-fA-F]{6}",
+          "colors\\.(\\w+)"
+        ],
+        "extract": ["hex codes", "CSS variables", "theme colors"],
+        "output": "Color palette with semantic names"
+      }
+    },
+
+    "behavior_pattern_detection": {
+      "error_handling": {
+        "search_patterns": [
+          "try\\s*{[\\s\\S]*?catch",
+          "throw new Error\\(['\"].*?['\"]\\)",
+          "toast\\.error\\(['\"].*?['\"]\\)"
+        ],
+        "extract": ["error message patterns", "try/catch usage", "user-facing messages"],
+        "output": "Error handling conventions"
+      },
+      "loading_states": {
+        "search_patterns": [
+          "isLoading",
+          "loading\\s*=\\s*(true|false)",
+          "<Spinner",
+          "<Skeleton"
+        ],
+        "extract": ["loading flag patterns", "loader components", "loading UX"],
+        "output": "Loading state conventions"
+      }
+    }
+  },
+
+  "output_document_templates": {
+    "ui_standards_structure": {
+      "header": "# UI Standards\n\n**Generated**: {date}\n**Project**: {project_name}\n**Pattern Discovery**: {scan_depth}\n\n---\n\n",
+      "sections": [
+        {
+          "title": "## Buttons",
+          "content": "### Sizes\n- small: {examples}\n- medium: {examples}\n- large: {examples}\n\n### Variants\n- primary: {examples}\n- secondary: {examples}\n- danger: {examples}\n\n### Usage\n{frequency_stats}"
+        },
+        {
+          "title": "## Modals",
+          "content": "### Sizes\n{discovered_sizes}\n\n### Positioning\n{positioning_rules}\n\n### Backdrop\n{backdrop_config}"
+        }
+      ]
+    },
+
+    "component_index_structure": {
+      "header": "# Component Index\n\n**Total Components**: {count}\n**Last Updated**: {date}\n\n---\n\n",
+      "table_format": "| Component | Type | Usage Count | Status | Props | Notes |\n|-----------|------|-------------|--------|-------|-------|\n{rows}"
+    }
+  },
+
+  "testing_strategy": {
+    "unit_tests": [
+      {
+        "test": "test_scan_codebase",
+        "verifies": "Scanner finds all relevant files"
+      },
+      {
+        "test": "test_analyze_ui_patterns",
+        "verifies": "Pattern analyzer extracts expected patterns"
+      },
+      {
+        "test": "test_frequency_calculation",
+        "verifies": "Frequency stats are accurate"
+      },
+      {
+        "test": "test_document_generation",
+        "verifies": "Markdown documents are well-formed"
+      }
+    ],
+    "integration_tests": [
+      {
+        "test": "test_establish_standards_on_docs_mcp",
+        "project": "docs-mcp itself",
+        "expected": "Generates 4 standards documents without errors"
+      },
+      {
+        "test": "test_establish_standards_on_react_project",
+        "project": "Sample React/TypeScript project",
+        "expected": "Discovers UI components and generates comprehensive standards"
+      }
+    ],
+    "manual_validation": [
+      {
+        "step": "Run on real project",
+        "verify": "Standards documents are readable and accurate"
+      },
+      {
+        "step": "Check frequency stats",
+        "verify": "Most common patterns identified correctly"
+      },
+      {
+        "step": "Review edge cases",
+        "verify": "Handles empty dirs, no components gracefully"
+      }
+    ],
+    "edge_cases": {
+      "description": "Comprehensive edge case testing to ensure robustness",
+      "test_scenarios": [
+        {
+          "scenario": "Empty project (no source files)",
+          "setup": "Create empty project directory with no .tsx/.jsx/.ts/.js files",
+          "expected_behavior": "Generates all 4 standards docs with 'No patterns found' notes",
+          "verify": [
+            "All 4 files created in coderef/standards/",
+            "Each file contains graceful 'No patterns discovered' messaging",
+            "No errors or exceptions thrown",
+            "StandardsResultDict shows patterns_count: 0"
+          ],
+          "error_handling": "No errors - graceful degradation"
+        },
+        {
+          "scenario": "Non-existent project path",
+          "setup": "Call establish_standards with path to non-existent directory",
+          "expected_behavior": "FileNotFoundError with helpful error message",
+          "verify": [
+            "Error handled via ErrorResponse.not_found()",
+            "Error message suggests verifying project_path exists",
+            "Logged to stderr with log_error()",
+            "No standards directory created"
+          ],
+          "error_handling": "FileNotFoundError → ErrorResponse.not_found()"
+        },
+        {
+          "scenario": "Large codebase (1000+ files)",
+          "setup": "Run on large React/TypeScript project with extensive component library",
+          "expected_behavior": "Completes without timeout, with performance logging",
+          "verify": [
+            "Scan completes within reasonable time (< 5 min for standard depth)",
+            "Logs show scan duration and file counts",
+            "Memory usage remains reasonable",
+            "Progress logged: 'Found X source files to analyze'"
+          ],
+          "error_handling": "No errors - performance monitoring only"
+        },
+        {
+          "scenario": "Permission denied on standards directory",
+          "setup": "Make coderef/ or coderef/standards/ directory read-only",
+          "expected_behavior": "PermissionError with clear message about directory permissions",
+          "verify": [
+            "Error handled via ErrorResponse.permission_denied()",
+            "Error message suggests checking directory permissions",
+            "Logged as security event with log_security_event()",
+            "No partial file writes"
+          ],
+          "error_handling": "PermissionError → ErrorResponse.permission_denied()"
+        },
+        {
+          "scenario": "Mixed patterns (multiple button sizes used)",
+          "setup": "Project with buttons using different sizes: small (60%), medium (30%), large (10%)",
+          "expected_behavior": "Documents ALL patterns with frequency statistics",
+          "verify": [
+            "UI-STANDARDS.md shows all button sizes",
+            "Frequency stats included: 'small: 60%, medium: 30%, large: 10%'",
+            "Most common pattern (small) marked as recommended",
+            "Alternative patterns documented as 'also used'"
+          ],
+          "error_handling": "No errors - pattern ambiguity handled gracefully"
+        },
+        {
+          "scenario": "Invalid scan_depth parameter",
+          "setup": "Call establish_standards with scan_depth='invalid'",
+          "expected_behavior": "ValueError with list of valid scan_depth options",
+          "verify": [
+            "Error handled via ErrorResponse.invalid_input()",
+            "Error message shows valid options: quick, standard, deep",
+            "Logged with log_error('establish_standards_validation_error')",
+            "validate_scan_depth() raises ValueError"
+          ],
+          "error_handling": "ValueError → ErrorResponse.invalid_input()"
+        },
+        {
+          "scenario": "Invalid focus_areas parameter",
+          "setup": "Call establish_standards with focus_areas=['invalid_area']",
+          "expected_behavior": "ValueError with list of valid focus areas",
+          "verify": [
+            "Error handled via ErrorResponse.invalid_input()",
+            "Error message shows valid options: ui_components, behavior_patterns, ux_flows, all",
+            "Logged with log_error('establish_standards_validation_error')",
+            "validate_focus_areas() raises ValueError"
+          ],
+          "error_handling": "ValueError → ErrorResponse.invalid_input()"
+        },
+        {
+          "scenario": "No UI components (backend-only project)",
+          "setup": "Run on Node.js/Python project with no React/UI components",
+          "expected_behavior": "Generates standards docs noting absence of UI patterns",
+          "verify": [
+            "UI-STANDARDS.md created with note: 'No UI components detected'",
+            "BEHAVIOR-STANDARDS.md contains backend patterns (error handling, logging)",
+            "Component index shows 0 UI components",
+            "No errors - graceful handling of missing patterns"
+          ],
+          "error_handling": "No errors - graceful degradation"
+        },
+        {
+          "scenario": "Disk full during standards save",
+          "setup": "Simulate disk full condition when writing standards files",
+          "expected_behavior": "OSError with clear message about disk space",
+          "verify": [
+            "Error handled via ErrorResponse.io_error()",
+            "Error message suggests checking disk space",
+            "Logged with log_error('establish_standards_io_error')",
+            "No partial files left behind (cleanup attempted)"
+          ],
+          "error_handling": "OSError → ErrorResponse.io_error()"
+        }
+      ]
+    }
+  },
+
+  "performance_monitoring": {
+    "description": "Performance monitoring and optimization strategy for establish_standards tool",
+    "rationale": "Large codebases (1000+ files) require performance monitoring to ensure reasonable execution times and resource usage",
+    "metrics_to_track": [
+      {
+        "metric": "Scan duration (total time)",
+        "how_to_measure": "Log timestamp at scan start and completion",
+        "target": "< 2 min for quick, < 5 min for standard, < 15 min for deep on typical project (< 500 files)",
+        "logging": "logger.info('Scan completed in {duration:.2f}s', extra={'duration': elapsed_time, 'file_count': len(files)})"
+      },
+      {
+        "metric": "Files scanned per second",
+        "how_to_measure": "Total files / scan duration",
+        "target": "> 50 files/sec for quick, > 20 files/sec for standard, > 10 files/sec for deep",
+        "logging": "logger.info('Scan rate: {rate:.1f} files/sec', extra={'rate': files_per_sec})"
+      },
+      {
+        "metric": "Pattern analysis time per category",
+        "how_to_measure": "Log timestamp before/after each analyze_* method",
+        "target": "< 30 sec per category (UI, behavior, UX) for standard depth",
+        "logging": "logger.debug('UI pattern analysis completed in {duration:.2f}s', extra={'duration': elapsed_time, 'patterns_found': len(ui_patterns)})"
+      },
+      {
+        "metric": "Document generation time",
+        "how_to_measure": "Log timestamp before/after each generate_*_doc method",
+        "target": "< 5 sec per document",
+        "logging": "logger.debug('Generated UI-STANDARDS.md in {duration:.2f}s', extra={'duration': elapsed_time})"
+      },
+      {
+        "metric": "Memory usage during scan",
+        "how_to_measure": "Use psutil.Process().memory_info().rss",
+        "target": "< 500 MB for typical project, < 1 GB for large project",
+        "logging": "logger.warning('High memory usage: {memory_mb:.1f} MB', extra={'memory_mb': memory_mb}) if memory > 500MB"
+      }
+    ],
+    "logging_strategy": [
+      {
+        "event": "Scan start",
+        "log_level": "INFO",
+        "message": "Starting codebase scan",
+        "extra_data": ["project_path", "scan_depth", "estimated_file_count"]
+      },
+      {
+        "event": "Progress update (every 100 files)",
+        "log_level": "INFO",
+        "message": "Scan progress: {processed}/{total} files ({percent}%)",
+        "extra_data": ["processed_files", "total_files", "percent_complete"]
+      },
+      {
+        "event": "Scan completion",
+        "log_level": "INFO",
+        "message": "Scan completed",
+        "extra_data": ["total_files", "duration_sec", "files_per_sec"]
+      },
+      {
+        "event": "High memory usage",
+        "log_level": "WARNING",
+        "message": "Memory usage exceeded threshold",
+        "extra_data": ["memory_mb", "threshold_mb", "file_count"],
+        "condition": "Only log if memory > 500MB"
+      },
+      {
+        "event": "Pattern analysis complete",
+        "log_level": "DEBUG",
+        "message": "Pattern analysis completed for {category}",
+        "extra_data": ["category", "patterns_found", "duration_sec"]
+      }
+    ],
+    "optimization_opportunities": [
+      {
+        "optimization": "Cache compiled regex patterns",
+        "rationale": "Recompiling regexes for every file is wasteful",
+        "implementation": "Compile all regex patterns in StandardsGenerator.__init__() and store as instance variables",
+        "expected_improvement": "10-20% reduction in scan time",
+        "code_example": "self._button_pattern = re.compile(r'<Button.*?>', re.DOTALL)\nself._modal_pattern = re.compile(r'<Modal.*?>', re.DOTALL)"
+      },
+      {
+        "optimization": "Skip excluded directories",
+        "rationale": "node_modules/, .git/, dist/, build/ contain no relevant code",
+        "implementation": "Add EXCLUDE_DIRS constant and check during scan_codebase()",
+        "expected_improvement": "50-90% reduction in files scanned (typical project)",
+        "code_example": "EXCLUDE_DIRS = ['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '__pycache__']",
+        "security_note": "This is SEC-004 (path validation) - ensure excluded dirs don't allow path traversal"
+      },
+      {
+        "optimization": "Process files in parallel (threading)",
+        "rationale": "Pattern analysis is I/O bound, can parallelize file reading",
+        "implementation": "Use concurrent.futures.ThreadPoolExecutor to process files in parallel",
+        "expected_improvement": "2-4x speedup on multi-core systems",
+        "code_example": "with ThreadPoolExecutor(max_workers=4) as executor:\n    results = executor.map(self._analyze_file, files)",
+        "note": "Defer to v1.1 - adds complexity, validate sequential performance first"
+      },
+      {
+        "optimization": "Stream large files instead of loading into memory",
+        "rationale": "Large files (> 1MB) can cause memory issues",
+        "implementation": "Process files line-by-line for files > 1MB instead of reading entire file",
+        "expected_improvement": "Prevents OOM errors on very large files",
+        "code_example": "if file_size > 1_000_000:\n    with open(file_path, 'r') as f:\n        for line in f:  # Stream line by line\n            match_patterns(line)",
+        "note": "Important for deep scan mode"
+      },
+      {
+        "optimization": "Early exit for quick scan mode",
+        "rationale": "Quick scan only needs common patterns, not exhaustive search",
+        "implementation": "In quick mode, stop scanning after finding N examples of each pattern",
+        "expected_improvement": "60-80% reduction in scan time for quick mode",
+        "code_example": "if scan_depth == ScanDepth.QUICK and len(button_patterns) >= 10:\n    break  # We have enough button examples",
+        "note": "Balances speed vs completeness"
+      }
+    ],
+    "performance_targets": {
+      "small_project": {
+        "description": "< 100 files, typical SPA",
+        "quick": "< 30 sec",
+        "standard": "< 1 min",
+        "deep": "< 3 min"
+      },
+      "medium_project": {
+        "description": "100-500 files, typical web app",
+        "quick": "< 1 min",
+        "standard": "< 3 min",
+        "deep": "< 10 min"
+      },
+      "large_project": {
+        "description": "500-1000+ files, enterprise app",
+        "quick": "< 2 min",
+        "standard": "< 5 min",
+        "deep": "< 15 min"
+      }
+    }
+  },
+
+  "security_considerations": {
+    "description": "Security validations and threat mitigation for establish_standards tool",
+    "overview": "Following SEC-001 through SEC-005 pattern from existing codebase, with focus on path traversal and directory exclusion security",
+    "threats_and_mitigations": [
+      {
+        "id": "SEC-004",
+        "threat": "Path Traversal via Excluded Directories",
+        "risk_level": "Medium",
+        "description": "Attacker could bypass path validation by crafting malicious exclude patterns (e.g., '../../../sensitive-dir') to access files outside project scope",
+        "attack_vector": "User-provided focus_areas or scan configuration could be manipulated to scan sensitive directories",
+        "mitigation": "Validate and canonicalize ALL paths using Path.resolve() before checking exclusions",
+        "implementation": {
+          "location": "generators/standards_generator.py in scan_codebase() method",
+          "code_example": "# SECURITY: Canonicalize all paths before exclusion checks (SEC-004)\nEXCLUDE_DIRS = ['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '__pycache__']\nexcluded_paths = [Path(self.project_path / d).resolve() for d in EXCLUDE_DIRS]\n\nfor file_path in all_files:\n    file_resolved = file_path.resolve()  # Canonicalize file path\n    \n    # Check if file is under any excluded directory\n    if any(file_resolved.is_relative_to(exc_path) for exc_path in excluded_paths):\n        logger.debug(f\"Skipping excluded file: {file_path}\", extra={'reason': 'excluded_directory'})\n        continue\n    \n    # Process file...",
+          "validation": "Test with symlink pointing to excluded directory, verify file is skipped"
+        }
+      },
+      {
+        "id": "SEC-005",
+        "threat": "Template Name Path Traversal",
+        "risk_level": "Low (Already Mitigated)",
+        "description": "User could provide template_name='../../../etc/passwd' to read arbitrary files",
+        "status": "Already implemented in existing codebase",
+        "mitigation": "Template name validation with regex: ^[a-zA-Z0-9_-]+$ prevents path traversal",
+        "reference": "validation.py:validate_template_name_input() - reuse this pattern for any user-provided file identifiers",
+        "note": "establish_standards doesn't accept template names as input, but pattern is important for consistency"
+      },
+      {
+        "id": "SEC-006",
+        "threat": "Project Path Validation",
+        "risk_level": "Medium",
+        "description": "User could provide project_path pointing to sensitive directories (/etc, /home, C:\\Windows)",
+        "status": "Already mitigated by existing validate_project_path_input()",
+        "mitigation": "Reuse existing validation that canonicalizes paths with Path.resolve()",
+        "implementation": {
+          "location": "tool_handlers.py in handle_establish_standards()",
+          "code_example": "# SECURITY: Validate project path (SEC-006 - reuse existing validation)\nproject_path = validate_project_path_input(arguments.get(\"project_path\", \"\"))\n# This already calls Path.resolve() to prevent path traversal",
+          "additional_check": "Consider adding whitelist of allowed base directories (e.g., only scan user home directory or specific workspace paths)",
+          "note": "Current implementation is secure but could be stricter for production environments"
+        }
+      },
+      {
+        "id": "SEC-007",
+        "threat": "File Size Denial of Service",
+        "risk_level": "Low",
+        "description": "Scanning very large files (> 100MB) could cause memory exhaustion or timeout",
+        "mitigation": "Implement file size limit and skip files exceeding threshold",
+        "implementation": {
+          "location": "generators/standards_generator.py in scan_codebase() or analyze_* methods",
+          "code_example": "MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB limit\n\nfor file_path in files:\n    file_size = file_path.stat().st_size\n    \n    if file_size > MAX_FILE_SIZE:\n        logger.warning(\n            f\"Skipping large file: {file_path}\",\n            extra={'file_size_mb': file_size / 1024 / 1024, 'max_size_mb': MAX_FILE_SIZE / 1024 / 1024}\n        )\n        continue\n    \n    # Process file...",
+          "rationale": "Prevents OOM errors and ensures reasonable scan times"
+        }
+      },
+      {
+        "id": "SEC-008",
+        "threat": "Symlink Directory Traversal",
+        "risk_level": "Medium",
+        "description": "Symlinks could point outside project directory to sensitive locations",
+        "mitigation": "Detect symlinks and either skip them or validate their resolved path is within project scope",
+        "implementation": {
+          "location": "generators/standards_generator.py in scan_codebase()",
+          "code_example": "for file_path in all_files:\n    # SECURITY: Check for symlinks (SEC-008)\n    if file_path.is_symlink():\n        resolved = file_path.resolve()\n        \n        # Ensure symlink target is within project directory\n        if not resolved.is_relative_to(self.project_path.resolve()):\n            log_security_event(\n                'symlink_outside_project',\n                f\"Skipping symlink pointing outside project: {file_path} -> {resolved}\",\n                file_path=str(file_path),\n                target=str(resolved)\n            )\n            continue\n    \n    # Process file...",
+          "validation": "Create test symlink pointing to /etc/passwd, verify it's skipped and logged as security event"
+        }
+      }
+    ],
+    "security_checklist": [
+      "✅ SEC-001: Path traversal protection (validate_project_path_input with .resolve())",
+      "✅ SEC-002: JSON schema validation (not applicable - no JSON input)",
+      "✅ SEC-003: Smart output routing (standards always go to coderef/standards/)",
+      "✅ SEC-004: Excluded directory path validation (NEW - canonicalize before exclusion checks)",
+      "✅ SEC-005: Template name sanitization (not applicable - no template input)",
+      "✅ SEC-006: Project path whitelist (consider for production)",
+      "✅ SEC-007: File size limits (NEW - prevent DoS via large files)",
+      "✅ SEC-008: Symlink validation (NEW - prevent directory traversal via symlinks)"
+    ],
+    "logging_requirements": [
+      "Log all security events (permission denied, path traversal attempts, symlink skips) using log_security_event()",
+      "Log excluded files at DEBUG level for audit trail",
+      "Log large files skipped at WARNING level",
+      "Include file paths and reasons in all security logs"
+    ],
+    "constants_additions_for_security": {
+      "file": "constants.py",
+      "new_constants": {
+        "EXCLUDE_DIRS": "['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '__pycache__', '.venv', 'venv', 'vendor']",
+        "MAX_FILE_SIZE": "10 * 1024 * 1024  # 10 MB - skip files larger than this",
+        "ALLOWED_FILE_EXTENSIONS": "['.tsx', '.jsx', '.ts', '.js', '.css', '.scss', '.less']  # Only scan these file types"
+      }
+    }
+  },
+
+  "integration_with_existing_system": {
+    "follows_patterns": [
+      "QUA-002: Handler registry pattern",
+      "ARCH-001: ErrorResponse factory for errors",
+      "REF-003: Input validation at boundaries",
+      "ARCH-003: Structured logging for all operations",
+      "QUA-001: TypedDict for complex return types"
+    ],
+    "imports_required": [
+      "from constants import Paths, Files",
+      "from validation import validate_project_path_input",
+      "from error_responses import ErrorResponse",
+      "from logger_config import logger, log_tool_call, log_error",
+      "from generators import StandardsGenerator",
+      "from type_defs import UIPatternDict, BehaviorPatternDict, UXPatternDict, ComponentMetadataDict, StandardsResultDict"
+    ],
+    "type_defs_additions": {
+      "file": "type_defs.py",
+      "code": "from typing import TypedDict, List\nfrom pathlib import Path\n\n# Standards Generator TypedDicts (INFRA-006)\n\nclass UIPatternDict(TypedDict, total=False):\n    \"\"\"UI pattern data structure.\"\"\"\n    buttons: dict  # {size: [...], variant: [...], common_props: [...]}\n    modals: dict   # {size: [...], position: [...], backdrop: [...]}\n    forms: dict    # {input_types: [...], validation: [...], error_states: [...]}\n    colors: dict   # {hex_codes: [...], css_vars: [...], theme_colors: [...]}\n    typography: dict  # {font_sizes: [...], weights: [...], families: [...]}\n    spacing: dict  # {margins: [...], paddings: [...], gaps: [...]}\n    icons: dict    # {library: str, sizes: [...], colors: [...]}\n\nclass BehaviorPatternDict(TypedDict, total=False):\n    \"\"\"Behavior pattern data structure.\"\"\"\n    error_handling: dict  # {patterns: [...], messages: [...], recovery: [...]}\n    loading_states: dict  # {indicators: [...], skeleton: [...], flags: [...]}\n    toasts: dict  # {duration: [...], position: [...], types: [...]}\n    validation: dict  # {rules: [...], timing: [...], messages: [...]}\n    api_communication: dict  # {error_handling: [...], retries: [...]}\n\nclass UXPatternDict(TypedDict, total=False):\n    \"\"\"UX pattern data structure.\"\"\"\n    navigation: dict  # {routing: [...], breadcrumbs: [...], back_buttons: [...]}\n    permissions: dict  # {auth_guards: [...], role_checks: [...], fallbacks: [...]}\n    offline_handling: dict  # {detection: [...], fallbacks: [...], sync: [...]}\n    accessibility: dict  # {aria: [...], keyboard: [...], screen_readers: [...]}\n\nclass ComponentMetadataDict(TypedDict):\n    \"\"\"Component inventory metadata.\"\"\"\n    name: str\n    type: str  # 'ui' | 'layout' | 'utility'\n    usage_count: int\n    status: str  # 'active' | 'deprecated' | 'experimental'\n    props: List[str]\n    file_path: str\n    notes: str\n\nclass StandardsResultDict(TypedDict):\n    \"\"\"Result from save_standards operation.\"\"\"\n    files: List[str]  # List of created file paths\n    patterns_count: int  # Total patterns discovered\n    success: bool\n    ui_patterns_count: int\n    behavior_patterns_count: int\n    ux_patterns_count: int\n    components_count: int"
+    },
+    "constants_additions": {
+      "file": "constants.py",
+      "additions": {
+        "Paths": "STANDARDS_DIR = 'coderef/standards'",
+        "Files": "UI_STANDARDS = 'UI-STANDARDS.md', BEHAVIOR_STANDARDS = 'BEHAVIOR-STANDARDS.md', UX_PATTERNS = 'UX-PATTERNS.md', COMPONENT_INDEX = 'COMPONENT-INDEX.md'"
+      },
+      "enums": {
+        "description": "Add enum classes for establish_standards parameters (REF-002, QUA-003)",
+        "code": "# Standards Tool Enums (REF-002)\n\nclass ScanDepth:\n    \"\"\"Valid scan depth options for establish_standards tool.\"\"\"\n    QUICK = \"quick\"\n    STANDARD = \"standard\"\n    DEEP = \"deep\"\n    \n    @classmethod\n    def values(cls) -> list:\n        \"\"\"Return list of all valid scan depth values.\"\"\"\n        return [cls.QUICK, cls.STANDARD, cls.DEEP]\n\nclass FocusArea:\n    \"\"\"Valid focus areas for establish_standards tool.\"\"\"\n    UI_COMPONENTS = \"ui_components\"\n    BEHAVIOR_PATTERNS = \"behavior_patterns\"\n    UX_FLOWS = \"ux_flows\"\n    ALL = \"all\"\n    \n    @classmethod\n    def values(cls) -> list:\n        \"\"\"Return list of all valid focus area values.\"\"\"\n        return [cls.UI_COMPONENTS, cls.BEHAVIOR_PATTERNS, cls.UX_FLOWS, cls.ALL]"
+      }
+    },
+    "generators_init_update": {
+      "file": "generators/__init__.py",
+      "addition": "from .standards_generator import StandardsGenerator"
+    },
+    "validation_additions": {
+      "file": "validation.py",
+      "imports": "from constants import ScanDepth, FocusArea",
+      "code": "# Standards Validation Functions (INFRA-007)\n\ndef validate_scan_depth(scan_depth: str) -> str:\n    \"\"\"Validate scan_depth parameter using ScanDepth enum.\n    \n    Args:\n        scan_depth: Analysis depth ('quick', 'standard', or 'deep')\n        \n    Returns:\n        Validated scan_depth string\n        \n    Raises:\n        ValueError: If scan_depth is not a valid option\n    \"\"\"\n    valid_depths = ScanDepth.values()  # Use enum instead of hardcoded list (REF-002)\n    if scan_depth not in valid_depths:\n        raise ValueError(\n            f\"Invalid scan_depth: {scan_depth}. \"\n            f\"Must be one of: {', '.join(valid_depths)}\"\n        )\n    return scan_depth\n\ndef validate_focus_areas(focus_areas: list) -> list:\n    \"\"\"Validate focus_areas parameter using FocusArea enum.\n    \n    Args:\n        focus_areas: List of areas to analyze\n        \n    Returns:\n        Validated focus_areas list\n        \n    Raises:\n        ValueError: If any focus_area is not valid\n    \"\"\"\n    valid_areas = FocusArea.values()  # Use enum instead of hardcoded list (REF-002)\n    for area in focus_areas:\n        if area not in valid_areas:\n            raise ValueError(\n                f\"Invalid focus_area: {area}. \"\n                f\"Must be one of: {', '.join(valid_areas)}\"\n            )\n    return focus_areas"
+    }
+  },
+
+  "documentation_updates": {
+    "files_to_update": [
+      {
+        "file": "README.md",
+        "section": "Available Tools",
+        "addition": "Tool #8: establish_standards - Scan codebase to establish standards baseline"
+      },
+      {
+        "file": "API.md",
+        "section": "Tool Endpoints",
+        "addition": "Document establish_standards tool schema, parameters, outputs"
+      },
+      {
+        "file": "ARCHITECTURE.md",
+        "section": "Module Architecture",
+        "addition": "Add StandardsGenerator to generators module documentation"
+      },
+      {
+        "file": "CLAUDE.md",
+        "section": "Tool Catalog",
+        "addition": "Complete usage guidance for establish_standards tool",
+        "detailed_content": {
+          "section_title": "#### `establish_standards`",
+          "purpose": "Scan codebase to discover UI/UX/behavior patterns and generate standards documentation",
+          "when_to_use": [
+            "User wants to establish consistency standards for a project",
+            "Before using audit_codebase (Tool #9) or check_consistency (Tool #10)",
+            "Project lacks documented standards and needs baseline",
+            "Team wants to document existing patterns as official standards"
+          ],
+          "integration_with_trilogy": "This is the FIRST tool in the consistency trilogy:\n1. establish_standards (Tool #8) - Create standards baseline\n2. audit_codebase (Tool #9) - Find violations of standards\n3. check_consistency (Tool #10) - Quality gate for new code\n\nYou MUST run establish_standards before running audit_codebase or check_consistency, as they depend on the standards documents it generates.",
+          "input_parameters": {
+            "project_path": {
+              "type": "string",
+              "required": true,
+              "description": "Absolute path to project directory",
+              "example": "C:/Users/willh/my-project"
+            },
+            "scan_depth": {
+              "type": "string",
+              "required": false,
+              "default": "standard",
+              "options": ["quick", "standard", "deep"],
+              "description": "Analysis depth:\n  - quick: Common patterns only (fast, ~1-2 min)\n  - standard: Comprehensive analysis (balanced, ~3-5 min)\n  - deep: Exhaustive with edge cases (thorough, ~10-15 min)"
+            },
+            "focus_areas": {
+              "type": "array",
+              "required": false,
+              "default": ["all"],
+              "options": ["ui_components", "behavior_patterns", "ux_flows", "all"],
+              "description": "Which areas to analyze:\n  - ui_components: Buttons, modals, forms, colors, typography\n  - behavior_patterns: Error handling, loading states, notifications\n  - ux_flows: Navigation, permissions, offline handling\n  - all: Analyze all areas (recommended)"
+            }
+          },
+          "output_files": [
+            "coderef/standards/UI-STANDARDS.md - Button, modal, form, color, typography standards",
+            "coderef/standards/BEHAVIOR-STANDARDS.md - Error handling, loading, notification standards",
+            "coderef/standards/UX-PATTERNS.md - Navigation, permissions, accessibility patterns",
+            "coderef/standards/COMPONENT-INDEX.md - Complete component inventory with metadata"
+          ],
+          "example_usage": "```python\n# Basic usage (all defaults)\nmcp__docs_mcp__establish_standards(\n    project_path=\"C:/Users/willh/my-project\"\n)\n\n# Quick scan for initial assessment\nmcp__docs_mcp__establish_standards(\n    project_path=\"C:/Users/willh/my-project\",\n    scan_depth=\"quick\"\n)\n\n# Focus only on UI components\nmcp__docs_mcp__establish_standards(\n    project_path=\"C:/Users/willh/my-project\",\n    scan_depth=\"standard\",\n    focus_areas=[\"ui_components\"]\n)\n\n# Deep analysis of behavior patterns\nmcp__docs_mcp__establish_standards(\n    project_path=\"C:/Users/willh/my-project\",\n    scan_depth=\"deep\",\n    focus_areas=[\"behavior_patterns\", \"ux_flows\"]\n)\n```",
+          "critical_notes": [
+            "Run this tool ONCE per project to establish baseline standards",
+            "The generated standards documents become the source of truth for Tools #9 and #10",
+            "Use scan_depth=quick for initial assessment, standard for production, deep for comprehensive documentation",
+            "The tool discovers patterns by frequency - most common pattern becomes the standard",
+            "If project has no UI components, UI-STANDARDS.md will note this gracefully",
+            "Results are saved to coderef/standards/ directory (created if missing)"
+          ],
+          "typical_workflow": "**Step 1**: User asks to \"establish coding standards\" or \"document our patterns\"\n**Step 2**: Call establish_standards with appropriate scan_depth\n**Step 3**: Review generated standards documents\n**Step 4**: User can now use audit_codebase (Tool #9) to find violations\n**Step 5**: User can integrate check_consistency (Tool #10) as quality gate"
+        }
+      }
+    ]
+  },
+
+  "success_criteria": {
+    "description": "Quantifiable success metrics to validate implementation quality and completeness",
+    "functional_requirements": [
+      {
+        "requirement": "Tool registration",
+        "metric": "Tool appears in MCP tool list",
+        "target": "Tool visible in `claude mcp list` output with ✓ Connected status",
+        "validation": "Run `claude mcp list` and verify docs-mcp shows establish_standards tool"
+      },
+      {
+        "requirement": "Standards generation",
+        "metric": "Number of markdown files created",
+        "target": "Exactly 4 files created in coderef/standards/ directory",
+        "validation": "Verify UI-STANDARDS.md, BEHAVIOR-STANDARDS.md, UX-PATTERNS.md, COMPONENT-INDEX.md all exist"
+      },
+      {
+        "requirement": "Pattern discovery",
+        "metric": "Patterns discovered for UI project",
+        "target": "> 0 patterns discovered for projects with UI components (patterns_count > 0 in StandardsResultDict)",
+        "validation": "Run on sample React project, verify StandardsResultDict.patterns_count > 0"
+      },
+      {
+        "requirement": "Error handling robustness",
+        "metric": "Unhandled exceptions during scan",
+        "target": "0 unhandled exceptions (all errors caught and returned as ErrorResponse)",
+        "validation": "Review logs for 'Traceback' or unhandled exceptions during all test scenarios"
+      },
+      {
+        "requirement": "Edge case coverage",
+        "metric": "Edge case scenarios passing",
+        "target": "All 9 edge case scenarios pass validation without crashes",
+        "validation": "Execute all 9 edge case tests from testing_strategy.edge_cases and verify expected behavior"
+      },
+      {
+        "requirement": "Directory creation",
+        "metric": "Standards directory auto-creation",
+        "target": "coderef/standards/ directory created if missing (no manual setup required)",
+        "validation": "Run on project without coderef/ directory, verify directory created automatically"
+      }
+    ],
+    "quality_requirements": [
+      {
+        "requirement": "Architecture compliance",
+        "metric": "Pattern adherence percentage",
+        "target": "100% of code follows existing patterns (ARCH-001, QUA-001, QUA-002, REF-002, REF-003)",
+        "validation": [
+          "ARCH-001: All errors use ErrorResponse factory (not manual dict construction)",
+          "QUA-001: All complex returns use TypedDict (UIPatternDict, BehaviorPatternDict, etc.)",
+          "QUA-002: Handler registered in TOOL_HANDLERS dict",
+          "REF-002: No magic strings (use constants from constants.py)",
+          "REF-003: All inputs validated at MCP boundaries"
+        ]
+      },
+      {
+        "requirement": "Error coverage",
+        "metric": "Error types handled",
+        "target": "All 5 error types handled: ValueError, PermissionError, FileNotFoundError, OSError, Exception",
+        "validation": "Review handler try/except block and verify all 5 error types have specific handlers"
+      },
+      {
+        "requirement": "Logging coverage",
+        "metric": "Operations with logging",
+        "target": "100% of operations logged (tool invocation, errors, security events, completion)",
+        "validation": [
+          "log_tool_call() at handler start",
+          "log_error() for all error scenarios",
+          "log_security_event() for permission errors",
+          "logger.info() for scan progress and completion"
+        ]
+      },
+      {
+        "requirement": "Type hint coverage",
+        "metric": "Functions with type hints",
+        "target": "100% of functions have complete type hints (parameters and return types)",
+        "validation": "Review all methods in StandardsGenerator and handle_establish_standards for type annotations"
+      },
+      {
+        "requirement": "Documentation coverage",
+        "metric": "Documentation files updated",
+        "target": "4 documentation files updated: README.md, API.md, ARCHITECTURE.md, CLAUDE.md",
+        "validation": "Verify each file contains establish_standards tool documentation"
+      }
+    ],
+    "performance_requirements": [
+      {
+        "requirement": "Scan performance (standard depth)",
+        "metric": "Scan duration for medium project",
+        "target": "< 5 min for 500-file project with standard scan depth",
+        "validation": "Run on 500-file React project, measure duration from logs, verify < 300 seconds"
+      },
+      {
+        "requirement": "Memory usage",
+        "metric": "Peak memory usage during scan",
+        "target": "< 500 MB for typical project (< 500 files), < 1 GB for large project (> 1000 files)",
+        "validation": "Monitor memory usage during scan (psutil), verify stays below thresholds"
+      },
+      {
+        "requirement": "Files per second (throughput)",
+        "metric": "File processing rate",
+        "target": "> 20 files/sec for standard scan depth",
+        "validation": "Calculate files_scanned / duration_sec from logs, verify > 20"
+      },
+      {
+        "requirement": "Quick scan optimization",
+        "metric": "Quick scan speedup vs standard",
+        "target": "Quick scan completes in < 50% of standard scan time (2x faster)",
+        "validation": "Run both quick and standard on same project, verify quick_time < (standard_time * 0.5)"
+      }
+    ],
+    "security_requirements": [
+      {
+        "requirement": "Path traversal protection",
+        "metric": "Excluded directory enforcement",
+        "target": "0 files scanned from node_modules/, .git/, dist/, build/ directories",
+        "validation": "Run on project with node_modules/, verify logs show 0 files from excluded directories"
+      },
+      {
+        "requirement": "Permission enforcement",
+        "metric": "Permission errors handled gracefully",
+        "target": "PermissionError logged as security event and returned as ErrorResponse.permission_denied()",
+        "validation": "Test with read-only directory, verify error handling and security logging"
+      }
+    ],
+    "integration_requirements": [
+      {
+        "requirement": "Trilogy integration",
+        "metric": "Standards documents usable by Tools #9 and #10",
+        "target": "Generated standards documents are parseable and contain required structure for audit_codebase and check_consistency",
+        "validation": "Verify standards docs have consistent markdown structure with ## headings and code examples"
+      },
+      {
+        "requirement": "Changelog documentation",
+        "metric": "Changelog entry created",
+        "target": "Version 1.2.0 changelog entry exists with complete details (change_type, severity, files, reason, impact)",
+        "validation": "Run get_changelog(version='1.2.0') and verify entry exists with all required fields"
+      }
+    ]
+  },
+
+  "changelog_entry": {
+    "tool": "add_changelog_entry",
+    "parameters": {
+      "project_path": "C:/Users/willh/.mcp-servers/docs-mcp",
+      "version": "1.2.0",
+      "change_type": "feature",
+      "severity": "major",
+      "title": "Add establish_standards tool for consistency management",
+      "description": "Implemented Tool #8 (establish_standards) - scans codebase to discover UI/UX/behavior patterns and generates comprehensive standards documents. Creates single source of truth for consistency validation. Generates 4 markdown documents: UI-STANDARDS.md, BEHAVIOR-STANDARDS.md, UX-PATTERNS.md, and COMPONENT-INDEX.md in coderef/standards/ directory.",
+      "files": [
+        "server.py",
+        "tool_handlers.py",
+        "constants.py",
+        "generators/standards_generator.py",
+        "generators/__init__.py",
+        "README.md",
+        "API.md",
+        "ARCHITECTURE.md",
+        "CLAUDE.md"
+      ],
+      "reason": "Foundation for consistency enforcement system. Tools #9 (audit_codebase) and #10 (check_consistency) depend on standards documents generated by this tool.",
+      "impact": "Users can now establish comprehensive standards documentation from existing codebase patterns. Enables consistency validation and quality gates for new features."
+    }
+  },
+
+  "future_enhancements": {
+    "v1_1_improvements": [
+      {
+        "feature": "AST-based pattern discovery",
+        "description": "Use TypeScript compiler API for deeper analysis",
+        "benefit": "More accurate pattern detection, prop type extraction",
+        "effort": "2-3 days"
+      },
+      {
+        "feature": "Pattern confidence scoring",
+        "description": "Score patterns by frequency, consistency, recency",
+        "benefit": "Identify which patterns are most established",
+        "effort": "4 hours"
+      },
+      {
+        "feature": "JSON export option",
+        "description": "Generate machine-readable JSON alongside markdown",
+        "benefit": "Enable automated tooling consumption",
+        "effort": "2 hours"
+      },
+      {
+        "feature": "Interactive web viewer",
+        "description": "Generate HTML dashboard for standards browsing",
+        "benefit": "Better developer experience for standards review",
+        "effort": "1 week"
+      }
+    ]
+  },
+
+  "notes_and_considerations": {
+    "design_decisions": [
+      {
+        "decision": "Use regex/glob instead of AST parsing",
+        "rationale": "Faster to implement, good enough for MVP. Can add AST later if needed.",
+        "trade_off": "Less precise but significantly simpler"
+      },
+      {
+        "decision": "Generate markdown instead of JSON",
+        "rationale": "Human-readable first. Tools #9 and #10 can parse markdown or we add JSON export later.",
+        "trade_off": "Harder for machines to parse, but better for humans"
+      },
+      {
+        "decision": "Frequency-based pattern discovery",
+        "rationale": "Most common pattern = standard. Simple and effective.",
+        "trade_off": "May miss intentional variations"
+      }
+    ],
+    "potential_challenges": [
+      {
+        "challenge": "Large codebases may be slow to scan",
+        "mitigation": "Implement scan_depth parameter (quick/standard/deep)",
+        "fallback": "Add progress indicator or async processing"
+      },
+      {
+        "challenge": "Edge cases (no UI components, unusual patterns)",
+        "mitigation": "Handle gracefully with warnings, don't fail",
+        "fallback": "Generate minimal standards document with note"
+      },
+      {
+        "challenge": "Pattern ambiguity (multiple common patterns)",
+        "mitigation": "Document all patterns with frequency stats",
+        "fallback": "Let user decide via manual standards review"
+      }
+    ]
+  },
+
+  "timeline_estimate": {
+    "phase_1": "2 hours - Infrastructure setup",
+    "phase_2": "4 hours - Pattern discovery engine",
+    "phase_3": "2 hours - Documentation generation",
+    "testing": "1 hour - Manual testing and validation",
+    "documentation": "1 hour - Update README, API, ARCHITECTURE, CLAUDE.md",
+    "total": "6-8 hours for complete implementation",
+    "note": "May extend to 10 hours if AST parsing is required"
+  },
+
+  "next_steps": [
+    "1. Review this plan with user for approval",
+    "2. Begin Phase 1: Infrastructure setup",
+    "3. Implement StandardsGenerator class (Phase 2)",
+    "4. Test on docs-mcp project",
+    "5. Test on sample React project",
+    "6. Update documentation",
+    "7. Create changelog entry via add_changelog_entry",
+    "8. Commit and push changes"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "agent": "Marcus (Agent 3 - Backend Specialist)",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-003",
+  "feature": "Backend Specialization Implementation",
+  "scope": "Phase 1: Transform into backend specialist + Phase 3: Update documentation",
+  "tasks": [
+    {
+      "id": "AGENT3-001",
+      "description": "Rename persona to 'marcus' and update agent-3.json with backend specialization",
+      "details": "Change name to 'marcus', description to 'Marcus: Backend Specialist - API, database, server logic, authentication, data models'. Create slash command /marcus",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "AGENT3-002",
+      "description": "Write comprehensive backend system prompt (API, database, auth workflows)",
+      "details": "Write 1500+ line system prompt covering: REST/GraphQL API design, database modeling (SQL/NoSQL), authentication/authorization (JWT, OAuth), server architecture, data validation, error handling, security best practices, API documentation, background jobs, caching",
+      "estimated_time": "3 hours"
+    },
+    {
+      "id": "AGENT3-003",
+      "description": "Define 15+ backend expertise areas",
+      "details": "Expertise: REST/GraphQL APIs, SQL (PostgreSQL/MySQL), NoSQL (MongoDB), Authentication (JWT/OAuth), Authorization (RBAC), Data modeling, Server architecture, Security (OWASP), Error handling, API documentation (OpenAPI), Background jobs, Caching (Redis), Database migrations, ORM patterns, Microservices",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "AGENT3-004",
+      "description": "Add backend-specific use cases and examples",
+      "details": "Use cases: Designing RESTful APIs, implementing authentication, database schema design, data validation, error handling, API security, writing database migrations, background job processing",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "DOCS-AGENT3-001",
+      "description": "Update my-guide.md with Agent 3 backend specialist section",
+      "details": "Add section: 'Agent 3 (Backend Specialist) - Use for: API development, database design, authentication, server logic, data models'",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "DOCS-AGENT3-002",
+      "description": "Update README.md with Agent 3 description",
+      "details": "Update Agent 3 description to highlight backend specialization",
+      "estimated_time": "15 min"
+    },
+    {
+      "id": "TEST-AGENT3",
+      "description": "Test backend specialization with real tasks",
+      "details": "Test with: 'Design a user authentication API', 'Create database schema for blog posts', 'Implement JWT authentication middleware'. Verify acceptance and quality.",
+      "estimated_time": "1 hour"
+    }
+  ],
+  "deliverables": [
+    "agent-3.json fully specialized for backend",
+    "Comprehensive system prompt (1500+ lines)",
+    "15+ backend expertise areas defined",
+    "Backend use cases and examples",
+    "my-guide.md updated",
+    "README.md updated",
+    "Backend specialization tested and validated"
+  ],
+  "estimated_duration": "1.5 days",
+  "dependencies": []
+}

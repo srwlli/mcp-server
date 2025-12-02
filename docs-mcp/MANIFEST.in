@@ -1,0 +1,23 @@
+# Include documentation
+include README.md
+include LICENSE
+include CLAUDE.md
+include user-guide.md
+include MCP-SETUP-GUIDE.md
+
+# Include requirements
+include requirements.txt
+include pyproject.toml
+
+# Include templates
+recursive-include templates *.txt
+
+# Include schema files
+recursive-include coderef/changelog *.json
+
+# Exclude unnecessary files
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.swp
+global-exclude *~
+global-exclude .DS_Store

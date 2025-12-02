@@ -1,0 +1,161 @@
+{
+  "feature_name": "agent-persona-mcp",
+  "description": "Create an MCP server that allows users to activate and compose multiple expert agent personas. Personas can be hierarchical (e.g., mcp-expert:docs-mcp) or stacked (mcp-expert + docs-specialist). Each persona provides specialized knowledge and behavior that influences how the AI uses other MCP tools. Personas can call and use tools from any MCP server while applying their domain expertise.",
+  "goal": "Build a composable persona system where users can activate single or multiple expert personalities that work together to influence how the AI approaches problems and uses tools",
+  "requirements": [
+    "MCP server with persona-switching and composition capability",
+    "use_persona tool to activate one or more personas (supports comma-separated list or hierarchical notation)",
+    "add_persona tool to stack additional personas on top of active ones",
+    "clear_personas tool to reset to default state",
+    "Support for hierarchical personas (e.g., mcp-expert:docs-mcp for specialized docs-mcp expert)",
+    "Support for composable personas (stack multiple persona contexts: mcp-expert + docs-specialist)",
+    "Base persona definitions (mcp-expert, docs-specialist, code-reviewer, planning-expert)",
+    "Specialized sub-personas (mcp-expert:docs-mcp, mcp-expert:planning, mcp-expert:inventory, mcp-expert:changelog)",
+    "Persona context injection (system prompts that define expertise and behavior)",
+    "Personas can use other MCP tools (docs-mcp, file tools, etc.) while active",
+    "Persona state management (track active persona stack/composition)",
+    "list_personas tool to show all available personas including hierarchical ones",
+    "get_active_personas tool to check current persona stack",
+    "Persona definitions stored as structured data (JSON/YAML with prompts, expertise, parent personas)"
+  ],
+  "out_of_scope": [
+    "AI model hosting (uses existing LLM, just changes context/prompts)",
+    "Fine-tuning models (prompt engineering only)",
+    "Creating new personas at runtime (personas are pre-defined)",
+    "Multi-user persona sessions (single user manages persona stack)",
+    "Persona memory across sessions (stateless within session)"
+  ],
+  "constraints": [
+    "Must follow MCP protocol specification",
+    "Personas must work with existing MCP architecture",
+    "Must not interfere with other MCP servers' tools",
+    "Persona switching/stacking should be lightweight (just context composition)",
+    "Must be compatible with Claude Code and other MCP clients",
+    "Persona context must compose cleanly (no conflicts when stacking)"
+  ],
+  "decisions": {
+    "architecture": "MCP server with persona management tools (use_persona, add_persona, clear_personas, list_personas, get_active_personas)",
+    "persona_storage": "Hierarchical JSON files: base personas + specialized variants",
+    "composition_strategy": "System prompt composition - merge contexts when stacking personas",
+    "hierarchical_notation": "Use colon for specialization (mcp-expert:docs-mcp), plus for stacking (mcp-expert+docs-specialist)",
+    "state_management": "Track persona stack as ordered list (later personas overlay on earlier ones)",
+    "tool_integration": "Personas provide context that influences AI behavior when using any available tools",
+    "activation_pattern": "use_persona returns composed system prompt that AI applies to all subsequent actions"
+  },
+  "success_criteria": {
+    "functional": [
+      "Can activate single persona (use_persona mcp-expert)",
+      "Can activate hierarchical persona (use_persona mcp-expert:docs-mcp)",
+      "Can stack multiple personas (use_persona mcp-expert, then add_persona docs-specialist)",
+      "At least 5 base personas + 4 specialized sub-personas",
+      "Active personas influence tool usage and responses",
+      "Personas successfully use tools from other MCP servers",
+      "list_personas shows tree of available personas",
+      "get_active_personas shows current composition"
+    ],
+    "operational": [
+      "Persona activation happens instantly",
+      "Persona context persists across multiple tool uses",
+      "Clear indication of active persona stack",
+      "Error handling for invalid persona names or conflicts",
+      "Graceful composition of multiple persona contexts"
+    ],
+    "quality": [
+      "Personas demonstrate distinct expertise and behavior",
+      "Specialized personas show deeper domain knowledge than base",
+      "Stacked personas combine expertise effectively",
+      "Persona context clearly influences problem-solving approach",
+      "Smooth integration with existing MCP tool ecosystem",
+      "Well-documented persona capabilities, hierarchy, and use cases"
+    ]
+  },
+  "example_workflows": {
+    "single_persona": {
+      "scenario": "Activate MCP expert for general MCP help",
+      "steps": [
+        "User: use_persona('mcp-expert')",
+        "Server: Returns MCP expert context",
+        "AI: Adopts MCP expert behavior",
+        "User: Help me design a new tool",
+        "MCP Expert: Provides expert guidance on MCP tool patterns"
+      ]
+    },
+    "hierarchical_persona": {
+      "scenario": "Activate specialized docs-mcp expert",
+      "steps": [
+        "User: use_persona('mcp-expert:docs-mcp')",
+        "Server: Returns composed context (mcp-expert + docs-mcp specialization)",
+        "AI: Adopts MCP expert with deep docs-mcp knowledge",
+        "User: Help me add a new inventory tool",
+        "Docs-MCP Expert: Uses docs-mcp expertise to guide implementation with existing patterns"
+      ]
+    },
+    "stacked_personas": {
+      "scenario": "Combine MCP expert with planning expert",
+      "steps": [
+        "User: use_persona('mcp-expert')",
+        "User: add_persona('planning-expert')",
+        "Server: Returns merged context (MCP + planning expertise)",
+        "AI: Can plan MCP features with both expertises",
+        "User: Plan a new changelog feature for docs-mcp",
+        "Combined Expert: Uses planning workflows + MCP architecture knowledge"
+      ]
+    }
+  },
+  "personas_to_implement": {
+    "base_personas": [
+      {
+        "name": "mcp-expert",
+        "expertise": "MCP protocol, tool design, server architecture, MCP best practices",
+        "use_cases": ["Planning MCP features", "Debugging MCP tools", "MCP architecture decisions"],
+        "specializations": ["docs-mcp", "planning", "inventory", "changelog", "consistency"]
+      },
+      {
+        "name": "docs-specialist",
+        "expertise": "Technical writing, POWER framework, documentation structure, clarity",
+        "use_cases": ["Writing documentation", "Improving readability", "Creating guides"]
+      },
+      {
+        "name": "planning-expert",
+        "expertise": "Feature planning, requirement gathering, risk assessment, task breakdown",
+        "use_cases": ["Creating plans", "Validating plans", "Breaking down features"]
+      },
+      {
+        "name": "code-reviewer",
+        "expertise": "Code quality, best practices, security, performance, maintainability",
+        "use_cases": ["Reviewing code", "Suggesting improvements", "Identifying issues"]
+      },
+      {
+        "name": "testing-expert",
+        "expertise": "Test strategy, coverage, test patterns, quality assurance",
+        "use_cases": ["Writing tests", "Test planning", "Quality gates"]
+      }
+    ],
+    "specialized_personas": [
+      {
+        "name": "mcp-expert:docs-mcp",
+        "parent": "mcp-expert",
+        "specialization": "Deep expertise in docs-mcp server tools, generators, patterns",
+        "knows": ["All docs-mcp tools", "POWER framework", "Planning workflows", "Inventory system"]
+      },
+      {
+        "name": "mcp-expert:planning",
+        "parent": "mcp-expert",
+        "specialization": "Expert in MCP planning workflows and implementation plans",
+        "knows": ["Planning template", "Validation", "Review loops", "Context gathering"]
+      },
+      {
+        "name": "mcp-expert:inventory",
+        "parent": "mcp-expert",
+        "specialization": "Expert in MCP inventory tools and project analysis",
+        "knows": ["All inventory tools", "Manifest generation", "Dependency analysis", "API/DB discovery"]
+      },
+      {
+        "name": "mcp-expert:changelog",
+        "parent": "mcp-expert",
+        "specialization": "Expert in MCP changelog management and version tracking",
+        "knows": ["Changelog structure", "Versioning", "Breaking changes", "Update workflows"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "feature_name": "generalist-rename",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-005",
+  "description": "Rename agent-generalist persona to 'taylor' with proper naming, slash command, and documentation updates",
+  "goal": "Transform agent-generalist into Taylor, the General Purpose Agent, following the established naming pattern (Lloyd, Ava, Marcus, Quinn, Taylor)",
+  "requirements": [
+    "Rename personas/base/agent-generalist.json → taylor.json",
+    "Update name field to 'taylor'",
+    "Update description to include 'Taylor: General Purpose Agent'",
+    "Create .claude/commands/taylor.md slash command",
+    "Update my-guide.md with Taylor section",
+    "Update README.md with Taylor description",
+    "Update CLAUDE.md with Taylor in persona list",
+    "Update index.html with taylor persona and /taylor command",
+    "Clean git commit with proper workorder tracking"
+  ],
+  "constraints": [
+    "Must follow existing persona naming pattern (human names)",
+    "Slash command must be /taylor (not /agent-generalist)",
+    "Must maintain all existing functionality",
+    "No changes to system prompt content (just metadata)",
+    "Must preserve version history"
+  ],
+  "success_criteria": {
+    "renamed": "taylor.json exists, agent-generalist.json deleted",
+    "slash_command": "/taylor command created and working",
+    "documentation": "my-guide.md, README.md, CLAUDE.md, index.html all updated",
+    "git_commit": "Clean commit with WO-AGENT-SPECIALIZATION-005 tracking"
+  },
+  "created_at": "2025-10-23T12:30:00Z"
+}

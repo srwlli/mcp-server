@@ -1,0 +1,97 @@
+{
+  "feature": "FEATURE_NAME_IN_CAPS",
+  "workorder_id": "WO-FEATURE-NAME-001",
+  "from": "Agent 1",
+  "to": "Agent N",
+  "date": "YYYY-MM-DD",
+  "task": "One-line summary of what needs to be done",
+  "instruction": "Single sentence directive for executing agent",
+  "precise_steps": [
+    "Step 1: Read {file_path}:{line_start}-{line_end} to understand current implementation",
+    "Step 2: Implement {feature_name} in {file_path}:{line_number}",
+    "Step 3: Add helper function {function_name}() to {file_path}",
+    "Step 4: Update tests in {test_file_path}",
+    "Step 5: Run tests: {test_command}",
+    "Step 6: Create documentation in {docs_path}",
+    "Step 7: Verify forbidden files unchanged: git diff {forbidden_file}",
+    "Step 8: Build project: {build_command}",
+    "Step 9: Commit changes: '{commit_message}'"
+  ],
+  "details": {
+    "work_area": "specific/directory/to/work/in",
+    "forbidden_files": [
+      "{file_path} - DO NOT MODIFY (reason: production system)",
+      "{file_path} - DO NOT MODIFY (reason: working implementation)"
+    ],
+    "allowed_files": [
+      "{file_path} - What to modify and why",
+      "{file_path} - What to add or change"
+    ],
+    "context": {
+      "feature_name": "Feature being implemented",
+      "goal": "What this feature accomplishes",
+      "dependencies": ["List of features this depends on"],
+      "references": ["plan.json section 4_key_features", "context.json requirements"]
+    }
+  },
+  "testing_checklist": [
+    "1. Create test case for {feature_name}",
+    "2. Run unit tests: {unit_test_command}",
+    "3. Run integration tests: {integration_test_command}",
+    "4. Verify output matches expected results",
+    "5. Test edge cases: {edge_case_1}, {edge_case_2}",
+    "6. Verify forbidden files unchanged: git diff {forbidden_files}"
+  ],
+  "success_criteria": [
+    "✅ {Feature_name} implemented and working correctly",
+    "✅ All unit tests passing",
+    "✅ All integration tests passing",
+    "✅ Forbidden files unchanged (verified via git diff)",
+    "✅ Project builds without errors",
+    "✅ Documentation created and complete",
+    "✅ Code follows existing patterns and standards"
+  ],
+  "agent_1_status": "READY - Planning complete, awaiting agent assignment",
+  "agent_N_status": null,
+  "agent_N_assigned_at": null,
+  "agent_N_completion": {
+    "status": null,
+    "timestamp": null,
+    "changes_made": [],
+    "verification": {
+      "forbidden_files_unchanged": null,
+      "tests_passing": null,
+      "build_successful": null
+    },
+    "commit_hash": null,
+    "commit_message": null
+  },
+  "agent_1_verification": {
+    "status": null,
+    "verified_at": null,
+    "verified_by": "Agent 1",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "YYYY-MM-DDTHH:MM:SSZ",
+    "updated_at": "YYYY-MM-DDTHH:MM:SSZ",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

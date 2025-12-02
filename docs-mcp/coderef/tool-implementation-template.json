@@ -1,0 +1,602 @@
+{
+  "$schema": "./tool-implementation-template-schema.json",
+  "template_info": {
+    "name": "Tool Implementation Plan Template",
+    "version": "1.0.0",
+    "created_date": "2025-10-10",
+    "description": "Standardized template for planning MCP tool implementations in docs-mcp project",
+    "usage": "Copy this template, fill in all sections, and use task IDs (INFRA-NNN, SCAN-NNN, etc.) to track implementation progress",
+    "compliance": "Follows docs-mcp architecture patterns: ARCH-001, QUA-001, QUA-002, REF-002, REF-003, ARCH-003"
+  },
+
+  "document_info": {
+    "title": "[Tool Name] Implementation Plan",
+    "tool_id": 0,
+    "version": "1.0.0",
+    "created_date": "YYYY-MM-DD",
+    "status": "planning",
+    "estimated_effort": "X-Y hours",
+    "description": "[One-sentence description of what this tool does]"
+  },
+
+  "executive_summary": {
+    "purpose": "[What problem does this solve? What gap does it fill?]",
+    "value_proposition": "[Why is this important? What value does it provide?]",
+    "real_world_analogy": "[Explain it simply using a real-world comparison]",
+    "use_case": "[When would someone use this tool? What's the primary scenario?]",
+    "output": "[What artifacts/files/data does this tool create or return?]"
+  },
+
+  "risk_assessment": {
+    "overall_risk": "[Low | Medium | High]",
+    "complexity": "[Low | Medium | High | Very High]",
+    "scope": "[Small | Medium | Large] - X files affected",
+    "risk_factors": {
+      "file_system": "[Risk level and description of file system operations]",
+      "dependencies": "[External dependencies or none]",
+      "performance": "[Performance concerns or considerations]",
+      "security": "[Security implications and mitigations]",
+      "breaking_changes": "[Any breaking changes or none]"
+    }
+  },
+
+  "current_state_analysis": {
+    "affected_files": [
+      "server.py - [What changes at what line]",
+      "tool_handlers.py - [Handler creation and registration]",
+      "constants.py - [New constants and enums]",
+      "type_defs.py - [New TypedDict definitions]",
+      "validation.py - [New validation functions]",
+      "[other files] - [changes needed]"
+    ],
+    "dependencies": [
+      "Existing: [What existing code/patterns does this rely on?]",
+      "New: [What new classes/functions will be created?]"
+    ],
+    "architecture_context": "[How does this fit into the existing system? What layer does it operate at?]"
+  },
+
+  "key_features": [
+    "[Primary feature 1]",
+    "[Primary feature 2]",
+    "[Secondary feature 1]",
+    "[Edge case handling feature]",
+    "[Optional parameter feature]"
+  ],
+
+  "tool_specification": {
+    "name": "[tool_name]",
+    "description": "[Tool description for MCP schema]",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "required_param": {
+          "type": "string",
+          "description": "[Parameter description]",
+          "required": true
+        },
+        "optional_param": {
+          "type": "string",
+          "enum": ["option1", "option2"],
+          "description": "[Parameter description]",
+          "required": false,
+          "default": "option1"
+        }
+      },
+      "required": ["required_param"]
+    },
+    "output": "[Description of what the tool returns]"
+  },
+
+  "architecture_design": {
+    "data_flow_diagram": "[ASCII diagram showing data flow from input to output]",
+    "module_interactions": "[Diagram showing which modules interact]",
+    "file_structure_changes": [
+      "New files: [List new files to create]",
+      "Modified files: [List files to modify]"
+    ]
+  },
+
+  "implementation_phases": {
+    "phase_1_infrastructure": {
+      "title": "Core Infrastructure Setup",
+      "duration": "[X hours]",
+      "tasks": [
+        {
+          "id": "INFRA-001",
+          "task": "Add tool schema to server.py",
+          "location": "server.py:[line number]",
+          "details": "[Detailed description of what needs to be done]",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "INFRA-002",
+          "task": "Create handler in tool_handlers.py",
+          "location": "tool_handlers.py (new function)",
+          "details": "Create async def handle_[tool_name](arguments: dict) -> list[TextContent]",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "INFRA-003",
+          "task": "Register handler in TOOL_HANDLERS dict",
+          "location": "tool_handlers.py:[line number]",
+          "details": "Add '[tool_name]': handle_[tool_name] to registry",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "INFRA-004",
+          "task": "Update constants.py",
+          "location": "constants.py",
+          "details": "Add paths, files, and enum constants",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "INFRA-005",
+          "task": "Add TypedDict definitions to type_defs.py",
+          "location": "type_defs.py",
+          "details": "Create TypedDict definitions for complex return types (QUA-001 compliance)",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "INFRA-006",
+          "task": "Add validation functions to validation.py",
+          "location": "validation.py",
+          "details": "Create validation functions for input parameters (REF-003 compliance)",
+          "effort": "[X minutes]"
+        }
+      ]
+    },
+    "phase_2_core_logic": {
+      "title": "Core Logic Implementation",
+      "duration": "[X-Y hours]",
+      "approach": "[High-level approach description]",
+      "tasks": [
+        {
+          "id": "[PREFIX]-001",
+          "task": "[Core logic task 1]",
+          "method": "[How this will be implemented]",
+          "details": "[Detailed description]",
+          "effort": "[X hours]"
+        }
+      ]
+    },
+    "phase_3_testing": {
+      "title": "Testing & Validation",
+      "duration": "[X hours]",
+      "tasks": [
+        {
+          "id": "TEST-001",
+          "task": "Unit tests",
+          "details": "[What unit tests are needed]",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "TEST-002",
+          "task": "Integration tests",
+          "details": "[What integration tests are needed]",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "TEST-003",
+          "task": "Manual validation",
+          "details": "[Manual testing steps]",
+          "effort": "[X minutes]"
+        }
+      ]
+    },
+    "phase_4_documentation": {
+      "title": "Documentation Updates",
+      "duration": "[X minutes]",
+      "tasks": [
+        {
+          "id": "DOC-001",
+          "task": "Update README.md",
+          "location": "README.md",
+          "details": "Add tool to Available Tools section",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "DOC-002",
+          "task": "Update API.md",
+          "location": "API.md",
+          "details": "Document tool endpoint, parameters, examples",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "DOC-003",
+          "task": "Update ARCHITECTURE.md",
+          "location": "ARCHITECTURE.md",
+          "details": "Add to module architecture documentation",
+          "effort": "[X minutes]"
+        },
+        {
+          "id": "DOC-004",
+          "task": "Update CLAUDE.md",
+          "location": "CLAUDE.md",
+          "details": "Add AI usage guidance to Tool Catalog",
+          "effort": "[X minutes]"
+        }
+      ]
+    }
+  },
+
+  "code_structure": {
+    "handler_implementation": {
+      "file": "tool_handlers.py",
+      "function": "handle_[tool_name]",
+      "pattern": "Standard handler pattern with validation, logging, error handling",
+      "imports_required": [
+        "from mcp.types import TextContent",
+        "from pathlib import Path",
+        "from constants import [relevant constants]",
+        "from validation import [relevant validators]",
+        "from error_responses import ErrorResponse",
+        "from logger_config import logger, log_tool_call, log_error, log_security_event",
+        "from type_defs import [relevant TypedDicts]"
+      ],
+      "pseudocode": [
+        "1. Log tool invocation with log_tool_call()",
+        "2. Validate inputs using validate_*() functions (REF-003)",
+        "3. Log operation start with logger.info()",
+        "4. Execute business logic",
+        "5. Log success with logger.info()",
+        "6. Return result using TypedDict (QUA-001)",
+        "7. Handle errors with ErrorResponse factory (ARCH-001)"
+      ],
+      "error_handling": {
+        "ValueError": "ErrorResponse.invalid_input() - Input validation errors",
+        "PermissionError": "ErrorResponse.permission_denied() - Permission issues",
+        "FileNotFoundError": "ErrorResponse.not_found() - Missing files/paths",
+        "OSError": "ErrorResponse.io_error() - I/O errors",
+        "Exception": "ErrorResponse.generic_error() - Unexpected errors"
+      }
+    },
+    "generator_class": {
+      "file": "generators/[name]_generator.py",
+      "class": "[Name]Generator",
+      "inherits_from": "BaseGenerator (optional)",
+      "methods": [
+        {
+          "name": "__init__",
+          "signature": "def __init__(self, param1: Type1, param2: Type2)",
+          "description": "[Initialize with parameters]"
+        },
+        {
+          "name": "method_name",
+          "signature": "def method_name(self, param: Type) -> ReturnType",
+          "description": "[Method description]",
+          "returns": "[Description of return value]"
+        }
+      ]
+    }
+  },
+
+  "integration_with_existing_system": {
+    "follows_patterns": [
+      "QUA-002: Handler registry pattern",
+      "ARCH-001: ErrorResponse factory for errors",
+      "REF-003: Input validation at boundaries",
+      "ARCH-003: Structured logging for all operations",
+      "QUA-001: TypedDict for complex return types",
+      "REF-002: Constants/enums instead of magic strings"
+    ],
+    "constants_additions": {
+      "file": "constants.py",
+      "Paths": "[New path constants]",
+      "Files": "[New file name constants]",
+      "enums": {
+        "description": "[Description of new enums needed]",
+        "code": "[Enum class definitions]"
+      }
+    },
+    "type_defs_additions": {
+      "file": "type_defs.py",
+      "code": "[TypedDict definitions]"
+    },
+    "validation_additions": {
+      "file": "validation.py",
+      "code": "[Validation function implementations]"
+    }
+  },
+
+  "testing_strategy": {
+    "unit_tests": [
+      {
+        "test": "test_[function_name]",
+        "verifies": "[What this test validates]",
+        "task_id": "TEST-001"
+      }
+    ],
+    "integration_tests": [
+      {
+        "test": "test_[tool_name]_on_sample_project",
+        "project": "[Test project description]",
+        "expected": "[Expected outcome]",
+        "task_id": "TEST-002"
+      }
+    ],
+    "manual_validation": [
+      {
+        "step": "[Manual test step]",
+        "verify": "[What to verify]",
+        "task_id": "TEST-003"
+      }
+    ],
+    "edge_cases": {
+      "description": "Comprehensive edge case testing to ensure robustness",
+      "test_scenarios": [
+        {
+          "scenario": "[Edge case description]",
+          "setup": "[How to create this scenario]",
+          "expected_behavior": "[What should happen]",
+          "verify": [
+            "[Verification point 1]",
+            "[Verification point 2]"
+          ],
+          "error_handling": "[Expected error type or 'No errors']"
+        }
+      ]
+    }
+  },
+
+  "performance_monitoring": {
+    "description": "Performance monitoring strategy (if applicable)",
+    "metrics_to_track": [
+      {
+        "metric": "[Metric name]",
+        "how_to_measure": "[Measurement method]",
+        "target": "[Target value/range]",
+        "logging": "[Log statement example]"
+      }
+    ],
+    "optimization_opportunities": [
+      {
+        "optimization": "[Optimization description]",
+        "rationale": "[Why this optimization helps]",
+        "implementation": "[How to implement]",
+        "expected_improvement": "[Expected performance gain]"
+      }
+    ],
+    "performance_targets": {
+      "small_input": "[Target for small input]",
+      "medium_input": "[Target for medium input]",
+      "large_input": "[Target for large input]"
+    }
+  },
+
+  "documentation_updates": {
+    "files_to_update": [
+      {
+        "file": "README.md",
+        "section": "Available Tools",
+        "addition": "[Brief description to add]"
+      },
+      {
+        "file": "API.md",
+        "section": "Tool Endpoints",
+        "addition": "Document [tool_name] endpoint with parameters, examples, error handling"
+      },
+      {
+        "file": "ARCHITECTURE.md",
+        "section": "Module Architecture",
+        "addition": "Add [Generator/Module] to architecture documentation"
+      },
+      {
+        "file": "CLAUDE.md",
+        "section": "Tool Catalog",
+        "addition": "Complete AI usage guidance for [tool_name]",
+        "detailed_content": {
+          "purpose": "[What this tool does]",
+          "when_to_use": [
+            "[Usage scenario 1]",
+            "[Usage scenario 2]"
+          ],
+          "input_parameters": {
+            "param_name": {
+              "type": "[type]",
+              "required": true,
+              "description": "[description]"
+            }
+          },
+          "example_usage": "[Code example]",
+          "critical_notes": [
+            "[Important note 1]",
+            "[Important note 2]"
+          ]
+        }
+      }
+    ]
+  },
+
+  "success_criteria": {
+    "description": "Quantifiable success metrics to validate implementation quality and completeness",
+    "functional_requirements": [
+      {
+        "requirement": "[Functional requirement name]",
+        "metric": "[What to measure]",
+        "target": "[Target value or condition]",
+        "validation": "[How to validate]"
+      }
+    ],
+    "quality_requirements": [
+      {
+        "requirement": "Architecture compliance",
+        "metric": "Pattern adherence",
+        "target": "100% of code follows existing patterns (ARCH-001, QUA-001, QUA-002, REF-002, REF-003)",
+        "validation": [
+          "ARCH-001: All errors use ErrorResponse factory",
+          "QUA-001: All complex returns use TypedDict",
+          "QUA-002: Handler registered in TOOL_HANDLERS dict",
+          "REF-002: No magic strings (use constants)",
+          "REF-003: All inputs validated at boundaries"
+        ]
+      },
+      {
+        "requirement": "Logging coverage",
+        "metric": "Operations with logging",
+        "target": "100% of operations logged",
+        "validation": [
+          "log_tool_call() at handler start",
+          "log_error() for all error scenarios",
+          "logger.info() for operation progress"
+        ]
+      }
+    ],
+    "performance_requirements": [
+      {
+        "requirement": "[Performance requirement]",
+        "metric": "[What to measure]",
+        "target": "[Target value]",
+        "validation": "[How to validate]"
+      }
+    ],
+    "security_requirements": [
+      {
+        "requirement": "[Security requirement]",
+        "metric": "[What to measure]",
+        "target": "[Target value]",
+        "validation": "[How to validate]"
+      }
+    ]
+  },
+
+  "changelog_entry": {
+    "tool": "add_changelog_entry",
+    "parameters": {
+      "project_path": "C:/Users/willh/.mcp-servers/docs-mcp",
+      "version": "[X.Y.Z]",
+      "change_type": "feature",
+      "severity": "major",
+      "title": "Add [tool_name] tool for [purpose]",
+      "description": "[Detailed description of what was implemented]",
+      "files": [
+        "server.py",
+        "tool_handlers.py",
+        "constants.py",
+        "type_defs.py",
+        "validation.py",
+        "[other affected files]"
+      ],
+      "reason": "[Why this tool was needed]",
+      "impact": "[Impact on users/system]"
+    }
+  },
+
+  "troubleshooting_guide": {
+    "common_issues": [
+      {
+        "issue": "[Issue description]",
+        "symptom": "[What the user sees]",
+        "causes": [
+          "[Possible cause 1]",
+          "[Possible cause 2]"
+        ],
+        "resolution": "[How to fix it]"
+      }
+    ]
+  },
+
+  "review_gates": {
+    "pre_implementation": {
+      "reviewer": "user",
+      "question": "Does this plan address all requirements?",
+      "checkpoint": "Before starting Phase 1"
+    },
+    "post_infrastructure": {
+      "reviewer": "user",
+      "question": "Is infrastructure setup correct?",
+      "checkpoint": "After Phase 1, before Phase 2"
+    },
+    "post_implementation": {
+      "reviewer": "user",
+      "question": "Does the implementation meet success criteria?",
+      "checkpoint": "Before creating changelog entry"
+    }
+  },
+
+  "implementation_checklist": {
+    "pre_implementation": [
+      "☐ Review plan for completeness",
+      "☐ Get user approval on approach",
+      "☐ Create feature branch (optional)"
+    ],
+    "phase_1_infrastructure": [
+      "☐ INFRA-001: Tool schema (server.py)",
+      "☐ INFRA-002: Handler implementation (tool_handlers.py)",
+      "☐ INFRA-003: Register handler (tool_handlers.py)",
+      "☐ INFRA-004: Constants (constants.py)",
+      "☐ INFRA-005: TypeDicts (type_defs.py)",
+      "☐ INFRA-006: Validation functions (validation.py)"
+    ],
+    "phase_2_core_logic": [
+      "☐ [PREFIX]-001: [Core logic task 1]",
+      "☐ [PREFIX]-002: [Core logic task 2]"
+    ],
+    "phase_3_testing": [
+      "☐ TEST-001: Unit tests",
+      "☐ TEST-002: Integration tests",
+      "☐ TEST-003: Manual validation",
+      "☐ TEST-004: Edge case testing"
+    ],
+    "phase_4_documentation": [
+      "☐ DOC-001: Update README.md",
+      "☐ DOC-002: Update API.md",
+      "☐ DOC-003: Update ARCHITECTURE.md",
+      "☐ DOC-004: Update CLAUDE.md"
+    ],
+    "finalization": [
+      "☐ Add changelog entry via add_changelog_entry",
+      "☐ Update tooling-plan.json status to 'implemented'",
+      "☐ Commit changes (optional)"
+    ]
+  },
+
+  "task_id_reference": {
+    "description": "Task ID prefixes and their usage",
+    "prefixes": {
+      "INFRA": "Infrastructure setup - files, imports, registrations, schema definitions",
+      "SCAN": "Scanning/analysis - pattern discovery, code analysis, data collection",
+      "DOC": "Documentation generation - template filling, output formatting",
+      "TEST": "Testing - unit tests, integration tests, validation",
+      "SEC": "Security implementation - validations, sanitization, permissions",
+      "API": "API/endpoint development - request/response handling",
+      "DB": "Database/storage - schema changes, migrations, storage setup"
+    },
+    "usage_pattern": "Use PREFIX-NNN format (e.g., INFRA-001, SCAN-002) for all implementation tasks",
+    "benefits": [
+      "Traceability - Links tasks to specific plan sections",
+      "Dependencies - Shows task ordering",
+      "Progress tracking - Checkbox-style completion",
+      "Cross-referencing - Easy to reference in discussions",
+      "Consistency - Mirrors architecture pattern naming"
+    ]
+  },
+
+  "notes_and_considerations": {
+    "design_decisions": [
+      {
+        "decision": "[Design decision]",
+        "rationale": "[Why this approach was chosen]",
+        "trade_off": "[What trade-offs were made]"
+      }
+    ],
+    "potential_challenges": [
+      {
+        "challenge": "[Challenge description]",
+        "mitigation": "[How to mitigate]",
+        "fallback": "[Fallback plan]"
+      }
+    ]
+  },
+
+  "future_enhancements": {
+    "v1_1_improvements": [
+      {
+        "feature": "[Enhancement description]",
+        "description": "[Detailed description]",
+        "benefit": "[What benefit this provides]",
+        "effort": "[Estimated effort]"
+      }
+    ]
+  }
+}

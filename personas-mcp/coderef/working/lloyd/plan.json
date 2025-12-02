@@ -1,0 +1,366 @@
+{
+  "project_name": "lloyd-mcp",
+  "version": "1.0.0",
+  "plan_created": "2025-10-18",
+  "status": "planning",
+  "overview": {
+    "description": "Lloyd: Multi-Agent Orchestration MCP server that coordinates specialized AI agents across the full software development lifecycle",
+    "goal": "Enable fully automated feature implementation by coordinating multiple agents (planning, implementation, testing, security, documentation, deployment) working in parallel",
+    "target_completion": "Q3 2026 (Phase 4)",
+    "estimated_effort": "8-12 weeks"
+  },
+  "architecture": {
+    "core_components": [
+      {
+        "name": "MCP Server",
+        "description": "Python MCP server implementing 12 core tools",
+        "file": "server.py",
+        "dependencies": ["mcp Python SDK"]
+      },
+      {
+        "name": "Workflow Engine",
+        "description": "State machine for workflow management",
+        "file": "src/workflow_engine.py",
+        "dependencies": ["state machine library"]
+      },
+      {
+        "name": "Agent Manager",
+        "description": "Spawns, coordinates, and manages agent lifecycle",
+        "file": "src/agent_manager.py",
+        "dependencies": ["LangChain or AutoGen"]
+      },
+      {
+        "name": "Task Queue",
+        "description": "Manages task distribution and coordination",
+        "file": "src/task_queue.py",
+        "dependencies": []
+      },
+      {
+        "name": "Coordinator",
+        "description": "Lloyd coordinator logic (Scrum Master + Tech Lead)",
+        "file": "src/coordinator.py",
+        "dependencies": []
+      },
+      {
+        "name": "Result Aggregator",
+        "description": "Combines results from multiple agents",
+        "file": "src/aggregator.py",
+        "dependencies": []
+      }
+    ],
+    "integration_points": [
+      "personas-mcp (4 personas: mcp-expert, docs-expert, coderef-expert, nfl-scraper-expert)",
+      "docs-mcp (30 tools for planning and documentation)",
+      "CodeRef-MCP (6 tools for code analysis)",
+      "test-mcp (future - 18 testing tools)",
+      "deploy-mcp (future - 15 deployment tools)",
+      "data-mcp (future - 16 data tools)",
+      "security-mcp (future - 14 security tools)"
+    ]
+  },
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Foundation",
+      "duration": "2 weeks",
+      "status": "pending",
+      "deliverables": [
+        "MCP server skeleton with 12 tool definitions",
+        "Basic workflow engine (sequential workflows only)",
+        "Agent manager with spawn_agent capability",
+        "Integration with personas-mcp (activate personas in agents)",
+        "Simple task queue implementation"
+      ],
+      "success_criteria": [
+        "Can spawn a single agent with a persona",
+        "Can execute a simple 2-step sequential workflow",
+        "All 12 tools return basic responses (stubs ok)"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Workflow Orchestration",
+      "duration": "3 weeks",
+      "status": "pending",
+      "deliverables": [
+        "Full workflow engine (sequential, parallel, conditional, retry)",
+        "State machine implementation for workflow management",
+        "monitor_workflow, pause_workflow, retry_workflow tools",
+        "Workflow persistence and recovery",
+        "Error handling and rollback logic"
+      ],
+      "success_criteria": [
+        "Can execute parallel workflows (2+ agents at once)",
+        "Can retry failed workflow steps",
+        "Can pause and resume workflows",
+        "Workflows survive server restart"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Agent Coordination",
+      "duration": "2 weeks",
+      "status": "pending",
+      "deliverables": [
+        "assign_task tool (intelligent task routing)",
+        "coordinate_agents tool (inter-agent communication)",
+        "aggregate_results tool (result combining)",
+        "Task decomposition logic",
+        "Agent communication protocol"
+      ],
+      "success_criteria": [
+        "Can coordinate 3+ agents on a single task",
+        "Agents can share data and communicate",
+        "Results are properly aggregated and formatted"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Intelligence & Analysis",
+      "duration": "2 weeks",
+      "status": "pending",
+      "deliverables": [
+        "analyze_task_complexity tool",
+        "suggest_workflow tool",
+        "optimize_workflow tool",
+        "ML model or heuristics for task analysis",
+        "Workflow recommendation engine"
+      ],
+      "success_criteria": [
+        "Can analyze task and suggest appropriate workflow",
+        "Can recommend which agents to use",
+        "Can optimize existing workflows for efficiency"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Integration & Testing",
+      "duration": "2 weeks",
+      "status": "pending",
+      "deliverables": [
+        "Full integration with docs-mcp (30 tools)",
+        "Full integration with CodeRef-MCP (6 tools)",
+        "End-to-end workflow tests",
+        "Performance testing (10+ agent workflows)",
+        "Documentation (CLAUDE.md, README.md, examples)"
+      ],
+      "success_criteria": [
+        "Can execute complete feature implementation workflow (7 agents)",
+        "All 12 tools fully functional",
+        "Example workflows documented and tested"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Lloyd Persona & Polish",
+      "duration": "1 week",
+      "status": "pending",
+      "deliverables": [
+        "lloyd-expert persona (comprehensive system prompt)",
+        "Slash commands (/use-lloyd, /lloyd-workflow)",
+        "Dashboard/monitoring UI (optional)",
+        "Production deployment configuration",
+        "Migration guide from manual workflows"
+      ],
+      "success_criteria": [
+        "lloyd-expert persona operational in personas-mcp",
+        "Can activate Lloyd via /use-lloyd",
+        "Production-ready deployment"
+      ]
+    }
+  ],
+  "tools_implementation_order": [
+    {
+      "priority": 1,
+      "tools": ["spawn_agent", "create_workflow", "execute_workflow"],
+      "reason": "Core functionality - must work first"
+    },
+    {
+      "priority": 2,
+      "tools": ["assign_task", "coordinate_agents", "aggregate_results"],
+      "reason": "Agent coordination - enables multi-agent workflows"
+    },
+    {
+      "priority": 3,
+      "tools": ["monitor_workflow", "pause_workflow", "retry_workflow"],
+      "reason": "Workflow management - production readiness"
+    },
+    {
+      "priority": 4,
+      "tools": ["analyze_task_complexity", "suggest_workflow", "optimize_workflow"],
+      "reason": "Intelligence layer - nice to have, not critical"
+    }
+  ],
+  "personas_implementation": {
+    "phase_1_personas": [
+      {
+        "name": "lloyd-expert",
+        "priority": "critical",
+        "expertise_areas": 18,
+        "system_prompt_size": "~2000 lines",
+        "reason": "Core coordinator persona for lloyd-mcp"
+      }
+    ],
+    "future_personas": [
+      {
+        "name": "automation-expert",
+        "priority": "high",
+        "reason": "Workflow optimization and analysis"
+      },
+      {
+        "name": "architecture-expert",
+        "priority": "medium",
+        "reason": "Architecture review and standards"
+      },
+      {
+        "name": "product-expert",
+        "priority": "low",
+        "reason": "Product & Design Group coordination"
+      },
+      {
+        "name": "ui-expert",
+        "priority": "low",
+        "reason": "UI/UX design coordination"
+      }
+    ]
+  },
+  "dependencies": {
+    "required_before_start": [
+      "personas-mcp v1.0.0+ operational ✅",
+      "docs-mcp operational ✅"
+    ],
+    "recommended_before_production": [
+      "CodeRef-MCP operational (currently in development)",
+      "test-mcp operational (Phase 1 - Q4 2025)",
+      "deploy-mcp operational (Phase 2 - Q1 2026)",
+      "data-mcp operational (Phase 3 - Q2 2026)",
+      "security-mcp operational (Phase 3 - Q2 2026)"
+    ]
+  },
+  "risks_and_mitigations": [
+    {
+      "risk": "Agent framework (LangChain/AutoGen) integration complexity",
+      "severity": "high",
+      "mitigation": "Start with simple subprocess-based agents, upgrade to LangChain later",
+      "contingency": "Build custom agent framework if needed"
+    },
+    {
+      "risk": "Workflow state management and persistence",
+      "severity": "medium",
+      "mitigation": "Use SQLite for workflow state, implement checkpoint/recovery",
+      "contingency": "In-memory only for v1, add persistence in v2"
+    },
+    {
+      "risk": "Inter-agent communication complexity",
+      "severity": "medium",
+      "mitigation": "Use simple JSON message passing, standardize protocol early",
+      "contingency": "Start with shared state (no direct communication)"
+    },
+    {
+      "risk": "Dependent MCP servers not ready (test-mcp, deploy-mcp, etc.)",
+      "severity": "low",
+      "mitigation": "Build Lloyd to work with stub/mock tools, graceful degradation",
+      "contingency": "Focus on docs-mcp + CodeRef-MCP workflows initially"
+    }
+  ],
+  "success_metrics": {
+    "functional": [
+      "All 12 tools implemented and tested",
+      "Can spawn 10+ agents concurrently",
+      "Can execute workflows with 7+ steps",
+      "Workflow success rate > 95%"
+    ],
+    "performance": [
+      "Agent spawn time < 2 seconds",
+      "Workflow execution overhead < 10%",
+      "Can handle 5 concurrent workflows"
+    ],
+    "integration": [
+      "Works with all operational MCP servers",
+      "lloyd-expert persona operational",
+      "Example workflows documented"
+    ]
+  },
+  "example_workflows": [
+    {
+      "name": "Complete Feature Implementation",
+      "description": "User requests 'Implement authentication system' → Lloyd coordinates 7 agents end-to-end",
+      "agents": [
+        "Planning Agent (docs-expert)",
+        "Implementation Agent (mcp-expert)",
+        "Security Agent (security-expert)",
+        "Testing Agent (test-expert)",
+        "Data Agent (data-expert)",
+        "Documentation Agent (docs-expert)",
+        "Deployment Agent (devops-expert)"
+      ],
+      "workflow_type": "sequential with parallel testing/security",
+      "estimated_duration": "30-60 minutes",
+      "status": "target for Phase 5"
+    },
+    {
+      "name": "Code Refactoring with Impact Analysis",
+      "description": "Refactor codebase with multi-agent impact analysis and validation",
+      "agents": [
+        "Planning Agent (docs-expert)",
+        "Implementation Agent (mcp-expert)",
+        "CodeRef Agent (coderef-expert)",
+        "Testing Agent (test-expert)",
+        "Documentation Agent (docs-expert)"
+      ],
+      "workflow_type": "sequential",
+      "estimated_duration": "15-30 minutes",
+      "status": "target for Phase 3"
+    },
+    {
+      "name": "Security Audit + Automated Fixes",
+      "description": "Scan for vulnerabilities, locate code, patch, test, document",
+      "agents": [
+        "Security Agent (security-expert)",
+        "CodeRef Agent (coderef-expert)",
+        "Implementation Agent (mcp-expert)",
+        "Testing Agent (test-expert)",
+        "Documentation Agent (docs-expert)"
+      ],
+      "workflow_type": "sequential",
+      "estimated_duration": "20-40 minutes",
+      "status": "target for Phase 5 (requires security-mcp)"
+    }
+  ],
+  "file_structure": {
+    "root": "lloyd-mcp/",
+    "structure": [
+      "server.py (MCP server with 12 tools)",
+      "README.md (project overview)",
+      "CLAUDE.md (AI context)",
+      "package.json or pyproject.toml (dependencies)",
+      "src/",
+      "  ├── models.py (Pydantic models for workflows, agents, tasks)",
+      "  ├── workflow_engine.py (state machine + workflow execution)",
+      "  ├── agent_manager.py (spawn, coordinate, lifecycle)",
+      "  ├── task_queue.py (task distribution)",
+      "  ├── coordinator.py (Lloyd coordinator logic)",
+      "  ├── aggregator.py (result combining)",
+      "  └── mcp_client.py (calls to other MCP servers)",
+      "personas/",
+      "  └── base/",
+      "      └── lloyd-expert.json (Lloyd coordinator persona)",
+      "examples/",
+      "  ├── feature_implementation.py",
+      "  ├── code_refactoring.py",
+      "  └── security_audit.py",
+      "tests/",
+      "  ├── test_tools.py (12 tool tests)",
+      "  ├── test_workflows.py (workflow execution tests)",
+      "  └── test_integration.py (MCP integration tests)"
+    ]
+  },
+  "next_steps": [
+    "1. Create lloyd-mcp repository structure",
+    "2. Implement Phase 1: Foundation (MCP server skeleton + basic workflow)",
+    "3. Test with simple 2-agent workflow (Planning + Implementation)",
+    "4. Iterate through phases 2-6",
+    "5. Create lloyd-expert persona in personas-mcp",
+    "6. Deploy to production"
+  ]
+}

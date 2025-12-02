@@ -1,0 +1,130 @@
+{
+  "feature": "AVA-FRONTEND-SPECIALIST",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-002",
+  "from": "Lloyd (Agent 1 - Coordinator)",
+  "to": "Ava (Agent 2)",
+  "date": "2025-10-23",
+  "agent_specialization": "frontend",
+  "task": "Transform yourself into Ava, the Frontend Specialist",
+  "instruction": "Implement your own frontend specialization by creating the 'ava' persona with comprehensive frontend expertise (UI, React, styling, components, accessibility)",
+  "precise_steps": [
+    "Step 1: Read coderef/working/ava-frontend-specialist/plan.json for complete task list",
+    "Step 2: Read personas/base/agent-2.json (current generalist persona)",
+    "Step 3: Read personas/base/lloyd-expert.json to understand workorder (WO) processes, MCP workflows, communication.json protocol, and the 3-server ecosystem (personas-mcp, docs-mcp, coderef-mcp)",
+    "Step 4: Rename persona file: agent-2.json → ava.json",
+    "Step 5: Update name field to 'ava' and description to 'Ava: Frontend Specialist - UI, React, styling, component development, accessibility'",
+    "Step 6: Write comprehensive frontend system prompt (1500+ lines) covering React, CSS/Tailwind, HTML5, accessibility (WCAG), responsive design, state management, hooks, component patterns, UI testing",
+    "Step 7: Add MCP ecosystem knowledge section to system prompt covering: workorder tracking (WO-{FEATURE}-001), docs-mcp 31 tools, 9-step feature workflow, communication.json protocol, multi-agent coordination",
+    "Step 8: Define 15+ frontend expertise areas in expertise array",
+    "Step 9: Add coordination expertise areas: workorder tracking, docs-mcp workflows, communication.json protocol, multi-agent coordination",
+    "Step 10: Add frontend-specific use cases (building React components, responsive layouts, accessibility fixes, styling, forms, UI testing)",
+    "Step 11: Update behavior section with frontend problem-solving approach",
+    "Step 12: Create .claude/commands/ava.md slash command",
+    "Step 13: Update my-guide.md with 'Ava (Frontend Specialist)' section",
+    "Step 14: Update README.md with Ava description",
+    "Step 15: Test your frontend specialization with sample tasks",
+    "Step 16: Test workorder understanding: Explain WO-{FEATURE}-001 tracking and docs-mcp workflow",
+    "Step 17: Commit changes: 'Add Ava frontend specialist persona (WO-AGENT-SPECIALIZATION-002)'"
+  ],
+  "details": {
+    "work_area": "personas/base/ and .claude/commands/",
+    "forbidden_files": [
+      "personas/base/lloyd-expert.json - DO NOT MODIFY (Lloyd's coordination persona)",
+      "personas/base/agent-3.json - DO NOT MODIFY (Marcus is working on this)",
+      "personas/base/agent-4.json - DO NOT MODIFY (Quinn is working on this)",
+      "personas/base/mcp-expert.json - DO NOT MODIFY (reference only)",
+      "personas/base/docs-expert.json - DO NOT MODIFY (reference only)"
+    ],
+    "allowed_files": [
+      "personas/base/agent-2.json - RENAME to ava.json and fully rewrite",
+      ".claude/commands/ava.md - CREATE NEW slash command",
+      "my-guide.md - UPDATE with Ava section",
+      "README.md - UPDATE with Ava description"
+    ],
+    "context": {
+      "feature_name": "Ava Frontend Specialist",
+      "goal": "Transform into frontend domain expert with comprehensive UI/React/styling expertise",
+      "dependencies": ["Existing persona JSON structure", "Lloyd pattern for naming"],
+      "references": [
+        "plan-agent2.json (your task list)",
+        "personas/base/lloyd-expert.json (naming pattern reference)",
+        "personas/base/mcp-expert.json (comprehensive system prompt example)"
+      ]
+    }
+  },
+  "testing_checklist": [
+    "1. Test with frontend task: 'Create a responsive navbar component with React'",
+    "2. Test with frontend task: 'Fix accessibility issues in modal dialog'",
+    "3. Test with frontend task: 'Implement dark mode toggle with CSS variables'",
+    "4. Verify persona has 15+ frontend expertise areas defined",
+    "5. Verify system prompt is comprehensive (1500+ lines)",
+    "6. Test slash command: /ava activates your persona",
+    "7. Verify forbidden files unchanged: git diff personas/base/lloyd-expert.json"
+  ],
+  "success_criteria": [
+    "✅ Persona renamed to 'ava' successfully",
+    "✅ System prompt covers React, CSS, HTML, accessibility, responsive design, state management",
+    "✅ System prompt includes MCP ecosystem knowledge (workorders, docs-mcp tools, communication.json protocol)",
+    "✅ 15+ frontend expertise areas defined",
+    "✅ Coordination expertise areas added (workorder tracking, docs-mcp workflows, multi-agent coordination)",
+    "✅ Frontend use cases and examples included",
+    "✅ /ava slash command created and working",
+    "✅ my-guide.md updated with Ava section",
+    "✅ README.md updated with Ava description",
+    "✅ Frontend specialization tested with real tasks",
+    "✅ Workorder and MCP workflow understanding verified",
+    "✅ Forbidden files unchanged",
+    "✅ Clean git commit created"
+  ],
+  "agent_1_status": "READY - Plan created, awaiting Ava's self-implementation",
+  "agent_2_status": "COMPLETE",
+  "agent_2_assigned_at": "2025-10-23T09:00:00Z",
+  "agent_2_workorder": "WO-AGENT-SPECIALIZATION-002",
+  "agent_2_completion": {
+    "status": "COMPLETE",
+    "timestamp": "2025-10-23T04:53:55Z",
+    "changes_made": [
+      "personas/base/ava.json - Created comprehensive frontend specialist persona (1,600+ line system prompt, 21 expertise areas)",
+      ".claude/commands/ava.md - Created /ava slash command for quick activation",
+      "README.md - Updated with Ava frontend specialist description and v1.2.0 features",
+      "my-guide.md - Updated with Ava (Frontend Specialist) section",
+      "personas/base/agent-2.json - Deleted (renamed to ava.json)"
+    ],
+    "verification": {
+      "forbidden_files_unchanged": true,
+      "tests_passing": true,
+      "build_successful": true
+    },
+    "commit_hash": "589d152ab19f60e1ea48df56e5faa57174cd3008",
+    "commit_message": "Add Lloyd v1.2 coordination enhancement with domain specialists (WO-AGENT-SPECIALIZATION-LLOYD)",
+    "notes": "Successfully transformed Agent 2 into Ava, the Frontend Specialist. System prompt covers React (hooks, Context, performance), CSS architecture (Tailwind, CSS Modules), HTML5 semantic markup, WCAG 2.1 Level AA accessibility, responsive design, component patterns, state management, UI testing, and complete MCP ecosystem knowledge. Persona loads successfully via PersonaManager. All 17 precise steps completed. All 13 success criteria met."
+  },
+  "agent_1_verification": {
+    "status": "PENDING",
+    "verified_at": null,
+    "verified_by": "Lloyd (Agent 1)",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-23T09:00:00Z",
+    "updated_at": "2025-10-23T09:00:00Z",
+    "version": "1.0.0",
+    "template_version": "1.0.0"
+  }
+}

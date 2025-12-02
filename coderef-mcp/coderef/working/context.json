@@ -1,0 +1,223 @@
+{
+  "project": "CodeRef MCP Server - Agentic Enhancements",
+  "location": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+  "objective": "Enhance existing Python MCP server with Resources, Prompts, Natural Language Query, and Real-Time Scanning capabilities",
+
+  "current_state": {
+    "implementation": "Python-based MCP server using @modelcontextprotocol/sdk",
+    "existing_tools": [
+      "mcp__coderef__query - Element and relationship queries",
+      "mcp__coderef__analyze - Impact analysis with dependency tracking",
+      "mcp__coderef__validate - Reference validation",
+      "mcp__coderef__batch_validate - Bulk validation",
+      "mcp__coderef__generate_docs - Documentation generation",
+      "mcp__coderef__audit - Code audit and metrics"
+    ],
+    "strengths": [
+      "Async/await pattern with proper async handlers",
+      "Singleton executors (QueryExecutor, DeepAnalysisEngine, ReferenceValidator)",
+      "Comprehensive error handling with standardized responses",
+      "Parameter validation with type checking",
+      "Structured logging for observability",
+      "Official MCP SDK integration"
+    ],
+    "missing_features": [
+      "Resources - Read-only data access (MCP standard)",
+      "Prompts - Pre-built workflows (MCP standard)",
+      "Sampling - LLM completion requests (advanced)",
+      "Natural language query parsing",
+      "Real-time scanning bridge to TypeScript CLI"
+    ]
+  },
+
+  "key_files": {
+    "server.py": "Main MCP server entry point with tool registration (334 lines)",
+    "tool_handlers.py": "Implementation of all 6 tool handlers with async patterns (631 lines)",
+    "typescript_cli": "C:\\Users\\willh\\Desktop\\projects - current-location\\coderef-system\\packages\\cli"
+  },
+
+  "proposed_enhancements": [
+    {
+      "priority": 1,
+      "name": "Resources Support",
+      "description": "Add MCP Resources for read-only data access",
+      "resources": [
+        "coderef://graph/current - Complete dependency graph",
+        "coderef://stats/summary - Codebase statistics",
+        "coderef://index/elements - Element index",
+        "coderef://coverage/test - Test coverage map"
+      ],
+      "effort": "4-6 hours",
+      "impact": "HIGH",
+      "roi": "Critical"
+    },
+    {
+      "priority": 2,
+      "name": "Prompts Support",
+      "description": "Add MCP Prompts for pre-built workflows",
+      "prompts": [
+        "analyze_function - Deep function analysis",
+        "review_changes - Code change review",
+        "refactor_plan - Safe refactoring plan generation",
+        "find_dead_code - Unused code identification"
+      ],
+      "effort": "6-8 hours",
+      "impact": "HIGH",
+      "roi": "Critical"
+    },
+    {
+      "priority": 3,
+      "name": "Natural Language Query",
+      "description": "Parse natural language into structured queries",
+      "capabilities": [
+        "Pattern-based intent recognition",
+        "Context-aware parsing",
+        "Common query patterns (what calls X, what does X call, impact of X)",
+        "Natural language summaries of results"
+      ],
+      "effort": "8-12 hours",
+      "impact": "MEDIUM",
+      "roi": "Important"
+    },
+    {
+      "priority": 4,
+      "name": "Real-Time Scanning Bridge",
+      "description": "Connect Python MCP to TypeScript CLI AST scanner",
+      "features": [
+        "Subprocess bridge to TypeScript CLI",
+        "99% precision AST scanning",
+        "Index update on scan completion",
+        "Support for TypeScript, JavaScript, Python"
+      ],
+      "effort": "12-16 hours",
+      "impact": "MEDIUM",
+      "roi": "Important"
+    }
+  ],
+
+  "technical_requirements": {
+    "python_version": ">=3.10",
+    "dependencies": [
+      "@modelcontextprotocol/sdk (Python)",
+      "asyncio for async operations",
+      "subprocess for CLI bridge",
+      "regex for NL query parsing"
+    ],
+    "integration_points": {
+      "typescript_cli": "C:\\Users\\willh\\Desktop\\projects - current-location\\coderef-system\\packages\\cli",
+      "claude_desktop": "Configure in claude_desktop_config.json",
+      "data_store": "TBD - SQLite, JSON, or in-memory"
+    }
+  },
+
+  "implementation_phases": {
+    "phase_1_resources": {
+      "week": 1,
+      "tasks": [
+        "Implement @app.list_resources() handler",
+        "Implement @app.read_resource() handler",
+        "Add graph resource (coderef://graph/current)",
+        "Add stats resource (coderef://stats/summary)",
+        "Add index resource (coderef://index/elements)",
+        "Add coverage resource (coderef://coverage/test)",
+        "Test with Claude Desktop"
+      ]
+    },
+    "phase_2_prompts": {
+      "week": 2,
+      "tasks": [
+        "Implement @app.list_prompts() handler",
+        "Implement @app.get_prompt() handler",
+        "Add analyze_function prompt",
+        "Add review_changes prompt",
+        "Add refactor_plan prompt",
+        "Add find_dead_code prompt",
+        "Test workflows end-to-end"
+      ]
+    },
+    "phase_3_nl_query": {
+      "week": 3,
+      "tasks": [
+        "Implement parse_query_intent() function",
+        "Add pattern matching for common queries",
+        "Add context awareness",
+        "Create mcp__coderef__nl_query tool",
+        "Add handler to TOOL_HANDLERS",
+        "Test with various natural language inputs"
+      ]
+    },
+    "phase_4_realtime_scan": {
+      "week": 4,
+      "tasks": [
+        "Implement CLI subprocess bridge",
+        "Add index update logic",
+        "Create mcp__coderef__scan_realtime tool",
+        "Add caching layer",
+        "Test end-to-end scanning flow",
+        "Performance tuning"
+      ]
+    }
+  },
+
+  "success_criteria": {
+    "resources": "AI agents can fetch graphs and stats without running queries",
+    "prompts": "Common workflows accessible with simple prompt names",
+    "nl_query": "Natural language queries parsed correctly (>90% accuracy)",
+    "realtime_scan": "Fresh scans complete in <5 seconds for small codebases"
+  },
+
+  "risks": {
+    "data_persistence": "Need to decide on storage mechanism (SQLite vs JSON vs in-memory)",
+    "subprocess_overhead": "CLI bridge may add 100-500ms latency",
+    "nl_parsing_accuracy": "Regex patterns may not cover all query variations",
+    "breaking_changes": "Updates should maintain backward compatibility with existing tools"
+  },
+
+  "related_systems": {
+    "coderef_typescript_cli": {
+      "path": "C:\\Users\\willh\\Desktop\\projects - current-location\\coderef-system",
+      "packages": [
+        "@coderef/core - AST scanning engine",
+        "@coderef/cli - Command-line interface",
+        "@coderef/sentinel - Monitoring",
+        "@coderef/path-validation - Path utilities"
+      ],
+      "capabilities": [
+        "AST-based scanning (99% precision)",
+        "Dependency graph analysis",
+        "Query and impact analysis",
+        "TypeScript, JavaScript, Python support"
+      ]
+    },
+    "claude_desktop_integration": {
+      "config_file": "claude_desktop_config.json",
+      "server_registration": "mcpServers.coderef",
+      "required_env_vars": [
+        "CODEREF_CLI_PATH",
+        "CODEREF_LOG_LEVEL"
+      ]
+    }
+  },
+
+  "documentation": {
+    "existing": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef-mcp\\README.md (likely)",
+      "C:\\Users\\willh\\Desktop\\projects - current-location\\coderef-system\\CLAUDE.md",
+      "C:\\Users\\willh\\Desktop\\projects - current-location\\coderef-system\\AI-AGENTIC-INTEGRATION.md"
+    ],
+    "to_create": [
+      "AGENTIC-ENHANCEMENTS.md - Enhancement specification",
+      "RESOURCES.md - Resources documentation",
+      "PROMPTS.md - Prompts documentation",
+      "TESTING.md - Testing strategy"
+    ]
+  },
+
+  "next_steps": [
+    "Review and validate this context",
+    "Gather detailed technical context using docs-mcp",
+    "Create detailed implementation plan",
+    "Begin Phase 1: Resources implementation",
+    "Test with Claude Desktop after each phase"
+  ]
+}

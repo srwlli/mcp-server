@@ -1,0 +1,72 @@
+[project]
+name = "personas-mcp"
+version = "0.1.0"
+description = "MCP Server for Composable Expert Agent Personas"
+readme = "README.md"
+authors = [
+    {name = "willh"},
+    {name = "Claude Code AI"}
+]
+maintainers = [
+    {name = "willh"}
+]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = [
+    "mcp",
+    "personas",
+    "agents",
+    "ai-assistant",
+    "expert-systems"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "mypy>=1.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/srwlli/personas-mcp"
+Repository = "https://github.com/srwlli/personas-mcp"
+Issues = "https://github.com/srwlli/personas-mcp/issues"
+
+[project.scripts]
+personas-mcp = "server:main"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+asyncio_mode = "auto"

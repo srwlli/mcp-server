@@ -1,0 +1,53 @@
+{
+  "foundation_docs": {
+    "available": [],
+    "missing": [
+      "README.md",
+      "API.md",
+      "ARCHITECTURE.md",
+      "COMPONENTS.md",
+      "SCHEMA.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "unknown",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [],
+    "file_counts": {
+      "coderef\\working\\agent-persona-mcp\\context\\training-data": 3,
+      ".claude": 1,
+      "coderef\\future": 1,
+      "coderef\\working\\agent-persona-mcp": 1
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: README.md, API.md, ARCHITECTURE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)",
+    "No README.md found in project root"
+  ]
+}

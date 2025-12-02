@@ -1,0 +1,195 @@
+{
+  "workorder_id": "WO-NFL-SCRAPER-PERSONA-001",
+  "feature_name": "nfl-scraper-expert",
+  "project": "personas-mcp",
+  "target_project": "next-scraper",
+  "created_at": "2025-10-18",
+
+  "project_overview": {
+    "name": "next-scraper (NFL Stats Platform)",
+    "description": "Backend data infrastructure for 2025-26 NFL season - automated scraping, scheduling, and data management",
+    "tech_stack": {
+      "runtime": "Node.js 20+",
+      "database": "Supabase (PostgreSQL)",
+      "api_source": "ESPN API",
+      "logging": "Winston",
+      "scheduling": "node-cron",
+      "http_client": "Axios",
+      "deployment": "Docker"
+    },
+    "data_scale": {
+      "teams": 33,
+      "players": "2,637+",
+      "games": 272,
+      "scrapers": 5,
+      "seed_scripts": 4
+    }
+  },
+
+  "requirements": {
+    "functional": [
+      "Expert knowledge of ESPN API endpoints and response formats",
+      "Understanding of NFL data model (teams, players, games, stats, injuries)",
+      "Web scraping best practices (rate limiting, retry logic, error handling)",
+      "next-scraper architecture knowledge (scripts, utils, patterns)",
+      "Supabase/PostgreSQL operations (inserts, updates, upserts, migrations)",
+      "Winston logging patterns and best practices",
+      "node-cron scheduling and game-day detection logic",
+      "Docker deployment and production setup"
+    ],
+    "non_functional": [
+      "Comprehensive 2000-4000 line system prompt for agentic use",
+      "18 expertise areas specific to NFL data scraping",
+      "12 use cases relevant to next-scraper project",
+      "Code examples from actual next-scraper patterns",
+      "Independent persona (parent: null)",
+      "Follows PersonaDefinition schema"
+    ]
+  },
+
+  "success_criteria": [
+    "Persona loads successfully via PersonaManager",
+    "Provides actionable guidance on ESPN API integration",
+    "References actual next-scraper file paths and patterns",
+    "Can troubleshoot scraper failures effectively",
+    "Validates against PersonaDefinition schema",
+    "AI responses include next-scraper specific knowledge"
+  ],
+
+  "next_scraper_analysis": {
+    "file_structure": {
+      "scripts/seed/": {
+        "01-teams.js": "Loads 33 NFL teams (includes WSH/WAS alias)",
+        "02-stadiums.js": "Loads 30 stadiums with capacity and location",
+        "03-players.js": "Loads 2,637 players across all teams",
+        "04-schedule.js": "Loads 272 games for 2025 season"
+      },
+      "scripts/scrapers/": {
+        "game-stats-scraper.js": "Post-game stats (team + player + scoring plays + weather)",
+        "live-games-scraper.js": "Real-time scores, polls every 30s during games",
+        "injuries-scraper.js": "Player injury reports from ESPN",
+        "roster-updates-scraper.js": "Daily roster changes (signings/releases)",
+        "standings-scraper.js": "Division/conference rankings"
+      },
+      "scripts/utils/": {
+        "supabase-client.js": "Database connection and operations",
+        "espn-api.js": "ESPN API wrapper with endpoints",
+        "logger.js": "Winston logging setup (file + console)",
+        "rate-limiter.js": "1 req/sec rate limiter for ESPN API"
+      },
+      "scripts/scheduler.js": "Cron-based automation orchestration"
+    },
+
+    "espn_api_endpoints": [
+      "/sports/football/nfl/scoreboard - Live scores and game status",
+      "/sports/football/nfl/teams - Team information",
+      "/sports/football/nfl/teams/{teamId}/roster - Player rosters",
+      "/sports/football/nfl/summary?event={gameId} - Game details and stats",
+      "/sports/football/nfl/teams/{teamId}/injuries - Injury reports",
+      "/sports/football/nfl/standings - Division/conference standings"
+    ],
+
+    "key_patterns": {
+      "rate_limiting": "Custom rate limiter: 1 request per second to ESPN API",
+      "error_handling": "Try-catch with Winston logging at multiple levels",
+      "data_validation": "Schema validation before Supabase inserts",
+      "idempotency": "Upsert operations for safe re-runs",
+      "batch_operations": "Bulk inserts for performance",
+      "game_day_detection": "Smart scheduling (Thu/Sun/Mon + late-season Sat)"
+    },
+
+    "data_model": {
+      "core_tables": [
+        "teams - 33 teams with abbreviations, divisions, conferences",
+        "stadiums - 30 stadiums with capacity, location, surface",
+        "players - 2,637+ players with positions, numbers, heights, weights",
+        "games - 272 games with dates, locations, statuses",
+        "team_game_stats - Per-game team statistics",
+        "player_game_stats - Per-game player statistics",
+        "scoring_plays - Play-by-play scoring summary",
+        "injuries - Player injury reports with statuses",
+        "transactions - Roster changes (signings/releases)",
+        "standings - Division/conference rankings"
+      ],
+      "relationships": [
+        "teams ← players (team_id foreign key)",
+        "games → teams (home_team_id, away_team_id)",
+        "team_game_stats → games + teams",
+        "player_game_stats → games + players",
+        "scoring_plays → games + teams",
+        "injuries → players",
+        "transactions → players + teams"
+      ]
+    },
+
+    "automation": {
+      "scheduler_cron_jobs": [
+        "Live scores: Every 30s during game windows (Thu/Sun/Mon 12pm-12am ET)",
+        "Game stats: Triggered when games complete (via live-games-scraper)",
+        "Injuries: Daily at 9am ET",
+        "Roster updates: Daily at 10am ET",
+        "Standings: Daily at 11pm ET"
+      ],
+      "smart_scheduling": "Only runs live-games-scraper on actual game days to save resources"
+    }
+  },
+
+  "use_cases": [
+    "Adding a new scraper for player prop bets",
+    "Debugging why live-games-scraper isn't updating scores",
+    "Optimizing game-stats-scraper for concurrent games",
+    "Implementing retry logic for ESPN API timeouts",
+    "Adding new data fields (weather, referee, play-by-play)",
+    "Troubleshooting Supabase connection pool issues",
+    "Creating new cron schedule for bye week updates",
+    "Handling ESPN API schema changes mid-season",
+    "Implementing alerting for scraper failures",
+    "Migrating to alternative data source",
+    "Adding fantasy points or betting odds data",
+    "Creating comprehensive test suite for scrapers"
+  ],
+
+  "technical_challenges": {
+    "espn_api_quirks": [
+      "Team abbreviation inconsistencies (WSH vs WAS)",
+      "Missing injury data for some teams",
+      "Inconsistent player name formats",
+      "Rate limiting (need 1 req/sec)",
+      "Schema changes mid-season",
+      "Missing game data for postponed games"
+    ],
+    "scraper_challenges": [
+      "Handling concurrent game scraping",
+      "Partial failures (some players succeed, others fail)",
+      "Transaction rollback for multi-step operations",
+      "Detecting when games actually complete (not just final score shown)",
+      "Normalizing player positions (ESPN format vs database format)",
+      "Deduplicating player records across teams"
+    ],
+    "performance_challenges": [
+      "Batch inserts for 60-80 player stats per game",
+      "Connection pool exhaustion during high-volume scraping",
+      "Log file size management",
+      "Caching player/team lookups to reduce database queries"
+    ]
+  },
+
+  "reference_documentation": [
+    "CLAUDE.md - Project overview, feature status, architecture",
+    "SCHEDULER.md - Cron job details, automation patterns",
+    "DEPLOYMENT.md - Docker setup, environment config, production deployment",
+    "START-HERE.md - Project onboarding guide",
+    "finalization-progress.md - Implementation progress tracking",
+    "FINALIZATION-STATUS.md - Production readiness status"
+  ],
+
+  "persona_requirements": {
+    "expertise_areas": 18,
+    "use_cases": 12,
+    "system_prompt_length": "2000-4000 lines",
+    "code_examples": 8,
+    "communication_style": "Technical, sports-data-focused, practical",
+    "problem_solving_approach": "Troubleshooting-first, references actual next-scraper patterns",
+    "tool_usage": "Guides implementation with code examples, file paths, best practices"
+  }
+}

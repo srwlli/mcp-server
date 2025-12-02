@@ -1,0 +1,577 @@
+{
+  "meta": {
+    "title": "personas-mcp Enhancement Suggestions",
+    "generated_at": "2025-10-23",
+    "current_version": "1.3.0",
+    "analysis_scope": "Persona system capabilities and enhancement opportunities",
+    "total_suggestions": 15
+  },
+  "summary": {
+    "strengths": [
+      "10 comprehensive personas (4 expert + 1 coordinator + 4 specialists + 1 generalist)",
+      "Deep domain expertise with 1500-6000 line system prompts",
+      "Multi-agent coordination via communication.json protocol",
+      "Clean activation workflow with slash commands",
+      "Strong domain boundary detection and refusal logic"
+    ],
+    "identified_gaps": [
+      "Persona composition and stacking not implemented",
+      "No persona versioning or update management",
+      "No persona discovery/search by expertise",
+      "No usage analytics or effectiveness tracking",
+      "No user-customizable personas",
+      "No cross-persona knowledge synthesis",
+      "No persona recommendation system",
+      "No persona learning or improvement feedback loop"
+    ]
+  },
+  "suggestions": [
+    {
+      "priority": 1,
+      "category": "Persona Composition & Stacking",
+      "tools": [
+        {
+          "id": "TOOL-001",
+          "name": "add_persona",
+          "description": "Stack additional persona on top of current active persona, enabling multi-expertise workflows (e.g., mcp-expert + docs-expert for planning MCP documentation features)",
+          "parameters": {
+            "name": "Persona name to add to stack",
+            "position": "Stack position (top/bottom, default: top)"
+          },
+          "output": "Updated persona stack with composition details",
+          "value": "high",
+          "complexity": "medium",
+          "roi": 4,
+          "estimated_effort_hours": 12,
+          "dependencies": ["Persona stack state management", "System prompt merging logic"]
+        },
+        {
+          "id": "TOOL-002",
+          "name": "remove_persona",
+          "description": "Remove specific persona from stack while keeping others active",
+          "parameters": {
+            "name": "Persona name to remove from stack"
+          },
+          "output": "Updated persona stack",
+          "value": "medium",
+          "complexity": "low",
+          "roi": 3,
+          "estimated_effort_hours": 4,
+          "dependencies": ["TOOL-001: add_persona"]
+        },
+        {
+          "id": "TOOL-003",
+          "name": "get_active_personas",
+          "description": "Get all active personas in stack (plural) with combined expertise overview",
+          "output": "List of active personas with merged expertise areas and tool preferences",
+          "value": "medium",
+          "complexity": "low",
+          "roi": 4,
+          "estimated_effort_hours": 6,
+          "dependencies": ["TOOL-001: add_persona"]
+        },
+        {
+          "id": "TOOL-004",
+          "name": "create_persona_preset",
+          "description": "Save common persona combinations as reusable presets (e.g., 'fullstack' = ava + marcus, 'planning' = docs-expert + mcp-expert)",
+          "parameters": {
+            "preset_name": "Name for the preset",
+            "personas": "List of persona names in order",
+            "description": "Description of when to use this preset"
+          },
+          "output": "Saved preset definition",
+          "slash_command": "/save-persona-preset",
+          "value": "high",
+          "complexity": "medium",
+          "roi": 4,
+          "estimated_effort_hours": 10,
+          "dependencies": ["TOOL-001: add_persona"]
+        }
+      ]
+    },
+    {
+      "priority": 2,
+      "category": "Persona Discovery & Search",
+      "tools": [
+        {
+          "id": "TOOL-005",
+          "name": "search_personas_by_expertise",
+          "description": "Search personas by expertise keywords (e.g., 'React', 'authentication', 'testing') and return ranked matches with relevance scores",
+          "parameters": {
+            "query": "Expertise keyword or phrase",
+            "limit": "Maximum results (default: 5)"
+          },
+          "output": "Ranked list of personas with relevance scores and matching expertise areas",
+          "slash_command": "/find-persona",
+          "value": "high",
+          "complexity": "medium",
+          "roi": 4,
+          "estimated_effort_hours": 8
+        },
+        {
+          "id": "TOOL-006",
+          "name": "recommend_persona",
+          "description": "Auto-recommend persona(s) based on current task context by analyzing user message for keywords and matching to persona expertise",
+          "parameters": {
+            "task_description": "Description of the task or problem",
+            "max_recommendations": "Number of recommendations (default: 3)"
+          },
+          "output": "Ranked persona recommendations with match reasoning",
+          "value": "high",
+          "complexity": "high",
+          "roi": 4,
+          "estimated_effort_hours": 16,
+          "integration": "Could auto-suggest personas when user asks domain-specific questions"
+        },
+        {
+          "id": "TOOL-007",
+          "name": "get_persona_capabilities",
+          "description": "Get detailed breakdown of persona capabilities including expertise areas, preferred tools, use cases, and example workflows",
+          "parameters": {
+            "persona_name": "Name of persona to analyze"
+          },
+          "output": "Structured capability report with examples",
+          "value": "medium",
+          "complexity": "low",
+          "roi": 3,
+          "estimated_effort_hours": 6
+        }
+      ]
+    },
+    {
+      "priority": 3,
+      "category": "Persona Analytics & Tracking",
+      "tools": [
+        {
+          "id": "TOOL-008",
+          "name": "track_persona_usage",
+          "description": "Track persona activation patterns, session durations, and effectiveness metrics to identify most valuable personas and improvement opportunities",
+          "output": "coderef/analytics/persona-usage.json",
+          "metrics": [
+            "Activation count per persona",
+            "Average session duration",
+            "Task completion rate per persona",
+            "Most common persona combinations"
+          ],
+          "value": "medium",
+          "complexity": "medium",
+          "roi": 3,
+          "estimated_effort_hours": 12,
+          "privacy_note": "All tracking is local, no data sent externally"
+        },
+        {
+          "id": "TOOL-009",
+          "name": "generate_persona_effectiveness_report",
+          "description": "Generate report analyzing which personas are most effective for different task types based on usage data and user feedback",
+          "output": "coderef/analytics/effectiveness-report.md",
+          "dependencies": ["TOOL-008: track_persona_usage"],
+          "value": "medium",
+          "complexity": "medium",
+          "roi": 3,
+          "estimated_effort_hours": 10
+        }
+      ]
+    },
+    {
+      "priority": 4,
+      "category": "Persona Customization & Templates",
+      "tools": [
+        {
+          "id": "TOOL-010",
+          "name": "create_custom_persona",
+          "description": "Allow users to create custom personas by providing expertise areas, communication style, and behavior preferences using guided template",
+          "parameters": {
+            "name": "Unique persona name",
+            "expertise": "List of expertise areas",
+            "communication_style": "How persona should communicate",
+            "preferred_tools": "MCP tools this persona should use",
+            "use_cases": "When to use this persona"
+          },
+          "output": "New persona definition saved to personas/custom/",
+          "slash_command": "/create-persona",
+          "value": "high",
+          "complexity": "high",
+          "roi": 4,
+          "estimated_effort_hours": 20,
+          "note": "Requires persona template validation and system prompt generation"
+        },
+        {
+          "id": "TOOL-011",
+          "name": "clone_and_customize_persona",
+          "description": "Clone existing persona and customize specific aspects (expertise, tools, behavior) while preserving base structure",
+          "parameters": {
+            "base_persona": "Persona to clone",
+            "new_name": "Name for customized version",
+            "modifications": "Aspects to modify"
+          },
+          "output": "Customized persona saved to personas/custom/",
+          "value": "medium",
+          "complexity": "medium",
+          "roi": 3,
+          "estimated_effort_hours": 8,
+          "dependencies": ["TOOL-010: create_custom_persona"]
+        },
+        {
+          "id": "TOOL-012",
+          "name": "validate_persona_definition",
+          "description": "Validate custom persona definitions against schema and best practices before activation",
+          "parameters": {
+            "persona_path": "Path to persona JSON file"
+          },
+          "output": "Validation report with errors and warnings",
+          "value": "medium",
+          "complexity": "low",
+          "roi": 3,
+          "estimated_effort_hours": 6
+        }
+      ]
+    },
+    {
+      "priority": 5,
+      "category": "Persona Versioning & Updates",
+      "tools": [
+        {
+          "id": "TOOL-013",
+          "name": "compare_persona_versions",
+          "description": "Compare different versions of a persona to see expertise changes, new tools, behavior modifications",
+          "parameters": {
+            "persona_name": "Name of persona",
+            "version_a": "First version (e.g., '1.0.0')",
+            "version_b": "Second version (e.g., '1.1.0')"
+          },
+          "output": "Diff report showing changes in expertise, tools, behavior",
+          "value": "medium",
+          "complexity": "medium",
+          "roi": 2,
+          "estimated_effort_hours": 10
+        },
+        {
+          "id": "TOOL-014",
+          "name": "update_persona",
+          "description": "Update existing persona with new expertise, tools, or behavior while maintaining version history",
+          "parameters": {
+            "persona_name": "Name of persona to update",
+            "version": "New version number (semantic versioning)",
+            "changes": "Structured changes object"
+          },
+          "output": "Updated persona with changelog",
+          "value": "high",
+          "complexity": "medium",
+          "roi": 3,
+          "estimated_effort_hours": 12,
+          "note": "Preserves old versions for rollback"
+        }
+      ]
+    },
+    {
+      "priority": 6,
+      "category": "Cross-Persona Knowledge Synthesis",
+      "tools": [
+        {
+          "id": "TOOL-015",
+          "name": "query_persona_knowledge",
+          "description": "Query knowledge from specific persona without activating it (e.g., 'What does ava know about React hooks?' without becoming Ava)",
+          "parameters": {
+            "persona_name": "Persona to query",
+            "question": "Knowledge query"
+          },
+          "output": "Knowledge excerpt from persona's system prompt",
+          "value": "high",
+          "complexity": "high",
+          "roi": 3,
+          "estimated_effort_hours": 14,
+          "use_case": "Compare approaches across personas, reference specific expertise without context switch"
+        }
+      ]
+    }
+  ],
+  "implementation_phases": {
+    "phase_1": {
+      "name": "Core Composition",
+      "duration": "2-3 weeks",
+      "estimated_hours": 32,
+      "tools": [
+        "TOOL-001: add_persona",
+        "TOOL-002: remove_persona",
+        "TOOL-003: get_active_personas",
+        "TOOL-007: get_persona_capabilities"
+      ],
+      "rationale": "Enables multi-expertise workflows, highest value-to-effort ratio"
+    },
+    "phase_2": {
+      "name": "Discovery & Recommendation",
+      "duration": "2-3 weeks",
+      "estimated_hours": 30,
+      "tools": [
+        "TOOL-005: search_personas_by_expertise",
+        "TOOL-004: create_persona_preset",
+        "TOOL-006: recommend_persona"
+      ],
+      "rationale": "Improves persona discoverability and usability"
+    },
+    "phase_3": {
+      "name": "Customization & Templates",
+      "duration": "3-4 weeks",
+      "estimated_hours": 34,
+      "tools": [
+        "TOOL-010: create_custom_persona",
+        "TOOL-011: clone_and_customize_persona",
+        "TOOL-012: validate_persona_definition"
+      ],
+      "rationale": "Enables user-driven persona creation"
+    },
+    "phase_4": {
+      "name": "Analytics & Versioning",
+      "duration": "3-4 weeks",
+      "estimated_hours": 44,
+      "tools": [
+        "TOOL-008: track_persona_usage",
+        "TOOL-009: generate_persona_effectiveness_report",
+        "TOOL-013: compare_persona_versions",
+        "TOOL-014: update_persona"
+      ],
+      "rationale": "Data-driven improvements and version management"
+    }
+  },
+  "workflow_enhancements": {
+    "current_flow": [
+      "User activates single persona",
+      "Works with that persona",
+      "Clears persona or switches"
+    ],
+    "enhanced_flow_options": {
+      "option_1_stacking": [
+        "User activates base persona (e.g., mcp-expert)",
+        "User adds complementary persona (e.g., docs-expert)",
+        "Combined expertise for complex tasks",
+        "Remove specific persona as needed",
+        "Clear all when done"
+      ],
+      "option_2_presets": [
+        "User loads preset (e.g., 'fullstack' = ava + marcus)",
+        "Instant multi-expertise activation",
+        "Works with combined capabilities",
+        "Clear preset when done"
+      ],
+      "option_3_recommendation": [
+        "User describes task",
+        "System recommends appropriate persona(s)",
+        "User accepts recommendation",
+        "Auto-activates recommended personas",
+        "Works with optimal expertise"
+      ],
+      "option_4_query": [
+        "User queries persona knowledge without activation",
+        "Gets specific knowledge excerpts",
+        "Compares approaches across personas",
+        "Activates persona if needed"
+      ]
+    }
+  },
+  "roi_analysis": {
+    "top_roi_tools": [
+      {
+        "tool_id": "TOOL-001",
+        "name": "add_persona",
+        "roi_score": 4,
+        "effort_hours": 12,
+        "value": "high",
+        "roi_per_hour": 0.333,
+        "impact": "Unlocks multi-expertise workflows, foundation for persona system evolution"
+      },
+      {
+        "tool_id": "TOOL-004",
+        "name": "create_persona_preset",
+        "roi_score": 4,
+        "effort_hours": 10,
+        "value": "high",
+        "roi_per_hour": 0.4,
+        "impact": "Simplifies common persona combinations, saves time"
+      },
+      {
+        "tool_id": "TOOL-005",
+        "name": "search_personas_by_expertise",
+        "roi_score": 4,
+        "effort_hours": 8,
+        "value": "high",
+        "roi_per_hour": 0.5,
+        "impact": "Makes persona discovery intuitive, improves usability"
+      },
+      {
+        "tool_id": "TOOL-003",
+        "name": "get_active_personas",
+        "roi_score": 4,
+        "effort_hours": 6,
+        "value": "medium",
+        "roi_per_hour": 0.667,
+        "impact": "Essential for persona stack visibility"
+      },
+      {
+        "tool_id": "TOOL-006",
+        "name": "recommend_persona",
+        "roi_score": 4,
+        "effort_hours": 16,
+        "value": "high",
+        "roi_per_hour": 0.25,
+        "impact": "Intelligent persona matching, reduces cognitive load"
+      }
+    ],
+    "total_estimated_effort_hours": 140,
+    "average_roi_score": 3.47
+  },
+  "integration_points": {
+    "with_docs_mcp": [
+      {
+        "feature": "Persona Presets for Planning",
+        "description": "Create presets like 'implementation-planning' = docs-expert + mcp-expert",
+        "benefit": "Auto-activate optimal personas for docs-mcp workflows"
+      },
+      {
+        "feature": "Task-Specific Recommendations",
+        "description": "When user runs /gather-context, recommend docs-expert + domain specialist",
+        "benefit": "Context-aware persona activation"
+      }
+    ],
+    "with_coderef_mcp": [
+      {
+        "feature": "Code Analysis Personas",
+        "description": "Activate coderef-expert when using coderef-mcp tools",
+        "benefit": "Expert guidance for code reference queries"
+      }
+    ],
+    "with_lloyd_coordination": [
+      {
+        "feature": "Auto-Assign Based on Persona",
+        "description": "Lloyd detects active persona and assigns appropriate tasks",
+        "benefit": "Seamless agent coordination based on expertise"
+      }
+    ]
+  },
+  "persona_ecosystem_vision": {
+    "current_count": 10,
+    "target_count": 20,
+    "expansion_categories": [
+      {
+        "category": "Development Specialists",
+        "personas": [
+          "api-designer - RESTful/GraphQL API architecture",
+          "database-architect - Schema design and optimization",
+          "security-expert - OWASP, penetration testing, security audits",
+          "performance-engineer - Profiling, optimization, scalability"
+        ]
+      },
+      {
+        "category": "Domain Experts",
+        "personas": [
+          "ml-engineer - Machine learning, model training, deployment",
+          "devops-engineer - CI/CD, infrastructure, monitoring",
+          "ux-researcher - User research, usability testing, design"
+        ]
+      },
+      {
+        "category": "Process Experts",
+        "personas": [
+          "code-reviewer - Code review best practices, static analysis",
+          "technical-writer - Documentation, API docs, user guides",
+          "product-manager - Requirements, prioritization, roadmaps"
+        ]
+      }
+    ]
+  },
+  "recommendations": {
+    "immediate_start": [
+      "TOOL-005: search_personas_by_expertise - Improves discoverability immediately, highest ROI per hour",
+      "TOOL-001: add_persona - Foundation for all composition features, unlocks multi-expertise"
+    ],
+    "next_quarter": [
+      "TOOL-004: create_persona_preset - High value once stacking is implemented",
+      "TOOL-003: get_active_personas - Essential complement to add_persona",
+      "TOOL-007: get_persona_capabilities - Improves persona transparency"
+    ],
+    "future_consideration": [
+      "TOOL-010: create_custom_persona - Complex but enables user customization",
+      "TOOL-006: recommend_persona - AI-powered recommendations, high complexity",
+      "TOOL-015: query_persona_knowledge - Advanced knowledge synthesis"
+    ]
+  },
+  "success_metrics": {
+    "phase_1_success": [
+      "Users can stack 2-3 personas for complex tasks",
+      "Persona combinations documented with use cases",
+      "Stack visibility via get_active_personas"
+    ],
+    "phase_2_success": [
+      "5+ common persona presets created and used",
+      "Users find personas by expertise in <10 seconds",
+      "Auto-recommendations accepted 70%+ of the time"
+    ],
+    "phase_3_success": [
+      "Users create 10+ custom personas",
+      "Custom personas validated before activation",
+      "Clone-and-customize workflow established"
+    ],
+    "phase_4_success": [
+      "Usage analytics identify top 3 personas per task type",
+      "Persona versions tracked with changelogs",
+      "Data-driven persona improvements implemented"
+    ]
+  },
+  "technical_considerations": {
+    "persona_stacking": {
+      "approach": "Merge system prompts with priority ordering (later personas overlay on earlier)",
+      "challenges": [
+        "Context window limits (max 3-4 stacked personas)",
+        "Conflict resolution when expertise overlaps",
+        "Performance impact of prompt merging"
+      ],
+      "solutions": [
+        "Implement smart truncation for combined prompts",
+        "Define merge rules (later wins vs. combine)",
+        "Cache merged prompts for common combinations"
+      ]
+    },
+    "persona_search": {
+      "approach": "Keyword matching with TF-IDF scoring on expertise arrays",
+      "indexing": "Build inverted index on persona expertise for O(log n) lookups",
+      "challenges": [
+        "Synonym handling ('React' vs 'ReactJS')",
+        "Multi-word queries ('API design')"
+      ],
+      "solutions": [
+        "Keyword normalization and synonym mapping",
+        "Phrase matching with ngrams"
+      ]
+    },
+    "custom_personas": {
+      "storage": "personas/custom/ directory with same JSON schema",
+      "validation": "JSON schema validation + expertise coherence checks",
+      "system_prompt_generation": "Template-based generation with user-provided expertise",
+      "challenges": [
+        "Quality control for user-generated content",
+        "Preventing conflicting or low-quality personas"
+      ],
+      "solutions": [
+        "Validation rules and quality checks",
+        "Approval workflow for shared custom personas",
+        "Sandboxing for experimental personas"
+      ]
+    }
+  },
+  "open_questions": {
+    "stacking": [
+      "What's the optimal max stack depth?",
+      "How to visualize active persona stack to user?",
+      "Should there be persona incompatibilities?"
+    ],
+    "recommendation": [
+      "What confidence threshold for auto-activation?",
+      "How to explain recommendations to users?",
+      "Should recommendations learn from user feedback?"
+    ],
+    "customization": [
+      "Should custom personas be shareable?",
+      "How to prevent malicious persona injection?",
+      "What's the approval process for community personas?"
+    ]
+  }
+}

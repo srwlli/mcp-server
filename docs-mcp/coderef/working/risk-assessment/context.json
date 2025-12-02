@@ -1,0 +1,76 @@
+{
+  "feature_name": "risk-assessment",
+  "description": "AI-powered risk assessment workflow that evaluates proposed code changes, file modifications, or deployment decisions. Provides structured risk analysis with severity ratings, likelihood scores, and actionable recommendations. Tool accepts multiple alternative options for comparison (Option 1 vs Option 2), analyzes project context (existing files, dependencies, patterns), and returns machine-readable JSON with risk scores. Designed for AI agents to make informed decisions before modifying code, with optional markdown report generation for human stakeholders.",
+  "goal": "Enable AI agents and human developers to evaluate risks before making code changes, with structured scoring system (severity x likelihood), comparison of multiple approaches, and clear go/no-go recommendations based on configurable risk thresholds.",
+  "requirements": [
+    "Accept proposed changes: file paths, descriptions, change type (create/modify/delete)",
+    "Support multiple options for comparison (Option 1, Option 2, Option 3, etc.)",
+    "Analyze project context: read existing files, check dependencies, detect patterns",
+    "Evaluate risk dimensions: breaking changes, security, performance, maintainability, reversibility",
+    "Calculate risk scores: severity (low/medium/high/critical) x likelihood (0-100%)",
+    "Generate structured JSON output with risk scores, pros/cons, recommendations",
+    "Provide go/no-go recommendation based on configurable risk threshold",
+    "Save risk assessments to coderef/risk-assessments/{feature-name}-{timestamp}.json",
+    "Support 'what-if' analysis: evaluate hypothetical changes without executing them",
+    "Include mitigation strategies for identified risks",
+    "Track risk history: compare current risks against past assessments",
+    "Python 3.11+ compatibility, integrate with existing MCP tool patterns"
+  ],
+  "out_of_scope": [
+    "Automatic execution of recommended fixes (assessment only, not implementation)",
+    "Real-time monitoring or continuous risk assessment (one-time analysis per call)",
+    "External threat intelligence or CVE database lookups (offline only)",
+    "Static code analysis or linting (use existing tools like ruff/mypy for that)",
+    "Performance profiling or load testing (assessment focuses on architectural risks)",
+    "Automated testing execution (assumes tests exist, doesn't run them)",
+    "Risk assessment for non-code changes (infrastructure, deployment configs, etc.)",
+    "Multi-user approval workflows or risk sign-offs (single-agent decision tool)",
+    "Historical trend analysis beyond simple comparison (v2 feature)",
+    "Custom risk dimensions beyond the 5 core categories (extensible in v2)"
+  ],
+  "constraints": [
+    "Must follow existing MCP tool patterns (handler decorators, error responses, validation)",
+    "Must not modify any files during assessment (read-only analysis)",
+    "Must complete assessment within 5 seconds for typical projects",
+    "Must handle missing files/dependencies gracefully (degrade to partial assessment)",
+    "Risk scoring algorithm must be deterministic and explainable",
+    "Must work offline (no external API calls for risk data)",
+    "JSON output must be machine-parseable for AI agent consumption",
+    "Must reuse existing project analysis tools (analyze_project_for_planning pattern)",
+    "Severity levels must map to actionable thresholds (auto-approve low, block critical)",
+    "Must support both single-option and multi-option comparison modes"
+  ],
+  "decisions": {
+    "output_format": "Structured JSON (machine-readable) with optional markdown generation via separate tool",
+    "integration_strategy": "Standalone workflow, not auto-integrated with /create-plan (AI calls explicitly when needed)",
+    "risk_scoring_model": "Severity (critical/high/medium/low) x Likelihood (%) = Risk Score (0-100)",
+    "comparison_mode": "Multi-option support (Option 1 vs Option 2 vs Option 3)",
+    "project_analysis": "Reuse analyze_project_for_planning pattern for context gathering",
+    "storage_location": "coderef/risk-assessments/ directory with timestamped JSON files"
+  },
+  "success_criteria": {
+    "functional": [
+      "Tool evaluates single proposed change and returns risk JSON within 5 seconds",
+      "Tool compares 3 alternative approaches with relative risk scores",
+      "Risk dimensions cover: breaking changes, security, performance, maintainability, reversibility",
+      "Recommendations include clear go/no-go guidance based on threshold",
+      "Saved assessments are valid JSON and machine-parseable"
+    ],
+    "quality": [
+      "Risk scoring is deterministic (same input = same output)",
+      "Explanations are clear enough for human stakeholders to understand",
+      "Tool handles missing files/incomplete context gracefully (partial assessment)",
+      "JSON schema is well-defined and validated"
+    ],
+    "integration": [
+      "Works with existing docs-mcp patterns (decorators, validation, logging)",
+      "AI agents can call tool and parse results programmatically",
+      "Optional markdown report generation matches user-provided example format"
+    ]
+  },
+  "_metadata": {
+    "workorder_id": "WO-RISK-ASSESSMENT-001",
+    "workorder_assigned_at": "2025-10-20T21:24:19.329507+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

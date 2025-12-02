@@ -1,0 +1,1013 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "agent-persona-mcp",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-10-18",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [],
+        "missing": [
+          "README.md - Project overview and quick start",
+          "ARCHITECTURE.md - MCP server design and persona composition",
+          "API.md - MCP tool definitions and usage",
+          "COMPONENTS.md - Persona definition structure",
+          "SCHEMA.md - Persona JSON schema"
+        ],
+        "action": "Will create foundation docs after implementation"
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "No existing coding standards - new project"
+        ],
+        "action": "Establish MCP server patterns and persona definition standards"
+      },
+      "reference_components": {
+        "primary": null,
+        "secondary": [],
+        "external_references": [
+          "MCP protocol specification",
+          "docs-mcp server as reference implementation",
+          "MCP Python SDK documentation"
+        ]
+      },
+      "technology_stack": {
+        "language": "Python 3.10+",
+        "framework": "MCP Python SDK",
+        "persona_storage": "JSON files",
+        "dependencies": [
+          "mcp (MCP Python SDK)",
+          "pydantic (data validation)",
+          "asyncio (async operations)"
+        ]
+      },
+      "project_structure": {
+        "to_create": [
+          "personas-mcp/",
+          "  server.py - Main MCP server",
+          "  personas/ - Persona definitions",
+          "    base/ - Base personas (5 files)",
+          "    specialized/ - Specialized personas (4+ files)",
+          "  src/",
+          "    persona_manager.py - Core persona logic",
+          "    models.py - Persona data models",
+          "    composition.py - Context composition logic",
+          "  tests/ - Unit and integration tests",
+          "  pyproject.toml - Python project config"
+        ]
+      }
+    },
+    "1_executive_summary": {
+      "overview": "Build a composable MCP expert persona system that allows users to activate and stack specialized AI agent personalities. The system provides 5 base personas (mcp-expert, docs-specialist, planning-expert, code-reviewer, testing-expert) and 4+ specialized variants (mcp-expert:docs-mcp, mcp-expert:planning, etc.). Personas influence how the AI approaches problems and uses other MCP tools by providing domain-specific context and expertise.",
+      "business_value": "Enables users to get expert-level assistance in specific domains without switching tools or contexts. Personas can be composed to combine multiple expertises, creating powerful hybrid experts (e.g., MCP + planning expertise for feature design).",
+      "user_impact": "Users gain access to on-demand domain experts through simple persona activation commands. Stacking personas creates unique combinations of expertise tailored to specific tasks.",
+      "technical_scope": "Implement MCP server with 5 core tools (use_persona, add_persona, clear_personas, list_personas, get_active_personas), persona loading/composition system, and initial persona library with hierarchical support.",
+      "timeline_estimate": "2-3 days for core implementation, 1-2 days for persona definitions, 1 day for testing and documentation",
+      "complexity_rating": "Medium - Well-defined MCP patterns, clear requirements, but requires careful context composition logic"
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Persona context conflicts when stacking multiple personas",
+          "likelihood": "Medium",
+          "impact": "Medium",
+          "mitigation": "Use clear overlay pattern (later personas take precedence), test common persona combinations thoroughly"
+        },
+        {
+          "risk": "MCP protocol compliance issues with stateful persona management",
+          "likelihood": "Low",
+          "impact": "High",
+          "mitigation": "Follow MCP specification strictly, use session-scoped state only, test with Claude Code client"
+        },
+        {
+          "risk": "Persona context size exceeding token limits when heavily stacked",
+          "likelihood": "Medium",
+          "impact": "Medium",
+          "mitigation": "Keep persona prompts concise, warn users when stacking >3 personas, document practical limits"
+        },
+        {
+          "risk": "Hierarchical persona resolution complexity (parent inheritance)",
+          "likelihood": "Low",
+          "impact": "Low",
+          "mitigation": "Simple parent-child merging, specialized personas extend (not override) base personas"
+        }
+      ],
+      "integration_risks": [
+        {
+          "risk": "Personas not effectively influencing tool usage behavior",
+          "likelihood": "Medium",
+          "impact": "High",
+          "mitigation": "Create clear, directive system prompts with specific tool usage patterns, validate with real-world scenarios"
+        },
+        {
+          "risk": "Incompatibility with other MCP servers",
+          "likelihood": "Low",
+          "impact": "Medium",
+          "mitigation": "Personas only provide context, don't intercept or modify other tools, test with docs-mcp integration"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "Persona definition quality requires iteration",
+          "likelihood": "High",
+          "impact": "Low",
+          "mitigation": "Start with minimal viable personas, iterate based on usage, allow easy persona updates"
+        }
+      ],
+      "overall_risk_level": "Medium - Clear requirements and architecture reduce risk, but persona quality requires validation"
+    },
+    "3_current_state_analysis": {
+      "existing_implementation": {
+        "summary": "New project - only planning artifacts exist (CLAUDE.md, context.json, concept document)",
+        "files_to_preserve": [
+          "CLAUDE.md - AI context documentation",
+          "coderef/future/composable-personas-concept.md - Core concept",
+          "coderef/working/agent-persona-mcp/context.json - Requirements"
+        ],
+        "patterns_to_follow": [
+          "MCP protocol patterns from docs-mcp",
+          "Tool definition patterns from MCP Python SDK",
+          "JSON-based configuration storage"
+        ]
+      },
+      "files_to_create": [
+        {
+          "path": "server.py",
+          "purpose": "Main MCP server entry point with tool definitions",
+          "complexity": "Medium"
+        },
+        {
+          "path": "src/persona_manager.py",
+          "purpose": "Core persona loading, composition, and state management",
+          "complexity": "High"
+        },
+        {
+          "path": "src/models.py",
+          "purpose": "Pydantic models for persona definitions and state",
+          "complexity": "Low"
+        },
+        {
+          "path": "src/composition.py",
+          "purpose": "System prompt composition and context merging",
+          "complexity": "Medium"
+        },
+        {
+          "path": "personas/base/mcp-expert.json",
+          "purpose": "Base MCP expert persona definition",
+          "complexity": "Medium"
+        },
+        {
+          "path": "personas/base/docs-specialist.json",
+          "purpose": "Documentation expert persona",
+          "complexity": "Low"
+        },
+        {
+          "path": "personas/base/planning-expert.json",
+          "purpose": "Planning expert persona",
+          "complexity": "Low"
+        },
+        {
+          "path": "personas/base/code-reviewer.json",
+          "purpose": "Code review expert persona",
+          "complexity": "Low"
+        },
+        {
+          "path": "personas/base/testing-expert.json",
+          "purpose": "Testing expert persona",
+          "complexity": "Low"
+        },
+        {
+          "path": "personas/specialized/mcp-expert-docs-mcp.json",
+          "purpose": "MCP expert specialized in docs-mcp tools",
+          "complexity": "High"
+        },
+        {
+          "path": "personas/specialized/mcp-expert-planning.json",
+          "purpose": "MCP expert specialized in planning workflows",
+          "complexity": "Medium"
+        },
+        {
+          "path": "personas/specialized/mcp-expert-inventory.json",
+          "purpose": "MCP expert specialized in inventory tools",
+          "complexity": "Medium"
+        },
+        {
+          "path": "personas/specialized/mcp-expert-changelog.json",
+          "purpose": "MCP expert specialized in changelog management",
+          "complexity": "Medium"
+        },
+        {
+          "path": "pyproject.toml",
+          "purpose": "Python project configuration and dependencies",
+          "complexity": "Low"
+        },
+        {
+          "path": "tests/test_persona_manager.py",
+          "purpose": "Unit tests for persona management",
+          "complexity": "Medium"
+        },
+        {
+          "path": "tests/test_composition.py",
+          "purpose": "Tests for context composition logic",
+          "complexity": "Medium"
+        },
+        {
+          "path": "README.md",
+          "purpose": "Project overview and usage guide",
+          "complexity": "Low"
+        }
+      ],
+      "files_to_modify": [],
+      "dependencies": {
+        "new": [
+          "mcp - MCP Python SDK",
+          "pydantic - Data validation and models"
+        ],
+        "existing": []
+      }
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "MCP Server with Persona Tools",
+        "description": "Core MCP server implementation with 5 persona management tools",
+        "user_story": "As a user, I want to activate and manage expert personas through MCP tools",
+        "acceptance_criteria": [
+          "use_persona(name) activates single or hierarchical persona",
+          "add_persona(name) stacks additional persona",
+          "clear_personas() resets to default state",
+          "list_personas() shows available persona tree",
+          "get_active_personas() returns current persona stack",
+          "Server follows MCP protocol specification",
+          "Compatible with Claude Code and other MCP clients"
+        ],
+        "technical_approach": "Use MCP Python SDK to define tools, implement async handlers, return persona context as tool results"
+      },
+      "feature_2": {
+        "name": "Persona Loading and Storage",
+        "description": "Hierarchical JSON-based persona definition system",
+        "user_story": "As a developer, I want to define personas as structured JSON with inheritance support",
+        "acceptance_criteria": [
+          "Personas stored as JSON files in personas/base/ and personas/specialized/",
+          "Schema includes: name, parent (optional), system_prompt, expertise, use_cases, behavior",
+          "Hierarchical personas (e.g., mcp-expert:docs-mcp) resolve parent + specialization",
+          "Persona loader validates schema and handles missing files gracefully",
+          "Easy to add new personas without code changes"
+        ],
+        "technical_approach": "Use Pydantic models for validation, implement parent resolution logic, load personas on server startup"
+      },
+      "feature_3": {
+        "name": "Context Composition Engine",
+        "description": "System prompt merging for stacked personas",
+        "user_story": "As a user, I want to stack multiple personas to combine their expertise",
+        "acceptance_criteria": [
+          "Multiple personas compose into single coherent system prompt",
+          "Later personas overlay on earlier ones (clear precedence)",
+          "Composed context includes all expertise areas",
+          "No conflicts or contradictions in merged prompts",
+          "Context size stays reasonable (warn if >3 personas stacked)"
+        ],
+        "technical_approach": "Implement prompt merging with clear section structure, use overlay pattern for behavior conflicts"
+      },
+      "feature_4": {
+        "name": "Base Persona Library",
+        "description": "5 fundamental expert personas covering core domains",
+        "user_story": "As a user, I want access to expert personas for common tasks",
+        "acceptance_criteria": [
+          "mcp-expert: MCP protocol and architecture expertise",
+          "docs-specialist: Technical writing and POWER framework",
+          "planning-expert: Feature planning and requirement gathering",
+          "code-reviewer: Code quality and best practices",
+          "testing-expert: Test strategy and quality assurance",
+          "Each persona demonstrates distinct expertise and behavior",
+          "Personas clearly influence problem-solving approach"
+        ],
+        "technical_approach": "Write comprehensive system prompts with specific expertise areas, tool usage patterns, and communication styles"
+      },
+      "feature_5": {
+        "name": "Specialized MCP Expert Personas",
+        "description": "4 specialized mcp-expert variants for docs-mcp domains",
+        "user_story": "As a user, I want deep domain expertise in specific MCP tool areas",
+        "acceptance_criteria": [
+          "mcp-expert:docs-mcp - Deep docs-mcp tool knowledge",
+          "mcp-expert:planning - Planning workflow expertise",
+          "mcp-expert:inventory - Inventory tool expertise",
+          "mcp-expert:changelog - Changelog management expertise",
+          "Specialized personas inherit base mcp-expert knowledge",
+          "Specialized personas show deeper domain knowledge than base",
+          "Can reference specific tools and patterns in their domain"
+        ],
+        "technical_approach": "Extend mcp-expert base persona with domain-specific knowledge, include tool lists and workflow patterns"
+      },
+      "feature_6": {
+        "name": "Persona State Management",
+        "description": "Track active persona stack during session",
+        "user_story": "As a user, I want to see which personas are currently active",
+        "acceptance_criteria": [
+          "Server tracks ordered list of active personas",
+          "State persists across tool calls within session",
+          "get_active_personas() returns current stack with details",
+          "clear_personas() resets state cleanly",
+          "State is session-scoped (no cross-session persistence)"
+        ],
+        "technical_approach": "Use in-memory persona stack, implement clean state mutations, return stack info in tool results"
+      }
+    },
+    "5_task_id_system": {
+      "task_breakdown": [
+        {
+          "task_id": "SETUP-001",
+          "title": "Initialize Python project structure",
+          "description": "Create pyproject.toml, directory structure, install dependencies",
+          "feature": "Foundation",
+          "complexity": "Low",
+          "estimated_hours": 1,
+          "dependencies": []
+        },
+        {
+          "task_id": "MODEL-001",
+          "title": "Define Persona data models",
+          "description": "Create Pydantic models for Persona, PersonaStack, PersonaDefinition",
+          "feature": "Persona Loading",
+          "complexity": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["SETUP-001"]
+        },
+        {
+          "task_id": "LOAD-001",
+          "title": "Implement persona file loader",
+          "description": "Load JSON persona files, validate schema, handle errors",
+          "feature": "Persona Loading",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "LOAD-002",
+          "title": "Implement hierarchical persona resolution",
+          "description": "Parse persona:specialization notation, merge parent + child definitions",
+          "feature": "Persona Loading",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["LOAD-001"]
+        },
+        {
+          "task_id": "COMP-001",
+          "title": "Implement context composition engine",
+          "description": "Merge multiple persona system prompts with overlay pattern",
+          "feature": "Context Composition",
+          "complexity": "High",
+          "estimated_hours": 4,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "STATE-001",
+          "title": "Implement persona state management",
+          "description": "Track active persona stack, implement push/pop/clear operations",
+          "feature": "Persona State",
+          "complexity": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "TOOL-001",
+          "title": "Implement use_persona tool",
+          "description": "Parse persona name, load/compose personas, return context",
+          "feature": "MCP Server",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["LOAD-002", "COMP-001", "STATE-001"]
+        },
+        {
+          "task_id": "TOOL-002",
+          "title": "Implement add_persona tool",
+          "description": "Add persona to existing stack, recompose context",
+          "feature": "MCP Server",
+          "complexity": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["TOOL-001"]
+        },
+        {
+          "task_id": "TOOL-003",
+          "title": "Implement clear_personas tool",
+          "description": "Reset persona stack to default state",
+          "feature": "MCP Server",
+          "complexity": "Low",
+          "estimated_hours": 1,
+          "dependencies": ["STATE-001"]
+        },
+        {
+          "task_id": "TOOL-004",
+          "title": "Implement list_personas tool",
+          "description": "Return tree of available personas with descriptions",
+          "feature": "MCP Server",
+          "complexity": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["LOAD-001"]
+        },
+        {
+          "task_id": "TOOL-005",
+          "title": "Implement get_active_personas tool",
+          "description": "Return current persona stack with details",
+          "feature": "MCP Server",
+          "complexity": "Low",
+          "estimated_hours": 1,
+          "dependencies": ["STATE-001"]
+        },
+        {
+          "task_id": "SERVER-001",
+          "title": "Implement MCP server entry point",
+          "description": "Create server.py with tool registration and async handlers",
+          "feature": "MCP Server",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["TOOL-001", "TOOL-002", "TOOL-003", "TOOL-004", "TOOL-005"]
+        },
+        {
+          "task_id": "PERSONA-001",
+          "title": "Define mcp-expert base persona",
+          "description": "Write comprehensive system prompt with MCP expertise",
+          "feature": "Base Personas",
+          "complexity": "High",
+          "estimated_hours": 4,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "PERSONA-002",
+          "title": "Define docs-specialist persona",
+          "description": "Write system prompt for technical writing expert",
+          "feature": "Base Personas",
+          "complexity": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "PERSONA-003",
+          "title": "Define planning-expert persona",
+          "description": "Write system prompt for planning and requirements expert",
+          "feature": "Base Personas",
+          "complexity": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "PERSONA-004",
+          "title": "Define code-reviewer persona",
+          "description": "Write system prompt for code quality expert",
+          "feature": "Base Personas",
+          "complexity": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "PERSONA-005",
+          "title": "Define testing-expert persona",
+          "description": "Write system prompt for testing and QA expert",
+          "feature": "Base Personas",
+          "complexity": "Medium",
+          "estimated_hours": 2,
+          "dependencies": ["MODEL-001"]
+        },
+        {
+          "task_id": "SPEC-001",
+          "title": "Define mcp-expert:docs-mcp specialized persona",
+          "description": "Extend mcp-expert with deep docs-mcp tool knowledge",
+          "feature": "Specialized Personas",
+          "complexity": "High",
+          "estimated_hours": 4,
+          "dependencies": ["PERSONA-001"]
+        },
+        {
+          "task_id": "SPEC-002",
+          "title": "Define mcp-expert:planning specialized persona",
+          "description": "Extend mcp-expert with planning workflow expertise",
+          "feature": "Specialized Personas",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["PERSONA-001"]
+        },
+        {
+          "task_id": "SPEC-003",
+          "title": "Define mcp-expert:inventory specialized persona",
+          "description": "Extend mcp-expert with inventory tool expertise",
+          "feature": "Specialized Personas",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["PERSONA-001"]
+        },
+        {
+          "task_id": "SPEC-004",
+          "title": "Define mcp-expert:changelog specialized persona",
+          "description": "Extend mcp-expert with changelog management expertise",
+          "feature": "Specialized Personas",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["PERSONA-001"]
+        },
+        {
+          "task_id": "TEST-001",
+          "title": "Write persona loading tests",
+          "description": "Unit tests for persona file loading and validation",
+          "feature": "Testing",
+          "complexity": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["LOAD-001"]
+        },
+        {
+          "task_id": "TEST-002",
+          "title": "Write composition tests",
+          "description": "Test context merging with various persona combinations",
+          "feature": "Testing",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["COMP-001"]
+        },
+        {
+          "task_id": "TEST-003",
+          "title": "Write MCP tool integration tests",
+          "description": "Test all 5 tools with MCP client simulation",
+          "feature": "Testing",
+          "complexity": "Medium",
+          "estimated_hours": 3,
+          "dependencies": ["SERVER-001"]
+        },
+        {
+          "task_id": "DOC-001",
+          "title": "Write README with usage examples",
+          "description": "Document installation, configuration, and persona usage",
+          "feature": "Documentation",
+          "complexity": "Low",
+          "estimated_hours": 2,
+          "dependencies": ["SERVER-001"]
+        },
+        {
+          "task_id": "DOC-002",
+          "title": "Document persona definition schema",
+          "description": "Create guide for adding new personas",
+          "feature": "Documentation",
+          "complexity": "Low",
+          "estimated_hours": 1,
+          "dependencies": ["MODEL-001"]
+        }
+      ],
+      "total_estimated_hours": 63,
+      "critical_path": [
+        "SETUP-001",
+        "MODEL-001",
+        "LOAD-001",
+        "LOAD-002",
+        "COMP-001",
+        "TOOL-001",
+        "SERVER-001",
+        "PERSONA-001",
+        "SPEC-001"
+      ]
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Foundation and Core Infrastructure",
+        "complexity": "medium",
+        "effort_level": 3,
+        "objectives": [
+          "Set up project structure and dependencies",
+          "Implement data models and persona loading",
+          "Build context composition engine",
+          "Implement state management"
+        ],
+        "tasks": [
+          "SETUP-001",
+          "MODEL-001",
+          "LOAD-001",
+          "LOAD-002",
+          "COMP-001",
+          "STATE-001"
+        ],
+        "deliverables": [
+          "Working persona loader with hierarchical support",
+          "Context composition engine",
+          "Persona state management",
+          "Pydantic models and validation"
+        ],
+        "validation": [
+          "Can load base persona from JSON",
+          "Can resolve hierarchical persona (parent:child)",
+          "Can compose multiple persona contexts",
+          "Can track persona stack state"
+        ]
+      },
+      "phase_2": {
+        "name": "MCP Server Implementation",
+        "complexity": "medium",
+        "effort_level": 3,
+        "objectives": [
+          "Implement all 5 MCP tools",
+          "Create server entry point",
+          "Test MCP protocol compliance"
+        ],
+        "tasks": [
+          "TOOL-001",
+          "TOOL-002",
+          "TOOL-003",
+          "TOOL-004",
+          "TOOL-005",
+          "SERVER-001"
+        ],
+        "deliverables": [
+          "Functioning MCP server",
+          "All 5 persona tools implemented",
+          "Server compatible with Claude Code"
+        ],
+        "validation": [
+          "use_persona activates single persona",
+          "use_persona resolves hierarchical personas",
+          "add_persona stacks personas",
+          "clear_personas resets state",
+          "list_personas shows available personas",
+          "get_active_personas returns stack",
+          "Server follows MCP specification"
+        ]
+      },
+      "phase_3": {
+        "name": "Persona Library Creation",
+        "complexity": "high",
+        "effort_level": 4,
+        "objectives": [
+          "Define all 5 base personas",
+          "Define 4 specialized mcp-expert personas",
+          "Validate persona quality and distinctiveness"
+        ],
+        "tasks": [
+          "PERSONA-001",
+          "PERSONA-002",
+          "PERSONA-003",
+          "PERSONA-004",
+          "PERSONA-005",
+          "SPEC-001",
+          "SPEC-002",
+          "SPEC-003",
+          "SPEC-004"
+        ],
+        "deliverables": [
+          "5 base persona JSON files",
+          "4 specialized persona JSON files",
+          "Distinct expertise and behavior for each persona"
+        ],
+        "validation": [
+          "Each persona demonstrates clear expertise",
+          "Specialized personas show deeper knowledge than base",
+          "Personas influence AI behavior noticeably",
+          "Hierarchical personas properly extend parents",
+          "Stacked personas combine expertise effectively"
+        ]
+      },
+      "phase_4": {
+        "name": "Testing and Documentation",
+        "complexity": "medium",
+        "effort_level": 2,
+        "objectives": [
+          "Write comprehensive tests",
+          "Create user documentation",
+          "Validate end-to-end workflows"
+        ],
+        "tasks": [
+          "TEST-001",
+          "TEST-002",
+          "TEST-003",
+          "DOC-001",
+          "DOC-002"
+        ],
+        "deliverables": [
+          "Unit tests for persona loading and composition",
+          "Integration tests for MCP tools",
+          "README with usage examples",
+          "Persona definition schema documentation"
+        ],
+        "validation": [
+          "All tests pass",
+          "Documentation covers all features",
+          "Example workflows work end-to-end",
+          "Users can add new personas following docs"
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "component": "Persona Loader",
+          "test_cases": [
+            "Load valid base persona JSON",
+            "Load valid specialized persona JSON",
+            "Handle missing persona file gracefully",
+            "Validate persona schema (reject invalid JSON)",
+            "Resolve parent persona for hierarchical personas"
+          ],
+          "file": "tests/test_persona_manager.py"
+        },
+        {
+          "component": "Context Composition",
+          "test_cases": [
+            "Compose single persona context",
+            "Compose two stacked personas",
+            "Compose three stacked personas",
+            "Overlay pattern (later personas take precedence)",
+            "Merge expertise arrays from multiple personas",
+            "Warn when stacking >3 personas"
+          ],
+          "file": "tests/test_composition.py"
+        },
+        {
+          "component": "State Management",
+          "test_cases": [
+            "Initialize empty persona stack",
+            "Push persona to stack",
+            "Pop persona from stack",
+            "Clear all personas",
+            "Get current stack snapshot"
+          ],
+          "file": "tests/test_persona_manager.py"
+        }
+      ],
+      "integration_tests": [
+        {
+          "workflow": "Single Persona Activation",
+          "test_cases": [
+            "use_persona('mcp-expert') returns mcp-expert context",
+            "use_persona('docs-specialist') returns docs-specialist context",
+            "get_active_personas() shows single active persona",
+            "clear_personas() resets to empty state"
+          ],
+          "file": "tests/test_integration.py"
+        },
+        {
+          "workflow": "Hierarchical Persona Activation",
+          "test_cases": [
+            "use_persona('mcp-expert:docs-mcp') resolves parent + specialization",
+            "Context includes both base and specialized knowledge",
+            "get_active_personas() shows hierarchical persona",
+            "Invalid specialization returns helpful error"
+          ],
+          "file": "tests/test_integration.py"
+        },
+        {
+          "workflow": "Persona Stacking",
+          "test_cases": [
+            "use_persona('mcp-expert') then add_persona('planning-expert')",
+            "Composed context includes both expertises",
+            "get_active_personas() shows both personas in order",
+            "clear_personas() removes all personas",
+            "add_persona to empty stack (should error or init)"
+          ],
+          "file": "tests/test_integration.py"
+        },
+        {
+          "workflow": "MCP Tool Compliance",
+          "test_cases": [
+            "list_personas() returns valid MCP tool result",
+            "All tools follow MCP specification",
+            "Error responses follow MCP error format",
+            "Server handles async requests properly"
+          ],
+          "file": "tests/test_mcp_compliance.py"
+        }
+      ],
+      "manual_tests": [
+        {
+          "scenario": "End-to-End Persona Usage with Claude Code",
+          "steps": [
+            "Install personas-mcp in Claude Code config",
+            "Activate mcp-expert persona",
+            "Ask MCP architecture question",
+            "Verify expert-level response with MCP knowledge",
+            "Stack planning-expert persona",
+            "Ask to plan an MCP feature",
+            "Verify response uses both MCP + planning expertise"
+          ]
+        },
+        {
+          "scenario": "Persona Quality Validation",
+          "steps": [
+            "Test each base persona with domain-specific questions",
+            "Verify distinct expertise and communication style",
+            "Test specialized personas vs base personas",
+            "Verify deeper domain knowledge in specialized variants",
+            "Test stacked personas for expertise combination"
+          ]
+        },
+        {
+          "scenario": "Integration with docs-mcp Tools",
+          "steps": [
+            "Activate mcp-expert:docs-mcp persona",
+            "Use docs-mcp planning tools with persona active",
+            "Verify persona influences tool usage and guidance",
+            "Check that persona doesn't interfere with tool functionality"
+          ]
+        }
+      ],
+      "test_coverage_goals": {
+        "unit_tests": "90% code coverage",
+        "integration_tests": "All 5 tools + major workflows",
+        "manual_tests": "All personas validated for quality and distinctiveness"
+      }
+    },
+    "8_success_criteria": {
+      "functional_acceptance": [
+        {
+          "criteria": "Can activate single base persona",
+          "measurement": "use_persona('mcp-expert') activates mcp-expert successfully",
+          "status": "pending"
+        },
+        {
+          "criteria": "Can activate hierarchical specialized persona",
+          "measurement": "use_persona('mcp-expert:docs-mcp') resolves parent + specialization",
+          "status": "pending"
+        },
+        {
+          "criteria": "Can stack multiple personas",
+          "measurement": "use_persona + add_persona creates composed context with both expertises",
+          "status": "pending"
+        },
+        {
+          "criteria": "Complete persona library",
+          "measurement": "5 base personas + 4 specialized personas defined and working",
+          "status": "pending"
+        },
+        {
+          "criteria": "Personas influence AI behavior",
+          "measurement": "Activated persona demonstrates expertise in domain-specific questions",
+          "status": "pending"
+        },
+        {
+          "criteria": "Personas work with other MCP tools",
+          "measurement": "Can use docs-mcp tools while persona is active, persona influences usage",
+          "status": "pending"
+        },
+        {
+          "criteria": "Persona tree listing",
+          "measurement": "list_personas() shows all base and specialized personas with hierarchy",
+          "status": "pending"
+        },
+        {
+          "criteria": "Active persona visibility",
+          "measurement": "get_active_personas() accurately shows current stack composition",
+          "status": "pending"
+        }
+      ],
+      "operational_acceptance": [
+        {
+          "criteria": "Instant persona activation",
+          "measurement": "use_persona completes in <100ms",
+          "status": "pending"
+        },
+        {
+          "criteria": "Persona context persistence",
+          "measurement": "Activated persona context persists across multiple tool uses in session",
+          "status": "pending"
+        },
+        {
+          "criteria": "Clear active persona indication",
+          "measurement": "get_active_personas provides clear, human-readable stack display",
+          "status": "pending"
+        },
+        {
+          "criteria": "Error handling",
+          "measurement": "Invalid persona names return helpful error messages, server doesn't crash",
+          "status": "pending"
+        },
+        {
+          "criteria": "Clean context composition",
+          "measurement": "Stacked personas compose without conflicts or contradictions",
+          "status": "pending"
+        }
+      ],
+      "quality_acceptance": [
+        {
+          "criteria": "Distinct persona expertise",
+          "measurement": "Each persona demonstrates clearly different knowledge and approach",
+          "status": "pending"
+        },
+        {
+          "criteria": "Specialized depth",
+          "measurement": "Specialized personas show deeper domain knowledge than base personas",
+          "status": "pending"
+        },
+        {
+          "criteria": "Effective stacking",
+          "measurement": "Stacked personas combine expertise (not just concatenate prompts)",
+          "status": "pending"
+        },
+        {
+          "criteria": "Influenced problem-solving",
+          "measurement": "Persona clearly affects how AI approaches problems and suggests solutions",
+          "status": "pending"
+        },
+        {
+          "criteria": "MCP ecosystem integration",
+          "measurement": "Personas work smoothly with existing MCP tools from other servers",
+          "status": "pending"
+        },
+        {
+          "criteria": "Documentation quality",
+          "measurement": "Users can understand and use personas from README alone",
+          "status": "pending"
+        }
+      ],
+      "definition_of_done": [
+        "All 5 MCP tools implemented and tested",
+        "9 personas defined (5 base + 4 specialized)",
+        "Unit test coverage >90%",
+        "All integration tests passing",
+        "Manual testing shows distinct persona behaviors",
+        "README with installation and usage examples",
+        "Schema documentation for adding new personas",
+        "Compatible with Claude Code MCP client",
+        "No MCP protocol violations",
+        "Context composition works cleanly for 2-3 stacked personas"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "□ Create pyproject.toml with dependencies",
+        "□ Set up directory structure (src/, personas/base/, personas/specialized/, tests/)",
+        "□ Install mcp and pydantic packages",
+        "□ Define PersonaDefinition Pydantic model",
+        "□ Define PersonaStack model",
+        "□ Define ComposedContext model",
+        "□ Implement load_persona() function",
+        "□ Implement validate_persona_json() function",
+        "□ Implement resolve_hierarchical_persona() function",
+        "□ Implement compose_contexts() function",
+        "□ Implement PersonaStateManager class",
+        "□ Test persona loading with sample JSON",
+        "□ Test hierarchical resolution (parent:child)",
+        "□ Test context composition with 2-3 personas",
+        "□ Test state push/pop/clear operations"
+      ],
+      "phase_2_checklist": [
+        "□ Create server.py with MCP Server instance",
+        "□ Implement use_persona tool handler",
+        "□ Implement add_persona tool handler",
+        "□ Implement clear_personas tool handler",
+        "□ Implement list_personas tool handler",
+        "□ Implement get_active_personas tool handler",
+        "□ Register all tools with MCP server",
+        "□ Test use_persona with single persona",
+        "□ Test use_persona with hierarchical persona",
+        "□ Test add_persona for stacking",
+        "□ Test clear_personas for reset",
+        "□ Test list_personas output format",
+        "□ Test get_active_personas accuracy",
+        "□ Verify MCP protocol compliance",
+        "□ Test with Claude Code client (manual)"
+      ],
+      "phase_3_checklist": [
+        "□ Write mcp-expert.json system prompt",
+        "□ Write docs-specialist.json system prompt",
+        "□ Write planning-expert.json system prompt",
+        "□ Write code-reviewer.json system prompt",
+        "□ Write testing-expert.json system prompt",
+        "□ Write mcp-expert-docs-mcp.json (specialized)",
+        "□ Write mcp-expert-planning.json (specialized)",
+        "□ Write mcp-expert-inventory.json (specialized)",
+        "□ Write mcp-expert-changelog.json (specialized)",
+        "□ Test each persona for distinct expertise",
+        "□ Validate specialized personas extend base properly",
+        "□ Test persona stacking combinations",
+        "□ Refine personas based on behavior testing",
+        "□ Document persona use cases and examples"
+      ],
+      "phase_4_checklist": [
+        "□ Write tests/test_persona_manager.py",
+        "□ Write tests/test_composition.py",
+        "□ Write tests/test_integration.py",
+        "□ Write tests/test_mcp_compliance.py",
+        "□ Achieve >90% unit test coverage",
+        "□ All integration tests passing",
+        "□ Manual persona quality validation complete",
+        "□ Write README.md with installation instructions",
+        "□ Document all 5 MCP tools in README",
+        "□ Add persona usage examples to README",
+        "□ Document persona definition schema",
+        "□ Create guide for adding new personas",
+        "□ Update CLAUDE.md with implementation status",
+        "□ Final end-to-end test with Claude Code"
+      ],
+      "deployment_checklist": [
+        "□ All tests passing",
+        "□ Documentation complete",
+        "□ MCP server runs without errors",
+        "□ Compatible with Claude Code",
+        "□ All 9 personas working",
+        "□ Persona stacking works cleanly",
+        "□ Error handling comprehensive",
+        "□ README has clear usage examples",
+        "□ Schema docs allow persona extension",
+        "□ Ready for production use"
+      ]
+    }
+  }
+}

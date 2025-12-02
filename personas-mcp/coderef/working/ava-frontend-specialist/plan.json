@@ -1,0 +1,61 @@
+{
+  "agent": "Ava (Agent 2 - Frontend Specialist)",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-002",
+  "feature": "Frontend Specialization Implementation",
+  "scope": "Phase 1: Transform into frontend specialist + Phase 3: Update documentation",
+  "tasks": [
+    {
+      "id": "AGENT2-001",
+      "description": "Rename persona to 'ava' and update agent-2.json with frontend specialization",
+      "details": "Change name to 'ava', description to 'Ava: Frontend Specialist - UI, React, styling, component development, accessibility'. Create slash command /ava",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "AGENT2-002",
+      "description": "Write comprehensive frontend system prompt (UI, React, styling workflows)",
+      "details": "Write 1500+ line system prompt covering: React best practices, component patterns, CSS/Tailwind, accessibility (WCAG), responsive design, state management, hooks, UI testing, design systems",
+      "estimated_time": "3 hours"
+    },
+    {
+      "id": "AGENT2-003",
+      "description": "Define 15+ frontend expertise areas",
+      "details": "Expertise: React/JSX, CSS/Tailwind/Styled-components, HTML5, Accessibility (WCAG 2.1), Responsive design, Component architecture, State management (Redux/Context), React hooks, UI testing (Testing Library), Design systems, Forms/validation, Animation, Performance optimization, Browser APIs, Build tools (Vite/Webpack)",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "AGENT2-004",
+      "description": "Add frontend-specific use cases and examples",
+      "details": "Use cases: Building React components, implementing responsive layouts, fixing accessibility issues, styling with Tailwind, state management patterns, form validation, UI testing",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "DOCS-AGENT2-001",
+      "description": "Update my-guide.md with Agent 2 frontend specialist section",
+      "details": "Add section: 'Agent 2 (Frontend Specialist) - Use for: UI components, React development, styling, accessibility, responsive design'",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "DOCS-AGENT2-002",
+      "description": "Update README.md with Agent 2 description",
+      "details": "Update Agent 2 description to highlight frontend specialization",
+      "estimated_time": "15 min"
+    },
+    {
+      "id": "TEST-AGENT2",
+      "description": "Test frontend specialization with real tasks",
+      "details": "Test with: 'Create a responsive navbar component', 'Fix accessibility issues in modal', 'Implement dark mode toggle'. Verify acceptance and quality.",
+      "estimated_time": "1 hour"
+    }
+  ],
+  "deliverables": [
+    "agent-2.json fully specialized for frontend",
+    "Comprehensive system prompt (1500+ lines)",
+    "15+ frontend expertise areas defined",
+    "Frontend use cases and examples",
+    "my-guide.md updated",
+    "README.md updated",
+    "Frontend specialization tested and validated"
+  ],
+  "estimated_duration": "1.5 days",
+  "dependencies": []
+}

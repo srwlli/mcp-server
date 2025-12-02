@@ -1,0 +1,133 @@
+{
+  "project_name": "docs-mcp",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\docs-mcp",
+  "generated_at": "2025-10-15T20:23:26.976866",
+  "frameworks": [],
+  "test_files": [
+    {
+      "file_path": "coderef/archived/test_audit_integration.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T04:45:50.766854",
+      "size_bytes": 3314
+    },
+    {
+      "file_path": "coderef/archived/test_check_consistency.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T05:28:59.305229",
+      "size_bytes": 10797
+    },
+    {
+      "file_path": "coderef/archived/test_establish_standards.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T03:15:39.780334",
+      "size_bytes": 1858
+    },
+    {
+      "file_path": "generators/test_generator.py",
+      "framework": "python",
+      "last_modified": "2025-10-15T20:23:12.019579",
+      "size_bytes": 21672
+    },
+    {
+      "file_path": "tests/integration/test_planning_workflow_e2e.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T23:55:41.123180",
+      "size_bytes": 17311
+    },
+    {
+      "file_path": "tests/integration/test_user_approval_gate.py",
+      "framework": "python",
+      "last_modified": "2025-10-11T00:13:11.937089",
+      "size_bytes": 16254
+    },
+    {
+      "file_path": "tests/integration/test_workflow_documentation.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T23:59:31.335102",
+      "size_bytes": 10869
+    },
+    {
+      "file_path": "tests/performance/test_performance.py",
+      "framework": "python",
+      "last_modified": "2025-10-11T00:15:00.578651",
+      "size_bytes": 16906
+    },
+    {
+      "file_path": "tests/security/test_security_fixes.py",
+      "framework": "python",
+      "last_modified": "2025-10-09T17:36:45.481517",
+      "size_bytes": 10667
+    },
+    {
+      "file_path": "tests/security/test_sec_004_005.py",
+      "framework": "python",
+      "last_modified": "2025-10-09T18:26:44.618519",
+      "size_bytes": 5265
+    },
+    {
+      "file_path": "tests/smoke/test_analyze_project_basic.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T08:42:15.254909",
+      "size_bytes": 4032
+    },
+    {
+      "file_path": "tests/unit/generators/test_planning_generator.py",
+      "framework": "python",
+      "last_modified": "2025-10-12T01:18:41.272310",
+      "size_bytes": 12767
+    },
+    {
+      "file_path": "tests/unit/generators/test_review_formatter.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T21:54:24.431943",
+      "size_bytes": 22619
+    },
+    {
+      "file_path": "tests/unit/handlers/test_analysis_feature_specific.py",
+      "framework": "python",
+      "last_modified": "2025-10-14T21:31:01.536868",
+      "size_bytes": 13527
+    },
+    {
+      "file_path": "tests/unit/handlers/test_generate_review_report_handler.py",
+      "framework": "python",
+      "last_modified": "2025-10-11T00:10:45.503335",
+      "size_bytes": 17113
+    },
+    {
+      "file_path": "tests/unit/handlers/test_get_planning_template.py",
+      "framework": "python",
+      "last_modified": "2025-10-10T08:14:33.029740",
+      "size_bytes": 4359
+    },
+    {
+      "file_path": "tests/unit/handlers/test_validate_plan_handler.py",
+      "framework": "python",
+      "last_modified": "2025-10-11T00:08:06.507976",
+      "size_bytes": 23062
+    }
+  ],
+  "coverage_data": null,
+  "untested_files": [
+    "add_changelog_v1.3.0.py",
+    "coderef\\changelog\\__init__.py",
+    "constants.py",
+    "error_responses.py",
+    "generators\\__init__.py",
+    "generators\\consistency_checker.py",
+    "generators\\plan_validator.py",
+    "generators\\planning_analyzer.py",
+    "logger_config.py",
+    "server.py",
+    "tool_handlers.py",
+    "type_defs.py",
+    "validation.py"
+  ],
+  "metrics": {
+    "total_test_files": 17,
+    "frameworks_detected": [],
+    "untested_files_count": 13,
+    "coverage_available": false,
+    "overall_coverage": null
+  }
+}

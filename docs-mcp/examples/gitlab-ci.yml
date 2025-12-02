@@ -1,0 +1,299 @@
+# GitLab CI/CD pipeline for docs-mcp consistency checking
+#
+# Usage:
+#   1. Copy this file to .gitlab-ci.yml or include it in your existing pipeline
+#   2. Adjust configuration variables as needed
+#   3. Ensure docs-mcp server is accessible in CI environment
+#
+# This pipeline will:
+#   - Trigger on merge requests and main branch
+#   - Auto-detect changed files via git diff
+#   - Run consistency checks against established standards
+#   - Fail the pipeline if violations found (configurable severity)
+#   - Post check results as MR comment
+
+# Global variables
+variables:
+  SEVERITY_THRESHOLD: "major"  # critical|major|minor
+  CHECK_SCOPE: "all"           # ui_patterns|behavior_patterns|ux_patterns|all
+  FAIL_ON_VIOLATIONS: "true"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+# Cache pip packages
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+# Pipeline stages
+stages:
+  - prepare
+  - check
+  - report
+
+# Install docs-mcp server
+install_mcp:
+  stage: prepare
+  image: python:3.11-slim
+  script:
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install mcp
+    # Clone or install your docs-mcp server
+    # Adjust based on your deployment method
+    - git clone https://github.com/your-org/docs-mcp.git /tmp/docs-mcp || true
+    - cd /tmp/docs-mcp
+    - pip install -r requirements.txt || true
+  artifacts:
+    paths:
+      - venv/
+    expire_in: 1 hour
+
+# Check if standards exist, establish if needed
+ensure_standards:
+  stage: prepare
+  image: python:3.11-slim
+  dependencies:
+    - install_mcp
+  script:
+    - source venv/bin/activate
+    - |
+      if [ ! -d "coderef/standards" ]; then
+        echo "📚 No standards found. Establishing standards from codebase..."
+        # Call establish_standards via MCP
+        python3 -m mcp_client call docs-mcp establish_standards \
+          --project_path "$CI_PROJECT_DIR"
+      else
+        echo "✓ Standards already exist"
+      fi
+  artifacts:
+    paths:
+      - coderef/standards/
+    expire_in: 1 day
+
+# Run consistency check
+consistency_check:
+  stage: check
+  image: python:3.11-slim
+  dependencies:
+    - install_mcp
+    - ensure_standards
+  script:
+    - source venv/bin/activate
+
+    # Determine changed files based on context
+    - |
+      if [ "$CI_MERGE_REQUEST_IID" ]; then
+        # Merge request context
+        BASE_REF="origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+        HEAD_REF="HEAD"
+        echo "📝 Checking MR !$CI_MERGE_REQUEST_IID"
+      else
+        # Regular commit on main/develop
+        BASE_REF="HEAD~1"
+        HEAD_REF="HEAD"
+        echo "📝 Checking commit $CI_COMMIT_SHORT_SHA"
+      fi
+
+    # Get changed .ts, .tsx, .js, .jsx files
+    - |
+      CHANGED_FILES=$(git diff --name-only "$BASE_REF" "$HEAD_REF" | \
+        grep -E '\.(ts|tsx|js|jsx)$' | \
+        jq -R -s -c 'split("\n") | map(select(length > 0))' || echo '[]')
+      echo "Changed files: $CHANGED_FILES"
+
+    # Run consistency check
+    - echo "🔍 Running consistency check..."
+    - |
+      RESULT=$(python3 -m mcp_client call docs-mcp check_consistency \
+        --project_path "$CI_PROJECT_DIR" \
+        --files "$CHANGED_FILES" \
+        --severity_threshold "$SEVERITY_THRESHOLD" \
+        --scope "$CHECK_SCOPE" \
+        --fail_on_violations "$FAIL_ON_VIOLATIONS" || echo '{"status":"fail","exit_code":1}')
+
+    # Save results
+    - echo "$RESULT" > check-results.json
+    - cat check-results.json
+
+    # Parse results
+    - STATUS=$(echo "$RESULT" | jq -r '.status // "fail"')
+    - VIOLATIONS=$(echo "$RESULT" | jq -r '.violations_found // 0')
+    - EXIT_CODE=$(echo "$RESULT" | jq -r '.exit_code // 1')
+
+    # Display in job log
+    - |
+      echo ""
+      echo "=========================================="
+      echo "🔍 CONSISTENCY CHECK RESULTS"
+      echo "=========================================="
+      echo "Status:      $STATUS"
+      echo "Violations:  $VIOLATIONS"
+      echo "Threshold:   $SEVERITY_THRESHOLD"
+      echo "Scope:       $CHECK_SCOPE"
+      echo "Exit Code:   $EXIT_CODE"
+      echo "=========================================="
+      echo ""
+
+    # Create Markdown report for GitLab
+    - |
+      cat > consistency-report.md <<EOF
+      ## 🔍 Consistency Check Results
+
+      | Metric | Value |
+      |--------|-------|
+      | Status | $STATUS |
+      | Violations | $VIOLATIONS |
+      | Threshold | $SEVERITY_THRESHOLD |
+      | Scope | $CHECK_SCOPE |
+      | Files Checked | $(echo "$RESULT" | jq -r '.files_checked // 0') |
+      | Duration | $(echo "$RESULT" | jq -r '.duration // 0')s |
+
+      EOF
+
+    # Add violations to report if found
+    - |
+      if [ "$VIOLATIONS" -gt 0 ]; then
+        echo "" >> consistency-report.md
+        echo "### ❌ Violations Found" >> consistency-report.md
+        echo "" >> consistency-report.md
+
+        # Parse violations and group by file
+        echo "$RESULT" | jq -r '.violations[] | "#### \(.file_path)\n\n- Line \(.line_number) [\(.severity)]: \(.message)\n  - 💡 Fix: \(.fix_suggestion // "N/A")\n"' >> consistency-report.md
+      fi
+
+    # Exit with appropriate code
+    - exit $EXIT_CODE
+
+  artifacts:
+    when: always
+    paths:
+      - check-results.json
+      - consistency-report.md
+    reports:
+      dotenv: check-results.json  # Make results available to other jobs
+    expire_in: 1 week
+
+  # Only run on merge requests and main branch
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# Post results to merge request
+post_mr_comment:
+  stage: report
+  image: python:3.11-slim
+  dependencies:
+    - consistency_check
+  script:
+    - pip install python-gitlab
+    - |
+      python3 <<EOF
+      import os
+      import json
+      import gitlab
+
+      # Read results
+      with open('check-results.json') as f:
+          results = json.load(f)
+
+      # Read markdown report
+      with open('consistency-report.md') as f:
+          report = f.read()
+
+      # Only post if there are violations and it's a merge request
+      if results.get('violations_found', 0) > 0 and os.environ.get('CI_MERGE_REQUEST_IID'):
+          gl = gitlab.Gitlab(
+              os.environ['CI_SERVER_URL'],
+              private_token=os.environ['GITLAB_TOKEN']
+          )
+
+          project = gl.projects.get(os.environ['CI_PROJECT_ID'])
+          mr = project.mergerequests.get(os.environ['CI_MERGE_REQUEST_IID'])
+
+          # Post comment
+          mr.notes.create({'body': report})
+          print(f"Posted comment to MR !{os.environ['CI_MERGE_REQUEST_IID']}")
+      else:
+          print("No violations found or not a merge request - skipping comment")
+      EOF
+
+  only:
+    - merge_requests
+
+  # Allow failure if comment posting fails (don't block pipeline)
+  allow_failure: true
+
+  # Requires GITLAB_TOKEN variable with api scope
+  # Set in Settings > CI/CD > Variables
+
+# Optional: Scheduled job to update standards
+update_standards_scheduled:
+  stage: prepare
+  image: python:3.11-slim
+  script:
+    - source venv/bin/activate
+    - echo "📚 Regenerating standards from codebase..."
+    - |
+      python3 -m mcp_client call docs-mcp establish_standards \
+        --project_path "$CI_PROJECT_DIR"
+
+    # Commit changes if standards were updated
+    - |
+      if git diff --quiet coderef/standards/; then
+        echo "No changes to standards"
+      else
+        git config user.email "ci@gitlab.com"
+        git config user.name "GitLab CI"
+        git add coderef/standards/
+        git commit -m "chore: Update coding standards from codebase analysis [skip ci]"
+        git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:main
+        echo "Standards updated and committed"
+      fi
+
+  only:
+    - schedules  # Run only on scheduled pipelines
+
+  # Requires GITLAB_TOKEN with write_repository scope
+
+# Optional: Generate compliance badge
+generate_badge:
+  stage: report
+  image: python:3.11-slim
+  dependencies:
+    - consistency_check
+  script:
+    - |
+      # Read compliance score from results
+      SCORE=$(jq -r '.compliance_score // 0' check-results.json)
+
+      # Determine badge color
+      if [ "$SCORE" -ge 90 ]; then
+        COLOR="brightgreen"
+        GRADE="A"
+      elif [ "$SCORE" -ge 80 ]; then
+        COLOR="green"
+        GRADE="B"
+      elif [ "$SCORE" -ge 70 ]; then
+        COLOR="yellow"
+        GRADE="C"
+      elif [ "$SCORE" -ge 60 ]; then
+        COLOR="orange"
+        GRADE="D"
+      else
+        COLOR="red"
+        GRADE="F"
+      fi
+
+      # Create badge JSON for GitLab badges API
+      echo "{\"compliance_score\": \"$SCORE\", \"grade\": \"$GRADE\", \"color\": \"$COLOR\"}" > badge.json
+
+  artifacts:
+    paths:
+      - badge.json
+    expire_in: 30 days
+
+  only:
+    - main

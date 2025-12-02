@@ -1,0 +1,61 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)"
+    ],
+    "missing": [
+      "API.md",
+      "ARCHITECTURE.md",
+      "COMPONENTS.md",
+      "SCHEMA.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "personas\\base",
+      "coderef\\working\\docs-expert-v2"
+    ],
+    "file_counts": {
+      "coderef\\working\\docs-expert-v2": 12,
+      "personas\\base": 11,
+      ".claude\\commands": 8,
+      "personas_mcp.egg-info": 6,
+      "src": 5,
+      "tests": 4,
+      "coderef\\archived\\coderef-persona-context": 4,
+      ".pytest_cache": 3,
+      "coderef\\working\\agent-persona-mcp": 3,
+      "coderef\\working\\lloyd": 3
+    },
+    "organization_pattern": "modular (src-based)"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: API.md, ARCHITECTURE.md, COMPONENTS.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

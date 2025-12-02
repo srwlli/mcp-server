@@ -1,0 +1,305 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "mcp-server-detection-fix",
+    "version": "1.0.0",
+    "status": "in_progress",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-10-17T21:18:00Z",
+    "updated_at": "2025-10-18T01:15:00Z",
+    "has_context": false,
+    "has_analysis": false,
+    "description": "Fix coderef2-mcp server not being detected by Claude Code MCP despite correct configuration",
+    "progress": {
+      "phase_1_investigation": "completed",
+      "phase_2_fix_implementation": "completed",
+      "phase_3_verification": "in_progress"
+    },
+    "tasks_completed": ["T001", "T002", "T003", "T004", "T005", "T006"],
+    "tasks_in_progress": ["T007"],
+    "tasks_remaining": [],
+    "next_actions": [
+      "Add shebang line to server.py (#!/usr/bin/env python3)",
+      "Fully restart Claude Code application",
+      "Check Claude Code logs for startup errors",
+      "Verify server detection with 'claude mcp list'"
+    ]
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "readme": "Not found",
+        "architecture": "Not found",
+        "api_docs": "Not found"
+      },
+      "coding_standards": {
+        "style_guide": "Not found",
+        "patterns": "Python MCP server patterns based on docs-mcp reference"
+      },
+      "reference_components": {
+        "similar_implementations": [
+          "docs-mcp server (working reference)",
+          "MCP stdio server protocol"
+        ]
+      },
+      "dependencies": {
+        "mcp": "MCP SDK",
+        "python": "3.x",
+        "asyncio": "Standard library"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "MCP Server Detection Fix",
+      "business_value": "Enable coderef2-mcp tools to be available in Claude Code, providing code reference and analysis capabilities",
+      "target_users": "Developers using Claude Code with coderef2-mcp server",
+      "timeline": "1-2 hours",
+      "effort_estimate": "Small - debugging and configuration fix"
+    },
+    "2_risk_assessment": {
+      "complexity_score": 3,
+      "risk_level": "Low",
+      "key_risks": [
+        {
+          "risk": "Server startup fails silently",
+          "impact": "High",
+          "probability": "Medium",
+          "mitigation": "Add comprehensive logging and error handling"
+        },
+        {
+          "risk": "Import errors prevent server initialization",
+          "impact": "High",
+          "probability": "Medium",
+          "mitigation": "Verify all imports and dependencies are properly installed"
+        },
+        {
+          "risk": "MCP protocol handshake fails",
+          "impact": "High",
+          "probability": "Low",
+          "mitigation": "Compare with working docs-mcp implementation"
+        }
+      ],
+      "dependencies": [
+        "MCP SDK properly installed",
+        "Python environment configured correctly",
+        "Claude Code MCP client functioning"
+      ]
+    },
+    "3_current_state_analysis": {
+      "observations": [
+        "Server starts successfully when run directly (logs show 6 tools available)",
+        "Config file matches working docs-mcp pattern exactly",
+        "Claude Code only detects docs-mcp, not coderef2-mcp",
+        "Server.py imports look correct (mcp.server, mcp.server.stdio, mcp.types)"
+      ],
+      "files_to_modify": [
+        "server.py - Add better error handling and stdio protocol compliance",
+        "logger_config.py - Ensure logging doesn't interfere with stdio",
+        "tool_handlers.py - Verify tool registration format"
+      ],
+      "files_to_create": [
+        "test_mcp_server.py - Standalone test to verify MCP protocol compliance"
+      ]
+    },
+    "4_key_features": {
+      "F001": {
+        "name": "Fix MCP Server Detection",
+        "description": "Ensure coderef2-mcp server is properly detected and initialized by Claude Code",
+        "priority": "Critical",
+        "acceptance_criteria": [
+          "Server appears in 'claude mcp list' output",
+          "Server shows ✓ Connected status",
+          "All 6 tools are available in Claude Code"
+        ]
+      },
+      "F002": {
+        "name": "Improve Server Diagnostics",
+        "description": "Add better logging and error reporting for debugging",
+        "priority": "High",
+        "acceptance_criteria": [
+          "Startup errors are clearly logged",
+          "MCP handshake success/failure is logged",
+          "Tool registration is logged"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "tasks": {
+        "T001": {
+          "feature": "F001",
+          "description": "Investigate stdio protocol implementation",
+          "details": "Compare server.py stdio_server usage with working docs-mcp implementation to identify differences",
+          "estimated_hours": 0.5,
+          "status": "completed",
+          "completed_at": "2025-10-17T21:45:00Z",
+          "findings": "Both servers use identical stdio_server() pattern. No differences found in MCP protocol implementation."
+        },
+        "T002": {
+          "feature": "F001",
+          "description": "Check logger configuration for stdio conflicts",
+          "details": "Ensure logging doesn't write to stdout/stderr in a way that breaks MCP protocol",
+          "estimated_hours": 0.5,
+          "status": "completed",
+          "completed_at": "2025-10-17T21:50:00Z",
+          "findings": "CRITICAL ISSUE FOUND: logger_config.py was using StreamHandler() which defaults to stdout. This corrupts MCP protocol messages on stdin/stdout channel."
+        },
+        "T003": {
+          "feature": "F001",
+          "description": "Verify tool handler format",
+          "details": "Ensure TOOL_HANDLERS dict matches expected MCP tool registration format",
+          "estimated_hours": 0.25,
+          "status": "completed",
+          "completed_at": "2025-10-17T21:55:00Z",
+          "findings": "Tool handler registration format is correct. All 6 tools properly registered in TOOL_HANDLERS dict."
+        },
+        "T004": {
+          "feature": "F001",
+          "description": "Test server with minimal implementation",
+          "details": "Strip down to bare minimum MCP server to isolate issue",
+          "estimated_hours": 0.5,
+          "status": "completed",
+          "completed_at": "2025-10-17T22:00:00Z",
+          "findings": "Server starts successfully when run directly. Logs show 6 tools available. No import or initialization errors."
+        },
+        "T005": {
+          "feature": "F002",
+          "description": "Add startup diagnostic logging",
+          "details": "Log each initialization step to identify where failure occurs",
+          "estimated_hours": 0.25,
+          "status": "completed",
+          "completed_at": "2025-10-17T22:05:00Z",
+          "findings": "Diagnostic logging already present in server.py. Server logs startup, available tools, and readiness messages."
+        },
+        "T006": {
+          "feature": "F001",
+          "description": "Fix identified issue",
+          "details": "Apply fix based on investigation findings",
+          "estimated_hours": 0.5,
+          "status": "completed",
+          "completed_at": "2025-10-17T22:10:00Z",
+          "findings": "Fixed logger_config.py line 20: Changed StreamHandler() to StreamHandler(sys.stderr). Committed as d3cea88.",
+          "files_modified": ["logger_config.py"]
+        },
+        "T007": {
+          "feature": "F001",
+          "description": "Verify server detection",
+          "details": "Confirm server appears in claude mcp list and tools are available",
+          "estimated_hours": 0.25,
+          "status": "in_progress",
+          "findings": "Server still not appearing in 'claude mcp list' despite fix. Additional investigation needed."
+        },
+        "T008": {
+          "feature": "F001",
+          "description": "Add shebang line to server.py",
+          "details": "Add #!/usr/bin/env python3 to match working docs-mcp pattern",
+          "estimated_hours": 0.1,
+          "status": "completed",
+          "completed_at": "2025-10-18T01:20:00Z",
+          "findings": "Added shebang line to server.py:1 to match docs-mcp server pattern.",
+          "files_modified": ["server.py"]
+        }
+      }
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Investigation",
+        "goal": "Identify root cause of detection failure",
+        "complexity": "low",
+        "effort_level": 2,
+        "tasks": ["T001", "T002", "T003"],
+        "deliverables": [
+          "Comparison report of coderef2-mcp vs docs-mcp",
+          "Identification of specific issue causing detection failure"
+        ]
+      },
+      "phase_2": {
+        "name": "Fix Implementation",
+        "goal": "Apply fix to resolve detection issue",
+        "complexity": "low",
+        "effort_level": 2,
+        "tasks": ["T004", "T005", "T006"],
+        "deliverables": [
+          "Updated server.py with fix",
+          "Enhanced logging for diagnostics"
+        ]
+      },
+      "phase_3": {
+        "name": "Verification",
+        "goal": "Confirm fix resolves the issue",
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": ["T007"],
+        "deliverables": [
+          "Server detected by Claude Code",
+          "All tools available and functional"
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test server initialization without MCP client",
+        "Test tool handler registration",
+        "Test logging configuration"
+      ],
+      "integration_tests": [
+        "Test MCP protocol handshake",
+        "Test tool invocation via MCP client",
+        "Test server with Claude Code client"
+      ],
+      "manual_tests": [
+        "Run 'claude mcp list' and verify coderef2-mcp appears",
+        "Invoke each of the 6 tools from Claude Code",
+        "Verify no errors in Claude Code logs"
+      ],
+      "edge_cases": [
+        "Server starts when stdout/stderr already have content",
+        "Multiple concurrent tool invocations from Claude Code",
+        "Server restart while Claude Code is running",
+        "Large JSON responses that may buffer or split across stdio",
+        "Tool invocation with malformed parameters",
+        "Network interruption during MCP handshake",
+        "Server crashes and needs to reconnect",
+        "Python environment has missing dependencies",
+        "Config file has invalid JSON or missing fields",
+        "Server receives unknown MCP protocol messages"
+      ]
+    },
+    "8_success_criteria": {
+      "must_have": [
+        "coderef2-mcp appears in 'claude mcp list' output",
+        "Server shows ✓ Connected status",
+        "All 6 tools (query, analyze, validate, batch_validate, generate_docs, audit) are available"
+      ],
+      "should_have": [
+        "Clear error messages if server fails to start",
+        "Diagnostic logging for troubleshooting"
+      ],
+      "metrics": {
+        "server_detection_rate": "100%",
+        "tool_availability": "6/6 tools",
+        "startup_time": "< 5 seconds"
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_1_investigation": [
+        "Compare server.py with docs-mcp server.py line by line",
+        "Check if logger writes to stdout/stderr",
+        "Verify tool handler registration format",
+        "Review MCP protocol requirements",
+        "Check for any import errors or missing dependencies"
+      ],
+      "phase_2_fix": [
+        "Create minimal test server to isolate issue",
+        "Apply identified fix to server.py",
+        "Add diagnostic logging",
+        "Test server starts without errors",
+        "Verify MCP handshake completes"
+      ],
+      "phase_3_verification": [
+        "Restart Claude Code to reload MCP config",
+        "Run 'claude mcp list' and confirm detection",
+        "Test each tool invocation",
+        "Review Claude Code logs for errors",
+        "Document the fix for future reference"
+      ]
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "workorder_id": "WO-AGENT-SPECIALIZATION-005",
+  "feature": "Generalist Rename to Taylor",
+  "agent": "Taylor (Agent - Self-Implementation)",
+  "estimated_time": "30 minutes",
+  "tasks": [
+    {
+      "id": "TAYLOR-001",
+      "description": "Rename persona file: agent-generalist.json → taylor.json",
+      "details": "Use git mv to preserve history",
+      "estimated_time": "2 min"
+    },
+    {
+      "id": "TAYLOR-002",
+      "description": "Update persona metadata (name, description, updated_at)",
+      "details": "name: 'taylor', description: 'Taylor: General Purpose Agent'",
+      "estimated_time": "3 min"
+    },
+    {
+      "id": "TAYLOR-003",
+      "description": "Create .claude/commands/taylor.md slash command",
+      "details": "Copy pattern from ava.md, update for Taylor",
+      "estimated_time": "5 min"
+    },
+    {
+      "id": "TAYLOR-004",
+      "description": "Update my-guide.md with Taylor section",
+      "details": "Add Taylor to personas list with description",
+      "estimated_time": "5 min"
+    },
+    {
+      "id": "TAYLOR-005",
+      "description": "Update README.md with Taylor description",
+      "details": "Update persona count and add Taylor to list",
+      "estimated_time": "3 min"
+    },
+    {
+      "id": "TAYLOR-006",
+      "description": "Update CLAUDE.md with Taylor in Base Personas section",
+      "details": "Change agent-generalist to taylor in documentation",
+      "estimated_time": "5 min"
+    },
+    {
+      "id": "TAYLOR-007",
+      "description": "Update index.html with taylor persona and /taylor command",
+      "details": "Change agent-generalist to taylor, add /taylor slash command",
+      "estimated_time": "5 min"
+    },
+    {
+      "id": "TAYLOR-008",
+      "description": "Create clean git commit with workorder tracking",
+      "details": "Commit message: 'Rename agent-generalist to Taylor (WO-AGENT-SPECIALIZATION-005)'",
+      "estimated_time": "2 min"
+    }
+  ],
+  "success_criteria": [
+    "taylor.json exists in personas/base/",
+    "agent-generalist.json deleted (git mv preserves history)",
+    "/taylor slash command works",
+    "All documentation updated (my-guide, README, CLAUDE, index)",
+    "Git commit created with WO-AGENT-SPECIALIZATION-005"
+  ]
+}

@@ -1,0 +1,1243 @@
+{
+  "plan_metadata": {
+    "plan_name": "CodeRef MCP Server - Agentic Enhancements",
+    "version": "1.1.0",
+    "created_at": "2025-10-23",
+    "updated_at": "2025-10-23",
+    "target_directory": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+    "estimated_duration": "4 weeks",
+    "complexity": "medium-high",
+    "priority": "high",
+    "validation_score": 93,
+    "validation_status": "PASS"
+  },
+
+  "project_overview": {
+    "objective": "Enhance existing Python MCP server with MCP standard features (Resources, Prompts) and AI-native capabilities (Natural Language Query, Real-Time Scanning)",
+    "current_state": "Solid foundation with 6 tools, async handlers, comprehensive error handling, singleton pattern",
+    "target_state": "MCP-complete server with Resources, Prompts, NL query, and TypeScript CLI bridge",
+    "success_metrics": [
+      "All 4 MCP Resources accessible via Claude Desktop",
+      "All 4 MCP Prompts working end-to-end",
+      "NL Query parsing accuracy >90%",
+      "Real-time scanning completes in <5 seconds for small codebases"
+    ]
+  },
+
+  "rollback_plan": {
+    "strategy": "Incremental rollback per phase with automated testing checkpoints",
+    "phase_1_rollback": {
+      "steps": [
+        "Remove @app.list_resources() decorator from server.py",
+        "Remove @app.read_resource() decorator from server.py",
+        "Delete coderef/utils/resource_cache.py if created",
+        "Remove Resource import from mcp.server.models",
+        "Restart MCP server via systemctl or manual process restart",
+        "Verify existing 6 tools still functional via test suite"
+      ],
+      "validation": "Run tests/integration/test_existing_tools.py to verify no regression",
+      "estimated_time": "5 minutes",
+      "data_safety": "No persistent data affected - all in-memory"
+    },
+    "phase_2_rollback": {
+      "steps": [
+        "Remove @app.list_prompts() decorator from server.py",
+        "Remove @app.get_prompt() decorator from server.py",
+        "Remove Prompt, PromptArgument, PromptMessage imports",
+        "Restart MCP server",
+        "Verify Phase 1 Resources still working"
+      ],
+      "validation": "Run tests/integration/test_resources.py to verify Phase 1 intact",
+      "estimated_time": "5 minutes",
+      "data_safety": "No persistent data affected - templates only"
+    },
+    "phase_3_rollback": {
+      "steps": [
+        "Remove mcp__coderef__nl_query from TOOL_SCHEMAS",
+        "Remove handle_nl_query from TOOL_HANDLERS",
+        "Remove parse_query_intent function from tool_handlers.py",
+        "Restart MCP server",
+        "Verify Phases 1-2 still working"
+      ],
+      "validation": "Run full integration test suite",
+      "estimated_time": "5 minutes",
+      "data_safety": "No persistent data affected"
+    },
+    "phase_4_rollback": {
+      "steps": [
+        "Remove mcp__coderef__scan_realtime from TOOL_SCHEMAS",
+        "Remove handle_scan_realtime from TOOL_HANDLERS",
+        "Remove subprocess bridge code",
+        "Remove scan caching extensions",
+        "Restart MCP server",
+        "Verify Phases 1-3 still working"
+      ],
+      "validation": "Run full integration test suite",
+      "estimated_time": "10 minutes",
+      "data_safety": "Index updates are in-memory, no persistent corruption risk"
+    },
+    "emergency_rollback": {
+      "description": "Complete rollback to pre-enhancement state",
+      "steps": [
+        "git checkout server.py tool_handlers.py (restore originals)",
+        "rm -rf coderef/utils/resource_cache.py",
+        "Restart MCP server",
+        "Run full test suite"
+      ],
+      "estimated_time": "2 minutes",
+      "trigger_conditions": [
+        "Server fails to start",
+        "Existing tools broken",
+        "Memory leak detected",
+        "Critical bug in production"
+      ]
+    },
+    "testing_before_deployment": {
+      "unit_tests": "Run pytest tests/unit/ before each phase commit",
+      "integration_tests": "Run pytest tests/integration/ after each phase",
+      "smoke_tests": "Verify all existing tools still work after each phase",
+      "performance_tests": "Run benchmarks to ensure no regression"
+    }
+  },
+
+  "phases": [
+    {
+      "phase_number": 1,
+      "phase_name": "Resources Support",
+      "duration": "Week 1",
+      "priority": "CRITICAL",
+      "effort_hours": "4-6 hours",
+      "roi": "HIGH",
+      "status": "planned",
+
+      "objectives": [
+        "Implement MCP Resources handlers (@app.list_resources, @app.read_resource)",
+        "Add 4 core resources (graph, stats, index, coverage)",
+        "Enable AI agents to fetch structured data without queries",
+        "Test with Claude Desktop"
+      ],
+
+      "deliverables": [
+        "server.py with Resources handlers",
+        "4 resource URIs implemented",
+        "Resource caching layer (5-minute TTL)",
+        "Integration tests for Resources",
+        "Documentation for Resources API"
+      ],
+
+      "tasks": [
+        {
+          "task_id": "P1.1",
+          "name": "Add Resources handlers to server.py",
+          "description": "Implement MCP-compliant Resources handlers including list_resources and read_resource decorators to enable AI agents to discover and fetch read-only structured data such as dependency graphs and codebase statistics without requiring complex query syntax, thereby improving token efficiency and enabling more intelligent context-aware code analysis workflows in Claude Desktop and other MCP clients",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "1 hour",
+          "dependencies": [],
+          "implementation_notes": [
+            "Add import for Resource model from mcp.server.models",
+            "Implement list_resources() to return 4 resources",
+            "Implement read_resource(uri) with switch statement for each URI",
+            "Add error handling for unknown URIs"
+          ],
+          "code_snippet": {
+            "file": "server.py",
+            "location": "After @app.call_tool() handler",
+            "content": "@app.list_resources()\nasync def list_resources() -> list[Resource]:\n    return [\n        Resource(\n            uri=\"coderef://graph/current\",\n            name=\"Current Dependency Graph\",\n            description=\"Complete dependency graph\",\n            mimeType=\"application/json\"\n        ),\n        # ... 3 more resources\n    ]"
+          },
+          "edge_cases": [
+            "What if mcp.server.models doesn't export Resource (wrong MCP SDK version)?",
+            "What if read_resource() receives URI with special characters or encoding issues?",
+            "What if read_resource() is called before server initialization completes?",
+            "What if multiple clients request same resource simultaneously (race condition)?",
+            "What if resource URI scheme changes in future MCP spec versions?",
+            "What if resource data is too large to fit in memory (>100MB graph)?",
+            "What if client requests non-existent resource URI?",
+            "What if server has no data to return (empty codebase, fresh install)?"
+          ]
+        },
+        {
+          "task_id": "P1.2",
+          "name": "Implement graph resource (coderef://graph/current)",
+          "description": "Create the dependency graph resource that returns the complete codebase dependency graph including all nodes representing code elements and edges representing relationships such as function calls and imports, enabling AI agents to perform sophisticated graph traversal and impact analysis without repeatedly querying individual elements, which significantly reduces token usage and improves analysis speed for large codebases with complex dependency chains",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "1.5 hours",
+          "dependencies": ["P1.1"],
+          "implementation_notes": [
+            "Add get_dependency_graph() async function",
+            "Query all elements and their relationships",
+            "Build nodes and edges structure",
+            "Return JSON-serializable graph",
+            "Add caching with 5-minute TTL"
+          ],
+          "acceptance_criteria": [
+            "Returns valid JSON with nodes[] and edges[]",
+            "Includes all elements in the index",
+            "Includes all relationships (calls, imports)",
+            "Response time <500ms for typical codebase"
+          ],
+          "edge_cases": [
+            "What if graph contains circular dependencies (infinite loop risk)?",
+            "What if graph is extremely large (>10,000 nodes) and exceeds JSON size limits?",
+            "What if graph contains nodes with identical IDs (collision)?",
+            "What if relationships reference non-existent nodes (orphaned edges)?",
+            "What if QueryExecutor is not initialized when graph is requested?",
+            "What if graph data is being updated while resource is being read (dirty read)?",
+            "What if serialization to JSON fails due to special characters in element names?",
+            "What if two different element types have same name (ambiguity)?"
+          ]
+        },
+        {
+          "task_id": "P1.3",
+          "name": "Implement stats resource (coderef://stats/summary)",
+          "description": "Implement the codebase statistics resource that aggregates and returns comprehensive metrics including element counts by type and language, average complexity scores, and total relationship counts, providing AI agents with quick access to high-level codebase insights that inform architecture recommendations, refactoring priorities, and technical debt assessment without requiring multiple individual queries to compute these commonly needed aggregate statistics",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P1.1"],
+          "implementation_notes": [
+            "Add get_statistics() async function",
+            "Aggregate element counts by type",
+            "Aggregate element counts by language",
+            "Calculate average complexity",
+            "Count total relationships",
+            "Add caching with 5-minute TTL"
+          ],
+          "acceptance_criteria": [
+            "Returns total_elements count",
+            "Returns elements_by_type breakdown",
+            "Returns elements_by_language breakdown",
+            "Returns avg_complexity metric",
+            "Returns total_relationships count"
+          ],
+          "edge_cases": [
+            "What if no elements exist in index (division by zero for averages)?",
+            "What if some elements missing type or language metadata?",
+            "What if complexity scores are not available for some elements?",
+            "What if element types include unknown/custom designators?",
+            "What if language detection fails and returns null/undefined?",
+            "What if aggregation calculation overflows (extremely large codebase)?",
+            "What if concurrent updates to index occur during stat calculation?",
+            "What if cache is stale and stats don't reflect recent changes?"
+          ]
+        },
+        {
+          "task_id": "P1.4",
+          "name": "Implement index resource (coderef://index/elements)",
+          "description": "Create the complete element index resource that returns all indexed code elements with their full metadata including references, types, file locations, and line numbers, allowing AI agents to perform comprehensive codebase searches, generate complete documentation, and analyze naming patterns without making hundreds of individual element queries, especially useful for batch operations and whole-codebase analysis workflows that would otherwise require excessive API calls and token consumption",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "0.5 hours",
+          "dependencies": ["P1.1"],
+          "implementation_notes": [
+            "Add get_all_elements() async function",
+            "Query all elements from data store",
+            "Return with metadata (count, generated_at)",
+            "Add pagination support (optional)",
+            "Add caching with 5-minute TTL"
+          ],
+          "acceptance_criteria": [
+            "Returns all elements in index",
+            "Includes element metadata",
+            "Includes generated_at timestamp",
+            "Response size reasonable (<10MB)"
+          ],
+          "edge_cases": [
+            "What if index contains >100,000 elements (response too large)?",
+            "What if some elements have malformed metadata?",
+            "What if client requests index before any scanning has occurred?",
+            "What if pagination offset exceeds total element count?",
+            "What if elements contain non-serializable data types?",
+            "What if index is being rebuilt while resource is being read?",
+            "What if memory is insufficient to load all elements at once?",
+            "What if generated_at timestamp format is incompatible with client?"
+          ]
+        },
+        {
+          "task_id": "P1.5",
+          "name": "Implement coverage resource (coderef://coverage/test)",
+          "description": "Develop the test coverage resource that maps test elements to the code they cover and identifies uncovered elements, calculating overall coverage percentages to help AI agents identify testing gaps, prioritize test writing efforts, and assess risk levels for code changes by understanding which critical functions lack test coverage, thereby enabling more intelligent recommendations for improving codebase quality and reducing regression risks in automated refactoring workflows",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P1.1"],
+          "implementation_notes": [
+            "Add get_test_coverage() async function",
+            "Identify test elements (@T type designator)",
+            "Map tests to covered elements",
+            "Calculate coverage percentage",
+            "List uncovered elements",
+            "Add caching with 5-minute TTL"
+          ],
+          "acceptance_criteria": [
+            "Returns covered_elements list",
+            "Returns uncovered_elements list",
+            "Returns coverage_percentage",
+            "Identifies test-to-element relationships"
+          ],
+          "edge_cases": [
+            "What if no test elements exist in codebase (0% coverage)?",
+            "What if test elements don't follow @T convention?",
+            "What if test-to-element relationships are ambiguous or unclear?",
+            "What if test covers multiple elements (how to allocate coverage)?",
+            "What if element is tested but relationship not recorded in index?",
+            "What if coverage calculation logic differs from external tools (pytest-cov)?",
+            "What if integration tests cover many elements indirectly?",
+            "What if mock elements are counted as uncovered incorrectly?"
+          ]
+        },
+        {
+          "task_id": "P1.6",
+          "name": "Add resource caching layer",
+          "description": "Implement a comprehensive resource caching system with time-to-live support, thread-safe access, and manual invalidation capabilities to dramatically improve response times for frequently accessed resources like dependency graphs and statistics, reducing computational overhead and enabling near-instant responses for repeated resource requests within the cache window, while ensuring cache coherency through automatic expiration and supporting manual cache invalidation when fresh data is required after significant codebase changes or reindexing operations",
+          "files_to_create": ["coderef/utils/resource_cache.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P1.2", "P1.3", "P1.4", "P1.5"],
+          "implementation_notes": [
+            "Create ResourceCache class with TTL support",
+            "Default TTL: 300 seconds (5 minutes)",
+            "Support manual cache invalidation",
+            "Thread-safe implementation",
+            "Log cache hits/misses"
+          ],
+          "acceptance_criteria": [
+            "Cache stores resource results with TTL",
+            "Cache automatically expires after TTL",
+            "Cache can be manually invalidated",
+            "Cache is thread-safe"
+          ],
+          "edge_cases": [
+            "What if cache grows unbounded and exceeds available memory?",
+            "What if cache key collision occurs between different resource types?",
+            "What if TTL expires during an active read operation?",
+            "What if multiple threads invalidate cache simultaneously (race condition)?",
+            "What if system clock changes (NTP sync) and affects TTL calculation?",
+            "What if cache contains stale data and client needs fresh data urgently?",
+            "What if serialization for caching fails for certain data types?",
+            "What if cache invalidation occurs mid-request serving cached data?"
+          ]
+        },
+        {
+          "task_id": "P1.7",
+          "name": "Test Resources with Claude Desktop",
+          "description": "Perform comprehensive integration testing of all four implemented resources using the Claude Desktop client to validate end-to-end functionality including resource discovery, data fetching, error handling, and cache behavior in a real-world MCP client environment, ensuring that AI agents can successfully utilize resources for improved code analysis workflows and verifying that the implementation meets MCP specification requirements for production readiness and seamless integration with existing Claude Desktop features and workflows",
+          "files_to_create": ["tests/integration/test_resources.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P1.1", "P1.2", "P1.3", "P1.4", "P1.5"],
+          "implementation_notes": [
+            "Update claude_desktop_config.json with server",
+            "Test list_resources() returns 4 resources",
+            "Test each resource URI returns valid data",
+            "Test error handling for invalid URIs",
+            "Verify caching behavior"
+          ],
+          "acceptance_criteria": [
+            "Claude Desktop can list Resources",
+            "Claude Desktop can read each Resource",
+            "Invalid URIs return proper errors",
+            "Cache improves response time on subsequent reads"
+          ],
+          "edge_cases": [
+            "What if Claude Desktop config is malformed or missing required fields?",
+            "What if server fails to start due to port conflicts?",
+            "What if network latency causes timeout during resource fetch?",
+            "What if Claude Desktop client version is incompatible with server?",
+            "What if server process crashes mid-request?",
+            "What if firewall blocks stdio communication between client and server?",
+            "What if multiple Claude Desktop instances try to connect simultaneously?",
+            "What if resource fetch happens before server index is fully populated?"
+          ]
+        }
+      ],
+
+      "risks": [
+        {
+          "risk": "Data store integration unclear",
+          "mitigation": "Start with in-memory data structures, plan for SQLite later",
+          "severity": "medium"
+        },
+        {
+          "risk": "Large codebases may cause slow resource fetching",
+          "mitigation": "Implement pagination and caching",
+          "severity": "low"
+        }
+      ]
+    },
+
+    {
+      "phase_number": 2,
+      "phase_name": "Prompts Support",
+      "duration": "Week 2",
+      "priority": "CRITICAL",
+      "effort_hours": "6-8 hours",
+      "roi": "HIGH",
+      "status": "planned",
+
+      "objectives": [
+        "Implement MCP Prompts handlers (@app.list_prompts, @app.get_prompt)",
+        "Add 4 pre-built workflow prompts",
+        "Enable AI agents to use common workflows easily",
+        "Test workflows end-to-end"
+      ],
+
+      "deliverables": [
+        "server.py with Prompts handlers",
+        "4 workflow prompts implemented",
+        "Prompt templates with argument interpolation",
+        "Integration tests for Prompts",
+        "Documentation for Prompts API"
+      ],
+
+      "tasks": [
+        {
+          "task_id": "P2.1",
+          "name": "Add Prompts handlers to server.py",
+          "description": "Implement MCP-compliant Prompts handlers including list_prompts and get_prompt decorators to expose pre-built workflow templates that guide AI agents through complex multi-step code analysis tasks such as function analysis, code review, and refactoring planning, reducing the need for users to craft detailed prompts manually and ensuring consistent high-quality analysis workflows across different code review and refactoring scenarios while maintaining compatibility with MCP specification requirements for prompt argument validation and template interpolation",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P1.7"],
+          "implementation_notes": [
+            "Add import for Prompt, PromptArgument, PromptMessage from mcp.server.models",
+            "Implement list_prompts() to return 4 prompts",
+            "Implement get_prompt(name, arguments) with switch for each prompt",
+            "Add argument validation",
+            "Add error handling for unknown prompts"
+          ],
+          "code_snippet": {
+            "file": "server.py",
+            "location": "After @app.read_resource() handler",
+            "content": "@app.list_prompts()\nasync def list_prompts() -> list[Prompt]:\n    return [\n        Prompt(\n            name=\"analyze_function\",\n            description=\"Deep analysis of a function\",\n            arguments=[\n                PromptArgument(\n                    name=\"function_name\",\n                    description=\"Function to analyze\",\n                    required=True\n                )\n            ]\n        ),\n        # ... 3 more prompts\n    ]"
+          },
+          "edge_cases": [
+            "What if mcp.server.models doesn't export Prompt classes (SDK version mismatch)?",
+            "What if get_prompt receives unknown prompt name?",
+            "What if required argument is missing from arguments dict?",
+            "What if argument value contains special characters that break template interpolation?",
+            "What if prompt name contains spaces or invalid characters?",
+            "What if client requests prompt before server initialization?",
+            "What if arguments dict contains extra unexpected keys?",
+            "What if PromptMessage content exceeds size limits?"
+          ]
+        },
+        {
+          "task_id": "P2.2",
+          "name": "Implement analyze_function prompt",
+          "description": "Create a comprehensive function analysis workflow prompt that guides AI agents through a systematic four-step process of querying incoming calls, querying outgoing calls, analyzing impact of potential changes, and optionally checking test coverage, providing structured output that helps developers understand function dependencies, usage patterns, and change risks in a consistent format that facilitates informed decision-making for refactoring, optimization, and maintenance tasks across the codebase",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "1.5 hours",
+          "dependencies": ["P2.1"],
+          "implementation_notes": [
+            "Accept function_name and optional include_tests arguments",
+            "Generate prompt that guides AI through:",
+            "  1. Query incoming calls",
+            "  2. Query outgoing calls",
+            "  3. Analyze impact",
+            "  4. Check test coverage (if requested)",
+            "Return PromptMessage with complete workflow instructions"
+          ],
+          "acceptance_criteria": [
+            "Generates valid PromptMessage",
+            "Includes all 4 workflow steps",
+            "Interpolates function_name correctly",
+            "Conditionally includes test coverage step",
+            "Provides clear output format instructions"
+          ],
+          "edge_cases": [
+            "What if function_name contains special regex characters?",
+            "What if function name is ambiguous (multiple matches)?",
+            "What if function doesn't exist in codebase?",
+            "What if function has no incoming or outgoing calls?",
+            "What if include_tests is not a boolean value?",
+            "What if function is in a language not yet supported?",
+            "What if workflow steps are executed out of order?",
+            "What if one step fails but others succeed?"
+          ]
+        },
+        {
+          "task_id": "P2.3",
+          "name": "Implement review_changes prompt",
+          "description": "Develop a code review workflow prompt that systematically guides AI agents through validating existing references, analyzing impact for each changed element, checking for breaking changes in signatures or interfaces, and identifying affected test files, providing a structured risk assessment framework with LOW to CRITICAL severity levels and actionable recommendations for updating tests and documentation, ensuring thorough and consistent code reviews that catch potential issues before they reach production",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "1.5 hours",
+          "dependencies": ["P2.1"],
+          "implementation_notes": [
+            "Accept file_path and changed_elements arguments",
+            "Generate prompt that guides AI through:",
+            "  1. Validate existing references",
+            "  2. Analyze impact for each changed element",
+            "  3. Check for breaking changes",
+            "  4. Identify affected tests",
+            "Provide risk assessment framework",
+            "Return PromptMessage with review workflow"
+          ],
+          "acceptance_criteria": [
+            "Generates valid PromptMessage",
+            "Includes validation, impact, breaking changes, tests",
+            "Interpolates file_path and changed_elements",
+            "Provides risk level framework (LOW/MEDIUM/HIGH/CRITICAL)",
+            "Lists suggested actions"
+          ],
+          "edge_cases": [
+            "What if file_path doesn't exist or is invalid?",
+            "What if changed_elements list is empty?",
+            "What if changed_elements contains non-existent elements?",
+            "What if file contains elements not in changed_elements list?",
+            "What if breaking changes detection logic is ambiguous?",
+            "What if no tests are affected (should this raise a warning)?",
+            "What if risk levels conflict (one check says LOW, another says HIGH)?",
+            "What if suggested actions are not actionable or too vague?"
+          ]
+        },
+        {
+          "task_id": "P2.4",
+          "name": "Implement refactor_plan prompt",
+          "description": "Build a safe refactoring plan generation prompt that supports four refactoring types (rename, extract, inline, move) and guides AI agents through analyzing current state dependencies, identifying risks such as circular dependencies and name conflicts, generating type-specific refactoring instructions tailored to the chosen refactoring operation, and providing an ordered checklist of validation steps including pre-refactoring tests, change implementation order, test updates, post-refactoring verification, and documentation updates to ensure zero-downtime refactoring with minimal regression risk",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P2.1"],
+          "implementation_notes": [
+            "Accept element_id and refactor_type arguments",
+            "Support refactor types: rename, extract, inline, move",
+            "Generate prompt that guides AI through:",
+            "  1. Analyze current state (dependencies)",
+            "  2. Identify risks",
+            "  3. Generate type-specific plan",
+            "  4. Provide ordered checklist",
+            "Include specific steps for each refactor type",
+            "Return PromptMessage with refactoring plan workflow"
+          ],
+          "acceptance_criteria": [
+            "Generates valid PromptMessage",
+            "Supports 4 refactor types",
+            "Provides type-specific instructions",
+            "Includes risk identification",
+            "Provides actionable checklist"
+          ],
+          "edge_cases": [
+            "What if element_id is invalid or malformed?",
+            "What if refactor_type is not one of the supported four types?",
+            "What if element doesn't exist in codebase?",
+            "What if refactoring creates circular dependencies?",
+            "What if rename target name already exists (conflict)?",
+            "What if extract operation would create invalid code?",
+            "What if inline operation increases complexity beyond limits?",
+            "What if move operation breaks imports or references?"
+          ]
+        },
+        {
+          "task_id": "P2.5",
+          "name": "Implement find_dead_code prompt",
+          "description": "Create a dead code detection workflow prompt that guides AI agents through auditing all elements in a specified directory, identifying elements with zero references while applying intelligent exceptions for entry points, test utilities, CLI commands, event handlers, and React components that may be lazy loaded, calculating confidence scores based on multiple heuristics, sorting results by confidence to prioritize review efforts, and providing clear recommendations (delete, investigate, keep) with rationale to help developers safely remove unused code and reduce technical debt",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "1.5 hours",
+          "dependencies": ["P2.1"],
+          "implementation_notes": [
+            "Accept directory and min_confidence arguments",
+            "Generate prompt that guides AI through:",
+            "  1. Audit all elements in directory",
+            "  2. Identify elements with zero refs",
+            "  3. Apply exceptions (entry points, tests, etc.)",
+            "  4. Calculate confidence scores",
+            "  5. Sort by confidence",
+            "Provide clear dead code criteria",
+            "Return PromptMessage with dead code detection workflow"
+          ],
+          "acceptance_criteria": [
+            "Generates valid PromptMessage",
+            "Includes audit + analysis workflow",
+            "Lists exception categories",
+            "Provides confidence scoring framework",
+            "Specifies output format"
+          ],
+          "edge_cases": [
+            "What if directory path is invalid or inaccessible?",
+            "What if directory contains no elements?",
+            "What if min_confidence is outside valid range (0-1)?",
+            "What if all elements have zero references (entire codebase unused)?",
+            "What if exception detection logic is too aggressive (keeps everything)?",
+            "What if confidence scoring produces ties (multiple elements at same score)?",
+            "What if recommendation logic conflicts (delete vs keep)?",
+            "What if elements are used via reflection or dynamic imports?"
+          ]
+        },
+        {
+          "task_id": "P2.6",
+          "name": "Test Prompts with Claude Desktop",
+          "description": "Perform end-to-end integration testing of all four workflow prompts using Claude Desktop client to validate that prompts can be listed, executed with various argument combinations, correctly interpolate arguments into workflow templates, handle missing required arguments gracefully with clear error messages, and produce expected AI-driven workflows that successfully guide the AI through complex code analysis tasks, ensuring production readiness and demonstrating clear value in reducing prompt engineering effort and improving analysis consistency for common development workflows",
+          "files_to_create": ["tests/integration/test_prompts.py"],
+          "estimated_time": "1.5 hours",
+          "dependencies": ["P2.2", "P2.3", "P2.4", "P2.5"],
+          "implementation_notes": [
+            "Test list_prompts() returns 4 prompts",
+            "Test analyze_function with various arguments",
+            "Test review_changes with file path + elements",
+            "Test refactor_plan with different refactor types",
+            "Test find_dead_code with directory",
+            "Verify argument interpolation works correctly",
+            "Verify error handling for missing required args"
+          ],
+          "acceptance_criteria": [
+            "Claude Desktop can list Prompts",
+            "Claude Desktop can execute each Prompt",
+            "Arguments are interpolated correctly",
+            "Missing required arguments return errors",
+            "Generated prompts produce expected AI workflows"
+          ],
+          "edge_cases": [
+            "What if Claude Desktop version doesn't support Prompts feature?",
+            "What if prompt execution times out before completion?",
+            "What if AI doesn't follow prompt instructions precisely?",
+            "What if prompt template contains syntax errors?",
+            "What if argument interpolation produces invalid tool calls?",
+            "What if prompt requires multiple rounds of interaction?",
+            "What if workflow steps fail partway through?",
+            "What if user cancels prompt execution mid-workflow?"
+          ]
+        }
+      ],
+
+      "risks": [
+        {
+          "risk": "Prompt templates may be too rigid",
+          "mitigation": "Design with flexibility in mind, allow optional sections",
+          "severity": "low"
+        },
+        {
+          "risk": "AI may not follow prompt instructions precisely",
+          "mitigation": "Iterate on prompt wording based on testing",
+          "severity": "medium"
+        }
+      ]
+    },
+
+    {
+      "phase_number": 3,
+      "phase_name": "Natural Language Query",
+      "duration": "Week 3",
+      "priority": "IMPORTANT",
+      "effort_hours": "8-12 hours",
+      "roi": "MEDIUM",
+      "status": "planned",
+
+      "objectives": [
+        "Implement natural language query parsing",
+        "Support common query patterns (what calls X, what does X call, impact of X, etc.)",
+        "Add context-aware parsing",
+        "Achieve >90% parsing accuracy for common queries"
+      ],
+
+      "deliverables": [
+        "mcp__coderef__nl_query tool",
+        "parse_query_intent() function with pattern matching",
+        "Support for 5+ common query types",
+        "Integration tests with various NL queries",
+        "Documentation for NL Query API"
+      ],
+
+      "tasks": [
+        {
+          "task_id": "P3.1",
+          "name": "Add NL Query tool schema",
+          "description": "Define and register the natural language query tool schema in the MCP server's tool catalog, accepting a query string for the natural language question and an optional context object containing current file, recent changes, and other environmental data that helps disambiguate vague queries and improve parsing accuracy, enabling AI agents to ask questions about code in plain English rather than requiring knowledge of specific query syntax or CodeRef reference format conventions",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "0.5 hours",
+          "dependencies": ["P2.6"],
+          "implementation_notes": [
+            "Add nl_query to TOOL_SCHEMAS",
+            "Schema accepts: query (string, required), context (object, optional)",
+            "Context can include current_file, recent_changes, etc."
+          ],
+          "edge_cases": [
+            "What if query string is empty or only whitespace?",
+            "What if query string exceeds maximum length (very long question)?",
+            "What if context object contains invalid or malformed data?",
+            "What if context keys don't match expected schema?",
+            "What if query contains special characters that break parsing?"
+          ]
+        },
+        {
+          "task_id": "P3.2",
+          "name": "Implement parse_query_intent() function",
+          "description": "Develop the core natural language parsing engine using regex pattern matching to identify five or more common query intents including find_callers, find_callees, impact_analysis, find_unused, and find_tests, extracting element names from queries using capture groups, calculating confidence scores based on pattern match quality, handling ambiguous queries gracefully with fallback strategies, and returning structured intent objects that route to appropriate existing MCP tools, achieving target parsing accuracy of ninety percent or higher for commonly used query patterns",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "3 hours",
+          "dependencies": ["P3.1"],
+          "implementation_notes": [
+            "Add parse_query_intent(query, context) async function",
+            "Support patterns for:",
+            "  - find_callers: 'what calls X', 'find callers of X', 'who uses X'",
+            "  - find_callees: 'what does X call', 'find dependencies of X'",
+            "  - impact_analysis: 'impact of X', 'what breaks if X changes'",
+            "  - find_unused: 'find unused', 'dead code', 'what's not used'",
+            "  - find_tests: 'tests for X', 'test coverage of X'",
+            "Use regex for pattern matching",
+            "Return intent object with type, element, confidence",
+            "Fall back to context if no pattern matches"
+          ],
+          "acceptance_criteria": [
+            "Correctly identifies 5+ query types",
+            "Extracts element names from queries",
+            "Returns confidence scores",
+            "Handles ambiguous queries gracefully",
+            "Falls back to context when needed"
+          ],
+          "edge_cases": [
+            "What if query matches multiple patterns (ambiguous intent)?",
+            "What if element name contains spaces or special characters?",
+            "What if query uses synonyms not in pattern list?",
+            "What if query is in different language (non-English)?",
+            "What if regex pattern matching is extremely slow (ReDoS attack)?",
+            "What if extracted element name doesn't exist in codebase?",
+            "What if confidence calculation produces unexpected values (NaN, infinity)?",
+            "What if context is provided but doesn't help disambiguation?"
+          ]
+        },
+        {
+          "task_id": "P3.3",
+          "name": "Implement handle_nl_query() handler",
+          "description": "Create the main natural language query handler that orchestrates the complete workflow by first parsing user intent using parse_query_intent, then routing to appropriate existing MCP tools based on detected intent type (such as routing find_callers to query tool with incoming_calls filter or routing impact_analysis to analyze tool with depth parameter), executing the underlying tool with proper parameters, generating natural language summaries of results that make findings accessible to non-technical users, and returning structured responses that include interpreted intent for transparency and debugging",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "3 hours",
+          "dependencies": ["P3.2"],
+          "implementation_notes": [
+            "Add handle_nl_query(args) async function",
+            "Parse intent using parse_query_intent()",
+            "Route to appropriate existing tools based on intent:",
+            "  - find_callers -> query with incoming_calls",
+            "  - find_callees -> query with outgoing_calls",
+            "  - impact_analysis -> analyze with depth=3",
+            "  - find_unused -> audit with scope=all",
+            "  - find_tests -> query with test filter",
+            "Generate natural language summary of results",
+            "Return structured response with interpretation"
+          ],
+          "acceptance_criteria": [
+            "Routes correctly based on intent",
+            "Executes underlying tools properly",
+            "Returns natural language summary",
+            "Includes interpreted_as field",
+            "Handles unknown intents with suggestions"
+          ],
+          "edge_cases": [
+            "What if routing logic fails to map intent to tool?",
+            "What if underlying tool execution fails or times out?",
+            "What if tool returns empty results (no matches found)?",
+            "What if tool returns extremely large result sets?",
+            "What if natural language summary generation fails?",
+            "What if intent is unknown and no suggestions are available?",
+            "What if multiple tools should be called for complex query?",
+            "What if user query requires chaining multiple operations?"
+          ]
+        },
+        {
+          "task_id": "P3.4",
+          "name": "Add context-aware parsing",
+          "description": "Enhance the parsing engine with context awareness by extracting current file, current element, and recent changes from the provided context object, using this contextual information to disambiguate vague queries like what calls this by defaulting to the current element when no specific element is mentioned, improving accuracy for queries that reference this or here or it by resolving pronouns to concrete element references, and considering recent changes to prioritize relevant results over stale information in large codebases with many similar elements",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P3.3"],
+          "implementation_notes": [
+            "Extract current_file from context",
+            "Extract current_element from context",
+            "Extract recent_changes from context",
+            "Use context to disambiguate queries",
+            "Default to current element if query is vague",
+            "Example: 'what calls this' uses current_element from context"
+          ],
+          "acceptance_criteria": [
+            "Uses current_file for disambiguation",
+            "Uses current_element as default",
+            "Considers recent_changes for relevance",
+            "Improves accuracy for vague queries"
+          ],
+          "edge_cases": [
+            "What if context is missing expected fields (current_file null)?",
+            "What if current_element doesn't exist in index?",
+            "What if recent_changes list is extremely long?",
+            "What if context information conflicts with explicit query (which takes precedence)?",
+            "What if pronouns like this are ambiguous even with context?",
+            "What if context is stale (refers to old file state)?",
+            "What if user provides context but it's not relevant to query?",
+            "What if context-based resolution produces incorrect element?"
+          ]
+        },
+        {
+          "task_id": "P3.5",
+          "name": "Register NL Query tool",
+          "description": "Complete the natural language query feature integration by registering the handle_nl_query handler function in the TOOL_HANDLERS registry dictionary, making the natural language query tool discoverable and callable by MCP clients such as Claude Desktop, enabling users to ask code questions in plain English without needing to learn CodeRef syntax or query language conventions",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "0.5 hours",
+          "dependencies": ["P3.3"],
+          "implementation_notes": [
+            "Add 'mcp__coderef__nl_query': handle_nl_query to TOOL_HANDLERS"
+          ],
+          "edge_cases": [
+            "What if tool name conflicts with existing tool?",
+            "What if TOOL_HANDLERS registry is modified during runtime?",
+            "What if handler function signature doesn't match expected format?"
+          ]
+        },
+        {
+          "task_id": "P3.6",
+          "name": "Test NL Query with various inputs",
+          "description": "Conduct comprehensive testing of natural language query parsing using diverse input patterns for each supported intent type including find_callers patterns like what calls authenticate and who uses sendEmail, find_callees patterns like what does processPayment call, impact_analysis patterns like what breaks if I modify validateUser, find_unused patterns like dead code in src, and context-aware queries like what calls this with current element context, measuring parsing accuracy against the ninety percent target threshold and validating that unknown queries return helpful suggestions rather than silent failures",
+          "files_to_create": ["tests/integration/test_nl_query.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P3.5"],
+          "implementation_notes": [
+            "Test find_callers patterns:",
+            "  - 'what calls authenticate'",
+            "  - 'find callers of validateUser'",
+            "  - 'who uses sendEmail'",
+            "Test find_callees patterns:",
+            "  - 'what does processPayment call'",
+            "  - 'find dependencies of UserClass'",
+            "Test impact_analysis patterns:",
+            "  - 'impact of changing authenticate'",
+            "  - 'what breaks if I modify validateUser'",
+            "Test find_unused patterns:",
+            "  - 'find unused code'",
+            "  - 'dead code in src/'",
+            "Test context-aware queries:",
+            "  - 'what calls this' with current_element context",
+            "Measure accuracy (target: >90%)"
+          ],
+          "acceptance_criteria": [
+            "All pattern types correctly identified",
+            "Element names extracted correctly",
+            "Accuracy >90% for common queries",
+            "Context-aware queries work",
+            "Unknown queries return helpful suggestions"
+          ],
+          "edge_cases": [
+            "What if test dataset is too small to measure accuracy reliably?",
+            "What if accuracy varies significantly by query type?",
+            "What if edge cases cause accuracy to drop below ninety percent?",
+            "What if tests pass locally but fail in CI environment?",
+            "What if new query patterns emerge that weren't tested?",
+            "What if accuracy degrades over time with code changes?",
+            "What if test assertions are too lenient and miss bugs?",
+            "What if performance regression occurs with complex queries?"
+          ]
+        }
+      ],
+
+      "risks": [
+        {
+          "risk": "Regex patterns may not cover all query variations",
+          "mitigation": "Iterate based on real-world usage, add patterns as needed",
+          "severity": "medium"
+        },
+        {
+          "risk": "Ambiguous queries may produce wrong results",
+          "mitigation": "Return confidence scores, allow users to refine queries",
+          "severity": "low"
+        }
+      ]
+    },
+
+    {
+      "phase_number": 4,
+      "phase_name": "Real-Time Scanning Bridge",
+      "duration": "Week 4",
+      "priority": "IMPORTANT",
+      "effort_hours": "12-16 hours",
+      "roi": "MEDIUM",
+      "status": "planned",
+
+      "objectives": [
+        "Bridge Python MCP server to TypeScript CLI AST scanner",
+        "Enable real-time scanning via MCP",
+        "Update MCP index with fresh scan results",
+        "Optimize performance with caching"
+      ],
+
+      "deliverables": [
+        "mcp__coderef__scan_realtime tool",
+        "Subprocess bridge to TypeScript CLI",
+        "Index update logic",
+        "Caching layer for scan results",
+        "Integration tests for scanning",
+        "Performance benchmarks"
+      ],
+
+      "tasks": [
+        {
+          "task_id": "P4.1",
+          "name": "Add Real-Time Scan tool schema",
+          "description": "Define the real-time scanning tool schema that accepts source directory path as required parameter, optional language array defaulting to TypeScript and JavaScript variants, optional analyzer type enum choosing between fast regex scanner or precise AST scanner with AST as default, and optional update_index boolean defaulting to true for automatic index updates, enabling MCP clients to trigger on-demand codebase scans with ninety-nine percent precision AST analysis and automatic synchronization of the MCP server's element index with fresh scan results",
+          "files_to_modify": ["server.py"],
+          "estimated_time": "0.5 hours",
+          "dependencies": ["P3.6"],
+          "implementation_notes": [
+            "Add scan_realtime to TOOL_SCHEMAS",
+            "Schema accepts:",
+            "  - source_dir (string, required)",
+            "  - languages (array, optional, default: ['ts', 'tsx', 'js', 'jsx'])",
+            "  - analyzer (string, optional, enum: ['regex', 'ast'], default: 'ast')",
+            "  - update_index (boolean, optional, default: true)"
+          ],
+          "edge_cases": [
+            "What if source_dir path is invalid or doesn't exist?",
+            "What if source_dir path contains spaces or special characters?",
+            "What if languages array is empty?",
+            "What if languages array contains unsupported language?",
+            "What if analyzer value is not in enum list?"
+          ]
+        },
+        {
+          "task_id": "P4.2",
+          "name": "Implement CLI subprocess bridge",
+          "description": "Build the subprocess bridge that spawns the TypeScript CLI as an asynchronous child process using asyncio create_subprocess_exec, constructs the pnpm command with appropriate arguments for source directory, language filters, analyzer type, and JSON output flag, sets the current working directory to the CLI installation path obtained from CODEREF_CLI_PATH environment variable, captures standard output and standard error streams, parses JSON-formatted scan results from stdout, handles CLI errors gracefully by returning structured error responses, and manages process lifecycle to avoid zombie processes or resource leaks",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "3 hours",
+          "dependencies": ["P4.1"],
+          "implementation_notes": [
+            "Add handle_scan_realtime(args) async function",
+            "Get CLI path from environment variable CODEREF_CLI_PATH",
+            "Build pnpm command: ['pnpm', 'start', 'scan', source_dir, '--lang', langs, '--analyzer', analyzer, '--json']",
+            "Use asyncio.create_subprocess_exec() for async subprocess",
+            "Set cwd to CLI path",
+            "Capture stdout and stderr",
+            "Parse JSON output",
+            "Handle errors gracefully"
+          ],
+          "acceptance_criteria": [
+            "Successfully spawns TypeScript CLI subprocess",
+            "Captures stdout with scan results",
+            "Parses JSON correctly",
+            "Handles CLI errors",
+            "Returns subprocess exit code"
+          ],
+          "edge_cases": [
+            "What if CODEREF_CLI_PATH environment variable is not set?",
+            "What if pnpm is not installed or not in PATH?",
+            "What if CLI process hangs and never completes?",
+            "What if CLI outputs invalid JSON?",
+            "What if stdout buffer overflows with large scan results?",
+            "What if CLI process crashes mid-scan?",
+            "What if working directory cannot be changed to CLI path?",
+            "What if multiple scans are triggered simultaneously?"
+          ]
+        },
+        {
+          "task_id": "P4.3",
+          "name": "Implement index update logic",
+          "description": "Develop the index synchronization logic that extracts unique file paths from scan results to identify which files were scanned, atomically removes old element entries from those files to prevent stale data, adds new element entries from fresh scan results with all metadata including types, names, locations, and relationships, updates the QueryExecutor singleton instance to reflect changes, logs detailed index update statistics for observability including counts of removed and added elements, and ensures thread-safe execution to prevent race conditions when multiple scans or queries occur concurrently in production environments",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "3 hours",
+          "dependencies": ["P4.2"],
+          "implementation_notes": [
+            "Add update_local_index(scan_results) async function",
+            "Extract unique file paths from scan results",
+            "Remove old elements from those files",
+            "Add new elements from scan results",
+            "Update QueryExecutor index",
+            "Log index update statistics",
+            "Handle concurrent index updates safely"
+          ],
+          "acceptance_criteria": [
+            "Removes old elements from scanned files",
+            "Adds new elements from scan",
+            "Updates index atomically",
+            "Thread-safe implementation",
+            "Logs update statistics"
+          ],
+          "edge_cases": [
+            "What if scan results contain duplicate elements?",
+            "What if file path format differs between scan and index?",
+            "What if index is being queried during update (dirty read)?",
+            "What if update operation fails partway through?",
+            "What if QueryExecutor is not initialized?",
+            "What if scan results contain elements without file paths?",
+            "What if concurrent updates target overlapping file sets?",
+            "What if removal of old elements fails but addition succeeds?"
+          ]
+        },
+        {
+          "task_id": "P4.4",
+          "name": "Add scan result caching",
+          "description": "Extend the ResourceCache class to support scan result caching with cache keys derived from hashing source directory path, language list, and analyzer type to ensure unique cache entries per scan configuration, implementing cache invalidation based on file modification times by checking mtimes of scanned files before returning cached results, using longer TTL of ten minutes compared to five-minute resource cache TTL because scans are more expensive, storing both scan results and metadata including scan timestamp and file count, and verifying file freshness before serving cached data to prevent stale results when files change between scans",
+          "files_to_modify": ["coderef/utils/resource_cache.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P4.3"],
+          "implementation_notes": [
+            "Extend ResourceCache to support scan caching",
+            "Cache key: hash(source_dir + languages + analyzer)",
+            "Cache invalidation: file modification time",
+            "TTL: 10 minutes (longer than resources)",
+            "Store scan results and metadata",
+            "Check file mtimes before returning cached results"
+          ],
+          "acceptance_criteria": [
+            "Caches scan results by directory + options",
+            "Invalidates cache when files change",
+            "Returns cached results when files unchanged",
+            "Improves performance for repeated scans"
+          ],
+          "edge_cases": [
+            "What if file mtime check is expensive for large codebases?",
+            "What if system clock skew affects mtime comparison?",
+            "What if file is modified but mtime doesn't change (same second)?",
+            "What if hash collision occurs for different scan configs?",
+            "What if cache key serialization fails?",
+            "What if cache is full and needs eviction?",
+            "What if scan results are too large to cache in memory?",
+            "What if files are deleted between cache creation and retrieval?"
+          ]
+        },
+        {
+          "task_id": "P4.5",
+          "name": "Add helper functions",
+          "description": "Implement utility functions for scan result processing including count_by_type to aggregate element counts by type designator for statistics, count_by_language to break down elements by programming language for multi-language codebases, validate_scan_results to check result structure and ensure all required fields are present and well-formed, and format_scan_summary to generate human-readable summary text describing scan outcomes including total elements found, breakdown by type and language, and scan performance metrics for user feedback and logging purposes",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "1 hour",
+          "dependencies": ["P4.3"],
+          "implementation_notes": [
+            "Add count_by_type(elements) function",
+            "Add count_by_language(elements) function",
+            "Add validate_scan_results(results) function",
+            "Add format_scan_summary(results) function"
+          ],
+          "acceptance_criteria": [
+            "count_by_type returns element type breakdown",
+            "count_by_language returns language breakdown",
+            "validate_scan_results checks result structure",
+            "format_scan_summary creates readable summary"
+          ],
+          "edge_cases": [
+            "What if elements array is empty?",
+            "What if element is missing type or language field?",
+            "What if type or language values are unexpected?",
+            "What if validation finds corrupted data?",
+            "What if summary formatting encounters non-serializable values?",
+            "What if counts exceed integer max value?",
+            "What if language names contain special characters?",
+            "What if type designators are custom/unknown?"
+          ]
+        },
+        {
+          "task_id": "P4.6",
+          "name": "Register Real-Time Scan tool",
+          "description": "Complete the real-time scanning feature by registering the handle_scan_realtime handler function in the TOOL_HANDLERS registry, making the scan tool discoverable by MCP clients and enabling AI agents to trigger on-demand codebase scans with automatic index updates for fresh analysis results",
+          "files_to_modify": ["tool_handlers.py"],
+          "estimated_time": "0.5 hours",
+          "dependencies": ["P4.5"],
+          "implementation_notes": [
+            "Add 'mcp__coderef__scan_realtime': handle_scan_realtime to TOOL_HANDLERS"
+          ],
+          "edge_cases": [
+            "What if tool name conflicts with existing tool?",
+            "What if handler registration fails silently?",
+            "What if handler is registered but not callable?"
+          ]
+        },
+        {
+          "task_id": "P4.7",
+          "name": "Test Real-Time Scanning end-to-end",
+          "description": "Execute comprehensive end-to-end integration testing covering scanning of TypeScript, JavaScript, and Python files, testing with both regex and AST analyzers to verify both scanner implementations work correctly, validating that index is updated with scan results after successful scans, testing cache behavior to confirm performance improvements on repeated scans of unchanged codebases, testing error handling for invalid paths and CLI errors, measuring actual performance against five-second target for small codebases with fewer than one hundred files to ensure acceptable user experience",
+          "files_to_create": ["tests/integration/test_realtime_scan.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P4.6"],
+          "implementation_notes": [
+            "Test scan with TypeScript files",
+            "Test scan with JavaScript files",
+            "Test scan with Python files",
+            "Test with regex analyzer",
+            "Test with AST analyzer",
+            "Test index update after scan",
+            "Test cache behavior",
+            "Test error handling (invalid paths, CLI errors)",
+            "Measure performance"
+          ],
+          "acceptance_criteria": [
+            "Successfully scans TypeScript/JavaScript/Python",
+            "Both analyzers work (regex and AST)",
+            "Index is updated with scan results",
+            "Cache improves performance on repeated scans",
+            "Errors are handled gracefully",
+            "Scan completes in <5s for small codebases"
+          ],
+          "edge_cases": [
+            "What if test files are in different character encodings?",
+            "What if test codebase contains syntax errors?",
+            "What if network issues prevent CLI download/update?",
+            "What if tests run in parallel and conflict?",
+            "What if test environment lacks required dependencies?",
+            "What if cleanup fails and leaves test artifacts?",
+            "What if performance varies by machine/environment?",
+            "What if scan timeout is hit in CI but not locally?"
+          ]
+        },
+        {
+          "task_id": "P4.8",
+          "name": "Performance benchmarking",
+          "description": "Conduct systematic performance benchmarking across three codebase size categories including small codebases with ten to fifty files, medium codebases with one hundred to five hundred files, and large codebases with one thousand or more files, measuring scan time, index update time, and total end-to-end time for each size, comparing performance between regex and AST analyzer implementations, measuring cache hit performance improvement to quantify caching effectiveness, and generating comprehensive performance report with charts and recommendations for optimization opportunities to guide future performance tuning efforts",
+          "files_to_create": ["tests/performance/benchmark_scan.py"],
+          "estimated_time": "2 hours",
+          "dependencies": ["P4.7"],
+          "implementation_notes": [
+            "Benchmark small codebase (10-50 files)",
+            "Benchmark medium codebase (100-500 files)",
+            "Benchmark large codebase (1000+ files)",
+            "Measure: scan time, index update time, total time",
+            "Compare regex vs AST analyzer",
+            "Measure cache hit performance improvement",
+            "Generate performance report"
+          ],
+          "acceptance_criteria": [
+            "Benchmarks on 3 codebase sizes",
+            "Compares regex vs AST performance",
+            "Measures cache effectiveness",
+            "Generates performance report with charts"
+          ],
+          "edge_cases": [
+            "What if benchmark codebases are not representative?",
+            "What if performance varies significantly between runs?",
+            "What if benchmark results are affected by system load?",
+            "What if chart generation libraries are not installed?",
+            "What if performance degrades over multiple iterations?",
+            "What if memory usage exceeds limits on large codebases?",
+            "What if benchmark takes too long to run in CI?",
+            "What if results are misinterpreted or misleading?"
+          ]
+        }
+      ],
+
+      "risks": [
+        {
+          "risk": "Subprocess overhead may be significant (100-500ms)",
+          "mitigation": "Use caching aggressively, consider keeping CLI process alive",
+          "severity": "medium"
+        },
+        {
+          "risk": "Large codebases may timeout",
+          "mitigation": "Add configurable timeout, support incremental scanning",
+          "severity": "medium"
+        },
+        {
+          "risk": "Concurrent scans may cause race conditions",
+          "mitigation": "Use locks for index updates, queue scan requests",
+          "severity": "low"
+        }
+      ]
+    }
+  ],
+
+  "cross_cutting_concerns": {
+    "testing_strategy": {
+      "unit_tests": "Test individual functions in isolation (parsers, validators)",
+      "integration_tests": "Test tool handlers end-to-end with mocked data stores",
+      "system_tests": "Test with Claude Desktop client, real TypeScript CLI",
+      "performance_tests": "Benchmark scanning, caching, query performance",
+      "target_coverage": "80% code coverage minimum"
+    },
+
+    "documentation": {
+      "code_documentation": "Docstrings for all public functions (Google style)",
+      "api_documentation": "Document all MCP tools, resources, prompts in AGENTIC-ENHANCEMENTS.md",
+      "user_guide": "Create MCP_USER_GUIDE.md with examples",
+      "architecture_docs": "Update ARCHITECTURE.md with new components"
+    },
+
+    "configuration": {
+      "claude_desktop_config": {
+        "file": "claude_desktop_config.json",
+        "required_env_vars": [
+          "CODEREF_CLI_PATH - Path to TypeScript CLI",
+          "CODEREF_LOG_LEVEL - Logging level (DEBUG, INFO, WARNING, ERROR)",
+          "CODEREF_CACHE_TTL - Cache TTL in seconds (default: 300)"
+        ]
+      }
+    },
+
+    "data_persistence": {
+      "current_approach": "In-memory data structures with singleton pattern",
+      "short_term": "Continue with in-memory for MVP",
+      "long_term": "Consider SQLite for persistent storage",
+      "migration_path": "Abstract data access layer for easy migration"
+    },
+
+    "error_handling": {
+      "standardized_errors": "Use _error_response() for all errors",
+      "error_codes": "Consistent error code naming (INVALID_REQUEST, QUERY_ERROR, etc.)",
+      "logging": "Log all errors with stack traces",
+      "user_feedback": "Provide actionable error messages"
+    },
+
+    "performance_optimization": {
+      "caching": "Cache resources (5 min TTL), scan results (10 min TTL)",
+      "lazy_loading": "Only compute data when requested",
+      "pagination": "Support pagination for large result sets",
+      "async_operations": "Use async/await throughout for non-blocking I/O"
+    }
+  },
+
+  "success_criteria": {
+    "phase_1_success": [
+      "All 4 Resources accessible via Claude Desktop",
+      "Resources return valid JSON",
+      "Cache improves performance by 10x",
+      "Response time <500ms for typical queries"
+    ],
+    "phase_2_success": [
+      "All 4 Prompts working in Claude Desktop",
+      "Prompts correctly interpolate arguments",
+      "AI agents can execute workflows successfully",
+      "Prompts save 50%+ prompt engineering time"
+    ],
+    "phase_3_success": [
+      "NL Query parsing accuracy >90% for common queries",
+      "Natural language summaries are clear and accurate",
+      "Context-aware parsing improves vague queries",
+      "Unknown queries return helpful suggestions"
+    ],
+    "phase_4_success": [
+      "Real-time scanning works for TypeScript/JavaScript/Python",
+      "Index updates correctly after scan",
+      "Scan completes in <5s for small codebases (<100 files)",
+      "Cache reduces scan time by 80%+ for unchanged codebases"
+    ]
+  },
+
+  "post_implementation": {
+    "monitoring": {
+      "metrics_to_track": [
+        "Tool invocation counts",
+        "Resource fetch counts",
+        "Prompt execution counts",
+        "NL query accuracy",
+        "Scan performance",
+        "Cache hit rates",
+        "Error rates"
+      ],
+      "logging_improvements": "Add structured logging with correlation IDs"
+    },
+
+    "optimization_opportunities": [
+      "LLM-based NL query parsing for complex queries",
+      "Incremental scanning (only changed files)",
+      "Persistent caching with SQLite",
+      "Background scanning with file watchers",
+      "GraphQL API for complex queries"
+    ],
+
+    "future_enhancements": [
+      "Sampling support (MCP standard feature)",
+      "Voice control integration",
+      "Multi-codebase support",
+      "Real-time collaboration features",
+      "Advanced visualization (graph UI)",
+      "Machine learning for pattern detection"
+    ]
+  },
+
+  "timeline_summary": {
+    "week_1": "Resources Support - 4-6 hours",
+    "week_2": "Prompts Support - 6-8 hours",
+    "week_3": "Natural Language Query - 8-12 hours",
+    "week_4": "Real-Time Scanning Bridge - 12-16 hours",
+    "total_effort": "30-42 hours",
+    "recommended_pace": "10-12 hours per week, complete in 1 month"
+  },
+
+  "approval_required": false,
+  "ready_to_implement": true,
+  "next_immediate_action": "Begin Phase 1, Task P1.1: Add Resources handlers to server.py"
+}

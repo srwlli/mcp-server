@@ -1,0 +1,61 @@
+{
+  "agent": "Lloyd (Agent 1)",
+  "workorder_id": "WO-AGENT-SPECIALIZATION-LLOYD",
+  "feature": "Lloyd Coordination Enhancement",
+  "scope": "Phase 2: Implement task-to-agent matching, domain validation, and protocol enhancement",
+  "tasks": [
+    {
+      "id": "LLOYD-001",
+      "description": "Design task-to-agent matching heuristics (keyword mapping)",
+      "details": "Create keyword mapping for frontend (UI, React, component, styling, CSS, HTML), backend (API, database, server, auth, model), and testing (test, QA, coverage, debug, assertion) tasks",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "LLOYD-002",
+      "description": "Update lloyd-expert.json with assignment logic section",
+      "details": "Add comprehensive section to Lloyd's system prompt explaining task analysis, domain detection, and specialist assignment workflow with examples",
+      "estimated_time": "2 hours"
+    },
+    {
+      "id": "LLOYD-003",
+      "description": "Add domain validation before agent assignment",
+      "details": "Add validation logic to Lloyd's workflow: analyze task → detect domain → match to specialist → confirm assignment",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "VALID-001",
+      "description": "Add domain boundary detection to agent system prompts",
+      "details": "Add section to each agent's prompt explaining how to detect if task is in their domain vs out-of-domain",
+      "estimated_time": "1 hour"
+    },
+    {
+      "id": "VALID-002",
+      "description": "Define clear error messages for out-of-domain task refusal",
+      "details": "Create error message templates: 'This is a [domain] task. Please assign to Agent [N] ([specialization]).'",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "PROTO-001",
+      "description": "Add agent_specialization field to communication.json schema",
+      "details": "Document optional field: agent_specialization: 'frontend' | 'backend' | 'testing' for explicit domain tracking",
+      "estimated_time": "30 min"
+    },
+    {
+      "id": "DOCS-LLOYD",
+      "description": "Update CLAUDE.md with Lloyd's coordination enhancement documentation",
+      "details": "Document task matching logic, domain validation, and specialist assignment workflow",
+      "estimated_time": "45 min"
+    }
+  ],
+  "deliverables": [
+    "lloyd-expert.json updated with task matching logic",
+    "Domain validation workflow implemented",
+    "Communication.json schema enhanced",
+    "Error message templates defined",
+    "CLAUDE.md updated with coordination documentation"
+  ],
+  "estimated_duration": "1 day",
+  "dependencies": [
+    "Wait for Agent 2, 3, 4 to complete their specialization (VALID-001 needs their updated personas)"
+  ]
+}

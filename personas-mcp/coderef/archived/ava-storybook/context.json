@@ -1,0 +1,13 @@
+{
+  "feature_name": "ava-storybook",
+  "workorder_id": "WO-STORYBOOK-001",
+  "description": "Establish Storybook for component development",
+  "goal": "Setup Storybook for isolated component dev",
+  "requirements": [
+    "Install Storybook dependencies",
+    "Configure Storybook for React + Tailwind",
+    "Create sample component stories",
+    "Document usage in README"
+  ],
+  "created_at": "2025-10-23T12:35:00Z"
+}

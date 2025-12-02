@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="docs-mcp - Enterprise-Grade MCP Server for Documentation Generation, Changelog Management, and Planning Workflows">
+    <title>docs-mcp - Documentation & Planning Tools for AI Assistants</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .version-info {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .badge-version {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-tools {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-status {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .card h3 {
+            color: #764ba2;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .card ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .tool-count {
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .cta-section {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .workflow-diagram {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+
+        .new-badge {
+            background: #ef4444;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+            vertical-align: super;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 docs-mcp</h1>
+            <p class="tagline">Enterprise-Grade MCP Server for Documentation Generation, Planning Workflows & Multi-Agent Coordination</p>
+
+            <div class="version-info">
+                <span class="badge badge-version">v1.11.0</span>
+                <span class="badge badge-tools">31 Tools</span>
+                <span class="badge badge-status">Production Ready</span>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">31</div>
+                    <div class="stat-label">MCP Tools</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">28</div>
+                    <div class="stat-label">Slash Commands</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Tool Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Test Coverage</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="cta-section">
+            <h2>Quick Start</h2>
+            <p>Get started with docs-mcp in seconds</p>
+            <div class="cta-buttons">
+                <a href="README.md" class="btn btn-primary">Read Documentation</a>
+                <a href="user-guide.md" class="btn btn-secondary">User Guide</a>
+                <a href="CLAUDE.md" class="btn btn-secondary">AI Assistant Guide</a>
+                <a href="my-guide.md" class="btn btn-secondary">Quick Reference</a>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>📝 Documentation Generation <span class="tool-count">4</span></h2>
+                <p>Create professional documentation using POWER framework templates</p>
+                <ul class="feature-list">
+                    <li>README, ARCHITECTURE, API, COMPONENTS, SCHEMA docs</li>
+                    <li>Universal quickref generation for any app type</li>
+                    <li>Interactive AI-assisted workflow</li>
+                    <li>Structured templates ensure quality</li>
+                </ul>
+                <h3>Available Tools</h3>
+                <ul>
+                    <li><code>list_templates</code> - List all templates</li>
+                    <li><code>get_template</code> - Get template content</li>
+                    <li><code>generate_foundation_docs</code> - Generate 5 docs</li>
+                    <li><code>generate_quickref_interactive</code> - Quickref guide</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>📋 Changelog Management <span class="tool-count">4</span></h2>
+                <p>Maintain structured, schema-validated changelogs with workorder tracking</p>
+                <ul class="feature-list">
+                    <li>Structured CHANGELOG.json format</li>
+                    <li>Agentic self-documentation workflow</li>
+                    <li>Version history tracking</li>
+                    <li>Auto-update all docs <span class="new-badge">NEW</span></li>
+                </ul>
+                <h3>Available Tools</h3>
+                <ul>
+                    <li><code>get_changelog</code> - Query history</li>
+                    <li><code>add_changelog_entry</code> - Add entry</li>
+                    <li><code>update_changelog</code> - Agentic workflow</li>
+                    <li><code>update_all_documentation</code> - Update all docs <span class="new-badge">NEW</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Planning Workflow <span class="tool-count">4</span></h2>
+                <p>AI-assisted implementation planning with automated validation</p>
+                <ul class="feature-list">
+                    <li>Automated project analysis (80ms)</li>
+                    <li>Plan validation with 0-100 scoring</li>
+                    <li>Iterative review loops until score ≥ 90</li>
+                    <li>Workorder tracking integration</li>
+                </ul>
+                <h3>Workflow Pattern</h3>
+                <div class="workflow-diagram">
+gather-context → analyze → create-plan → validate
+→ review → approve → implement
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>✅ Standards & Consistency <span class="tool-count">3</span></h2>
+                <p>Extract standards and audit codebases for compliance</p>
+                <ul class="feature-list">
+                    <li>Discover UI/UX/behavior patterns</li>
+                    <li>Compliance scoring (0-100)</li>
+                    <li>Pre-commit quality gates</li>
+                    <li>Automated fix suggestions</li>
+                </ul>
+                <h3>The Consistency Trilogy</h3>
+                <ul>
+                    <li><code>establish_standards</code> - Extract patterns</li>
+                    <li><code>audit_codebase</code> - Find violations</li>
+                    <li><code>check_consistency</code> - Quality gate</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>📊 Deliverables Tracking <span class="tool-count">2</span></h2>
+                <p>Automatic metrics tracking with git integration</p>
+                <ul class="feature-list">
+                    <li>Auto-generate DELIVERABLES.md template</li>
+                    <li>Git-based metrics (LOC, commits, time)</li>
+                    <li>Integrated with /create-plan workflow</li>
+                    <li>Real-time progress tracking</li>
+                </ul>
+                <h3>Git Metrics</h3>
+                <ul>
+                    <li>Lines of Code added/deleted</li>
+                    <li>Commit count and contributors</li>
+                    <li>Time from first to last commit</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🤝 Multi-Agent Coordination <span class="tool-count">5</span></h2>
+                <p>First MCP server with native parallel agent execution</p>
+                <ul class="feature-list">
+                    <li>Parallel agent task execution</li>
+                    <li>Agent-scoped workorder IDs</li>
+                    <li>Automated verification with git diff</li>
+                    <li>Real-time status dashboard</li>
+                </ul>
+                <h3>Performance</h3>
+                <ul>
+                    <li>3x faster through parallel execution</li>
+                    <li>&lt;600ms coordination overhead</li>
+                    <li>&lt;100ms status tracking</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>📦 Project Inventory <span class="tool-count">7</span></h2>
+                <p>Comprehensive project analysis and cataloging</p>
+                <ul class="feature-list">
+                    <li>File inventory with metadata & risk scoring</li>
+                    <li>Dependency analysis with security scanning</li>
+                    <li>API endpoint discovery (4 frameworks)</li>
+                    <li>Database schema extraction (4 systems)</li>
+                    <li>Config file analysis with secret detection</li>
+                    <li>Test framework discovery & coverage</li>
+                    <li>Documentation quality metrics</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🗄️ Feature Archiving <span class="tool-count">1</span></h2>
+                <p>Automated archiving of completed features</p>
+                <ul class="feature-list">
+                    <li>Status checking before archive</li>
+                    <li>User confirmation for incomplete work</li>
+                    <li>Searchable archive index</li>
+                    <li>Atomic folder relocation</li>
+                </ul>
+                <h3>Integration</h3>
+                <div class="workflow-diagram">
+implement → update-deliverables
+→ update-docs → archive-feature
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Installation</h2>
+            <h3>Quick Install (Claude Code)</h3>
+            <pre><code># Add docs-mcp globally
+claude mcp add --scope user docs-mcp python "C:\Users\willh\.mcp-servers\docs-mcp\server.py"
+
+# Verify installation
+claude mcp list</code></pre>
+
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Python 3.10+</li>
+                <li>MCP-compatible AI client (Claude Code, Cursor, Windsurf, VS Code)</li>
+                <li>pip package manager</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🏗️ Architecture Highlights</h2>
+            <ul class="feature-list">
+                <li>Modular handler registry pattern</li>
+                <li>Full TypedDict type coverage</li>
+                <li>Comprehensive structured logging</li>
+                <li>ErrorResponse factory for consistency</li>
+                <li>97% reduction in main dispatcher (407 → 13 lines)</li>
+                <li>Security hardened (path traversal protection, schema validation)</li>
+            </ul>
+
+            <h3>Security Features</h3>
+            <ul>
+                <li>🔒 SEC-001: Path traversal protection</li>
+                <li>🔒 SEC-002: JSON schema validation</li>
+                <li>🔒 SEC-003: Smart output routing</li>
+                <li>🔒 SEC-005: Template sanitization</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>📖 Documentation Resources</h2>
+            <ul>
+                <li><a href="README.md"><strong>README.md</strong></a> - Main documentation</li>
+                <li><a href="user-guide.md"><strong>user-guide.md</strong></a> - Comprehensive usage guide</li>
+                <li><a href="CLAUDE.md"><strong>CLAUDE.md</strong></a> - AI assistant context docs</li>
+                <li><a href="my-guide.md"><strong>my-guide.md</strong></a> - Quick reference (60-80 lines)</li>
+                <li><a href="coderef/changelog/CHANGELOG.json"><strong>CHANGELOG.json</strong></a> - Version history</li>
+                <li><a href="coderef/quickref.md"><strong>quickref.md</strong></a> - Tool catalog</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Use Cases</h2>
+            <h3>For Developers</h3>
+            <ul>
+                <li>Generate professional project documentation</li>
+                <li>Maintain structured changelogs automatically</li>
+                <li>Audit codebases for consistency violations</li>
+                <li>Create implementation plans with AI assistance</li>
+                <li>Track deliverables with git metrics</li>
+            </ul>
+
+            <h3>For Teams</h3>
+            <ul>
+                <li>Establish coding standards from existing code</li>
+                <li>Coordinate parallel agent workflows</li>
+                <li>Archive completed features systematically</li>
+                <li>Analyze project inventory and dependencies</li>
+                <li>Ensure documentation quality and coverage</li>
+            </ul>
+
+            <h3>For AI Agents</h3>
+            <ul>
+                <li>Self-document changes autonomously</li>
+                <li>Validate implementation against plans</li>
+                <li>Generate and review implementation plans</li>
+                <li>Execute parallel task coordination</li>
+                <li>Update all documentation automatically</li>
+            </ul>
+        </div>
+
+        <div class="cta-section">
+            <h2>Future Development</h2>
+            <p>20 new tools planned for expansion</p>
+            <ul class="feature-list" style="text-align: left; max-width: 600px; margin: 1rem auto;">
+                <li>Implementation progress tracking</li>
+                <li>Automated code review</li>
+                <li>Test plan generation</li>
+                <li>Release readiness validation</li>
+                <li>Migration guide generation</li>
+                <li>Knowledge graph generation</li>
+            </ul>
+            <a href="coderef/future/claude-20-tools-list.md" class="btn btn-secondary">View Full Roadmap</a>
+        </div>
+
+        <footer>
+            <p><strong>docs-mcp v1.11.0</strong></p>
+            <p>Maintained by: willh, Claude Code AI</p>
+            <p>Last Updated: 2025-10-18</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">
+                🤖 Enterprise-Grade MCP Server for AI-Assisted Development Workflows
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

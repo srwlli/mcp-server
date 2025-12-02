@@ -1,0 +1,581 @@
+{
+  "guide_metadata": {
+    "title": "Comprehensive MCP Server Implementation Guide for Claude Code CLI",
+    "version": "1.0.0",
+    "target_audience": "AI Agents",
+    "last_updated": "2025-10-18",
+    "scope": "IDE and Terminal Integration",
+    "protocol_version": "2024-11-05"
+  },
+  "introduction": {
+    "what_is_mcp": "Model Context Protocol (MCP) is an open standard that enables AI applications to securely connect to external data sources and tools. It acts as a universal interface between LLMs and external systems, similar to USB-C for AI applications.",
+    "why_mcp_matters": "MCP solves the N×M integration problem by providing a standardized way for AI models to access tools, resources, and data without requiring custom integrations for each combination of AI application and data source.",
+    "key_concepts": {
+      "mcp_servers": "Lightweight servers that expose specific functionalities (tools, resources, prompts) via the MCP protocol",
+      "mcp_clients": "Applications that connect to MCP servers to request data or trigger actions (e.g., Claude Code, Claude Desktop, Cursor)",
+      "tools": "Functions that can be executed by the LLM (like POST endpoints - they produce side effects)",
+      "resources": "Data that can be loaded into LLM context (like GET endpoints - they retrieve information)",
+      "prompts": "Reusable templates for LLM interactions"
+    }
+  },
+  "architecture": {
+    "components": {
+      "mcp_host": {
+        "description": "The LLM application (e.g., Claude Code CLI)",
+        "role": "Initiates requests and processes responses",
+        "examples": ["Claude Code", "Claude Desktop", "Cursor", "Windsurf"]
+      },
+      "mcp_client": {
+        "description": "Maintains connections with MCP servers",
+        "role": "Routes requests from host to appropriate servers",
+        "location": "Embedded within the host application"
+      },
+      "mcp_server": {
+        "description": "Exposes tools, resources, and prompts",
+        "role": "Provides functionality and data access",
+        "types": ["Local (stdio)", "Remote (HTTP/SSE)"]
+      },
+      "data_sources": {
+        "description": "Actual data stores or services",
+        "examples": ["Local files", "Databases", "APIs", "Cloud services"]
+      }
+    },
+    "communication_flow": [
+      "User sends prompt to MCP host (Claude Code)",
+      "Host's MCP client identifies needed tools/resources",
+      "MCP client sends JSON-RPC request to MCP server",
+      "MCP server processes request and accesses data source",
+      "MCP server returns JSON-RPC response",
+      "MCP client passes data to host",
+      "Host (LLM) generates response using the data"
+    ],
+    "transport_types": {
+      "stdio": {
+        "description": "Standard input/output for local servers",
+        "use_case": "Local development, desktop applications",
+        "security": "Highest - runs in local process"
+      },
+      "http": {
+        "description": "HTTP protocol for remote servers",
+        "use_case": "Cloud-hosted servers, web services",
+        "security": "Requires authentication (OAuth 2.0, API keys)"
+      },
+      "sse": {
+        "description": "Server-Sent Events for streaming",
+        "use_case": "Real-time updates, long-running operations",
+        "security": "Requires authentication"
+      }
+    }
+  },
+  "claude_code_cli_specifics": {
+    "installation": {
+      "prerequisites": ["Node.js v20+", "macOS 10.15+, Ubuntu 20.04+, or Windows WSL"],
+      "install_command": "npm install -g @anthropic-ai/claude-code",
+      "verify_installation": "claude --version",
+      "important_notes": [
+        "Do NOT use sudo npm install -g (permission issues)",
+        "Windows requires WSL - Claude Code does not run natively on Windows",
+        "Global packages install to ~/.npm-global"
+      ]
+    },
+    "configuration_locations": {
+      "macos": "~/Library/Application Support/Claude/claude_desktop_config.json",
+      "linux": "~/.config/Claude/claude_desktop_config.json",
+      "windows_wsl": "~/.config/Claude/claude_desktop_config.json",
+      "project_specific": ".mcp.json (at project root)"
+    },
+    "configuration_scopes": {
+      "local": {
+        "description": "Available only to you in current project (default)",
+        "file_location": ".mcp.json in project root",
+        "use_when": "Project-specific tools, team sharing via version control",
+        "priority": "Highest (overrides user scope)"
+      },
+      "project": {
+        "description": "Shared with everyone in project via .mcp.json",
+        "file_location": ".mcp.json in project root",
+        "use_when": "Team collaboration, consistent tooling",
+        "priority": "High"
+      },
+      "user": {
+        "description": "Available across all projects for this user (formerly 'global')",
+        "file_location": "~/.config/Claude/claude_desktop_config.json",
+        "use_when": "Personal tools, cross-project utilities",
+        "priority": "Lower than project scope"
+      }
+    },
+    "cli_commands": {
+      "add_server": {
+        "command": "claude mcp add [name] [options] -- [server_command]",
+        "examples": [
+          {
+            "description": "Add stdio server with user scope",
+            "command": "claude mcp add myserver --scope user -- python /path/to/server.py"
+          },
+          {
+            "description": "Add server with environment variables",
+            "command": "claude mcp add github --env GITHUB_TOKEN=ghp_xxx -- npx @modelcontextprotocol/server-github"
+          },
+          {
+            "description": "Add HTTP transport server",
+            "command": "claude mcp add --transport http myserver https://mcp.example.com"
+          },
+          {
+            "description": "Add SSE transport server",
+            "command": "claude mcp add --transport sse asana https://mcp.asana.com/sse"
+          }
+        ],
+        "flags": {
+          "--scope": "local|project|user (default: local)",
+          "--transport": "stdio|http|sse (default: stdio)",
+          "--env": "KEY=value (repeatable for multiple vars)",
+          "--header": "Header: Value (for HTTP/SSE auth)"
+        },
+        "double_dash_explanation": "Everything before -- are Claude CLI options; everything after -- is the command to run the server"
+      },
+      "list_servers": {
+        "command": "claude mcp list",
+        "output": "Shows all configured servers and connection status"
+      },
+      "remove_server": {
+        "command": "claude mcp remove [name]",
+        "example": "claude mcp remove myserver"
+      },
+      "test_server": {
+        "command": "claude mcp get [name]",
+        "purpose": "Test server connection and list available tools"
+      },
+      "reset_project_approvals": {
+        "command": "claude mcp reset-project-choices",
+        "purpose": "Clear saved approval choices for .mcp.json tools"
+      },
+      "import_from_desktop": {
+        "command": "claude mcp import",
+        "purpose": "Import server configurations from Claude Desktop"
+      },
+      "add_from_json": {
+        "command": "claude mcp add-json \"server_name\" '{\"command\": \"python\", \"args\": [\"server.py\"]}'",
+        "purpose": "Add server configuration directly from JSON"
+      }
+    },
+    "environment_variables": {
+      "MCP_TIMEOUT": {
+        "description": "Timeout for MCP operations in milliseconds",
+        "default": "5000",
+        "example": "MCP_TIMEOUT=10000 claude"
+      },
+      "MAX_MCP_OUTPUT_TOKENS": {
+        "description": "Maximum tokens for MCP tool outputs",
+        "default": "25000",
+        "warning_threshold": "10000",
+        "example": "MAX_MCP_OUTPUT_TOKENS=50000 claude"
+      },
+      "CLAUDE_PLUGIN_ROOT": {
+        "description": "Plugin-relative path variable",
+        "use": "For plugin-bundled MCP servers"
+      }
+    }
+  },
+  "python_server_implementation": {
+    "setup": {
+      "steps": [
+        {
+          "step": 1,
+          "action": "Create project directory",
+          "commands": [
+            "mkdir my-mcp-server",
+            "cd my-mcp-server"
+          ]
+        },
+        {
+          "step": 2,
+          "action": "Create virtual environment",
+          "commands": [
+            "python -m venv .venv",
+            "source .venv/bin/activate  # Unix",
+            ".venv\\\\Scripts\\\\activate  # Windows"
+          ]
+        },
+        {
+          "step": 3,
+          "action": "Install dependencies",
+          "commands": [
+            "pip install mcp",
+            "pip install 'mcp[cli]'  # For CLI tools"
+          ]
+        }
+      ]
+    },
+    "basic_server_structure": {
+      "minimal_example": "from mcp.server.fastmcp import FastMCP\\n\\nmcp = FastMCP(name=\\\"My MCP Server\\\")\\n\\n@mcp.tool\\ndef add(a: int, b: int) -> int:\\n    \\\"\\\"\\\"Adds two numbers.\\\"\\\"\\\"\\n    return a + b\\n\\nif __name__ == \\\"__main__\\\":\\n    mcp.run()",
+      "file_structure": {
+        "server.py": "Main server entry point with FastMCP instance",
+        "tools.py": "Tool definitions (optional, for organization)",
+        "resources.py": "Resource definitions (optional)",
+        "prompts.py": "Prompt templates (optional)",
+        "utils.py": "Helper functions"
+      }
+    },
+    "implementing_tools": {
+      "basic_tool": {
+        "description": "Synchronous function that performs an action",
+        "example": "@mcp.tool\\ndef calculate(x: int, y: int, operation: str) -> int:\\n    \\\"\\\"\\\"Performs basic math operations.\\\"\\\"\\\"\\n    if operation == 'add': return x + y\\n    elif operation == 'subtract': return x - y\\n    else: raise ValueError('Invalid operation')"
+      },
+      "async_tool": {
+        "description": "Asynchronous function for I/O operations",
+        "example": "@mcp.tool\\nasync def fetch_data(url: str) -> dict:\\n    \\\"\\\"\\\"Fetches data from an API.\\\"\\\"\\\"\\n    import httpx\\n    async with httpx.AsyncClient() as client:\\n        response = await client.get(url)\\n        return response.json()"
+      },
+      "type_hints": {
+        "importance": "FastMCP uses type hints to generate tool schemas automatically",
+        "supported_types": ["str", "int", "float", "bool", "dict", "list", "Optional", "Union"],
+        "example": "def tool(name: str, age: int, active: bool = True) -> dict: ..."
+      },
+      "error_handling": {
+        "best_practice": "Always include try-except blocks",
+        "example": "@mcp.tool\\ndef risky_operation(value: str) -> str:\\n    try:\\n        result = process(value)\\n        return result\\n    except Exception as e:\\n        return f\\\"Error: {str(e)}\\\""
+      }
+    },
+    "implementing_resources": {
+      "static_resource": {
+        "description": "Fixed data available at a URI",
+        "example": "@mcp.resource(\\\"config://settings\\\")\\ndef get_config() -> dict:\\n    return {\\\"version\\\": \\\"1.0\\\", \\\"debug\\\": False}"
+      },
+      "dynamic_resource": {
+        "description": "Parameterized resource using URI templates",
+        "example": "@mcp.resource(\\\"user://{user_id}\\\")\\ndef get_user(user_id: str) -> dict:\\n    return {\\\"id\\\": user_id, \\\"name\\\": f\\\"User {user_id}\\\"}"
+      },
+      "file_resource": {
+        "description": "Expose file contents as resources",
+        "example": "@mcp.resource(\\\"file://{filepath}\\\")\\nasync def read_file(filepath: str) -> str:\\n    with open(filepath, 'r') as f:\\n        return f.read()"
+      }
+    },
+    "implementing_prompts": {
+      "basic_prompt": {
+        "description": "Reusable prompt template",
+        "example": "@mcp.prompt\\ndef code_review() -> str:\\n    return \\\"Review this code for bugs and improvements:\\\""
+      },
+      "parameterized_prompt": {
+        "description": "Prompt with dynamic parameters",
+        "example": "@mcp.prompt\\ndef analyze_code(language: str, focus: str) -> str:\\n    return f\\\"Analyze this {language} code focusing on {focus}:\\\""
+      }
+    }
+  },
+  "server_configuration_format": {
+    "stdio_server": {
+      "description": "Local server using standard I/O",
+      "config_example": {
+        "mcpServers": {
+          "my-python-server": {
+            "command": "python",
+            "args": ["/absolute/path/to/server.py"],
+            "env": {
+              "API_KEY": "${API_KEY}",
+              "DEBUG": "true"
+            }
+          }
+        }
+      },
+      "notes": [
+        "Use absolute paths for reliability",
+        "Can use ${VAR} or ${VAR:-default} for env var expansion",
+        "Server runs as subprocess of Claude Code"
+      ]
+    },
+    "http_server": {
+      "description": "Remote server over HTTP",
+      "config_example": {
+        "mcpServers": {
+          "remote-server": {
+            "url": "https://mcp.example.com",
+            "headers": {
+              "Authorization": "Bearer ${API_TOKEN}"
+            }
+          }
+        }
+      }
+    },
+    "sse_server": {
+      "description": "Server-Sent Events for streaming",
+      "config_example": {
+        "mcpServers": {
+          "streaming-server": {
+            "url": "https://mcp.example.com/sse",
+            "headers": {
+              "X-API-Key": "${API_KEY}"
+            }
+          }
+        }
+      }
+    },
+    "npx_server": {
+      "description": "Node.js package server",
+      "config_example": {
+        "mcpServers": {
+          "github": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-github"],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+            }
+          }
+        }
+      },
+      "windows_note": "On Windows, npx requires cmd /c wrapper: {'command': 'cmd', 'args': ['/c', 'npx', '-y', 'package-name']}"
+    }
+  },
+  "testing_and_debugging": {
+    "local_testing": {
+      "method_1_manual": {
+        "description": "Test server manually with JSON-RPC",
+        "steps": [
+          "Run server: python server.py",
+          "Send initialize request: echo '{\"jsonrpc\":\"2.0\",\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\"},\"id\":1}' | python server.py",
+          "Check for valid JSON-RPC response"
+        ]
+      },
+      "method_2_mcp_dev": {
+        "description": "Use mcp dev for interactive testing",
+        "command": "mcp dev server.py",
+        "features": ["Interactive tool testing", "Resource inspection", "Real-time debugging"]
+      },
+      "method_3_claude_cli": {
+        "description": "Test with Claude Code directly",
+        "steps": [
+          "Add server: claude mcp add testserver --scope local -- python server.py",
+          "Verify: claude mcp list",
+          "Test tool: Ask Claude to use the tool in conversation"
+        ]
+      }
+    },
+    "debugging_tips": {
+      "logging": {
+        "recommendation": "Use structured logging to stderr (stdout is reserved for MCP protocol)",
+        "example": "import logging\\nimport sys\\n\\nlogging.basicConfig(stream=sys.stderr, level=logging.DEBUG)\\nlogger = logging.getLogger(__name__)"
+      },
+      "common_issues": [
+        {
+          "issue": "Server not appearing in claude mcp list",
+          "causes": ["Invalid JSON config", "Server crashes on startup", "Incorrect paths"],
+          "solutions": ["Validate JSON", "Test server manually", "Use absolute paths"]
+        },
+        {
+          "issue": "Connection closed errors",
+          "causes": ["Server exits immediately", "Missing dependencies", "Port conflicts"],
+          "solutions": ["Check server logs", "Verify imports", "Use unique ports"]
+        },
+        {
+          "issue": "Tools not detected",
+          "causes": ["Incorrect tool decorator", "Missing type hints", "Server not restarted"],
+          "solutions": ["Check @mcp.tool syntax", "Add type annotations", "Restart Claude Code"]
+        }
+      ]
+    }
+  },
+  "best_practices": {
+    "security": [
+      "Never hardcode API keys - use environment variables",
+      "Validate all input parameters",
+      "Implement rate limiting for expensive operations",
+      "Use scoped file access (don't expose entire filesystem)",
+      "Require user confirmation for destructive operations"
+    ],
+    "performance": [
+      "Use async functions for I/O-bound operations",
+      "Implement caching for frequently accessed data",
+      "Paginate large result sets",
+      "Set appropriate timeouts",
+      "Monitor token usage with MAX_MCP_OUTPUT_TOKENS"
+    ],
+    "maintainability": [
+      "Use descriptive tool/resource names",
+      "Write clear docstrings (they become tool descriptions)",
+      "Separate concerns (tools.py, resources.py, etc.)",
+      "Version your server configuration",
+      "Document environment variable requirements"
+    ],
+    "development_workflow": [
+      "Start with minimal server and test",
+      "Add one tool at a time",
+      "Test each tool before adding more",
+      "Use --scope local during development",
+      "Promote to --scope user or project when stable"
+    ]
+  },
+  "project_mcp_json_best_practices": {
+    "when_to_use": [
+      "Team needs shared MCP servers",
+      "Project-specific tools required",
+      "Consistent development environment needed"
+    ],
+    "structure": {
+      "mcpServers": {
+        "project-db": {
+          "command": "python",
+          "args": ["${PROJECT_ROOT}/scripts/db_mcp.py"],
+          "env": {
+            "DB_PATH": "${PROJECT_ROOT}/data/project.db"
+          }
+        }
+      }
+    },
+    "environment_variables": [
+      "Use ${VAR} for expansion",
+      "Use ${VAR:-default} for defaults",
+      "Common vars: ${PROJECT_ROOT}, ${HOME}, ${USER}"
+    ],
+    "version_control": {
+      "commit": ".mcp.json file",
+      "ignore": "Sensitive values (use .env files)",
+      "document": "Required environment variables in README"
+    },
+    "approval_mechanism": {
+      "first_use": "Claude Code prompts user to approve project servers",
+      "subsequent_use": "Approvals are remembered per project",
+      "reset": "claude mcp reset-project-choices"
+    }
+  },
+  "advanced_patterns": {
+    "multi_tool_orchestration": {
+      "description": "Combine multiple tools for complex workflows",
+      "example_workflow": [
+        "Tool 1: Search database for records",
+        "Tool 2: Process and transform data",
+        "Tool 3: Generate report",
+        "Tool 4: Send notification"
+      ]
+    },
+    "resource_templates": {
+      "description": "Dynamic resources with URI patterns",
+      "pattern": "resource://{category}/{id}",
+      "example": "@mcp.resource(\\\"doc://{lang}/{topic}\\\")\\ndef get_doc(lang: str, topic: str) -> str: ..."
+    },
+    "error_recovery": {
+      "description": "Graceful degradation and retry logic",
+      "pattern": "Implement exponential backoff for rate-limited APIs",
+      "example": "async def retry_with_backoff(func, max_retries=3):\\n    for attempt in range(max_retries):\\n        try: return await func()\\n        except RateLimitError:\\n            await asyncio.sleep(2 ** attempt)"
+    },
+    "plugin_bundling": {
+      "description": "Bundle MCP servers with Claude Code plugins",
+      "benefits": ["Automatic setup", "Team consistency", "Bundled distribution"],
+      "reference": "See Claude Code plugin documentation"
+    }
+  },
+  "integration_with_claude_code": {
+    "using_tools": {
+      "implicit": "Claude automatically detects and calls tools based on conversation",
+      "explicit": "User mentions tool by name or function"
+    },
+    "using_resources": {
+      "autocomplete": "Type @ to see available resources",
+      "syntax": "@server:protocol://resource/path",
+      "example": "@myserver:file:///home/user/data.json"
+    },
+    "using_prompts": {
+      "discovery": "Type / to see available prompts",
+      "format": "/mcp__servername__promptname",
+      "with_args": "/mcp__servername__promptname arg1 arg2"
+    },
+    "permissions": {
+      "tool_execution": "Claude Code may request permission before executing tools",
+      "allow_for_chat": "One-time approval for current conversation",
+      "always_allow": "Remember approval (with caution)"
+    }
+  },
+  "real_world_examples": {
+    "database_server": {
+      "purpose": "Query project database",
+      "tools": ["query_db", "insert_record", "update_record"],
+      "resources": ["db://tables", "db://schema/{table}"],
+      "config": {
+        "command": "python",
+        "args": ["${PROJECT_ROOT}/mcp/db_server.py"],
+        "env": {"DB_URL": "${DATABASE_URL}"}
+      }
+    },
+    "file_operations": {
+      "purpose": "Read/write project files",
+      "tools": ["read_file", "write_file", "list_directory"],
+      "resources": ["file://{filepath}"],
+      "security_note": "Restrict to project directory only"
+    },
+    "api_integration": {
+      "purpose": "Connect to external API",
+      "tools": ["api_call", "search_api", "post_data"],
+      "resources": ["api://endpoint/{path}"],
+      "config": {
+        "env": {
+          "API_KEY": "${THIRD_PARTY_API_KEY}",
+          "API_BASE": "https://api.example.com"
+        }
+      }
+    },
+    "code_analysis": {
+      "purpose": "Analyze codebase",
+      "tools": ["find_references", "get_dependencies", "analyze_complexity"],
+      "resources": ["code://{filepath}", "ast://{filepath}"]
+    }
+  },
+  "troubleshooting_guide": {
+    "diagnostic_steps": [
+      {
+        "step": 1,
+        "action": "Verify server configuration",
+        "command": "cat ~/.config/Claude/claude_desktop_config.json  # or project .mcp.json"
+      },
+      {
+        "step": 2,
+        "action": "Test server manually",
+        "command": "python /path/to/server.py"
+      },
+      {
+        "step": 3,
+        "action": "Check Claude Code connection",
+        "command": "claude mcp list"
+      },
+      {
+        "step": 4,
+        "action": "Verify environment variables",
+        "command": "echo $API_KEY  # Check required vars are set"
+      },
+      {
+        "step": 5,
+        "action": "Test in conversation",
+        "command": "Ask Claude to list available tools: /mcp"
+      }
+    ],
+    "error_messages": {
+      "Connection closed": "Server crashed or exited - check stderr logs",
+      "Server not found": "Invalid path or server not in config",
+      "Tool not available": "Server running but tool not registered - check decorators",
+      "Timeout": "Server too slow - increase MCP_TIMEOUT or optimize code",
+      "Permission denied": "File/directory access issues - check paths and permissions"
+    }
+  },
+  "reference_links": {
+    "official_documentation": [
+      "https://modelcontextprotocol.io/",
+      "https://docs.claude.com/en/docs/claude-code/mcp",
+      "https://github.com/modelcontextprotocol/python-sdk",
+      "https://anthropic.skilljar.com/introduction-to-model-context-protocol"
+    ],
+    "tutorials": [
+      "https://www.digitalocean.com/community/tutorials/mcp-server-python",
+      "https://gofastmcp.com/tutorials/create-mcp-server",
+      "https://www.kdnuggets.com/building-a-simple-mcp-server"
+    ],
+    "examples": [
+      "https://github.com/modelcontextprotocol/servers",
+      "https://github.com/steipete/claude-code-mcp"
+    ]
+  },
+  "quick_start_checklist": [
+    "Install Claude Code CLI: npm install -g @anthropic-ai/claude-code",
+    "Create project directory and Python virtual environment",
+    "Install MCP SDK: pip install mcp",
+    "Create server.py with FastMCP instance and tools",
+    "Test server manually: python server.py",
+    "Add to Claude Code: claude mcp add myserver --scope local -- python server.py",
+    "Verify: claude mcp list",
+    "Test in conversation: Ask Claude to use your tools"
+  ]
+}

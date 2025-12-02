@@ -1,0 +1,55 @@
+{
+  "project": "personas-mcp",
+  "current_version": "1.1.0",
+  "versions": [
+    {
+      "version": "1.1.0",
+      "date": "2025-10-20",
+      "changes": [
+        {
+          "type": "feature",
+          "severity": "minor",
+          "title": "Add MVP generalist multi-agent personas",
+          "description": "Added agent-generalist.json and 3 identical generalist agents (agent-2, agent-3, agent-4) for multi-agent coordination. All agents can handle any task (code, tests, docs) assigned by Lloyd via communication.json protocol. Replaces specialized personas with flexible execution agents that can be refined over time.",
+          "files": [
+            "personas/base/agent-generalist.json",
+            "personas/base/agent-2.json",
+            "personas/base/agent-3.json",
+            "personas/base/agent-4.json",
+            ".claude/commands/agent2.md",
+            ".claude/commands/agent3.md",
+            ".claude/commands/agent4.md"
+          ],
+          "reason": "MVP should focus on communication.json protocol and basics. All agents start as generalists and can be specialized as system evolves.",
+          "impact": "Users can now activate 3 execution agents that work with Lloyd for parallel task execution",
+          "breaking": false,
+          "workorder_id": "WO-AGENT-MVP-001",
+          "contributors": ["Claude"]
+        }
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2025-10-18",
+      "changes": [
+        {
+          "type": "feature",
+          "severity": "major",
+          "title": "Initial release with 4 expert personas",
+          "description": "Created personas-mcp server with 4 independent expert personas: mcp-expert, docs-expert, coderef-expert, nfl-scraper-expert. Each provides 1000-6000+ line system prompts designed for agentic use.",
+          "files": [
+            "server.py",
+            "personas/base/mcp-expert.json",
+            "personas/base/docs-expert.json",
+            "personas/base/coderef-expert.json",
+            "personas/base/nfl-scraper-expert.json"
+          ],
+          "reason": "Enable AI assistants to activate expert personas with specialized domain knowledge",
+          "impact": "Users can activate expert personas via MCP tools to influence AI behavior and tool usage",
+          "breaking": false,
+          "contributors": ["Claude"]
+        }
+      ]
+    }
+  ]
+}

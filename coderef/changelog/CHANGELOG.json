@@ -1,0 +1,33 @@
+{
+  "$schema": "./schema.json",
+  "project": ".mcp-servers",
+  "changelog_version": "1.0",
+  "current_version": "1.4.0",
+  "entries": [
+    {
+      "version": "1.4.0",
+      "date": "2025-12-02",
+      "summary": "Version 1.4.0 changes",
+      "changes": [
+        {
+          "id": "change-001",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Add comprehensive reference documentation and internet access research",
+          "description": "Created TOOLS-REFERENCE.md documenting all 53 MCP tools across 3 servers. Updated index.html with current tool counts (personas-mcp: 8 tools, docs-mcp: 37 tools, coderef-mcp: 8 tools). Created MCP-INTERNET-ACCESS-GUIDE.md with comprehensive research on deployment platforms, authentication methods, and security best practices for exposing MCP servers over the internet.",
+          "files": [
+            "TOOLS-REFERENCE.md",
+            "index.html",
+            "MCP-INTERNET-ACCESS-GUIDE.md"
+          ],
+          "reason": "Need centralized documentation for all available MCP tools and research on how to securely expose servers for remote access (ChatGPT integration, CI/CD, etc.)",
+          "impact": "Users now have quick reference guides for all 53 tools and comprehensive guidance on internet deployment options including Railway, Cloudflare, AWS, and authentication methods.",
+          "breaking": false
+        }
+      ],
+      "contributors": [
+        "Claude"
+      ]
+    }
+  ]
+}

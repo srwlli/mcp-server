@@ -33,6 +33,16 @@ IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
 STANDALONE_MODE = os.environ.get('STANDALONE_MODE', 'false').lower() == 'true' or IS_RAILWAY
 SERVER_DIRS = ['docs-mcp'] if STANDALONE_MODE else ['docs-mcp', 'coderef-mcp', 'hello-world-mcp', 'personas-mcp']
 
+# ============================================================================
+# SECURITY CONFIGURATION
+# ============================================================================
+# API Key authentication (required for production)
+MCP_API_KEY = os.environ.get('MCP_API_KEY')
+# CORS allowed origins (comma-separated, or '*' for all)
+ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*')
+# Public endpoints that don't require authentication
+PUBLIC_ENDPOINTS = ['/', '/health', '/openapi.json']
+
 print(f"Environment: {'Railway' if IS_RAILWAY else 'Local'}")
 print(f"Standalone mode: {STANDALONE_MODE}")
 print(f"Will load servers: {SERVER_DIRS}")
@@ -493,6 +503,45 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config['JSON_SORT_KEYS'] = False
     app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+
+    # ========================================================================
+    # API KEY AUTHENTICATION MIDDLEWARE
+    # ========================================================================
+    @app.before_request
+    def check_api_key():
+        """
+        Validate API key for protected endpoints.
+
+        - Skips auth for PUBLIC_ENDPOINTS (/, /health, /openapi.json)
+        - Skips auth if MCP_API_KEY not configured (dev mode)
+        - Returns 401 for invalid/missing API key
+        """
+        # Skip auth for public endpoints
+        if request.path in PUBLIC_ENDPOINTS:
+            return None
+
+        # Skip auth for OPTIONS requests (CORS preflight)
+        if request.method == 'OPTIONS':
+            return None
+
+        # Skip auth if no API key configured (dev mode)
+        if not MCP_API_KEY:
+            return None
+
+        # Validate API key from X-API-Key header
+        provided_key = request.headers.get('X-API-Key')
+        if not provided_key or provided_key != MCP_API_KEY:
+            # Log failed authentication attempt
+            logger.warning(
+                f"Auth failed: IP={request.remote_addr} Path={request.path} "
+                f"Method={request.method} Key={'[provided]' if provided_key else '[missing]'}"
+            )
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Invalid or missing API key. Include X-API-Key header.'
+            }), 401
+
+        return None
 
     @app.route('/', methods=['GET'])
     def root() -> Tuple[Dict[str, Any], int]:
@@ -1031,10 +1080,16 @@ def create_app() -> Flask:
 
     @app.after_request
     def add_cors_headers(response):
-        """Add CORS headers for development."""
-        response.headers['Access-Control-Allow-Origin'] = '*'
+        """
+        Add CORS headers for cross-origin requests.
+
+        Uses ALLOWED_ORIGINS env var to restrict origins in production.
+        Set to '*' for development or comma-separated list for production.
+        Example: ALLOWED_ORIGINS=https://chat.openai.com,https://myapp.com
+        """
+        response.headers['Access-Control-Allow-Origin'] = ALLOWED_ORIGINS
         response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-API-Key'
         return response
 
     return app

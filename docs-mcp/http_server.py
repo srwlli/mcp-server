@@ -103,6 +103,9 @@ print("All imports complete")
 # MULTI-SERVER LOADING
 # ============================================================================
 
+# Store import errors for debugging via health endpoint
+IMPORT_ERRORS: Dict[str, str] = {}
+
 def _load_mcp_servers() -> Dict[str, Any]:
     """
     Dynamically import all MCP servers from sibling directories.
@@ -122,6 +125,8 @@ def _load_mcp_servers() -> Dict[str, Any]:
             loaded['docs-mcp'] = docs_server
             logger.info("✓ Loaded docs-mcp server module directly")
         except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
             logger.error(f"✗ Failed to import server module: {e}")
         return loaded
 
@@ -170,7 +175,11 @@ def _load_mcp_servers() -> Dict[str, Any]:
             logger.info(f"✓ Loaded server: {server_dir}")
 
         except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
             logger.error(f"✗ Failed to import {server_dir}: {e}")
+            logger.error(f"Full traceback: {error_details}")
+            IMPORT_ERRORS[server_dir] = str(e)
             continue
 
     logger.info(f"Successfully loaded {len(loaded)}/{len(SERVER_DIRS)} servers")
@@ -628,7 +637,7 @@ def create_app() -> Flask:
                 servers_status[server_name] = {
                     'status': 'failed',
                     'tools': 0,
-                    'reason': 'Import error or dependency conflict'
+                    'reason': IMPORT_ERRORS.get(server_name, 'Import error or dependency conflict')
                 }
 
         return jsonify({

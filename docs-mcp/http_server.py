@@ -537,8 +537,12 @@ def create_app() -> Flask:
         # available when the module is first imported
         api_key = os.environ.get('MCP_API_KEY')
 
+        # DEBUG: Log what we're seeing at request time
+        logger.info(f"[AUTH DEBUG] Path={request.path} API_KEY_SET={bool(api_key)} KEY_LEN={len(api_key) if api_key else 0}")
+
         # Skip auth if no API key configured (dev mode)
         if not api_key:
+            logger.info(f"[AUTH DEBUG] Skipping auth - no API key configured at request time")
             return None
 
         # Validate API key from X-API-Key header

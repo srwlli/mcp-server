@@ -30,8 +30,16 @@ print("Standard library imports complete")
 # In multi-server mode (local), load all servers
 # Auto-detect Railway environment or explicit STANDALONE_MODE flag
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
-STANDALONE_MODE = os.environ.get('STANDALONE_MODE', 'false').lower() == 'true' or IS_RAILWAY
-SERVER_DIRS = ['docs-mcp'] if STANDALONE_MODE else ['docs-mcp', 'coderef-mcp', 'hello-world-mcp', 'personas-mcp']
+# STANDALONE_MODE: explicit setting takes priority, defaults to True on Railway if not set
+STANDALONE_MODE_ENV = os.environ.get('STANDALONE_MODE', '').lower()
+if STANDALONE_MODE_ENV == 'false':
+    STANDALONE_MODE = False  # Explicitly disabled - load all servers
+elif STANDALONE_MODE_ENV == 'true':
+    STANDALONE_MODE = True   # Explicitly enabled - load only docs-mcp
+else:
+    STANDALONE_MODE = IS_RAILWAY  # Not set - default to standalone on Railway
+
+SERVER_DIRS = ['docs-mcp'] if STANDALONE_MODE else ['docs-mcp', 'coderef-mcp', 'personas-mcp']
 
 # ============================================================================
 # SECURITY CONFIGURATION

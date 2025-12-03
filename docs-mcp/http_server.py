@@ -49,7 +49,7 @@ MCP_API_KEY = os.environ.get('MCP_API_KEY')
 # CORS allowed origins (comma-separated, or '*' for all)
 ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*')
 # Public endpoints that don't require authentication
-PUBLIC_ENDPOINTS = ['/', '/health', '/openapi.json']
+PUBLIC_ENDPOINTS = ['/', '/health', '/openapi.json', '/debug']
 
 print(f"Environment: {'Railway' if IS_RAILWAY else 'Local'}")
 print(f"Standalone mode: {STANDALONE_MODE}")

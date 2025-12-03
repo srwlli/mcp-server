@@ -286,6 +286,8 @@ try:
     logger.info("=" * 80)
     logger.info("LOADING MCP SERVERS")
     logger.info("=" * 80)
+    logger.info(f"API Key configured: {'YES' if MCP_API_KEY else 'NO (auth disabled)'}")
+    logger.info(f"Allowed origins: {ALLOWED_ORIGINS}")
 
     LOADED_SERVERS = _load_mcp_servers()
 

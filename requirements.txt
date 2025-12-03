@@ -1,0 +1,11 @@
+# Combined requirements for all MCP servers
+# docs-mcp, personas-mcp, coderef-mcp
+
+mcp>=1.0.0
+jsonschema>=4.0.0
+pyyaml>=6.0
+toml>=0.10.2
+python-dotenv>=1.0.0
+flask>=3.0.0
+pydantic>=2.0.0
+gunicorn>=21.0.0

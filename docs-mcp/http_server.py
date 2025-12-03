@@ -616,6 +616,9 @@ def create_app() -> Flask:
                     'reason': 'Import error or dependency conflict'
                 }
 
+        # DEBUG: Show what env vars are available (names only, not values for security)
+        mcp_env_vars = {k: ('SET' if v else 'EMPTY') for k, v in os.environ.items() if k.startswith(('MCP_', 'ALLOWED_', 'STANDALONE', 'RAILWAY', 'PORT'))}
+
         return jsonify({
             'status': 'operational' if len(LOADED_SERVERS) > 0 else 'degraded',
             'timestamp': datetime.utcnow().isoformat() + 'Z',
@@ -623,7 +626,8 @@ def create_app() -> Flask:
             'tools_available': len(ALL_TOOL_HANDLERS),
             'servers_loaded': len(LOADED_SERVERS),
             'servers_total': len(SERVER_DIRS),
-            'servers': servers_status
+            'servers': servers_status,
+            'debug_env_vars': mcp_env_vars  # DEBUG: Remove after fixing
         }), 200
 
     @app.route('/tools', methods=['GET'])

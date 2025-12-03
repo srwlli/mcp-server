@@ -650,6 +650,16 @@ def create_app() -> Flask:
             'servers': servers_status
         }), 200
 
+    @app.route('/debug', methods=['GET'])
+    def debug() -> Tuple[Dict[str, Any], int]:
+        """Debug endpoint to see import errors."""
+        return jsonify({
+            'import_errors': IMPORT_ERRORS,
+            'loaded_servers': list(LOADED_SERVERS.keys()),
+            'server_dirs': SERVER_DIRS,
+            'standalone_mode': STANDALONE_MODE
+        }), 200
+
     @app.route('/tools', methods=['GET'])
     def tools() -> Tuple[Dict[str, Any], int]:
         """

@@ -146,6 +146,17 @@ def _load_mcp_servers() -> Dict[str, Any]:
             if server_path_str not in sys.path:
                 sys.path.insert(0, server_path_str)
 
+            # CRITICAL: Clear conflicting modules from sys.modules before loading
+            # This prevents module name collisions between servers that have
+            # identically-named files (constants.py, logger_config.py, etc.)
+            conflicting_modules = [
+                'constants', 'error_responses', 'logger_config',
+                'tool_handlers', 'validation', 'type_defs'
+            ]
+            for mod_name in conflicting_modules:
+                if mod_name in sys.modules:
+                    del sys.modules[mod_name]
+
             # Import using importlib
             spec = importlib.util.spec_from_file_location(
                 f"{server_dir}.server",

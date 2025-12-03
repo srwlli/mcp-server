@@ -537,12 +537,8 @@ def create_app() -> Flask:
         # available when the module is first imported
         api_key = os.environ.get('MCP_API_KEY')
 
-        # DEBUG: Log what we're seeing at request time
-        logger.info(f"[AUTH DEBUG] Path={request.path} API_KEY_SET={bool(api_key)} KEY_LEN={len(api_key) if api_key else 0}")
-
         # Skip auth if no API key configured (dev mode)
         if not api_key:
-            logger.info(f"[AUTH DEBUG] Skipping auth - no API key configured at request time")
             return None
 
         # Validate API key from X-API-Key header
@@ -616,9 +612,6 @@ def create_app() -> Flask:
                     'reason': 'Import error or dependency conflict'
                 }
 
-        # DEBUG: Show what env vars are available (names only, not values for security)
-        mcp_env_vars = {k: ('SET' if v else 'EMPTY') for k, v in os.environ.items() if k.startswith(('MCP_', 'ALLOWED_', 'STANDALONE', 'RAILWAY', 'PORT'))}
-
         return jsonify({
             'status': 'operational' if len(LOADED_SERVERS) > 0 else 'degraded',
             'timestamp': datetime.utcnow().isoformat() + 'Z',
@@ -626,8 +619,7 @@ def create_app() -> Flask:
             'tools_available': len(ALL_TOOL_HANDLERS),
             'servers_loaded': len(LOADED_SERVERS),
             'servers_total': len(SERVER_DIRS),
-            'servers': servers_status,
-            'debug_env_vars': mcp_env_vars  # DEBUG: Remove after fixing
+            'servers': servers_status
         }), 200
 
     @app.route('/tools', methods=['GET'])

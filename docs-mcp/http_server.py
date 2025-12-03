@@ -322,7 +322,24 @@ def _route_tool_call(tool_name: str, arguments: dict) -> Any:
             params = CallToolRequestParams(name=tool_name, arguments=arguments)
             request = CallToolRequest(params=params)
             result = loop.run_until_complete(call_handler(request))
-            return result
+
+            # Serialize ServerResult to JSON-compatible format
+            # ServerResult has 'content' list containing TextContent objects
+            if hasattr(result, 'content') and result.content:
+                # Extract text from content items
+                content_list = []
+                for item in result.content:
+                    if hasattr(item, 'text'):
+                        content_list.append({'type': 'text', 'text': item.text})
+                    elif hasattr(item, 'model_dump'):
+                        content_list.append(item.model_dump())
+                    else:
+                        content_list.append(str(item))
+                return {'content': content_list}
+            elif hasattr(result, 'model_dump'):
+                return result.model_dump()
+            else:
+                return {'result': str(result)}
 
         # Regular handler function (TOOL_HANDLERS pattern)
         if callable(handler):

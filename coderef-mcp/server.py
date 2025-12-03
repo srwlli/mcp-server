@@ -572,6 +572,11 @@ async def get_prompt(name: str, arguments: dict) -> PromptMessage:
 
         include_tests = arguments.get("include_tests", "true").lower() == "true"
 
+        # Build test coverage section separately (f-strings can't contain backslashes)
+        test_step = """4. Check test coverage:
+   Use mcp__coderef__query to find tests that reference this function""" if include_tests else ""
+        test_status = "- Test coverage status" if include_tests else ""
+
         content = f"""Analyze the function '{function_name}' using CodeRef tools:
 
 1. Query what calls this function:
@@ -590,14 +595,14 @@ async def get_prompt(name: str, arguments: dict) -> PromptMessage:
    - analysis_type: "impact"
    - depth: 3
 
-{"4. Check test coverage:\n   Use mcp__coderef__query to find tests that reference this function" if include_tests else ""}
+{test_step}
 
 Provide a summary including:
 - Function purpose and complexity
 - Direct callers and callees
 - Impact radius (how many elements affected by changes)
 - Risk assessment for modifications (LOW/MEDIUM/HIGH/CRITICAL)
-{"- Test coverage status" if include_tests else ""}
+{test_status}
 """
 
         return PromptMessage(role="user", content=content)

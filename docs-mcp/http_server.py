@@ -46,6 +46,8 @@ PUBLIC_ENDPOINTS = ['/', '/health', '/openapi.json']
 print(f"Environment: {'Railway' if IS_RAILWAY else 'Local'}")
 print(f"Standalone mode: {STANDALONE_MODE}")
 print(f"Will load servers: {SERVER_DIRS}")
+print(f"API Key configured: {'YES' if MCP_API_KEY else 'NO'}")
+print(f"Allowed origins: {ALLOWED_ORIGINS}")
 
 # Storage for loaded servers
 LOADED_SERVERS = {}  # {server_name: module}

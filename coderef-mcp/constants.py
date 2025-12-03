@@ -86,3 +86,15 @@ BASELINE_ELEMENTS_COUNT = 281
 BASELINE_RELATIONSHIPS_COUNT = 1000
 TEST_TARGET_CASES = 150
 TEST_COVERAGE_TARGET = 0.90
+
+# RAG System Configuration
+RAG_TIMEOUT_SECONDS = 30.0  # Timeout for RAG queries (includes LLM call)
+RAG_DEFAULT_TOP_K = 10      # Default number of results to retrieve
+RAG_MIN_CONFIDENCE = 0.3    # Minimum confidence threshold for answers
+RAG_STRATEGIES = [
+    'semantic',    # Default - balances similarity with graph metrics
+    'centrality',  # Prioritizes highly-connected code
+    'quality',     # Prioritizes well-tested, low-complexity code
+    'usage',       # Prioritizes frequently-used code
+    'public',      # Prioritizes exported/public APIs
+]

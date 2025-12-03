@@ -6,7 +6,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 from logger_config import get_logger
-from constants import MCP_TOOLS
+from constants import MCP_TOOLS, RAG_TIMEOUT_SECONDS, RAG_DEFAULT_TOP_K, RAG_MIN_CONFIDENCE
 from coderef.utils.resource_cache import get_resource_cache
 from coderef.generators.query_generator import QueryExecutor, ReferenceParser
 from coderef.generators.analysis_generator import DeepAnalysisEngine
@@ -802,6 +802,96 @@ async def handle_audit(args: Dict[str, Any]) -> Dict[str, Any]:
 # Natural Language Query Parser (P3.2)
 # ============================================================================
 
+def is_semantic_query(query: str) -> bool:
+    """Determine if a query should be routed to RAG (semantic) vs graph handlers.
+
+    Semantic queries are explanatory/conceptual and benefit from LLM understanding:
+    - "How does X work?"
+    - "Explain the authentication flow"
+    - "What is the purpose of X?"
+    - "Why does X do Y?"
+    - "Describe how X handles Y"
+
+    Structured queries are better handled by the dependency graph:
+    - "What calls X?" → graph callers
+    - "Find tests for X" → graph coverage
+    - "Impact of X" → graph impact analysis
+
+    Args:
+        query: Natural language query string
+
+    Returns:
+        bool: True if query should go to RAG, False for graph handlers
+    """
+    import re
+
+    query_lower = query.lower().strip()
+
+    # Patterns that indicate semantic/explanatory queries (→ RAG)
+    semantic_patterns = [
+        r"how\s+does\s+.+\s+work",
+        r"how\s+do\s+.+\s+work",
+        r"how\s+is\s+.+\s+implemented",
+        r"how\s+are\s+.+\s+implemented",
+        r"explain\s+(?:the\s+)?(?:how|what|why)",
+        r"explain\s+.+\s+(?:works?|flow|process|mechanism)",
+        r"what\s+is\s+the\s+purpose\s+of",
+        r"what\s+is\s+.+\s+used\s+for",
+        r"why\s+does\s+.+",
+        r"why\s+is\s+.+",
+        r"describe\s+(?:the\s+)?(?:how|what|why|process|flow|architecture)",
+        r"tell\s+me\s+(?:about\s+)?how",
+        r"can\s+you\s+explain",
+        r"what\s+happens\s+when",
+        r"walk\s+me\s+through",
+        r"give\s+me\s+an?\s+overview",
+        r"summarize\s+(?:the\s+)?(?:how|what)",
+        r"understand\s+(?:the\s+)?(?:how|what)",
+    ]
+
+    # Patterns that indicate structured queries (→ graph handlers)
+    structured_patterns = [
+        r"what\s+calls\s+",
+        r"who\s+calls\s+",
+        r"find\s+callers?\s+of",
+        r"what\s+does\s+.+\s+call\b",
+        r"find\s+tests?\s+for",
+        r"test\s+coverage\s+(?:for|of)",
+        r"is\s+.+\s+tested",
+        r"impact\s+of\s+(?:changing\s+)?",
+        r"what\s+breaks?\s+if",
+        r"dependencies\s+of",
+        r"what\s+depends\s+on",
+        r"find\s+all\s+.+\s+in\s+",
+        r"list\s+all\s+",
+        r"show\s+callers",
+        r"show\s+callees",
+    ]
+
+    # Check structured patterns first (more specific)
+    for pattern in structured_patterns:
+        if re.search(pattern, query_lower):
+            return False  # Use graph handlers
+
+    # Check semantic patterns
+    for pattern in semantic_patterns:
+        if re.search(pattern, query_lower):
+            return True  # Use RAG
+
+    # Default heuristics for ambiguous queries
+    # If query is a question without specific graph keywords, prefer RAG
+    if query_lower.endswith('?'):
+        # Questions starting with "how" or "why" are usually semantic
+        if query_lower.startswith(('how ', 'why ')):
+            return True
+        # "What is" questions are usually semantic
+        if re.match(r"what\s+is\s+", query_lower):
+            return True
+
+    # Default: use graph handlers (existing behavior)
+    return False
+
+
 def parse_query_intent(query: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Parse natural language query to identify intent and extract parameters.
 
@@ -999,7 +1089,46 @@ async def handle_nl_query(args: Dict[str, Any]) -> Dict[str, Any]:
         context = args.get("context")
         response_format = args.get("format", "natural")
 
-        # Parse the query intent
+        # Check if this is a semantic query that should go to RAG
+        if is_semantic_query(query):
+            logger.info(f"Routing semantic query to RAG: {query[:50]}...")
+
+            # Check if RAG is available
+            rag_status = await check_rag_available()
+
+            if rag_status.get("available"):
+                try:
+                    # Extract optional filters from context
+                    lang_filter = context.get("language") if context else None
+
+                    # Call RAG system
+                    rag_result = await run_rag_ask(
+                        question=query,
+                        strategy="semantic",
+                        lang_filter=lang_filter
+                    )
+
+                    # Format RAG response for MCP
+                    return _format_rag_response(query, rag_result, response_format)
+
+                except RuntimeError as e:
+                    error_msg = str(e)
+                    if "RAG_NOT_CONFIGURED" in error_msg:
+                        logger.warning("RAG not configured, falling back to graph handlers")
+                        # Fall through to graph handlers
+                    else:
+                        logger.error(f"RAG query failed: {e}")
+                        # Fall through to graph handlers with warning
+                except Exception as e:
+                    logger.error(f"Unexpected RAG error: {e}", exc_info=True)
+                    # Fall through to graph handlers
+
+                # If we get here, RAG failed - inform user and try graph handlers
+                logger.info("RAG unavailable or failed, using graph-based handlers as fallback")
+            else:
+                logger.info(f"RAG not available ({rag_status.get('reason')}), using graph handlers")
+
+        # Parse the query intent for graph-based handling
         parsed = parse_query_intent(query, context)
 
         logger.info(f"NL Query parsed: intent={parsed['intent']}, element={parsed['element']}, confidence={parsed['confidence']}")
@@ -1165,6 +1294,84 @@ async def handle_nl_query(args: Dict[str, Any]) -> Dict[str, Any]:
             "NL_QUERY_ERROR",
             f"Natural language query failed: {str(e)}"
         )
+
+
+def _format_rag_response(query: str, rag_result: Dict[str, Any], response_format: str) -> Dict[str, Any]:
+    """Format RAG response for MCP protocol.
+
+    Args:
+        query: Original query
+        rag_result: RAG system response with answer, sources, confidence, etc.
+        response_format: Desired format (natural, structured, json)
+
+    Returns:
+        dict: MCP-formatted response
+    """
+    # Extract key fields from RAG result
+    answer = rag_result.get("answer", "")
+    sources = rag_result.get("sources", [])
+    confidence = rag_result.get("confidence", 0.0)
+    related_questions = rag_result.get("related_questions", [])
+    token_usage = rag_result.get("token_usage", {})
+    search_stats = rag_result.get("search_stats", {})
+
+    # Convert confidence to level
+    if confidence >= 0.8:
+        confidence_level = "very-high"
+    elif confidence >= 0.6:
+        confidence_level = "high"
+    elif confidence >= 0.4:
+        confidence_level = "medium"
+    elif confidence >= 0.2:
+        confidence_level = "low"
+    else:
+        confidence_level = "very-low"
+
+    # Format sources as CodeRef references
+    formatted_sources = []
+    for source in sources:
+        if isinstance(source, dict):
+            formatted_sources.append({
+                "coderef": source.get("coderef", ""),
+                "score": source.get("score", 0.0),
+                "file": source.get("metadata", {}).get("file", ""),
+                "line": source.get("metadata", {}).get("line", 0),
+                "type": source.get("metadata", {}).get("type", "unknown")
+            })
+        elif isinstance(source, str):
+            formatted_sources.append({"coderef": source})
+
+    base_response = {
+        "status": "success",
+        "source": "rag",
+        "query": query,
+        "answer": answer,
+        "confidence": confidence,
+        "confidence_level": confidence_level,
+        "sources": formatted_sources,
+        "source_count": len(formatted_sources),
+        "related_questions": related_questions,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+    # Add metadata based on format
+    if response_format == "json":
+        base_response["metadata"] = {
+            "token_usage": token_usage,
+            "search_stats": search_stats,
+            "rag_version": "1.0"
+        }
+    elif response_format == "natural":
+        # Add a formatted natural language summary
+        source_summary = ""
+        if formatted_sources:
+            source_refs = [s.get("coderef", "Unknown") for s in formatted_sources[:3]]
+            more = f" (and {len(formatted_sources) - 3} more)" if len(formatted_sources) > 3 else ""
+            source_summary = f"\n\nSources: {', '.join(source_refs)}{more}"
+
+        base_response["natural_summary"] = f"{answer}{source_summary}"
+
+    return base_response
 
 
 def _generate_nl_summary(query: str, parsed: Dict[str, Any], result: Dict[str, Any]) -> str:
@@ -1368,6 +1575,215 @@ async def run_cli_scan(
     except Exception as e:
         logger.error(f"CLI scan error: {e}", exc_info=True)
         raise
+
+
+# ============================================================================
+# RAG CLI Bridge (MCP-RAG Integration)
+# ============================================================================
+
+async def run_rag_ask(
+    question: str,
+    strategy: str = "semantic",
+    top_k: int = RAG_DEFAULT_TOP_K,
+    min_score: float = 0.5,
+    lang_filter: Optional[str] = None,
+    type_filter: Optional[str] = None
+) -> Dict[str, Any]:
+    """Run CodeRef RAG rag-ask CLI command and parse JSON output.
+
+    Args:
+        question: Natural language question to ask
+        strategy: Query strategy (semantic, centrality, quality, usage, public)
+        top_k: Number of results to retrieve
+        min_score: Minimum similarity score threshold
+        lang_filter: Optional language filter (e.g., 'ts', 'py')
+        type_filter: Optional type filter (e.g., 'function', 'class')
+
+    Returns:
+        dict: RAG response with structure:
+            {
+                "answer": str,
+                "sources": [...],
+                "confidence": float,
+                "related_questions": [...],
+                "token_usage": {...},
+                "search_stats": {...}
+            }
+
+    Raises:
+        Exception: If CLI execution fails or RAG is unavailable
+    """
+    import asyncio
+    import os
+
+    # Get CLI path from environment variable
+    cli_path = os.environ.get("CODEREF_CLI_PATH")
+    if not cli_path:
+        raise ValueError("CODEREF_CLI_PATH environment variable not set")
+
+    # Verify CLI path exists
+    cli_bin = os.path.join(cli_path, "dist", "cli.js")
+    if not os.path.exists(cli_bin):
+        raise FileNotFoundError(f"CodeRef CLI not found at: {cli_bin}")
+
+    # Build command
+    cmd = [
+        "node",
+        cli_bin,
+        "rag-ask",
+        question,
+        "--strategy", strategy,
+        "--top-k", str(top_k),
+        "--min-score", str(min_score),
+        "--json"
+    ]
+
+    # Add optional filters
+    if lang_filter:
+        cmd.extend(["--lang", lang_filter])
+    if type_filter:
+        cmd.extend(["--type", type_filter])
+
+    logger.info(f"Running RAG query: {question[:50]}...")
+    logger.debug(f"RAG command: {' '.join(cmd)}")
+
+    try:
+        # Create subprocess
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=cli_path
+        )
+
+        # Wait for process to complete with timeout
+        stdout, stderr = await asyncio.wait_for(
+            process.communicate(),
+            timeout=RAG_TIMEOUT_SECONDS
+        )
+
+        # Check return code
+        if process.returncode != 0:
+            error_msg = stderr.decode('utf-8') if stderr else "Unknown error"
+            logger.error(f"RAG query failed with code {process.returncode}: {error_msg}")
+
+            # Check for specific errors
+            if "Configuration error" in error_msg or "API key" in error_msg.lower():
+                raise RuntimeError("RAG_NOT_CONFIGURED: RAG system requires API keys to be configured")
+            if "No relevant results" in error_msg:
+                return {
+                    "answer": "No relevant code found for your question.",
+                    "sources": [],
+                    "confidence": 0.0,
+                    "related_questions": [],
+                    "error": "no_results"
+                }
+            raise RuntimeError(f"RAG query failed: {error_msg}")
+
+        # Parse JSON output
+        output_str = stdout.decode('utf-8')
+
+        # CLI may output non-JSON lines before the JSON, so find the JSON part
+        json_start = -1
+        for i, char in enumerate(output_str):
+            if char == '{':
+                json_start = i
+                break
+
+        if json_start == -1:
+            raise ValueError(f"No JSON found in RAG output: {output_str[:200]}")
+
+        json_str = output_str[json_start:]
+        rag_result = json.loads(json_str)
+
+        logger.info(f"RAG query complete: confidence={rag_result.get('confidence', 'N/A')}")
+
+        return rag_result
+
+    except asyncio.TimeoutError:
+        logger.error(f"RAG query timed out after {RAG_TIMEOUT_SECONDS} seconds")
+        raise RuntimeError(f"RAG query timed out after {RAG_TIMEOUT_SECONDS}s")
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse RAG JSON output: {e}")
+        logger.debug(f"Raw output: {output_str[:500]}")
+        raise RuntimeError(f"Invalid JSON from RAG: {str(e)}")
+    except Exception as e:
+        logger.error(f"RAG query error: {e}", exc_info=True)
+        raise
+
+
+async def check_rag_available() -> Dict[str, Any]:
+    """Check if RAG system is available and configured.
+
+    Returns:
+        dict: Availability status with structure:
+            {
+                "available": bool,
+                "reason": str (if not available),
+                "cli_path": str,
+                "checked_at": str
+            }
+    """
+    import os
+
+    cli_path = os.environ.get("CODEREF_CLI_PATH")
+
+    if not cli_path:
+        return {
+            "available": False,
+            "reason": "CODEREF_CLI_PATH environment variable not set",
+            "checked_at": datetime.utcnow().isoformat()
+        }
+
+    cli_bin = os.path.join(cli_path, "dist", "cli.js")
+    if not os.path.exists(cli_bin):
+        return {
+            "available": False,
+            "reason": f"CodeRef CLI not found at: {cli_bin}",
+            "cli_path": cli_path,
+            "checked_at": datetime.utcnow().isoformat()
+        }
+
+    # Check if rag-config command works (tests API key availability)
+    try:
+        import asyncio
+        process = await asyncio.create_subprocess_exec(
+            "node", cli_bin, "rag-config",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=cli_path
+        )
+        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=10.0)
+
+        if process.returncode != 0:
+            error_msg = stderr.decode('utf-8') if stderr else stdout.decode('utf-8')
+            return {
+                "available": False,
+                "reason": f"RAG configuration error: {error_msg[:200]}",
+                "cli_path": cli_path,
+                "checked_at": datetime.utcnow().isoformat()
+            }
+
+        return {
+            "available": True,
+            "cli_path": cli_path,
+            "checked_at": datetime.utcnow().isoformat()
+        }
+
+    except asyncio.TimeoutError:
+        return {
+            "available": False,
+            "reason": "RAG config check timed out",
+            "cli_path": cli_path,
+            "checked_at": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "available": False,
+            "reason": str(e),
+            "cli_path": cli_path,
+            "checked_at": datetime.utcnow().isoformat()
+        }
 
 
 # ============================================================================

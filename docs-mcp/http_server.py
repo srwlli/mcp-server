@@ -519,6 +519,10 @@ def create_app() -> Flask:
         - Skips auth for PUBLIC_ENDPOINTS (/, /health, /openapi.json)
         - Skips auth if MCP_API_KEY not configured (dev mode)
         - Returns 401 for invalid/missing API key
+
+        NOTE: We read os.environ.get('MCP_API_KEY') at REQUEST TIME, not module
+        load time, because Gunicorn workers may not have env vars available
+        when the module is first imported. This is critical for Railway deployment.
         """
         # Skip auth for public endpoints
         if request.path in PUBLIC_ENDPOINTS:
@@ -528,13 +532,18 @@ def create_app() -> Flask:
         if request.method == 'OPTIONS':
             return None
 
+        # Read API key at request time (not module load time)
+        # This is critical for Railway/Gunicorn where env vars may not be
+        # available when the module is first imported
+        api_key = os.environ.get('MCP_API_KEY')
+
         # Skip auth if no API key configured (dev mode)
-        if not MCP_API_KEY:
+        if not api_key:
             return None
 
         # Validate API key from X-API-Key header
         provided_key = request.headers.get('X-API-Key')
-        if not provided_key or provided_key != MCP_API_KEY:
+        if not provided_key or provided_key != api_key:
             # Log failed authentication attempt
             logger.warning(
                 f"Auth failed: IP={request.remote_addr} Path={request.path} "

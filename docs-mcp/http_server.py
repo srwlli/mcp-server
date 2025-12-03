@@ -258,6 +258,35 @@ def _build_unified_tool_registry() -> Tuple[Dict[str, str], Dict[str, Any]]:
     return tool_registry, all_handlers
 
 
+def _normalize_mcp_request(data: dict) -> dict:
+    """
+    Normalize MCP request format for cross-pattern compatibility.
+    
+    Handles differences between:
+    - TOOL_HANDLERS pattern: {"method": "tool", "params": {}}
+    - MCP Server pattern: {"name": "tool", "arguments": {}}
+    
+    Returns normalized format with both keys populated.
+    """
+    normalized = {}
+    
+    # Normalize tool name (accept both 'method' and 'name')
+    normalized['name'] = data.get('name') or data.get('method', '')
+    normalized['method'] = normalized['name']
+    
+    # Normalize arguments (accept both 'arguments' and 'params')
+    normalized['arguments'] = data.get('arguments') or data.get('params', {})
+    normalized['params'] = normalized['arguments']
+    
+    # Preserve other fields
+    if 'id' in data:
+        normalized['id'] = data['id']
+    if 'jsonrpc' in data:
+        normalized['jsonrpc'] = data['jsonrpc']
+    
+    return normalized
+
+
 def _route_tool_call(tool_name: str, arguments: dict) -> Any:
     """
     Route tool call to the appropriate server.
@@ -276,7 +305,7 @@ def _route_tool_call(tool_name: str, arguments: dict) -> Any:
         # Check if handler is an MCP Server app (from MCP Server pattern)
         if hasattr(handler, 'call_tool'):
             # This is an MCP Server app - use request_handlers[CallToolRequest]
-            from mcp.types import CallToolRequest
+            from mcp.types import CallToolRequest, CallToolRequestParams
 
             if not (hasattr(handler, 'request_handlers') and CallToolRequest in handler.request_handlers):
                 raise ValueError(f"MCP Server app missing CallToolRequest handler for tool: {tool_name}")
@@ -287,9 +316,11 @@ def _route_tool_call(tool_name: str, arguments: dict) -> Any:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
 
-            # Create CallToolRequest and call the handler directly
+            # Create CallToolRequest with proper params structure
+            # CallToolRequest requires params: CallToolRequestParams, not direct arguments
             call_handler = handler.request_handlers[CallToolRequest]
-            request = CallToolRequest(name=tool_name, arguments=arguments)
+            params = CallToolRequestParams(name=tool_name, arguments=arguments)
+            request = CallToolRequest(params=params)
             result = loop.run_until_complete(call_handler(request))
             return result
 
@@ -1087,8 +1118,10 @@ def create_app() -> Flask:
             # Check if method exists in unified tool handlers
             if method in ALL_TOOL_HANDLERS:
                 try:
+                    # Normalize request for MCP Server pattern compatibility
+                    normalized = _normalize_mcp_request({'method': method, 'params': params})
                     logger.info(f"Legacy tool call: {method} (from {TOOL_REGISTRY.get(method, 'unknown')})")
-                    result = _route_tool_call(method, params)
+                    result = _route_tool_call(method, normalized['arguments'])
                     response_data = _format_tool_response(result)
 
                     return jsonify({

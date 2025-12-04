@@ -3,184 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP Tools Quick Reference</title>
+    <title>MCP Ecosystem</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 8px; }
-        h1 { font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; border-bottom: 3px solid #3498db; padding-bottom: 15px; }
-        h2 { font-size: 1.8em; color: #34495e; margin-top: 40px; margin-bottom: 20px; padding-left: 15px; border-left: 5px solid #3498db; }
-        h3 { font-size: 1.3em; color: #2c3e50; margin-top: 25px; margin-bottom: 15px; font-weight: 600; }
-        .tool-list { list-style: none; margin-left: 0; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .tool-list li { padding: 10px 15px; background: #f8f9fa; border-left: 3px solid #3498db; border-radius: 4px; transition: all 0.2s; }
-        .tool-list li:hover { background: #e8f4f8; transform: translateX(5px); }
-        .tool-name { font-weight: 600; color: #2c3e50; font-family: 'Courier New', monospace; }
-        .server-card { background: #f8f9fa; padding: 25px; margin: 25px 0; border-radius: 6px; border: 1px solid #e1e8ed; }
-        .tag { display: inline-block; background: #3498db; color: white; padding: 3px 10px; border-radius: 3px; font-size: 0.85em; margin-left: 10px; }
-        .tag.new { background: #e74c3c; }
-        .command-list { background: #2c3e50; color: #ecf0f1; padding: 15px 20px; border-radius: 4px; font-family: 'Courier New', monospace; margin: 10px 0; font-size: 0.9em; }
-        .footer { margin-top: 50px; padding-top: 20px; border-top: 2px solid #ecf0f1; text-align: center; color: #7f8c8d; font-size: 0.9em; }
-        @media (max-width: 768px) { .container { padding: 20px; } h1 { font-size: 2em; } h2 { font-size: 1.5em; } }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2rem; color: #2c3e50; margin-bottom: 8px; }
+        .tagline { color: #666; font-size: 1rem; }
+
+        .stats { display: flex; justify-content: center; gap: 30px; margin: 30px 0; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 700; color: #3498db; }
+        .stat-label { font-size: 0.85rem; color: #666; }
+
+        .railway-box { background: #2c3e50; color: #fff; padding: 20px; border-radius: 8px; margin: 30px 0; text-align: center; }
+        .railway-box h3 { font-size: 0.9rem; font-weight: 400; margin-bottom: 10px; opacity: 0.8; }
+        .railway-url { font-family: monospace; font-size: 0.95rem; background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 4px; display: inline-block; word-break: break-all; }
+
+        .servers { margin: 40px 0; }
+        .server { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 15px; border: 1px solid #e1e8ed; }
+        .server-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .server-name { font-weight: 600; color: #2c3e50; }
+        .server-count { background: #3498db; color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 0.85rem; }
+        .server-desc { color: #666; font-size: 0.9rem; }
+
+        .categories { margin-top: 40px; }
+        .categories h2 { font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
+        .cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-bottom: 30px; }
+        .cat-item { font-size: 0.9rem; color: #555; padding: 6px 0; }
+        .cat-item span { color: #3498db; font-weight: 600; }
+
+        .commands { margin-top: 40px; }
+        .commands h2 { font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
+        .cmd-section { margin-bottom: 25px; }
+        .cmd-section h3 { font-size: 0.95rem; color: #667eea; margin-bottom: 10px; font-weight: 600; }
+        .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+        .cmd { font-family: monospace; font-size: 0.85rem; color: #2c3e50; background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e1e8ed; }
+
+        footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>MCP Tools Quick Reference</h1>
+        <header>
+            <h1>MCP Ecosystem</h1>
+            <p class="tagline">Documentation, Planning & Code Analysis Tools</p>
+        </header>
 
-        <h2>personas-mcp - Expert Agent Personas (8 tools, 10 personas) <span class="tag new">v1.4</span></h2>
-        <div class="server-card">
-            <h3>MCP Tools <span class="tag">8</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">use_persona</span> - Activate expert persona</li>
-                <li><span class="tool-name">get_active_persona</span> - Get current persona</li>
-                <li><span class="tool-name">clear_persona</span> - Deactivate persona</li>
-                <li><span class="tool-name">list_personas</span> - List all personas</li>
-                <li><span class="tool-name">create_custom_persona</span> - Create new persona <span class="tag new">NEW</span></li>
-                <li><span class="tool-name">generate_todo_list</span> - Plan to TodoWrite</li>
-                <li><span class="tool-name">track_plan_execution</span> - Sync plan/todo status</li>
-                <li><span class="tool-name">execute_plan_interactive</span> - Step-by-step execution</li>
-            </ul>
-
-            <h3>Expert Personas <span class="tag">4</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">mcp-expert</span> - MCP Protocol Expert</li>
-                <li><span class="tool-name">docs-expert</span> - Documentation & Planning</li>
-                <li><span class="tool-name">coderef-expert</span> - Code Analysis</li>
-                <li><span class="tool-name">nfl-scraper-expert</span> - NFL Data Scraping</li>
-            </ul>
-
-            <h3>Coordinator <span class="tag">1</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">lloyd-expert</span> - Multi-Agent Coordinator</li>
-            </ul>
-
-            <h3>Specialist Personas <span class="tag">4</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">ava</span> - Frontend Specialist (Agent 2)</li>
-                <li><span class="tool-name">marcus</span> - Backend Specialist (Agent 3)</li>
-                <li><span class="tool-name">quinn</span> - Testing Specialist (Agent 4)</li>
-                <li><span class="tool-name">devon</span> - Project Setup Specialist (Agent 5)</li>
-            </ul>
-
-            <h3>Generalist <span class="tag">1</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">taylor</span> - General Purpose Agent</li>
-            </ul>
+        <div class="stats">
+            <div class="stat"><div class="stat-num">53</div><div class="stat-label">MCP Tools</div></div>
+            <div class="stat"><div class="stat-num">10</div><div class="stat-label">Personas</div></div>
+            <div class="stat"><div class="stat-num">3</div><div class="stat-label">Servers</div></div>
         </div>
 
-        <h2>docs-mcp - Documentation & Planning Tools (37 tools)</h2>
-        <div class="server-card">
-            <h3>Documentation Generation <span class="tag">5</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">list_templates</span></li>
-                <li><span class="tool-name">get_template</span></li>
-                <li><span class="tool-name">generate_foundation_docs</span></li>
-                <li><span class="tool-name">generate_individual_doc</span></li>
-                <li><span class="tool-name">generate_quickref_interactive</span></li>
-            </ul>
-
-            <h3>Changelog Management <span class="tag">3</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">get_changelog</span></li>
-                <li><span class="tool-name">add_changelog_entry</span></li>
-                <li><span class="tool-name">update_changelog</span></li>
-            </ul>
-
-            <h3>Standards & Consistency <span class="tag">3</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">establish_standards</span></li>
-                <li><span class="tool-name">audit_codebase</span></li>
-                <li><span class="tool-name">check_consistency</span></li>
-            </ul>
-
-            <h3>Planning Workflow <span class="tag">7</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">get_planning_template</span></li>
-                <li><span class="tool-name">gather_context</span></li>
-                <li><span class="tool-name">analyze_project_for_planning</span></li>
-                <li><span class="tool-name">create_plan</span></li>
-                <li><span class="tool-name">validate_implementation_plan</span></li>
-                <li><span class="tool-name">generate_plan_review_report</span></li>
-                <li><span class="tool-name">execute_plan</span></li>
-            </ul>
-
-            <h3>/start-feature Workflow <span class="tag new">NEW</span></h3>
-            <p style="margin-bottom: 10px; color: #555;">One command to orchestrate the full planning pipeline:</p>
-            <ol style="margin-left: 20px; margin-bottom: 15px; color: #2c3e50;">
-                <li><strong>Get Feature Name</strong> - Interactive prompt</li>
-                <li><strong>Gather Context</strong> - Requirements Q&A</li>
-                <li><strong>Analyze Project</strong> - Auto-discovery</li>
-                <li><strong>Create Plan</strong> - 10-section plan.json</li>
-                <li><strong>Validate Plan</strong> - Score 0-100</li>
-                <li><strong>Validation Loop</strong> - Fix until score >= 90</li>
-                <li><strong>Output Summary</strong> - Files created</li>
-                <li><strong>Commit & Push</strong> - Pre-execution checkpoint</li>
-            </ol>
-
-            <h3>Deliverables Tracking <span class="tag">2</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">generate_deliverables_template</span></li>
-                <li><span class="tool-name">update_deliverables</span></li>
-            </ul>
-
-            <h3>Project Inventory <span class="tag">7</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">inventory_manifest</span></li>
-                <li><span class="tool-name">dependency_inventory</span></li>
-                <li><span class="tool-name">api_inventory</span></li>
-                <li><span class="tool-name">database_inventory</span></li>
-                <li><span class="tool-name">config_inventory</span></li>
-                <li><span class="tool-name">test_inventory</span></li>
-                <li><span class="tool-name">documentation_inventory</span></li>
-            </ul>
-
-            <h3>Multi-Agent Coordination <span class="tag">5</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">generate_agent_communication</span></li>
-                <li><span class="tool-name">assign_agent_task</span></li>
-                <li><span class="tool-name">verify_agent_completion</span></li>
-                <li><span class="tool-name">aggregate_agent_deliverables</span></li>
-                <li><span class="tool-name">track_agent_status</span></li>
-            </ul>
-
-            <h3>Feature & Workorder Management <span class="tag">5</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">archive_feature</span></li>
-                <li><span class="tool-name">update_all_documentation</span></li>
-                <li><span class="tool-name">log_workorder</span></li>
-                <li><span class="tool-name">get_workorder_log</span></li>
-                <li><span class="tool-name">generate_handoff_context</span></li>
-            </ul>
-
-            <h3>Risk Assessment <span class="tag">1</span></h3>
-            <ul class="tool-list">
-                <li><span class="tool-name">assess_risk</span> - AI-powered 5-dimension risk analysis</li>
-            </ul>
+        <div class="railway-box">
+            <h3>Railway Deployment (Production)</h3>
+            <div class="railway-url">https://docs-mcp-production.up.railway.app/mcp</div>
         </div>
 
-        <h2>coderef-mcp - Code Reference Analysis (8 tools)</h2>
-        <div class="server-card">
-            <ul class="tool-list">
-                <li><span class="tool-name">mcp__coderef__query</span> - Query by reference/pattern</li>
-                <li><span class="tool-name">mcp__coderef__analyze</span> - Impact/coverage/complexity</li>
-                <li><span class="tool-name">mcp__coderef__validate</span> - Validate reference format</li>
-                <li><span class="tool-name">mcp__coderef__batch_validate</span> - Batch validation</li>
-                <li><span class="tool-name">mcp__coderef__generate_docs</span> - Generate element docs</li>
-                <li><span class="tool-name">mcp__coderef__audit</span> - Audit validation/coverage</li>
-                <li><span class="tool-name">mcp__coderef__nl_query</span> - Natural language queries <span class="tag new">NEW</span></li>
-                <li><span class="tool-name">mcp__coderef__scan_realtime</span> - Real-time code scanning <span class="tag new">NEW</span></li>
-            </ul>
+        <div class="servers">
+            <div class="server">
+                <div class="server-header">
+                    <span class="server-name">docs-mcp</span>
+                    <span class="server-count">37 tools</span>
+                </div>
+                <p class="server-desc">Documentation generation, planning workflows, standards auditing, multi-agent coordination</p>
+            </div>
+            <div class="server">
+                <div class="server-header">
+                    <span class="server-name">personas-mcp</span>
+                    <span class="server-count">8 tools</span>
+                </div>
+                <p class="server-desc">Expert agent personas (mcp-expert, docs-expert, coderef-expert) + specialists (ava, marcus, quinn, taylor, devon)</p>
+            </div>
+            <div class="server">
+                <div class="server-header">
+                    <span class="server-name">coderef-mcp</span>
+                    <span class="server-count">8 tools</span>
+                </div>
+                <p class="server-desc">Code reference analysis, natural language queries, real-time scanning</p>
+            </div>
         </div>
 
-        <h2>MCP Server Management</h2>
-        <div class="command-list">claude mcp list | claude mcp add &lt;name&gt; | claude mcp remove &lt;name&gt;</div>
+        <div class="categories">
+            <h2>docs-mcp Categories</h2>
+            <div class="cat-list">
+                <div class="cat-item">Documentation <span>(5)</span></div>
+                <div class="cat-item">Changelog <span>(3)</span></div>
+                <div class="cat-item">Planning <span>(7)</span></div>
+                <div class="cat-item">Standards <span>(3)</span></div>
+                <div class="cat-item">Inventory <span>(7)</span></div>
+                <div class="cat-item">Multi-Agent <span>(5)</span></div>
+                <div class="cat-item">Deliverables <span>(2)</span></div>
+                <div class="cat-item">Workorders <span>(4)</span></div>
+                <div class="cat-item">Risk <span>(1)</span></div>
+            </div>
 
-        <div class="footer">
-            <p><strong>Active Servers:</strong> personas-mcp, docs-mcp, coderef-mcp</p>
-            <p><strong>Total MCP Tools:</strong> 53 (8 personas + 37 docs + 8 coderef)</p>
-            <p><strong>Total Personas:</strong> 10 (4 expert + 1 coordinator + 4 specialists + 1 generalist)</p>
-            <p>Last Updated: 2025-12-03 (v1.5 - Added /start-feature 8-step workflow)</p>
+            <h2>personas-mcp</h2>
+            <div class="cat-list">
+                <div class="cat-item">Expert: mcp-expert</div>
+                <div class="cat-item">Expert: docs-expert</div>
+                <div class="cat-item">Expert: coderef-expert</div>
+                <div class="cat-item">Coordinator: lloyd</div>
+                <div class="cat-item">Specialist: ava (frontend)</div>
+                <div class="cat-item">Specialist: marcus (backend)</div>
+                <div class="cat-item">Specialist: quinn (testing)</div>
+                <div class="cat-item">Specialist: devon (setup)</div>
+                <div class="cat-item">Generalist: taylor</div>
+            </div>
         </div>
+
+        <div class="commands">
+            <h2>Slash Commands</h2>
+
+            <div class="cmd-section">
+                <h3>Documentation</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/generate-docs</div>
+                    <div class="cmd">/generate-user-guide</div>
+                    <div class="cmd">/generate-quickref</div>
+                    <div class="cmd">/list-templates</div>
+                    <div class="cmd">/get-template</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Changelog</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/add-changelog</div>
+                    <div class="cmd">/get-changelog</div>
+                    <div class="cmd">/update-changelog</div>
+                    <div class="cmd">/update-docs</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Planning</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/start-feature</div>
+                    <div class="cmd">/gather-context</div>
+                    <div class="cmd">/analyze-for-planning</div>
+                    <div class="cmd">/create-plan</div>
+                    <div class="cmd">/validate-plan</div>
+                    <div class="cmd">/generate-plan-review</div>
+                    <div class="cmd">/get-planning-template</div>
+                    <div class="cmd">/execute-plan</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Standards & Auditing</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/establish-standards</div>
+                    <div class="cmd">/audit-codebase</div>
+                    <div class="cmd">/check-consistency</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Inventory</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/inventory-manifest</div>
+                    <div class="cmd">/dependency-inventory</div>
+                    <div class="cmd">/api-inventory</div>
+                    <div class="cmd">/database-inventory</div>
+                    <div class="cmd">/config-inventory</div>
+                    <div class="cmd">/test-inventory</div>
+                    <div class="cmd">/documentation-inventory</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Multi-Agent Coordination</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/generate-agent-communication</div>
+                    <div class="cmd">/assign-agent-task</div>
+                    <div class="cmd">/verify-agent-completion</div>
+                    <div class="cmd">/aggregate-agent-deliverables</div>
+                    <div class="cmd">/track-agent-status</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Deliverables & Workorders</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/generate-deliverables</div>
+                    <div class="cmd">/update-deliverables</div>
+                    <div class="cmd">/log-workorder</div>
+                    <div class="cmd">/get-workorder-log</div>
+                    <div class="cmd">/archive-feature</div>
+                    <div class="cmd">/handoff</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Risk Assessment</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/assess-risk</div>
+                </div>
+            </div>
+
+            <div class="cmd-section">
+                <h3>Personas</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/use-persona</div>
+                    <div class="cmd">/docs-expert</div>
+                    <div class="cmd">/coderef-expert</div>
+                    <div class="cmd">/ava</div>
+                    <div class="cmd">/devon</div>
+                    <div class="cmd">/taylor</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Last updated: 2025-12-04</p>
+        </footer>
     </div>
 </body>
 </html>

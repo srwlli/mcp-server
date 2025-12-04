@@ -1,0 +1,366 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "root-cleanup",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-04T17:45:00Z",
+    "has_context": false,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["README.md", "CLAUDE.md", "user-guide.md", "QUICK-START.md", "MCP-SETUP-GUIDE.md", "RELEASE_NOTES.md"],
+        "missing": []
+      },
+      "coding_standards": {
+        "available": ["coderef/standards/"],
+        "missing": []
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP SDK",
+        "testing": "pytest"
+      }
+    },
+    "1_executive_summary": {
+      "description": "Clean up the docs-mcp root directory by archiving old implementation plans, removing obsolete scripts, moving misplaced test files, and updating .gitignore to exclude log files",
+      "goal": "Reduce root directory clutter from 50+ files to essential core files only, improving project maintainability and developer experience",
+      "scope": "Root directory file organization only - no code changes to core functionality",
+      "estimated_complexity": "low",
+      "key_deliverables": [
+        "Archive 5 old JSON plan files to coderef/archived/plans/",
+        "Delete 1 obsolete version-specific script",
+        "Move 3 test files to tests/ directory",
+        "Update .gitignore to exclude log files",
+        "Review and potentially consolidate HTTP server files"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Accidentally delete needed files",
+          "severity": "medium",
+          "likelihood": "low",
+          "mitigation": "Git provides full recovery; review each file before deletion"
+        },
+        {
+          "risk": "Break imports by moving test files",
+          "severity": "low",
+          "likelihood": "low",
+          "mitigation": "Test files are standalone; verify pytest still discovers them"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        { "path": ".gitignore", "purpose": "Add log file exclusions" }
+      ],
+      "files_to_create": [
+        { "path": "coderef/archived/plans/README.md", "purpose": "Document archived plans directory" }
+      ],
+      "files_to_delete": [
+        { "path": "add_changelog_v1.3.0.py", "purpose": "Obsolete version-specific script" }
+      ],
+      "files_to_move": [
+        { "from": "audit-codebase-plan.json", "to": "coderef/archived/plans/" },
+        { "from": "check-consistency-plan.json", "to": "coderef/archived/plans/" },
+        { "from": "establish-standards-plan.json", "to": "coderef/archived/plans/" },
+        { "from": "tooling-plan.json", "to": "coderef/archived/plans/" },
+        { "from": "docs-mcp-improvements.json", "to": "coderef/archived/plans/" },
+        { "from": "test_app.py", "to": "tests/" },
+        { "from": "test_http_simple.py", "to": "tests/" },
+        { "from": "test_hello.json", "to": "tests/fixtures/" }
+      ],
+      "current_root_file_count": 52,
+      "target_root_file_count": 42
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Archive Old Plans",
+          "description": "Move 5 old implementation plan JSON files to coderef/archived/plans/"
+        },
+        {
+          "id": "F2",
+          "name": "Remove Obsolete Scripts",
+          "description": "Delete version-specific scripts that are no longer needed"
+        },
+        {
+          "id": "F3",
+          "name": "Organize Test Files",
+          "description": "Move misplaced test files from root to tests/ directory"
+        },
+        {
+          "id": "F4",
+          "name": "Update Gitignore",
+          "description": "Add log file patterns to .gitignore"
+        },
+        {
+          "id": "F5",
+          "name": "HTTP Server Review",
+          "description": "Review http_server_full.py for potential consolidation"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-ROOT-CLEANUP-001",
+        "name": "Root Directory Cleanup",
+        "feature_dir": "coderef/working/root-cleanup"
+      },
+      "tasks": [
+        {
+          "id": "ARCHIVE-001",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Create coderef/archived/plans/ directory",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-002",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move audit-codebase-plan.json to archived/plans/",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-003",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move check-consistency-plan.json to archived/plans/",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-004",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move establish-standards-plan.json to archived/plans/",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-005",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move tooling-plan.json to archived/plans/",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-006",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move docs-mcp-improvements.json to archived/plans/",
+          "feature": "F1",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "ARCHIVE-007",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Create README.md in archived/plans/ documenting contents",
+          "feature": "F1",
+          "complexity": "low",
+          "estimated_minutes": 5
+        },
+        {
+          "id": "DELETE-001",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Delete add_changelog_v1.3.0.py obsolete script",
+          "feature": "F2",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "MOVE-001",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move test_app.py to tests/",
+          "feature": "F3",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "MOVE-002",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Move test_http_simple.py to tests/",
+          "feature": "F3",
+          "complexity": "trivial",
+          "estimated_minutes": 1
+        },
+        {
+          "id": "MOVE-003",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Create tests/fixtures/ and move test_hello.json",
+          "feature": "F3",
+          "complexity": "low",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "MOVE-004",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Verify pytest still discovers moved test files",
+          "feature": "F3",
+          "complexity": "low",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "GITIGNORE-001",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Add *.log and server*.log patterns to .gitignore",
+          "feature": "F4",
+          "complexity": "trivial",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "GITIGNORE-002",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Remove server.log and server_debug.log from git tracking",
+          "feature": "F4",
+          "complexity": "low",
+          "estimated_minutes": 2
+        },
+        {
+          "id": "REVIEW-001",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Compare http_server.py and http_server_full.py for redundancy",
+          "feature": "F5",
+          "complexity": "medium",
+          "estimated_minutes": 10
+        },
+        {
+          "id": "REVIEW-002",
+          "workorder_id": "WO-ROOT-CLEANUP-001",
+          "description": "Document decision on HTTP server consolidation",
+          "feature": "F5",
+          "complexity": "low",
+          "estimated_minutes": 5
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Archive Old Plans",
+          "description": "Create archive directory and move old JSON plan files",
+          "tasks": ["ARCHIVE-001", "ARCHIVE-002", "ARCHIVE-003", "ARCHIVE-004", "ARCHIVE-005", "ARCHIVE-006", "ARCHIVE-007"],
+          "deliverables": ["coderef/archived/plans/ directory with 5 plan files and README"]
+        },
+        {
+          "phase": 2,
+          "name": "Remove and Reorganize",
+          "description": "Delete obsolete files and move test files to proper locations",
+          "tasks": ["DELETE-001", "MOVE-001", "MOVE-002", "MOVE-003", "MOVE-004"],
+          "deliverables": ["Cleaned root directory", "Test files in tests/"]
+        },
+        {
+          "phase": 3,
+          "name": "Update Configuration",
+          "description": "Update .gitignore and clean up git tracking",
+          "tasks": ["GITIGNORE-001", "GITIGNORE-002"],
+          "deliverables": ["Updated .gitignore", "Log files untracked"]
+        },
+        {
+          "phase": 4,
+          "name": "Review and Document",
+          "description": "Review HTTP server files and document decisions",
+          "tasks": ["REVIEW-001", "REVIEW-002"],
+          "deliverables": ["HTTP server consolidation decision documented"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [
+        {
+          "name": "Verify pytest discovery",
+          "description": "Run pytest --collect-only to verify moved test files are discovered"
+        }
+      ],
+      "manual_verification": [
+        "Verify root directory has fewer files",
+        "Verify archived plans are accessible",
+        "Verify log files are gitignored"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        {
+          "id": "SC-001",
+          "description": "Root directory reduced from 52 to ~42 files",
+          "measurable": true,
+          "verification": "ls -la | wc -l"
+        },
+        {
+          "id": "SC-002",
+          "description": "All 5 plan JSON files archived to coderef/archived/plans/",
+          "measurable": true,
+          "verification": "ls coderef/archived/plans/*.json | wc -l == 5"
+        },
+        {
+          "id": "SC-003",
+          "description": "No obsolete scripts in root directory",
+          "measurable": true,
+          "verification": "No add_changelog_*.py files exist"
+        },
+        {
+          "id": "SC-004",
+          "description": "All test files in tests/ directory",
+          "measurable": true,
+          "verification": "No test_*.py files in root"
+        },
+        {
+          "id": "SC-005",
+          "description": "Log files excluded from git",
+          "measurable": true,
+          "verification": "git status shows no .log files"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": {
+        "name": "Archive Old Plans",
+        "tasks": [
+          { "id": "ARCHIVE-001", "description": "Create coderef/archived/plans/ directory", "status": "pending" },
+          { "id": "ARCHIVE-002", "description": "Move audit-codebase-plan.json", "status": "pending" },
+          { "id": "ARCHIVE-003", "description": "Move check-consistency-plan.json", "status": "pending" },
+          { "id": "ARCHIVE-004", "description": "Move establish-standards-plan.json", "status": "pending" },
+          { "id": "ARCHIVE-005", "description": "Move tooling-plan.json", "status": "pending" },
+          { "id": "ARCHIVE-006", "description": "Move docs-mcp-improvements.json", "status": "pending" },
+          { "id": "ARCHIVE-007", "description": "Create README.md for archived plans", "status": "pending" }
+        ]
+      },
+      "phase_2": {
+        "name": "Remove and Reorganize",
+        "tasks": [
+          { "id": "DELETE-001", "description": "Delete add_changelog_v1.3.0.py", "status": "pending" },
+          { "id": "MOVE-001", "description": "Move test_app.py to tests/", "status": "pending" },
+          { "id": "MOVE-002", "description": "Move test_http_simple.py to tests/", "status": "pending" },
+          { "id": "MOVE-003", "description": "Move test_hello.json to tests/fixtures/", "status": "pending" },
+          { "id": "MOVE-004", "description": "Verify pytest discovery", "status": "pending" }
+        ]
+      },
+      "phase_3": {
+        "name": "Update Configuration",
+        "tasks": [
+          { "id": "GITIGNORE-001", "description": "Add log patterns to .gitignore", "status": "pending" },
+          { "id": "GITIGNORE-002", "description": "Remove log files from git tracking", "status": "pending" }
+        ]
+      },
+      "phase_4": {
+        "name": "Review and Document",
+        "tasks": [
+          { "id": "REVIEW-001", "description": "Compare HTTP server files", "status": "pending" },
+          { "id": "REVIEW-002", "description": "Document consolidation decision", "status": "pending" }
+        ]
+      }
+    }
+  }
+}

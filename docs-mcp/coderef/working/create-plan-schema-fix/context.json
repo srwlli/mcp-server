@@ -1,0 +1,28 @@
+{
+  "feature_name": "create-plan-schema-fix",
+  "description": "Update handle_create_plan to return the plan.schema.json content with its instructions, so AI generates schema-compliant plans from the start",
+  "goal": "Fix the root cause of schema mismatch - ensure AI has the schema contract BEFORE generating plan.json",
+  "requirements": [
+    "Load plan.schema.json in handle_create_plan",
+    "Include schema in the returned instructions to AI",
+    "AI must follow schema when generating plan.json",
+    "Prevent schema drift at the source"
+  ],
+  "out_of_scope": [
+    "Changing the schema itself",
+    "Modifying other handlers",
+    "Breaking existing plans"
+  ],
+  "constraints": [
+    "Must not break existing create_plan behavior",
+    "Schema file path must be correct",
+    "Instructions must be clear for AI to follow"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-CREATE-PLAN-SCHEMA-FIX-001",
+    "workorder_assigned_at": "2025-12-03T18:40:32.120191+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

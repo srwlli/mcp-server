@@ -43,10 +43,22 @@
         .links a:hover { text-decoration: underline; }
 
         footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
+
+        .nav { display: flex; justify-content: center; gap: 20px; padding: 15px; background: #2c3e50; margin-bottom: 30px; border-radius: 8px; }
+        .nav a { color: #fff; text-decoration: none; font-size: 0.9rem; padding: 5px 12px; border-radius: 4px; }
+        .nav a:hover { background: rgba(255,255,255,0.1); }
+        .nav a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="container">
+        <nav class="nav">
+            <a href="../index.html">Ecosystem</a>
+            <a href="../docs-mcp/index.html">docs-mcp</a>
+            <a href="../personas-mcp/index.html" class="active">personas-mcp</a>
+            <a href="../coderef-mcp/index.html">coderef-mcp</a>
+        </nav>
+
         <header>
             <h1>personas-mcp</h1>
             <p class="tagline">Expert Agent Personas for AI Assistants</p>

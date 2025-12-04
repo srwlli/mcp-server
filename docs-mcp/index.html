@@ -47,10 +47,22 @@
         .install-box { background: #2c3e50; color: #ecf0f1; padding: 15px 20px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; overflow-x: auto; margin: 20px 0; }
 
         footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
+
+        .nav { display: flex; justify-content: center; gap: 20px; padding: 15px; background: #2c3e50; margin-bottom: 30px; border-radius: 8px; }
+        .nav a { color: #fff; text-decoration: none; font-size: 0.9rem; padding: 5px 12px; border-radius: 4px; }
+        .nav a:hover { background: rgba(255,255,255,0.1); }
+        .nav a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="container">
+        <nav class="nav">
+            <a href="../index.html">Ecosystem</a>
+            <a href="../docs-mcp/index.html" class="active">docs-mcp</a>
+            <a href="../personas-mcp/index.html">personas-mcp</a>
+            <a href="../coderef-mcp/index.html">coderef-mcp</a>
+        </nav>
+
         <header>
             <h1>docs-mcp</h1>
             <p class="tagline">MCP Server for Documentation & Planning</p>

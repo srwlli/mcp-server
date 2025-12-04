@@ -3227,11 +3227,37 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
             plan_data = json.load(f)
     except json.JSONDecodeError as e:
         return ErrorResponse.malformed_json(
-            f"plan.json is malformed: {str(e)}"
+            f"plan.json is malformed at line {e.lineno}, column {e.colno}: {e.msg}\n"
+            f"Suggestion: Run /validate-plan to identify issues, or regenerate with /create-plan"
+        )
+
+    # Validate plan structure
+    if not isinstance(plan_data, dict):
+        return ErrorResponse.invalid_input(
+            f"plan.json root must be an object, got {type(plan_data).__name__}",
+            "Regenerate plan with /create-plan"
+        )
+
+    # Check for required sections
+    required_sections = ["META_DOCUMENTATION", "9_implementation_checklist"]
+    missing_sections = [s for s in required_sections if s not in plan_data]
+    if missing_sections:
+        available_sections = list(plan_data.keys())[:10]  # Show first 10
+        return ErrorResponse.invalid_input(
+            f"plan.json missing required sections: {', '.join(missing_sections)}",
+            f"Available sections: {', '.join(available_sections)}\n"
+            f"Run /create-plan to regenerate or manually add missing sections"
         )
 
     # Extract workorder_id (with fallback)
-    workorder_id = plan_data.get("META_DOCUMENTATION", {}).get("workorder_id")
+    meta_doc = plan_data.get("META_DOCUMENTATION", {})
+    if not isinstance(meta_doc, dict):
+        return ErrorResponse.invalid_input(
+            f"META_DOCUMENTATION must be an object, got {type(meta_doc).__name__}",
+            "Fix META_DOCUMENTATION structure or regenerate with /create-plan"
+        )
+
+    workorder_id = meta_doc.get("workorder_id")
     if not workorder_id:
         # Fallback: Generate from feature name
         workorder_id = f"WO-{feature_name.upper().replace('-', '-')}-001"
@@ -3244,10 +3270,23 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     section_9 = get_checklist(plan_data, strict=True)
 
     if not section_9:
-        return ErrorResponse.invalid_input(
-            "Section 9 (9_implementation_checklist) not found in plan",
-            "Plan must contain implementation checklist to execute"
-        )
+        # Provide diagnostic info
+        raw_section_9 = plan_data.get("9_implementation_checklist")
+        if raw_section_9 is None:
+            return ErrorResponse.invalid_input(
+                "Section 9 (9_implementation_checklist) not found in plan",
+                "Plan must contain implementation checklist. Run /create-plan to regenerate."
+            )
+        elif not isinstance(raw_section_9, dict):
+            return ErrorResponse.invalid_input(
+                f"Section 9 must be an object with task lists, got {type(raw_section_9).__name__}",
+                "Expected format: {\"phase_1\": [\"task1\", \"task2\"], ...}"
+            )
+        else:
+            return ErrorResponse.invalid_input(
+                f"Section 9 exists but schema validation failed. Keys found: {list(raw_section_9.keys())}",
+                "Check that each phase contains a list of task strings"
+            )
 
     # Extract all tasks from all phase lists
     all_tasks = []

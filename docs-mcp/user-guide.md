@@ -1297,7 +1297,7 @@ Slash commands are shortcuts that make docs-mcp tools easier to use. Instead of 
 
 ---
 
-### Available Slash Commands (12 Total)
+### Available Slash Commands (40 Total)
 
 #### Documentation Commands (4)
 
@@ -1602,9 +1602,40 @@ AI: You can now run /analyze-for-planning to create implementation plan
 
 ---
 
-#### Planning Commands (5)
+#### Planning Commands (6)
 
-##### `/analyze-for-planning`
+##### `/start-feature` ⭐ RECOMMENDED
+**Primary entry point for feature planning.** Orchestrates the full workflow in one command.
+
+**What it does:**
+- Asks for feature name
+- Runs gather-context (interactive Q&A)
+- Runs analyze-project-for-planning (automatic)
+- Runs create-plan (automatic)
+- Runs validate-plan (auto-fixes until score >= 90)
+- Commits planning artifacts to git
+
+**When to use:**
+- **Always start here** for new features
+- Single command replaces 4 separate commands
+- Best for complete planning workflow
+
+**Workflow:**
+```
+/start-feature → /execute-plan → implement → /update-deliverables → /archive-feature
+```
+
+**Example:**
+```
+You: /start-feature
+AI: What feature would you like to plan? auth-system
+AI: [Runs full planning pipeline automatically]
+AI: Created: context.json, analysis.json, plan.json, DELIVERABLES.md
+```
+
+---
+
+##### `/analyze-for-planning` (Advanced)
 Analyze project for implementation planning context.
 
 **What it does:**
@@ -1747,6 +1778,92 @@ AI: [Displays formatted task list with TASK-ID first]
 
 ---
 
+#### Inventory Commands (8)
+
+##### `/quick-inventory` ⭐ RECOMMENDED
+**Run all 7 inventory tools in one command.** Best entry point for project analysis.
+
+**What it does:**
+- Runs all 7 inventory tools in sequence:
+  1. `inventory_manifest` - File catalog
+  2. `dependency_inventory` - Dependencies + security
+  3. `api_inventory` - API endpoints
+  4. `database_inventory` - Database schemas
+  5. `config_inventory` - Configuration files
+  6. `test_inventory` - Test infrastructure
+  7. `documentation_inventory` - Documentation files
+- Saves all manifests to `coderef/inventory/`
+- Provides combined summary
+
+**When to use:**
+- **First time exploring a project**
+- Complete project analysis
+- Before major refactoring
+
+**Example:**
+```
+You: /quick-inventory
+AI: Running all 7 inventory tools...
+AI: Created: manifest.json, dependencies.json, api.json, database.json, config.json, tests.json, documentation.json
+AI: Summary: 245 files, 32 dependencies (2 outdated), 15 API endpoints, 8 tables
+```
+
+---
+
+##### `/inventory-manifest`
+Generate comprehensive project file inventory.
+
+##### `/dependency-inventory`
+Analyze dependencies with security vulnerability scanning.
+
+##### `/api-inventory`
+Discover API endpoints across multiple frameworks.
+
+##### `/database-inventory`
+Generate database schema inventory from ORM models.
+
+##### `/config-inventory`
+Discover configuration files with security masking.
+
+##### `/test-inventory`
+Discover test files and analyze coverage.
+
+##### `/documentation-inventory`
+Discover documentation files with quality metrics.
+
+---
+
+#### Reference Commands (2)
+
+##### `/list-tools`
+Display all 53 MCP tools across all 3 servers in formatted CLI output.
+
+**What it does:**
+- Lists tools from docs-mcp (37 tools)
+- Lists tools from personas-mcp (8 tools)
+- Lists tools from coderef-mcp (8 tools)
+- Displays in Unicode box art format
+
+**When to use:**
+- Quick reference for available tools
+- Finding the right tool for a task
+
+---
+
+##### `/list-commands`
+Display all slash commands organized by category.
+
+**What it does:**
+- Lists all 40 slash commands
+- Organized by category (Documentation, Planning, Inventory, etc.)
+- Shows recommended entry points
+
+**When to use:**
+- Quick reference for available commands
+- Finding the right command for a task
+
+---
+
 ### Slash Commands vs MCP Tools
 
 | Slash Command | MCP Tool | Parameters |
@@ -1763,6 +1880,11 @@ AI: [Displays formatted task list with TASK-ID first]
 | `/validate-plan` | `validate_implementation_plan` | Prompts for filename |
 | `/generate-plan-review` | `generate_plan_review_report` | Prompts for filename |
 | `/handoff` | `generate_handoff_context` | Prompts for feature name and mode |
+| `/start-feature` ⭐ | (Workflow) | Orchestrates full planning pipeline |
+| `/execute-plan` | `execute_plan` | Prompts for feature name |
+| `/quick-inventory` ⭐ | (Runs all 7 inventory tools) | Uses current directory |
+| `/list-tools` | (Reference only) | Displays all MCP tools |
+| `/list-commands` | (Reference only) | Displays all slash commands |
 
 **Key difference:** Slash commands use sensible defaults. MCP tools allow full parameter control.
 
@@ -1770,51 +1892,46 @@ AI: [Displays formatted task list with TASK-ID first]
 
 ### Complete Workflow with Slash Commands
 
-**Scenario:** Document project, establish standards, create implementation plan
+**Scenario:** Analyze project, plan feature, implement, and archive
 
 ```bash
-# 1. Generate foundation documentation
+# 1. Explore the project (one command runs all inventory tools)
+You: /quick-inventory
+AI: Runs 7 inventory tools, creates manifest.json, dependencies.json, api.json, etc.
+AI: Summary: 245 files, 32 dependencies, 15 API endpoints
+
+# 2. Generate documentation (if not already present)
 You: /generate-docs
 AI: Creates 5 foundation docs: README, ARCHITECTURE, API, COMPONENTS, SCHEMA
 
-# 2. Establish coding standards
-You: /establish-standards
-AI: Scans codebase and creates 4 standards documents
+# 3. Plan a new feature (one command runs full planning pipeline)
+You: /start-feature
+AI: What feature? "auth-system"
+AI: [Runs gather-context, analyze, create-plan, validate automatically]
+AI: Created: context.json, analysis.json, plan.json, DELIVERABLES.md
+AI: Plan score: 91/100 - PASS!
 
-# 3. Audit for baseline compliance
-You: /audit-codebase
-AI: Compliance Score: 85/100 (Grade: B)
+# 4. Execute the plan (generates task checklist)
+You: /execute-plan
+AI: Feature name? "auth-system"
+AI: Generated 17 tasks for WO-AUTH-001
+AI: [Displays organized TodoWrite checklist]
 
-# 4. Gather feature context (optional)
-You: /gather-context
-AI: Conducts Q&A and saves to coderef/working/generate-homepage/context.json
+# 5. Implement the feature
+AI: Implements according to plan with task tracking
 
-# 5. Create implementation plan
-You: "Create plan for the generate-homepage feature"
+# 6. Update deliverables after implementation
+You: /update-deliverables
+AI: Feature name? "auth-system"
+AI: Updated metrics: 12 commits, 450 LOC, 3 days
 
-# 6. Analyze for planning context
-You: /analyze-for-planning
-AI: Discovers docs, standards, tech stack
-
-# 7. Get planning template
-You: /get-planning-template
-AI: Returns template structure
-
-# 8. AI creates plan
-AI: Saves to coderef/working/generate-homepage/plan.json
-
-# 9. Validate plan
-You: /validate-plan
-AI: Score: 91/100 - PASS!
-
-# 10. Generate review report
-You: /generate-plan-review
-AI: Saves to coderef/working/generate-homepage/review.json
-
-# 11. User approves and implements
-You: "Approved, proceed with implementation"
-AI: Implements according to plan
+# 7. Archive completed feature
+You: /archive-feature
+AI: Feature name? "auth-system"
+AI: Archived to coderef/archived/auth-system/
 ```
+
+**Key insight:** `/start-feature` + `/execute-plan` replaces 6-8 manual steps!
 
 ---
 

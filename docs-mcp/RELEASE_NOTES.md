@@ -1,4 +1,79 @@
-# docs-mcp v2.0.0 Release Notes
+# docs-mcp Release Notes
+
+**Current Version**: 2.7.0
+**Last Updated**: December 4, 2025
+**Status**: Production Ready ✅
+
+---
+
+## Recent Updates (December 2025)
+
+### v2.7.0 - Consolidated Planning & Reference Commands
+
+**New Slash Commands:**
+- `/start-feature` ⭐ **RECOMMENDED** - Single entry point for complete planning workflow (replaces 4 commands)
+- `/quick-inventory` ⭐ **RECOMMENDED** - Run all 7 inventory tools in one command
+- `/list-tools` - Display all 53 MCP tools across 3 servers
+- `/list-commands` - Display all 40 slash commands by category
+
+**Enhancements:**
+- `dependency_inventory` now includes `fix_command` field with ecosystem-specific update commands:
+  - npm: `npm install package@version`
+  - pip: `pip install package==version`
+  - cargo: `cargo update -p package`
+  - composer: `composer require package:version`
+- Simplified command format for better slash command recognition
+
+**Documentation Updates:**
+- Consolidated planning entry points to `/start-feature`
+- Updated workflow examples to use recommended commands
+- Added Reference Commands category
+
+**Total Stats:**
+- 37 MCP Tools
+- 40 Slash Commands
+- 3 Server Ecosystem (docs-mcp, personas-mcp, coderef-mcp)
+
+---
+
+### v2.6.0 - Global Workorder Logging
+
+**New Tools:**
+- `log_workorder` - Log workorder entries to global activity log
+- `get_workorder_log` - Query workorder history with filters
+
+**Features:**
+- Simple one-line format: `WO-ID | Project | Description | Timestamp`
+- Reverse chronological order (latest first)
+- Filter by project, pattern, or limit
+
+---
+
+### v2.5.0 - Plan Execution
+
+**New Tools:**
+- `execute_plan` - Generate TodoWrite task list from plan.json
+
+**Features:**
+- TASK-ID first format for easy scanning
+- Gerund conversion for activeForm (Install → Installing)
+- Execution logging to execution-log.json
+
+---
+
+### v2.4.0 - Documentation Updates
+
+**New Tools:**
+- `update_all_documentation` - Update README, CLAUDE, and CHANGELOG in one call
+
+**Features:**
+- Auto-version increment based on change type
+- Workorder tracking integration
+- Agentic design (agent provides context)
+
+---
+
+# docs-mcp v2.0.0 Release Notes (Archive)
 
 **Release Date**: October 15, 2025
 **Status**: Production Ready ✅

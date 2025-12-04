@@ -484,6 +484,118 @@ Track agent status across features with real-time dashboard.
 # Displays agent statuses and blockers
 ```
 
+---
+
+### Multi-Agent Workflow Example
+
+**Scenario**: Implement authentication feature using 3 parallel agents
+
+```bash
+# Step 1: Create plan (single agent)
+/start-feature
+# Feature name: auth-system
+# Creates: plan.json with workorder WO-AUTH-SYSTEM-001
+
+# Step 2: Generate communication protocol
+/generate-agent-communication
+# Feature name: auth-system
+# Creates: communication.json with agent slots and forbidden files
+
+# Step 3: Assign work to parallel agents
+/assign-agent-task
+# Feature: auth-system, Agent: 1, Phase: phase_1_setup
+# Agent 1 gets WO-AUTH-SYSTEM-002 (dependencies + directory structure)
+
+/assign-agent-task
+# Feature: auth-system, Agent: 2, Phase: phase_2_core
+# Agent 2 gets WO-AUTH-SYSTEM-003 (JWT + password hashing)
+
+/assign-agent-task
+# Feature: auth-system, Agent: 3, Phase: phase_3_tests
+# Agent 3 gets WO-AUTH-SYSTEM-004 (unit + integration tests)
+
+# Step 4: Agents work in parallel (each in separate terminal)
+# Agent 1: Completes setup, marks status COMPLETE
+# Agent 2: Completes core logic, marks status COMPLETE
+# Agent 3: Completes tests, marks status COMPLETE
+
+# Step 5: Verify each agent's work
+/verify-agent-completion
+# Feature: auth-system, Agent: 1
+# Validates: forbidden files unchanged, success criteria met
+# Status: VERIFIED ✅
+
+/verify-agent-completion
+# Feature: auth-system, Agent: 2
+# Status: VERIFIED ✅
+
+/verify-agent-completion
+# Feature: auth-system, Agent: 3
+# Status: VERIFIED ✅
+
+# Step 6: Monitor overall progress
+/track-agent-status
+# Feature: auth-system
+# Output:
+# ┌─────────────────────────────────────┐
+# │ Agent Status: auth-system           │
+# ├─────────────────────────────────────┤
+# │ Agent 1: VERIFIED ✅                │
+# │ Agent 2: VERIFIED ✅                │
+# │ Agent 3: VERIFIED ✅                │
+# │ Overall: 3/3 complete               │
+# └─────────────────────────────────────┘
+
+# Step 7: Aggregate deliverables
+/aggregate-agent-deliverables
+# Feature: auth-system
+# Creates: DELIVERABLES-COMBINED.md with total LOC, commits, time
+
+# Step 8: Archive completed feature
+/archive-feature
+# Feature: auth-system
+# Moves to: coderef/archived/auth-system/
+```
+
+**communication.json Structure**:
+```json
+{
+  "workorder_id": "WO-AUTH-SYSTEM-001",
+  "feature_name": "auth-system",
+  "agents": {
+    "agent_1": {
+      "workorder_id": "WO-AUTH-SYSTEM-002",
+      "phase": "phase_1_setup",
+      "status": "VERIFIED",
+      "forbidden_files": ["src/core/**", "tests/**"],
+      "allowed_files": ["requirements.txt", "src/auth/__init__.py"]
+    },
+    "agent_2": {
+      "workorder_id": "WO-AUTH-SYSTEM-003",
+      "phase": "phase_2_core",
+      "status": "VERIFIED",
+      "forbidden_files": ["requirements.txt", "tests/**"],
+      "allowed_files": ["src/auth/*.py"]
+    },
+    "agent_3": {
+      "workorder_id": "WO-AUTH-SYSTEM-004",
+      "phase": "phase_3_tests",
+      "status": "VERIFIED",
+      "forbidden_files": ["src/**"],
+      "allowed_files": ["tests/**"]
+    }
+  }
+}
+```
+
+**Key Benefits**:
+- **Conflict Prevention**: Forbidden files prevent agents from stepping on each other
+- **Traceability**: Each agent has unique workorder for audit trail
+- **Verification**: Automated checks ensure quality before merge
+- **Aggregation**: Combined metrics show total effort
+
+---
+
 #### `/archive-feature` **NEW in v1.10.0**
 Archive completed features from coderef/working/ to coderef/archived/.
 - Asks user for feature name
@@ -632,7 +744,7 @@ View and query the global workorder activity log.
 - Quick project status overview
 - Search workorder history
 
-#### `/handoff` **NEW in v1.12.0**
+#### `/generate-handoff-context` (renamed from /handoff)
 Generate automated agent handoff context files for seamless agent transitions.
 - Asks user for feature name
 - Optionally asks for mode (full/minimal, default: full)
@@ -642,12 +754,12 @@ Generate automated agent handoff context files for seamless agent transitions.
 
 ```bash
 # Generate full handoff context
-/handoff
+/generate-handoff-context
 # feature_name: auth-system
 # mode: full
 
 # Generate minimal handoff context
-/handoff
+/generate-handoff-context
 # feature_name: auth-system
 # mode: minimal
 ```

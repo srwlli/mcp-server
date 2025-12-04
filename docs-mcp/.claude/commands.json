@@ -152,6 +152,11 @@
       "category": "agent-coordination"
     },
     {
+      "name": "generate-handoff-context",
+      "description": "Generate automated agent handoff context for seamless agent-to-agent transitions",
+      "category": "agent-coordination"
+    },
+    {
       "name": "update-docs",
       "description": "Update all documentation files after feature completion",
       "category": "documentation"
@@ -224,14 +229,15 @@
         "assign-agent-task",
         "verify-agent-completion",
         "aggregate-agent-deliverables",
-        "track-agent-status"
+        "track-agent-status",
+        "generate-handoff-context"
       ]
     }
   },
   "metadata": {
-    "version": "1.12.0",
-    "total_commands": 30,
+    "version": "2.7.0",
+    "total_commands": 40,
     "project": "docs-mcp",
-    "generated_at": "2025-10-18T18:00:00Z"
+    "generated_at": "2025-12-04T00:00:00Z"
   }
 }

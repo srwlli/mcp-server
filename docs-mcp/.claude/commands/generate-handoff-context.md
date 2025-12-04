@@ -16,7 +16,7 @@ Reduces handoff time from 20-30 minutes to under 5 minutes by auto-populating 80
 
 **Usage:**
 ```
-/handoff
+/generate-handoff-context
 # Claude asks: Which feature? (e.g., "auth-system")
 # Claude asks: Mode? (full/minimal, default: full)
 # Generates coderef/working/{feature}/claude.md

@@ -27,7 +27,8 @@
 ### Key Features
 
 ✅ **37 MCP Tools** - Complete toolkit for documentation, changelog, consistency, quickref generation, planning workflow, deliverables tracking, **multi-agent coordination**, **agent handoff automation**, **feature archiving**, **workorder tracking**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations)
-✅ **38 Slash Commands** - Quick access to common workflows via `/command` syntax
+✅ **40 Slash Commands** - Quick access to common workflows via `/command` syntax
+✅ **Reference Commands** - `/list-tools` (53 tools across 3 servers) and `/list-commands` with Unicode box art display
 ✅ **Workorder Tracking** - Automatic unique ID assignment for all features in MCP planning workflow (NEW in v1.5.0)
 ✅ **Deliverables Tracking** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (NEW in v1.6.0)
 ✅ **Multi-Agent Coordination** - First MCP server with native parallel agent execution and automated verification (NEW in v1.9.0)

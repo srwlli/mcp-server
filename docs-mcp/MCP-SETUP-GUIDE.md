@@ -1,6 +1,6 @@
 # MCP Server Setup Guide - Complete Walkthrough
 
-**Last Updated**: 2025-10-11
+**Last Updated**: 2025-12-04
 **Author**: Claude (via Claude Code debugging session)
 
 ---
@@ -28,7 +28,7 @@ This guide documents the complete process of setting up MCP (Model Context Proto
 
 MCP servers expose custom tools that AI assistants can use to interact with your local system, read files, execute commands, or provide specialized functionality.
 
-**Advanced Example**: For a production MCP server with 13 tools, see the `docs-mcp` server in this directory. Refer to `docs-mcp/coderef/quickref.md` for complete tool documentation.
+**Advanced Example**: For a production MCP server with 37 tools, see the `docs-mcp` server in this directory. Refer to `docs-mcp/QUICK-START.md` for quick reference.
 
 ---
 
@@ -595,10 +595,10 @@ asyncio.run(test())
 - [MCP Python SDK](https://github.com/anthropics/mcp-python)
 - [Claude Code Documentation](https://docs.claude.com/claude-code)
 - [Example MCP Servers](https://github.com/anthropics/mcp-servers)
-- [docs-mcp Quick Reference](./docs-mcp/coderef/quickref.md) - Advanced MCP server example with 13 tools
+- [docs-mcp Quick Start](./docs-mcp/QUICK-START.md) - Advanced MCP server example with 37 tools
 
 ---
 
 **End of Guide**
 
-*This guide was created through live debugging and discovery. All commands and configurations have been tested and verified working as of 2025-10-08.*
+*This guide was created through live debugging and discovery. All commands and configurations have been tested and verified working as of 2025-12-04.*

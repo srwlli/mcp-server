@@ -213,7 +213,7 @@
 
 ### Medium Priority
 
-4. **Add `/quick-inventory`**: Single command to run all 7 inventory tools
+4. ~~**Add `/quick-inventory`**: Single command to run all 7 inventory tools~~ **DONE** (2025-12-04)
 5. ~~**Consolidate template commands**: `/list-templates` + `/get-template` into one~~ (Low priority - keep separate)
 6. **Multi-agent simplification**: 5 tools with ~6 rating average - need consolidation or better docs
 

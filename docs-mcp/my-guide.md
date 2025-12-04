@@ -103,13 +103,14 @@
   - /update-deliverables - Update DELIVERABLES.md with git metrics (LOC, commits, time)
 
   Project Inventory:
+  - /quick-inventory - Run ALL 7 inventory tools for complete project snapshot (recommended)
   - /inventory-manifest - Generate comprehensive project file inventory
   - /dependency-inventory - Analyze project dependencies with security scanning
-  - /api-inventory - Discover API endpoints across multiple frameworks with documentation coverage
-  - /database-inventory - Discover database schemas across multiple systems with ORM/migration parsing
+  - /api-inventory - Discover API endpoints across multiple frameworks
+  - /database-inventory - Discover database schemas with ORM/migration parsing
   - /config-inventory - Analyze configuration files with security detection
-  - /test-inventory - Discover test frameworks and analyze coverage metrics
-  - /documentation-inventory - Analyze documentation quality and metrics
+  - /test-inventory - Discover test frameworks and analyze coverage
+  - /documentation-inventory - Analyze documentation quality
 
   
   Multi-Agent Coordination:

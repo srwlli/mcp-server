@@ -107,6 +107,11 @@
       "category": "inventory"
     },
     {
+      "name": "quick-inventory",
+      "description": "Run all 7 inventory tools for complete project snapshot",
+      "category": "inventory"
+    },
+    {
       "name": "list-templates",
       "description": "List all available POWER framework documentation templates",
       "category": "documentation"
@@ -182,10 +187,14 @@
     "inventory": {
       "description": "Project inventory and analysis commands",
       "commands": [
+        "quick-inventory",
         "inventory-manifest",
         "dependency-inventory",
         "api-inventory",
-        "database-inventory"
+        "database-inventory",
+        "config-inventory",
+        "test-inventory",
+        "documentation-inventory"
       ]
     },
     "planning": {

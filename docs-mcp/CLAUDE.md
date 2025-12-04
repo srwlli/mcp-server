@@ -1,6 +1,6 @@
 # CLAUDE.md - docs-mcp AI Context Documentation
 
-**Version**: 1.11.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
+**Version**: 2.7.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
 
 ---
 
@@ -21,12 +21,12 @@
 ### What This Server Does
 
 **docs-mcp** is an MCP server providing:
-- **37 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
+- **38 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
 - **Workorder Tracking System** - Automatic unique ID assignment (WO-{FEATURE-NAME}-001) for all features in MCP planning workflow (v1.5.0)
 - **Global Workorder Logging** - Simple one-line logging for tracking workorder completion across projects (NEW in v1.11.0)
 - **Deliverables Tracking System** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (v1.6.0)
 - **Feature Archive System** - Automated archiving of completed features from working to archived directory with index tracking (v1.10.0)
-- **35 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, and inventory tools
+- **40 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, and inventory tools
 - **POWER framework templates** for comprehensive technical documentation
 - **Agentic workflows** enabling AI self-documentation via meta-tools
 - **Consistency Trilogy** pattern for living standards and compliance auditing

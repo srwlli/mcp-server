@@ -13,7 +13,7 @@
 **New Slash Commands:**
 - `/start-feature` ⭐ **RECOMMENDED** - Single entry point for complete planning workflow (replaces 4 commands)
 - `/quick-inventory` ⭐ **RECOMMENDED** - Run all 7 inventory tools in one command
-- `/list-tools` - Display all 53 MCP tools across 3 servers
+- `/list-tools` - Display all 54 MCP tools across 3 servers
 - `/list-commands` - Display all 40 slash commands by category
 
 **Enhancements:**
@@ -30,7 +30,7 @@
 - Added Reference Commands category
 
 **Total Stats:**
-- 37 MCP Tools
+- 38 MCP Tools
 - 40 Slash Commands
 - 3 Server Ecosystem (docs-mcp, personas-mcp, coderef-mcp)
 

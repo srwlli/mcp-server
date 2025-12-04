@@ -80,7 +80,7 @@
 
 | Command | Description |
 |----------|--------------|
-| `/list-tools` | Show all 53 MCP tools across 3 servers |
+| `/list-tools` | Show all 54 MCP tools across 3 servers |
 | `/list-commands` | Show all 40 slash commands by category |
 
 ---
@@ -128,4 +128,4 @@ mcp__docs-mcp__dependency_inventory(project_path="/path")
 
 ---
 
-**Total: 37 MCP Tools | 40 Slash Commands**
+**Total: 38 MCP Tools | 40 Slash Commands**

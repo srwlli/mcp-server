@@ -1836,10 +1836,10 @@ Discover documentation files with quality metrics.
 #### Reference Commands (2)
 
 ##### `/list-tools`
-Display all 53 MCP tools across all 3 servers in formatted CLI output.
+Display all 54 MCP tools across all 3 servers in formatted CLI output.
 
 **What it does:**
-- Lists tools from docs-mcp (37 tools)
+- Lists tools from docs-mcp (38 tools)
 - Lists tools from personas-mcp (8 tools)
 - Lists tools from coderef-mcp (8 tools)
 - Displays in Unicode box art format

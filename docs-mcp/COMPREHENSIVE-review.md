@@ -2,7 +2,7 @@
 
 **Version:** 3.0 (Agentic Perspective)
 **Review Date:** 2025-12-04
-**Total Components:** 37 MCP Tools + 40 Slash Commands
+**Total Components:** 38 MCP Tools + 40 Slash Commands
 **Design Philosophy:** Agentic-First (AI agents as primary users)
 
 ---
@@ -236,7 +236,7 @@
 
 ## Rating Distribution (Agentic Perspective)
 
-### MCP Tools (37)
+### MCP Tools (38)
 - **9/10**: 5 tools (14%)
 - **8/10**: 21 tools (57%)
 - **7/10**: 11 tools (30%)
@@ -301,7 +301,7 @@ docs-mcp is a comprehensive **agentic toolkit** designed for AI agents to autono
 ### Rating Summary
 | Category | Average | Grade |
 |----------|---------|-------|
-| MCP Tools (37) | 7.8/10 | A- |
+| MCP Tools (38) | 7.8/10 | A- |
 | Slash Commands (40) | 8.0/10 | A- |
 
 **Overall Grade: A-** ⬆️ (was B+)

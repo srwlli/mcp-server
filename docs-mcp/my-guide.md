@@ -142,14 +142,14 @@
   - /execute-plan - Generate TodoWrite task list from plan.json
 
   Agent Handoff Slash Commands:
-  - /handoff - Auto-generate agent handoff context (reduces handoff time from 20-30 min to <5 min)
+  - /generate-handoff-context - Auto-generate agent handoff context (reduces handoff time from 20-30 min to <5 min)
 
   Workorder Tracking Slash Commands:
   - /log-workorder - Log workorder to global activity log
   - /get-workorder-log - Query global workorder log with filters
 
   Reference:
-  - /list-tools - Show all 53 MCP tools across 3 servers (docs-mcp, personas-mcp, coderef-mcp)
+  - /list-tools - Show all 54 MCP tools across 3 servers (docs-mcp, personas-mcp, coderef-mcp)
   - /list-commands - Show all slash commands by category
 
-  Total: 37 MCP tools and 40 slash commands from docs-mcp server!
+  Total: 38 MCP tools and 40 slash commands from docs-mcp server!

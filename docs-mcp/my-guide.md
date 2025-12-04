@@ -27,6 +27,12 @@
   - generate_plan_review_report - Create human-readable plan review
   - execute_plan - Generate TodoWrite task list from plan.json with TASK-ID first format
 
+  Schema Validation Helpers (NEW in v1.1.0):
+  - get_phases(plan) - Extract phases from array or legacy dict format
+  - get_tasks(plan) - Extract tasks from array or task_breakdown format
+  - get_files_to_create(plan) - Normalize strings to {path, purpose} objects
+  - get_workorder_id(plan) - Safe extraction with fallback
+
   Deliverables Tracking:
   - generate_deliverables_template - Generate DELIVERABLES.md from plan.json (automatic with /create-plan)
   - update_deliverables - Update DELIVERABLES.md with git metrics (LOC, commits, time)

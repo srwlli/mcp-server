@@ -98,6 +98,29 @@ docs-mcp now includes a consistency management system for discovering and docume
 - **ux_flows** - Navigation, permissions, accessibility
 - **all** - Complete analysis (recommended)
 
+### Schema-First Planning (NEW in v1.1.0)
+
+docs-mcp enforces **schema-first design** for implementation plans:
+
+**Three-Layer Defense:**
+
+| Layer | Tool | Action | On Failure |
+|-------|------|--------|------------|
+| Producer | `create_plan` | Shows schema contract to AI | N/A (preventive) |
+| Validator | `schema_validator.py` | Normalizes any format | Logs warning, proceeds |
+| Consumer | `generate_deliverables_template` | Uses helper functions | Graceful fallback |
+
+**Schema Contract (Critical Structures):**
+- `6_implementation_phases` - Use `phases: []` array (not `phase_1`, `phase_2` keys)
+- `5_task_id_system` - Use `tasks: []` array (not `task_breakdown` dict)
+- `files_to_create` - Use `[{path, purpose}]` objects (not strings)
+
+**Helper Functions** (`schema_validator.py`):
+- `get_phases(plan)` - Extracts phases from either format
+- `get_tasks(plan)` - Extracts tasks from either format
+- `get_files_to_create(plan)` - Normalizes strings to objects
+- `get_workorder_id(plan)` - Safe extraction with fallback
+
 ### Planning Workflow System (NEW in v1.4.0)
 
 docs-mcp now includes a comprehensive planning workflow system for AI-assisted implementation planning:

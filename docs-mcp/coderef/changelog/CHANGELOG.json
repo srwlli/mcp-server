@@ -675,6 +675,21 @@
           "reason": "Feature completion: workorder-log-integration",
           "impact": "Documentation now reflects 1.1.0 changes",
           "breaking": false
+        },
+        {
+          "id": "change-037",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Schema-First Design for planning workflow - Added plan.schema.json as single source of truth, schema_validator.py with helper functions for safe data extraction, and updated generate_deliverables_template to use normalized format handling. Implements three-layer defense: Producer (create_plan shows schema), Validator (normalizes formats), Consumer (uses helpers).",
+          "description": "Workorder WO-DOCS-MCP-SCHEMA-FIX-001: Schema-First Design for planning workflow - Added plan.schema.json as single source of truth, schema_validator.py with helper functions for safe data extraction, and updated generate_deliverables_template to use normalized format handling. Implements three-layer defense: Producer (create_plan shows schema), Validator (normalizes formats), Consumer (uses helpers).",
+          "files": [
+            "schemas/plan.schema.json",
+            "schema_validator.py",
+            "tool_handlers.py"
+          ],
+          "reason": "Feature completion: schema-first-planning",
+          "impact": "Documentation now reflects 1.1.0 changes",
+          "breaking": false
         }
       ],
       "contributors": [

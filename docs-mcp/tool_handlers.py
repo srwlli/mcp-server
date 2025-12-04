@@ -3214,7 +3214,7 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     feature_name = validate_feature_name_input(feature_name)
 
     # Load plan.json
-    plan_file = project_path / Paths.CONTEXT_DIR / "working" / feature_name / "plan.json"
+    plan_file = Path(project_path) / Paths.CONTEXT_DIR / "working" / feature_name / "plan.json"
 
     if not plan_file.exists():
         return ErrorResponse.not_found(
@@ -3257,27 +3257,31 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
 
         if isinstance(value, list):
             # This is a phase list
-            for task in value:
-                if isinstance(task, str) and any(prefix in task for prefix in ["☐", "☑", "⏳", "🚫"]):
-                    # Parse task: "☐ TASK-ID: Description"
-                    # Remove status prefix
-                    task_clean = task.lstrip("☐☑⏳🚫").strip()
-
-                    # Determine initial status based on prefix
-                    if "☑" in task:
-                        status = "completed"
-                    elif "⏳" in task:
-                        status = "in_progress"
-                    elif "🚫" in task:
-                        status = "blocked"
+            for idx, task in enumerate(value):
+                if isinstance(task, str):
+                    # Check for checkbox prefix format (legacy)
+                    if any(prefix in task for prefix in ["☐", "☑", "⏳", "🚫"]):
+                        task_clean = task.lstrip("☐☑⏳🚫").strip()
+                        if "☑" in task:
+                            status = "completed"
+                        elif "⏳" in task:
+                            status = "in_progress"
+                        elif "🚫" in task:
+                            status = "blocked"
+                        else:
+                            status = "pending"
                     else:
+                        # Plain text format (common AI generation)
+                        task_clean = task.strip()
                         status = "pending"
 
                     # Extract TASK-ID and description
                     if ": " in task_clean:
                         task_id, description = task_clean.split(": ", 1)
                     else:
-                        task_id = task_clean
+                        # Generate task ID from phase key and index
+                        phase_prefix = key.upper().replace("_", "-")[:8]
+                        task_id = f"{phase_prefix}-{idx+1:03d}"
                         description = task_clean
 
                     # Generate activeForm (present continuous)

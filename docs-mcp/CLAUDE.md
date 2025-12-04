@@ -2949,6 +2949,7 @@ assert "version format" in result[0].text.lower()
 **Maintainers**: willh, Claude Code AI
 
 **Change History** (Recent):
+- 1.1.0: Schema-First Design for planning workflow - Added plan.schema.json as single source of truth, schema_validator.py with helper functions for safe data extraction, and updated generate_deliverables_template to use normalized format handling. Implements three-layer defense: Producer (create_plan shows schema), Validator (normalizes formats), Consumer (uses helpers).
 - 1.0.4: Fixed /create-plan to automatically generate DELIVERABLES.md after plan.json creation - aligns code with existing documentation claims
 - 1.1.0: Integrated automatic workorder logging with archive feature workflow - completes workorder lifecycle by auto-logging to workorder-log.txt when features are archived
 - 1.11.0: Global Workorder Logging System - 2 new tools (log_workorder, get_workorder_log) for tracking feature completion

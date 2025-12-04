@@ -3382,7 +3382,7 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
         workorder_id: Workorder ID from plan
         tasks: List of TodoWrite-formatted tasks
     """
-    log_file = project_path / Paths.CONTEXT_DIR / "working" / feature_name / "execution-log.json"
+    log_file = Path(project_path) / Paths.CONTEXT_DIR / "working" / feature_name / "execution-log.json"
 
     execution_entry = {
         "timestamp": datetime.now().isoformat(),

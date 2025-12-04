@@ -441,7 +441,7 @@ class DependencyGenerator:
             ecosystem: Package ecosystem (npm, pip, cargo, composer)
 
         Returns:
-            Updated list of dependency dictionaries with latest_version and outdated fields
+            Updated list of dependency dictionaries with latest_version, outdated, and fix_command fields
         """
         for dep in dependencies:
             try:
@@ -457,16 +457,46 @@ class DependencyGenerator:
                     dep['latest_version'] = latest
                     # Simple version comparison (TODO: use packaging library for accurate comparison)
                     dep['outdated'] = dep['version'] != latest
+                    # Add fix command for outdated packages
+                    if dep['outdated']:
+                        dep['fix_command'] = self._get_fix_command(dep['name'], latest, ecosystem)
+                    else:
+                        dep['fix_command'] = None
                 else:
                     dep['latest_version'] = 'unknown'
                     dep['outdated'] = False
+                    dep['fix_command'] = None
 
             except Exception as e:
                 log_error('version_check_error', f"Failed to check latest version for {dep['name']}: {str(e)}")
                 dep['latest_version'] = 'unknown'
                 dep['outdated'] = False
+                dep['fix_command'] = None
 
         return dependencies
+
+    def _get_fix_command(self, package_name: str, latest_version: str, ecosystem: str) -> str:
+        """
+        Generate the fix command to update an outdated package.
+
+        Args:
+            package_name: Name of the package
+            latest_version: Latest available version
+            ecosystem: Package ecosystem (npm, pip, cargo, composer)
+
+        Returns:
+            Command string to update the package
+        """
+        if ecosystem == 'npm':
+            return f"npm install {package_name}@{latest_version}"
+        elif ecosystem == 'pip':
+            return f"pip install {package_name}=={latest_version}"
+        elif ecosystem == 'cargo':
+            return f"cargo update -p {package_name}"
+        elif ecosystem == 'composer':
+            return f"composer require {package_name}:{latest_version}"
+        else:
+            return f"# Update {package_name} to {latest_version}"
 
     def _get_npm_latest_version(self, package_name: str) -> Optional[str]:
         """Get latest version from npm registry."""

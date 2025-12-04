@@ -246,20 +246,38 @@ Quick consistency check on modified files (pre-commit gate).
 # Claude checks only modified files for standards violations
 ```
 
-#### `/analyze-for-planning`
-Analyzes project for implementation planning context.
+#### `/start-feature` (RECOMMENDED)
+**Primary entry point for feature planning.** Orchestrates the full workflow in one command.
+- Asks for feature name
+- Runs gather-context (interactive Q&A)
+- Runs analyze-project-for-planning (automatic)
+- Runs create-plan (automatic)
+- Runs validate-plan (auto-fixes until score >= 90)
+- Commits planning artifacts to git
+
+```bash
+# User types: /start-feature
+# Claude runs entire planning pipeline: gather → analyze → plan → validate → commit
+# Creates: context.json, analysis.json, plan.json, DELIVERABLES.md
+```
+
+**Workflow:**
+```
+/start-feature → /execute-plan → implement → /update-deliverables → /archive-feature
+```
+
+---
+
+#### `/analyze-for-planning` (Advanced)
+Standalone project analysis - use when you already have context or need fine-grained control.
 - Calls `analyze_project_for_planning` with current directory
-- Optionally saves to feature folder when used with feature_name parameter
 - Discovers foundation docs, standards, patterns
 - Identifies tech stack and reference components
-- Flags gaps and risks
-- **Preserves workorder ID** from prior /gather-context if available
-- **Run BEFORE creating implementation plans**
+- **Note:** Usually not needed - `/start-feature` runs this automatically
 
 ```bash
 # User types: /analyze-for-planning
 # Claude analyzes project and provides planning context (80ms)
-# To save to feature folder, call MCP tool directly with feature_name parameter
 ```
 
 #### `/validate-plan`
@@ -289,22 +307,19 @@ Get feature implementation planning template for AI reference.
 # Claude returns the full planning template or specific section
 ```
 
-#### `/create-plan`
-Create implementation plan by synthesizing context, analysis, and template.
+#### `/create-plan` (Advanced)
+Standalone plan creation - use when you already have context.json and analysis.json.
+- **Tip:** Use `/start-feature` instead for the full automated workflow
 - Asks user for feature name (alphanumeric, hyphens, underscores only)
 - Calls `create_plan` with current directory and feature name
-- Loads context.json from prior `/gather-context` (if available) - **reads workorder ID**
-- Loads analysis from prior `/analyze-for-planning` (if available) - **preserves workorder**
-- Loads AI-optimized template (502 lines, 63% smaller)
-- Generates complete 10-section plan in batch mode
-- **Embeds workorder in section 5** - all tasks reference workorder_id
+- Loads context.json and analysis.json if available
+- Generates complete 10-section plan
 - Saves to coderef/working/{feature_name}/plan.json
 
 ```bash
 # User types: /create-plan
 # Claude asks for feature name, then generates implementation plan
-# Best results require both context and analysis
-# Workorder ID automatically flows through context → plan
+# Best results require both context and analysis (use /start-feature)
 ```
 
 #### `/generate-plan-review`

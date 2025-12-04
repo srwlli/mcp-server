@@ -19,13 +19,16 @@
   - check_consistency - Lightweight pre-commit quality gate
 
   Planning & Validation:
-  - get_planning_template - Get implementation planning template
-  - analyze_project_for_planning - Discover docs, standards, patterns (optional: save to feature folder)
-  - gather_context - Gather feature requirements (assigns workorder ID)
-  - create_plan - Generate implementation plan (auto-generates DELIVERABLES.md)
+  - Use /start-feature command for full workflow (recommended)
+  - execute_plan - Generate TodoWrite task list from plan.json
   - validate_implementation_plan - Validate plan quality (scores 0-100)
   - generate_plan_review_report - Create human-readable plan review
-  - execute_plan - Generate TodoWrite task list from plan.json with TASK-ID first format
+
+  Advanced Planning (standalone tools):
+  - gather_context - Gather feature requirements (assigns workorder ID)
+  - analyze_project_for_planning - Discover docs, standards, patterns
+  - create_plan - Generate implementation plan (auto-generates DELIVERABLES.md)
+  - get_planning_template - Get implementation planning template
 
   Schema Validation Helpers (NEW in v1.1.0):
   - get_phases(plan) - Extract phases from array or legacy dict format
@@ -84,13 +87,16 @@
   - /check-consistency - Quick consistency check on modified files (pre-commit gate)
 
   Planning & Validation:
-  - /gather-context - Gather feature requirements and context (assigns workorder ID)
-  - /analyze-for-planning - Analyze project for implementation planning
-  - /get-planning-template - Get implementation planning template
-  - /create-plan - Create implementation plan (auto-generates DELIVERABLES.md)
+  - /start-feature - RECOMMENDED: Full planning workflow (gather → analyze → plan → validate → commit)
+  - /execute-plan - Generate TodoWrite task list from plan.json
   - /validate-plan - Validate implementation plan quality (scores 0-100)
   - /generate-plan-review - Generate human-readable plan review report
-  - /execute-plan - Generate TodoWrite task list with TASK-ID first format for execution
+
+  Advanced (standalone):
+  - /gather-context - Gather feature requirements (use /start-feature instead)
+  - /analyze-for-planning - Analyze project for planning (use /start-feature instead)
+  - /create-plan - Create implementation plan (use /start-feature instead)
+  - /get-planning-template - Get implementation planning template
 
   Deliverables Tracking:
   - /generate-deliverables - Generate DELIVERABLES.md template from plan.json

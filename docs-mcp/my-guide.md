@@ -148,4 +148,8 @@
   - /log-workorder - Log workorder to global activity log
   - /get-workorder-log - Query global workorder log with filters
 
-  Total: 37 MCP tools and 38 slash commands from docs-mcp server!
+  Reference:
+  - /list-tools - Show all 53 MCP tools across 3 servers (docs-mcp, personas-mcp, coderef-mcp)
+  - /list-commands - Show all slash commands by category
+
+  Total: 37 MCP tools and 40 slash commands from docs-mcp server!

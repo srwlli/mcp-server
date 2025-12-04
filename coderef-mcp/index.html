@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>coderef-mcp</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2rem; color: #e74c3c; margin-bottom: 8px; }
+        .tagline { color: #666; font-size: 1rem; margin-bottom: 15px; }
+        .badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 4px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 600; }
+        .badge-version { background: #e74c3c; color: #fff; }
+        .badge-tools { background: #10b981; color: #fff; }
+        .badge-status { background: #f59e0b; color: #fff; }
+
+        .section { margin: 40px 0; }
+        .section h2 { font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #e74c3c; padding-bottom: 8px; }
+
+        .tools-list { list-style: none; margin-top: 15px; }
+        .tools-list li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+        .tools-list li:last-child { border-bottom: none; }
+        .tool-name { font-family: monospace; color: #e74c3c; font-weight: 600; }
+        .tool-desc { color: #666; font-size: 0.85rem; margin-top: 3px; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
+        .feature { background: #fff; border: 1px solid #e1e8ed; border-radius: 6px; padding: 12px 15px; }
+        .feature-name { font-weight: 600; color: #2c3e50; font-size: 0.9rem; }
+        .feature-desc { font-size: 0.8rem; color: #666; margin-top: 4px; }
+
+        .install-box { background: #2c3e50; color: #ecf0f1; padding: 15px 20px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; overflow-x: auto; margin: 20px 0; }
+
+        .links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0; }
+        .links a { color: #e74c3c; text-decoration: none; font-size: 0.9rem; }
+        .links a:hover { text-decoration: underline; }
+
+        footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>coderef-mcp</h1>
+            <p class="tagline">Code Reference Analysis & Natural Language Queries</p>
+            <div class="badges">
+                <span class="badge badge-version">v1.0.0</span>
+                <span class="badge badge-tools">8 Tools</span>
+                <span class="badge badge-status">Production</span>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2>MCP Tools (8)</h2>
+            <ul class="tools-list">
+                <li>
+                    <div class="tool-name">mcp__coderef__query</div>
+                    <div class="tool-desc">Query CodeRef elements by reference or pattern</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__analyze</div>
+                    <div class="tool-desc">Deep analysis: impact, coverage, complexity</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__validate</div>
+                    <div class="tool-desc">Validate CodeRef reference format and structure</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__batch_validate</div>
+                    <div class="tool-desc">Batch validation (sequential or parallel)</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__generate_docs</div>
+                    <div class="tool-desc">Generate documentation for CodeRef elements</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__audit</div>
+                    <div class="tool-desc">Audit elements for validation, coverage, performance</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__nl_query</div>
+                    <div class="tool-desc">Natural language queries - ask questions in plain English</div>
+                </li>
+                <li>
+                    <div class="tool-name">mcp__coderef__scan_realtime</div>
+                    <div class="tool-desc">Real-time source code scanning with AST parser</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-name">Natural Language</div>
+                    <div class="feature-desc">Ask "what calls login?" in plain English</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-name">AST Parsing</div>
+                    <div class="feature-desc">99% precision with relationship detection</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-name">Real-time Scanning</div>
+                    <div class="feature-desc">Scan source code and update index live</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-name">Impact Analysis</div>
+                    <div class="feature-desc">Understand change ripple effects</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-name">Batch Operations</div>
+                    <div class="feature-desc">Parallel validation for performance</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-name">Multi-Language</div>
+                    <div class="feature-desc">TypeScript, JavaScript, Python support</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quick Start</h2>
+            <div class="install-box">claude mcp add --scope user coderef-mcp python "C:\Users\willh\.mcp-servers\coderef-mcp\server.py"</div>
+        </div>
+
+        <div class="section">
+            <h2>Example Queries</h2>
+            <div class="install-box"># Natural language queries
+"What functions call the login method?"
+"Find all tests for the auth module"
+"Show me the dependencies of UserService"
+
+# Pattern-based queries
+mcp__coderef__query("src/auth/*.ts:function:*")
+mcp__coderef__analyze("src/services/user.ts:class:UserService")</div>
+        </div>
+
+        <div class="links">
+            <a href="README.md">README</a>
+            <a href="API.md">API Docs</a>
+            <a href="IMPLEMENTATION-GUIDE.md">Implementation Guide</a>
+        </div>
+
+        <footer>
+            <p>Last updated: 2025-12-04</p>
+        </footer>
+    </div>
+</body>
+</html>

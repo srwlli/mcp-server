@@ -37,6 +37,11 @@
       "category": "planning"
     },
     {
+      "name": "start-feature",
+      "description": "Start new feature with full planning workflow (gather, analyze, plan, validate)",
+      "category": "planning"
+    },
+    {
       "name": "database-inventory",
       "description": "Generate comprehensive database schema inventory",
       "category": "inventory"
@@ -150,36 +155,73 @@
   "categories": {
     "archive": {
       "description": "Feature archive management commands",
-      "commands": ["archive-feature"]
+      "commands": [
+        "archive-feature"
+      ]
     },
     "changelog": {
       "description": "Changelog management commands",
-      "commands": ["add-changelog", "get-changelog", "update-changelog"]
+      "commands": [
+        "add-changelog",
+        "get-changelog",
+        "update-changelog"
+      ]
     },
     "documentation": {
       "description": "Documentation generation commands",
-      "commands": ["generate-docs", "generate-user-guide", "generate-quickref", "generate-my-guide", "list-templates", "get-template", "update-docs"]
+      "commands": [
+        "generate-docs",
+        "generate-user-guide",
+        "generate-quickref",
+        "generate-my-guide",
+        "list-templates",
+        "get-template",
+        "update-docs"
+      ]
     },
     "inventory": {
       "description": "Project inventory and analysis commands",
-      "commands": ["inventory-manifest", "dependency-inventory", "api-inventory", "database-inventory"]
+      "commands": [
+        "inventory-manifest",
+        "dependency-inventory",
+        "api-inventory",
+        "database-inventory"
+      ]
     },
     "planning": {
       "description": "Implementation planning workflow commands",
-      "commands": ["gather-context", "analyze-for-planning", "get-planning-template", "create-plan", "validate-plan", "generate-plan-review"]
+      "commands": [
+        "start-feature",
+        "gather-context",
+        "analyze-for-planning",
+        "get-planning-template",
+        "create-plan",
+        "validate-plan",
+        "generate-plan-review"
+      ]
     },
     "standards": {
       "description": "Code consistency and standards commands",
-      "commands": ["establish-standards", "audit-codebase", "check-consistency"]
+      "commands": [
+        "establish-standards",
+        "audit-codebase",
+        "check-consistency"
+      ]
     },
     "agent-coordination": {
       "description": "Multi-agent task coordination commands",
-      "commands": ["generate-agent-communication", "assign-agent-task", "verify-agent-completion", "aggregate-agent-deliverables", "track-agent-status"]
+      "commands": [
+        "generate-agent-communication",
+        "assign-agent-task",
+        "verify-agent-completion",
+        "aggregate-agent-deliverables",
+        "track-agent-status"
+      ]
     }
   },
   "metadata": {
-    "version": "1.11.0",
-    "total_commands": 29,
+    "version": "1.12.0",
+    "total_commands": 30,
     "project": "docs-mcp",
     "generated_at": "2025-10-18T18:00:00Z"
   }

@@ -1227,6 +1227,52 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f"8. Success Criteria - Measurable acceptance criteria\n"
     result += f"9. Implementation Checklist - Phase checklists\n\n"
 
+    # NEW: Schema contract section - shows AI the exact structure to follow
+    result += f"=" * 60 + "\n\n"
+    result += f"📐 SCHEMA CONTRACT (CRITICAL):\n"
+    result += f"-" * 60 + "\n"
+    result += f"Your plan.json MUST conform to plan.schema.json v1.0.0\n"
+    result += f"The following structures are REQUIRED - do not deviate:\n\n"
+
+    result += f"1. META_DOCUMENTATION must include schema_version:\n"
+    result += f'   "META_DOCUMENTATION": {{\n'
+    result += f'     "feature_name": "{feature_name}",\n'
+    result += f'     "schema_version": "1.0.0",  // REQUIRED\n'
+    result += f'     "version": "1.0.0",\n'
+    result += f'     "status": "complete"\n'
+    result += f'   }}\n\n'
+
+    result += f"2. 6_implementation_phases MUST use phases[] array:\n"
+    result += f'   "6_implementation_phases": {{\n'
+    result += f'     "phases": [           // MUST be array, NOT phase_1/phase_2 keys\n'
+    result += f'       {{\n'
+    result += f'         "phase": 1,       // Integer phase number\n'
+    result += f'         "name": "Setup",\n'
+    result += f'         "description": "...",\n'
+    result += f'         "tasks": ["SETUP-001", "SETUP-002"],\n'
+    result += f'         "deliverables": ["..."]\n'
+    result += f'       }}\n'
+    result += f'     ]\n'
+    result += f'   }}\n\n'
+
+    result += f"3. 5_task_id_system MUST use tasks[] array:\n"
+    result += f'   "5_task_id_system": {{\n'
+    result += f'     "workorder": {{ ... }},\n'
+    result += f'     "tasks": [            // MUST be array, NOT task_breakdown dict\n'
+    result += f'       {{ "id": "SETUP-001", "workorder_id": "...", ... }}\n'
+    result += f'     ]\n'
+    result += f'   }}\n\n'
+
+    result += f"4. files_to_create MUST use object format:\n"
+    result += f'   "files_to_create": [\n'
+    result += f'     {{ "path": "src/file.ts", "purpose": "..." }}  // NOT just strings\n'
+    result += f'   ]\n\n'
+
+    result += f"⚠️  WRONG formats that will cause errors:\n"
+    result += f'   - "phase_1": {{ }}, "phase_2": {{ }}  // Wrong - use phases[]\n'
+    result += f'   - "task_breakdown": {{ }}             // Wrong - use tasks[]\n'
+    result += f'   - "files_to_create": ["path"]        // Wrong - use [{{path, purpose}}]\n\n'
+
     result += f"=" * 60 + "\n\n"
     result += f"📋 WORKORDER INFORMATION:\n"
     result += f"-" * 60 + "\n"
@@ -1257,6 +1303,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f"{{\n"
     result += f'  "META_DOCUMENTATION": {{\n'
     result += f'    "feature_name": "{feature_name}",\n'
+    result += f'    "schema_version": "1.0.0",\n'
     result += f'    "version": "1.0.0",\n'
     result += f'    "status": "complete",\n'
     result += f'    "generated_by": "AI Assistant",\n'
@@ -1864,8 +1911,15 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     Generates DELIVERABLES.md template from plan.json structure with phase/task checklists.
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
+
+    Updated in WO-DOCS-MCP-SCHEMA-FIX-001 to use schema_validator helper functions
+    for robust handling of both new schema format and legacy formats.
     """
     from handler_helpers import format_success_response
+    from schema_validator import (
+        get_phases, get_tasks, get_files_to_create, get_files_to_modify,
+        get_workorder_id, get_success_criteria
+    )
 
     # Validate inputs
     project_path = validate_project_path_input(arguments.get("project_path", ""))
@@ -1893,23 +1947,25 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     with open(template_path, 'r', encoding='utf-8') as f:
         template = f.read()
 
-    # Extract data from plan
+    # Extract data from plan using schema-aware helper functions
     meta = plan.get('META_DOCUMENTATION', {})
     structure = plan.get('UNIVERSAL_PLANNING_STRUCTURE', {})
     exec_summary = structure.get('1_executive_summary', {})
-    phases = structure.get('6_implementation_phases', {})
-    task_system = structure.get('5_task_id_system', {})
-    success = structure.get('8_success_criteria', {})
 
-    # Get workorder ID if available
-    workorder_id = task_system.get('workorder', {}).get('id', 'N/A')
+    # Use schema_validator helpers for robust data extraction
+    phases_list = get_phases(plan)
+    tasks_list = get_tasks(plan)
+    files_to_create = get_files_to_create(plan)
+    files_to_modify = get_files_to_modify(plan)
+    workorder_id = get_workorder_id(plan)
+    success = get_success_criteria(plan)
 
     # Format phases section
     phases_md = []
-    for phase_key in sorted([k for k in phases.keys() if k.startswith('phase_')]):
-        phase = phases[phase_key]
-        phases_md.append(f"### {phase['name']}")
-        phases_md.append(f"\n**Description**: {phase['description']}\n")
+    for phase in phases_list:
+        phase_num = phase.get('phase', '?')
+        phases_md.append(f"### Phase {phase_num}: {phase.get('name', 'Unnamed')}")
+        phases_md.append(f"\n**Description**: {phase.get('description', 'TBD')}\n")
         phases_md.append(f"**Estimated Duration**: {phase.get('estimated_duration', 'TBD')}\n")
         phases_md.append("**Deliverables**:")
         for deliverable in phase.get('deliverables', []):
@@ -1918,24 +1974,25 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
 
     # Format tasks checklist
     tasks_md = []
-    task_breakdown = task_system.get('task_breakdown', {})
-    for feature_key in sorted([k for k in task_breakdown.keys() if k.endswith('_tasks')]):
-        feature_tasks = task_breakdown[feature_key]
-        for task in feature_tasks:
-            tasks_md.append(f"- [ ] [{task['id']}] {task['description']}")
+    for task in tasks_list:
+        task_id = task.get('id', '???')
+        task_desc = task.get('description', 'No description')
+        tasks_md.append(f"- [ ] [{task_id}] {task_desc}")
 
-    # Format files section
-    current_state = structure.get('3_current_state_analysis', {})
+    # Format files section (already normalized by helpers)
     files_md = []
-    for file_info in current_state.get('files_to_create', []):
+    for file_info in files_to_create:
         files_md.append(f"- **{file_info['path']}** - {file_info['purpose']}")
-    for file_info in current_state.get('files_to_modify', []):
+    for file_info in files_to_modify:
         files_md.append(f"- **{file_info['path']}** - {file_info['changes']}")
 
-    # Format success criteria
+    # Format success criteria (handles both old and new formats)
     success_md = []
-    for req in success.get('functional_requirements', []):
-        success_md.append(f"- **{req['criterion']}**: {req['target']}")
+    for criterion in success.get('functional', []):
+        if isinstance(criterion, str):
+            success_md.append(f"- {criterion}")
+        elif isinstance(criterion, dict):
+            success_md.append(f"- **{criterion.get('criterion', 'TBD')}**: {criterion.get('target', 'TBD')}")
 
     # Replace template variables
     deliverables_content = template
@@ -1943,8 +2000,11 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     deliverables_content = deliverables_content.replace('{{PROJECT_NAME}}', meta.get('project_name', Path(project_path).name))
     deliverables_content = deliverables_content.replace('{{WORKORDER_ID}}', workorder_id)
     deliverables_content = deliverables_content.replace('{{GENERATED_DATE}}', datetime.now().strftime('%Y-%m-%d'))
-    deliverables_content = deliverables_content.replace('{{GOAL}}', exec_summary.get('feature_overview', 'TBD'))
-    deliverables_content = deliverables_content.replace('{{DESCRIPTION}}', exec_summary.get('business_value', 'TBD'))
+    # Handle both old (feature_overview/business_value) and new (goal/description) field names
+    goal = exec_summary.get('goal', exec_summary.get('feature_overview', 'TBD'))
+    description = exec_summary.get('description', exec_summary.get('business_value', 'TBD'))
+    deliverables_content = deliverables_content.replace('{{GOAL}}', goal)
+    deliverables_content = deliverables_content.replace('{{DESCRIPTION}}', description)
     deliverables_content = deliverables_content.replace('{{PHASES}}', '\n'.join(phases_md))
     deliverables_content = deliverables_content.replace('{{TASKS}}', '\n'.join(tasks_md) if tasks_md else '- No tasks defined')
     deliverables_content = deliverables_content.replace('{{FILES}}', '\n'.join(files_md) if files_md else '- No files listed')
@@ -1962,8 +2022,8 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
             'deliverables_path': str(deliverables_path.relative_to(Path(project_path))),
             'feature_name': feature_name,
             'workorder_id': workorder_id,
-            'phases_count': len([k for k in phases.keys() if k.startswith('phase_')]),
-            'tasks_count': sum(len(v) for k, v in task_breakdown.items() if k.endswith('_tasks')),
+            'phases_count': len(phases_list),
+            'tasks_count': len(tasks_list),
             'success': True
         },
         message="✅ DELIVERABLES.md template generated successfully"
@@ -3138,6 +3198,8 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     Returns:
         TextContent with TodoWrite-formatted task list JSON
     """
+    from schema_validator import get_checklist
+    
     # Validate inputs
     project_path = validate_project_path_input(arguments.get("project_path", ""))
     feature_name = arguments.get("feature_name", "")
@@ -3178,8 +3240,8 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
             extra={'feature_name': feature_name}
         )
 
-    # Parse tasks from section 9
-    section_9 = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("9_implementation_checklist", {})
+    # Parse tasks from section 9 using schema helper for format normalization
+    section_9 = get_checklist(plan_data, strict=True)
 
     if not section_9:
         return ErrorResponse.invalid_input(

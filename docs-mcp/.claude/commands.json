@@ -160,6 +160,46 @@
       "name": "update-docs",
       "description": "Update all documentation files after feature completion",
       "category": "documentation"
+    },
+    {
+      "name": "config-inventory",
+      "description": "Generate comprehensive configuration file inventory with secret detection",
+      "category": "inventory"
+    },
+    {
+      "name": "documentation-inventory",
+      "description": "Generate comprehensive documentation file inventory with quality metrics",
+      "category": "inventory"
+    },
+    {
+      "name": "test-inventory",
+      "description": "Generate comprehensive test file inventory with coverage analysis",
+      "category": "inventory"
+    },
+    {
+      "name": "execute-plan",
+      "description": "Generate TodoWrite task list from plan.json for execution tracking",
+      "category": "planning"
+    },
+    {
+      "name": "generate-deliverables",
+      "description": "Generate DELIVERABLES.md template from plan.json structure",
+      "category": "deliverables"
+    },
+    {
+      "name": "update-deliverables",
+      "description": "Update DELIVERABLES.md with actual metrics from git history",
+      "category": "deliverables"
+    },
+    {
+      "name": "log-workorder",
+      "description": "Log workorder entry to global workorder activity log",
+      "category": "workorder"
+    },
+    {
+      "name": "get-workorder-log",
+      "description": "View and query the global workorder activity log",
+      "category": "workorder"
     }
   ],
   "categories": {
@@ -211,7 +251,22 @@
         "get-planning-template",
         "create-plan",
         "validate-plan",
-        "generate-plan-review"
+        "generate-plan-review",
+        "execute-plan"
+      ]
+    },
+    "deliverables": {
+      "description": "Deliverables tracking and metrics commands",
+      "commands": [
+        "generate-deliverables",
+        "update-deliverables"
+      ]
+    },
+    "workorder": {
+      "description": "Workorder logging and tracking commands",
+      "commands": [
+        "log-workorder",
+        "get-workorder-log"
       ]
     },
     "standards": {

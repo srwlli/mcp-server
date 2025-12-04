@@ -1,8 +1,8 @@
 # docs-mcp Comprehensive Review
 
-**Version:** 2.0
+**Version:** 2.1
 **Review Date:** 2025-12-04
-**Total Components:** 37 MCP Tools + 35 Slash Commands
+**Total Components:** 37 MCP Tools + 37 Slash Commands (including /list-tools, /list-commands)
 
 ---
 
@@ -236,14 +236,20 @@
 
 **Average Rating: 6.9/10**
 
-### Slash Commands (35)
-- **9/10**: 4 commands (11%)
-- **8/10**: 8 commands (23%)
-- **7/10**: 10 commands (29%)
-- **6/10**: 8 commands (23%)
-- **5/10**: 5 commands (14%)
+### Slash Commands (37)
+- **9/10**: 6 commands (16%) - includes new /list-tools and /list-commands
+- **8/10**: 8 commands (22%)
+- **7/10**: 10 commands (27%)
+- **6/10**: 8 commands (22%)
+- **5/10**: 5 commands (13%)
 
-**Average Rating: 6.9/10**
+**Average Rating: 7.0/10**
+
+### New Commands Added (2025-12-04)
+| Command | Rating | Notes |
+|---------|--------|-------|
+| `/list-tools` | **9/10** | Shows all 53 MCP tools across 3 servers with Unicode box art |
+| `/list-commands` | **9/10** | Shows all slash commands by category with Unicode box art |
 
 ---
 

@@ -20,16 +20,19 @@ This command orchestrates the full planning pipeline in sequence, eliminating th
 4. Create Plan (automatic via create_plan)
     |
     v
-5. Validate Plan (automatic via validate_implementation_plan)
+5. Multi-Agent Decision (AskUserQuestion - based on phase count)
     |
     v
-6. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
+6. Validate Plan (automatic via validate_implementation_plan)
     |
     v
-7. Output Summary
+7. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
     |
     v
-8. Commit & Push (pre-execution checkpoint)
+8. Output Summary
+    |
+    v
+9. Commit & Push (pre-execution checkpoint)
 ```
 
 ## Step-by-Step Instructions
@@ -112,7 +115,53 @@ This creates `coderef/working/{feature_name}/plan.json` with:
 - Workorder ID embedded in section 5
 - DELIVERABLES.md template
 
-### Step 5: Validate Plan
+### Step 5: Multi-Agent Decision
+
+After the plan is created, count the number of implementation phases and ask the user about multi-agent mode:
+
+1. Read plan.json and count phases in `UNIVERSAL_PLANNING_STRUCTURE.6_implementation_phases`
+2. Use AskUserQuestion:
+
+```
+Question: "Plan has {phase_count} phases. Enable multi-agent mode for parallel execution?"
+Header: "Multi-Agent"
+multiSelect: false
+Options: [
+  {"label": "Yes, use {phase_count} agents", "description": "1 agent per phase (recommended for parallel work)"},
+  {"label": "Yes, fewer agents", "description": "I'll specify how many agents to use"},
+  {"label": "No, single agent", "description": "Sequential execution (default)"}
+]
+```
+
+3. If user selects "Yes, use {phase_count} agents":
+   - Store `agent_count = phase_count`
+   - Set `multi_agent = true`
+
+4. If user selects "Yes, fewer agents":
+   - Ask follow-up: "How many agents? (1-{phase_count})"
+   - Store user's response as `agent_count`
+   - Set `multi_agent = true`
+
+5. If user selects "No, single agent":
+   - Set `multi_agent = false`
+   - Skip communication.json generation
+
+6. If `multi_agent = true`, call generate_agent_communication:
+
+```python
+mcp__docs_mcp__generate_agent_communication({
+    "project_path": <current_working_directory>,
+    "feature_name": <from_step_1>
+})
+```
+
+This creates `coderef/working/{feature_name}/communication.json` with:
+- Agent slots for parallel work
+- Forbidden files per agent (prevents conflicts)
+- Success criteria per phase
+- Workorder IDs for each agent
+
+### Step 6: Validate Plan
 
 Call the validate_implementation_plan MCP tool:
 
@@ -129,7 +178,7 @@ Returns validation result with:
 - Checklist results
 - Approved status (true if score >= 90)
 
-### Step 6: Validation Loop (if needed)
+### Step 7: Validation Loop (if needed)
 
 If validation score < 90:
 
@@ -145,10 +194,11 @@ If validation score < 90:
 - Major (-5 points each): Placeholders, vague criteria, missing fields
 - Minor (-1 point each): Short descriptions, style issues
 
-### Step 7: Output Summary
+### Step 8: Output Summary
 
 After validation passes (or max iterations reached), present summary:
 
+**For single-agent mode:**
 ```
 Feature Planning Complete: {feature_name}
 
@@ -174,6 +224,36 @@ Next Steps:
 7. Run /archive-feature to complete the workflow
 ```
 
+**For multi-agent mode:**
+```
+Feature Planning Complete: {feature_name}
+
+Workorder: {workorder_id}
+Location: coderef/working/{feature_name}/
+Mode: Multi-Agent ({agent_count} agents)
+
+Files Created:
+- context.json (requirements)
+- analysis.json (project analysis)
+- plan.json (implementation plan)
+- DELIVERABLES.md (tracking template)
+- communication.json (agent coordination)
+
+Validation Score: {score}/100
+Status: {PASS|PASS_WITH_WARNINGS|NEEDS_REVISION}
+
+Next Steps:
+1. Review communication.json for agent assignments
+2. Assign agents: /assign-agent-task (for each agent 1-{agent_count})
+3. Each agent runs /execute-plan and implements their phase
+4. Verify each agent: /verify-agent-completion
+5. Track progress: /track-agent-status
+6. Aggregate results: /aggregate-agent-deliverables
+7. Run /update-docs to update changelog and documentation
+8. Run /update-foundation-docs to update API.md, user-guide.md, etc. if needed
+9. Run /archive-feature to complete the workflow
+```
+
 If validation failed after 3 iterations:
 
 ```
@@ -189,7 +269,7 @@ The plan is saved but needs manual review.
 Run /validate-plan to see full issue details.
 ```
 
-### Step 8: Commit & Push (Pre-Execution Checkpoint)
+### Step 9: Commit & Push (Pre-Execution Checkpoint)
 
 After validation passes, commit and push all planning artifacts:
 

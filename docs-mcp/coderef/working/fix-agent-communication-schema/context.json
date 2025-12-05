@@ -1,0 +1,12 @@
+{
+  "feature_name": "fix-agent-communication-schema",
+  "workorder_id": "WO-FIX-AGENT-COMM-001",
+  "description": "Fix generate_agent_communication tool schema handling",
+  "issue": {
+    "error": "'list' object has no attribute 'get'",
+    "location": "tool_handlers.py - generate_agent_communication handler",
+    "cause": "Tool expects 6_implementation_phases to use dict keys (phase_1, phase_2) but plan.json uses phases[] array per schema",
+    "fix_needed": "Update handler to iterate over phases[] array instead of calling .get() on phase keys"
+  },
+  "status": "stub"
+}

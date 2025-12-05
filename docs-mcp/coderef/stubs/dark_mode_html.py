@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+#!/usr/bin/env python3
+"""Generate new-index.html with dark mode support."""
+
+html_content = '''<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -160,7 +163,7 @@
         </div>
         <div class="section">
             <h2>Quick Start</h2>
-            <div class="install-box">claude mcp add --scope user docs-mcp python "C:\Users\willh\.mcp-servers\docs-mcp\server.py"</div>
+            <div class="install-box">claude mcp add --scope user docs-mcp python "C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py"</div>
         </div>
         <div class="links">
             <a href="README.md">README</a>
@@ -185,4 +188,11 @@
         })();
     </script>
 </body>
-</html>
+</html>'''
+
+if __name__ == "__main__":
+    import os
+    output_path = os.path.join(os.path.dirname(__file__), '..', '..', 'new-index.html')
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(html_content)
+    print(f"Created {output_path}")

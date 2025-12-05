@@ -27,7 +27,18 @@
       "Bash(cat:*)",
       "Bash(for dir in personas-mcp docs-mcp coderef-mcp)",
       "Bash(ls:*)",
-      "Read(//c/Users/willh/.claude/**)"
+      "Read(//c/Users/willh/.claude/**)",
+      "Bash(dir /s /b *.py)",
+      "Bash(findstr:*)",
+      "Bash(find:*)",
+      "mcp__docs-mcp__create_plan",
+      "mcp__docs-mcp__add_changelog_entry",
+      "mcp__docs-mcp__archive_feature",
+      "Bash(for dir in clean-templates-structure consolidate-planning create-plan-schema-fix docs-mcp-schema-fix handoff-automation risk-assessment root-cleanup test-new-command)",
+      "Bash(if [ -f \"C:/Users/willh/.mcp-servers/docs-mcp/coderef/working/$dir/plan.json\" ])",
+      "Bash(then python3 -c \"import json; d=json.load(open(''C:/Users/willh/.mcp-servers/docs-mcp/coderef/working/$dir/plan.json'')); print(''Status:'', d.get(''META_DOCUMENTATION'',{}).get(''status'',''unknown''))\")",
+      "Bash(else echo \"No plan.json\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []

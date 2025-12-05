@@ -2,8 +2,64 @@
   "$schema": "./schema.json",
   "project": "docs-mcp",
   "changelog_version": "1.0",
-  "current_version": "1.12.0",
+  "current_version": "1.13.0",
   "entries": [
+    {
+      "version": "1.13.0",
+      "date": "2025-12-05",
+      "summary": "Version 1.13.0 changes",
+      "changes": [
+        {
+          "id": "change-039",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Context-Aware Planning - Planning workflow now reads foundation doc content and inventory data",
+          "description": "Enhanced PlanningAnalyzer to read and extract actual content from foundation docs and inventory manifests. Added read_foundation_doc_content() method that extracts previews (500 chars), headers (first 10), location, and size from ARCHITECTURE.md, API.md, COMPONENTS.md, SCHEMA.md, and README.md. Added read_inventory_data() method that reads all 7 inventory manifests from coderef/inventory/ and extracts relevant summaries (file counts, dependencies, test coverage, doc quality). Updated load_analysis() in PlanningGenerator to actually load analysis.json from feature working directory. Enhanced handle_create_plan() to display foundation doc content with formatted previews/headers and inventory metrics. Planning workflow now consumes the documentation it generates instead of just checking existence.",
+          "files": [
+            "generators/planning_analyzer.py",
+            "generators/planning_generator.py",
+            "tool_handlers.py"
+          ],
+          "reason": "The planning workflow was 'write-only' - it generated foundation docs and inventory data but never read them back. analyze_project_for_planning only returned whether docs existed, not their content. This made the generated documentation useless for planning since the AI had to manually read files anyway. Now the analyzer extracts and provides actual content for context-aware plan generation.",
+          "impact": "Plans created via /create-plan now receive full context including: foundation doc previews with headers showing document structure, inventory metrics (file counts, test coverage, doc quality scores, security vulnerabilities). AI can directly incorporate architecture patterns, existing component designs, and project health metrics into implementation plans without manual file reading. Reduces planning time and improves plan quality by leveraging existing project documentation.",
+          "breaking": false
+        },
+        {
+          "id": "change-040",
+          "type": "enhancement",
+          "severity": "minor",
+          "title": "Complete Feature Lifecycle Documentation - Added post-implementation steps to /start-feature workflow",
+          "description": "Updated /start-feature.md Next Steps section to include the complete post-implementation workflow: /update-deliverables (git metrics), /update-docs (changelog, README, CLAUDE.md), and /archive-feature. Added visual workflow diagram to CLAUDE.md showing the full feature lifecycle from planning through archive. This ensures AI agents always know to update the changelog when completing features.",
+          "files": [
+            ".claude/commands/start-feature.md",
+            "CLAUDE.md"
+          ],
+          "reason": "The planning workflow documentation only covered the planning phase but not the post-implementation steps. AI agents would complete features without updating the changelog because the workflow didn't explicitly include /update-docs. Now the complete lifecycle is documented so agents always complete the full workflow.",
+          "impact": "AI agents using /start-feature will now see the complete workflow including changelog updates. The Next Steps section explicitly lists: implement → /update-deliverables → /update-docs → /archive-feature. CLAUDE.md includes a visual diagram of the full lifecycle. This ensures changelog is always updated when features are completed.",
+          "breaking": false
+        },
+        {
+          "id": "change-041",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Added /update-foundation-docs command for updating API.md, user-guide.md, etc. after feature implementation",
+          "description": "Created new slash command /update-foundation-docs that guides AI through updating foundation documentation (API.md, ARCHITECTURE.md, COMPONENTS.md, SCHEMA.md, user-guide.md, my-guide.md) after implementing features. Integrated into the complete feature lifecycle workflow between /update-docs and /archive-feature. Updated /start-feature Next Steps to include /update-foundation-docs as step 6. Updated CLAUDE.md workflow diagram to show the complete 7-step lifecycle.",
+          "files": [
+            ".claude/commands/update-foundation-docs.md",
+            ".claude/commands/start-feature.md",
+            ".claude/commands.json",
+            "CLAUDE.md"
+          ],
+          "reason": "The workflow previously only updated changelog via /update-docs but didn't remind AI to update other foundation docs like API.md when adding new tools, or user-guide.md when adding user-facing features. This led to documentation drift where foundation docs became outdated after feature implementations.",
+          "impact": "AI agents now have a clear step in the workflow to update foundation documentation. The /update-foundation-docs command provides guidance on which docs to update based on what changed (new tools → API.md, new commands → my-guide.md, architecture changes → ARCHITECTURE.md, etc.). Total commands increased from 40 to 41.",
+          "breaking": false
+        }
+      ],
+      "contributors": [
+        "Claude Code AI",
+        "willh"
+      ]
+    },
     {
       "version": "1.12.0",
       "date": "2025-10-23",

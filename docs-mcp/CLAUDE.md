@@ -261,10 +261,20 @@ Quick consistency check on modified files (pre-commit gate).
 # Creates: context.json, analysis.json, plan.json, DELIVERABLES.md
 ```
 
-**Workflow:**
+**Complete Feature Lifecycle:**
 ```
-/start-feature → /execute-plan → implement → /update-deliverables → /archive-feature
+/start-feature → /execute-plan → implement → /update-deliverables → /update-docs → /update-foundation-docs → /archive-feature
+     │                │              │                │                  │                  │                    │
+     │                │              │                │                  │                  │                    └─ Archive to coderef/archived/
+     │                │              │                │                  │                  └─ Update API.md, user-guide.md, etc.
+     │                │              │                │                  └─ Update changelog, README, CLAUDE.md
+     │                │              │                └─ Capture git metrics (LOC, commits, time)
+     │                │              └─ Write code following plan phases
+     │                └─ Generate TodoWrite task list
+     └─ Plan: gather context → analyze → create plan → validate
 ```
+
+**IMPORTANT: Always complete the full lifecycle including changelog (/update-docs) and foundation docs (/update-foundation-docs)**
 
 ---
 

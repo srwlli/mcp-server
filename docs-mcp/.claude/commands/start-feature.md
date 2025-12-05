@@ -167,7 +167,11 @@ Status: {PASS|PASS_WITH_WARNINGS|NEEDS_REVISION}
 Next Steps:
 1. Review the plan at coderef/working/{feature_name}/plan.json
 2. Run /execute-plan to generate task list
-3. Begin implementation following the plan phases
+3. Implement the feature following the plan phases
+4. Run /update-deliverables to capture git metrics (LOC, commits, time)
+5. Run /update-docs to update changelog and documentation
+6. Run /update-foundation-docs to update API.md, user-guide.md, etc. if needed
+7. Run /archive-feature to complete the workflow
 ```
 
 If validation failed after 3 iterations:

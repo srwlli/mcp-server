@@ -1,3 +1,6 @@
+WO-CLEAN-TEMPLATES-STRUCTURE-001 | docs-mcp | Archived feature: Clean Templates Structure | 2025-12-05T18:49:13.527561+00:00
+WO-RISK-ASSESSMENT-001 | docs-mcp | Archived feature: Risk Assessment | 2025-12-05T18:47:02.891753+00:00
+WO-HANDOFF-AUTOMATION-001 | docs-mcp | Archived feature: Handoff Automation | 2025-12-05T18:47:02.615735+00:00
 WO-HANDOFF-AUTOMATION-002 | docs-mcp | Implement /handoff command for automated agent context generation | 2025-10-23T07:54:03.097298+00:00
 WO-WORKORDER-LOG-002 | docs-mcp | Update docs for workorder logging (CHANGELOG, v... | 2025-10-21T02:30:00.000000+00:00
 WO-WORKORDER-LOG-001 | docs-mcp | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51.983188+00:00

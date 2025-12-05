@@ -99,21 +99,42 @@ class PlanningGenerator:
             log_error('context_load_error', str(e), path=str(context_file))
             raise ValueError(f"Error loading context file: {str(e)}")
 
-    def load_analysis(self) -> Optional[Dict[str, Any]]:
+    def load_analysis(self, feature_name: str = None) -> Optional[Dict[str, Any]]:
         """
         Load project analysis data from analyze_project_for_planning.
+
+        Args:
+            feature_name: Optional feature name to load feature-specific analysis
 
         Returns:
             Analysis data dict or None if not available
 
         Note:
-            Analysis data is stored in-memory during MCP session.
-            This method is a placeholder for future persistence support.
+            If feature_name provided, looks in coderef/working/{feature_name}/analysis.json
+            Otherwise returns None (analysis must be run first).
         """
-        # TODO: Implement analysis persistence/loading
-        # For now, analysis is expected to be passed to generate_plan()
-        logger.debug("Analysis loading not yet implemented (in-memory only)")
-        return None
+        if not feature_name:
+            logger.debug("No feature_name provided for analysis loading")
+            return None
+
+        # Look for analysis.json in feature working directory
+        analysis_file = self.project_path / 'coderef' / 'working' / feature_name / 'analysis.json'
+
+        if not analysis_file.exists():
+            logger.debug(f"Analysis file not found: {analysis_file}")
+            return None
+
+        try:
+            with open(analysis_file, 'r', encoding='utf-8') as f:
+                analysis = json.load(f)
+            logger.info(f"Analysis loaded from: {analysis_file}")
+            return analysis
+        except json.JSONDecodeError as e:
+            log_error('malformed_analysis', f"Analysis file is malformed: {str(e)}", path=str(analysis_file))
+            return None
+        except Exception as e:
+            log_error('analysis_load_error', str(e), path=str(analysis_file))
+            return None
 
     def load_template(self) -> Dict[str, Any]:
         """

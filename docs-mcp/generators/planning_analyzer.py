@@ -59,6 +59,12 @@ class PlanningAnalyzer:
         logger.info("Scanning foundation docs...")
         foundation_docs = self.scan_foundation_docs()
 
+        logger.info("Reading foundation doc content...")
+        foundation_doc_content = self.read_foundation_doc_content()
+
+        logger.info("Reading inventory data...")
+        inventory_data = self.read_inventory_data()
+
         logger.info("Scanning coding standards...")
         coding_standards = self.scan_coding_standards()
 
@@ -80,6 +86,8 @@ class PlanningAnalyzer:
         # Build result
         result: PreparationSummaryDict = {
             'foundation_docs': foundation_docs,
+            'foundation_doc_content': foundation_doc_content,
+            'inventory_data': inventory_data,
             'coding_standards': coding_standards,
             'reference_components': reference_components,
             'key_patterns_identified': key_patterns_identified,
@@ -133,6 +141,185 @@ class PlanningAnalyzer:
 
         logger.debug(f"Found {len(available)} foundation docs, {len(missing)} missing")
         return {'available': available, 'missing': missing}
+
+    def read_foundation_doc_content(self) -> dict:
+        """
+        Read and extract key content from foundation docs.
+
+        Reads ARCHITECTURE.md, API.md, COMPONENTS.md, SCHEMA.md and extracts:
+        - Location (root or coderef/foundation-docs)
+        - Preview (first 500 characters)
+        - Headers (first 10 markdown headers)
+        - Size (character count)
+
+        Returns:
+            Dict mapping doc name to content info
+        """
+        logger.debug("Reading foundation doc content...")
+        doc_content = {}
+        docs_to_read = ['ARCHITECTURE.md', 'API.md', 'COMPONENTS.md', 'SCHEMA.md', 'README.md']
+
+        for doc_name in docs_to_read:
+            # Check root first, then coderef/foundation-docs/
+            for location in [self.project_path, self.project_path / 'coderef' / 'foundation-docs']:
+                doc_path = location / doc_name
+                if doc_path.exists():
+                    try:
+                        content = doc_path.read_text(encoding='utf-8', errors='ignore')
+                        rel_location = str(location.relative_to(self.project_path)) if location != self.project_path else 'root'
+                        doc_content[doc_name] = {
+                            'location': rel_location,
+                            'preview': content[:500],  # First 500 chars
+                            'headers': self._extract_headers(content),
+                            'size': len(content)
+                        }
+                        logger.debug(f"Read {doc_name} from {rel_location} ({len(content)} chars)")
+                    except Exception as e:
+                        logger.warning(f"Error reading {doc_name}: {e}")
+                    break  # Found the doc, don't check other locations
+
+        logger.debug(f"Read content from {len(doc_content)} foundation docs")
+        return doc_content
+
+    def _extract_headers(self, content: str) -> List[str]:
+        """
+        Extract markdown headers from content.
+
+        Args:
+            content: Markdown content to parse
+
+        Returns:
+            List of first 10 header titles (without # prefix)
+        """
+        headers = re.findall(r'^#{1,3}\s+(.+)$', content, re.MULTILINE)
+        return headers[:10]  # Limit to first 10 headers
+
+    def read_inventory_data(self) -> dict:
+        """
+        Read existing inventory data from coderef/inventory/.
+
+        Reads available inventory manifests:
+        - manifest.json (file inventory)
+        - dependencies.json (package dependencies)
+        - api.json (API endpoints)
+        - database.json (database schemas)
+        - config.json (configuration files)
+        - tests.json (test infrastructure)
+        - documentation.json (documentation files)
+
+        Returns:
+            Dict with inventory type as key, summary data as value
+        """
+        logger.debug("Reading inventory data...")
+        inventory_data = {}
+        inventory_dir = self.project_path / 'coderef' / 'inventory'
+
+        if not inventory_dir.exists():
+            logger.debug("No coderef/inventory/ directory found")
+            return {'available': [], 'missing': ['Run /quick-inventory to generate inventory data']}
+
+        inventory_files = {
+            'manifest.json': 'file_inventory',
+            'dependencies.json': 'dependencies',
+            'api.json': 'api_endpoints',
+            'database.json': 'database_schemas',
+            'config.json': 'configuration',
+            'tests.json': 'test_infrastructure',
+            'documentation.json': 'documentation'
+        }
+
+        available = []
+        for filename, key in inventory_files.items():
+            inventory_path = inventory_dir / filename
+            if inventory_path.exists():
+                try:
+                    data = json.loads(inventory_path.read_text(encoding='utf-8'))
+                    # Extract summary info from each inventory type
+                    summary = self._extract_inventory_summary(key, data)
+                    inventory_data[key] = summary
+                    available.append(filename)
+                    logger.debug(f"Read {filename} inventory data")
+                except Exception as e:
+                    logger.warning(f"Error reading {filename}: {e}")
+
+        inventory_data['available'] = available
+        inventory_data['missing'] = [f for f in inventory_files.keys() if f not in available]
+
+        logger.debug(f"Read {len(available)} inventory files")
+        return inventory_data
+
+    def _extract_inventory_summary(self, inventory_type: str, data: dict) -> dict:
+        """
+        Extract relevant summary from inventory data.
+
+        Args:
+            inventory_type: Type of inventory (file_inventory, dependencies, etc.)
+            data: Raw inventory JSON data
+
+        Returns:
+            Dict with summary information relevant for planning
+        """
+        summary = {}
+
+        # Safely get nested values with defaults
+        def safe_get(d, *keys, default=None):
+            """Safely get nested dict values."""
+            result = d
+            for key in keys:
+                if result is None or not isinstance(result, dict):
+                    return default
+                result = result.get(key, default)
+            return result if result is not None else default
+
+        if inventory_type == 'file_inventory':
+            # Extract file counts and categories
+            summary['total_files'] = safe_get(data, 'metrics', 'total_files', default=0)
+            by_category = safe_get(data, 'by_category', default={})
+            summary['categories'] = list(by_category.keys())[:5] if by_category else []
+            files = safe_get(data, 'files', default=[])
+            summary['high_risk_files'] = len([f for f in files if isinstance(f, dict) and f.get('risk_level') == 'high'])
+
+        elif inventory_type == 'dependencies':
+            # Extract dependency info
+            summary['total_dependencies'] = safe_get(data, 'metrics', 'total_dependencies', default=0)
+            summary['ecosystems'] = safe_get(data, 'ecosystems_detected', default=[])
+            summary['security_vulnerabilities'] = safe_get(data, 'security_summary', 'total_vulnerabilities', default=0)
+            summary['outdated_count'] = safe_get(data, 'metrics', 'outdated_count', default=0)
+
+        elif inventory_type == 'api_endpoints':
+            # Extract API info
+            summary['total_endpoints'] = safe_get(data, 'metrics', 'total_endpoints', default=0)
+            summary['frameworks'] = safe_get(data, 'frameworks_detected', default=[])
+            summary['undocumented_endpoints'] = safe_get(data, 'metrics', 'undocumented_count', default=0)
+
+        elif inventory_type == 'database_schemas':
+            # Extract database info
+            summary['total_tables'] = safe_get(data, 'metrics', 'total_tables', default=0)
+            summary['database_systems'] = safe_get(data, 'systems_detected', default=[])
+            summary['migration_files'] = safe_get(data, 'metrics', 'migration_count', default=0)
+
+        elif inventory_type == 'test_infrastructure':
+            # Extract test info
+            summary['total_test_files'] = safe_get(data, 'test_summary', 'total_test_files', default=0)
+            summary['frameworks'] = safe_get(data, 'frameworks_detected', default=[])
+            summary['coverage'] = safe_get(data, 'coverage_data', 'overall', default='unknown')
+            summary['test_readiness_score'] = safe_get(data, 'test_summary', 'test_readiness_score', default=0)
+
+        elif inventory_type == 'documentation':
+            # Extract docs info
+            summary['total_files'] = safe_get(data, 'metrics', 'total_files', default=0)
+            summary['formats'] = safe_get(data, 'formats', default=[])
+            summary['quality_score'] = safe_get(data, 'metrics', 'quality_score', default=0)
+            summary['coverage_percentage'] = safe_get(data, 'metrics', 'coverage_percentage', default=0)
+
+        elif inventory_type == 'configuration':
+            # Extract config info
+            files = safe_get(data, 'files', default=[])
+            summary['total_files'] = len(files) if isinstance(files, list) else 0
+            summary['formats_detected'] = safe_get(data, 'formats_detected', default=[])
+            summary['sensitive_values_found'] = safe_get(data, 'security_summary', 'total_secrets_found', default=0)
+
+        return summary
 
     def scan_coding_standards(self) -> dict:
         """

@@ -1162,7 +1162,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
 
     # Load inputs
     context = generator.load_context(feature_name)
-    analysis = generator.load_analysis()  # Will be None for now
+    analysis = generator.load_analysis(feature_name)  # Load from analysis.json if exists
     template = generator.load_template()
 
     # Try to read workorder from context or analysis
@@ -1204,13 +1204,58 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     else:
         result += f"⚠️  NO CONTEXT - Generate plan without requirements\n\n"
 
-    # Analysis section (if available in future)
+    # Analysis section (if available)
     if analysis:
         result += f"🔍 ANALYSIS (from /analyze-for-planning):\n"
         result += f"-" * 60 + "\n"
+
+        # Highlight foundation doc content (new feature)
+        if 'foundation_doc_content' in analysis and analysis['foundation_doc_content']:
+            result += f"\n📚 FOUNDATION DOCUMENTATION CONTENT:\n"
+            for doc_name, doc_info in analysis['foundation_doc_content'].items():
+                result += f"\n  {doc_name}:\n"
+                result += f"    Location: {doc_info.get('location', 'unknown')}\n"
+                result += f"    Size: {doc_info.get('size', 0)} chars\n"
+                result += f"    Headers: {', '.join(doc_info.get('headers', [])[:5])}\n"
+                preview = doc_info.get('preview', '')[:200]
+                result += f"    Preview: {preview}...\n"
+            result += "\n"
+
+        # Highlight inventory data (new feature)
+        if 'inventory_data' in analysis and analysis['inventory_data'].get('available'):
+            result += f"\n📊 PROJECT INVENTORY DATA:\n"
+            inv = analysis['inventory_data']
+            result += f"  Available inventories: {', '.join(inv.get('available', []))}\n"
+
+            # Show key metrics from each inventory type
+            if 'dependencies' in inv:
+                deps = inv['dependencies']
+                result += f"\n  Dependencies:\n"
+                result += f"    Total: {deps.get('total_dependencies', 0)}\n"
+                result += f"    Ecosystems: {', '.join(deps.get('ecosystems', []))}\n"
+                if deps.get('security_vulnerabilities', 0) > 0:
+                    result += f"    ⚠️ Security vulnerabilities: {deps.get('security_vulnerabilities')}\n"
+
+            if 'test_infrastructure' in inv:
+                tests = inv['test_infrastructure']
+                result += f"\n  Tests:\n"
+                result += f"    Test files: {tests.get('total_test_files', 0)}\n"
+                result += f"    Frameworks: {', '.join(tests.get('frameworks', []))}\n"
+                result += f"    Coverage: {tests.get('coverage', 'unknown')}\n"
+
+            if 'documentation' in inv:
+                docs = inv['documentation']
+                result += f"\n  Documentation:\n"
+                result += f"    Files: {docs.get('total_files', 0)}\n"
+                result += f"    Quality score: {docs.get('quality_score', 0)}/100\n"
+            result += "\n"
+
+        # Show remaining analysis data
+        result += f"Full analysis data:\n"
         result += json.dumps(analysis, indent=2) + "\n\n"
     else:
-        result += f"⚠️  NO ANALYSIS - Use generic preparation section\n\n"
+        result += f"⚠️  NO ANALYSIS - Run /analyze-for-planning first for better plans\n"
+        result += f"   This provides foundation doc content and inventory data.\n\n"
 
     # Template structure
     result += f"📋 TEMPLATE STRUCTURE:\n"
@@ -3238,15 +3283,28 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
             "Regenerate plan with /create-plan"
         )
 
-    # Check for required sections
-    required_sections = ["META_DOCUMENTATION", "9_implementation_checklist"]
-    missing_sections = [s for s in required_sections if s not in plan_data]
-    if missing_sections:
-        available_sections = list(plan_data.keys())[:10]  # Show first 10
+    # Check for required sections (handle nested UNIVERSAL_PLANNING_STRUCTURE)
+    structure = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {})
+
+    # META_DOCUMENTATION must be at top level
+    if "META_DOCUMENTATION" not in plan_data:
         return ErrorResponse.invalid_input(
-            f"plan.json missing required sections: {', '.join(missing_sections)}",
-            f"Available sections: {', '.join(available_sections)}\n"
-            f"Run /create-plan to regenerate or manually add missing sections"
+            "plan.json missing required section: META_DOCUMENTATION",
+            f"Available sections: {', '.join(list(plan_data.keys())[:10])}\n"
+            f"Run /create-plan to regenerate"
+        )
+
+    # 9_implementation_checklist can be at top level OR inside UNIVERSAL_PLANNING_STRUCTURE
+    has_checklist = (
+        "9_implementation_checklist" in plan_data or
+        "9_implementation_checklist" in structure
+    )
+    if not has_checklist:
+        available_in_structure = list(structure.keys())[:10] if structure else []
+        return ErrorResponse.invalid_input(
+            "plan.json missing required section: 9_implementation_checklist",
+            f"Available in UNIVERSAL_PLANNING_STRUCTURE: {', '.join(available_in_structure)}\n"
+            f"Run /create-plan to regenerate or manually add missing section"
         )
 
     # Extract workorder_id (with fallback)
@@ -3270,8 +3328,8 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     section_9 = get_checklist(plan_data, strict=True)
 
     if not section_9:
-        # Provide diagnostic info
-        raw_section_9 = plan_data.get("9_implementation_checklist")
+        # Provide diagnostic info - check both top level and nested structure
+        raw_section_9 = plan_data.get("9_implementation_checklist") or structure.get("9_implementation_checklist")
         if raw_section_9 is None:
             return ErrorResponse.invalid_input(
                 "Section 9 (9_implementation_checklist) not found in plan",

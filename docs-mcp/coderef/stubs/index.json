@@ -1,0 +1,21 @@
+{
+  "stubs": [
+    {
+      "id": "STUB-001",
+      "title": "Stub workflow /command",
+      "description": "Create /stub command to quickly log ideas as JSON entries",
+      "category": "feature",
+      "priority": "medium",
+      "created": "2025-12-05T19:00:00Z"
+    },
+    {
+      "id": "STUB-002",
+      "title": "Fix generate_agent_communication schema",
+      "description": "Change phases.get('phase_1') to iterate phases[] array in tool_handlers.py",
+      "category": "fix",
+      "priority": "high",
+      "created": "2025-12-05T19:00:00Z"
+    }
+  ],
+  "next_id": 3
+}

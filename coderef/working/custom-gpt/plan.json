@@ -1,0 +1,345 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "custom-gpt",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["README.md"],
+        "missing": ["API.md", "ARCHITECTURE.md"]
+      },
+      "coding_standards": {
+        "available": [],
+        "note": "This feature creates configuration files, not code"
+      },
+      "reference_components": {
+        "primary": "personas-mcp/personas/base/lloyd.json",
+        "secondary": ["docs-mcp/.claude/commands/start-feature.md"]
+      },
+      "technology_stack": {
+        "format": "JSON/Markdown",
+        "platform": "OpenAI Custom GPT",
+        "tooling": "Manual configuration via OpenAI UI"
+      }
+    },
+    "1_executive_summary": {
+      "feature_overview": "Create a Custom GPT version of Lloyd that mimics the /start-feature workflow to create context, plans, and deliverables documents for project planning",
+      "business_value": "Enables users to run the project planning workflow through OpenAI's ChatGPT interface without requiring Claude Code CLI, making the planning methodology accessible to more users",
+      "primary_goal": "Create /lloyd Custom GPT that guides users through phased project planning - from scoping to context gathering to plan creation to deliverables - replicating the /start-feature workflow in a conversational GPT format",
+      "scope": {
+        "in_scope": [
+          "GPT configuration file (JSON) for version control",
+          "Structured Instructions block with ROLE, OBJECTIVES, INTERACTION STYLE sections",
+          "Knowledge file specifications for project artifacts",
+          "Conversation starters for planning workflow",
+          "Capability configuration documentation"
+        ],
+        "out_of_scope": [
+          "Direct code execution within GPT",
+          "File system operations",
+          "External API integrations",
+          "Multi-agent orchestration"
+        ]
+      },
+      "estimated_complexity": "Low - primarily documentation and configuration"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "id": "RISK-001",
+          "description": "OpenAI GPT capabilities may not fully replicate Claude Code workflow",
+          "severity": "medium",
+          "mitigation": "Focus on core planning workflow steps that translate to conversation format"
+        },
+        {
+          "id": "RISK-002",
+          "description": "Knowledge file upload limits may constrain reference material",
+          "severity": "low",
+          "mitigation": "Prioritize essential documents and summarize where needed"
+        },
+        {
+          "id": "RISK-003",
+          "description": "GPT instructions have character limits",
+          "severity": "low",
+          "mitigation": "Keep instructions concise and well-structured"
+        }
+      ],
+      "overall_risk_level": "low"
+    },
+    "3_current_state_analysis": {
+      "existing_resources": [
+        {
+          "path": "personas-mcp/personas/base/lloyd.json",
+          "purpose": "Existing Lloyd persona definition to adapt"
+        },
+        {
+          "path": "docs-mcp/.claude/commands/start-feature.md",
+          "purpose": "Workflow steps to replicate"
+        },
+        {
+          "path": "docs-mcp/.claude/commands/gather-context.md",
+          "purpose": "Context gathering flow reference"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "custom-gpt/lloyd-gpt-config.json",
+          "purpose": "Main GPT configuration file for version control"
+        },
+        {
+          "path": "custom-gpt/INSTRUCTIONS.md",
+          "purpose": "Full instructions text formatted for GPT"
+        },
+        {
+          "path": "custom-gpt/KNOWLEDGE-FILES.md",
+          "purpose": "Documentation of required knowledge files"
+        },
+        {
+          "path": "custom-gpt/SETUP-GUIDE.md",
+          "purpose": "Step-by-step guide for configuring the GPT in OpenAI UI"
+        }
+      ],
+      "files_to_modify": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "GPT Configuration File",
+          "description": "JSON configuration capturing all GPT settings for version control and reproducibility",
+          "priority": "high",
+          "tasks": ["CONFIG-001", "CONFIG-002"]
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Structured Instructions",
+          "description": "Complete instructions block with ROLE, OBJECTIVES, INTERACTION STYLE, WHAT TO DO, WHAT TO AVOID sections",
+          "priority": "high",
+          "tasks": ["INSTR-001", "INSTR-002", "INSTR-003"]
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Workflow Conversation Starters",
+          "description": "Pre-defined prompts that initiate planning workflow phases",
+          "priority": "medium",
+          "tasks": ["STARTER-001"]
+        },
+        {
+          "id": "FEAT-004",
+          "name": "Knowledge Base Specification",
+          "description": "Documentation of files to upload and their purposes",
+          "priority": "medium",
+          "tasks": ["KNOWLEDGE-001"]
+        },
+        {
+          "id": "FEAT-005",
+          "name": "Setup Documentation",
+          "description": "Guide for configuring GPT in OpenAI interface",
+          "priority": "low",
+          "tasks": ["DOCS-001"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CUSTOM-GPT-001",
+        "name": "Custom GPT Lloyd Configuration",
+        "feature_dir": "coderef/working/custom-gpt"
+      },
+      "tasks": [
+        {
+          "id": "CONFIG-001",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Create base GPT configuration JSON structure with name, description, and metadata fields",
+          "type": "create",
+          "file": "custom-gpt/lloyd-gpt-config.json",
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "CONFIG-002",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Add capability configuration (web_search, canvas, code_interpreter) to config",
+          "type": "modify",
+          "file": "custom-gpt/lloyd-gpt-config.json",
+          "estimated_loc": 20,
+          "dependencies": ["CONFIG-001"]
+        },
+        {
+          "id": "INSTR-001",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Write ROLE and PRIMARY OBJECTIVES sections defining Lloyd's identity and goals",
+          "type": "create",
+          "file": "custom-gpt/INSTRUCTIONS.md",
+          "estimated_loc": 40,
+          "dependencies": []
+        },
+        {
+          "id": "INSTR-002",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Write INTERACTION STYLE and WHAT TO DO sections with planning workflow steps",
+          "type": "modify",
+          "file": "custom-gpt/INSTRUCTIONS.md",
+          "estimated_loc": 60,
+          "dependencies": ["INSTR-001"]
+        },
+        {
+          "id": "INSTR-003",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Write WHAT TO AVOID and FAIL-SAFE BEHAVIOR sections",
+          "type": "modify",
+          "file": "custom-gpt/INSTRUCTIONS.md",
+          "estimated_loc": 30,
+          "dependencies": ["INSTR-002"]
+        },
+        {
+          "id": "STARTER-001",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Create 5 conversation starters that initiate planning workflow phases",
+          "type": "create",
+          "file": "custom-gpt/lloyd-gpt-config.json",
+          "estimated_loc": 15,
+          "dependencies": ["CONFIG-001"]
+        },
+        {
+          "id": "KNOWLEDGE-001",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Document required knowledge files with file types and purposes",
+          "type": "create",
+          "file": "custom-gpt/KNOWLEDGE-FILES.md",
+          "estimated_loc": 50,
+          "dependencies": []
+        },
+        {
+          "id": "DOCS-001",
+          "workorder_id": "WO-CUSTOM-GPT-001",
+          "description": "Create step-by-step GPT setup guide with screenshots placeholders",
+          "type": "create",
+          "file": "custom-gpt/SETUP-GUIDE.md",
+          "estimated_loc": 80,
+          "dependencies": ["CONFIG-001", "INSTR-003", "KNOWLEDGE-001"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Core Configuration",
+          "description": "Create the foundational GPT configuration structure and identity",
+          "tasks": ["CONFIG-001", "INSTR-001"],
+          "deliverables": [
+            "lloyd-gpt-config.json with base structure",
+            "INSTRUCTIONS.md with ROLE and OBJECTIVES"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Workflow Integration",
+          "description": "Add planning workflow instructions and conversation starters",
+          "tasks": ["INSTR-002", "INSTR-003", "STARTER-001", "CONFIG-002"],
+          "deliverables": [
+            "Complete INSTRUCTIONS.md with all sections",
+            "Conversation starters in config",
+            "Capability settings configured"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Documentation",
+          "description": "Create supporting documentation for knowledge files and setup",
+          "tasks": ["KNOWLEDGE-001", "DOCS-001"],
+          "deliverables": [
+            "KNOWLEDGE-FILES.md with specifications",
+            "SETUP-GUIDE.md with configuration steps"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "approach": "Manual validation through GPT configuration and conversation testing",
+      "test_cases": [
+        {
+          "id": "TEST-001",
+          "description": "Verify GPT configuration JSON is valid and complete",
+          "type": "validation",
+          "acceptance_criteria": "JSON parses without errors and contains all required fields"
+        },
+        {
+          "id": "TEST-002",
+          "description": "Test conversation starters initiate correct workflow phases",
+          "type": "manual",
+          "acceptance_criteria": "Each starter leads to appropriate planning questions"
+        },
+        {
+          "id": "TEST-003",
+          "description": "Verify instructions fit within GPT character limits",
+          "type": "validation",
+          "acceptance_criteria": "Instructions under 8000 characters"
+        },
+        {
+          "id": "TEST-004",
+          "description": "End-to-end test of planning workflow in GPT",
+          "type": "integration",
+          "acceptance_criteria": "Can complete context gathering through deliverables creation"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        {
+          "id": "SC-001",
+          "description": "GPT configuration file is complete and version-controlled",
+          "measurable": true,
+          "metric": "Config file exists with all required fields"
+        },
+        {
+          "id": "SC-002",
+          "description": "Instructions cover all /start-feature workflow phases",
+          "measurable": true,
+          "metric": "Instructions include scoping, context, planning, and deliverables phases"
+        },
+        {
+          "id": "SC-003",
+          "description": "GPT can guide user through complete planning workflow",
+          "measurable": true,
+          "metric": "Successful end-to-end test producing context, plan, and deliverables outputs"
+        },
+        {
+          "id": "SC-004",
+          "description": "Documentation enables self-service GPT setup",
+          "measurable": true,
+          "metric": "SETUP-GUIDE.md provides complete configuration steps"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create custom-gpt directory",
+        "[ ] Initialize lloyd-gpt-config.json with name, description",
+        "[ ] Write ROLE section in INSTRUCTIONS.md",
+        "[ ] Write PRIMARY OBJECTIVES section"
+      ],
+      "phase_2": [
+        "[ ] Write INTERACTION STYLE section",
+        "[ ] Write WHAT TO DO section with planning steps",
+        "[ ] Write WHAT TO AVOID section",
+        "[ ] Write FAIL-SAFE BEHAVIOR section",
+        "[ ] Add conversation starters to config",
+        "[ ] Add capability configuration"
+      ],
+      "phase_3": [
+        "[ ] Document knowledge file requirements",
+        "[ ] Create SETUP-GUIDE.md",
+        "[ ] Validate complete configuration",
+        "[ ] Test in OpenAI GPT builder"
+      ]
+    }
+  }
+}

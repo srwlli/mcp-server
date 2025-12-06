@@ -1,0 +1,183 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "lloyd-start-feature",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Project Coordinator)",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-LLOYD-START-FEATURE-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md", "CLAUDE.md"],
+      "codebase_analyzed": true,
+      "primary_file": "personas/base/lloyd.json",
+      "technology_stack": {
+        "language": "JSON (persona definition)",
+        "framework": "personas-mcp"
+      }
+    },
+    "1_executive_summary": {
+      "objective": "Enhance Lloyd persona to be THE expert on /start-feature workflow orchestration",
+      "scope": "Update lloyd.json system prompt to remove docs-expert reference and add workflow mastery section",
+      "approach": "Targeted edits to existing persona definition - no new files needed",
+      "estimated_complexity": "low",
+      "key_deliverables": [
+        "Updated lloyd.json with workflow leadership",
+        "/start-feature Mastery section added",
+        "Step 0 reference to docs-expert removed"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "System prompt becomes too large",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Add focused content, remove redundant sections"
+        },
+        {
+          "risk": "Breaking existing Lloyd behavior",
+          "likelihood": "low",
+          "impact": "high",
+          "mitigation": "Preserve core identity sections unchanged"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "personas/base/lloyd.json",
+          "purpose": "Update workflow section and add mastery guidance"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "lloyd.html",
+          "purpose": "Landing page for Lloyd persona with expertise, workflow mastery, and quick start"
+        }
+      ],
+      "dependencies": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEATURE-001",
+          "name": "Remove docs-expert reference",
+          "description": "Change Step 0 from '/use-persona docs-expert' to show Lloyd leads directly"
+        },
+        {
+          "id": "FEATURE-002",
+          "name": "Add /start-feature Mastery section",
+          "description": "New section with workflow guidance, pitfalls, and adaptations"
+        },
+        {
+          "id": "FEATURE-003",
+          "name": "Update expertise list",
+          "description": "Emphasize workflow leadership in expertise areas"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-LLOYD-START-FEATURE-001",
+        "name": "Lloyd Start Feature Enhancement",
+        "feature_dir": "coderef/working/lloyd-start-feature"
+      },
+      "tasks": [
+        {
+          "id": "WORKFLOW-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Update Step 0 in 'Complete Feature Implementation Workflow' section",
+          "details": "Change from '/use-persona docs-expert' to 'Lloyd leads directly (you are already Lloyd)'",
+          "acceptance_criteria": "Step 0 no longer references docs-expert"
+        },
+        {
+          "id": "MASTERY-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Add '/start-feature Mastery' section after workflow section",
+          "details": "Include: when to use /start-feature, how to guide users, common pitfalls, project type adaptations",
+          "acceptance_criteria": "New section exists with 4 subsections"
+        },
+        {
+          "id": "EXPERTISE-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Update expertise list to emphasize workflow leadership",
+          "details": "Add '/start-feature workflow orchestration' as explicit expertise",
+          "acceptance_criteria": "Expertise array includes workflow orchestration entry"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Verify Lloyd activation and workflow guidance",
+          "details": "Run /lloyd and ask 'help me start a new feature' - should guide directly",
+          "acceptance_criteria": "Lloyd provides workflow guidance without mentioning docs-expert"
+        },
+        {
+          "id": "HTML-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Create lloyd.html landing page in personas-mcp root",
+          "details": "Match index.html style, show Lloyd expertise, /start-feature workflow mastery, quick start",
+          "acceptance_criteria": "lloyd.html exists with consistent styling and Lloyd-specific content"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Core Updates",
+          "description": "Update workflow section and add mastery content",
+          "tasks": ["WORKFLOW-001", "MASTERY-001"],
+          "deliverables": ["Updated workflow section", "New mastery section"]
+        },
+        {
+          "phase": 2,
+          "name": "Expertise Enhancement",
+          "description": "Update expertise list and verify changes",
+          "tasks": ["EXPERTISE-001", "TEST-001"],
+          "deliverables": ["Updated expertise list", "Verified behavior"]
+        },
+        {
+          "phase": 3,
+          "name": "Documentation",
+          "description": "Create Lloyd landing page",
+          "tasks": ["HTML-001"],
+          "deliverables": ["lloyd.html landing page"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_testing": [
+        "Run /lloyd to activate persona",
+        "Ask 'help me start a new feature'",
+        "Verify Lloyd guides through workflow directly",
+        "Confirm no reference to 'activate docs-expert'"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "Lloyd leads /start-feature workflow without deferring to docs-expert",
+        "New mastery section provides clear guidance on workflow usage",
+        "Expertise list explicitly includes workflow orchestration",
+        "Existing Lloyd functionality remains intact"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_core_updates": [
+        "[ ] WORKFLOW-001: Update Step 0 to remove docs-expert reference",
+        "[ ] MASTERY-001: Add /start-feature Mastery section"
+      ],
+      "phase_2_expertise_enhancement": [
+        "[ ] EXPERTISE-001: Update expertise list with workflow leadership",
+        "[ ] TEST-001: Verify Lloyd activation and workflow guidance"
+      ],
+      "phase_3_documentation": [
+        "[ ] HTML-001: Create lloyd.html landing page"
+      ]
+    }
+  }
+}

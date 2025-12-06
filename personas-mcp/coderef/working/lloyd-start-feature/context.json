@@ -1,0 +1,24 @@
+{
+  "feature_name": "lloyd-start-feature",
+  "description": "Enhance Lloyd persona to be THE expert on /start-feature workflow orchestration. Remove reference to docs-expert and establish Lloyd as the workflow leader.",
+  "goal": "Make Lloyd the definitive /start-feature workflow coordinator so users call /lloyd for feature planning guidance",
+  "requirements": [
+    "Remove Step 0 reference to docs-expert in workflow section",
+    "Add /start-feature Mastery section with guidance on when/how to use workflow",
+    "Update expertise list to emphasize workflow leadership",
+    "Add common pitfalls and adaptations for different project types"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must maintain backward compatibility with existing Lloyd functionality",
+    "Keep system prompt size reasonable (already ~3000 lines)",
+    "Preserve Lloyd's Scrum Master + Tech Lead identity"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-LLOYD-START-FEATURE-001",
+    "workorder_assigned_at": "2025-12-06T04:12:30.894596+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

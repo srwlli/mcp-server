@@ -1,0 +1,8 @@
+{
+  "feature_name": "llm-workflow",
+  "description": "Create consistent output, and consolidate LLM output for best results",
+  "category": "feature",
+  "priority": "high",
+  "created": "2025-12-06T08:15:00Z",
+  "status": "stub"
+}

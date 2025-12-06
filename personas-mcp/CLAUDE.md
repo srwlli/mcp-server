@@ -33,7 +33,7 @@ use_persona('mcp-expert')
 # Activate docs-mcp expert
 use_persona('docs-expert')
 
-# Activate CodeRef-MCP server building expert
+# Activate CodeRef analysis expert
 use_persona('coderef-expert')
 
 # Activate NFL data scraping expert
@@ -72,9 +72,9 @@ use_persona('docs-expert')
 **3. coderef-expert**
 ```
 use_persona('coderef-expert')
-# CodeRef-MCP server building expert
-# 18 expertise areas, ~5,000 line system prompt
-# Helps BUILD the CodeRef-MCP server (not use it)
+# CodeRef analysis and dependency tracking expert
+# 14 expertise areas, ~3,000 line system prompt
+# Helps USE the CodeRef-MCP tools for code analysis, impact assessment, and dependency queries
 ```
 
 **4. nfl-scraper-expert**
@@ -149,10 +149,10 @@ Planning Expert:
    - Use cases: Documentation generation, implementation planning, standards auditing, project inventory
    - System prompt: ~6,000 lines (20 expertise areas)
 
-4. ✅ **coderef-expert** (v1.0.0)
-   - Expertise: Building CodeRef-MCP server (AST scanning, drift detection, query engines, integration patterns)
-   - Use cases: Implementing scan/drift/validate/query/coverage/impact tools, building connected MCP network
-   - System prompt: ~5,000 lines (18 expertise areas)
+4. ✅ **coderef-expert** (v2.1.0)
+   - Expertise: Using CodeRef-MCP tools (8 tools, 4 resources, 4 prompts), natural language queries, impact analysis, dependency tracking
+   - Use cases: Code exploration, refactoring risk assessment, finding dead code, understanding dependencies, test coverage analysis
+   - System prompt: ~3,000 lines (14 expertise areas)
 
 **Specialist Personas (5) - NEW in v1.2-1.3:**
 
@@ -204,7 +204,7 @@ personas/
 └── base/
     ├── mcp-expert.json (v1.0.0, parent: null)
     ├── docs-expert.json (v1.0.0, parent: null)
-    └── coderef-expert.json (v1.0.0, parent: null)
+    └── coderef-expert.json (v2.1.0, parent: null)
 ```
 
 All personas are independent (no hierarchical structure). Future expansion will add more base personas or potentially reintroduce specialized personas if stacking is implemented.
@@ -453,7 +453,7 @@ personas-mcp/
 │   └── base/
 │       ├── mcp-expert.json            ← ✅ v1.0.0 (14 expertise areas)
 │       ├── docs-expert.json           ← ✅ v1.0.0 (20 expertise areas)
-│       └── coderef-expert.json        ← ✅ v1.0.0 (18 expertise areas)
+│       └── coderef-expert.json        ← ✅ v2.1.0 (14 expertise areas)
 ├── src/
 │   ├── models.py                      ← PersonaDefinition Pydantic schema
 │   └── persona_manager.py             ← PersonaManager (simplified)

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lloyd - AI Project Coordinator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f8f9fa; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        h1 { font-size: 2rem; color: #764ba2; margin-bottom: 8px; }
+        .tagline { color: #666; font-size: 1rem; margin-bottom: 15px; }
+        .badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 4px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: 600; }
+        .badge-version { background: #764ba2; color: #fff; }
+        .badge-role { background: #10b981; color: #fff; }
+        .badge-workflow { background: #667eea; color: #fff; }
+
+        .section { margin: 40px 0; }
+        .section h2 { font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #764ba2; padding-bottom: 8px; }
+
+        .expertise-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .expertise { background: #fff; border: 1px solid #e1e8ed; border-radius: 6px; padding: 12px 15px; }
+        .expertise-name { font-weight: 600; color: #764ba2; font-size: 0.95rem; }
+        .expertise-desc { font-size: 0.8rem; color: #666; margin-top: 4px; }
+
+        .workflow-steps { list-style: none; margin-top: 15px; counter-reset: step; }
+        .workflow-steps li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 12px; }
+        .workflow-steps li:last-child { border-bottom: none; }
+        .step-num { background: #764ba2; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; }
+        .step-content { flex: 1; }
+        .step-cmd { font-family: monospace; color: #764ba2; font-weight: 600; }
+
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+        .agent { background: #fff; border: 1px solid #e1e8ed; border-radius: 6px; padding: 10px 12px; text-align: center; }
+        .agent-name { font-weight: 600; color: #764ba2; font-size: 0.9rem; }
+        .agent-domain { font-size: 0.75rem; color: #666; }
+
+        .cmd-section { margin-bottom: 20px; }
+        .cmd-section h3 { font-size: 0.95rem; color: #764ba2; margin-bottom: 8px; font-weight: 600; }
+        .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+        .cmd { font-family: monospace; font-size: 0.85rem; color: #2c3e50; background: #fff; padding: 5px 10px; border-radius: 4px; border: 1px solid #e1e8ed; }
+
+        .install-box { background: #2c3e50; color: #ecf0f1; padding: 15px 20px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; overflow-x: auto; margin: 20px 0; }
+
+        .links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0; }
+        .links a { color: #764ba2; text-decoration: none; font-size: 0.9rem; }
+        .links a:hover { text-decoration: underline; }
+
+        footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
+
+        .nav { display: flex; justify-content: center; gap: 20px; padding: 15px; background: #2c3e50; margin-bottom: 30px; border-radius: 8px; }
+        .nav a { color: #fff; text-decoration: none; font-size: 0.9rem; padding: 5px 12px; border-radius: 4px; }
+        .nav a:hover { background: rgba(255,255,255,0.1); }
+        .nav a.active { background: rgba(255,255,255,0.2); font-weight: 600; }
+
+        .highlight-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .highlight-box h3 { font-size: 1rem; margin-bottom: 10px; }
+        .highlight-box p { font-size: 0.9rem; opacity: 0.95; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html">personas-mcp</a>
+            <a href="lloyd.html" class="active">Lloyd</a>
+            <a href="../docs-mcp/index.html">docs-mcp</a>
+            <a href="../coderef-mcp/index.html">coderef-mcp</a>
+        </nav>
+
+        <header>
+            <h1>Lloyd</h1>
+            <p class="tagline">Your AI Project Coordinator & Workflow Expert</p>
+            <div class="badges">
+                <span class="badge badge-version">v1.1.0</span>
+                <span class="badge badge-role">Scrum Master + Tech Lead</span>
+                <span class="badge badge-workflow">/start-feature Expert</span>
+            </div>
+        </header>
+
+        <div class="highlight-box">
+            <h3>THE Expert on /start-feature Workflow</h3>
+            <p>Lloyd leads the complete feature implementation lifecycle - from context gathering through archiving. Activate Lloyd anytime you want coordinated, organized project execution.</p>
+        </div>
+
+        <div class="section">
+            <h2>Core Expertise</h2>
+            <div class="expertise-grid">
+                <div class="expertise">
+                    <div class="expertise-name">/start-feature Orchestration</div>
+                    <div class="expertise-desc">THE expert on planning workflow - context, analysis, plan, validate</div>
+                </div>
+                <div class="expertise">
+                    <div class="expertise-name">Multi-Agent Coordination</div>
+                    <div class="expertise-desc">Task-to-agent assignment, communication.json, verification</div>
+                </div>
+                <div class="expertise">
+                    <div class="expertise-name">Project Coordination</div>
+                    <div class="expertise-desc">Break complex features into actionable steps with workorder tracking</div>
+                </div>
+                <div class="expertise">
+                    <div class="expertise-name">Technical Leadership</div>
+                    <div class="expertise-desc">Architecture decisions, best practices, risk identification</div>
+                </div>
+                <div class="expertise">
+                    <div class="expertise-name">31 docs-mcp Tools</div>
+                    <div class="expertise-desc">Planning, docs, inventory, standards, deliverables, multi-agent</div>
+                </div>
+                <div class="expertise">
+                    <div class="expertise-name">6 coderef-mcp Tools</div>
+                    <div class="expertise-desc">Query, analyze, validate, audit for code understanding</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Feature Implementation Workflow (9 Steps)</h2>
+            <ul class="workflow-steps">
+                <li>
+                    <span class="step-num">0</span>
+                    <div class="step-content"><span class="step-cmd">/lloyd</span> - Lloyd is active! No persona switch needed.</div>
+                </li>
+                <li>
+                    <span class="step-num">1</span>
+                    <div class="step-content"><span class="step-cmd">/gather-context</span> - Capture requirements, create context.json with WO-{FEATURE}-001</div>
+                </li>
+                <li>
+                    <span class="step-num">2</span>
+                    <div class="step-content"><span class="step-cmd">/analyze-for-planning</span> - Discover patterns, standards, gaps</div>
+                </li>
+                <li>
+                    <span class="step-num">3</span>
+                    <div class="step-content"><span class="step-cmd">/create-plan</span> - Generate 10-section plan + DELIVERABLES.md</div>
+                </li>
+                <li>
+                    <span class="step-num">4</span>
+                    <div class="step-content"><span class="step-cmd">/validate-plan</span> - Score >= 90 to proceed (iterative refinement)</div>
+                </li>
+                <li>
+                    <span class="step-num">5</span>
+                    <div class="step-content"><span class="step-cmd">Implementation</span> - Execute tasks (single or multi-agent mode)</div>
+                </li>
+                <li>
+                    <span class="step-num">6</span>
+                    <div class="step-content"><span class="step-cmd">/update-deliverables</span> - Calculate git metrics (LOC, commits, time)</div>
+                </li>
+                <li>
+                    <span class="step-num">7</span>
+                    <div class="step-content"><span class="step-cmd">/update-docs</span> - Auto-increment version, update README/CLAUDE/CHANGELOG</div>
+                </li>
+                <li>
+                    <span class="step-num">8</span>
+                    <div class="step-content"><span class="step-cmd">/archive-feature</span> - Move to coderef/archived/ with index update</div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Multi-Agent Team</h2>
+            <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">Lloyd coordinates these specialists based on domain keywords and phase requirements:</p>
+            <div class="agent-grid">
+                <div class="agent">
+                    <div class="agent-name">Ava</div>
+                    <div class="agent-domain">Frontend (React, CSS, UI)</div>
+                </div>
+                <div class="agent">
+                    <div class="agent-name">Marcus</div>
+                    <div class="agent-domain">Backend (API, DB, Auth)</div>
+                </div>
+                <div class="agent">
+                    <div class="agent-name">Quinn</div>
+                    <div class="agent-domain">Testing (Unit, E2E, TDD)</div>
+                </div>
+                <div class="agent">
+                    <div class="agent-name">Devon</div>
+                    <div class="agent-domain">Setup (CI/CD, Config)</div>
+                </div>
+                <div class="agent">
+                    <div class="agent-name">Taylor</div>
+                    <div class="agent-domain">General (Any Domain)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Key Commands</h2>
+            <div class="cmd-section">
+                <h3>Activation</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/lloyd</div>
+                    <div class="cmd">/start-feature</div>
+                </div>
+            </div>
+            <div class="cmd-section">
+                <h3>Planning</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/gather-context</div>
+                    <div class="cmd">/analyze-for-planning</div>
+                    <div class="cmd">/create-plan</div>
+                    <div class="cmd">/validate-plan</div>
+                </div>
+            </div>
+            <div class="cmd-section">
+                <h3>Multi-Agent</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/generate-agent-communication</div>
+                    <div class="cmd">/assign-agent-task</div>
+                    <div class="cmd">/verify-agent-completion</div>
+                    <div class="cmd">/track-agent-status</div>
+                </div>
+            </div>
+            <div class="cmd-section">
+                <h3>Completion</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/update-deliverables</div>
+                    <div class="cmd">/update-docs</div>
+                    <div class="cmd">/archive-feature</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quick Start</h2>
+            <div class="install-box">/lloyd</div>
+            <p style="text-align: center; color: #666; font-size: 0.9rem;">Then say: "Help me start a new feature"</p>
+        </div>
+
+        <div class="links">
+            <a href="index.html">Back to personas-mcp</a>
+            <a href="personas/base/lloyd.json">lloyd.json</a>
+            <a href="CLAUDE.md">CLAUDE.md</a>
+        </div>
+
+        <footer>
+            <p>Lloyd v1.1.0 - AI Project Coordinator</p>
+            <p>Last updated: 2025-12-05</p>
+        </footer>
+    </div>
+</body>
+</html>

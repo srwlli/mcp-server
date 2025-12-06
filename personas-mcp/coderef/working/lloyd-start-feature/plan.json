@@ -175,16 +175,16 @@
     },
     "9_implementation_checklist": {
       "phase_1_core_updates": [
-        "[ ] WORKFLOW-001: Update Step 0 to remove docs-expert reference",
-        "[ ] MASTERY-001: Add /start-feature Mastery section",
-        "[ ] MULTIAGENT-001: Review and update multi-agent coordination guidance"
+        "[x] WORKFLOW-001: Update Step 0 to remove docs-expert reference",
+        "[x] MASTERY-001: Add /start-feature Mastery section",
+        "[x] MULTIAGENT-001: Review and update multi-agent coordination guidance"
       ],
       "phase_2_expertise_enhancement": [
-        "[ ] EXPERTISE-001: Update expertise list with workflow leadership",
-        "[ ] TEST-001: Verify Lloyd activation and workflow guidance"
+        "[x] EXPERTISE-001: Update expertise list with workflow leadership",
+        "[x] TEST-001: Verify Lloyd activation and workflow guidance"
       ],
       "phase_3_documentation": [
-        "[ ] HTML-001: Create lloyd.html landing page"
+        "[x] HTML-001: Create lloyd.html landing page"
       ]
     }
   }

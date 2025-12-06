@@ -103,6 +103,13 @@
           "acceptance_criteria": "New section exists with 4 subsections"
         },
         {
+          "id": "MULTIAGENT-001",
+          "workorder_id": "WO-LLOYD-START-FEATURE-001",
+          "description": "Review and update multi-agent coordination guidance in Step 5",
+          "details": "Verify agent assignment logic (Ava/Marcus/Quinn/Taylor/Devon), communication.json guidance, decision criteria for parallelization",
+          "acceptance_criteria": "Lloyd provides clear guidance on when/how to use multi-agent mode"
+        },
+        {
           "id": "EXPERTISE-001",
           "workorder_id": "WO-LLOYD-START-FEATURE-001",
           "description": "Update expertise list to emphasize workflow leadership",
@@ -130,9 +137,9 @@
         {
           "phase": 1,
           "name": "Core Updates",
-          "description": "Update workflow section and add mastery content",
-          "tasks": ["WORKFLOW-001", "MASTERY-001"],
-          "deliverables": ["Updated workflow section", "New mastery section"]
+          "description": "Update workflow section, add mastery content, review multi-agent guidance",
+          "tasks": ["WORKFLOW-001", "MASTERY-001", "MULTIAGENT-001"],
+          "deliverables": ["Updated workflow section", "New mastery section", "Enhanced multi-agent guidance"]
         },
         {
           "phase": 2,
@@ -169,7 +176,8 @@
     "9_implementation_checklist": {
       "phase_1_core_updates": [
         "[ ] WORKFLOW-001: Update Step 0 to remove docs-expert reference",
-        "[ ] MASTERY-001: Add /start-feature Mastery section"
+        "[ ] MASTERY-001: Add /start-feature Mastery section",
+        "[ ] MULTIAGENT-001: Review and update multi-agent coordination guidance"
       ],
       "phase_2_expertise_enhancement": [
         "[ ] EXPERTISE-001: Update expertise list with workflow leadership",

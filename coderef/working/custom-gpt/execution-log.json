@@ -1,0 +1,80 @@
+[
+  {
+    "timestamp": "2025-12-06T02:56:03.680908",
+    "workorder_id": "WO-CUSTOM-GPT-001",
+    "feature_name": "custom-gpt",
+    "task_count": 14,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] Create custom-gpt directory",
+        "activeForm": "PHASE-1-001: [ing ] Create custom-gpt directory",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] Initialize lloyd-gpt-config.json with name, description",
+        "activeForm": "PHASE-1-002: [ing ] Initialize lloyd-gpt-config.json with name, description",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] Write ROLE section in INSTRUCTIONS.md",
+        "activeForm": "PHASE-1-003: [ing ] Write ROLE section in INSTRUCTIONS.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] Write PRIMARY OBJECTIVES section",
+        "activeForm": "PHASE-1-004: [ing ] Write PRIMARY OBJECTIVES section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Write INTERACTION STYLE section",
+        "activeForm": "PHASE-2-001: [ing ] Write INTERACTION STYLE section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Write WHAT TO DO section with planning steps",
+        "activeForm": "PHASE-2-002: [ing ] Write WHAT TO DO section with planning steps",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-003: [ ] Write WHAT TO AVOID section",
+        "activeForm": "PHASE-2-003: [ing ] Write WHAT TO AVOID section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-004: [ ] Write FAIL-SAFE BEHAVIOR section",
+        "activeForm": "PHASE-2-004: [ing ] Write FAIL-SAFE BEHAVIOR section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-005: [ ] Add conversation starters to config",
+        "activeForm": "PHASE-2-005: [ing ] Add conversation starters to config",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-006: [ ] Add capability configuration",
+        "activeForm": "PHASE-2-006: [ing ] Add capability configuration",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Document knowledge file requirements",
+        "activeForm": "PHASE-3-001: [ing ] Document knowledge file requirements",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Create SETUP-GUIDE.md",
+        "activeForm": "PHASE-3-002: [ing ] Create SETUP-GUIDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-003: [ ] Validate complete configuration",
+        "activeForm": "PHASE-3-003: [ing ] Validate complete configuration",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-004: [ ] Test in OpenAI GPT builder",
+        "activeForm": "PHASE-3-004: [ing ] Test in OpenAI GPT builder",
+        "status": "pending"
+      }
+    ]
+  }
+]

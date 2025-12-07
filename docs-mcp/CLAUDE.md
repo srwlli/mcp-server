@@ -1,6 +1,6 @@
 # CLAUDE.md - docs-mcp AI Context Documentation
 
-**Version**: 2.9.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
+**Version**: 3.0.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
 
 ---
 
@@ -21,12 +21,13 @@
 ### What This Server Does
 
 **docs-mcp** is an MCP server providing:
-- **39 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, **LLM workflow**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
+- **45 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, **LLM workflow**, **context experts**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
 - **Workorder Tracking System** - Automatic unique ID assignment (WO-{FEATURE-NAME}-001) for all features in MCP planning workflow (v1.5.0)
 - **Global Workorder Logging** - Simple one-line logging for tracking workorder completion across projects (NEW in v1.11.0)
 - **Deliverables Tracking System** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (v1.6.0)
 - **Feature Archive System** - Automated archiving of completed features from working to archived directory with index tracking (v1.10.0)
-- **42 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, LLM workflow, and inventory tools
+- **Context Expert System** - File/directory-specific domain experts with deep context analysis, Lloyd onboarding, and staleness tracking (NEW in v3.0.0)
+- **48 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, LLM workflow, and inventory tools
 - **POWER framework templates** for comprehensive technical documentation
 - **Agentic workflows** enabling AI self-documentation via meta-tools
 - **Consistency Trilogy** pattern for living standards and compliance auditing
@@ -45,12 +46,14 @@ type_defs.py (219 lines)        # TypedDict definitions (QUA-001)
 logger_config.py                # Structured logging (ARCH-003)
 constants.py (119 lines)        # Paths, Files, enums (REF-002, QUA-003)
 validation.py (271 lines)       # Input validation layer (REF-003)
+context_expert_models.py        # Context expert TypedDict schemas (NEW in v3.0.0)
 generators/
   ├── base_generator.py         # Base template operations
   ├── foundation_generator.py   # Multi-document generation
   ├── changelog_generator.py    # Changelog CRUD + schema validation
   ├── standards_generator.py    # Standards extraction (~400 lines)
-  └── audit_generator.py        # Compliance auditing (~863 lines)
+  ├── audit_generator.py        # Compliance auditing (~863 lines)
+  └── context_expert_generator.py  # Context expert creation and analysis (NEW in v3.0.0)
 templates/power/                # POWER framework templates
   ├── readme.txt
   ├── architecture.txt
@@ -67,6 +70,10 @@ coderef/
   ├── changelog/
   │   ├── CHANGELOG.json        # Structured changelog data
   │   └── schema.json           # JSON schema for validation
+  ├── context-experts/           # Context expert system (NEW in v3.0.0)
+  │   ├── experts/              # Expert definition JSON files
+  │   ├── cache/                # Analysis cache
+  │   └── index.json            # Expert index
   ├── foundation-docs/          # Generated documentation output
   ├── standards/                # Extracted standards documents
   │   ├── UI-STANDARDS.md
@@ -2924,6 +2931,125 @@ get_workorder_log(
 **Slash command shortcuts**:
 - `/log-workorder` - Interactive prompt for logging new entry
 - `/get-workorder-log` - Interactive query with optional filters
+
+---
+
+
+### Context Expert Tools (NEW in v3.0.0)
+
+Context experts are file/directory-specific domain agents that maintain deep context about their assigned resources. Lloyd onboards them with briefing notes to transform raw analysis into activated specialists.
+
+#### `create_context_expert`
+**Purpose**: Create a new context expert for a file or directory
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `resource_path` (string, required): Relative path to file or directory
+- `resource_type` (string, optional): 'file' or 'directory' (default: file)
+- `capabilities` (array, optional): ['answer_questions', 'review_changes', 'generate_docs']
+- `domain` (string, optional): ui, db, script, docs, api, core, test, infra (default: core)
+- `workorder_id` (string, optional): Associated workorder ID
+- `assigned_by` (string, optional): Agent ID that assigned this expert
+
+**Output**:
+- expert_id: Unique ID (CE-{slug}-NNN)
+- name: Expert name with domain prefix
+- code_structure: Analysis summary (functions, classes, complexity)
+- git_history_count: Commits analyzed
+- relationships: Dependencies, tests, docs
+
+**Example**:
+```python
+create_context_expert(
+    project_path="C:/Users/willh/my-project",
+    resource_path="src/auth/handlers.py",
+    domain="api"
+)
+# Returns: CE-src-auth-handlers_py-001
+```
+
+---
+
+#### `list_context_experts`
+**Purpose**: List all defined context experts with optional filtering
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `domain` (string, optional): Filter by domain
+- `status` (string, optional): Filter by status (active, stale, archived)
+
+**Output**: List of expert summaries with ID, name, path, domain, status, staleness
+
+---
+
+#### `get_context_expert`
+**Purpose**: Get full details of a context expert by ID
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `expert_id` (string, required): Expert ID (CE-{slug}-NNN)
+
+**Output**: Complete expert definition including:
+- Code structure (functions, classes, imports, exports)
+- Git history (recent commits)
+- Relationships (dependencies, tests, docs)
+- Usage patterns (call sites, hot paths)
+- Onboarding (if activated by Lloyd)
+
+---
+
+#### `suggest_context_experts`
+**Purpose**: Auto-discover expert candidates based on codebase analysis
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `criteria` (object, optional): Filter criteria
+- `limit` (integer, optional): Max suggestions (default: 10)
+
+**Output**: List of suggestions with:
+- resource_path: Candidate file/directory
+- suggestion_reason: Why recommended
+- criteria_matched: Tags like ['high_impact', 'core']
+- confidence_score: 0.0-1.0 ranking
+
+---
+
+#### `update_context_expert`
+**Purpose**: Refresh an expert's context data
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `expert_id` (string, required): Expert ID to update
+
+**Output**: Updated expert with fresh analysis and reset staleness score
+
+---
+
+#### `activate_context_expert`
+**Purpose**: Activate expert with Lloyd's onboarding data
+
+**Input**:
+- `project_path` (string, required): Absolute path to project directory
+- `expert_id` (string, required): Expert ID to activate
+- `assigned_docs` (array, required): Docs the expert should read
+- `domain_scope` (string, required): Domain specialization description
+- `briefing_notes` (string, required): Lloyd's custom briefing
+- `onboarded_by` (string, optional): Agent ID (default: Lloyd)
+
+**Output**: Activated expert with onboarding data
+
+**Slash command shortcuts**:
+- `/create-expert` - Create new expert interactively
+- `/list-experts` - List all experts
+- `/get-expert` - View expert details
+- `/suggest-experts` - Auto-discover candidates
+- `/update-expert` - Refresh expert context
+- `/activate-expert` - Lloyd onboards expert
+
+**Storage location**: `coderef/context-experts/`
+- `experts/` - Expert definition JSON files
+- `cache/` - Analysis cache
+- `index.json` - Expert index
 
 ---
 

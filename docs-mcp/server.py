@@ -1162,9 +1162,181 @@ Run after /update-deliverables and before /archive-feature.''',
                 },
                 'required': ['input_file_path']
             }
-        )
-    ]
+        ),
+        Tool(
+            name='create_context_expert',
+            description='Create a new context expert for a file or directory. Analyzes code structure, git history, relationships, and usage patterns to build deep context. Experts are onboarded by Lloyd and maintain expertise about their assigned domain.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'resource_path': {
+                        'type': 'string',
+                        'description': 'Relative path to file or directory within project'
+                    },
+                    'resource_type': {
+                        'type': 'string',
+                        'enum': ['file', 'directory'],
+                        'description': 'Type of resource',
+                        'default': 'file'
+                    },
+                    'capabilities': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'string',
+                            'enum': ['answer_questions', 'review_changes', 'generate_docs']
+                        },
+                        'description': 'Expert capabilities',
+                        'default': ['answer_questions', 'review_changes']
+                    },
+                    'domain': {
+                        'type': 'string',
+                        'enum': ['ui', 'db', 'script', 'docs', 'api', 'core', 'test', 'infra'],
+                        'description': 'Domain specialization',
+                        'default': 'core'
+                    },
+                    'workorder_id': {
+                        'type': 'string',
+                        'description': 'Optional: Associated workorder ID',
+                        'pattern': '^WO-[A-Z0-9-]+-\\d{3}$'
+                    },
+                    'assigned_by': {
+                        'type': 'string',
+                        'description': 'Optional: Agent ID that assigned this expert'
+                    }
+                },
+                'required': ['project_path', 'resource_path']
+            }
+        ),
+        Tool(
+            name='list_context_experts',
+            description='List all defined context experts with optional filtering by domain or status.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'domain': {
+                        'type': 'string',
+                        'enum': ['ui', 'db', 'script', 'docs', 'api', 'core', 'test', 'infra'],
+                        'description': 'Optional: Filter by domain'
+                    },
+                    'status': {
+                        'type': 'string',
+                        'enum': ['active', 'stale', 'archived'],
+                        'description': 'Optional: Filter by status'
+                    }
+                },
+                'required': ['project_path']
+            }
+        ),
+        Tool(
+            name='get_context_expert',
+            description='Get full details of a context expert by ID, including code structure, git history, relationships, and usage patterns.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'expert_id': {
+                        'type': 'string',
+                        'description': 'Expert ID (format: CE-{slug}-NNN)',
+                        'pattern': '^CE-[a-zA-Z0-9_-]+-\\d{3}$'
+                    }
+                },
+                'required': ['project_path', 'expert_id']
+            }
+        ),
+        Tool(
+            name='suggest_context_experts',
+            description='Auto-discover expert candidates based on codebase analysis. Identifies high-impact files and directories that would benefit from dedicated context experts.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'criteria': {
+                        'type': 'object',
+                        'description': 'Optional: Filter criteria for suggestions'
+                    },
+                    'limit': {
+                        'type': 'integer',
+                        'description': 'Maximum number of suggestions (default: 10)',
+                        'default': 10,
+                        'minimum': 1,
+                        'maximum': 50
+                    }
+                },
+                'required': ['project_path']
+            }
+        ),
+        Tool(
+            name='update_context_expert',
+            description='Refresh an expert context data by re-analyzing code structure, git history, and relationships. Resets staleness score.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'expert_id': {
+                        'type': 'string',
+                        'description': 'Expert ID to update',
+                        'pattern': '^CE-[a-zA-Z0-9_-]+-\\d{3}$'
+                    }
+                },
+                'required': ['project_path', 'expert_id']
+            }
+        ),
+        Tool(
+            name='activate_context_expert',
+            description='Activate an expert by adding Lloyd onboarding data including assigned docs, domain scope, and briefing notes.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'expert_id': {
+                        'type': 'string',
+                        'description': 'Expert ID to activate',
+                        'pattern': '^CE-[a-zA-Z0-9_-]+-\\d{3}$'
+                    },
+                    'assigned_docs': {
+                        'type': 'array',
+                        'items': {'type': 'string'},
+                        'description': 'List of docs the expert should read'
+                    },
+                    'domain_scope': {
+                        'type': 'string',
+                        'description': 'Domain specialization description'
+                    },
+                    'briefing_notes': {
+                        'type': 'string',
+                        'description': 'Custom briefing notes from Lloyd'
+                    },
+                    'onboarded_by': {
+                        'type': 'string',
+                        'description': 'Agent ID that onboarded (default: Lloyd)',
+                        'default': 'Lloyd'
+                    }
+                },
+                'required': ['project_path', 'expert_id', 'assigned_docs', 'domain_scope', 'briefing_notes']
+            }
+        ),
 
+    ]
 
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:

@@ -47,6 +47,13 @@ __all__ = [
     'EXCLUDE_DIRS',
     'MAX_FILE_SIZE',
     'ALLOWED_FILE_EXTENSIONS',
+    # Context Expert constants
+    'ContextExpertPaths',
+    'ContextExpertStatus',
+    'ContextExpertCapability',
+    'ResourceType',
+    'ExpertDomain',
+    'EXPERT_ID_PATTERN',
 ]
 
 
@@ -318,3 +325,47 @@ class DocumentationType(str, Enum):
     HTML = 'html'  # HTML (.html) files
     ORGMODE = 'orgmode'  # Org-mode (.org) files
     PLAINTEXT = 'plaintext'  # Plain text (.txt) files
+
+# Context Expert System Constants (NEW in v3.0.0)
+class ContextExpertPaths:
+    """Paths for context expert system."""
+    ROOT = 'coderef/context-experts'
+    EXPERTS = 'coderef/context-experts/experts'
+    CACHE = 'coderef/context-experts/cache'
+    INDEX = 'coderef/context-experts/index.json'
+
+
+class ContextExpertStatus(str, Enum):
+    """Status of a context expert."""
+    ACTIVE = 'active'      # Expert is up-to-date and ready
+    STALE = 'stale'        # Expert context needs refresh
+    ARCHIVED = 'archived'  # Expert is no longer active
+
+
+class ContextExpertCapability(str, Enum):
+    """Capabilities a context expert can have."""
+    ANSWER_QUESTIONS = 'answer_questions'  # Can answer questions about the resource
+    REVIEW_CHANGES = 'review_changes'      # Can review changes to the resource
+    GENERATE_DOCS = 'generate_docs'        # Can generate documentation
+
+
+class ResourceType(str, Enum):
+    """Type of resource a context expert is assigned to."""
+    FILE = 'file'           # Single file expert
+    DIRECTORY = 'directory' # Directory/module expert
+
+
+class ExpertDomain(str, Enum):
+    """Domain specialization for context experts."""
+    UI = 'ui'           # Components, styling, accessibility
+    DB = 'db'           # Schemas, migrations, queries
+    SCRIPT = 'script'   # Build scripts, automation
+    DOCS = 'docs'       # Documentation structure, templates
+    API = 'api'         # API endpoints, handlers
+    CORE = 'core'       # Core business logic
+    TEST = 'test'       # Testing infrastructure
+    INFRA = 'infra'     # Infrastructure, deployment
+
+
+# Context Expert validation pattern
+EXPERT_ID_PATTERN = r'^CE-[a-zA-Z0-9_-]+-\d{3}$'

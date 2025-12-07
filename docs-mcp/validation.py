@@ -32,6 +32,13 @@ __all__ = [
     'validate_workorder_id',
     # Risk assessment validation
     'validate_risk_inputs',
+    # Context Expert validation
+    'validate_resource_path',
+    'validate_expert_id',
+    'validate_resource_type',
+    'validate_expert_domain',
+    'validate_expert_capabilities',
+    'validate_context_expert_inputs',
 ]
 
 
@@ -570,3 +577,198 @@ def validate_risk_inputs(arguments: dict) -> dict:
         'options': arguments.get('options'),
         'threshold': arguments.get('threshold', 50.0)  # Default threshold: 50
     }
+
+# Context Expert Validation Functions (WO-CONTEXT-EXPERTS-001)
+
+def validate_resource_path(project_path, resource_path: str) -> str:
+    """
+    Validate resource path exists within project and is valid.
+
+    Args:
+        project_path: Project root path (Path object)
+        resource_path: Relative path to resource within project
+
+    Returns:
+        Validated resource path string
+
+    Raises:
+        ValueError: If path is invalid or outside project
+    """
+    from pathlib import Path
+
+    if not resource_path or not isinstance(resource_path, str):
+        raise ValueError('resource_path must be a non-empty string')
+
+    # Check for path traversal
+    if '..' in resource_path:
+        raise ValueError(f"Path traversal detected in resource_path: {resource_path}")
+
+    # Resolve full path
+    full_path = (project_path / resource_path).resolve()
+
+    # Ensure path is within project
+    if not full_path.is_relative_to(project_path):
+        raise ValueError(
+            f"resource_path '{resource_path}' is outside project directory"
+        )
+
+    # Check if path exists
+    if not full_path.exists():
+        raise ValueError(
+            f"resource_path '{resource_path}' does not exist in project"
+        )
+
+    return resource_path
+
+
+def validate_expert_id(expert_id: str) -> str:
+    """
+    Validate context expert ID format.
+
+    Expected format: CE-{resource-slug}-{NUMBER}
+    Example: CE-src-auth-001, CE-components-ui-002
+
+    Args:
+        expert_id: Expert ID to validate
+
+    Returns:
+        Validated expert ID
+
+    Raises:
+        ValueError: If expert ID format is invalid
+    """
+    if not expert_id or not isinstance(expert_id, str):
+        raise ValueError('expert_id must be a non-empty string')
+
+    from constants import EXPERT_ID_PATTERN
+
+    if not re.match(EXPERT_ID_PATTERN, expert_id):
+        raise ValueError(
+            f"Invalid expert_id format: '{expert_id}'. "
+            f"Expected format: CE-resource-slug-001 (e.g., CE-src-auth-001)"
+        )
+
+    return expert_id
+
+
+def validate_resource_type(resource_type: str) -> str:
+    """
+    Validate resource type parameter.
+
+    Args:
+        resource_type: Type of resource ('file' or 'directory')
+
+    Returns:
+        Validated resource type
+
+    Raises:
+        ValueError: If resource type is invalid
+    """
+    from constants import ResourceType
+
+    valid_types = [t.value for t in ResourceType]
+    if resource_type not in valid_types:
+        raise ValueError(
+            f"Invalid resource_type: '{resource_type}'. "
+            f"Must be one of: {', '.join(valid_types)}"
+        )
+
+    return resource_type
+
+
+def validate_expert_domain(domain: str) -> str:
+    """
+    Validate expert domain parameter.
+
+    Args:
+        domain: Domain specialization (ui, db, api, core, etc.)
+
+    Returns:
+        Validated domain
+
+    Raises:
+        ValueError: If domain is invalid
+    """
+    from constants import ExpertDomain
+
+    valid_domains = [d.value for d in ExpertDomain]
+    if domain not in valid_domains:
+        raise ValueError(
+            f"Invalid domain: '{domain}'. "
+            f"Must be one of: {', '.join(valid_domains)}"
+        )
+
+    return domain
+
+
+def validate_expert_capabilities(capabilities: list) -> list:
+    """
+    Validate expert capabilities list.
+
+    Args:
+        capabilities: List of capabilities
+
+    Returns:
+        Validated capabilities list
+
+    Raises:
+        ValueError: If any capability is invalid
+    """
+    from constants import ContextExpertCapability
+
+    if not isinstance(capabilities, list):
+        raise ValueError("capabilities must be a list")
+
+    valid_caps = [c.value for c in ContextExpertCapability]
+    for cap in capabilities:
+        if cap not in valid_caps:
+            raise ValueError(
+                f"Invalid capability: '{cap}'. "
+                f"Must be one of: {', '.join(valid_caps)}"
+            )
+
+    return capabilities
+
+
+def validate_context_expert_inputs(arguments: dict) -> dict:
+    """
+    Validate context expert tool inputs at MCP boundary.
+
+    Args:
+        arguments: Tool arguments dict
+
+    Returns:
+        Validated arguments dict
+
+    Raises:
+        ValueError: If any input is invalid
+    """
+    from pathlib import Path
+
+    # Validate project_path (required)
+    if 'project_path' not in arguments:
+        raise ValueError("Missing required parameter: 'project_path'")
+
+    project_path = Path(validate_project_path_input(arguments['project_path'])).resolve()
+
+    # Validate resource_path (required for create)
+    if 'resource_path' in arguments:
+        validate_resource_path(project_path, arguments['resource_path'])
+
+    # Validate resource_type (required for create)
+    if 'resource_type' in arguments:
+        validate_resource_type(arguments['resource_type'])
+
+    # Validate expert_id (required for get/update/activate)
+    if 'expert_id' in arguments:
+        validate_expert_id(arguments['expert_id'])
+
+    # Validate domain (optional)
+    if 'domain' in arguments and arguments['domain']:
+        validate_expert_domain(arguments['domain'])
+
+    # Validate capabilities (optional)
+    if 'capabilities' in arguments and arguments['capabilities']:
+        validate_expert_capabilities(arguments['capabilities'])
+
+    return arguments

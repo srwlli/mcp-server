@@ -9,36 +9,42 @@ Generate a structured LLM prompt for multi-LLM querying with consistent JSON out
    - implementation: Suggest approaches for requirements
    - refactor: Identify improvement opportunities
 
-2. Ask user for their input (code, requirements, or description)
+2. Ask user for a name for this review (e.g., "playergenerator", "auth-module")
+   - This will be used for the filename
 
-3. Load the appropriate template from `templates/prompts/{task-type}.json`
+3. Ask user for their input (code, requirements, or description)
+   - Or tell them they can paste the code at the bottom of the saved file
 
-4. Generate the prompt by:
-   - Reading the template
-   - Substituting the user's input into the context.input field
-   - Formatting as a ready-to-paste prompt
+4. Load the appropriate template from `templates/prompts/{task-type}.json`
 
-5. Output the prompt in this format:
+5. Create the output directory if it doesn't exist:
+   - `coderef/llm-reviews/` in the current project
 
+6. Generate and save the prompt as JSON to:
+   - `coderef/llm-reviews/{name}-prompt.json`
+
+7. The saved file format:
+
+```json
+{
+  "task": "{task_type}",
+  "instruction": "{instruction from template}",
+  "context": {
+    "input": "[PASTE CODE HERE]",
+    "focus_areas": ["{areas from template}"]
+  },
+  "output_schema": {
+    "findings": [],
+    "recommendations": [],
+    "risks": [],
+    "metrics": {},
+    "ranked_actions": []
+  },
+  "success_criteria": ["{criteria from template}"]
+}
 ```
-# Task: {task}
 
-## Instruction
-{instruction}
-
-## Context
-{user_input}
-
-## Focus Areas
-{focus_areas as bullet list}
-
-## Required Output Format
-Respond with ONLY valid JSON matching this schema:
-
-{output_schema}
-
-## Success Criteria
-{success_criteria as bullet list}
-```
-
-6. Tell user: "Copy this prompt and paste into ChatGPT, Claude, and Gemini. Collect their JSON responses into a single file, then run /consolidate"
+8. Tell user:
+   - "Saved to coderef/llm-reviews/{name}-prompt.json"
+   - "Paste your code in the 'input' field, then copy the entire JSON to each LLM"
+   - "Save responses to coderef/llm-reviews/{name}-responses.txt and run /consolidate"

@@ -42,6 +42,16 @@
         .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
         .cmd { font-family: monospace; font-size: 0.85rem; color: #2c3e50; background: #fff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e1e8ed; }
 
+        .workflows { margin-top: 40px; }
+        .workflows h2 { font-size: 1.1rem; color: #2c3e50; margin-bottom: 15px; border-bottom: 2px solid #27ae60; padding-bottom: 8px; }
+        .workflow { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 12px; border: 1px solid #e1e8ed; }
+        .workflow-title { font-weight: 600; color: #2c3e50; margin-bottom: 5px; }
+        .workflow-desc { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
+        .workflow-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .workflow-flow .cmd { font-size: 0.8rem; padding: 4px 8px; background: #e8f4f8; border-color: #3498db; }
+        .workflow-flow .arrow { color: #27ae60; font-weight: bold; }
+        .workflow-flow .action { font-size: 0.8rem; padding: 4px 8px; background: #fef9e7; border: 1px solid #f1c40f; border-radius: 4px; color: #856404; }
+
         footer { text-align: center; color: #999; font-size: 0.85rem; margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e8ed; }
 
         .nav { display: flex; justify-content: center; gap: 20px; padding: 15px; background: #2c3e50; margin-bottom: 30px; border-radius: 8px; }
@@ -96,6 +106,90 @@
                     <span class="server-count">8 tools</span>
                 </div>
                 <p class="server-desc">Code reference analysis, natural language queries, real-time scanning</p>
+            </div>
+        </div>
+
+        <div class="workflows">
+            <h2>Workflows Quick Reference</h2>
+
+            <div class="workflow">
+                <div class="workflow-title">Feature Lifecycle (Full)</div>
+                <div class="workflow-desc">End-to-end feature development with planning, implementation, and archival</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/start-feature</span> <span class="arrow">-></span>
+                    <span class="cmd">/execute-plan</span> <span class="arrow">-></span>
+                    <span class="action">implement</span> <span class="arrow">-></span>
+                    <span class="cmd">/update-deliverables</span> <span class="arrow">-></span>
+                    <span class="cmd">/update-docs</span> <span class="arrow">-></span>
+                    <span class="cmd">/archive-feature</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Context Experts</div>
+                <div class="workflow-desc">Create domain-specific agents for files/directories with persistent context</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/suggest-experts</span> <span class="arrow">-></span>
+                    <span class="cmd">/create-expert</span> <span class="arrow">-></span>
+                    <span class="cmd">/activate-expert</span> <span class="arrow">-></span>
+                    <span class="action">query expert</span> <span class="arrow">-></span>
+                    <span class="cmd">/update-expert</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Standards & Auditing</div>
+                <div class="workflow-desc">Establish coding standards and audit codebase compliance</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/establish-standards</span> <span class="arrow">-></span>
+                    <span class="cmd">/audit-codebase</span> <span class="arrow">-></span>
+                    <span class="cmd">/check-consistency</span> <span class="arrow">-></span>
+                    <span class="action">fix issues</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Multi-Agent Coordination</div>
+                <div class="workflow-desc">Coordinate work across multiple agents with structured communication</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/generate-agent-communication</span> <span class="arrow">-></span>
+                    <span class="cmd">/assign-agent-task</span> <span class="arrow">-></span>
+                    <span class="cmd">/track-agent-status</span> <span class="arrow">-></span>
+                    <span class="cmd">/verify-agent-completion</span> <span class="arrow">-></span>
+                    <span class="cmd">/aggregate-agent-deliverables</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">LLM Multi-Query</div>
+                <div class="workflow-desc">Run queries across multiple LLM providers and consolidate responses</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/query-llms</span> <span class="arrow">-></span>
+                    <span class="action">collect responses</span> <span class="arrow">-></span>
+                    <span class="cmd">/consolidate-llm-outputs</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Documentation Generation</div>
+                <div class="workflow-desc">Generate comprehensive docs from codebase analysis</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/inventory-manifest</span> <span class="arrow">-></span>
+                    <span class="cmd">/generate-docs</span> <span class="arrow">-></span>
+                    <span class="cmd">/generate-user-guide</span> <span class="arrow">-></span>
+                    <span class="cmd">/add-changelog</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Project Inventory</div>
+                <div class="workflow-desc">Full codebase analysis across all dimensions</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/inventory-manifest</span> <span class="arrow">-></span>
+                    <span class="cmd">/dependency-inventory</span> <span class="arrow">-></span>
+                    <span class="cmd">/api-inventory</span> <span class="arrow">-></span>
+                    <span class="cmd">/test-inventory</span>
+                </div>
             </div>
         </div>
 
@@ -219,7 +313,7 @@
                 </div>
             </div>
 
-                        <div class="cmd-section">
+            <div class="cmd-section">
                 <h3>Context Experts</h3>
                 <div class="cmd-grid">
                     <div class="cmd">/create-expert</div>

@@ -30,15 +30,18 @@
         .tool-cat-name { font-weight: 600; color: #2c3e50; font-size: 0.9rem; }
         .tool-cat-count { color: #667eea; font-weight: 600; }
 
-        .tool-list { list-style: none; margin-top: 20px; }
-        .tool-list li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-        .tool-list li:last-child { border-bottom: none; }
-        .tool-name { font-family: monospace; color: #667eea; }
-
         .cmd-section { margin-bottom: 20px; }
         .cmd-section h3 { font-size: 0.95rem; color: #667eea; margin-bottom: 8px; font-weight: 600; }
         .cmd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
         .cmd { font-family: monospace; font-size: 0.85rem; color: #2c3e50; background: #fff; padding: 5px 10px; border-radius: 4px; border: 1px solid #e1e8ed; }
+
+        .workflow { background: #fff; border: 1px solid #e1e8ed; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .workflow-title { font-weight: 600; color: #667eea; font-size: 0.95rem; margin-bottom: 5px; }
+        .workflow-desc { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
+        .workflow-flow { font-family: monospace; font-size: 0.8rem; background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: nowrap; }
+        .workflow-flow .arrow { color: #667eea; }
+        .workflow-flow .cmd { background: #667eea; color: #fff; padding: 2px 6px; border-radius: 3px; border: none; }
+        .workflow-flow .action { color: #10b981; font-style: italic; }
 
         .links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 30px 0; }
         .links a { color: #667eea; text-decoration: none; font-size: 0.9rem; }
@@ -78,6 +81,92 @@
             <div class="railway-url">https://docs-mcp-production.up.railway.app/mcp</div>
         </div>
 
+        <!-- WORKFLOWS QUICK REFERENCE -->
+        <div class="section">
+            <h2>Workflows Quick Reference</h2>
+
+            <div class="workflow">
+                <div class="workflow-title">Feature Lifecycle (Full)</div>
+                <div class="workflow-desc">End-to-end feature development with planning, implementation, and archival</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/start-feature</span> <span class="arrow">→</span>
+                    <span class="cmd">/execute-plan</span> <span class="arrow">→</span>
+                    <span class="action">implement</span> <span class="arrow">→</span>
+                    <span class="cmd">/update-deliverables</span> <span class="arrow">→</span>
+                    <span class="cmd">/update-docs</span> <span class="arrow">→</span>
+                    <span class="cmd">/archive-feature</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Context Experts</div>
+                <div class="workflow-desc">Create persistent domain experts for files/directories with deep context analysis</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/suggest-experts</span> <span class="arrow">→</span>
+                    <span class="cmd">/create-expert</span> <span class="arrow">→</span>
+                    <span class="cmd">/activate-expert</span> <span class="arrow">→</span>
+                    <span class="cmd">/get-expert</span> <span class="arrow">→</span>
+                    <span class="cmd">/update-expert</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Standards & Auditing</div>
+                <div class="workflow-desc">Extract coding standards from codebase and audit for compliance</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/establish-standards</span> <span class="arrow">→</span>
+                    <span class="cmd">/audit-codebase</span> <span class="arrow">→</span>
+                    <span class="action">fix violations</span> <span class="arrow">→</span>
+                    <span class="cmd">/check-consistency</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Multi-Agent Coordination</div>
+                <div class="workflow-desc">Parallel agent work with conflict prevention and verification</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/generate-agent-communication</span> <span class="arrow">→</span>
+                    <span class="cmd">/assign-agent-task</span> <span class="arrow">→</span>
+                    <span class="action">agents work</span> <span class="arrow">→</span>
+                    <span class="cmd">/verify-agent-completion</span> <span class="arrow">→</span>
+                    <span class="cmd">/aggregate-agent-deliverables</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">LLM Multi-Query</div>
+                <div class="workflow-desc">Query multiple LLMs and consolidate responses for consensus</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/llm-prompt</span> <span class="arrow">→</span>
+                    <span class="action">query ChatGPT, Claude, Gemini</span> <span class="arrow">→</span>
+                    <span class="action">paste responses</span> <span class="arrow">→</span>
+                    <span class="cmd">/consolidate</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Documentation Generation</div>
+                <div class="workflow-desc">Generate POWER framework docs for any project</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/generate-docs</span> <span class="arrow">→</span>
+                    <span class="cmd">/generate-user-guide</span> <span class="arrow">→</span>
+                    <span class="cmd">/generate-quickref</span>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-title">Project Inventory</div>
+                <div class="workflow-desc">Comprehensive project analysis across all dimensions</div>
+                <div class="workflow-flow">
+                    <span class="cmd">/quick-inventory</span> <span class="action">or</span>
+                    <span class="cmd">/inventory-manifest</span> +
+                    <span class="cmd">/dependency-inventory</span> +
+                    <span class="cmd">/api-inventory</span> +
+                    <span class="cmd">/test-inventory</span>
+                </div>
+            </div>
+        </div>
+
         <div class="section">
             <h2>Tool Categories</h2>
             <div class="tools-grid">
@@ -90,7 +179,7 @@
                 <div class="tool-cat"><span class="tool-cat-name">Deliverables</span> <span class="tool-cat-count">(2)</span></div>
                 <div class="tool-cat"><span class="tool-cat-name">Workorders</span> <span class="tool-cat-count">(4)</span></div>
                 <div class="tool-cat"><span class="tool-cat-name">Risk</span> <span class="tool-cat-count">(1)</span></div>
-                <div class="tool-cat"><span class="tool-cat-name">LLM Workflow</span> <span class="tool-cat-count">(1)</span></div>
+                <div class="tool-cat"><span class="tool-cat-name">LLM Workflow</span> <span class="tool-cat-count">(2)</span></div>
                 <div class="tool-cat"><span class="tool-cat-name">Context Experts</span> <span class="tool-cat-count">(6)</span></div>
             </div>
         </div>
@@ -176,41 +265,23 @@
             </div>
 
             <div class="cmd-section">
-                <h3>Risk Assessment</h3>
+                <h3>Risk & LLM</h3>
                 <div class="cmd-grid">
                     <div class="cmd">/assess-risk</div>
-                </div>
-            </div>
-
-            <div class="cmd-section">
-                <h3>LLM Workflow</h3>
-                <div class="cmd-grid">
                     <div class="cmd" style="background:#667eea;color:#fff;font-weight:600">/llm-prompt</div>
                     <div class="cmd">/consolidate</div>
                 </div>
             </div>
 
-                        <div class="cmd-section">
+            <div class="cmd-section">
                 <h3>Context Experts</h3>
                 <div class="cmd-grid">
+                    <div class="cmd">/suggest-experts</div>
                     <div class="cmd">/create-expert</div>
+                    <div class="cmd">/activate-expert</div>
                     <div class="cmd">/list-experts</div>
                     <div class="cmd">/get-expert</div>
-                    <div class="cmd">/suggest-experts</div>
                     <div class="cmd">/update-expert</div>
-                    <div class="cmd">/activate-expert</div>
-                </div>
-            </div>
-
-                        <div class="cmd-section">
-                <h3>Context Experts</h3>
-                <div class="cmd-grid">
-                    <div class="cmd">/create-expert</div>
-                    <div class="cmd">/list-experts</div>
-                    <div class="cmd">/get-expert</div>
-                    <div class="cmd">/suggest-experts</div>
-                    <div class="cmd">/update-expert</div>
-                    <div class="cmd">/activate-expert</div>
                 </div>
             </div>
 

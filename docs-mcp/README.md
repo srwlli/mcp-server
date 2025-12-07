@@ -2,13 +2,13 @@
 
 **Enterprise-Grade MCP Server for Documentation Generation**
 
-**Version:** 2.7.0 | **Date:** 2025-12-04 | **Maintainers:** willh, Claude Code AI
+**Version:** 2.9.0 | **Date:** 2025-12-06 | **Maintainers:** willh, Claude Code AI
 
 ---
 
 ## Overview
 
-**docs-mcp** is a production-ready Model Context Protocol (MCP) server that provides AI assistants with professional documentation generation, changelog management, codebase consistency auditing, universal quickref generation, implementation planning workflow, automatic deliverables tracking, **multi-agent task coordination**, **feature archiving**, **global workorder tracking**, and comprehensive project inventory analysis. Built with enterprise-grade patterns, it offers **38 specialized tools** with comprehensive logging, type safety, and security hardening.
+**docs-mcp** is a production-ready Model Context Protocol (MCP) server that provides AI assistants with professional documentation generation, changelog management, codebase consistency auditing, universal quickref generation, implementation planning workflow, automatic deliverables tracking, **multi-agent task coordination**, **feature archiving**, **global workorder tracking**, **multi-LLM prompt generation and consolidation**, and comprehensive project inventory analysis. Built with enterprise-grade patterns, it offers **39 specialized tools** with comprehensive logging, type safety, and security hardening.
 
 ### What It Does
 
@@ -21,18 +21,20 @@
 - **Multi-Agent Coordination**: Parallel agent execution with automated verification and integrated deliverables tracking - NEW in v1.9.0
 - **Agent Handoff Automation**: Auto-generate comprehensive handoff context files in under 5 minutes (vs 20-30 min manual) - **NEW in v1.12.0**
 - **Feature Archiving**: Automated archiving of completed features with status checking and searchable index - NEW in v1.10.0
+- **LLM Workflow**: Multi-LLM prompt generation and response consolidation for code reviews, architecture analysis, security audits - **NEW in v2.9.0**
 - **Agentic Workflows**: Enable AI agents to self-document changes, maintain code quality, and create high-quality plans
 - **Production-Ready**: Full logging, error handling, type hints, and security features
 
 ### Key Features
 
-✅ **38 MCP Tools** - Complete toolkit for documentation, changelog, consistency, quickref generation, planning workflow, deliverables tracking, **multi-agent coordination**, **agent handoff automation**, **feature archiving**, **workorder tracking**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations)
-✅ **40 Slash Commands** - Quick access to common workflows via `/command` syntax
+✅ **39 MCP Tools** - Complete toolkit for documentation, changelog, consistency, quickref generation, planning workflow, deliverables tracking, **multi-agent coordination**, **agent handoff automation**, **feature archiving**, **workorder tracking**, **LLM workflow**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations)
+✅ **42 Slash Commands** - Quick access to common workflows via `/command` syntax
 ✅ **Reference Commands** - `/list-tools` (54 tools across 3 servers) and `/list-commands` with Unicode box art display
 ✅ **Workorder Tracking** - Automatic unique ID assignment for all features in MCP planning workflow (NEW in v1.5.0)
 ✅ **Deliverables Tracking** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (NEW in v1.6.0)
 ✅ **Multi-Agent Coordination** - First MCP server with native parallel agent execution and automated verification (NEW in v1.9.0)
 ✅ **Feature Archive System** - Automated archiving with status checking, user confirmation, and searchable index tracking (NEW in v1.10.0)
+✅ **LLM Workflow** - Multi-LLM prompt generation with structured JSON output and response consolidation (NEW in v2.9.0)
 ✅ **Modular Architecture** - Handler registry pattern with 97% reduction in main dispatcher (407 → 13 lines)
 ✅ **Enterprise Patterns** - ErrorResponse factory, TypedDict type hints, enum constants, comprehensive logging
 ✅ **Security Hardened** - Path traversal protection, schema validation, input sanitization, audit trails
@@ -386,6 +388,42 @@ WO-AUTH-001 | personas-mcp | Auth system workorder | 2025-10-21T01:45:20+00:00
 4. **update_deliverables** - Calculate metrics from git history
 5. **update_all_documentation** - Auto-increment version and update docs
 6. **archive_feature** - Move to archive with status checking
+
+---
+
+### LLM Workflow Tools (1) **NEW in v2.9.0**
+
+| Tool | Purpose | When to Use | Required Parameters |
+|------|---------|-------------|---------------------|
+| `consolidate_llm_outputs` | Parse and merge responses from multiple LLMs into unified JSON | **AFTER COLLECTING RESPONSES** - Merge ChatGPT, Claude, Gemini outputs | `input_file_path` |
+
+**LLM Workflow:**
+1. `/llm-prompt` - Generate structured prompt with JSON output schema
+2. Copy prompt to ChatGPT, Claude, Gemini
+3. Paste responses into `llm-responses.txt` with markers (`=== ChatGPT ===`, etc.)
+4. `/consolidate` - Merge all responses into unified JSON
+
+**Task Types:**
+- `code-review` - Analyze code for issues and improvements
+- `architecture` - Evaluate design and suggest patterns
+- `security-audit` - Identify vulnerabilities and risks
+- `implementation` - Suggest approaches for requirements
+- `refactor` - Identify improvement opportunities
+
+**Output Structure:**
+- **findings** - Merged with consensus tracking (which LLMs agreed)
+- **recommendations** - Aggregated with priority and effort
+- **risks** - Combined with severity/likelihood
+- **metrics** - Averaged confidence scores
+- **unique insights** - Findings only one LLM caught (worth extra attention)
+- **conflicts** - Where LLMs disagreed (needs human decision)
+
+**Files (in `coderef/working/{feature}/`):**
+- `llm-prompt.json` - Generated structured prompt
+- `llm-responses.txt` - Pasted LLM responses with markers
+- `llm-consolidated.json` - Merged output
+
+---
 
 
 ## Quick Start
@@ -955,6 +993,7 @@ docs-mcp implements a unique **meta-tool pattern** for changelog management:
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 2.9.0 | 2025-12-06 | **LLM Workflow** - Multi-LLM prompt generation and response consolidation with /llm-prompt and /consolidate commands. Supports code-review, architecture, security-audit, implementation, and refactor task types |
 | 1.12.0 | 2025-10-23 | **Agent Handoff Automation** - Auto-generate comprehensive agent handoff context files from plan.json, analysis.json, and git history, reducing handoff time from 20-30 minutes to under 5 minutes with 80%+ auto-population |
 | 1.11.0 | 2025-10-21 | **Global Workorder Logging** - Simple one-line workorder tracking system for global activity log across projects with 2 new tools (log_workorder, get_workorder_log) |
 | 1.10.0 | 2025-10-20 | **Feature Archive System** - Automated archiving of completed features from working to archived directory with status checking and searchable index tracking |

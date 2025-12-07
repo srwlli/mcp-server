@@ -1,6 +1,6 @@
 # CLAUDE.md - docs-mcp AI Context Documentation
 
-**Version**: 2.7.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
+**Version**: 2.9.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
 
 ---
 
@@ -21,12 +21,12 @@
 ### What This Server Does
 
 **docs-mcp** is an MCP server providing:
-- **38 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
+- **39 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, **LLM workflow**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations, tests, documentation)
 - **Workorder Tracking System** - Automatic unique ID assignment (WO-{FEATURE-NAME}-001) for all features in MCP planning workflow (v1.5.0)
 - **Global Workorder Logging** - Simple one-line logging for tracking workorder completion across projects (NEW in v1.11.0)
 - **Deliverables Tracking System** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (v1.6.0)
 - **Feature Archive System** - Automated archiving of completed features from working to archived directory with index tracking (v1.10.0)
-- **40 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, and inventory tools
+- **42 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, LLM workflow, and inventory tools
 - **POWER framework templates** for comprehensive technical documentation
 - **Agentic workflows** enabling AI self-documentation via meta-tools
 - **Consistency Trilogy** pattern for living standards and compliance auditing
@@ -821,6 +821,73 @@ M tests/test_auth.py
 - Agent handoff time < 5 minutes (vs 20-30 minutes manual)
 
 **Reduces handoff time from 20-30 minutes to under 5 minutes** by automatically extracting context from existing project files.
+
+#### `/llm-prompt` **NEW in v2.9.0**
+Generate a structured LLM prompt for multi-LLM querying with consistent JSON output.
+- Asks user for feature name (used for folder in `coderef/working/{feature}/`)
+- Asks user for task type (code-review, architecture, security-audit, implementation, refactor)
+- Generates structured prompt with JSON output schema
+- Saves to `coderef/working/{feature}/llm-prompt.json`
+
+```bash
+# User types: /llm-prompt
+# Claude asks for feature name and task type
+# Generates llm-prompt.json with structured JSON schema
+# User copies prompt to ChatGPT, Claude, Gemini
+```
+
+**Task Types:**
+- `code-review` - Analyze code for issues and improvements
+- `architecture` - Evaluate design and suggest patterns
+- `security-audit` - Identify vulnerabilities and risks
+- `implementation` - Suggest approaches for requirements
+- `refactor` - Identify improvement opportunities
+
+**When to use:**
+- Before code reviews requiring multiple perspectives
+- Architecture decisions needing diverse input
+- Security audits where consensus matters
+
+#### `/consolidate` **NEW in v2.9.0**
+Parse and consolidate multiple LLM responses into unified output.
+- Asks user for feature name
+- Asks user for output formats (json, markdown, html)
+- Reads responses from `coderef/working/{feature}/llm-responses.txt`
+- Merges all LLM responses into `coderef/working/{feature}/llm-consolidated.json`
+
+```bash
+# User types: /consolidate
+# Claude asks for feature name and output formats
+# Parses llm-responses.txt with LLM markers
+# Generates consolidated output with:
+# - Merged findings (consensus tracking)
+# - Unique insights (single-source findings)
+# - Conflicts (where LLMs disagreed)
+# - Aggregated metrics
+```
+
+**Response File Format** (`llm-responses.txt`):
+```text
+=== ChatGPT ===
+{ JSON response }
+
+=== Claude ===
+{ JSON response }
+
+=== Gemini ===
+{ JSON response }
+```
+
+**Output Structure:**
+- `findings.merged` - Findings multiple LLMs agreed on
+- `findings.unique` - Insights only one LLM caught (worth extra attention)
+- `conflicts` - Where LLMs disagreed (needs human decision)
+- `metrics.aggregated` - Averaged confidence scores
+
+**When to use:**
+- After collecting responses from multiple LLMs
+- Before creating implementation plans based on multi-LLM review
+- When consensus or unique insights are valuable
 
 **When to use slash commands:**
 - Faster than typing full MCP tool names
@@ -3081,11 +3148,12 @@ assert "version format" in result[0].text.lower()
 
 ## Version Information
 
-**Current Version**: 1.11.0
-**Last Updated**: 2025-10-21
+**Current Version**: 2.9.0
+**Last Updated**: 2025-12-06
 **Maintainers**: willh, Claude Code AI
 
 **Change History** (Recent):
+- 2.9.0: LLM Workflow - Multi-LLM prompt generation (/llm-prompt) and response consolidation (/consolidate) for code reviews, architecture, security audits. Files stored in coderef/working/{feature}/ folder.
 - 1.0.4: Synced commands.json registry with 8 missing slash commands (config-inventory, documentation-inventory, test-inventory, execute-plan, generate-deliverables, update-deliverables, log-workorder, get-workorder-log). Added new deliverables and workorder categories. Updated COMPREHENSIVE-review.md to mark all improvements complete.
 - 1.1.0: Schema-First Design for planning workflow - Added plan.schema.json as single source of truth, schema_validator.py with helper functions for safe data extraction, and updated generate_deliverables_template to use normalized format handling. Implements three-layer defense: Producer (create_plan shows schema), Validator (normalizes formats), Consumer (uses helpers).
 - 1.0.4: Fixed /create-plan to automatically generate DELIVERABLES.md after plan.json creation - aligns code with existing documentation claims

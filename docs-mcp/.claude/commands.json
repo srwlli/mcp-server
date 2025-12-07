@@ -205,6 +205,16 @@
       "name": "get-workorder-log",
       "description": "View and query the global workorder activity log",
       "category": "workorder"
+    },
+    {
+      "name": "llm-prompt",
+      "description": "Generate structured prompt for multi-LLM querying with JSON output schema",
+      "category": "llm-workflow"
+    },
+    {
+      "name": "consolidate",
+      "description": "Parse and consolidate multiple LLM responses into unified output",
+      "category": "llm-workflow"
     }
   ],
   "categories": {
@@ -293,12 +303,19 @@
         "track-agent-status",
         "generate-handoff-context"
       ]
+    },
+    "llm-workflow": {
+      "description": "Multi-LLM prompt generation and response consolidation",
+      "commands": [
+        "llm-prompt",
+        "consolidate"
+      ]
     }
   },
   "metadata": {
-    "version": "2.8.0",
-    "total_commands": 41,
+    "version": "2.9.0",
+    "total_commands": 43,
     "project": "docs-mcp",
-    "generated_at": "2025-12-05T00:00:00Z"
+    "generated_at": "2025-12-06T00:00:00Z"
   }
 }

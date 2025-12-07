@@ -3957,6 +3957,78 @@ async def handle_assess_risk(arguments: dict) -> list[TextContent]:
     )
 
 
+@log_invocation
+@mcp_error_handler
+async def handle_consolidate_llm_outputs(arguments: dict) -> list[TextContent]:
+    """
+    Handle consolidate_llm_outputs tool call.
+
+    Parses multiple LLM responses and consolidates them into unified output.
+    Part of the llm-workflow feature (WO-LLM-WORKFLOW-001).
+    """
+    from generators.llm_output_parser import parse_llm_responses
+    from generators.consolidation_engine import consolidate_responses
+    from generators.output_formatters import save_outputs
+
+    # Validate inputs
+    input_file_path = arguments.get("input_file_path")
+    if not input_file_path:
+        raise ValueError("input_file_path is required")
+
+    input_path = Path(input_file_path).resolve()
+    if not input_path.exists():
+        raise FileNotFoundError(f"Input file not found: {input_file_path}")
+
+    # Get optional parameters
+    output_dir = arguments.get("output_dir")
+    if output_dir:
+        output_path = Path(output_dir).resolve()
+    else:
+        output_path = input_path.parent
+
+    output_formats = arguments.get("output_formats", ["json"])
+    if isinstance(output_formats, str):
+        output_formats = [output_formats]
+
+    # Validate formats
+    valid_formats = {"json", "markdown", "md", "html"}
+    for fmt in output_formats:
+        if fmt.lower() not in valid_formats:
+            raise ValueError(f"Invalid output format: {fmt}. Valid: json, markdown, html")
+
+    # Parse the input file
+    logger.info(f"Parsing LLM responses from: {input_path}")
+    parsed_result = parse_llm_responses(input_path)
+
+    if parsed_result['error_count'] > 0 and parsed_result['parsed_count'] == 0:
+        raise ValueError(
+            f"Failed to parse any responses. Errors: {parsed_result['errors']}"
+        )
+
+    # Consolidate the responses
+    logger.info(f"Consolidating {parsed_result['parsed_count']} responses")
+    consolidated = consolidate_responses(parsed_result['responses'])
+
+    # Save outputs
+    base_name = input_path.stem + "-consolidated"
+    saved_files = save_outputs(consolidated, output_path, output_formats, base_name)
+
+    return format_success_response(
+        data={
+            'input_file': str(input_path),
+            'sources_detected': consolidated['metadata']['sources'],
+            'source_count': consolidated['metadata']['source_count'],
+            'total_findings': consolidated['summary']['total_findings'],
+            'unique_insights': consolidated['summary']['unique_insights'],
+            'total_recommendations': consolidated['summary']['total_recommendations'],
+            'conflicts_found': consolidated['summary']['conflicts_found'],
+            'output_files': saved_files,
+            'parse_errors': parsed_result['error_count']
+        },
+        message=f"Successfully consolidated {consolidated['metadata']['source_count']} LLM responses"
+    )
+
+
 # Tool handlers registry (QUA-002)
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
@@ -3997,6 +4069,7 @@ TOOL_HANDLERS = {
     'get_workorder_log': handle_get_workorder_log,
     'generate_handoff_context': handle_generate_handoff_context,
     'assess_risk': handle_assess_risk,
+    'consolidate_llm_outputs': handle_consolidate_llm_outputs,
 }
 
 

@@ -6,17 +6,79 @@
   "date": "YYYY-MM-DD",
   "task": "One-line summary of what needs to be done",
   "instruction": "Single sentence directive for executing agent",
-  "precise_steps": [
-    "Step 1: Read {file_path}:{line_start}-{line_end} to understand current implementation",
-    "Step 2: Implement {feature_name} in {file_path}:{line_number}",
-    "Step 3: Add helper function {function_name}() to {file_path}",
-    "Step 4: Update tests in {test_file_path}",
-    "Step 5: Run tests: {test_command}",
-    "Step 6: Create documentation in {docs_path}",
-    "Step 7: Verify forbidden files unchanged: git diff {forbidden_file}",
-    "Step 8: Build project: {build_command}",
-    "Step 9: Commit changes: '{commit_message}'"
+  "tasks": [
+    {
+      "id": "STEP-001",
+      "description": "Read {file_path}:{line_start}-{line_end} to understand current implementation",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-002",
+      "description": "Implement {feature_name} in {file_path}:{line_number}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-003",
+      "description": "Add helper function {function_name}() to {file_path}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-004",
+      "description": "Update tests in {test_file_path}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-005",
+      "description": "Run tests: {test_command}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-006",
+      "description": "Create documentation in {docs_path}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-007",
+      "description": "Verify forbidden files unchanged: git diff {forbidden_file}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-008",
+      "description": "Build project: {build_command}",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    },
+    {
+      "id": "STEP-009",
+      "description": "Commit changes: '{commit_message}'",
+      "status": "pending",
+      "completed_at": null,
+      "notes": null
+    }
   ],
+  "progress": {
+    "total": 9,
+    "complete": 0,
+    "in_progress": 0,
+    "pending": 9,
+    "blocked": 0,
+    "percent": 0
+  },
   "details": {
     "work_area": "specific/directory/to/work/in",
     "forbidden_files": [
@@ -88,10 +150,16 @@
     },
     "final_approval": null
   },
+  "context_experts": {
+    "loaded": [],
+    "created_this_session": [],
+    "suggested": [],
+    "stale": []
+  },
   "metadata": {
     "created_at": "YYYY-MM-DDTHH:MM:SSZ",
     "updated_at": "YYYY-MM-DDTHH:MM:SSZ",
     "version": "1.0.0",
-    "template_version": "1.0.0"
+    "template_version": "1.1.0"
   }
 }

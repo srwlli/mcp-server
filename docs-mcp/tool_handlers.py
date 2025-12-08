@@ -2238,17 +2238,23 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
     meta = plan_data.get("META_DOCUMENTATION", {})
     feature_display_name = meta.get("feature_name", feature_name).upper().replace("-", "_")
 
-    # Build precise steps from phases
+    # Build tasks array from phases (with status tracking)
     phases = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("6_implementation_phases", {})
-    precise_steps = []
+    tasks = []
     step_num = 1
 
     for phase_key in sorted(phases.keys()):
         phase = phases[phase_key]
         phase_name = phase.get("name", f"Phase {phase_key}")
 
-        # Add phase header
-        precise_steps.append(f"Step {step_num}: Review {phase_name} requirements")
+        # Add phase header task
+        tasks.append({
+            "id": f"STEP-{step_num:03d}",
+            "description": f"Review {phase_name} requirements",
+            "status": "pending",
+            "completed_at": None,
+            "notes": None
+        })
         step_num += 1
 
         # Add tasks from this phase
@@ -2262,9 +2268,26 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
                 for task in task_group:
                     if task.get("id") == task_id:
                         desc = task.get("description", "")
-                        precise_steps.append(f"Step {step_num}: {desc}")
+                        tasks.append({
+                            "id": f"STEP-{step_num:03d}",
+                            "description": desc,
+                            "status": "pending",
+                            "completed_at": None,
+                            "notes": None
+                        })
                         step_num += 1
                         break
+
+    # Calculate progress summary
+    total_tasks = len(tasks)
+    progress = {
+        "total": total_tasks,
+        "complete": 0,
+        "in_progress": 0,
+        "pending": total_tasks,
+        "blocked": 0,
+        "percent": 0
+    }
 
     # Extract forbidden/allowed files from risk assessment or phases
     forbidden_files = []
@@ -2293,8 +2316,9 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
         "to": "Agent N",
         "date": datetime.now().strftime("%Y-%m-%d"),
         "task": f"Implement {feature_display_name} following {len(phases)} implementation phases",
-        "instruction": f"Execute all tasks for {feature_display_name} following the precise steps and respecting boundaries",
-        "precise_steps": precise_steps[:20] if len(precise_steps) > 20 else precise_steps,  # Limit to 20 steps
+        "instruction": f"Execute all tasks for {feature_display_name} and update task status in communication.json as you complete each one",
+        "tasks": tasks[:30] if len(tasks) > 30 else tasks,  # Limit to 30 tasks
+        "progress": progress,
         "details": {
             "work_area": str(feature_dir.relative_to(project_path)),
             "forbidden_files": forbidden_files if forbidden_files else [
@@ -2323,11 +2347,17 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
         "success_criteria": success_criteria[:10] if len(success_criteria) > 10 else success_criteria,
         "agent_1_status": "READY - Planning complete, awaiting agent assignment",
         "agent_N_status": None,
+        "context_experts": {
+            "loaded": [],
+            "created_this_session": [],
+            "suggested": [],
+            "stale": []
+        },
         "metadata": {
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
             "version": "1.0.0",
-            "template_version": "1.0.0",
+            "template_version": "1.1.0",
             "generated_from_plan": str(plan_path.relative_to(project_path))
         }
     })

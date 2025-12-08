@@ -24,6 +24,22 @@ from generators.base_generator import BaseGenerator
 
 
 # ============================================================================
+# LOCAL FIXTURES - Override conftest.py fixtures with correct paths
+# ============================================================================
+
+@pytest.fixture
+def foundation_generator(project_root: Path):
+    """
+    Create a FoundationGenerator instance with the REAL templates directory.
+
+    This overrides the conftest.py fixture which incorrectly uses mock_project.
+    FoundationGenerator expects templates_dir to contain template files like readme.txt.
+    """
+    templates_dir = project_root / "templates" / "power"
+    return FoundationGenerator(templates_dir)
+
+
+# ============================================================================
 # INITIALIZATION TESTS
 # ============================================================================
 

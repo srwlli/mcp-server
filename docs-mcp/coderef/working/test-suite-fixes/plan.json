@@ -1,0 +1,457 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-suite-fixes",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code AI",
+    "generated_at": "2025-12-08T14:35:00Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md", "USER-GUIDE.md"],
+      "coding_standards_reviewed": [],
+      "reference_components_identified": ["tests/conftest.py", "server.py", "tool_handlers.py"],
+      "technology_stack": {
+        "language": "Python 3.10+",
+        "framework": "MCP Server",
+        "testing": "pytest, pytest-asyncio",
+        "patterns": "async/await, fixtures, parametrized tests"
+      },
+      "context_experts_available": ["CE-server_py-001", "CE-tests-001", "CE-constants_py-001"]
+    },
+    "1_executive_summary": {
+      "goal": "Achieve 100% test pass rate by fixing all 26 failing tests and identifying necessary handler changes",
+      "description": "Fix all 26 failing tests across 5 categories: JSON response format mismatches (7), wrong file path references (6), mock tool names in server tests (6), assertion text mismatches (2), and language detection bug (1). Current state: 642 passed, 26 failed (96% pass rate). Target: 668 passed, 0 failed (100% pass rate).",
+      "scope": "Test files in tests/integration/, tests/unit/, tests/smoke/ and related handler code where modifications are needed to achieve test compatibility."
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 26,
+      "risks": [
+        {
+          "risk": "Handler changes may break existing integrations",
+          "mitigation": "Run full test suite after each handler modification",
+          "severity": "medium"
+        },
+        {
+          "risk": "JSON response format changes may affect API consumers",
+          "mitigation": "Document response format changes, maintain backward compatibility where possible",
+          "severity": "medium"
+        },
+        {
+          "risk": "Test fixes may mask actual bugs",
+          "mitigation": "Understand root cause before fixing each test, prefer handler fixes over test-only fixes",
+          "severity": "low"
+        }
+      ],
+      "dependencies": [
+        "conftest.py fixtures must remain stable",
+        "TOOL_HANDLERS registry in server.py"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {"path": "tests/integration/test_mcp_workflows.py", "purpose": "Fix JSON parsing expectations for 4 tests"},
+        {"path": "tests/integration/test_planning_workflow.py", "purpose": "Fix 7 tests with JSON parsing and validation"},
+        {"path": "tests/integration/test_user_approval_gate.py", "purpose": "Fix 3 tests looking for CLAUDE.md in wrong path"},
+        {"path": "tests/integration/test_workflow_documentation.py", "purpose": "Fix 3 tests with wrong file path references"},
+        {"path": "tests/unit/test_server.py", "purpose": "Fix 6 tests using non-existent tool names"},
+        {"path": "tests/smoke/test_analyze_project_basic.py", "purpose": "Fix language detection assertion"},
+        {"path": "tool_handlers.py", "purpose": "Potentially add JSON response mode for tools"},
+        {"path": "generators/planning_generator.py", "purpose": "Fix language detection logic if needed"}
+      ],
+      "files_to_create": [],
+      "existing_patterns": {
+        "fixture_pattern": "conftest.py provides mock_project, temp_dir, sample_* fixtures",
+        "test_pattern": "pytest.mark.asyncio for async tests, parametrize for variants",
+        "response_pattern": "format_success_response() returns emoji-prefixed text"
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "JSON Response Format Compatibility",
+          "description": "Fix 7 tests that expect JSON but receive emoji-prefixed text responses",
+          "requirements": ["Tests must handle actual response format", "Document expected response format"]
+        },
+        {
+          "id": "F2",
+          "name": "File Path Reference Corrections",
+          "description": "Fix 6 tests looking for CLAUDE.md in tests/integration/ instead of project root",
+          "requirements": ["Update path references to use project root", "Use project_root fixture where available"]
+        },
+        {
+          "id": "F3",
+          "name": "Server Unit Test Mock Fixes",
+          "description": "Fix 6 tests using non-existent test_tool and perf_test tool names",
+          "requirements": ["Mock TOOL_HANDLERS dictionary", "Or use real tool names that exist"]
+        },
+        {
+          "id": "F4",
+          "name": "Assertion Text Updates",
+          "description": "Fix 2 tests with error message text mismatches",
+          "requirements": ["Update assertions to match actual error format"]
+        },
+        {
+          "id": "F5",
+          "name": "Language Detection Fix",
+          "description": "Fix 1 test where analyze_project returns 'unknown' instead of 'Python'",
+          "requirements": ["Debug language detection logic", "Fix detection or update assertion"]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TEST-SUITE-FIXES-001",
+        "name": "Test Suite Fixes",
+        "feature_dir": "coderef/working/test-suite-fixes"
+      },
+      "tasks": [
+        {
+          "id": "JSON-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_gather_context_workflow JSON parsing",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-002",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_create_and_list_expert_workflow JSON parsing",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-003",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_suggest_experts_workflow JSON parsing",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-004",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_planning_to_execution_workflow JSON parsing",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-005",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_gather_context_creates_context_file",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-006",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_gather_context_generates_workorder_id",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "JSON-007",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_gather_context_validates_required_fields",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "PATH-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_approval_gate_documentation path reference",
+          "file": "tests/integration/test_user_approval_gate.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "PATH-002",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_workflow_includes_approval_step path reference",
+          "file": "tests/integration/test_user_approval_gate.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "PATH-003",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_approval_gate_clarity path reference",
+          "file": "tests/integration/test_user_approval_gate.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "PATH-004",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_claude_md_documents_review_loop path reference",
+          "file": "tests/integration/test_workflow_documentation.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "PATH-005",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_meta_plan_shows_review_loop_in_workflow path reference",
+          "file": "tests/integration/test_workflow_documentation.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "PATH-006",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_workflow_examples_show_iteration_pattern path reference",
+          "file": "tests/integration/test_workflow_documentation.py",
+          "priority": "P1",
+          "feature_id": "F2"
+        },
+        {
+          "id": "MOCK-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_dispatches_to_handler mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "MOCK-002",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_returns_handler_result mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "MOCK-003",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_logs_invocation mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "MOCK-004",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_with_empty_arguments mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "MOCK-005",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_preserves_exception_from_handler mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "MOCK-006",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_call_tool_dispatch_performance mock setup",
+          "file": "tests/unit/test_server.py",
+          "priority": "P1",
+          "feature_id": "F3"
+        },
+        {
+          "id": "ASSERT-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_invalid_template_name_handling assertion",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P2",
+          "feature_id": "F4"
+        },
+        {
+          "id": "ASSERT-002",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_missing_required_arguments assertion",
+          "file": "tests/integration/test_mcp_workflows.py",
+          "priority": "P2",
+          "feature_id": "F4"
+        },
+        {
+          "id": "VALID-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_gather_context_validates_feature_name",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P1",
+          "feature_id": "F1"
+        },
+        {
+          "id": "VALID-002",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_validate_plan_handles_missing_file",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P1",
+          "feature_id": "F1"
+        },
+        {
+          "id": "VALID-003",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_validate_plan_handles_malformed_json",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P1",
+          "feature_id": "F1"
+        },
+        {
+          "id": "VALID-004",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_full_planning_workflow end-to-end",
+          "file": "tests/integration/test_planning_workflow.py",
+          "priority": "P0",
+          "feature_id": "F1"
+        },
+        {
+          "id": "DETECT-001",
+          "workorder_id": "WO-TEST-SUITE-FIXES-001",
+          "description": "Fix test_analyze_docs_mcp language detection",
+          "file": "tests/smoke/test_analyze_project_basic.py",
+          "priority": "P2",
+          "feature_id": "F5"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "JSON Response Format Fixes",
+          "description": "Fix 11 tests that expect JSON responses but receive text. Analyze response patterns and update tests to parse actual format or add helper functions.",
+          "tasks": ["JSON-001", "JSON-002", "JSON-003", "JSON-004", "JSON-005", "JSON-006", "JSON-007", "VALID-001", "VALID-002", "VALID-003", "VALID-004"],
+          "deliverables": [
+            "Updated test_mcp_workflows.py with proper response parsing",
+            "Updated test_planning_workflow.py with proper response parsing",
+            "Helper function for parsing tool responses if needed"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "File Path Reference Fixes",
+          "description": "Fix 6 tests looking for files in wrong directories. Update to use project root paths.",
+          "tasks": ["PATH-001", "PATH-002", "PATH-003", "PATH-004", "PATH-005", "PATH-006"],
+          "deliverables": [
+            "Updated test_user_approval_gate.py with correct paths",
+            "Updated test_workflow_documentation.py with correct paths"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Server Unit Test Mock Fixes",
+          "description": "Fix 6 server unit tests that use non-existent tool names. Add proper TOOL_HANDLERS mocking.",
+          "tasks": ["MOCK-001", "MOCK-002", "MOCK-003", "MOCK-004", "MOCK-005", "MOCK-006"],
+          "deliverables": [
+            "Updated test_server.py with proper mock setup",
+            "TOOL_HANDLERS mock fixture if needed"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Minor Fixes and Verification",
+          "description": "Fix assertion mismatches and language detection. Run full test suite for verification.",
+          "tasks": ["ASSERT-001", "ASSERT-002", "DETECT-001"],
+          "deliverables": [
+            "Updated assertion expectations",
+            "Fixed language detection or test",
+            "Full test suite passing (668/668)"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Individual test file fixes",
+        "approach": "Fix and run each test file individually before full suite"
+      },
+      "integration_tests": {
+        "scope": "Full test suite verification",
+        "approach": "Run pytest tests/ -v after each phase"
+      },
+      "verification_commands": [
+        "pytest tests/integration/test_mcp_workflows.py -v",
+        "pytest tests/integration/test_planning_workflow.py -v",
+        "pytest tests/integration/test_user_approval_gate.py -v",
+        "pytest tests/integration/test_workflow_documentation.py -v",
+        "pytest tests/unit/test_server.py -v",
+        "pytest tests/smoke/test_analyze_project_basic.py -v",
+        "pytest tests/ -v --tb=short"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 668 tests pass (0 failures)",
+        "No new test warnings introduced",
+        "Existing functionality unchanged"
+      ],
+      "quality": [
+        "Test fixes follow existing patterns from conftest.py",
+        "Handler changes documented if any",
+        "No backward compatibility breaks"
+      ],
+      "metrics": {
+        "target_pass_rate": "100%",
+        "current_pass_rate": "96%",
+        "tests_to_fix": 26
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Analyze test_mcp_workflows.py JSON expectations",
+        "[ ] Fix JSON-001: test_gather_context_workflow",
+        "[ ] Fix JSON-002: test_create_and_list_expert_workflow",
+        "[ ] Fix JSON-003: test_suggest_experts_workflow",
+        "[ ] Fix JSON-004: test_planning_to_execution_workflow",
+        "[ ] Analyze test_planning_workflow.py JSON expectations",
+        "[ ] Fix JSON-005: test_gather_context_creates_context_file",
+        "[ ] Fix JSON-006: test_gather_context_generates_workorder_id",
+        "[ ] Fix JSON-007: test_gather_context_validates_required_fields",
+        "[ ] Fix VALID-001: test_gather_context_validates_feature_name",
+        "[ ] Fix VALID-002: test_validate_plan_handles_missing_file",
+        "[ ] Fix VALID-003: test_validate_plan_handles_malformed_json",
+        "[ ] Fix VALID-004: test_full_planning_workflow",
+        "[ ] Run pytest tests/integration/test_mcp_workflows.py",
+        "[ ] Run pytest tests/integration/test_planning_workflow.py"
+      ],
+      "phase_2_checklist": [
+        "[ ] Identify correct CLAUDE.md path (project root)",
+        "[ ] Fix PATH-001: test_approval_gate_documentation",
+        "[ ] Fix PATH-002: test_workflow_includes_approval_step",
+        "[ ] Fix PATH-003: test_approval_gate_clarity",
+        "[ ] Fix PATH-004: test_claude_md_documents_review_loop",
+        "[ ] Fix PATH-005: test_meta_plan_shows_review_loop_in_workflow",
+        "[ ] Fix PATH-006: test_workflow_examples_show_iteration_pattern",
+        "[ ] Run pytest tests/integration/test_user_approval_gate.py",
+        "[ ] Run pytest tests/integration/test_workflow_documentation.py"
+      ],
+      "phase_3_checklist": [
+        "[ ] Analyze TOOL_HANDLERS in server.py",
+        "[ ] Create mock fixture for TOOL_HANDLERS",
+        "[ ] Fix MOCK-001: test_call_tool_dispatches_to_handler",
+        "[ ] Fix MOCK-002: test_call_tool_returns_handler_result",
+        "[ ] Fix MOCK-003: test_call_tool_logs_invocation",
+        "[ ] Fix MOCK-004: test_call_tool_with_empty_arguments",
+        "[ ] Fix MOCK-005: test_call_tool_preserves_exception_from_handler",
+        "[ ] Fix MOCK-006: test_call_tool_dispatch_performance",
+        "[ ] Run pytest tests/unit/test_server.py"
+      ],
+      "phase_4_checklist": [
+        "[ ] Fix ASSERT-001: test_invalid_template_name_handling",
+        "[ ] Fix ASSERT-002: test_missing_required_arguments",
+        "[ ] Debug language detection in analyze_project_for_planning",
+        "[ ] Fix DETECT-001: test_analyze_docs_mcp",
+        "[ ] Run full test suite: pytest tests/ -v",
+        "[ ] Verify 668/668 tests passing",
+        "[ ] Document any handler changes made"
+      ]
+    }
+  }
+}

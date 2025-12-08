@@ -532,9 +532,13 @@ Track agent status across features with real-time dashboard.
 # Agent 3 gets WO-AUTH-SYSTEM-004 (unit + integration tests)
 
 # Step 4: Agents work in parallel (each in separate terminal)
-# Agent 1: Completes setup, marks status COMPLETE
-# Agent 2: Completes core logic, marks status COMPLETE
-# Agent 3: Completes tests, marks status COMPLETE
+# Each agent updates communication.json tasks as they work:
+#   - Set task status to "in_progress" when starting
+#   - Set status to "complete" with timestamp when done
+# Lloyd can check progress anytime by reading communication.json
+# Agent 1: Completes setup, updates task status to COMPLETE
+# Agent 2: Completes core logic, updates task status to COMPLETE
+# Agent 3: Completes tests, updates task status to COMPLETE
 
 # Step 5: Verify each agent's work
 /verify-agent-completion
@@ -574,42 +578,41 @@ Track agent status across features with real-time dashboard.
 # Moves to: coderef/archived/auth-system/
 ```
 
-**communication.json Structure**:
+**communication.json Structure** (v1.1.0 - Task Tracking):
 ```json
 {
   "workorder_id": "WO-AUTH-SYSTEM-001",
   "feature_name": "auth-system",
-  "agents": {
-    "agent_1": {
-      "workorder_id": "WO-AUTH-SYSTEM-002",
-      "phase": "phase_1_setup",
-      "status": "VERIFIED",
-      "forbidden_files": ["src/core/**", "tests/**"],
-      "allowed_files": ["requirements.txt", "src/auth/__init__.py"]
-    },
-    "agent_2": {
-      "workorder_id": "WO-AUTH-SYSTEM-003",
-      "phase": "phase_2_core",
-      "status": "VERIFIED",
-      "forbidden_files": ["requirements.txt", "tests/**"],
-      "allowed_files": ["src/auth/*.py"]
-    },
-    "agent_3": {
-      "workorder_id": "WO-AUTH-SYSTEM-004",
-      "phase": "phase_3_tests",
-      "status": "VERIFIED",
-      "forbidden_files": ["src/**"],
-      "allowed_files": ["tests/**"]
-    }
-  }
+  "tasks": [
+    {"id": "STEP-001", "description": "Read plan.json", "status": "complete", "completed_at": "2025-12-07T23:15:00Z"},
+    {"id": "STEP-002", "description": "Create conftest.py", "status": "in_progress", "completed_at": null},
+    {"id": "STEP-003", "description": "Update pyproject.toml", "status": "pending", "completed_at": null}
+  ],
+  "progress": {
+    "total": 18,
+    "complete": 5,
+    "in_progress": 1,
+    "pending": 12,
+    "blocked": 0,
+    "percent": 28
+  },
+  "details": {
+    "forbidden_files": ["server.py", "tool_handlers.py"],
+    "allowed_files": ["tests/**/*.py", "pyproject.toml"]
+  },
+  "agent_2_status": "ASSIGNED",
+  "agent_2_workorder_id": "WO-AUTH-SYSTEM-002"
 }
 ```
 
+**Task Status Values**: `pending` | `in_progress` | `complete` | `blocked`
+
 **Key Benefits**:
+- **Single Source of Truth**: communication.json is where task status lives
+- **Real-time Progress**: Lloyd checks progress anytime via `progress.percent`
 - **Conflict Prevention**: Forbidden files prevent agents from stepping on each other
 - **Traceability**: Each agent has unique workorder for audit trail
 - **Verification**: Automated checks ensure quality before merge
-- **Aggregation**: Combined metrics show total effort
 
 ---
 
@@ -3051,6 +3054,56 @@ create_context_expert(
 - `cache/` - Analysis cache
 - `index.json` - Expert index
 
+### Context Expert Workflow Integration (v3.0.0)
+
+Context experts are now integrated with the planning and execution workflows:
+
+#### Integration with `/start-feature` (Step 3.5)
+
+After project analysis, the workflow now:
+1. **Lists existing experts** - Shows experts relevant to the feature
+2. **Suggests new experts** - Recommends high-impact files for expert creation
+3. **Asks user** - Optional creation of suggested experts
+4. **Creates experts** - If user approves, creates experts for selected files
+
+This ensures deep context is available before implementation begins.
+
+#### Integration with `/execute-plan`
+
+Before executing each phase:
+1. **Identifies files** - Reads plan.json for files in current phase
+2. **Loads experts** - Calls `get_context_expert` for files with experts
+3. **Uses context** - Code structure, relationships, and history guide implementation
+4. **Updates experts** - Refreshes stale experts after changes
+
+#### Integration with `communication.json`
+
+The multi-agent communication template now includes:
+```json
+"context_experts": {
+  "loaded": [],          // Experts loaded this session
+  "created_this_session": [],  // Experts created during planning
+  "suggested": [],       // Experts recommended but not created
+  "stale": []           // Experts needing refresh
+}
+```
+
+This tracks expert usage across agent handoffs and ensures context continuity.
+
+#### Lloyd's Expert-Aware Workflow
+
+Lloyd (personas-mcp) is now equipped with:
+- **6 context expert tools** in preferred_tools
+- **Expert workflow instructions** in system_prompt
+- **When to check for experts** guidance
+- **Expert integration** with `/start-feature` and `/execute-plan`
+
+Lloyd can now:
+- List and load experts when starting features
+- Suggest expert creation for complex files
+- Refresh stale experts after implementation
+- Track expert usage in communication.json
+
 ---
 
 ## Adding New Tools
@@ -3238,36 +3291,174 @@ Consider this server **production-ready at v1.0.9**. The 83% represents completi
 
 ---
 
-## Testing Recommendations
+## Testing
 
-### For Tool Functionality
-```python
-# Test each tool via MCP interface (not direct Python)
-import tool_handlers
+### Test Suite Overview
 
-# Test success case
-result = await tool_handlers.handle_list_templates({})
-assert "Available POWER Framework Templates" in result[0].text
+docs-mcp includes a comprehensive test suite with **200+ tests** covering:
 
-# Test error handling
-result = await tool_handlers.handle_get_template({"template_name": "invalid"})
-assert "Template 'invalid'" in result[0].text
-assert "not found" in result[0].text.lower()
+- **Unit tests** for all 6 generators
+- **Integration tests** for MCP workflows and planning pipeline
+- **Performance tests** for large projects (100+ files) and query operations
+
+**Test Structure:**
+```
+tests/
+├── conftest.py                 # Shared fixtures for all tests
+├── unit/
+│   ├── test_context_expert_generator.py  # Context Expert tests
+│   ├── test_foundation_generator.py      # Foundation docs tests
+│   ├── test_planning_generator.py        # Planning workflow tests
+│   ├── test_server.py                    # Server initialization tests
+│   ├── test_changelog_generator.py       # Changelog CRUD tests
+│   └── test_inventory_generators.py      # Inventory tools tests
+├── integration/
+│   ├── test_mcp_workflows.py             # End-to-end MCP tool tests
+│   └── test_planning_workflow.py         # Full planning pipeline tests
+└── performance/
+    ├── test_large_projects.py            # 100+ file project tests
+    └── test_query_performance.py         # Query and filter benchmarks
 ```
 
-### For Security
-```python
-# Test path traversal protection
-result = await tool_handlers.handle_get_template({"template_name": "../../../etc/passwd"})
-assert "invalid" in result[0].text.lower()
+### Running Tests
 
-# Test version validation
-result = await tool_handlers.handle_add_changelog_entry({
-    "project_path": "/valid/path",
-    "version": "v1.0.3",  # Invalid format
-    # ... other fields
-})
-assert "version format" in result[0].text.lower()
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=. --cov-report=term-missing
+
+# Run specific test categories
+pytest tests/unit/                    # Unit tests only
+pytest tests/integration/             # Integration tests only
+pytest tests/performance/             # Performance tests only
+pytest -m performance                 # Tests marked @performance
+
+# Run specific test file
+pytest tests/unit/test_context_expert_generator.py
+
+# Run with verbose output
+pytest -v --tb=short
+
+# Run slow tests (marked @slow)
+pytest -m slow
+```
+
+### Coverage Targets
+
+| Module | Target | Description |
+|--------|--------|-------------|
+| `generators/context_expert_generator.py` | 90%+ | Core Context Expert functionality |
+| `generators/foundation_generator.py` | 80%+ | Documentation generation |
+| `generators/planning_generator.py` | 80%+ | Planning workflow |
+| `generators/changelog_generator.py` | 80%+ | Changelog operations |
+| `generators/inventory_generators.py` | 80%+ | Inventory tools |
+| `tool_handlers.py` | 70%+ | MCP handler layer |
+
+### Writing Tests
+
+**Use shared fixtures from conftest.py:**
+```python
+import pytest
+from pathlib import Path
+
+def test_example(mock_project: Path):
+    """Test using mock project fixture."""
+    # mock_project provides:
+    # - src/ with Python, TypeScript files
+    # - tests/ with pytest tests
+    # - docs/ with README.md
+    # - coderef/ structure with changelog, experts
+    # - Initialized git repo with initial commit
+
+    assert (mock_project / "src" / "main.py").exists()
+```
+
+**Use mock_project_with_history for git operations:**
+```python
+def test_git_analysis(mock_project_with_history: Path):
+    """Test with git commit history."""
+    # Has 3+ commits for git history analysis testing
+    pass
+```
+
+**Use large_mock_project for performance tests:**
+```python
+@pytest.mark.performance
+def test_large_scale(large_mock_project: Path):
+    """Test with 100+ files."""
+    # 10 modules × 10 files = 100 Python files
+    pass
+```
+
+### Test Patterns
+
+**1. Tool Functionality (via MCP handlers):**
+```python
+import tool_handlers
+
+async def test_tool_success(mock_project):
+    result = await tool_handlers.handle_list_templates({})
+    assert "Available POWER Framework Templates" in result[0].text
+
+async def test_tool_error(mock_project):
+    result = await tool_handlers.handle_get_template({"template_name": "invalid"})
+    assert "not found" in result[0].text.lower()
+```
+
+**2. Security Tests:**
+```python
+async def test_path_traversal_blocked():
+    result = await tool_handlers.handle_get_template({
+        "template_name": "../../../etc/passwd"
+    })
+    assert "invalid" in result[0].text.lower()
+
+async def test_version_format_validated():
+    result = await tool_handlers.handle_add_changelog_entry({
+        "project_path": "/valid/path",
+        "version": "v1.0.3",  # Invalid: must be X.Y.Z
+    })
+    assert "version format" in result[0].text.lower()
+```
+
+**3. Performance Tests:**
+```python
+import time
+
+@pytest.mark.performance
+def test_operation_speed(large_mock_project):
+    start = time.time()
+    # Run operation
+    elapsed = time.time() - start
+    assert elapsed < 2.0, f"Took {elapsed:.2f}s, expected < 2s"
+```
+
+### Test Markers
+
+Available pytest markers (defined in pyproject.toml):
+
+- `@pytest.mark.unit` - Unit tests
+- `@pytest.mark.integration` - Integration tests
+- `@pytest.mark.performance` - Performance benchmarks
+- `@pytest.mark.slow` - Slow-running tests
+- `@pytest.mark.asyncio` - Async tests (auto-applied)
+
+### CI/CD Integration
+
+```yaml
+# Example GitHub Actions workflow
+test:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - run: pip install -e ".[dev]"
+    - run: pytest --cov=. --cov-report=xml
+    - uses: codecov/codecov-action@v4
 ```
 
 ---

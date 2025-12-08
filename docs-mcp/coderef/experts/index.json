@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2025-12-08T05:00:00.000000+00:00",
+  "total_experts": 2,
+  "experts": [
+    {
+      "expert_id": "CE-server_py-001",
+      "name": "CORE Expert: Server",
+      "resource_path": "server.py",
+      "domain": "core",
+      "status": "active",
+      "staleness_score": 0.0
+    },
+    {
+      "expert_id": "CE-tests-001",
+      "name": "TEST Expert: Tests",
+      "resource_path": "tests",
+      "domain": "test",
+      "status": "active",
+      "staleness_score": 0.0
+    }
+  ],
+  "auto_suggestions": []
+}

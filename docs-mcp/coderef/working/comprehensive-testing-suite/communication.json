@@ -1,0 +1,96 @@
+{
+  "feature": "COMPREHENSIVE_TESTING_SUITE",
+  "workorder_id": "WO-COMPREHENSIVE-TESTING-SUITE-001",
+  "from": "Lloyd (Agent 1)",
+  "to": "Quinn (Agent 2)",
+  "date": "2025-12-07",
+  "task": "Implement comprehensive test suite for docs-mcp with unit, integration, and performance tests",
+  "instruction": "Execute all 4 phases of the testing suite implementation following the plan.json structure",
+  "precise_steps": [
+    "Step 1: Read coderef/working/comprehensive-testing-suite/plan.json to understand full implementation plan",
+    "Step 2: Create tests/conftest.py with shared fixtures (tmp_path, mock_project, async event loop)",
+    "Step 3: Update pyproject.toml with pytest, pytest-asyncio, pytest-cov dependencies",
+    "Step 4: Implement unit tests for ContextExpertGenerator in tests/unit/generators/test_context_expert_generator.py",
+    "Step 5: Implement unit tests for FoundationGenerator in tests/unit/generators/test_foundation_generator.py",
+    "Step 6: Implement unit tests for PlanningGenerator in tests/unit/generators/test_planning_generator.py",
+    "Step 7: Implement unit tests for server.py in tests/unit/test_server.py",
+    "Step 8: Implement unit tests for ChangelogGenerator in tests/unit/generators/test_changelog_generator.py",
+    "Step 9: Implement unit tests for InventoryGenerators in tests/unit/generators/test_inventory_generators.py",
+    "Step 10: Create integration tests for MCP workflows in tests/integration/test_mcp_workflows.py",
+    "Step 11: Create integration tests for planning workflow in tests/integration/test_planning_workflow.py",
+    "Step 12: Create performance tests in tests/performance/test_large_projects.py",
+    "Step 13: Create performance tests in tests/performance/test_query_performance.py",
+    "Step 14: Update CLAUDE.md with testing section",
+    "Step 15: Run full test suite: pytest tests/ -v --cov=. --cov-report=term-missing",
+    "Step 16: Verify 80%+ coverage on core modules",
+    "Step 17: CREATE CONTEXT EXPERT for test infrastructure: mcp__docs-mcp__create_context_expert(project_path, resource_path='tests', resource_type='directory', domain='test', capabilities=['answer_questions', 'review_changes'])",
+    "Step 18: Commit changes with feature name in commit message"
+  ],
+  "details": {
+    "work_area": "tests/",
+    "forbidden_files": [
+      "server.py - DO NOT MODIFY (production MCP server)",
+      "tool_handlers.py - DO NOT MODIFY (production handlers)",
+      "generators/*.py - DO NOT MODIFY (code being tested)"
+    ],
+    "allowed_files": [
+      "tests/**/*.py - Create and modify test files",
+      "tests/conftest.py - Create shared fixtures",
+      "pyproject.toml - Add test dependencies only",
+      "CLAUDE.md - Add testing documentation section"
+    ],
+    "context": {
+      "feature_name": "comprehensive-testing-suite",
+      "goal": "Establish complete test coverage across MCP ecosystem",
+      "dependencies": [],
+      "references": ["plan.json section 5_task_id_system", "context.json requirements"]
+    }
+  },
+  "testing_checklist": [
+    "1. Run pytest tests/unit/ -v to verify unit tests",
+    "2. Run pytest tests/integration/ -v to verify integration tests",
+    "3. Run pytest tests/performance/ -v to verify performance tests",
+    "4. Run pytest --cov=. --cov-report=html to generate coverage report",
+    "5. Verify coverage >= 80% on generators/",
+    "6. Verify coverage >= 90% on context_expert_generator.py",
+    "7. Verify all tests pass (0 failures)"
+  ],
+  "success_criteria": [
+    "All unit tests passing (generators, server, handlers)",
+    "All integration tests passing (MCP workflows, planning pipeline)",
+    "Performance baselines established (large project scan < 5s, query < 100ms)",
+    "Code coverage >= 80% on core modules",
+    "CLAUDE.md updated with testing documentation",
+    "No flaky tests (all tests deterministic)",
+    "Project builds without errors",
+    "Context Expert created for tests/ directory (domain: test)"
+  ],
+  "agent_1_status": "READY - Planning complete, assigned to Quinn",
+  "agent_2_status": "ASSIGNED",
+  "agent_2_assigned_at": "2025-12-07T23:10:00Z",
+  "agent_2_workorder_id": "WO-COMPREHENSIVE-TESTING-SUITE-002",
+  "agent_2_completion": {
+    "status": null,
+    "timestamp": null,
+    "changes_made": [],
+    "verification": {
+      "forbidden_files_unchanged": null,
+      "tests_passing": null,
+      "build_successful": null
+    },
+    "commit_hash": null,
+    "commit_message": null
+  },
+  "context_experts": {
+    "loaded": ["CE-server_py-001"],
+    "created_this_session": [],
+    "suggested": [],
+    "stale": []
+  },
+  "metadata": {
+    "created_at": "2025-12-07T23:10:00Z",
+    "updated_at": "2025-12-07T23:10:00Z",
+    "version": "1.0.0",
+    "template_version": "1.1.0"
+  }
+}

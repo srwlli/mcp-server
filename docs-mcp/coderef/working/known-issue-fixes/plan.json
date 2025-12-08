@@ -1,0 +1,251 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "known-issue-fixes",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "ready",
+    "generated_by": "Lloyd",
+    "has_context": true,
+    "has_analysis": true,
+    "priority": "high"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["CLAUDE.md", "README.md"],
+      "coding_standards": [],
+      "reference_components": [
+        "generators/context_expert_generator.py - Arrow function regex patterns",
+        "handlers/validate_plan_handler.py - Plan validation logic",
+        "tests/unit/handlers/test_validate_plan_handler.py - VALID_PLAN fixture"
+      ],
+      "project_structure": {
+        "generators": "generators/",
+        "handlers": "handlers/",
+        "tests": "tests/unit/"
+      }
+    },
+    "1_executive_summary": {
+      "goal": "Fix two production issues affecting coderef workflow reliability",
+      "description": "During test suite review, two issues were identified: (1) Plan validator scores comprehensive plans below 85 threshold due to overly strict scoring, (2) Arrow function detection in context_expert_generator misses functions without parentheses (const fn = x => x). Both issues affect user experience and code analysis accuracy.",
+      "scope": "Targeted fixes to validator scoring and regex patterns - no API changes",
+      "estimated_complexity": "Medium - requires careful regex work and validator logic review",
+      "priority": "High - affects core workflow functionality"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "Regex changes break existing function detection",
+          "mitigation": "Add new patterns without removing existing ones, run all 204 existing tests",
+          "severity": "medium"
+        },
+        {
+          "risk": "Validator scoring changes pass invalid plans",
+          "mitigation": "Review scoring logic carefully, do not lower threshold - fix logic instead",
+          "severity": "high"
+        },
+        {
+          "risk": "Test changes miss edge cases",
+          "mitigation": "Add 8+ test cases covering arrow function variations",
+          "severity": "low"
+        }
+      ],
+      "complexity_score": 4,
+      "confidence_level": "High"
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {"path": "generators/context_expert_generator.py", "purpose": "Add arrow function regex patterns for functions without parentheses"},
+        {"path": "handlers/validate_plan_handler.py", "purpose": "Review and fix scoring logic for comprehensive plans"},
+        {"path": "tests/unit/generators/test_context_expert_generator.py", "purpose": "Add tests for new arrow function patterns"},
+        {"path": "tests/unit/handlers/test_validate_plan_handler.py", "purpose": "Restore threshold to 85, fix VALID_PLAN fixture if needed"}
+      ],
+      "files_to_create": [],
+      "dependencies": ["pytest", "re (regex)"]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "VALIDATOR-FIX",
+          "name": "Fix Plan Validator Scoring",
+          "description": "Review validator logic to ensure comprehensive plans score >= 85. Do not lower threshold - identify why valid plans score low and fix the root cause."
+        },
+        {
+          "id": "ARROW-FN-FIX",
+          "name": "Expand Arrow Function Detection",
+          "description": "Add regex patterns to detect arrow functions without parentheses: const fn = x => x, const fn = async x => x"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-KNOWN-ISSUE-FIXES-001",
+        "name": "Known Issue Fixes",
+        "feature_dir": "coderef/working/known-issue-fixes"
+      },
+      "tasks": [
+        {
+          "id": "DIAG-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Analyze validate_plan_handler.py scoring logic - identify why comprehensive plans score below 85",
+          "file": "handlers/validate_plan_handler.py",
+          "acceptance": "Root cause documented with specific scoring deductions identified"
+        },
+        {
+          "id": "DIAG-002",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Review VALID_PLAN fixture in tests - ensure it represents a truly valid comprehensive plan",
+          "file": "tests/unit/handlers/test_validate_plan_handler.py",
+          "acceptance": "VALID_PLAN fixture verified or updated to meet all validation requirements"
+        },
+        {
+          "id": "FIX-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Fix validator scoring logic or VALID_PLAN fixture to achieve >= 85 score",
+          "file": "handlers/validate_plan_handler.py",
+          "acceptance": "Comprehensive plans score >= 85 without lowering threshold"
+        },
+        {
+          "id": "FIX-002",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Restore test threshold assertion from >= 60 back to >= 85",
+          "file": "tests/unit/handlers/test_validate_plan_handler.py",
+          "acceptance": "Test asserts score >= 85 and passes"
+        },
+        {
+          "id": "REGEX-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Add regex pattern for arrow functions without parentheses: const fn = x => expr",
+          "file": "generators/context_expert_generator.py",
+          "acceptance": "Pattern added to fn_patterns list at line ~188"
+        },
+        {
+          "id": "REGEX-002",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Add regex pattern for async arrow functions without parentheses: const fn = async x => expr",
+          "file": "generators/context_expert_generator.py",
+          "acceptance": "Pattern added to fn_patterns list"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Add test for arrow function without parentheses detection",
+          "file": "tests/unit/generators/test_context_expert_generator.py",
+          "acceptance": "Test passes for const fn = x => x pattern"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Add test for async arrow function without parentheses detection",
+          "file": "tests/unit/generators/test_context_expert_generator.py",
+          "acceptance": "Test passes for const fn = async x => x pattern"
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Run full test suite to verify no regressions",
+          "file": "tests/",
+          "acceptance": "All tests pass, no regressions"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+          "description": "Add changelog entry for fixes",
+          "file": "coderef/changelog/CHANGELOG.json",
+          "acceptance": "Changelog updated with version and fix details"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Diagnosis",
+          "description": "Analyze root causes of both issues before making changes",
+          "tasks": ["DIAG-001", "DIAG-002"],
+          "deliverables": ["Root cause analysis for validator scoring", "VALID_PLAN fixture review"]
+        },
+        {
+          "phase": 2,
+          "name": "Validator Fix",
+          "description": "Fix the plan validator scoring to properly score comprehensive plans",
+          "tasks": ["FIX-001", "FIX-002"],
+          "deliverables": ["Validator logic fixed", "Test threshold restored to 85"]
+        },
+        {
+          "phase": 3,
+          "name": "Arrow Function Fix",
+          "description": "Expand regex patterns to detect arrow functions without parentheses",
+          "tasks": ["REGEX-001", "REGEX-002", "TEST-001", "TEST-002"],
+          "deliverables": ["New regex patterns added", "Tests for new patterns"]
+        },
+        {
+          "phase": 4,
+          "name": "Verification",
+          "description": "Verify all fixes work and document changes",
+          "tasks": ["VERIFY-001", "DOC-001"],
+          "deliverables": ["All tests passing", "Changelog updated"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "approach": "Run targeted tests after each fix, full suite at end",
+      "commands": [
+        "pytest tests/unit/handlers/test_validate_plan_handler.py -v -k valid_plan",
+        "pytest tests/unit/generators/test_context_expert_generator.py -v -k arrow",
+        "pytest tests/ -v"
+      ],
+      "coverage_targets": {
+        "validate_plan_handler.py": "80%",
+        "context_expert_generator.py": "90%"
+      },
+      "edge_cases": [
+        "Arrow function with single param no parens: const fn = x => x",
+        "Arrow function with single param and async: const fn = async x => x",
+        "Arrow function with underscore param: const fn = _ => null",
+        "Arrow function with destructuring: const fn = ({a}) => a (should NOT match - has parens)",
+        "Arrow function in object literal: { method: x => x }",
+        "Multi-line arrow function: const fn = x =>\n  x * 2",
+        "Arrow function with type annotation: const fn = (x: number) => x (has parens)",
+        "Chained arrow: const fn = x => y => x + y",
+        "Invalid plan missing executive_summary - score 0",
+        "Plan with all sections but placeholder text - score below 85",
+        "Well-formed plan with all 10 sections - score >= 85"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "VALID_PLAN fixture scores >= 85 (measured: run validate_plan_handler test)",
+        "Arrow function regex detects 100% of single-param no-paren patterns (measured: 4 test cases)",
+        "Async arrow function regex detects async x => patterns (measured: 2 test cases)",
+        "All 204+ existing tests pass with 0 failures (measured: pytest exit code 0)",
+        "No changes to public API signatures (measured: no changes to server.py tool definitions)",
+        "Changelog entry added with version 3.0.1 (measured: entry exists in CHANGELOG.json)",
+        "Test coverage >= 80% on modified files (measured: pytest --cov report)"
+      ],
+      "measurable_targets": {
+        "validator_score": ">= 85",
+        "test_pass_rate": "100%",
+        "new_test_count": ">= 6",
+        "regression_count": "0"
+      }
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "Read validate_plan_handler.py scoring logic",
+        "Read context_expert_generator.py regex patterns",
+        "Review VALID_PLAN fixture structure"
+      ],
+      "implementation": [
+        "Phase 1: Diagnose root causes",
+        "Phase 2: Fix validator scoring",
+        "Phase 3: Add arrow function regex patterns",
+        "Phase 4: Verify and document"
+      ],
+      "post_implementation": [
+        "Run full test suite",
+        "Update changelog",
+        "Commit with feature name"
+      ]
+    }
+  }
+}

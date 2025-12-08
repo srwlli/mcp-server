@@ -1,0 +1,25 @@
+{
+  "feature_name": "known-issue-fixes",
+  "description": "Fix two production issues discovered during test suite review: (1) Plan validator too strict - comprehensive plans scoring below 85, (2) Arrow function detection incomplete - functions without parentheses not detected in TypeScript/JavaScript",
+  "goal": "Improve coderef workflow reliability by fixing validator scoring and expanding code analysis regex patterns",
+  "requirements": [
+    "Fix plan validator to score comprehensive plans >= 85",
+    "Add regex patterns to detect arrow functions without parentheses",
+    "Ensure backward compatibility - no breaking changes",
+    "Add tests for new regex patterns",
+    "Document the fixes in changelog"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Do not change validation threshold - fix the validator logic instead",
+    "Maintain existing regex patterns - only add new ones",
+    "No changes to public API"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-KNOWN-ISSUE-FIXES-001",
+    "workorder_assigned_at": "2025-12-08T16:11:35.190929+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

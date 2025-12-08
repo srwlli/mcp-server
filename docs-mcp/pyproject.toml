@@ -42,6 +42,7 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
     "mypy>=1.8.0",
     "ruff>=0.1.0"
 ]
@@ -98,4 +99,8 @@ python_functions = "test_*"
 asyncio_mode = "auto"
 markers = [
     "asyncio: mark test as async test",
+    "slow: mark test as slow running",
+    "integration: mark test as integration test",
+    "performance: mark test as performance test",
+    "unit: mark test as unit test",
 ]

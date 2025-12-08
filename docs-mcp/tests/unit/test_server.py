@@ -351,59 +351,44 @@ class TestCallTool:
     async def test_call_tool_dispatches_to_handler(self):
         """call_tool should dispatch to correct handler."""
         import server
-        import tool_handlers
 
         # Mock a handler
         mock_handler = AsyncMock(return_value=[Mock()])
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['test_tool'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'test_tool': mock_handler}):
             result = await server.call_tool('test_tool', {'arg': 'value'})
-
             mock_handler.assert_called_once_with({'arg': 'value'})
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
     @pytest.mark.asyncio
     async def test_call_tool_returns_handler_result(self):
         """call_tool should return result from handler."""
         import server
-        import tool_handlers
         from mcp.types import TextContent
 
         expected_result = [TextContent(type="text", text="test result")]
         mock_handler = AsyncMock(return_value=expected_result)
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['test_tool'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'test_tool': mock_handler}):
             result = await server.call_tool('test_tool', {})
-
             assert result == expected_result
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
     @pytest.mark.asyncio
     async def test_call_tool_logs_invocation(self):
         """call_tool should log tool invocations."""
         import server
-        import tool_handlers
 
         mock_handler = AsyncMock(return_value=[Mock()])
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['test_tool'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'test_tool': mock_handler}):
             with patch('server.log_tool_call') as mock_log:
                 await server.call_tool('test_tool', {'key1': 'val1', 'key2': 'val2'})
-
                 mock_log.assert_called_once_with('test_tool', args_keys=['key1', 'key2'])
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
 
 class TestCallToolHandlerRegistry:
@@ -562,36 +547,27 @@ class TestEdgeCases:
     async def test_call_tool_with_empty_arguments(self):
         """call_tool should handle empty arguments dict."""
         import server
-        import tool_handlers
 
         mock_handler = AsyncMock(return_value=[Mock()])
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['test_tool'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'test_tool': mock_handler}):
             result = await server.call_tool('test_tool', {})
-
             mock_handler.assert_called_once_with({})
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
     @pytest.mark.asyncio
     async def test_call_tool_preserves_exception_from_handler(self):
         """call_tool should propagate exceptions from handlers."""
         import server
-        import tool_handlers
 
         mock_handler = AsyncMock(side_effect=RuntimeError("Handler error"))
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['test_tool'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'test_tool': mock_handler}):
             with pytest.raises(RuntimeError, match="Handler error"):
                 await server.call_tool('test_tool', {})
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
     @pytest.mark.asyncio
     async def test_call_tool_logs_unknown_tool(self):
@@ -633,15 +609,13 @@ class TestPerformance:
     async def test_call_tool_dispatch_performance(self):
         """call_tool dispatch should be fast."""
         import server
-        import tool_handlers
         import time
 
         mock_handler = AsyncMock(return_value=[Mock()])
-        original_handlers = tool_handlers.TOOL_HANDLERS.copy()
 
-        try:
-            tool_handlers.TOOL_HANDLERS['perf_test'] = mock_handler
-
+        # Must patch server.tool_handlers.TOOL_HANDLERS because http_server.py
+        # can replace sys.modules['tool_handlers'] during server loading
+        with patch.dict(server.tool_handlers.TOOL_HANDLERS, {'perf_test': mock_handler}):
             start = time.perf_counter()
             for _ in range(1000):
                 await server.call_tool('perf_test', {})
@@ -649,8 +623,6 @@ class TestPerformance:
 
             # 1000 dispatches should take less than 1 second
             assert elapsed < 1.0, f"call_tool dispatch too slow: {elapsed:.3f}s for 1000 calls"
-        finally:
-            tool_handlers.TOOL_HANDLERS = original_handlers
 
 
 # ============================================================================

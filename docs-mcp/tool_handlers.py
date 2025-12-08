@@ -2239,13 +2239,19 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
     feature_display_name = meta.get("feature_name", feature_name).upper().replace("-", "_")
 
     # Build tasks array from phases (with status tracking)
-    phases = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("6_implementation_phases", {})
+    phases_section = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("6_implementation_phases", {})
+    # Support both array format (new) and dict format (legacy)
+    if "phases" in phases_section and isinstance(phases_section["phases"], list):
+        phases_list = phases_section["phases"]
+    else:
+        # Legacy dict format: {"phase_1": {...}, "phase_2": {...}}
+        phases_list = [phases_section[k] for k in sorted(phases_section.keys()) if k.startswith("phase")]
+
     tasks = []
     step_num = 1
 
-    for phase_key in sorted(phases.keys()):
-        phase = phases[phase_key]
-        phase_name = phase.get("name", f"Phase {phase_key}")
+    for phase in phases_list:
+        phase_name = phase.get("name", f"Phase {phase.get('phase', '?')}")
 
         # Add phase header task
         tasks.append({
@@ -2259,24 +2265,29 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
 
         # Add tasks from this phase
         for task_id in phase.get("tasks", []):
-            # Find task description
-            task_breakdown = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get(
-                "5_task_id_system", {}
-            ).get("task_breakdown", {})
+            # Find task description from task_id_system
+            task_system = plan_data.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("5_task_id_system", {})
 
-            for task_group in task_breakdown.values():
-                for task in task_group:
-                    if task.get("id") == task_id:
-                        desc = task.get("description", "")
-                        tasks.append({
-                            "id": f"STEP-{step_num:03d}",
-                            "description": desc,
-                            "status": "pending",
-                            "completed_at": None,
-                            "notes": None
-                        })
-                        step_num += 1
-                        break
+            # Support both array format (new) and dict format (legacy)
+            task_list = task_system.get("tasks", [])
+            if not task_list and "task_breakdown" in task_system:
+                # Legacy format: flatten task_breakdown dict
+                task_breakdown = task_system.get("task_breakdown", {})
+                for task_group in task_breakdown.values():
+                    task_list.extend(task_group)
+
+            for task in task_list:
+                if task.get("id") == task_id:
+                    desc = task.get("description", "")
+                    tasks.append({
+                        "id": f"STEP-{step_num:03d}",
+                        "description": desc,
+                        "status": "pending",
+                        "completed_at": None,
+                        "notes": None
+                    })
+                    step_num += 1
+                    break
 
     # Calculate progress summary
     total_tasks = len(tasks)
@@ -2294,7 +2305,7 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
     allowed_files = []
 
     # Try to extract from phases or set defaults
-    for phase in phases.values():
+    for phase in phases_list:
         deliverables = phase.get("deliverables", [])
         for deliverable in deliverables:
             # Files to modify are "allowed"
@@ -2303,7 +2314,7 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
 
     # Extract success criteria from phases
     success_criteria = []
-    for phase in phases.values():
+    for phase in phases_list:
         validation = phase.get("validation", [])
         success_criteria.extend(validation)
 
@@ -2315,7 +2326,7 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
         "from": "Agent 1",
         "to": "Agent N",
         "date": datetime.now().strftime("%Y-%m-%d"),
-        "task": f"Implement {feature_display_name} following {len(phases)} implementation phases",
+        "task": f"Implement {feature_display_name} following {len(phases_list)} implementation phases",
         "instruction": f"Execute all tasks for {feature_display_name} and update task status in communication.json as you complete each one",
         "tasks": tasks[:30] if len(tasks) > 30 else tasks,  # Limit to 30 tasks
         "progress": progress,
@@ -2372,12 +2383,12 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
             'communication_path': str(comm_path.relative_to(Path(project_path))),
             'feature_name': feature_name,
             'workorder_id': workorder_id,
-            'steps_count': len(precise_steps),
+            'steps_count': len(tasks),
             'success_criteria_count': len(success_criteria),
             'plan_source': str(plan_path.relative_to(Path(project_path))),
             'success': True
         },
-        message=f"✅ Generated communication.json with {len(precise_steps)} steps and {len(success_criteria)} success criteria"
+        message=f"✅ Generated communication.json with {len(tasks)} steps and {len(success_criteria)} success criteria"
     )
 
 

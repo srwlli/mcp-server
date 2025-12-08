@@ -19,9 +19,11 @@ from tool_handlers import (
     handle_track_agent_status
 )
 
-# Initialize TEMPLATES_DIR for handlers
+# Initialize TEMPLATES_DIR and TOOL_TEMPLATES_DIR for handlers
 TEMPLATES_DIR = Path(__file__).parent.parent.parent / 'templates'
+TOOL_TEMPLATES_DIR = Path(__file__).parent.parent.parent / 'templates' / 'tools'
 tool_handlers.set_templates_dir(TEMPLATES_DIR)
+tool_handlers.set_tool_templates_dir(TOOL_TEMPLATES_DIR)
 
 
 class TestAgentCoordinationWorkflow:

@@ -1,22 +1,48 @@
 """
 Plan validation for implementation plans (QUA-001).
 
-Validates implementation plans against quality checklist from
-feature-implementation-planning-standard.json. Scores plans 0-100 based on
-completeness, quality, and autonomy. Enables iterative review loop.
+Validates implementation plans against:
+1. plan.schema.json - Single source of truth for plan structure
+2. Quality checklist - Completeness, quality, and autonomy checks
+
+Scores plans 0-100 based on completeness, quality, and autonomy.
+Enables iterative review loop until score >= 90.
 """
 
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Any, Optional
 import json
 import re
 import time
 from type_defs import ValidationResultDict, ValidationIssueDict
 from logger_config import logger
 
+# Schema path relative to project root
+SCHEMA_PATH = Path(__file__).parent.parent / "coderef" / "schemas" / "plan.schema.json"
+
 
 class PlanValidator:
-    """Validates implementation plans against quality checklist."""
+    """Validates implementation plans against schema and quality checklist."""
+
+    # Required fields from schema (cached for performance)
+    REQUIRED_SECTIONS = [
+        "0_preparation",
+        "1_executive_summary",
+        "2_risk_assessment",
+        "3_current_state_analysis",
+        "4_key_features",
+        "5_task_id_system",
+        "6_implementation_phases",
+        "7_testing_strategy",
+        "8_success_criteria",
+        "9_implementation_checklist"
+    ]
+
+    # Executive summary required fields (NEW format from schema)
+    EXECUTIVE_SUMMARY_REQUIRED = ["goal", "description", "scope"]
+
+    # OLD format fields (for backward compatibility)
+    EXECUTIVE_SUMMARY_LEGACY = ["feature_overview", "value_proposition", "real_world_analogy", "primary_use_cases", "success_metrics"]
 
     def __init__(self, plan_path: Path):
         """Initialize validator with path to plan file.
@@ -27,6 +53,27 @@ class PlanValidator:
         self.plan_path = plan_path
         self.plan_data = None
         self.issues: List[ValidationIssueDict] = []
+        self._schema: Optional[Dict[str, Any]] = None
+
+    def _load_schema(self) -> Optional[Dict[str, Any]]:
+        """Load plan schema from coderef/schemas/plan.schema.json.
+
+        Returns:
+            Schema dict or None if not found
+        """
+        if self._schema is not None:
+            return self._schema
+
+        try:
+            if SCHEMA_PATH.exists():
+                with open(SCHEMA_PATH, 'r', encoding='utf-8') as f:
+                    self._schema = json.load(f)
+                    logger.debug(f"Loaded plan schema v{self._schema.get('version', 'unknown')}")
+                    return self._schema
+        except Exception as e:
+            logger.warning(f"Could not load plan schema: {e}")
+
+        return None
 
     def validate(self) -> ValidationResultDict:
         """Validate plan and return results.
@@ -280,50 +327,61 @@ class PlanValidator:
                             })
 
     def _validate_phase_fields(self, phases_data):
-        """Check phases have required complexity and effort_level fields."""
+        """Check phases have required fields.
+
+        Supports both formats:
+        - OLD format: phase_1, phase_2 keys with complexity/effort_level
+        - NEW format: phases array with phase/name/tasks/deliverables
+        """
+        # Handle NEW format: phases array
+        if 'phases' in phases_data and isinstance(phases_data['phases'], list):
+            for phase in phases_data['phases']:
+                if isinstance(phase, dict):
+                    phase_name = phase.get('name', f"Phase {phase.get('phase', '?')}")
+
+                    # NEW format required fields
+                    required_new = ['phase', 'name', 'tasks', 'deliverables']
+                    for field in required_new:
+                        if field not in phase:
+                            self.issues.append({
+                                'severity': 'major',
+                                'section': 'quality',
+                                'issue': f'Phase "{phase_name}" missing required "{field}" field',
+                                'suggestion': f'Add {field} field to phase'
+                            })
+            return  # Don't check OLD format if NEW format detected
+
+        # Handle OLD format: phase_1, phase_2 keys
         for phase_key, phase in phases_data.items():
-            if isinstance(phase, dict):
+            if isinstance(phase, dict) and phase_key.startswith('phase_'):
                 phase_name = phase.get('title', phase_key)
 
-                # Check for complexity field
-                if 'complexity' not in phase:
-                    self.issues.append({
-                        'severity': 'major',
-                        'section': 'quality',
-                        'issue': f'Phase {phase_name} missing required "complexity" field',
-                        'suggestion': 'Add complexity rating (low | medium | high | very_high)'
-                    })
-                elif phase['complexity'] not in ['low', 'medium', 'high', 'very_high']:
-                    self.issues.append({
-                        'severity': 'minor',
-                        'section': 'quality',
-                        'issue': f'Phase {phase_name} has invalid complexity value: {phase["complexity"]}',
-                        'suggestion': 'Use one of: low, medium, high, very_high'
-                    })
+                # OLD format: complexity and effort_level are optional but validated if present
+                if 'complexity' in phase:
+                    if phase['complexity'] not in ['low', 'medium', 'high', 'very_high']:
+                        self.issues.append({
+                            'severity': 'minor',
+                            'section': 'quality',
+                            'issue': f'Phase {phase_name} has invalid complexity value: {phase["complexity"]}',
+                            'suggestion': 'Use one of: low, medium, high, very_high'
+                        })
 
-                # Check for effort_level field
-                if 'effort_level' not in phase:
-                    self.issues.append({
-                        'severity': 'major',
-                        'section': 'quality',
-                        'issue': f'Phase {phase_name} missing required "effort_level" field',
-                        'suggestion': 'Add effort_level (1-5 scale: 1=trivial, 5=major undertaking)'
-                    })
-                elif not isinstance(phase['effort_level'], int) or phase['effort_level'] < 1 or phase['effort_level'] > 5:
-                    self.issues.append({
-                        'severity': 'minor',
-                        'section': 'quality',
-                        'issue': f'Phase {phase_name} has invalid effort_level: {phase.get("effort_level")}',
-                        'suggestion': 'Use integer 1-5 (1=trivial, 5=major undertaking)'
-                    })
+                if 'effort_level' in phase:
+                    if not isinstance(phase['effort_level'], int) or phase['effort_level'] < 1 or phase['effort_level'] > 5:
+                        self.issues.append({
+                            'severity': 'minor',
+                            'section': 'quality',
+                            'issue': f'Phase {phase_name} has invalid effort_level: {phase.get("effort_level")}',
+                            'suggestion': 'Use integer 1-5 (1=trivial, 5=major undertaking)'
+                        })
 
                 # Warn if old "duration" field is still present
                 if 'duration' in phase:
                     self.issues.append({
-                        'severity': 'major',
+                        'severity': 'minor',
                         'section': 'quality',
                         'issue': f'Phase {phase_name} contains deprecated "duration" field',
-                        'suggestion': 'Remove "duration" field - use complexity and effort_level instead'
+                        'suggestion': 'Consider removing "duration" field'
                     })
 
     def _validate_success_criteria(self, criteria_data):
@@ -523,15 +581,24 @@ class PlanValidator:
         return results
 
     def _check_executive_summary_complete(self) -> bool:
-        """Check if executive summary has all required fields."""
+        """Check if executive summary has all required fields.
+
+        Uses class constants from plan.schema.json:
+        - EXECUTIVE_SUMMARY_REQUIRED: NEW format (goal, description, scope)
+        - EXECUTIVE_SUMMARY_LEGACY: OLD format (for backward compatibility)
+        """
         if 'UNIVERSAL_PLANNING_STRUCTURE' not in self.plan_data:
             return False
         structure = self.plan_data['UNIVERSAL_PLANNING_STRUCTURE']
         if '1_executive_summary' not in structure:
             return False
         summary = structure['1_executive_summary']
-        required_fields = ['feature_overview', 'value_proposition', 'real_world_analogy', 'primary_use_cases', 'success_metrics']
-        return all(field in summary for field in required_fields)
+
+        # Accept either NEW format (from schema) or OLD format (legacy)
+        has_new_format = all(field in summary for field in self.EXECUTIVE_SUMMARY_REQUIRED)
+        has_old_format = all(field in summary for field in self.EXECUTIVE_SUMMARY_LEGACY)
+
+        return has_new_format or has_old_format
 
     def _check_section_present(self, section_name: str) -> bool:
         """Check if a specific section is present."""

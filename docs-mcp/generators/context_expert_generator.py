@@ -74,8 +74,8 @@ class ContextExpertGenerator:
         slug = re.sub(r'[^a-zA-Z0-9_-]', '', slug)
         slug = slug[:30]  # Limit length
 
-        # Get next number for this slug
-        existing = list(self.experts_dir.glob(f"{slug}*.json"))
+        # Get next number for this slug - files are named CE-{slug}-NNN.json
+        existing = list(self.experts_dir.glob(f"CE-{slug}*.json"))
         next_num = len(existing) + 1
 
         return f"CE-{slug}-{next_num:03d}"
@@ -124,7 +124,7 @@ class ContextExpertGenerator:
                 line_count=0, complexity_score=0.0
             )
 
-        for file_path in files[:50]:  # Limit for performance
+        for file_path in files[:20]:  # Limit for performance
             try:
                 content = file_path.read_text(encoding='utf-8', errors='ignore')
                 lines = content.splitlines()
@@ -184,11 +184,15 @@ class ContextExpertGenerator:
         exports: List[str]
     ) -> None:
         """Extract code structure using regex (for JS/TS or fallback)."""
-        # Functions: function name(), const name = () =>, async function name()
+        # Functions: function name(), const name = () =>, const name = x =>, async function name()
         fn_patterns = [
             r'function\s+(\w+)\s*\(',
             r'(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*=>',
-            r'(\w+)\s*:\s*(?:async\s*)?\([^)]*\)\s*=>',  # Object method
+            r'(?:const|let|var)\s+(\w+)\s*=\s*[a-zA-Z_]\w*\s*=>',  # Arrow fn without parens: const fn = x =>
+            r'(?:const|let|var)\s+(\w+)\s*=\s*async\s+[a-zA-Z_]\w*\s*=>',  # Async arrow fn without parens
+            r'(\w+)\s*:\s*(?:async\s*)?\([^)]*\)\s*=>',  # Object method with parens
+            r'(\w+)\s*:\s*[a-zA-Z_]\w*\s*=>',  # Object method without parens: { method: x => ... }
+            r'(\w+)\s*:\s*async\s+[a-zA-Z_]\w*\s*=>',  # Async object method without parens: { method: async x => ... }
             r'async\s+function\s+(\w+)\s*\(',
         ]
         for pattern in fn_patterns:
@@ -247,7 +251,7 @@ class ContextExpertGenerator:
                 cwd=str(self.project_path),
                 capture_output=True,
                 text=True,
-                timeout=30
+                timeout=5
             )
 
             if result.returncode != 0:
@@ -340,10 +344,10 @@ class ContextExpertGenerator:
                 cwd=str(self.project_path),
                 capture_output=True,
                 text=True,
-                timeout=15
+                timeout=3
             )
             if result.returncode == 0:
-                for line in result.stdout.splitlines()[:20]:
+                for line in result.stdout.splitlines()[:10]:
                     if line != resource_path and not line.startswith('.git'):
                         dependents.append(line)
         except Exception:
@@ -421,7 +425,7 @@ class ContextExpertGenerator:
                 cwd=str(self.project_path),
                 capture_output=True,
                 text=True,
-                timeout=15
+                timeout=3
             )
             if result.returncode == 0:
                 for line in result.stdout.splitlines():

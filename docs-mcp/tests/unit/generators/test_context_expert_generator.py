@@ -308,6 +308,59 @@ class TestRegexExtraction:
 
         assert len(exports) > 0
 
+    def test_extract_arrow_functions_without_parens(self, mock_project: Path):
+        """Test arrow function extraction without parentheses around params."""
+        generator = ContextExpertGenerator(mock_project)
+
+        functions = []
+        classes = []
+        imports = []
+        exports = []
+
+        content = """
+        const double = x => x * 2;
+        const asyncFetch = async id => await fetch(id);
+        let square = n => n ** 2;
+        var cube = x => x ** 3;
+        const withParens = (x) => x + 1;
+        const asyncWithParens = async (x) => await process(x);
+        """
+
+        generator._extract_with_regex(content, functions, classes, imports, exports)
+
+        # Should detect arrow functions without parentheses
+        assert "double" in functions, f"Expected 'double' in {functions}"
+        assert "asyncFetch" in functions, f"Expected 'asyncFetch' in {functions}"
+        assert "square" in functions, f"Expected 'square' in {functions}"
+        assert "cube" in functions, f"Expected 'cube' in {functions}"
+        # Should also still detect arrow functions with parentheses
+        assert "withParens" in functions, f"Expected 'withParens' in {functions}"
+        assert "asyncWithParens" in functions, f"Expected 'asyncWithParens' in {functions}"
+
+    def test_extract_object_method_arrow_functions(self, mock_project: Path):
+        """Test object method arrow function extraction."""
+        generator = ContextExpertGenerator(mock_project)
+
+        functions = []
+        classes = []
+        imports = []
+        exports = []
+
+        content = """
+        const obj = {
+            method1: x => x + 1,
+            method2: (x, y) => x + y,
+            method3: async x => await fetch(x),
+        };
+        """
+
+        generator._extract_with_regex(content, functions, classes, imports, exports)
+
+        # Should detect object method arrow functions
+        assert "method1" in functions, f"Expected 'method1' in {functions}"
+        assert "method2" in functions, f"Expected 'method2' in {functions}"
+        assert "method3" in functions, f"Expected 'method3' in {functions}"
+
 
 class TestGitHistoryExtraction:
     """Test git history extraction."""

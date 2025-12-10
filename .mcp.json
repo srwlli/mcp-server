@@ -19,6 +19,7 @@
       "command": "uv",
       "args": ["run", "server.py"],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp"
+    },
     }
   }
 }

@@ -1,0 +1,270 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_name": "User Authentication Implementation Plan",
+    "workorder_id": "WO-USER-AUTHENTICATION-001",
+    "version": "1.0.0",
+    "status": "approved",
+    "created_at": "2025-12-06",
+    "updated_at": "2025-12-06"
+  },
+  "0_preparation": {
+    "context_source": "coderef/working/user-authentication/context.json",
+    "analysis_source": "coderef/working/user-authentication/analysis.json",
+    "foundation_docs_available": ["README.md", "ARCHITECTURE.md"],
+    "coding_standards_available": ["coderef/standards/BEHAVIOR-STANDARDS.md"],
+    "reference_components": ["src/middleware/error-handler.js"]
+  },
+  "1_executive_summary": {
+    "feature_name": "User Authentication",
+    "description": "Implement JWT-based user authentication with registration, login, and protected routes",
+    "primary_goal": "Enable secure user accounts with session management",
+    "success_metrics": [
+      "Users can register and login successfully",
+      "Protected routes properly secured",
+      "All tests passing with 80%+ coverage"
+    ],
+    "estimated_complexity": "medium",
+    "estimated_phases": 4
+  },
+  "2_risk_assessment": {
+    "technical_risks": [
+      {
+        "risk": "JWT secret key exposure",
+        "likelihood": "low",
+        "impact": "high",
+        "mitigation": "Store secrets in environment variables, never commit to git"
+      },
+      {
+        "risk": "Password storage vulnerability",
+        "likelihood": "low",
+        "impact": "high",
+        "mitigation": "Use bcrypt with minimum 10 rounds, never store plain text"
+      }
+    ],
+    "dependencies": ["bcrypt", "jsonwebtoken", "express"],
+    "assumptions": ["PostgreSQL database is already configured", "Express.js server is running"]
+  },
+  "3_current_state_analysis": {
+    "existing_components": ["Express server", "PostgreSQL connection", "Error handling middleware"],
+    "patterns_to_follow": ["Middleware pattern for route protection", "Service layer for business logic"],
+    "gaps_identified": ["No user model exists", "No auth middleware"],
+    "integration_points": ["Database connection", "Express router", "Error handler"]
+  },
+  "4_key_features": [
+    {
+      "feature_id": "FEAT-001",
+      "name": "User Registration",
+      "description": "Allow new users to create accounts with email and password",
+      "priority": "must-have",
+      "acceptance_criteria": [
+        "Email must be unique",
+        "Password hashed before storage",
+        "Returns user object without password"
+      ]
+    },
+    {
+      "feature_id": "FEAT-002",
+      "name": "User Login",
+      "description": "Authenticate users and issue JWT tokens",
+      "priority": "must-have",
+      "acceptance_criteria": [
+        "Validates email and password",
+        "Returns JWT token on success",
+        "Returns 401 on invalid credentials"
+      ]
+    },
+    {
+      "feature_id": "FEAT-003",
+      "name": "Route Protection",
+      "description": "Middleware to protect authenticated routes",
+      "priority": "must-have",
+      "acceptance_criteria": [
+        "Validates JWT token in Authorization header",
+        "Attaches user to request object",
+        "Returns 401 for invalid/expired tokens"
+      ]
+    }
+  ],
+  "5_task_id_system": {
+    "workorder_id": "WO-USER-AUTHENTICATION-001",
+    "task_prefix_map": {
+      "SETUP": "Setup and configuration tasks",
+      "AUTH": "Authentication implementation tasks",
+      "TEST": "Testing tasks",
+      "DOCS": "Documentation tasks"
+    },
+    "id_format": "PREFIX-NNN (e.g., SETUP-001, AUTH-002)"
+  },
+  "6_implementation_phases": [
+    {
+      "phase_id": "phase_1",
+      "name": "Setup",
+      "description": "Install dependencies and create database schema",
+      "tasks": [
+        {
+          "task_id": "SETUP-001",
+          "title": "Install dependencies",
+          "description": "npm install bcrypt jsonwebtoken",
+          "dependencies": [],
+          "estimated_effort": "small",
+          "acceptance_criteria": ["Packages installed and in package.json"]
+        },
+        {
+          "task_id": "SETUP-002",
+          "title": "Create users table",
+          "description": "Create PostgreSQL migration for users table with id, email, password_hash, created_at",
+          "dependencies": ["SETUP-001"],
+          "estimated_effort": "small",
+          "acceptance_criteria": ["Migration runs successfully", "Table created in database"]
+        }
+      ]
+    },
+    {
+      "phase_id": "phase_2",
+      "name": "Core Implementation",
+      "description": "Implement authentication logic",
+      "tasks": [
+        {
+          "task_id": "AUTH-001",
+          "title": "Create User model",
+          "description": "Implement User model with password hashing",
+          "dependencies": ["SETUP-002"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["Model can create users", "Passwords are hashed"]
+        },
+        {
+          "task_id": "AUTH-002",
+          "title": "Implement registration endpoint",
+          "description": "POST /auth/register endpoint",
+          "dependencies": ["AUTH-001"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["Creates user", "Returns 201", "Handles duplicate email"]
+        },
+        {
+          "task_id": "AUTH-003",
+          "title": "Implement login endpoint",
+          "description": "POST /auth/login endpoint with JWT generation",
+          "dependencies": ["AUTH-001"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["Validates credentials", "Returns JWT token"]
+        },
+        {
+          "task_id": "AUTH-004",
+          "title": "Implement auth middleware",
+          "description": "Middleware to validate JWT and attach user to request",
+          "dependencies": ["AUTH-003"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["Validates token", "Rejects invalid tokens", "Attaches user"]
+        }
+      ]
+    },
+    {
+      "phase_id": "phase_3",
+      "name": "Testing",
+      "description": "Write tests for all authentication functionality",
+      "tasks": [
+        {
+          "task_id": "TEST-001",
+          "title": "Unit tests for User model",
+          "description": "Test password hashing and validation",
+          "dependencies": ["AUTH-001"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["Tests pass", "Coverage > 80%"]
+        },
+        {
+          "task_id": "TEST-002",
+          "title": "Integration tests for auth endpoints",
+          "description": "Test registration and login flows",
+          "dependencies": ["AUTH-004"],
+          "estimated_effort": "medium",
+          "acceptance_criteria": ["All endpoints tested", "Error cases covered"]
+        }
+      ]
+    },
+    {
+      "phase_id": "phase_4",
+      "name": "Documentation",
+      "description": "Document the authentication system",
+      "tasks": [
+        {
+          "task_id": "DOCS-001",
+          "title": "Update API documentation",
+          "description": "Document auth endpoints in API.md",
+          "dependencies": ["AUTH-004"],
+          "estimated_effort": "small",
+          "acceptance_criteria": ["All endpoints documented", "Examples provided"]
+        }
+      ]
+    }
+  ],
+  "7_testing_strategy": {
+    "unit_tests": {
+      "coverage_target": "80%",
+      "frameworks": ["jest"],
+      "key_areas": ["User model", "Password hashing", "JWT generation"]
+    },
+    "integration_tests": {
+      "scope": ["Registration flow", "Login flow", "Protected route access"],
+      "approach": "Supertest with test database"
+    },
+    "manual_testing": {
+      "test_cases": [
+        "Register new user via Postman",
+        "Login and receive token",
+        "Access protected route with token",
+        "Verify rejection without token"
+      ]
+    }
+  },
+  "8_success_criteria": {
+    "functional": [
+      "Users can register with email and password",
+      "Users can login and receive JWT token",
+      "Protected routes reject invalid tokens",
+      "Error messages are clear and helpful"
+    ],
+    "non_functional": [
+      "Login response time < 200ms",
+      "Password hashing uses bcrypt with 10+ rounds",
+      "JWT secrets stored in environment variables"
+    ],
+    "acceptance_criteria": [
+      "All tests passing",
+      "Code reviewed",
+      "Documentation updated"
+    ]
+  },
+  "9_implementation_checklist": {
+    "phases": [
+      {
+        "phase_name": "Phase 1: Setup",
+        "tasks": [
+          {"task_id": "SETUP-001", "description": "Install dependencies", "status": "pending"},
+          {"task_id": "SETUP-002", "description": "Create users table", "status": "pending"}
+        ]
+      },
+      {
+        "phase_name": "Phase 2: Core Implementation",
+        "tasks": [
+          {"task_id": "AUTH-001", "description": "Create User model", "status": "pending"},
+          {"task_id": "AUTH-002", "description": "Implement registration endpoint", "status": "pending"},
+          {"task_id": "AUTH-003", "description": "Implement login endpoint", "status": "pending"},
+          {"task_id": "AUTH-004", "description": "Implement auth middleware", "status": "pending"}
+        ]
+      },
+      {
+        "phase_name": "Phase 3: Testing",
+        "tasks": [
+          {"task_id": "TEST-001", "description": "Unit tests for User model", "status": "pending"},
+          {"task_id": "TEST-002", "description": "Integration tests for auth endpoints", "status": "pending"}
+        ]
+      },
+      {
+        "phase_name": "Phase 4: Documentation",
+        "tasks": [
+          {"task_id": "DOCS-001", "description": "Update API documentation", "status": "pending"}
+        ]
+      }
+    ]
+  }
+}

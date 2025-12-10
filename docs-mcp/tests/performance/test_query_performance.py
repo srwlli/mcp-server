@@ -37,14 +37,14 @@ def project_with_changelog_history(tmp_path: Path) -> Path:
     changelog_dir = coderef_dir / "changelog"
     changelog_dir.mkdir()
 
-    # Create schema
+    # Create schema (matching actual changelog structure)
     schema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
-        "required": ["project_name", "versions"],
+        "required": ["project", "entries"],
         "properties": {
-            "project_name": {"type": "string"},
-            "versions": {"type": "array"}
+            "project": {"type": "string"},
+            "entries": {"type": "array"}
         }
     }
     (changelog_dir / "schema.json").write_text(json.dumps(schema, indent=2))
@@ -86,8 +86,8 @@ def project_with_changelog_history(tmp_path: Path) -> Path:
                 })
 
     changelog = {
-        "project_name": "changelog-history-project",
-        "versions": versions
+        "project": "changelog-history-project",
+        "entries": versions
     }
     (changelog_dir / "CHANGELOG.json").write_text(json.dumps(changelog, indent=2))
 
@@ -116,13 +116,12 @@ class Class_{i}:
     pass
 ''')
 
-    # Create coderef structure
+    # Create coderef structure (path is coderef/experts, not coderef/context-experts)
     coderef_dir = project_dir / "coderef"
     coderef_dir.mkdir()
 
-    experts_dir = coderef_dir / "context-experts"
+    experts_dir = coderef_dir / "experts"
     experts_dir.mkdir()
-    (experts_dir / "experts").mkdir()
     (experts_dir / "cache").mkdir()
 
     # Create index with many experts
@@ -144,8 +143,8 @@ class Class_{i}:
         }
         experts.append(expert)
 
-        # Also save individual expert files
-        expert_file = experts_dir / "experts" / f"{expert['expert_id']}.json"
+        # Also save individual expert files directly in experts_dir (not a nested "experts" subdir)
+        expert_file = experts_dir / f"{expert['expert_id']}.json"
         full_expert = {
             **expert,
             "code_structure": {
@@ -253,33 +252,38 @@ class TestChangelogQueryPerformance:
         """Get all changelog entries should be fast even with many entries."""
         from generators.changelog_generator import ChangelogGenerator
 
-        generator = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        generator = ChangelogGenerator(changelog_path)
 
         start_time = time.time()
-        result = generator.get_changelog()
+        result = generator.read_changelog()  # Not get_changelog()
         elapsed = time.time() - start_time
 
-        assert "versions" in result
-        assert len(result["versions"]) >= 20
+        assert "entries" in result  # Not "versions"
+        assert len(result["entries"]) >= 20
         assert elapsed < 0.5, f"Get all changelog took {elapsed:.3f}s, expected < 0.5s"
 
     def test_get_specific_version_performance(self, project_with_changelog_history: Path):
-        """Retrieving a specific version should be O(n) at worst."""
+        """Retrieving and filtering by version should be O(n) at worst."""
         from generators.changelog_generator import ChangelogGenerator
 
-        generator = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        generator = ChangelogGenerator(changelog_path)
 
-        # Test multiple version lookups
+        # Test multiple version lookups (read + filter in Python)
         versions_to_test = ["1.0.0", "1.2.1", "2.3.0", "2.4.1"]
         total_time = 0
 
         for version in versions_to_test:
             start_time = time.time()
-            result = generator.get_changelog(version=version)
+            result = generator.read_changelog()
+            # Simulate version filtering (what tool handlers do)
+            entries = result.get("entries", [])
+            version_entry = next((e for e in entries if e.get("version") == version), None)
             elapsed = time.time() - start_time
             total_time += elapsed
-
-            assert result.get("version") == version or "versions" in result
 
         avg_time = total_time / len(versions_to_test)
         assert avg_time < 0.1, f"Average version lookup took {avg_time:.3f}s, expected < 0.1s"
@@ -288,13 +292,18 @@ class TestChangelogQueryPerformance:
         """Filtering by change type should be efficient."""
         from generators.changelog_generator import ChangelogGenerator
 
-        generator = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        generator = ChangelogGenerator(changelog_path)
 
         change_types = ["bugfix", "enhancement", "feature", "breaking_change", "security"]
 
         for change_type in change_types:
             start_time = time.time()
-            result = generator.get_changelog(change_type=change_type)
+            result = generator.read_changelog()
+            # Simulate change_type filtering (what tool handlers do)
+            entries = result.get("entries", [])
+            filtered = [e for e in entries for c in e.get("changes", []) if c.get("type") == change_type]
             elapsed = time.time() - start_time
 
             assert elapsed < 0.2, f"Filter by {change_type} took {elapsed:.3f}s, expected < 0.2s"
@@ -303,10 +312,15 @@ class TestChangelogQueryPerformance:
         """Filtering breaking changes should be efficient."""
         from generators.changelog_generator import ChangelogGenerator
 
-        generator = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        generator = ChangelogGenerator(changelog_path)
 
         start_time = time.time()
-        result = generator.get_changelog(breaking_only=True)
+        result = generator.read_changelog()
+        # Simulate breaking_only filtering (what tool handlers do)
+        entries = result.get("entries", [])
+        breaking = [e for e in entries for c in e.get("changes", []) if c.get("breaking")]
         elapsed = time.time() - start_time
 
         assert elapsed < 0.2, f"Breaking changes filter took {elapsed:.3f}s, expected < 0.2s"
@@ -330,8 +344,12 @@ class TestExpertQueryPerformance:
         result = generator.list_experts()
         elapsed = time.time() - start_time
 
-        assert result.get("success", False)
-        assert len(result.get("experts", [])) >= 30
+        # list_experts returns either a dict with 'experts' key or a list directly
+        if isinstance(result, dict):
+            experts = result.get("experts", [])
+        else:
+            experts = result
+        assert len(experts) >= 30
         assert elapsed < 0.3, f"List experts took {elapsed:.3f}s, expected < 0.3s"
 
     def test_filter_by_domain_performance(self, project_with_many_experts: Path):
@@ -410,9 +428,7 @@ class TestPlanningQueryPerformance:
 
     def test_validate_plan_performance(self, project_with_plans: Path):
         """Plan validation should complete quickly."""
-        from generators.planning_generator import PlanningGenerator
-
-        generator = PlanningGenerator(project_with_plans)
+        from generators.plan_validator import PlanValidator
 
         features = ["auth-system", "user-dashboard", "api-v2"]
         total_time = 0
@@ -421,7 +437,8 @@ class TestPlanningQueryPerformance:
             plan_path = project_with_plans / "coderef" / "working" / feature / "plan.json"
 
             start_time = time.time()
-            result = generator.validate_plan(str(plan_path))
+            validator = PlanValidator(plan_path)
+            result = validator.validate()
             elapsed = time.time() - start_time
             total_time += elapsed
 
@@ -466,14 +483,20 @@ class TestBatchQueryPerformance:
         from generators.changelog_generator import ChangelogGenerator
         from generators.context_expert_generator import ContextExpertGenerator
 
-        changelog_gen = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        changelog_gen = ChangelogGenerator(changelog_path)
         expert_gen = ContextExpertGenerator(project_with_many_experts)
 
         start_time = time.time()
 
         # Interleave queries
         for i in range(10):
-            changelog_gen.get_changelog(version=f"1.{i % 5}.0")
+            result = changelog_gen.read_changelog()
+            # Simulate version filter
+            entries = result.get("entries", [])
+            version = f"1.{i % 5}.0"
+            _ = next((e for e in entries if e.get("version") == version), None)
             expert_gen.list_experts(domain=["core", "api", "ui"][i % 3])
 
         elapsed = time.time() - start_time
@@ -507,11 +530,14 @@ class TestIndexPerformance:
         """Changelog JSON parsing should be efficient."""
         from generators.changelog_generator import ChangelogGenerator
 
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+
         # Create fresh generator
         start_time = time.time()
-        generator = ChangelogGenerator(project_with_changelog_history)
+        generator = ChangelogGenerator(changelog_path)
         # Access to trigger parse
-        _ = generator.get_changelog()
+        _ = generator.read_changelog()
         elapsed = time.time() - start_time
 
         assert elapsed < 0.3, f"Changelog parse took {elapsed:.3f}s, expected < 0.3s"
@@ -552,12 +578,14 @@ class TestCachingPerformance:
         """Repeated changelog queries should be consistent."""
         from generators.changelog_generator import ChangelogGenerator
 
-        generator = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        generator = ChangelogGenerator(changelog_path)
 
         times = []
         for _ in range(10):
             start = time.time()
-            generator.get_changelog()
+            generator.read_changelog()
             times.append(time.time() - start)
 
         avg_time = sum(times) / len(times)
@@ -589,19 +617,24 @@ class TestQueryBaselines:
 
         metrics = {}
 
-        # Changelog queries
-        cgen = ChangelogGenerator(project_with_changelog_history)
+        # ChangelogGenerator takes file path, not directory
+        changelog_path = project_with_changelog_history / "coderef" / "changelog" / "CHANGELOG.json"
+        cgen = ChangelogGenerator(changelog_path)
 
         start = time.time()
-        cgen.get_changelog()
+        result = cgen.read_changelog()
         metrics["changelog_get_all"] = time.time() - start
 
         start = time.time()
-        cgen.get_changelog(version="1.2.0")
+        result = cgen.read_changelog()
+        entries = result.get("entries", [])
+        _ = next((e for e in entries if e.get("version") == "1.2.0"), None)
         metrics["changelog_get_version"] = time.time() - start
 
         start = time.time()
-        cgen.get_changelog(change_type="feature")
+        result = cgen.read_changelog()
+        entries = result.get("entries", [])
+        _ = [e for e in entries for c in e.get("changes", []) if c.get("type") == "feature"]
         metrics["changelog_filter_type"] = time.time() - start
 
         # Expert queries

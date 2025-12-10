@@ -1,6 +1,0 @@
-{
-  "file": "tool_handlers.py",
-  "function": "handle_generate_agent_communication",
-  "fix": "Change phases.get('phase_1') to iterate phases[] array",
-  "status": "stub"
-}

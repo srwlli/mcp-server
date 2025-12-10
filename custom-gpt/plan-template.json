@@ -1,0 +1,112 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_name": "Feature Name Implementation Plan",
+    "workorder_id": "WO-FEATURE-NAME-001",
+    "version": "1.0.0",
+    "status": "draft",
+    "created_at": "YYYY-MM-DD",
+    "updated_at": "YYYY-MM-DD"
+  },
+  "0_preparation": {
+    "context_source": "coderef/working/{feature}/context.json",
+    "analysis_source": "coderef/working/{feature}/analysis.json",
+    "foundation_docs_available": [],
+    "coding_standards_available": [],
+    "reference_components": []
+  },
+  "1_executive_summary": {
+    "feature_name": "",
+    "description": "",
+    "primary_goal": "",
+    "success_metrics": [],
+    "estimated_complexity": "low|medium|high",
+    "estimated_phases": 0
+  },
+  "2_risk_assessment": {
+    "technical_risks": [
+      {
+        "risk": "",
+        "likelihood": "low|medium|high",
+        "impact": "low|medium|high",
+        "mitigation": ""
+      }
+    ],
+    "dependencies": [],
+    "assumptions": []
+  },
+  "3_current_state_analysis": {
+    "existing_components": [],
+    "patterns_to_follow": [],
+    "gaps_identified": [],
+    "integration_points": []
+  },
+  "4_key_features": [
+    {
+      "feature_id": "FEAT-001",
+      "name": "",
+      "description": "",
+      "priority": "must-have|should-have|nice-to-have",
+      "acceptance_criteria": []
+    }
+  ],
+  "5_task_id_system": {
+    "workorder_id": "WO-FEATURE-NAME-001",
+    "task_prefix_map": {
+      "SETUP": "Setup and configuration tasks",
+      "IMPL": "Implementation tasks",
+      "TEST": "Testing tasks",
+      "DOCS": "Documentation tasks"
+    },
+    "id_format": "PREFIX-NNN (e.g., SETUP-001, IMPL-002)"
+  },
+  "6_implementation_phases": [
+    {
+      "phase_id": "phase_1",
+      "name": "Setup",
+      "description": "",
+      "tasks": [
+        {
+          "task_id": "SETUP-001",
+          "title": "",
+          "description": "",
+          "dependencies": [],
+          "estimated_effort": "small|medium|large",
+          "acceptance_criteria": []
+        }
+      ]
+    }
+  ],
+  "7_testing_strategy": {
+    "unit_tests": {
+      "coverage_target": "80%",
+      "frameworks": [],
+      "key_areas": []
+    },
+    "integration_tests": {
+      "scope": [],
+      "approach": ""
+    },
+    "manual_testing": {
+      "test_cases": []
+    }
+  },
+  "8_success_criteria": {
+    "functional": [],
+    "non_functional": [],
+    "acceptance_criteria": []
+  },
+  "9_implementation_checklist": {
+    "phases": [
+      {
+        "phase_name": "Phase 1: Setup",
+        "tasks": [
+          {
+            "task_id": "SETUP-001",
+            "description": "",
+            "status": "pending"
+          }
+        ]
+      }
+    ]
+  }
+}

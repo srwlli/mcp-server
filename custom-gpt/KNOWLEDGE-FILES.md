@@ -46,12 +46,15 @@ Before uploading, ensure files are:
 
 | File | Status | Notes |
 |------|--------|-------|
-| start-feature-workflow.md | [ ] | Copy from docs-mcp |
-| gather-context-workflow.md | [ ] | Copy from docs-mcp |
-| plan-template.json | [ ] | Create simplified version |
-| deliverables-template.md | [ ] | Copy example |
-| example-context.json | [ ] | Optional |
-| example-plan.json | [ ] | Optional |
+| start-feature-workflow.md | [x] | Created - ready to upload |
+| gather-context-workflow.md | [x] | Created - ready to upload |
+| plan-template.json | [x] | Created - ready to upload |
+| deliverables-template.md | [x] | Created - ready to upload |
+| example-context.json | [x] | Created - ready to upload |
+| example-plan.json | [x] | Created - ready to upload |
+| lloyd-persona.json | [x] | Created - ready to upload |
+
+All 7 knowledge files are now available in this directory and ready for upload to OpenAI GPT Builder.
 
 ## Updating Knowledge Files
 

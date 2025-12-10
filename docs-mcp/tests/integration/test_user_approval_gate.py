@@ -23,8 +23,8 @@ from typing import List, Set
 sys.path.insert(0, str(Path(__file__).parent))
 
 
-# Module-level constants
-DOCS_MCP_PATH = Path(__file__).parent
+# Module-level constants - point to project root (two levels up from tests/integration/)
+DOCS_MCP_PATH = Path(__file__).parent.parent.parent
 CLAUDE_MD_PATH = DOCS_MCP_PATH / 'CLAUDE.md'
 META_PLAN_PATH = DOCS_MCP_PATH / 'coderef' / 'planning-workflow' / 'planning-workflow-system-meta-plan.json'
 

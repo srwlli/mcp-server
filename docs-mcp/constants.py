@@ -329,10 +329,11 @@ class DocumentationType(str, Enum):
 # Context Expert System Constants (NEW in v3.0.0)
 class ContextExpertPaths:
     """Paths for context expert system."""
-    ROOT = 'coderef/context-experts'
-    EXPERTS = 'coderef/context-experts/experts'
-    CACHE = 'coderef/context-experts/cache'
-    INDEX = 'coderef/context-experts/index.json'
+    ROOT = 'coderef/experts'
+    EXPERTS = 'coderef/experts'
+    CACHE = 'coderef/experts/cache'
+    INDEX = 'coderef/experts/index.json'
+    REGISTRY = 'coderef/experts/experts.json'  # Comprehensive registry file
 
 
 class ContextExpertStatus(str, Enum):

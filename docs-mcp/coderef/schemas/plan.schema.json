@@ -1,0 +1,347 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "plan.schema.json",
+  "title": "Implementation Plan Schema",
+  "description": "Single source of truth for plan.json structure. Used by /create-plan and plan_validator.py",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["META_DOCUMENTATION", "UNIVERSAL_PLANNING_STRUCTURE"],
+  "properties": {
+    "META_DOCUMENTATION": {
+      "type": "object",
+      "required": ["feature_name", "schema_version", "version", "status"],
+      "properties": {
+        "feature_name": {
+          "type": "string",
+          "description": "Name of the feature being planned"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Version of this schema (should be 1.0.0)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Version of this plan document"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "ready", "in_progress", "complete", "archived"],
+          "description": "Current status of the plan"
+        },
+        "generated_by": {
+          "type": "string",
+          "description": "Agent or tool that generated this plan"
+        },
+        "has_context": {
+          "type": "boolean",
+          "description": "Whether context.json was available during generation"
+        },
+        "has_analysis": {
+          "type": "boolean",
+          "description": "Whether analysis.json was available during generation"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Priority level of the feature"
+        }
+      }
+    },
+    "UNIVERSAL_PLANNING_STRUCTURE": {
+      "type": "object",
+      "required": [
+        "0_preparation",
+        "1_executive_summary",
+        "2_risk_assessment",
+        "3_current_state_analysis",
+        "4_key_features",
+        "5_task_id_system",
+        "6_implementation_phases",
+        "7_testing_strategy",
+        "8_success_criteria",
+        "9_implementation_checklist"
+      ],
+      "properties": {
+        "0_preparation": {
+          "$ref": "#/definitions/preparation"
+        },
+        "1_executive_summary": {
+          "$ref": "#/definitions/executive_summary"
+        },
+        "2_risk_assessment": {
+          "$ref": "#/definitions/risk_assessment"
+        },
+        "3_current_state_analysis": {
+          "$ref": "#/definitions/current_state_analysis"
+        },
+        "4_key_features": {
+          "$ref": "#/definitions/key_features"
+        },
+        "5_task_id_system": {
+          "$ref": "#/definitions/task_id_system"
+        },
+        "6_implementation_phases": {
+          "$ref": "#/definitions/implementation_phases"
+        },
+        "7_testing_strategy": {
+          "$ref": "#/definitions/testing_strategy"
+        },
+        "8_success_criteria": {
+          "$ref": "#/definitions/success_criteria"
+        },
+        "9_implementation_checklist": {
+          "$ref": "#/definitions/implementation_checklist"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "preparation": {
+      "type": "object",
+      "properties": {
+        "foundation_docs": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of foundation documents to reference"
+        },
+        "coding_standards": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of coding standards documents"
+        },
+        "reference_components": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Reference components with descriptions"
+        },
+        "project_structure": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key directories in the project"
+        }
+      }
+    },
+    "executive_summary": {
+      "type": "object",
+      "required": ["goal", "description", "scope"],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Primary goal of the feature"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Detailed description of what will be built"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Scope boundaries for the implementation"
+        },
+        "estimated_complexity": {
+          "type": "string",
+          "description": "Complexity estimate (Low/Medium/High)"
+        },
+        "priority": {
+          "type": "string",
+          "description": "Priority and rationale"
+        }
+      }
+    },
+    "risk_assessment": {
+      "type": "object",
+      "required": ["risks"],
+      "properties": {
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["risk", "mitigation", "severity"],
+            "properties": {
+              "risk": {"type": "string"},
+              "mitigation": {"type": "string"},
+              "severity": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "critical"]
+              }
+            }
+          }
+        },
+        "complexity_score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "1-10 complexity score"
+        },
+        "confidence_level": {
+          "type": "string",
+          "enum": ["Low", "Medium", "High"],
+          "description": "Confidence in the plan"
+        }
+      }
+    },
+    "current_state_analysis": {
+      "type": "object",
+      "properties": {
+        "files_to_modify": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "purpose"],
+            "properties": {
+              "path": {"type": "string"},
+              "purpose": {"type": "string"}
+            }
+          }
+        },
+        "files_to_create": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "purpose"],
+            "properties": {
+              "path": {"type": "string"},
+              "purpose": {"type": "string"}
+            }
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "key_features": {
+      "type": "object",
+      "required": ["features"],
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "description"],
+            "properties": {
+              "id": {"type": "string"},
+              "name": {"type": "string"},
+              "description": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "task_id_system": {
+      "type": "object",
+      "required": ["workorder", "tasks"],
+      "properties": {
+        "workorder": {
+          "type": "object",
+          "required": ["id", "name", "feature_dir"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^WO-[A-Z0-9-]+-\\d{3}$"
+            },
+            "name": {"type": "string"},
+            "feature_dir": {"type": "string"}
+          }
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "workorder_id", "description"],
+            "properties": {
+              "id": {"type": "string"},
+              "workorder_id": {"type": "string"},
+              "description": {"type": "string"},
+              "file": {"type": "string"},
+              "acceptance": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "implementation_phases": {
+      "type": "object",
+      "required": ["phases"],
+      "properties": {
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["phase", "name", "description", "tasks", "deliverables"],
+            "properties": {
+              "phase": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "tasks": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "deliverables": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "testing_strategy": {
+      "type": "object",
+      "properties": {
+        "approach": {"type": "string"},
+        "commands": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "coverage_targets": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        },
+        "edge_cases": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "success_criteria": {
+      "type": "object",
+      "required": ["criteria"],
+      "properties": {
+        "criteria": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "measurable_targets": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    },
+    "implementation_checklist": {
+      "type": "object",
+      "properties": {
+        "pre_implementation": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "implementation": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "post_implementation": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}

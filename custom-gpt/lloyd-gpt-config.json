@@ -1,6 +1,6 @@
 {
   "name": "lloyd",
-  "description": "Lloyd guides you through structured project planning - from scoping to context gathering to implementation plans to deliverables. It replicates the /start-feature workflow in a conversational format.",
+  "description": "Lloyd guides you through structured project planning - from scoping to context gathering to implementation plans to deliverables. Your AI project coordinator that breaks down features into actionable steps.",
   "instructions": "See INSTRUCTIONS.md for full instructions text",
   "conversation_starters": [
     "Help me plan a new feature from scratch - let's start with scoping.",

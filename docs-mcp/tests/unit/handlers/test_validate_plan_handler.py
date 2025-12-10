@@ -349,12 +349,12 @@ def test_validate_valid_plan():
         print(f"  Issues: {len(issues)}")
         print(f"  Approved: {approved}")
 
-        # Well-formed plan should score reasonably (>= 60)
-        # Note: Validator has strict 25+ checks - perfect scores require all details
-        assert score >= 60, f"Well-formed plan should score >= 60, got {score}"
-        # Any result is acceptable as long as validation completes
-        assert validation_result in ['PASS', 'PASS_WITH_WARNINGS', 'NEEDS_REVISION', 'FAIL'], \
-            f"Validation should return valid result, got {validation_result}"
+        # Well-formed plan should score >= 85 (PASS or PASS_WITH_WARNINGS)
+        # Validator now supports both OLD and NEW schema formats
+        assert score >= 85, f"Well-formed plan should score >= 85, got {score}"
+        # Should achieve at least PASS_WITH_WARNINGS
+        assert validation_result in ['PASS', 'PASS_WITH_WARNINGS'], \
+            f"Well-formed plan should PASS or PASS_WITH_WARNINGS, got {validation_result}"
 
         # Check issue structure
         for issue in issues:
@@ -364,7 +364,7 @@ def test_validate_valid_plan():
             assert 'suggestion' in issue, "Issue should have fix suggestion"
 
         print("\n[PASS] Valid plan handler test completed successfully")
-        print(f"  [OK] Score {score} >= 60 (reasonable for strict validator)")
+        print(f"  [OK] Score {score} >= 85 (PASS threshold)")
         print(f"  [OK] Result: {validation_result}")
         print(f"  [OK] Issues properly structured")
 

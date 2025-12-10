@@ -245,10 +245,13 @@ pip install mock-project
     changelog_dir = coderef_dir / "changelog"
     changelog_dir.mkdir()
 
-    # Create empty changelog
+    # Create empty changelog (matching actual CHANGELOG.json structure)
     changelog_data = {
-        "project_name": "mock-project",
-        "versions": []
+        "$schema": "./schema.json",
+        "project": "mock-project",
+        "changelog_version": "1.0",
+        "current_version": "0.0.0",
+        "entries": []
     }
     (changelog_dir / "CHANGELOG.json").write_text(json.dumps(changelog_data, indent=2))
 
@@ -256,10 +259,12 @@ pip install mock-project
     schema_data = {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
-        "required": ["project_name", "versions"],
+        "required": ["project", "entries"],
         "properties": {
-            "project_name": {"type": "string"},
-            "versions": {"type": "array"}
+            "project": {"type": "string"},
+            "changelog_version": {"type": "string"},
+            "current_version": {"type": "string"},
+            "entries": {"type": "array"}
         }
     }
     (changelog_dir / "schema.json").write_text(json.dumps(schema_data, indent=2))

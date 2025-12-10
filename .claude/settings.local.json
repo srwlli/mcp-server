@@ -38,7 +38,15 @@
       "Bash(if [ -f \"C:/Users/willh/.mcp-servers/docs-mcp/coderef/working/$dir/plan.json\" ])",
       "Bash(then python3 -c \"import json; d=json.load(open(''C:/Users/willh/.mcp-servers/docs-mcp/coderef/working/$dir/plan.json'')); print(''Status:'', d.get(''META_DOCUMENTATION'',{}).get(''status'',''unknown''))\")",
       "Bash(else echo \"No plan.json\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(rm:*)",
+      "Bash(node:*)",
+      "mcp__docs-mcp__execute_plan",
+      "mcp__docs-mcp__generate_deliverables_template",
+      "mcp__docs-mcp__suggest_context_experts",
+      "mcp__docs-mcp__get_context_expert",
+      "mcp__docs-mcp__gather_context",
+      "Bash(pyinstaller:*)"
     ],
     "deny": [],
     "ask": []

@@ -19,8 +19,8 @@ async def test_analyze_docs_mcp():
     """Test analyze_project_for_planning on docs-mcp project itself."""
     print("Testing analyze_project_for_planning tool...\n")
 
-    # Test on docs-mcp project itself
-    project_path = str(Path(__file__).parent)
+    # Test on docs-mcp project itself (two levels up from tests/smoke/)
+    project_path = str(Path(__file__).parent.parent.parent)
     print(f"Analyzing project: {project_path}\n")
 
     result = await tool_handlers.handle_analyze_project_for_planning({

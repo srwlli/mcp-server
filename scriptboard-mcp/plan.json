@@ -1,0 +1,169 @@
+{
+  "name": "scriptboard-mcp",
+  "version": "0.1.0",
+  "description": "Standalone MCP server for Scriptboard clipboard companion",
+  "goal": "Allow Claude/Lloyd to control Scriptboard to package code reviews with prompts and attachments for one-click copy to other LLMs",
+
+  "location": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\",
+
+  "directory_structure": {
+    "server.py": "MCP server entry point",
+    "tool_handlers.py": "Handler functions + registry",
+    "http_client.py": "Async HTTP client for FastAPI",
+    "pyproject.toml": "Dependencies (mcp, httpx)",
+    "README.md": "Documentation",
+    "start_scriptboard.bat": "Startup script"
+  },
+
+  "tools": [
+    {
+      "name": "set_prompt",
+      "purpose": "Set prompt text",
+      "endpoint": "POST /prompt",
+      "params": ["text"]
+    },
+    {
+      "name": "clear_prompt",
+      "purpose": "Clear prompt",
+      "endpoint": "DELETE /prompt",
+      "params": []
+    },
+    {
+      "name": "add_attachment",
+      "purpose": "Add file/context",
+      "endpoint": "POST /attachments/text",
+      "params": ["text", "filename?"]
+    },
+    {
+      "name": "clear_attachments",
+      "purpose": "Clear all attachments",
+      "endpoint": "DELETE /attachments",
+      "params": []
+    },
+    {
+      "name": "get_export",
+      "purpose": "Get LLM-formatted output",
+      "endpoint": "GET /export/llm",
+      "params": []
+    },
+    {
+      "name": "save_session",
+      "purpose": "Save session",
+      "endpoint": "POST /sessions/save",
+      "params": ["name?"]
+    },
+    {
+      "name": "load_session",
+      "purpose": "Load session",
+      "endpoint": "POST /sessions/load",
+      "params": ["path"]
+    },
+    {
+      "name": "get_tokens",
+      "purpose": "Get token counts",
+      "endpoint": "GET /tokens",
+      "params": []
+    },
+    {
+      "name": "search",
+      "purpose": "Search content",
+      "endpoint": "GET /search",
+      "params": ["query", "limit?", "offset?"]
+    },
+    {
+      "name": "load_template",
+      "purpose": "Load prompt template",
+      "endpoint": "POST /prompt/preloaded",
+      "params": ["key"]
+    },
+    {
+      "name": "list_templates",
+      "purpose": "List available prompts",
+      "endpoint": "GET /prompts",
+      "params": []
+    },
+    {
+      "name": "health",
+      "purpose": "Check if backend running",
+      "endpoint": "GET /health",
+      "params": []
+    }
+  ],
+
+  "future_tools": [
+    "start_macro_recording",
+    "stop_macro_recording",
+    "replay_macro",
+    "batch_enqueue",
+    "batch_status",
+    "git_commit_session",
+    "add_folder_attachment"
+  ],
+
+  "implementation_phases": [
+    {
+      "phase": 1,
+      "name": "Scaffold",
+      "tasks": [
+        "Create scriptboard-mcp/ directory",
+        "Create pyproject.toml with mcp + httpx deps",
+        "Create basic server.py with MCP setup"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "HTTP Client",
+      "tasks": [
+        "Create http_client.py with ScriptboardClient class",
+        "Add async methods for each endpoint",
+        "Add graceful error handling when backend offline"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Handlers",
+      "tasks": [
+        "Create tool_handlers.py with 12 handler functions",
+        "Create TOOL_HANDLERS registry dict"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Tool Definitions",
+      "tasks": [
+        "Add all Tool definitions to server.py",
+        "Wire up handler dispatch"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Integration",
+      "tasks": [
+        "Add to Claude Code MCP config",
+        "Create start_scriptboard.bat",
+        "Test all tools"
+      ]
+    }
+  ],
+
+  "critical_files": {
+    "new": [
+      "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py",
+      "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\http_client.py",
+      "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\tool_handlers.py",
+      "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\pyproject.toml"
+    ],
+    "reference": [
+      "C:\\Users\\willh\\Desktop\\clipboard_compannion\\next\\backend\\api.py"
+    ]
+  },
+
+  "scriptboard_backend": {
+    "url": "http://localhost:8000",
+    "required": true,
+    "note": "Scriptboard FastAPI backend must be running for MCP tools to work"
+  },
+
+  "difficulty": "Medium",
+  "estimated_time": "2.5 hours"
+}

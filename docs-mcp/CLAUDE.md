@@ -3001,22 +3001,6 @@ create_context_expert(
 
 ---
 
-#### `suggest_context_experts`
-**Purpose**: Auto-discover expert candidates based on codebase analysis
-
-**Input**:
-- `project_path` (string, required): Absolute path to project directory
-- `criteria` (object, optional): Filter criteria
-- `limit` (integer, optional): Max suggestions (default: 10)
-
-**Output**: List of suggestions with:
-- resource_path: Candidate file/directory
-- suggestion_reason: Why recommended
-- criteria_matched: Tags like ['high_impact', 'core']
-- confidence_score: 0.0-1.0 ranking
-
----
-
 #### `update_context_expert`
 **Purpose**: Refresh an expert's context data
 
@@ -3045,7 +3029,6 @@ create_context_expert(
 - `/create-expert` - Create new expert interactively
 - `/list-experts` - List all experts
 - `/get-expert` - View expert details
-- `/suggest-experts` - Auto-discover candidates
 - `/update-expert` - Refresh expert context
 - `/activate-expert` - Lloyd onboards expert
 
@@ -3057,16 +3040,6 @@ create_context_expert(
 ### Context Expert Workflow Integration (v3.0.0)
 
 Context experts are now integrated with the planning and execution workflows:
-
-#### Integration with `/start-feature` (Step 3.5)
-
-After project analysis, the workflow now:
-1. **Lists existing experts** - Shows experts relevant to the feature
-2. **Suggests new experts** - Recommends high-impact files for expert creation
-3. **Asks user** - Optional creation of suggested experts
-4. **Creates experts** - If user approves, creates experts for selected files
-
-This ensures deep context is available before implementation begins.
 
 #### Integration with `/execute-plan`
 
@@ -3083,7 +3056,6 @@ The multi-agent communication template now includes:
 "context_experts": {
   "loaded": [],          // Experts loaded this session
   "created_this_session": [],  // Experts created during planning
-  "suggested": [],       // Experts recommended but not created
   "stale": []           // Experts needing refresh
 }
 ```
@@ -3093,14 +3065,12 @@ This tracks expert usage across agent handoffs and ensures context continuity.
 #### Lloyd's Expert-Aware Workflow
 
 Lloyd (personas-mcp) is now equipped with:
-- **6 context expert tools** in preferred_tools
+- **5 context expert tools** in preferred_tools
 - **Expert workflow instructions** in system_prompt
 - **When to check for experts** guidance
-- **Expert integration** with `/start-feature` and `/execute-plan`
 
 Lloyd can now:
 - List and load experts when starting features
-- Suggest expert creation for complex files
 - Refresh stale experts after implementation
 - Track expert usage in communication.json
 

@@ -459,24 +459,6 @@ class TestContextExpertWorkflow:
         expert_ids = [e.get("expert_id") for e in list_json["experts"]]
         assert expert_id in expert_ids
 
-    @pytest.mark.asyncio
-    async def test_suggest_experts_workflow(self, mock_project: Path):
-        """Test suggesting context experts."""
-        project_path = str(mock_project)
-
-        result = await tool_handlers.handle_suggest_context_experts({
-            "project_path": project_path,
-            "limit": 5
-        })
-
-        assert len(result) == 1
-        result_json = self._extract_json(result[0].text)
-
-        # Should have suggestions
-        assert "suggestions" in result_json
-        assert isinstance(result_json["suggestions"], list)
-
-
 # ============================================================================
 # TEST: Error Handling Across Workflows
 # ============================================================================

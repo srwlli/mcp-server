@@ -188,7 +188,6 @@ class TestListTools:
         assert 'create_context_expert' in tool_names
         assert 'list_context_experts' in tool_names
         assert 'get_context_expert' in tool_names
-        assert 'suggest_context_experts' in tool_names
         assert 'update_context_expert' in tool_names
         assert 'activate_context_expert' in tool_names
 

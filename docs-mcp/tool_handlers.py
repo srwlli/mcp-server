@@ -4200,32 +4200,6 @@ async def handle_get_context_expert(arguments: dict) -> list[TextContent]:
 
 @log_invocation
 @mcp_error_handler
-async def handle_suggest_context_experts(arguments: dict) -> list[TextContent]:
-    """
-    Handle suggest_context_experts tool call.
-
-    Auto-discovers expert candidates based on codebase analysis.
-    """
-    project_path_str = arguments.get('project_path', '')
-    criteria = arguments.get('criteria', {})
-    limit = arguments.get('limit', 10)
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-
-    generator = ContextExpertGenerator(project_path)
-    suggestions = generator.suggest_candidates(criteria=criteria, limit=limit)
-
-    return format_success_response(
-        data={
-            'suggestions': suggestions,
-            'total_count': len(suggestions)
-        },
-        message=f"Found {len(suggestions)} expert candidate(s)"
-    )
-
-
-@log_invocation
-@mcp_error_handler
 async def handle_update_context_expert(arguments: dict) -> list[TextContent]:
     """
     Handle update_context_expert tool call.
@@ -4350,7 +4324,6 @@ TOOL_HANDLERS = {
     'create_context_expert': handle_create_context_expert,
     'list_context_experts': handle_list_context_experts,
     'get_context_expert': handle_get_context_expert,
-    'suggest_context_experts': handle_suggest_context_experts,
     'update_context_expert': handle_update_context_expert,
     'activate_context_expert': handle_activate_context_expert,
 }

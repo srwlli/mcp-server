@@ -11,31 +11,28 @@ This command orchestrates the full planning pipeline in sequence, eliminating th
 1. Get Feature Name (AskUserQuestion)
     |
     v
-2. Load Context Experts (list existing, load relevant, suggest new)
+2. Gather Context (interactive Q&A)
     |
     v
-3. Gather Context (interactive Q&A, informed by expert knowledge)
+3. Analyze Project (automatic via analyze_project_for_planning)
     |
     v
-4. Analyze Project (automatic via analyze_project_for_planning)
+4. Create Plan (automatic via create_plan)
     |
     v
-5. Create Plan (automatic via create_plan)
+5. Multi-Agent Decision (AskUserQuestion - based on phase count)
     |
     v
-6. Multi-Agent Decision (AskUserQuestion - based on phase count)
+6. Validate Plan (automatic via validate_implementation_plan)
     |
     v
-7. Validate Plan (automatic via validate_implementation_plan)
+7. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
     |
     v
-8. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
+8. Output Summary
     |
     v
-9. Output Summary
-    |
-    v
-10. Commit & Push (pre-execution checkpoint)
+9. Commit & Push (pre-execution checkpoint)
 ```
 
 ## Step-by-Step Instructions
@@ -57,56 +54,7 @@ User will type their feature name in the "Other" field (e.g., "user-authenticati
 
 Store this as `feature_name` for use in subsequent steps.
 
-### Step 2: Load Context Experts
-
-**Before gathering context**, check for existing experts that can inform the planning process:
-
-1. **List existing experts** to see what deep knowledge is available:
-
-```python
-mcp__docs_mcp__list_context_experts({
-    "project_path": <current_working_directory>
-})
-```
-
-2. **Load relevant experts** - For each expert that might relate to the feature:
-
-```python
-mcp__docs_mcp__get_context_expert({
-    "project_path": <current_working_directory>,
-    "expert_id": <expert_id>  # e.g., "CE-src-auth-handlers_py-001"
-})
-```
-
-3. **Display expert context to inform planning**:
-   - Code structure (functions, classes, complexity)
-   - Relationships (dependencies, dependents, test files)
-   - Recent git history (what changed recently)
-   - Usage patterns (how the code is used)
-
-4. **Suggest new experts** for key areas if none exist:
-
-```python
-mcp__docs_mcp__suggest_context_experts({
-    "project_path": <current_working_directory>,
-    "limit": 5
-})
-```
-
-5. **Ask user** about creating suggested experts:
-
-```
-Question: "Create context experts for suggested files? (Provides deep knowledge for planning)"
-Header: "Experts"
-Options: [
-  {"label": "Yes, create suggested", "description": "Create experts for high-impact files"},
-  {"label": "No, continue without", "description": "Proceed without creating experts"}
-]
-```
-
-**Why this matters:** Expert context helps you ask better questions during context gathering and make more informed planning decisions.
-
-### Step 3: Gather Context
+### Step 2: Gather Context
 
 Execute the /gather-context workflow with the feature name from Step 1.
 
@@ -132,7 +80,7 @@ mcp__docs_mcp__gather_context({
 
 This creates `coderef/working/{feature_name}/context.json`.
 
-### Step 4: Analyze Project
+### Step 3: Analyze Project
 
 Call the analyze_project_for_planning MCP tool:
 
@@ -151,7 +99,7 @@ This creates `coderef/working/{feature_name}/analysis.json` with:
 - Project structure
 - Gaps and risks
 
-### Step 5: Create Plan
+### Step 4: Create Plan
 
 Call the create_plan MCP tool:
 
@@ -167,7 +115,7 @@ This creates `coderef/working/{feature_name}/plan.json` with:
 - Workorder ID embedded in section 5
 - DELIVERABLES.md template
 
-### Step 6: Multi-Agent Decision
+### Step 5: Multi-Agent Decision
 
 After the plan is created, count the number of implementation phases and ask the user about multi-agent mode:
 
@@ -224,7 +172,7 @@ Agents update communication.json directly as they work:
 ]
 ```
 
-### Step 7: Validate Plan
+### Step 6: Validate Plan
 
 Call the validate_implementation_plan MCP tool:
 
@@ -241,7 +189,7 @@ Returns validation result with:
 - Checklist results
 - Approved status (true if score >= 90)
 
-### Step 8: Validation Loop (if needed)
+### Step 7: Validation Loop (if needed)
 
 If validation score < 90:
 
@@ -257,7 +205,7 @@ If validation score < 90:
 - Major (-5 points each): Placeholders, vague criteria, missing fields
 - Minor (-1 point each): Short descriptions, style issues
 
-### Step 9: Output Summary
+### Step 8: Output Summary
 
 After validation passes (or max iterations reached), present summary:
 
@@ -335,7 +283,7 @@ The plan is saved but needs manual review.
 Run /validate-plan to see full issue details.
 ```
 
-### Step 10: Commit & Push (Pre-Execution Checkpoint)
+### Step 9: Commit & Push (Pre-Execution Checkpoint)
 
 After validation passes, commit and push all planning artifacts:
 
@@ -394,5 +342,5 @@ Use individual commands when:
 - `/gather-context` - Step 2 only (requirements gathering)
 - `/analyze-for-planning` - Step 3 only (project analysis)
 - `/create-plan` - Step 4 only (plan generation)
-- `/validate-plan` - Step 5 only (validation)
+- `/validate-plan` - Step 6 only (validation)
 - `/execute-plan` - Generate task list from plan

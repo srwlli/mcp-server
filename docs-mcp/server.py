@@ -1255,31 +1255,6 @@ Run after /update-deliverables and before /archive-feature.''',
             }
         ),
         Tool(
-            name='suggest_context_experts',
-            description='Auto-discover expert candidates based on codebase analysis. Identifies high-impact files and directories that would benefit from dedicated context experts.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory'
-                    },
-                    'criteria': {
-                        'type': 'object',
-                        'description': 'Optional: Filter criteria for suggestions'
-                    },
-                    'limit': {
-                        'type': 'integer',
-                        'description': 'Maximum number of suggestions (default: 10)',
-                        'default': 10,
-                        'minimum': 1,
-                        'maximum': 50
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
             name='update_context_expert',
             description='Refresh an expert context data by re-analyzing code structure, git history, and relationships. Resets staleness score.',
             inputSchema={

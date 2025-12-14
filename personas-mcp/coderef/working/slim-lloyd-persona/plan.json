@@ -1,0 +1,401 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "slim-lloyd-persona",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Opus 4.5",
+    "has_context": false,
+    "has_analysis": false,
+    "created_at": "2025-12-13",
+    "description": "Reduce lloyd.json system_prompt from ~6000 lines to ~800-1000 lines by extracting reference material to queryable docs and removing duplications"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["CLAUDE.md", "README.md", "my-guide.md"],
+        "relevant_patterns": ["PersonaDefinition schema", "system_prompt structure", "MCP tool integration"]
+      },
+      "standards_to_follow": {
+        "persona_format": "personas/base/*.json with name, parent, version, description, system_prompt, expertise, preferred_tools, use_cases, behavior fields",
+        "documentation_style": "Concise, action-oriented, no redundant sections"
+      },
+      "dependencies": {
+        "files_to_read": [
+          "personas/base/lloyd.json",
+          "personas/base/docs-expert.json",
+          "personas/base/mcp-expert.json"
+        ],
+        "external_dependencies": []
+      }
+    },
+    "1_executive_summary": {
+      "feature_overview": "Slim down the lloyd.json persona from ~6000 lines to ~800-1000 lines by extracting reference documentation, removing duplications, and keeping only core identity/behavior content",
+      "primary_goal": "Reduce context window consumption when loading Lloyd persona while maintaining coordination capabilities",
+      "success_metrics": [
+        "System prompt reduced from ~6000 lines to ~800-1000 lines (85% reduction)",
+        "All core Lloyd capabilities preserved (coordination, planning, task assignment)",
+        "Reference material accessible via docs-mcp tools when needed",
+        "No functionality regression in Lloyd workflows"
+      ],
+      "estimated_complexity": "Medium - requires careful extraction without breaking functionality"
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Lost context for tool guidance",
+          "severity": "medium",
+          "mitigation": "Extract to queryable reference doc that Lloyd can call when needed"
+        },
+        {
+          "risk": "Breaking multi-agent coordination instructions",
+          "severity": "high",
+          "mitigation": "Preserve agent assignment matrix and communication.json protocol in core prompt"
+        },
+        {
+          "risk": "Inconsistent behavior after slimming",
+          "severity": "medium",
+          "mitigation": "Test Lloyd persona against key workflows before/after"
+        }
+      ],
+      "scope_risks": [
+        {
+          "risk": "Over-extraction making Lloyd too generic",
+          "severity": "medium",
+          "mitigation": "Keep unique Lloyd identity, behavior patterns, and coordination expertise in core"
+        }
+      ],
+      "mitigation_strategies": [
+        "Create backup of original lloyd.json before modifications",
+        "Incremental extraction with testing at each step",
+        "Compare token counts before/after to verify reduction"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "personas/base/lloyd.json",
+          "changes": "Reduce system_prompt from ~6000 to ~800-1000 lines, update version to 1.2.0"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "docs/LLOYD-REFERENCE.md",
+          "purpose": "Extracted reference material (tool catalogs, workflow details, examples) that Lloyd can query"
+        },
+        {
+          "path": "docs/MCP-ECOSYSTEM-REFERENCE.md",
+          "purpose": "Full 3-server ecosystem documentation (moved from lloyd.json system_prompt)"
+        }
+      ],
+      "files_to_delete": [],
+      "current_architecture": {
+        "lloyd_structure": {
+          "total_lines": "~6000+ in system_prompt",
+          "sections": [
+            "Training/Evolution Phase (~50 lines)",
+            "3-Server MCP Ecosystem - DUPLICATED (~800 lines x2 = 1600 lines)",
+            "31 docs-mcp tools catalog (~600 lines)",
+            "6 coderef-mcp tools catalog (~200 lines)",
+            "4 personas catalog (~150 lines)",
+            "9-step workflow (~300 lines)",
+            "Multi-agent coordination (~500 lines)",
+            "Context Expert system (~200 lines)",
+            "Common scenarios (~400 lines)",
+            "Core identity (~300 lines)",
+            "Communication style (~100 lines)"
+          ]
+        }
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Remove Duplicate Sections",
+          "description": "Eliminate the duplicated '3-Server MCP Ecosystem' section that appears twice verbatim",
+          "priority": "high",
+          "estimated_line_savings": 800
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Extract Tool Catalogs",
+          "description": "Move detailed tool documentation (31 docs-mcp, 6 coderef-mcp tools) to LLOYD-REFERENCE.md",
+          "priority": "high",
+          "estimated_line_savings": 800
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Extract Ecosystem Documentation",
+          "description": "Move full MCP ecosystem architecture to MCP-ECOSYSTEM-REFERENCE.md",
+          "priority": "high",
+          "estimated_line_savings": 800
+        },
+        {
+          "id": "FEAT-004",
+          "name": "Consolidate Workflow Sections",
+          "description": "Merge redundant workflow explanations into concise summaries",
+          "priority": "medium",
+          "estimated_line_savings": 400
+        },
+        {
+          "id": "FEAT-005",
+          "name": "Preserve Core Identity",
+          "description": "Keep Lloyd's unique personality, behavior patterns, and coordination expertise",
+          "priority": "critical",
+          "estimated_line_savings": 0
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SLIM-LLOYD-PERSONA-001",
+        "name": "Slim Lloyd Persona",
+        "feature_dir": "coderef/working/slim-lloyd-persona"
+      },
+      "tasks": [
+        {
+          "id": "PREP-001",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Backup original lloyd.json",
+          "type": "setup",
+          "priority": "critical",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "PREP-002",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Count exact line numbers in current system_prompt sections",
+          "type": "analysis",
+          "priority": "high",
+          "estimated_effort": "10 minutes"
+        },
+        {
+          "id": "EXTRACT-001",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Create docs/MCP-ECOSYSTEM-REFERENCE.md with full ecosystem documentation",
+          "type": "implementation",
+          "priority": "high",
+          "estimated_effort": "30 minutes"
+        },
+        {
+          "id": "EXTRACT-002",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Create docs/LLOYD-REFERENCE.md with tool catalogs and detailed workflows",
+          "type": "implementation",
+          "priority": "high",
+          "estimated_effort": "30 minutes"
+        },
+        {
+          "id": "SLIM-001",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Remove duplicate 3-Server MCP Ecosystem section",
+          "type": "implementation",
+          "priority": "high",
+          "estimated_effort": "10 minutes"
+        },
+        {
+          "id": "SLIM-002",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Replace tool catalogs with summary + reference pointer",
+          "type": "implementation",
+          "priority": "high",
+          "estimated_effort": "20 minutes"
+        },
+        {
+          "id": "SLIM-003",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Consolidate redundant workflow explanations",
+          "type": "implementation",
+          "priority": "medium",
+          "estimated_effort": "20 minutes"
+        },
+        {
+          "id": "SLIM-004",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Update lloyd.json version to 1.2.0 and update metadata",
+          "type": "implementation",
+          "priority": "medium",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Verify lloyd.json loads without errors",
+          "type": "testing",
+          "priority": "critical",
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Test /lloyd command activates persona correctly",
+          "type": "testing",
+          "priority": "critical",
+          "estimated_effort": "10 minutes"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Verify Lloyd can still coordinate multi-agent workflows",
+          "type": "testing",
+          "priority": "high",
+          "estimated_effort": "15 minutes"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+          "description": "Update CLAUDE.md with new Lloyd structure and reference docs",
+          "type": "documentation",
+          "priority": "medium",
+          "estimated_effort": "15 minutes"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Preparation & Analysis",
+          "description": "Backup original file and analyze current structure",
+          "tasks": ["PREP-001", "PREP-002"],
+          "deliverables": [
+            "Backup of lloyd.json saved",
+            "Line count analysis of each section"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Extract Reference Material",
+          "description": "Create external reference documents for extracted content",
+          "tasks": ["EXTRACT-001", "EXTRACT-002"],
+          "deliverables": [
+            "docs/MCP-ECOSYSTEM-REFERENCE.md created",
+            "docs/LLOYD-REFERENCE.md created"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Slim System Prompt",
+          "description": "Remove duplications and replace verbose sections with summaries",
+          "tasks": ["SLIM-001", "SLIM-002", "SLIM-003", "SLIM-004"],
+          "deliverables": [
+            "lloyd.json system_prompt reduced to ~800-1000 lines",
+            "Version updated to 1.2.0"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Testing & Documentation",
+          "description": "Verify functionality and update documentation",
+          "tasks": ["TEST-001", "TEST-002", "TEST-003", "DOC-001"],
+          "deliverables": [
+            "All tests passing",
+            "CLAUDE.md updated",
+            "Lloyd persona functional"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_id": "UT-001",
+          "description": "lloyd.json parses as valid JSON",
+          "validation": "JSON.parse succeeds without errors"
+        },
+        {
+          "test_id": "UT-002",
+          "description": "lloyd.json conforms to PersonaDefinition schema",
+          "validation": "All required fields present with correct types"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_id": "IT-001",
+          "description": "use_persona('lloyd') loads successfully",
+          "validation": "MCP tool returns system_prompt and expertise"
+        },
+        {
+          "test_id": "IT-002",
+          "description": "/lloyd slash command activates Lloyd persona",
+          "validation": "AI responds with Lloyd's identity and coordination style"
+        }
+      ],
+      "manual_tests": [
+        {
+          "test_id": "MT-001",
+          "description": "Lloyd can guide through /start-feature workflow",
+          "validation": "Lloyd correctly orchestrates gather-context -> analyze -> create-plan sequence"
+        },
+        {
+          "test_id": "MT-002",
+          "description": "Lloyd can assign tasks to appropriate agents",
+          "validation": "Lloyd correctly identifies frontend/backend/testing tasks and assigns to Ava/Marcus/Quinn"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "quantitative": [
+        {
+          "metric": "System prompt line count",
+          "target": "800-1000 lines (down from ~6000)",
+          "measurement": "wc -l on system_prompt content"
+        },
+        {
+          "metric": "Size reduction percentage",
+          "target": "≥80% reduction",
+          "measurement": "(original - new) / original * 100"
+        }
+      ],
+      "qualitative": [
+        {
+          "criteria": "Core Lloyd identity preserved",
+          "validation": "Lloyd still acts as coordinator with same personality"
+        },
+        {
+          "criteria": "No functionality regression",
+          "validation": "All key workflows still work (planning, coordination, task assignment)"
+        },
+        {
+          "criteria": "Reference material accessible",
+          "validation": "Extracted docs are well-organized and findable"
+        }
+      ],
+      "acceptance_tests": [
+        "Lloyd persona loads without errors",
+        "/lloyd command works correctly",
+        "Lloyd can coordinate /start-feature workflow",
+        "Lloyd can assign tasks to specialist agents",
+        "Token count significantly reduced when loading persona"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Backup lloyd.json to lloyd.json.backup",
+        "[ ] Count lines in each system_prompt section",
+        "[ ] Document current total line count"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create docs/ directory if not exists",
+        "[ ] Create MCP-ECOSYSTEM-REFERENCE.md with full ecosystem docs",
+        "[ ] Create LLOYD-REFERENCE.md with tool catalogs and workflows"
+      ],
+      "phase_3_checklist": [
+        "[ ] Remove duplicate Big Picture section",
+        "[ ] Replace tool catalogs with summary tables",
+        "[ ] Add reference pointers to extracted docs",
+        "[ ] Consolidate redundant workflow sections",
+        "[ ] Update version to 1.2.0",
+        "[ ] Verify final line count is 800-1000"
+      ],
+      "phase_4_checklist": [
+        "[ ] Test JSON parsing",
+        "[ ] Test persona loading via MCP",
+        "[ ] Test /lloyd slash command",
+        "[ ] Test multi-agent coordination",
+        "[ ] Update CLAUDE.md with new structure"
+      ]
+    }
+  }
+}

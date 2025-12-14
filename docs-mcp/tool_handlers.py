@@ -24,7 +24,6 @@ from generators.plan_validator import PlanValidator
 from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
-from generators.context_expert_generator import ContextExpertGenerator
 from constants import Paths, Files, ScanDepth, FocusArea, AuditSeverity, AuditScope, PlanningPaths
 from validation import (
     validate_project_path_input,
@@ -2358,12 +2357,6 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
         "success_criteria": success_criteria[:10] if len(success_criteria) > 10 else success_criteria,
         "agent_1_status": "READY - Planning complete, awaiting agent assignment",
         "agent_N_status": None,
-        "context_experts": {
-            "loaded": [],
-            "created_this_session": [],
-            "suggested": [],
-            "stale": []
-        },
         "metadata": {
             "created_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
@@ -4079,207 +4072,6 @@ async def handle_consolidate_llm_outputs(arguments: dict) -> list[TextContent]:
 
 
 # =============================================================================
-# CONTEXT EXPERT HANDLERS (NEW in v3.0.0)
-# =============================================================================
-
-@log_invocation
-@mcp_error_handler
-async def handle_create_context_expert(arguments: dict) -> list[TextContent]:
-    """
-    Handle create_context_expert tool call.
-
-    Creates a new context expert for a file or directory with deep context analysis.
-    """
-    project_path_str = arguments.get('project_path', '')
-    resource_path = arguments.get('resource_path', '')
-    resource_type = arguments.get('resource_type', 'file')
-    capabilities = arguments.get('capabilities', ['answer_questions', 'review_changes'])
-    domain = arguments.get('domain', 'core')
-    workorder_id = arguments.get('workorder_id')
-    assigned_by = arguments.get('assigned_by')
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-    resource_path = validate_resource_path(project_path, resource_path)
-    resource_type = validate_resource_type(resource_type)
-    domain = validate_expert_domain(domain)
-    capabilities = validate_expert_capabilities(capabilities)
-
-    generator = ContextExpertGenerator(project_path)
-    expert = generator.create_expert(
-        resource_path=resource_path,
-        resource_type=resource_type,
-        capabilities=capabilities,
-        domain=domain,
-        workorder_id=workorder_id,
-        assigned_by=assigned_by
-    )
-
-    return format_success_response(
-        data={
-            'expert_id': expert['expert_id'],
-            'name': expert['name'],
-            'resource_path': expert['resource_path'],
-            'domain': expert['domain'],
-            'capabilities': expert['capabilities'],
-            'expertise_areas': expert['expertise_areas'],
-            'code_structure': {
-                'functions_count': len(expert['code_structure']['functions']),
-                'classes_count': len(expert['code_structure']['classes']),
-                'line_count': expert['code_structure']['line_count'],
-                'complexity_score': expert['code_structure']['complexity_score']
-            },
-            'git_history_count': len(expert['git_history']),
-            'relationships': {
-                'dependencies': len(expert['relationships']['dependencies']),
-                'dependents': len(expert['relationships']['dependents']),
-                'test_files': len(expert['relationships']['test_files'])
-            }
-        },
-        message=f"Created context expert: {expert['expert_id']}"
-    )
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_list_context_experts(arguments: dict) -> list[TextContent]:
-    """
-    Handle list_context_experts tool call.
-
-    Lists all defined context experts with optional filtering.
-    """
-    project_path_str = arguments.get('project_path', '')
-    domain = arguments.get('domain')
-    status = arguments.get('status')
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-
-    if domain:
-        domain = validate_expert_domain(domain)
-
-    generator = ContextExpertGenerator(project_path)
-    experts = generator.list_experts(domain=domain, status=status)
-
-    return format_success_response(
-        data={
-            'experts': experts,
-            'total_count': len(experts),
-            'filters_applied': {
-                'domain': domain,
-                'status': status
-            }
-        },
-        message=f"Found {len(experts)} context expert(s)"
-    )
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_get_context_expert(arguments: dict) -> list[TextContent]:
-    """
-    Handle get_context_expert tool call.
-
-    Retrieves full context expert details by ID.
-    """
-    project_path_str = arguments.get('project_path', '')
-    expert_id = arguments.get('expert_id', '')
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-    expert_id = validate_expert_id(expert_id)
-
-    generator = ContextExpertGenerator(project_path)
-    expert = generator.get_expert(expert_id)
-
-    if not expert:
-        raise ValueError(f"Context expert not found: {expert_id}")
-
-    return format_success_response(
-        data=expert,
-        message=f"Retrieved context expert: {expert_id}"
-    )
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_update_context_expert(arguments: dict) -> list[TextContent]:
-    """
-    Handle update_context_expert tool call.
-
-    Refreshes an expert's context data.
-    """
-    project_path_str = arguments.get('project_path', '')
-    expert_id = arguments.get('expert_id', '')
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-    expert_id = validate_expert_id(expert_id)
-
-    generator = ContextExpertGenerator(project_path)
-    expert = generator.update_expert(expert_id)
-
-    if not expert:
-        raise ValueError(f"Context expert not found: {expert_id}")
-
-    return format_success_response(
-        data={
-            'expert_id': expert['expert_id'],
-            'updated_at': expert['updated_at'],
-            'staleness_score': expert['staleness_score'],
-            'code_structure': {
-                'functions_count': len(expert['code_structure']['functions']),
-                'classes_count': len(expert['code_structure']['classes']),
-                'line_count': expert['code_structure']['line_count']
-            }
-        },
-        message=f"Updated context expert: {expert_id}"
-    )
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_activate_context_expert(arguments: dict) -> list[TextContent]:
-    """
-    Handle activate_context_expert tool call.
-
-    Activates an expert by adding Lloyd's onboarding data.
-    """
-    project_path_str = arguments.get('project_path', '')
-    expert_id = arguments.get('expert_id', '')
-    assigned_docs = arguments.get('assigned_docs', [])
-    domain_scope = arguments.get('domain_scope', '')
-    briefing_notes = arguments.get('briefing_notes', '')
-    onboarded_by = arguments.get('onboarded_by', 'Lloyd')
-
-    project_path = Path(validate_project_path_input(project_path_str)).resolve()
-    expert_id = validate_expert_id(expert_id)
-
-    if not assigned_docs:
-        raise ValueError("assigned_docs is required for activation")
-    if not domain_scope:
-        raise ValueError("domain_scope is required for activation")
-    if not briefing_notes:
-        raise ValueError("briefing_notes is required for activation")
-
-    generator = ContextExpertGenerator(project_path)
-    expert = generator.add_onboarding(
-        expert_id=expert_id,
-        assigned_docs=assigned_docs,
-        domain_scope=domain_scope,
-        briefing_notes=briefing_notes,
-        onboarded_by=onboarded_by
-    )
-
-    if not expert:
-        raise ValueError(f"Context expert not found: {expert_id}")
-
-    return format_success_response(
-        data={
-            'expert_id': expert['expert_id'],
-            'name': expert['name'],
-            'onboarding': expert['onboarding'],
-            'status': expert['status']
-        },
-        message=f"Activated context expert: {expert_id} (onboarded by {onboarded_by})"
-    )
-
 # Tool handlers registry (QUA-002)
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
@@ -4321,11 +4113,6 @@ TOOL_HANDLERS = {
     'generate_handoff_context': handle_generate_handoff_context,
     'assess_risk': handle_assess_risk,
     'consolidate_llm_outputs': handle_consolidate_llm_outputs,
-    'create_context_expert': handle_create_context_expert,
-    'list_context_experts': handle_list_context_experts,
-    'get_context_expert': handle_get_context_expert,
-    'update_context_expert': handle_update_context_expert,
-    'activate_context_expert': handle_activate_context_expert,
 }
 
 

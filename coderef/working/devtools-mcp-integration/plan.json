@@ -1,0 +1,235 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "devtools-mcp-integration",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_reviewed": ["README.md"],
+      "standards_reviewed": [],
+      "reference_implementations": ["personas-mcp/personas/base/ava.json", "personas-mcp/personas/base/lloyd.json"],
+      "technology_stack": {
+        "language": "Python/JSON",
+        "framework": "MCP Protocol",
+        "personas": "personas-mcp"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "DevTools MCP Integration",
+      "description": "Integrate Chrome DevTools MCP server with personas-mcp, enabling Ava (frontend specialist) and Lloyd (coordinator) to access browser debugging tools via MCP protocol.",
+      "goal": "Enable AI agents (Ava and Lloyd) to inspect browser elements, console messages, network requests, and debug UI issues through the DevTools MCP server.",
+      "estimated_complexity": "low",
+      "estimated_tasks": 8
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "DevTools MCP package name uncertainty",
+          "severity": "low",
+          "mitigation": "Verify exact npm package name before configuration"
+        },
+        {
+          "risk": "Chrome debug port requirement",
+          "severity": "medium",
+          "mitigation": "Document setup requirements clearly"
+        }
+      ],
+      "dependencies": ["Chrome DevTools MCP server (npm package)", "Chrome browser with remote debugging enabled"],
+      "blockers": []
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {"path": ".mcp.json", "purpose": "Add DevTools MCP server configuration"},
+        {"path": "personas-mcp/personas/base/ava.json", "purpose": "Add DevTools tools to Ava's preferred_tools"},
+        {"path": "personas-mcp/personas/base/lloyd.json", "purpose": "Add DevTools awareness to Lloyd"},
+        {"path": "README.md", "purpose": "Document DevTools MCP setup"}
+      ],
+      "files_to_create": [
+        {"path": "personas-mcp/.claude/commands/debug-ui.md", "purpose": "Slash command for UI debugging workflow"},
+        {"path": "docs/DEVTOOLS-SETUP.md", "purpose": "Chrome setup and usage documentation"}
+      ],
+      "files_to_delete": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "MCP Server Configuration",
+          "description": "Add DevTools MCP server to .mcp.json"
+        },
+        {
+          "id": "F2",
+          "name": "Ava Integration",
+          "description": "Update Ava persona with DevTools preferred_tools"
+        },
+        {
+          "id": "F3",
+          "name": "Lloyd Integration",
+          "description": "Update Lloyd persona with DevTools awareness"
+        },
+        {
+          "id": "F4",
+          "name": "Debug UI Command",
+          "description": "Create /debug-ui slash command"
+        },
+        {
+          "id": "F5",
+          "name": "Documentation",
+          "description": "Document setup requirements and usage patterns"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+        "name": "DevTools MCP Integration",
+        "feature_dir": "coderef/working/devtools-mcp-integration"
+      },
+      "tasks": [
+        {
+          "id": "CONFIG-001",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F1",
+          "description": "Research exact DevTools MCP npm package name and verify installation",
+          "type": "research",
+          "priority": "high",
+          "estimated_effort": "15min"
+        },
+        {
+          "id": "CONFIG-002",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F1",
+          "description": "Add DevTools MCP server configuration to .mcp.json",
+          "type": "config",
+          "priority": "high",
+          "estimated_effort": "10min"
+        },
+        {
+          "id": "PERSONA-001",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F2",
+          "description": "Add DevTools MCP tools to Ava's preferred_tools array",
+          "type": "update",
+          "priority": "high",
+          "estimated_effort": "15min"
+        },
+        {
+          "id": "PERSONA-002",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F2",
+          "description": "Add DevTools debugging workflow to Ava's system_prompt",
+          "type": "update",
+          "priority": "medium",
+          "estimated_effort": "20min"
+        },
+        {
+          "id": "PERSONA-003",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F3",
+          "description": "Add DevTools awareness to Lloyd's MCP ecosystem section",
+          "type": "update",
+          "priority": "medium",
+          "estimated_effort": "15min"
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F4",
+          "description": "Create /debug-ui slash command in personas-mcp/.claude/commands/",
+          "type": "create",
+          "priority": "medium",
+          "estimated_effort": "20min"
+        },
+        {
+          "id": "DOCS-001",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F5",
+          "description": "Create DEVTOOLS-SETUP.md with Chrome requirements and examples",
+          "type": "docs",
+          "priority": "medium",
+          "estimated_effort": "30min"
+        },
+        {
+          "id": "DOCS-002",
+          "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+          "feature_id": "F5",
+          "description": "Update root README.md with DevTools MCP section",
+          "type": "docs",
+          "priority": "low",
+          "estimated_effort": "15min"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Configuration",
+          "description": "Research and configure DevTools MCP server",
+          "tasks": ["CONFIG-001", "CONFIG-002"],
+          "deliverables": ["Working DevTools MCP in .mcp.json"]
+        },
+        {
+          "phase": 2,
+          "name": "Persona Updates",
+          "description": "Update Ava and Lloyd personas with DevTools capabilities",
+          "tasks": ["PERSONA-001", "PERSONA-002", "PERSONA-003"],
+          "deliverables": ["Updated ava.json", "Updated lloyd.json"]
+        },
+        {
+          "phase": 3,
+          "name": "Command & Docs",
+          "description": "Create slash command and documentation",
+          "tasks": ["CMD-001", "DOCS-001", "DOCS-002"],
+          "deliverables": ["/debug-ui command", "DEVTOOLS-SETUP.md", "Updated README"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "manual_testing": [
+        "Verify DevTools MCP loads: claude mcp list",
+        "Test /debug-ui command activates Ava",
+        "Verify DevTools tools appear in tool list",
+        "Test with Chrome running on debug port"
+      ],
+      "unit_tests": [],
+      "integration_tests": []
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "DevTools MCP server appears in 'claude mcp list' output",
+        "Ava persona includes DevTools tools in preferred_tools",
+        "Lloyd persona documents DevTools in MCP ecosystem section",
+        "/debug-ui command works and activates Ava",
+        "DEVTOOLS-SETUP.md documents Chrome setup requirements"
+      ],
+      "definition_of_done": [
+        "All configuration changes committed",
+        "Personas updated and tested",
+        "Documentation complete",
+        "Manual testing passed"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        {"task_id": "CONFIG-001", "description": "Research DevTools MCP package name", "status": "pending"},
+        {"task_id": "CONFIG-002", "description": "Add to .mcp.json", "status": "pending"}
+      ],
+      "phase_2": [
+        {"task_id": "PERSONA-001", "description": "Update Ava preferred_tools", "status": "pending"},
+        {"task_id": "PERSONA-002", "description": "Update Ava system_prompt", "status": "pending"},
+        {"task_id": "PERSONA-003", "description": "Update Lloyd MCP section", "status": "pending"}
+      ],
+      "phase_3": [
+        {"task_id": "CMD-001", "description": "Create /debug-ui command", "status": "pending"},
+        {"task_id": "DOCS-001", "description": "Create DEVTOOLS-SETUP.md", "status": "pending"},
+        {"task_id": "DOCS-002", "description": "Update README.md", "status": "pending"}
+      ]
+    }
+  }
+}

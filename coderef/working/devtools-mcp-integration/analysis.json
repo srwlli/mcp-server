@@ -1,0 +1,95 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)"
+    ],
+    "missing": [
+      "API.md",
+      "ARCHITECTURE.md",
+      "COMPONENTS.md",
+      "SCHEMA.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "README.md": {
+      "location": "root",
+      "preview": "# MCP Servers Configuration\n\nCentral repository for Model Context Protocol (MCP) server configurations and AI agent personas.\n\n## Overview\n\nThis directory contains the complete MCP server ecosystem for Claude Code, providing:\n- **Expert AI Personas** via personas-mcp\n- **Documentation & Planning Tools** via docs-mcp\n- **Semantic Code Analysis** via coderef-mcp\n- **IDE Integration** for VS Code/Jupyter\n- **Multi-Agent Coordination** workflows\n\n## Quick Start\n\n### View Available Tools\nOpen `index.",
+      "headers": [
+        "MCP Servers Configuration",
+        "Overview",
+        "Quick Start",
+        "View Available Tools",
+        "Activate MCP Servers",
+        "List active MCP servers",
+        "View server details",
+        "Directory Structure",
+        "Available MCP Servers",
+        "personas-mcp (10 personas)"
+      ],
+      "size": 6939
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "Flask",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "coderef-mcp",
+      "docs-mcp",
+      "personas-mcp",
+      "docs-mcp\\generators",
+      "mcp-workflows\\custom-gpt",
+      "personas-mcp\\.claude\\commands",
+      "personas-mcp\\personas\\base",
+      "personas-mcp\\coderef\\working\\docs-expert-v2",
+      "docs-mcp\\.claude\\commands",
+      "docs-mcp\\coderef\\archived"
+    ],
+    "file_counts": {
+      "docs-mcp\\.claude\\commands": 46,
+      "docs-mcp": 37,
+      "docs-mcp\\generators": 25,
+      "personas-mcp": 22,
+      "coderef-mcp": 16,
+      "docs-mcp\\coderef\\inventory": 14,
+      "personas-mcp\\personas\\base": 13,
+      "personas-mcp\\coderef\\working\\docs-expert-v2": 12,
+      "mcp-workflows\\custom-gpt": 11,
+      "personas-mcp\\.claude\\commands": 11
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: API.md, ARCHITECTURE.md, COMPONENTS.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

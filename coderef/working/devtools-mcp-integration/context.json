@@ -1,0 +1,29 @@
+{
+  "feature_name": "devtools-mcp-integration",
+  "description": "Integrate Chrome DevTools MCP server with personas-mcp, enabling Ava (frontend specialist) and Lloyd (coordinator) to access browser debugging tools via MCP protocol.",
+  "goal": "Enable AI agents (Ava and Lloyd) to inspect browser elements, console messages, network requests, and debug UI issues through the DevTools MCP server.",
+  "requirements": [
+    "Add DevTools MCP server to .mcp.json configuration",
+    "Update Ava persona preferred_tools with DevTools MCP tools",
+    "Update Lloyd persona with DevTools MCP awareness",
+    "Create /debug-ui slash command for quick UI debugging workflow",
+    "Document Chrome setup requirements (--remote-debugging-port)",
+    "Document usage patterns and workflows"
+  ],
+  "out_of_scope": [
+    "Full context expert integration with DevTools",
+    "Backend debugging integration (Marcus)",
+    "Automated test integration (Quinn)"
+  ],
+  "constraints": [
+    "Must work with existing persona system - no breaking changes",
+    "Chrome must be running with --remote-debugging-port for DevTools MCP to work"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-DEVTOOLS-MCP-INTEGRATION-001",
+    "workorder_assigned_at": "2025-12-14T04:08:58.595779+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

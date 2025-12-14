@@ -1136,33 +1136,6 @@ Run after /update-deliverables and before /archive-feature.''',
                 'required': ['project_path', 'proposed_change']
             }
         ),
-        Tool(
-            name='consolidate_llm_outputs',
-            description='Parse and consolidate multiple LLM responses into unified output. Detects LLM boundaries (ChatGPT, Claude, Gemini), extracts JSON findings, merges insights, identifies unique perspectives, and flags conflicts. Generates JSON, Markdown, and/or HTML outputs. Part of llm-workflow (WO-LLM-WORKFLOW-001).',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'input_file_path': {
-                        'type': 'string',
-                        'description': 'Path to text file containing pasted LLM responses'
-                    },
-                    'output_dir': {
-                        'type': 'string',
-                        'description': 'Optional: Directory to save outputs (default: same as input file)'
-                    },
-                    'output_formats': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['json', 'markdown', 'html']
-                        },
-                        'description': 'Output formats to generate (default: ["json"])',
-                        'default': ['json']
-                    }
-                },
-                'required': ['input_file_path']
-            }
-        ),
     ]
 
 @app.call_tool()

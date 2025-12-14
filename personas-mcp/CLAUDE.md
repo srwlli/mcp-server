@@ -1,16 +1,18 @@
 # personas-mcp - AI Context Documentation
 
 **Project:** personas-mcp
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Status:** ✅ Implemented (10 personas: 4 expert + 1 coordinator + 4 specialists + 1 generalist)
 **Created:** 2025-10-18
-**Last Updated:** 2025-10-23
+**Last Updated:** 2025-12-13
 
 ---
 
 ## Quick Summary
 
-**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "docs-expert", "coderef-expert", or "nfl-scraper-expert") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with 1000-6000+ line system prompts designed for agentic use.
+**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "docs-expert", "coderef-expert", or "nfl-scraper-expert") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
+
+**v1.4.0 Update (Lloyd Optimization):** Lloyd persona slimmed from 1,017 lines to 153 lines (85% reduction). Reference documentation extracted to `docs/MCP-ECOSYSTEM-REFERENCE.md` and `docs/LLOYD-REFERENCE.md`.
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
@@ -362,7 +364,17 @@ API Expert:
 
 ## Project Status
 
-### Current Phase: ✅ v1.4.0 - Custom Persona Creation
+### Current Phase: ✅ v1.4.1 - Lloyd Optimization
+
+**v1.4.1 (2025-12-13) - Lloyd Persona Optimization (WO-SLIM-LLOYD-PERSONA-001):**
+- ✅ Reduced lloyd.json system_prompt from 1,017 lines to 153 lines (85% reduction)
+- ✅ Extracted reference material to `docs/MCP-ECOSYSTEM-REFERENCE.md`
+- ✅ Extracted workflows/scenarios to `docs/LLOYD-REFERENCE.md`
+- ✅ Removed duplicate "Big Picture" and "Deep Understanding" sections
+- ✅ Replaced verbose tool catalogs with summary tables
+- ✅ Added reference pointers to extracted docs
+- ✅ Updated lloyd.json version to 1.2.0
+- ✅ All tests passing (JSON parsing, MCP loading, /lloyd command)
 
 **v1.4.0 (2025-10-23) - Custom Persona Creation (WO-CREATE-CUSTOM-PERSONA-001):**
 - ✅ `create_custom_persona` MCP tool with guided workflow

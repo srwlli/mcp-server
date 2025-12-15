@@ -21,6 +21,11 @@ from datetime import datetime
 
 from logger_config import logger
 from constants import EXCLUDE_DIRS, ALLOWED_FILE_EXTENSIONS
+from generators.mermaid_formatter import (
+    generate_module_diagram,
+    compute_graph_metrics,
+    get_high_impact_elements
+)
 
 __all__ = ['CoderefFoundationGenerator']
 
@@ -76,8 +81,18 @@ class CoderefFoundationGenerator:
 
         logger.info("Starting coderef foundation docs generation", extra={'project_path': str(self.project_path)})
 
-        # Detect if UI project (for COMPONENTS.md)
+        # Detect if UI project (for COMPONENTS.md fallback)
         is_ui_project = self._detect_ui_project() if self.include_components is None else self.include_components
+
+        # Phase 0: Load coderef data if available (99% accurate AST data)
+        logger.info("Phase 0: Loading coderef data...")
+        coderef_data = self._load_coderef_data()
+        has_coderef = coderef_data is not None
+
+        if has_coderef:
+            logger.info(f"Coderef data loaded: {len(coderef_data.get('elements', []))} elements")
+        else:
+            logger.info("No coderef data found, falling back to regex detection")
 
         # Phase 1: Deep extraction from existing foundation docs
         logger.info("Phase 1: Extracting from existing foundation docs...")
@@ -110,45 +125,56 @@ class CoderefFoundationGenerator:
             'patterns': patterns,
             'similar_features': similar_features,
             'existing_docs': existing_docs,
+            'coderef': {
+                'available': has_coderef,
+                'element_count': len(coderef_data.get('elements', [])) if has_coderef else 0,
+                'has_graph': bool(coderef_data.get('graph')) if has_coderef else False
+            },
             '_metadata': {
                 'generated_at': datetime.now().isoformat(),
                 'generator': 'coderef_foundation_generator',
-                'version': '1.0.0'
+                'version': '2.0.0'  # Updated version for coderef integration
             }
         }
 
         # Generate output files
         files_generated = []
 
-        # Generate ARCHITECTURE.md
-        arch_content = self._generate_architecture_md(project_context, existing_docs)
+        # Generate README.md (project root)
+        readme_content = self._generate_readme_md(project_context, coderef_data)
+        readme_path = self.project_path / 'README.md'
+        readme_path.write_text(readme_content, encoding='utf-8')
+        files_generated.append('README.md')
+
+        # Generate ARCHITECTURE.md (with diagrams and metrics if coderef available)
+        arch_content = self._generate_architecture_md(project_context, existing_docs, coderef_data)
         arch_path = self.foundation_docs_dir / 'ARCHITECTURE.md'
         arch_path.write_text(arch_content, encoding='utf-8')
-        files_generated.append('ARCHITECTURE.md')
+        files_generated.append('coderef/foundation-docs/ARCHITECTURE.md')
 
         # Generate SCHEMA.md
         schema_content = self._generate_schema_md(project_context, existing_docs)
         schema_path = self.foundation_docs_dir / 'SCHEMA.md'
         schema_path.write_text(schema_content, encoding='utf-8')
-        files_generated.append('SCHEMA.md')
+        files_generated.append('coderef/foundation-docs/SCHEMA.md')
 
-        # Generate COMPONENTS.md (conditional)
-        if is_ui_project:
-            components_content = self._generate_components_md(project_context, existing_docs)
+        # Generate COMPONENTS.md (always generate if coderef data available, or if UI project)
+        if has_coderef or is_ui_project:
+            components_content = self._generate_components_md(project_context, existing_docs, coderef_data)
             components_path = self.foundation_docs_dir / 'COMPONENTS.md'
             components_path.write_text(components_content, encoding='utf-8')
-            files_generated.append('COMPONENTS.md')
+            files_generated.append('coderef/foundation-docs/COMPONENTS.md')
 
         # Generate API.md
         api_content = self._generate_api_md(project_context, existing_docs)
         api_path = self.foundation_docs_dir / 'API.md'
         api_path.write_text(api_content, encoding='utf-8')
-        files_generated.append('API.md')
+        files_generated.append('coderef/foundation-docs/API.md')
 
         # Save project-context.json
         context_path = self.foundation_docs_dir / 'project-context.json'
         context_path.write_text(json.dumps(project_context, indent=2), encoding='utf-8')
-        files_generated.append('project-context.json')
+        files_generated.append('coderef/foundation-docs/project-context.json')
 
         duration = time.time() - start_time
 
@@ -157,13 +183,18 @@ class CoderefFoundationGenerator:
             'output_dir': str(self.foundation_docs_dir),
             'project_context': project_context,
             'is_ui_project': is_ui_project,
+            'has_coderef_data': has_coderef,
             'duration_seconds': round(duration, 2),
             'success': True
         }
 
         logger.info(
             f"Coderef foundation docs generation complete in {duration:.2f}s",
-            extra={'files_generated': files_generated, 'duration_seconds': duration}
+            extra={
+                'files_generated': files_generated,
+                'duration_seconds': duration,
+                'has_coderef_data': has_coderef
+            }
         )
 
         return result
@@ -196,6 +227,145 @@ class CoderefFoundationGenerator:
                         return True
 
         return False
+
+    def _load_coderef_data(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/index.json and graph.json if available.
+
+        Returns:
+            Dict with 'elements' and 'graph' if .coderef/ exists, None otherwise.
+            Falls back to regex detection when None is returned.
+        """
+        index_path = self.project_path / '.coderef' / 'index.json'
+        graph_path = self.project_path / '.coderef' / 'graph.json'
+
+        if not index_path.exists():
+            logger.debug(f"No .coderef/index.json found at {self.project_path}, falling back to regex")
+            return None
+
+        try:
+            elements = json.loads(index_path.read_text(encoding='utf-8'))
+            graph = None
+
+            if graph_path.exists():
+                graph = json.loads(graph_path.read_text(encoding='utf-8'))
+
+            logger.info(
+                f"Loaded coderef data: {len(elements)} elements, graph={'present' if graph else 'missing'}",
+                extra={'element_count': len(elements), 'has_graph': graph is not None}
+            )
+
+            return {
+                'elements': elements,
+                'graph': graph
+            }
+
+        except json.JSONDecodeError as e:
+            logger.warning(f"Failed to parse coderef JSON: {e}")
+            return None
+        except Exception as e:
+            logger.warning(f"Error loading coderef data: {e}")
+            return None
+
+    def _categorize_elements(self, elements: List[Dict]) -> Dict[str, List[Dict]]:
+        """
+        Categorize elements by type and naming patterns.
+
+        Args:
+            elements: List of element dicts from index.json
+
+        Returns:
+            Dict with categorized elements:
+            - handlers: functions matching handle_*
+            - generators: classes matching *Generator
+            - services: classes matching *Service
+            - middleware: classes/functions matching *Middleware
+            - components: type=component or React-style names
+            - utilities: remaining functions
+            - classes: remaining classes
+        """
+        categories = {
+            'handlers': [],
+            'generators': [],
+            'services': [],
+            'middleware': [],
+            'components': [],
+            'utilities': [],
+            'classes': [],
+            'functions': [],
+            'all': elements
+        }
+
+        for elem in elements:
+            name = elem.get('name', '')
+            elem_type = elem.get('type', '')
+
+            # Handler pattern: handle_*, on_*
+            if name.startswith('handle_') or name.startswith('on_'):
+                categories['handlers'].append(elem)
+            # Generator pattern: *Generator
+            elif name.endswith('Generator'):
+                categories['generators'].append(elem)
+            # Service pattern: *Service
+            elif name.endswith('Service'):
+                categories['services'].append(elem)
+            # Middleware pattern: *Middleware, *middleware
+            elif 'middleware' in name.lower():
+                categories['middleware'].append(elem)
+            # Component pattern: explicit type or PascalCase with props
+            elif elem_type == 'component' or (elem_type == 'function' and name[0].isupper() and '_' not in name):
+                categories['components'].append(elem)
+            # Remaining by type
+            elif elem_type == 'function':
+                categories['utilities'].append(elem)
+            elif elem_type == 'class':
+                categories['classes'].append(elem)
+            else:
+                categories['functions'].append(elem)
+
+        return categories
+
+    def _get_element_relationships(self, element_id: str, graph: Optional[Dict]) -> Dict[str, List[str]]:
+        """
+        Get callers and callees for an element from graph.json.
+
+        Args:
+            element_id: The element's ID/reference
+            graph: Graph data from graph.json
+
+        Returns:
+            Dict with 'callers' and 'callees' lists
+        """
+        relationships = {'callers': [], 'callees': []}
+
+        if not graph:
+            return relationships
+
+        edges = graph.get('edges', [])
+
+        for edge_entry in edges:
+            # Handle both array format [edgeId, edgeData] and dict format
+            if isinstance(edge_entry, list) and len(edge_entry) >= 2:
+                edge_data = edge_entry[1]
+            elif isinstance(edge_entry, dict):
+                edge_data = edge_entry
+            else:
+                continue
+
+            source = edge_data.get('source', '')
+            target = edge_data.get('target', '')
+            edge_type = edge_data.get('type', '')
+
+            # Only consider call relationships
+            if edge_type not in ['calls', 'imports', 'uses']:
+                continue
+
+            if source == element_id:
+                relationships['callees'].append(target)
+            elif target == element_id:
+                relationships['callers'].append(source)
+
+        return relationships
 
     def _extract_existing_docs(self) -> Dict[str, Any]:
         """Extract deep content from existing foundation docs."""
@@ -719,15 +889,18 @@ class CoderefFoundationGenerator:
 
         return similar[:10]  # Limit to 10 recent features
 
-    def _generate_architecture_md(self, context: Dict, existing: Dict) -> str:
-        """Generate ARCHITECTURE.md content."""
+    def _generate_architecture_md(self, context: Dict, existing: Dict, coderef_data: Optional[Dict] = None) -> str:
+        """
+        Generate ARCHITECTURE.md content with diagrams and metrics.
+
+        Includes: Module dependency graph, graph metrics, high-impact elements.
+        """
         lines = ['# Architecture Documentation', '']
 
         # If existing architecture doc, extract and enhance
         if existing.get('architecture') and existing['architecture'].get('full_content'):
             lines.append('## Overview')
             lines.append('')
-            # Extract intro section or first 500 chars
             sections = existing['architecture'].get('sections', {})
             if 'intro' in sections:
                 lines.append(sections['intro'][:1000])
@@ -737,7 +910,60 @@ class CoderefFoundationGenerator:
                 lines.append(existing['architecture']['full_content'][:1000])
             lines.append('')
 
-        # Add detected patterns
+        # Module Dependency Graph (from coderef data)
+        if coderef_data and coderef_data.get('graph'):
+            graph = coderef_data['graph']
+
+            lines.append('## Module Dependency Graph')
+            lines.append('')
+            diagram = generate_module_diagram(graph)
+            lines.append(diagram)
+            lines.append('')
+
+            # Graph Metrics
+            metrics = compute_graph_metrics(graph)
+            lines.append('## Metrics')
+            lines.append('')
+            lines.append(f"- **Total Files:** {metrics.get('node_count', 0)}")
+            lines.append(f"- **Total Elements:** {len(coderef_data.get('elements', []))}")
+            lines.append(f"- **Graph Density:** {metrics.get('density', 0)} (lower = better modularity)")
+
+            circular = metrics.get('circular_dependencies', [])
+            if circular:
+                lines.append(f"- **Circular Dependencies:** {len(circular)} ⚠️")
+                for cycle in circular[:3]:
+                    lines.append(f"  - {cycle}")
+            else:
+                lines.append('- **Circular Dependencies:** 0 ✅')
+
+            isolated = metrics.get('isolated_nodes', [])
+            lines.append(f"- **Isolated Nodes:** {len(isolated)} (constants, types)")
+            lines.append('')
+
+            # High-Impact Elements
+            high_impact = get_high_impact_elements(graph, limit=10)
+            if high_impact:
+                lines.append('## High-Impact Elements')
+                lines.append('')
+                lines.append('Elements with most dependents (change these carefully):')
+                lines.append('')
+                lines.append('| Element | File | Dependents | Risk |')
+                lines.append('|---------|------|------------|------|')
+                for elem in high_impact:
+                    name = elem.get('name', '')
+                    file = elem.get('file', '').split('/')[-1] if elem.get('file') else ''
+                    deps = elem.get('dependents', 0)
+                    risk = elem.get('risk', 'LOW')
+                    risk_emoji = '🔴' if risk == 'HIGH' else ('🟡' if risk == 'MEDIUM' else '🟢')
+                    lines.append(f"| {name} | `{file}` | {deps} | {risk_emoji} {risk} |")
+                lines.append('')
+        else:
+            lines.append('## Module Dependency Graph')
+            lines.append('')
+            lines.append('*Run `coderef index` to generate module dependency diagrams and metrics.*')
+            lines.append('')
+
+        # Add detected patterns (from regex fallback)
         patterns = context.get('patterns', {})
         if patterns:
             lines.append('## Code Patterns')
@@ -845,17 +1071,157 @@ class CoderefFoundationGenerator:
 
         return '\n'.join(lines)
 
-    def _generate_components_md(self, context: Dict, existing: Dict) -> str:
-        """Generate COMPONENTS.md content (for UI projects)."""
-        lines = ['# Component Documentation', '']
+    def _generate_components_md(self, context: Dict, existing: Dict, coderef_data: Optional[Dict] = None) -> str:
+        """
+        Generate COMPONENTS.md content with ALL modules (not just UI).
 
-        # If existing components doc, include it
-        if existing.get('components') and existing['components'].get('full_content'):
-            lines.append(existing['components']['full_content'])
+        Includes: Handlers, Generators, Services, Middleware, UI Components, Utilities
+        With relationship data (callers/callees) when coderef data is available.
+        """
+        lines = ['# Project Components', '']
+
+        # Check for coderef data
+        if coderef_data and coderef_data.get('elements'):
+            elements = coderef_data['elements']
+            graph = coderef_data.get('graph')
+            categories = self._categorize_elements(elements)
+
+            # Summary section
+            lines.append('## Summary')
             lines.append('')
+            lines.append(f"- **Total Elements:** {len(elements)} (from coderef scan)")
+
+            # Count by type
+            type_counts = {}
+            for elem in elements:
+                elem_type = elem.get('type', 'unknown')
+                type_counts[elem_type] = type_counts.get(elem_type, 0) + 1
+
+            type_summary = ' | '.join([f"**{t.title()}s:** {c}" for t, c in sorted(type_counts.items())])
+            lines.append(f"- {type_summary}")
+            lines.append('')
+
+            # Dependency diagram placeholder
+            lines.append('## Dependency Diagram')
+            lines.append('')
+            lines.append('<!-- AGENT: Generate Mermaid diagram from relationships -->')
+            lines.append('')
+
+            # Handlers section
+            if categories['handlers']:
+                lines.append(f"## Handlers ({len(categories['handlers'])} detected)")
+                lines.append('')
+                for handler in categories['handlers'][:15]:
+                    name = handler.get('name', 'unknown')
+                    file = handler.get('file', '')
+                    line = handler.get('line', '')
+                    elem_type = handler.get('type', 'function')
+
+                    lines.append(f"### {name}")
+                    lines.append('')
+                    lines.append(f"- **File:** `{file}:{line}`" if line else f"- **File:** `{file}`")
+                    lines.append(f"- **Type:** {elem_type}")
+
+                    # Add relationships if graph available
+                    elem_id = handler.get('id', name)
+                    rels = self._get_element_relationships(elem_id, graph)
+                    if rels['callees']:
+                        lines.append(f"- **Calls:** `{'`, `'.join(rels['callees'][:5])}`")
+                    if rels['callers']:
+                        lines.append(f"- **Called by:** `{'`, `'.join(rels['callers'][:5])}`")
+
+                    lines.append('- **Purpose:** <!-- AGENT: Describe purpose -->')
+                    lines.append('')
+
+            # Generators section
+            if categories['generators']:
+                lines.append(f"## Generators ({len(categories['generators'])} detected)")
+                lines.append('')
+                for gen in categories['generators'][:10]:
+                    name = gen.get('name', 'unknown')
+                    file = gen.get('file', '')
+                    line = gen.get('line', '')
+
+                    lines.append(f"### {name}")
+                    lines.append('')
+                    lines.append(f"- **File:** `{file}:{line}`" if line else f"- **File:** `{file}`")
+
+                    elem_id = gen.get('id', name)
+                    rels = self._get_element_relationships(elem_id, graph)
+                    if rels['callers']:
+                        lines.append(f"- **Used by:** `{'`, `'.join(rels['callers'][:5])}`")
+
+                    lines.append('- **Purpose:** <!-- AGENT: Describe purpose -->')
+                    lines.append('')
+
+            # Services section
+            if categories['services']:
+                lines.append(f"## Services ({len(categories['services'])} detected)")
+                lines.append('')
+                for svc in categories['services'][:10]:
+                    name = svc.get('name', 'unknown')
+                    file = svc.get('file', '')
+                    lines.append(f"### {name}")
+                    lines.append('')
+                    lines.append(f"- **File:** `{file}`")
+                    lines.append('- **Purpose:** <!-- AGENT: Describe purpose -->')
+                    lines.append('')
+            else:
+                lines.append('## Services (0 detected)')
+                lines.append('')
+                lines.append('*No *Service classes found*')
+                lines.append('')
+
+            # Middleware section
+            if categories['middleware']:
+                lines.append(f"## Middleware ({len(categories['middleware'])} detected)")
+                lines.append('')
+                for mw in categories['middleware'][:10]:
+                    name = mw.get('name', 'unknown')
+                    file = mw.get('file', '')
+                    lines.append(f"- `{name}` in `{file}`")
+                lines.append('')
+
+            # UI Components section
+            if categories['components']:
+                lines.append(f"## UI Components ({len(categories['components'])} detected)")
+                lines.append('')
+                lines.append('| Component | File | Type |')
+                lines.append('|-----------|------|------|')
+                for comp in categories['components'][:20]:
+                    name = comp.get('name', '')
+                    file = comp.get('file', '')
+                    comp_type = comp.get('type', 'component')
+                    lines.append(f"| {name} | `{file}` | {comp_type} |")
+                lines.append('')
+
+            # Utilities section
+            if categories['utilities']:
+                lines.append(f"## Utilities ({len(categories['utilities'])} detected)")
+                lines.append('')
+                lines.append('| Utility | File | Purpose |')
+                lines.append('|---------|------|---------|')
+                for util in categories['utilities'][:20]:
+                    name = util.get('name', '')
+                    file = util.get('file', '')
+                    lines.append(f"| {name} | `{file}` | <!-- AGENT: Purpose --> |")
+                lines.append('')
+
+            # Classes section
+            if categories['classes']:
+                lines.append(f"## Other Classes ({len(categories['classes'])} detected)")
+                lines.append('')
+                for cls in categories['classes'][:10]:
+                    name = cls.get('name', '')
+                    file = cls.get('file', '')
+                    lines.append(f"- `{name}` in `{file}`")
+                lines.append('')
+
         else:
-            # Auto-detect components
+            # Fall back to regex-based UI component detection (backward compatible)
             lines.append('## Detected Components')
+            lines.append('')
+            lines.append('*Note: Run `coderef index` for comprehensive module analysis with relationships.*')
             lines.append('')
 
             component_dirs = ['components', 'src/components', 'app/components', 'pages', 'src/pages']
@@ -871,7 +1237,7 @@ class CoderefFoundationGenerator:
                             found_components.append({
                                 'name': comp_file.stem,
                                 'path': str(comp_file.relative_to(self.project_path)),
-                                'type': ext[2:]  # tsx, jsx, etc.
+                                'type': ext[2:]
                             })
 
             if found_components:
@@ -993,6 +1359,87 @@ class CoderefFoundationGenerator:
             lines.append('*Error format not detected.*')
         lines.append('')
 
+        lines.append(f"*Generated: {datetime.now().isoformat()}*")
+
+        return '\n'.join(lines)
+
+    def _generate_readme_md(self, context: Dict, coderef_data: Optional[Dict] = None) -> str:
+        """
+        Generate README.md with project overview, stats, and architecture diagram.
+
+        Saved to project root (not coderef/foundation-docs/).
+        """
+        project_name = self.project_path.name
+        lines = [f'# {project_name}', '']
+
+        # Overview section with AGENT marker
+        lines.append('## Overview')
+        lines.append('')
+        lines.append('<!-- AGENT: Describe what this project does -->')
+        lines.append('')
+
+        # Quick Stats section
+        lines.append('## Quick Stats')
+        lines.append('')
+        lines.append('| Metric | Value |')
+        lines.append('|--------|-------|')
+
+        # Gather stats from context and coderef
+        if coderef_data and coderef_data.get('elements'):
+            elements = coderef_data['elements']
+
+            # Count by type
+            type_counts = {}
+            for elem in elements:
+                elem_type = elem.get('type', 'unknown')
+                type_counts[elem_type] = type_counts.get(elem_type, 0) + 1
+
+            for elem_type, count in sorted(type_counts.items()):
+                lines.append(f"| {elem_type.title()}s | {count} |")
+
+        # API endpoint count
+        api = context.get('api_context', {})
+        if api.get('count', 0) > 0:
+            lines.append(f"| API Endpoints | {api['count']} |")
+
+        # Database tables
+        db = context.get('database', {})
+        if db.get('table_count', 0) > 0:
+            lines.append(f"| Database Tables | {db['table_count']} |")
+
+        # Dependencies
+        deps = context.get('dependencies', {})
+        if deps.get('count', 0) > 0:
+            lines.append(f"| Dependencies | {deps['count']} |")
+
+        lines.append('')
+
+        # Architecture Overview diagram
+        if coderef_data and coderef_data.get('graph'):
+            lines.append('## Architecture Overview')
+            lines.append('')
+            diagram = generate_module_diagram(coderef_data['graph'], max_nodes=10)
+            lines.append(diagram)
+            lines.append('')
+
+        # Quick Start section with AGENT marker
+        lines.append('## Quick Start')
+        lines.append('')
+        lines.append('<!-- AGENT: Installation and usage instructions -->')
+        lines.append('')
+
+        # Documentation links
+        lines.append('## Documentation')
+        lines.append('')
+        lines.append('- [API Reference](coderef/foundation-docs/API.md)')
+        lines.append('- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)')
+        lines.append('- [Components](coderef/foundation-docs/COMPONENTS.md)')
+        lines.append('- [Schema](coderef/foundation-docs/SCHEMA.md)')
+        lines.append('')
+
+        # Footer
+        lines.append('---')
+        lines.append('')
         lines.append(f"*Generated: {datetime.now().isoformat()}*")
 
         return '\n'.join(lines)

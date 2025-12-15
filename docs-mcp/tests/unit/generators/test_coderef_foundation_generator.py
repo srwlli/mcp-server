@@ -932,7 +932,9 @@ class TestApiMdGeneration:
         gen = CoderefFoundationGenerator(fastapi_project, use_coderef=False)
         result = gen.generate()
 
-        assert 'API.md' in result['files_generated']
+        # Check for API.md in generated files (full path format)
+        api_file_present = any('API.md' in f for f in result['files_generated'])
+        assert api_file_present, f"API.md not found in {result['files_generated']}"
 
         api_path = fastapi_project / "coderef" / "foundation-docs" / "API.md"
         assert api_path.exists()
@@ -1052,3 +1054,319 @@ app.get("/health", (req, res) => res.send("ok"));
 
         assert 'FastAPI' in content
         assert 'Express' in content
+
+
+# ============================================================================
+# CODEREF DATA LOADING TESTS (WO-CODEREF-FOUNDATION-003)
+# ============================================================================
+
+class TestCoderefDataLoading:
+    """Test _load_coderef_data() method for loading .coderef/ JSON files."""
+
+    def test_load_coderef_data_no_coderef_dir(self, temp_project):
+        """Returns None when .coderef directory doesn't exist."""
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is None
+
+    def test_load_coderef_data_no_index_json(self, temp_project):
+        """Returns None when .coderef/index.json doesn't exist."""
+        # Create .coderef dir but no index.json
+        (temp_project / ".coderef").mkdir()
+
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is None
+
+    def test_load_coderef_data_valid_index(self, temp_project):
+        """Loads valid index.json successfully."""
+        coderef_dir = temp_project / ".coderef"
+        coderef_dir.mkdir()
+
+        # Create valid index.json
+        index_data = [
+            {"type": "function", "name": "handle_request", "file": "server.py", "line": 10},
+            {"type": "class", "name": "UserService", "file": "services.py", "line": 25}
+        ]
+        (coderef_dir / "index.json").write_text(json.dumps(index_data))
+
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is not None
+        assert 'elements' in result
+        assert len(result['elements']) == 2
+        assert result['graph'] is None  # No graph.json
+
+    def test_load_coderef_data_with_graph(self, temp_project):
+        """Loads both index.json and graph.json when available."""
+        coderef_dir = temp_project / ".coderef"
+        coderef_dir.mkdir()
+
+        # Create valid index.json
+        index_data = [
+            {"type": "function", "name": "handle_request", "file": "server.py", "line": 10}
+        ]
+        (coderef_dir / "index.json").write_text(json.dumps(index_data))
+
+        # Create valid graph.json
+        graph_data = {
+            "nodes": [["node1", {"id": "server.py::handle_request", "type": "function", "file": "server.py"}]],
+            "edges": [["edge1", {"source": "server.py::handle_request", "target": "utils.py::validate", "type": "calls"}]],
+            "metadata": {"nodeCount": 1, "edgeCount": 1}
+        }
+        (coderef_dir / "graph.json").write_text(json.dumps(graph_data))
+
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is not None
+        assert 'elements' in result
+        assert 'graph' in result
+        assert result['graph'] is not None
+        assert 'nodes' in result['graph']
+        assert 'edges' in result['graph']
+
+    def test_load_coderef_data_invalid_json(self, temp_project):
+        """Returns None when index.json contains invalid JSON."""
+        coderef_dir = temp_project / ".coderef"
+        coderef_dir.mkdir()
+
+        # Create invalid JSON
+        (coderef_dir / "index.json").write_text("{ invalid json }")
+
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is None
+
+    def test_load_coderef_data_empty_index(self, temp_project):
+        """Handles empty index.json array."""
+        coderef_dir = temp_project / ".coderef"
+        coderef_dir.mkdir()
+
+        (coderef_dir / "index.json").write_text("[]")
+
+        gen = CoderefFoundationGenerator(temp_project)
+        result = gen._load_coderef_data()
+
+        assert result is not None
+        assert result['elements'] == []
+
+
+# ============================================================================
+# ELEMENT CATEGORIZATION TESTS (WO-CODEREF-FOUNDATION-003)
+# ============================================================================
+
+class TestElementCategorization:
+    """Test _categorize_elements() method for grouping elements by type."""
+
+    def test_categorize_handlers(self, temp_project):
+        """Categorizes elements starting with handle_ as handlers."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "function", "name": "handle_create_plan", "file": "handlers.py"},
+            {"type": "function", "name": "handle_get_template", "file": "handlers.py"},
+            {"type": "function", "name": "on_message", "file": "events.py"},
+            {"type": "function", "name": "regular_function", "file": "utils.py"}
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        assert len(result['handlers']) == 3  # handle_* and on_*
+        handler_names = [h['name'] for h in result['handlers']]
+        assert 'handle_create_plan' in handler_names
+        assert 'handle_get_template' in handler_names
+        assert 'on_message' in handler_names
+
+    def test_categorize_generators(self, temp_project):
+        """Categorizes classes ending with Generator."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "class", "name": "ChangelogGenerator", "file": "generators.py"},
+            {"type": "class", "name": "PlanningGenerator", "file": "generators.py"},
+            {"type": "class", "name": "UserService", "file": "services.py"}
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        assert len(result['generators']) == 2
+        gen_names = [g['name'] for g in result['generators']]
+        assert 'ChangelogGenerator' in gen_names
+        assert 'PlanningGenerator' in gen_names
+
+    def test_categorize_services(self, temp_project):
+        """Categorizes classes ending with Service."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "class", "name": "UserService", "file": "services.py"},
+            {"type": "class", "name": "AuthService", "file": "auth.py"},
+            {"type": "class", "name": "DataManager", "file": "managers.py"}
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        assert len(result['services']) == 2
+        service_names = [s['name'] for s in result['services']]
+        assert 'UserService' in service_names
+        assert 'AuthService' in service_names
+
+    def test_categorize_middleware(self, temp_project):
+        """Categorizes middleware elements."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "class", "name": "AuthMiddleware", "file": "middleware.py"},
+            {"type": "function", "name": "auth_middleware", "file": "middleware.py"},
+            {"type": "function", "name": "regular_func", "file": "utils.py"}
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        assert len(result['middleware']) == 2
+
+    def test_categorize_components(self, temp_project):
+        """Categorizes UI components (tsx/jsx files with PascalCase functions)."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "function", "name": "Button", "file": "Button.tsx"},
+            {"type": "function", "name": "Modal", "file": "Modal.jsx"},
+            {"type": "function", "name": "useAuth", "file": "hooks.ts"},  # Not a component (hook)
+            {"type": "function", "name": "UserWidget", "file": "Widget.tsx"}  # Function component
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        # Components are functions in tsx/jsx files with PascalCase names
+        assert len(result['components']) == 3  # Button, Modal, UserWidget
+
+    def test_categorize_utilities(self, temp_project):
+        """Categorizes utility functions."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "function", "name": "validate_input", "file": "utils.py"},
+            {"type": "function", "name": "format_date", "file": "helpers.py"},
+            {"type": "function", "name": "handle_request", "file": "handlers.py"}  # Not utility
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        # Utilities are functions not in other categories
+        # validate_input and format_date should be utilities (not handlers)
+        utility_names = [u['name'] for u in result['utilities']]
+        assert 'validate_input' in utility_names
+        assert 'format_date' in utility_names
+        assert 'handle_request' not in utility_names
+
+    def test_categorize_all_elements_tracked(self, temp_project):
+        """All elements are available in 'all' category."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        elements = [
+            {"type": "function", "name": "handle_request", "file": "handlers.py"},
+            {"type": "class", "name": "UserService", "file": "services.py"},
+            {"type": "function", "name": "utility_func", "file": "utils.py"}
+        ]
+
+        result = gen._categorize_elements(elements)
+
+        assert len(result['all']) == 3
+
+    def test_categorize_empty_elements(self, temp_project):
+        """Handles empty element list."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        result = gen._categorize_elements([])
+
+        assert len(result['handlers']) == 0
+        assert len(result['generators']) == 0
+        assert len(result['services']) == 0
+        assert len(result['all']) == 0
+
+
+# ============================================================================
+# ELEMENT RELATIONSHIPS TESTS (WO-CODEREF-FOUNDATION-003)
+# ============================================================================
+
+class TestElementRelationships:
+    """Test _get_element_relationships() method for extracting call relationships."""
+
+    def test_get_relationships_no_graph(self, temp_project):
+        """Returns empty relationships when no graph data."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        result = gen._get_element_relationships("server.py::handle_request", None)
+
+        assert result['callers'] == []
+        assert result['callees'] == []
+
+    def test_get_relationships_with_callers(self, temp_project):
+        """Extracts callers from graph edges."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        graph = {
+            "nodes": [],
+            "edges": [
+                ["e1", {"source": "main.py::run", "target": "server.py::handle_request", "type": "calls"}],
+                ["e2", {"source": "cli.py::main", "target": "server.py::handle_request", "type": "calls"}]
+            ]
+        }
+
+        result = gen._get_element_relationships("server.py::handle_request", graph)
+
+        assert len(result['callers']) == 2
+        assert "main.py::run" in result['callers']
+        assert "cli.py::main" in result['callers']
+
+    def test_get_relationships_with_callees(self, temp_project):
+        """Extracts callees from graph edges."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        graph = {
+            "nodes": [],
+            "edges": [
+                ["e1", {"source": "server.py::handle_request", "target": "utils.py::validate", "type": "calls"}],
+                ["e2", {"source": "server.py::handle_request", "target": "db.py::query", "type": "calls"}]
+            ]
+        }
+
+        result = gen._get_element_relationships("server.py::handle_request", graph)
+
+        assert len(result['callees']) == 2
+        assert "utils.py::validate" in result['callees']
+        assert "db.py::query" in result['callees']
+
+    def test_get_relationships_both_directions(self, temp_project):
+        """Handles element that is both caller and callee."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        graph = {
+            "nodes": [],
+            "edges": [
+                ["e1", {"source": "main.py::run", "target": "server.py::handle_request", "type": "calls"}],
+                ["e2", {"source": "server.py::handle_request", "target": "utils.py::validate", "type": "calls"}]
+            ]
+        }
+
+        result = gen._get_element_relationships("server.py::handle_request", graph)
+
+        assert len(result['callers']) == 1
+        assert len(result['callees']) == 1
+
+    def test_get_relationships_empty_graph(self, temp_project):
+        """Handles empty graph."""
+        gen = CoderefFoundationGenerator(temp_project)
+
+        graph = {"nodes": [], "edges": []}
+
+        result = gen._get_element_relationships("server.py::handle_request", graph)
+
+        assert result['callers'] == []
+        assert result['callees'] == []

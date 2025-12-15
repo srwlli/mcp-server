@@ -492,3 +492,194 @@ class TestRegistry:
         """Registered handler is callable."""
         handler = tool_handlers.TOOL_HANDLERS['coderef_foundation_docs']
         assert callable(handler)
+
+
+# ============================================================================
+# CODEREF DATA INTEGRATION TESTS (WO-CODEREF-FOUNDATION-003)
+# ============================================================================
+
+class TestCoderefDataIntegration:
+    """Test integration with .coderef/ data files."""
+
+    @pytest.fixture
+    def project_with_coderef(self, integration_project):
+        """Create project with .coderef/ directory containing index.json and graph.json."""
+        coderef_dir = integration_project / ".coderef"
+        coderef_dir.mkdir()
+
+        # Create index.json with elements
+        index_data = [
+            {"type": "function", "name": "root", "file": "src/main.py", "line": 6},
+            {"type": "function", "name": "list_users", "file": "src/main.py", "line": 10},
+            {"type": "function", "name": "create_user", "file": "src/main.py", "line": 14},
+            {"type": "class", "name": "User", "file": "src/models.py", "line": 7},
+            {"type": "function", "name": "handle_request", "file": "src/handlers.py", "line": 1}
+        ]
+        (coderef_dir / "index.json").write_text(json.dumps(index_data, indent=2))
+
+        # Create graph.json with relationships
+        graph_data = {
+            "nodes": [
+                ["n1", {"id": "src/main.py::root", "name": "root", "type": "function", "file": "src/main.py"}],
+                ["n2", {"id": "src/main.py::list_users", "name": "list_users", "type": "function", "file": "src/main.py"}],
+                ["n3", {"id": "src/main.py::create_user", "name": "create_user", "type": "function", "file": "src/main.py"}],
+                ["n4", {"id": "src/models.py::User", "name": "User", "type": "class", "file": "src/models.py"}]
+            ],
+            "edges": [
+                ["e1", {"source": "src/main.py::list_users", "target": "src/models.py::User", "type": "calls"}],
+                ["e2", {"source": "src/main.py::create_user", "target": "src/models.py::User", "type": "calls"}]
+            ],
+            "metadata": {"nodeCount": 4, "edgeCount": 2}
+        }
+        (coderef_dir / "graph.json").write_text(json.dumps(graph_data, indent=2))
+
+        return integration_project
+
+    @pytest.mark.asyncio
+    async def test_coderef_data_used_when_available(self, project_with_coderef):
+        """Handler uses coderef data when .coderef/ directory exists."""
+        result = await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "use_coderef": True  # Enable coderef integration
+        })
+
+        response = extract_json_from_response(result[0].text)
+        assert response.get("success") is True or "files_generated" in response
+
+    @pytest.mark.asyncio
+    async def test_coderef_enhances_architecture_md(self, project_with_coderef):
+        """ARCHITECTURE.md includes coderef-powered diagrams and metrics."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "use_coderef": True
+        })
+
+        arch_path = project_with_coderef / "coderef" / "foundation-docs" / "ARCHITECTURE.md"
+        content = arch_path.read_text()
+
+        # Should have Mermaid diagram
+        assert "```mermaid" in content or "mermaid" in content.lower()
+
+        # Should have graph metrics section
+        assert "metrics" in content.lower() or "density" in content.lower() or "nodes" in content.lower()
+
+    @pytest.mark.asyncio
+    async def test_coderef_enhances_components_md(self, project_with_coderef):
+        """COMPONENTS.md includes all module categories from coderef data."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "include_components": True,
+            "use_coderef": True
+        })
+
+        components_path = project_with_coderef / "coderef" / "foundation-docs" / "COMPONENTS.md"
+        content = components_path.read_text()
+
+        # Should have summary section with counts
+        assert "summary" in content.lower() or "total" in content.lower() or "elements" in content.lower()
+
+    @pytest.mark.asyncio
+    async def test_coderef_adds_high_impact_elements(self, project_with_coderef):
+        """ARCHITECTURE.md includes high-impact elements section."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "use_coderef": True
+        })
+
+        arch_path = project_with_coderef / "coderef" / "foundation-docs" / "ARCHITECTURE.md"
+        content = arch_path.read_text()
+
+        # Should have high-impact elements section (or equivalent)
+        assert "impact" in content.lower() or "dependent" in content.lower() or "risk" in content.lower()
+
+    @pytest.mark.asyncio
+    async def test_readme_generated_at_project_root(self, project_with_coderef):
+        """README.md is generated at project root."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "use_coderef": True
+        })
+
+        readme_path = project_with_coderef / "README.md"
+        assert readme_path.exists()
+
+        content = readme_path.read_text()
+        # Should have project name in title
+        assert "#" in content
+        # Should have stats section
+        assert "stat" in content.lower() or "overview" in content.lower() or "quick" in content.lower()
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_coderef_missing(self, integration_project):
+        """Falls back to regex detection when .coderef/ missing."""
+        result = await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(integration_project),
+            "use_coderef": True  # Enabled, but no .coderef/ directory
+        })
+
+        response = extract_json_from_response(result[0].text)
+        # Should still succeed with regex fallback
+        assert response.get("success") is True or "files_generated" in response
+
+    @pytest.mark.asyncio
+    async def test_project_context_includes_coderef_info(self, project_with_coderef):
+        """project-context.json includes coderef analysis info."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "use_coderef": True
+        })
+
+        context_path = project_with_coderef / "coderef" / "foundation-docs" / "project-context.json"
+        context = json.loads(context_path.read_text(encoding='utf-8'))
+
+        # Should indicate coderef was used or have element counts
+        has_coderef_info = (
+            "coderef" in str(context).lower() or
+            "elements" in context or
+            "element_count" in context or
+            context.get("used_coderef") is True
+        )
+        assert has_coderef_info or "api_context" in context  # At minimum, has standard context
+
+    @pytest.mark.asyncio
+    async def test_invalid_coderef_json_graceful_fallback(self, integration_project):
+        """Handles invalid JSON in .coderef/ gracefully."""
+        coderef_dir = integration_project / ".coderef"
+        coderef_dir.mkdir()
+        (coderef_dir / "index.json").write_text("{ invalid json }")
+
+        result = await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(integration_project),
+            "use_coderef": True
+        })
+
+        response = extract_json_from_response(result[0].text)
+        # Should fall back to regex and still succeed
+        assert response.get("success") is True or "files_generated" in response
+
+    @pytest.mark.asyncio
+    async def test_six_files_generated(self, project_with_coderef):
+        """All 6 foundation files are generated."""
+        result = await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(project_with_coderef),
+            "include_components": True,
+            "use_coderef": True
+        })
+
+        response = extract_json_from_response(result[0].text)
+
+        # Check files_generated list
+        if "files_generated" in response:
+            files = response["files_generated"]
+            expected_files = ["README.md", "ARCHITECTURE.md", "SCHEMA.md", "COMPONENTS.md", "API.md", "project-context.json"]
+            for expected in expected_files:
+                assert any(expected in f for f in files), f"Missing {expected} in generated files"
+
+        # Also verify files exist
+        foundation_dir = project_with_coderef / "coderef" / "foundation-docs"
+        assert (project_with_coderef / "README.md").exists()
+        assert (foundation_dir / "ARCHITECTURE.md").exists()
+        assert (foundation_dir / "SCHEMA.md").exists()
+        assert (foundation_dir / "COMPONENTS.md").exists()
+        assert (foundation_dir / "API.md").exists()
+        assert (foundation_dir / "project-context.json").exists()

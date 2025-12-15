@@ -1525,435 +1525,6 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
 
 @log_invocation
 @mcp_error_handler
-async def handle_inventory_manifest(arguments: dict) -> list[TextContent]:
-    """
-    Handle inventory_manifest tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.inventory_generator import InventoryGenerator
-    from constants import AnalysisDepth
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    analysis_depth = arguments.get("analysis_depth", "standard")
-    exclude_dirs = arguments.get("exclude_dirs")
-    max_file_size = arguments.get("max_file_size")
-
-    # Validate analysis_depth (raises ValueError if invalid - caught by decorator)
-    valid_depths = [d.value for d in AnalysisDepth]
-    if analysis_depth not in valid_depths:
-        raise ValueError(f"Invalid analysis_depth. Must be one of: {valid_depths}")
-
-    logger.info(f"Generating inventory manifest for: {project_path} (depth={analysis_depth})")
-
-    # Initialize inventory generator
-    generator = InventoryGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest(
-        analysis_depth=analysis_depth,
-        exclude_dirs=exclude_dirs,
-        max_file_size=max_file_size
-    )
-
-    # Save manifest
-    manifest_path = generator.save_manifest(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "files_analyzed": metrics['total_files'],
-        "project_name": manifest['project_name'],
-        "analysis_depth": analysis_depth,
-        "metrics": {
-            "total_files": metrics['total_files'],
-            "total_size": metrics['total_size'],
-            "total_lines": metrics['total_lines'],
-            "file_categories": metrics['file_categories'],
-            "risk_distribution": metrics['risk_distribution'],
-            "language_breakdown": metrics.get('language_breakdown', {})
-        },
-        "success": True
-    }
-
-    logger.info(f"Inventory manifest generated successfully: {result['files_analyzed']} files")
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_dependency_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle dependency_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.dependency_generator import DependencyGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    scan_security = arguments.get("scan_security", True)
-    ecosystems = arguments.get("ecosystems", ['all'])
-    include_transitive = arguments.get("include_transitive", False)
-
-    logger.info(
-        f"Generating dependency inventory for: {project_path}",
-        extra={
-            'scan_security': scan_security,
-            'ecosystems': ecosystems,
-            'include_transitive': include_transitive
-        }
-    )
-
-    # Initialize dependency generator
-    generator = DependencyGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest(
-        scan_security=scan_security,
-        ecosystems=ecosystems,
-        include_transitive=include_transitive
-    )
-
-    # Save manifest
-    manifest_path = generator.save_manifest(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "package_managers": manifest['package_managers'],
-        "total_dependencies": metrics['total_dependencies'],
-        "vulnerable_count": metrics['vulnerable_count'],
-        "outdated_count": metrics['outdated_count'],
-        "metrics": {
-            "total_dependencies": metrics['total_dependencies'],
-            "direct_count": metrics['direct_count'],
-            "dev_count": metrics['dev_count'],
-            "peer_count": metrics.get('peer_count', 0),
-            "transitive_count": metrics.get('transitive_count', 0),
-            "outdated_count": metrics['outdated_count'],
-            "vulnerable_count": metrics['vulnerable_count'],
-            "critical_vulnerabilities": metrics['critical_vulnerabilities'],
-            "high_vulnerabilities": metrics['high_vulnerabilities'],
-            "medium_vulnerabilities": metrics['medium_vulnerabilities'],
-            "low_vulnerabilities": metrics['low_vulnerabilities'],
-            "license_breakdown": metrics.get('license_breakdown', {}),
-            "ecosystem_breakdown": metrics['ecosystem_breakdown']
-        },
-        "success": True
-    }
-
-    logger.info(
-        f"Dependency inventory generated successfully: {result['total_dependencies']} dependencies, {result['vulnerable_count']} vulnerable"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_api_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle api_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.api_generator import ApiGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    frameworks = arguments.get("frameworks", ['all'])
-    include_graphql = arguments.get("include_graphql", False)
-    scan_documentation = arguments.get("scan_documentation", True)
-
-    logger.info(
-        f"Generating API inventory for: {project_path}",
-        extra={
-            'frameworks': frameworks,
-            'include_graphql': include_graphql,
-            'scan_documentation': scan_documentation
-        }
-    )
-
-    # Initialize API generator
-    generator = ApiGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest(
-        frameworks=frameworks,
-        include_graphql=include_graphql,
-        scan_documentation=scan_documentation
-    )
-
-    # Save manifest
-    manifest_path = generator.save(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "frameworks": manifest['frameworks'],
-        "total_endpoints": metrics['total_endpoints'],
-        "documented_endpoints": metrics['documented_endpoints'],
-        "documentation_coverage": metrics['documentation_coverage'],
-        "metrics": {
-            "total_endpoints": metrics['total_endpoints'],
-            "documented_endpoints": metrics['documented_endpoints'],
-            "documentation_coverage": metrics['documentation_coverage'],
-            "frameworks_detected": metrics['frameworks_detected'],
-            "framework_breakdown": metrics.get('framework_breakdown', {}),
-            "method_breakdown": metrics.get('method_breakdown', {}),
-            "rest_endpoints": metrics['rest_endpoints'],
-            "graphql_endpoints": metrics['graphql_endpoints']
-        },
-        "success": True
-    }
-
-    logger.info(
-        f"API inventory generated successfully: {result['total_endpoints']} endpoints, {result['documentation_coverage']}% documented"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_test_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle test_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.test_generator import TestGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    frameworks = arguments.get("frameworks", ['all'])
-    include_coverage = arguments.get("include_coverage", True)
-
-    logger.info(
-        f"Generating test inventory for: {project_path}",
-        extra={
-            'frameworks': frameworks,
-            'include_coverage': include_coverage
-        }
-    )
-
-    # Initialize test generator
-    generator = TestGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest()
-
-    # Save manifest
-    manifest_path = generator.save_manifest(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "frameworks_detected": manifest['frameworks'],
-        "total_test_files": metrics['total_test_files'],
-        "untested_files_count": metrics['untested_files_count'],
-        "coverage_available": metrics['coverage_available'],
-        "metrics": {
-            "total_test_files": metrics['total_test_files'],
-            "frameworks_detected": metrics['frameworks_detected'],
-            "untested_files_count": metrics['untested_files_count'],
-            "coverage_available": metrics['coverage_available'],
-            "overall_coverage": metrics.get('overall_coverage')
-        },
-        "success": True
-    }
-
-    logger.info(
-        f"Test inventory generated successfully: {result['total_test_files']} test files, {result['untested_files_count']} untested files"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_database_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle database_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.database_generator import DatabaseGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    database_systems = arguments.get("database_systems", ['all'])
-    include_migrations = arguments.get("include_migrations", True)
-
-    logger.info(
-        f"Generating database inventory for: {project_path}",
-        extra={
-            'database_systems': database_systems,
-            'include_migrations': include_migrations
-        }
-    )
-
-    # Initialize database generator
-    generator = DatabaseGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest(
-        database_systems=database_systems,
-        include_migrations=include_migrations
-    )
-
-    # Save manifest
-    manifest_path = generator.save(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "database_systems": manifest['database_systems'],
-        "total_schemas": metrics['total_schemas'],
-        "sql_tables": metrics['sql_tables'],
-        "nosql_collections": metrics['nosql_collections'],
-        "metrics": {
-            "total_schemas": metrics['total_schemas'],
-            "sql_tables": metrics['sql_tables'],
-            "nosql_collections": metrics['nosql_collections'],
-            "database_systems_detected": metrics['database_systems_detected'],
-            "system_breakdown": metrics.get('system_breakdown', {}),
-            "orm_breakdown": metrics.get('orm_breakdown', {}),
-            "total_columns": metrics['total_columns'],
-            "total_relationships": metrics['total_relationships']
-        },
-        "success": True
-    }
-
-    logger.info(
-        f"Database inventory generated successfully: {result['total_schemas']} schemas ({result['sql_tables']} SQL tables, {result['nosql_collections']} NoSQL collections)"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_config_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle config_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.config_generator import ConfigGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    # Get optional parameters
-    formats = arguments.get("formats", ['all'])
-    mask_sensitive = arguments.get("mask_sensitive", True)
-
-    logger.info(
-        f"Generating configuration inventory for: {project_path}",
-        extra={
-            'formats': formats,
-            'mask_sensitive': mask_sensitive
-        }
-    )
-
-    # Initialize config generator
-    generator = ConfigGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest(
-        formats=formats,
-        mask_sensitive=mask_sensitive
-    )
-
-    # Save manifest
-    manifest_path = generator.save_manifest(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "formats_detected": manifest['formats'],
-        "total_files": metrics['total_files'],
-        "sensitive_files": metrics['sensitive_files'],
-        "success": True
-    }
-
-    logger.info(
-        f"Configuration inventory generated successfully: {result['total_files']} files, {result['sensitive_files']} with sensitive data"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_documentation_inventory(arguments: dict) -> list[TextContent]:
-    """
-    Handle documentation_inventory tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    from generators.documentation_generator import DocumentationGenerator
-
-    # Validate inputs
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-
-    logger.info(f"Generating documentation inventory for: {project_path}")
-
-    # Initialize documentation generator
-    generator = DocumentationGenerator(Path(project_path))
-
-    # Generate manifest
-    manifest = generator.generate_manifest()
-
-    # Save manifest
-    manifest_path = generator.save_manifest(manifest)
-
-    # Build summary response
-    metrics = manifest['metrics']
-    result = {
-        "manifest_path": str(manifest_path.relative_to(Path(project_path))),
-        "formats_detected": manifest['formats'],
-        "total_files": metrics['total_files'],
-        "markdown_files": metrics['markdown_files'],
-        "rst_files": metrics['rst_files'],
-        "asciidoc_files": metrics['asciidoc_files'],
-        "html_files": metrics['html_files'],
-        "orgmode_files": metrics['orgmode_files'],
-        "quality_score": metrics['quality_score'],
-        "freshness_days": metrics['freshness_days'],
-        "coverage_percentage": metrics['coverage_percentage'],
-        "success": True
-    }
-
-    logger.info(
-        f"Documentation inventory generated successfully: {result['total_files']} files, quality score {result['quality_score']}/100"
-    )
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
-
-
-@log_invocation
-@mcp_error_handler
 async def handle_generate_deliverables_template(arguments: dict) -> list[TextContent]:
     """
     Handle generate_deliverables_template tool call.
@@ -3997,6 +3568,68 @@ async def handle_assess_risk(arguments: dict) -> list[TextContent]:
     )
 
 
+@log_invocation
+@mcp_error_handler
+async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
+    """
+    Handle coderef_foundation_docs tool call.
+
+    Unified foundation docs generator powered by coderef analysis. Generates:
+    - ARCHITECTURE.md (patterns, decisions, constraints)
+    - SCHEMA.md (entities, relationships)
+    - COMPONENTS.md (component hierarchy - UI projects only)
+    - project-context.json (structured context for planning)
+
+    Replaces: api_inventory, database_inventory, dependency_inventory,
+              config_inventory, test_inventory, inventory_manifest, documentation_inventory
+    """
+    # Validate project_path
+    project_path = validate_project_path_input(arguments.get('project_path', ''))
+    project_path_obj = Path(project_path).resolve()
+
+    # Get optional parameters
+    include_components = arguments.get('include_components')  # None = auto-detect
+    deep_extraction = arguments.get('deep_extraction', True)
+    use_coderef = arguments.get('use_coderef', True)
+
+    logger.info(
+        f"Starting coderef foundation docs generation for: {project_path_obj}",
+        extra={
+            'include_components': include_components,
+            'deep_extraction': deep_extraction,
+            'use_coderef': use_coderef
+        }
+    )
+
+    # Import generator (lazy import to avoid circular dependencies)
+    from generators.coderef_foundation_generator import CoderefFoundationGenerator
+
+    # Initialize generator
+    generator = CoderefFoundationGenerator(
+        project_path_obj,
+        include_components=include_components,
+        deep_extraction=deep_extraction,
+        use_coderef=use_coderef
+    )
+
+    # Run generation
+    result = generator.generate()
+
+    logger.info(
+        "Coderef foundation docs generation complete",
+        extra={
+            'project_path': str(project_path_obj),
+            'files_generated': result.get('files_generated', []),
+            'context_sections': list(result.get('project_context', {}).keys())
+        }
+    )
+
+    return format_success_response(
+        data=result,
+        message=f"✅ Foundation docs generated: {', '.join(result.get('files_generated', []))}"
+    )
+
+
 # =============================================================================
 # Tool handlers registry (QUA-002)
 TOOL_HANDLERS = {
@@ -4017,13 +3650,6 @@ TOOL_HANDLERS = {
     'validate_implementation_plan': handle_validate_implementation_plan,
     'generate_plan_review_report': handle_generate_plan_review_report,
     'create_plan': handle_create_plan,
-    'inventory_manifest': handle_inventory_manifest,
-    'dependency_inventory': handle_dependency_inventory,
-    'api_inventory': handle_api_inventory,
-    'database_inventory': handle_database_inventory,
-    'config_inventory': handle_config_inventory,
-    'test_inventory': handle_test_inventory,
-    'documentation_inventory': handle_documentation_inventory,
     'generate_deliverables_template': handle_generate_deliverables_template,
     'update_deliverables': handle_update_deliverables,
     'generate_agent_communication': handle_generate_agent_communication,
@@ -4038,6 +3664,7 @@ TOOL_HANDLERS = {
     'get_workorder_log': handle_get_workorder_log,
     'generate_handoff_context': handle_generate_handoff_context,
     'assess_risk': handle_assess_risk,
+    'coderef_foundation_docs': handle_coderef_foundation_docs,
 }
 
 

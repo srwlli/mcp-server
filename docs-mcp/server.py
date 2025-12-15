@@ -513,200 +513,6 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
-            name='inventory_manifest',
-            description='Generate comprehensive project file inventory manifest. Creates detailed catalog of all project files with metadata (size, lines, category, risk level, dependencies), categorizes files using universal taxonomy, calculates project metrics, and saves manifest to coderef/inventory/manifest.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to inventory'
-                    },
-                    'analysis_depth': {
-                        'type': 'string',
-                        'enum': ['quick', 'standard', 'deep'],
-                        'description': 'Analysis depth: quick (basic metadata only), standard (+ categorization & basic dependencies), deep (+ full dependency parsing). Default: standard',
-                        'default': 'standard'
-                    },
-                    'exclude_dirs': {
-                        'type': 'array',
-                        'items': {'type': 'string'},
-                        'description': 'Optional: List of directory names to exclude (e.g., node_modules, .git). Default: common exclusions'
-                    },
-                    'max_file_size': {
-                        'type': 'integer',
-                        'description': 'Optional: Maximum file size to process in bytes. Default: 10MB',
-                        'minimum': 0
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='dependency_inventory',
-            description='Analyze project dependencies across multiple ecosystems (npm, pip, cargo, composer). Scans for security vulnerabilities via OSV API, checks for outdated packages, detects licenses, and generates comprehensive dependency manifest with metrics. Saves to coderef/inventory/dependencies.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    },
-                    'scan_security': {
-                        'type': 'boolean',
-                        'description': 'Whether to scan for security vulnerabilities and check latest versions. Default: true',
-                        'default': True
-                    },
-                    'ecosystems': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['npm', 'pip', 'cargo', 'composer', 'all']
-                        },
-                        'description': 'Which package ecosystems to analyze. Default: all detected ecosystems',
-                        'default': ['all']
-                    },
-                    'include_transitive': {
-                        'type': 'boolean',
-                        'description': 'Whether to include transitive (indirect) dependencies. Default: false',
-                        'default': False
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='api_inventory',
-            description='Discover API endpoints across multiple frameworks (FastAPI, Flask, Express, GraphQL). Extracts REST/GraphQL endpoints from source code using AST parsing, parses OpenAPI/Swagger documentation, calculates documentation coverage, and generates comprehensive API manifest. Saves to coderef/inventory/api.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    },
-                    'frameworks': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['fastapi', 'flask', 'express', 'graphql', 'all']
-                        },
-                        'description': 'Which API frameworks to detect. Default: all supported frameworks',
-                        'default': ['all']
-                    },
-                    'include_graphql': {
-                        'type': 'boolean',
-                        'description': 'Whether to parse GraphQL schemas. Default: false',
-                        'default': False
-                    },
-                    'scan_documentation': {
-                        'type': 'boolean',
-                        'description': 'Whether to scan for OpenAPI/Swagger documentation files. Default: true',
-                        'default': True
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='database_inventory',
-            description='Discover database schemas across multiple systems (PostgreSQL, MySQL, MongoDB, SQLite). Extracts table/collection definitions from ORM models (SQLAlchemy, Sequelize, Mongoose) and migration files (Alembic, Knex), parses column/field metadata with relationships, and generates comprehensive database manifest. Saves to coderef/inventory/database.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    },
-                    'database_systems': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['postgresql', 'mysql', 'mongodb', 'sqlite', 'all']
-                        },
-                        'description': 'Which database systems to detect. Default: all supported systems',
-                        'default': ['all']
-                    },
-                    'include_migrations': {
-                        'type': 'boolean',
-                        'description': 'Whether to parse migration files for schema definitions. Default: true',
-                        'default': True
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='config_inventory',
-            description='Discover and analyze configuration files across multiple formats (JSON, YAML, TOML, INI, ENV). Detects sensitive values (API keys, passwords, tokens), automatically masks them with [REDACTED], and generates comprehensive configuration manifest with security logging. Saves to coderef/inventory/config.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    },
-                    'formats': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['json', 'yaml', 'toml', 'ini', 'env', 'all']
-                        },
-                        'description': 'Which configuration formats to analyze. Default: all formats',
-                        'default': ['all']
-                    },
-                    'mask_sensitive': {
-                        'type': 'boolean',
-                        'description': 'Whether to mask sensitive values with [REDACTED]. Default: true',
-                        'default': True
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='test_inventory',
-            description='Discover test files, detect test frameworks (pytest, unittest, jest, mocha, vitest), analyze coverage metrics if available, and identify untested source files. Generates comprehensive test infrastructure manifest. Saves to coderef/inventory/tests.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    },
-                    'frameworks': {
-                        'type': 'array',
-                        'items': {
-                            'type': 'string',
-                            'enum': ['pytest', 'unittest', 'jest', 'mocha', 'vitest', 'all']
-                        },
-                        'description': 'Which test frameworks to detect. Default: all frameworks',
-                        'default': ['all']
-                    },
-                    'include_coverage': {
-                        'type': 'boolean',
-                        'description': 'Whether to analyze coverage data if available (.coverage, coverage.json, lcov.info). Default: true',
-                        'default': True
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
-            name='documentation_inventory',
-            description='Discover documentation files across multiple formats (Markdown, RST, AsciiDoc, HTML, Org-mode), analyze quality metrics (freshness, completeness, coverage), and generate comprehensive documentation manifest. Saves to coderef/inventory/documentation.json.',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory to analyze'
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
             name='generate_deliverables_template',
             description='Generate DELIVERABLES.md template from plan.json structure with phase/task checklists and metric placeholders. Automatically called by /create-plan workflow. Saves to coderef/working/{feature-name}/DELIVERABLES.md.',
             inputSchema={
@@ -1134,6 +940,48 @@ Run after /update-deliverables and before /archive-feature.''',
                     }
                 },
                 'required': ['project_path', 'proposed_change']
+            }
+        ),
+        Tool(
+            name='coderef_foundation_docs',
+            description='''Unified foundation docs generator powered by coderef analysis. Generates comprehensive project context for planning workflows by:
+- Deep extraction from existing ARCHITECTURE.md, SCHEMA.md (patterns, decisions, constraints)
+- Auto-detection of API endpoints, database schemas, dependencies
+- Git activity analysis (recent commits, active files, contributors)
+- Code pattern detection via coderef-mcp integration (handlers, decorators, error handling)
+- Similar feature discovery from coderef/archived/
+
+Outputs:
+- ARCHITECTURE.md (patterns, decisions, constraints)
+- SCHEMA.md (entities, relationships)
+- COMPONENTS.md (component hierarchy - for UI projects only)
+- project-context.json (structured context for planning)
+
+Replaces: api_inventory, database_inventory, dependency_inventory, config_inventory, test_inventory, inventory_manifest, documentation_inventory''',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'include_components': {
+                        'type': 'boolean',
+                        'description': 'Generate COMPONENTS.md for UI/frontend projects. Default: auto-detect based on project type',
+                        'default': None
+                    },
+                    'deep_extraction': {
+                        'type': 'boolean',
+                        'description': 'Enable deep extraction from existing foundation docs (vs shallow 500-char preview). Default: true',
+                        'default': True
+                    },
+                    'use_coderef': {
+                        'type': 'boolean',
+                        'description': 'Use coderef-mcp for code pattern detection. Default: true',
+                        'default': True
+                    }
+                },
+                'required': ['project_path']
             }
         ),
     ]

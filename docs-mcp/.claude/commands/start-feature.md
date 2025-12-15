@@ -14,25 +14,28 @@ This command orchestrates the full planning pipeline in sequence, eliminating th
 2. Gather Context (interactive Q&A)
     |
     v
-3. Analyze Project (automatic via analyze_project_for_planning)
+3. Generate Foundation Docs (automatic via coderef_foundation_docs) [NEW]
     |
     v
-4. Create Plan (automatic via create_plan)
+4. Analyze Project (automatic via analyze_project_for_planning)
     |
     v
-5. Multi-Agent Decision (AskUserQuestion - based on phase count)
+5. Create Plan (automatic via create_plan)
     |
     v
-6. Validate Plan (automatic via validate_implementation_plan)
+6. Multi-Agent Decision (AskUserQuestion - based on phase count)
     |
     v
-7. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
+7. Validate Plan (automatic via validate_implementation_plan)
     |
     v
-8. Output Summary
+8. Validation Loop (if score < 90, fix and re-validate, max 3 iterations)
     |
     v
-9. Commit & Push (pre-execution checkpoint)
+9. Output Summary
+    |
+    v
+10. Commit & Push (pre-execution checkpoint)
 ```
 
 ## Step-by-Step Instructions
@@ -80,7 +83,33 @@ mcp__docs_mcp__gather_context({
 
 This creates `coderef/working/{feature_name}/context.json`.
 
-### Step 3: Analyze Project
+### Step 3: Generate Foundation Docs [NEW]
+
+Call the coderef_foundation_docs MCP tool to generate comprehensive project context:
+
+```python
+mcp__docs_mcp__coderef_foundation_docs({
+    "project_path": <current_working_directory>
+})
+```
+
+This generates:
+- **ARCHITECTURE.md** - Patterns, decisions, constraints (deep extraction from existing docs)
+- **SCHEMA.md** - Database entities and relationships
+- **COMPONENTS.md** - Component hierarchy (for UI projects only)
+- **project-context.json** - Structured context with:
+  - API endpoints (auto-detected from code)
+  - Database schema (from models/migrations)
+  - Dependencies (from package.json/requirements.txt)
+  - Git activity (recent commits, active files, contributors)
+  - Code patterns (handlers, decorators, error handling)
+  - Similar features (from coderef/archived/)
+
+Files are saved to `coderef/foundation-docs/`.
+
+This step replaces the need for separate inventory commands (api_inventory, database_inventory, dependency_inventory, etc.) and provides much richer context for planning.
+
+### Step 4: Analyze Project
 
 Call the analyze_project_for_planning MCP tool:
 
@@ -99,7 +128,7 @@ This creates `coderef/working/{feature_name}/analysis.json` with:
 - Project structure
 - Gaps and risks
 
-### Step 4: Create Plan
+### Step 5: Create Plan
 
 Call the create_plan MCP tool:
 
@@ -115,7 +144,7 @@ This creates `coderef/working/{feature_name}/plan.json` with:
 - Workorder ID embedded in section 5
 - DELIVERABLES.md template
 
-### Step 5: Multi-Agent Decision
+### Step 6: Multi-Agent Decision
 
 After the plan is created, count the number of implementation phases and ask the user about multi-agent mode:
 
@@ -172,7 +201,7 @@ Agents update communication.json directly as they work:
 ]
 ```
 
-### Step 6: Validate Plan
+### Step 7: Validate Plan
 
 Call the validate_implementation_plan MCP tool:
 
@@ -189,7 +218,7 @@ Returns validation result with:
 - Checklist results
 - Approved status (true if score >= 90)
 
-### Step 7: Validation Loop (if needed)
+### Step 8: Validation Loop (if needed)
 
 If validation score < 90:
 
@@ -205,7 +234,7 @@ If validation score < 90:
 - Major (-5 points each): Placeholders, vague criteria, missing fields
 - Minor (-1 point each): Short descriptions, style issues
 
-### Step 8: Output Summary
+### Step 9: Output Summary
 
 After validation passes (or max iterations reached), present summary:
 
@@ -283,7 +312,7 @@ The plan is saved but needs manual review.
 Run /validate-plan to see full issue details.
 ```
 
-### Step 9: Commit & Push (Pre-Execution Checkpoint)
+### Step 10: Commit & Push (Pre-Execution Checkpoint)
 
 After validation passes, commit and push all planning artifacts:
 
@@ -340,7 +369,8 @@ Use individual commands when:
 ## Related Commands
 
 - `/gather-context` - Step 2 only (requirements gathering)
-- `/analyze-for-planning` - Step 3 only (project analysis)
-- `/create-plan` - Step 4 only (plan generation)
-- `/validate-plan` - Step 6 only (validation)
+- `/coderef-foundation-docs` - Step 3 only (foundation docs generation) [NEW]
+- `/analyze-for-planning` - Step 4 only (project analysis)
+- `/create-plan` - Step 5 only (plan generation)
+- `/validate-plan` - Step 7 only (validation)
 - `/execute-plan` - Generate task list from plan

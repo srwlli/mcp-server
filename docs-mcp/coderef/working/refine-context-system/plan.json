@@ -1,0 +1,125 @@
+{
+  "META_DOCUMENTATION": {
+    "workorder_id": "WO-REFINE-CONTEXT-001",
+    "feature_name": "refine-context-system",
+    "status": "planned",
+    "created": "2025-12-14",
+    "estimated_effort": "10 hours"
+  },
+  "goal": "Replace shallow, noisy context extraction with high-value, focused context that actually improves plan quality",
+  "changes_summary": [
+    "Remove low-value sources (manifest.json, documentation.json, USER-GUIDE.md, README.md preview)",
+    "Add new sources (git activity, detected patterns, similar features)",
+    "Consolidate API.md + api.json with gap detection",
+    "Deep extraction from foundation docs instead of 500-char previews"
+  ],
+  "context_model": {
+    "high_value_sources": {
+      "ARCHITECTURE.md": { "value": 9, "extraction": "Deep: patterns, decisions, constraints" },
+      "SCHEMA.md": { "value": 8, "extraction": "Deep: data models, relationships" },
+      "database.json": { "value": 9, "extraction": "Auto-generate if stale" },
+      "dependencies.json": { "value": 7, "extraction": "Auto-generate if stale, highlight vulns" }
+    },
+    "consolidated_api_context": {
+      "description": "Merge API.md + api.json with gap detection",
+      "schema": {
+        "documented": [],
+        "detected": [],
+        "gaps": { "undocumented": [], "stale_docs": [] },
+        "auth_method": "",
+        "error_format": ""
+      }
+    },
+    "new_sources": {
+      "git_activity": { "value": 9, "how": "Parse git log: recent commits, active files, contributors" },
+      "detected_patterns": { "value": 8, "how": "Query coderef-mcp: handler patterns, decorators, error handling" },
+      "similar_features": { "value": 8, "how": "Search coderef/archived/: past features with matching keywords" }
+    },
+    "removed_sources": {
+      "manifest.json": { "value": 2, "reason": "file counts not actionable" },
+      "documentation.json": { "value": 2, "reason": "doc stats not actionable" },
+      "USER-GUIDE.md": { "value": 2, "reason": "user-facing, not dev-facing" },
+      "README.md_preview": { "value": 4, "reason": "high-level overview rarely actionable" },
+      "COMPONENTS.md_preview": { "value": 6, "reason": "keep only if UI feature" }
+    }
+  },
+  "implementation_phases": [
+    {
+      "phase": 1,
+      "name": "Restructure Context Sources",
+      "effort": "3-4 hours",
+      "files": ["generators/planning_analyzer.py"],
+      "tasks": [
+        "Remove low-value extraction methods",
+        "Add extract_api_context() - consolidates API.md + api.json with gap detection",
+        "Add extract_git_activity() - recent commits, active files",
+        "Add query_coderef_patterns() - call coderef-mcp for detected patterns",
+        "Add find_similar_features() - search archived features"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Deep Foundation Doc Extraction",
+      "effort": "2-3 hours",
+      "files": ["generators/planning_analyzer.py"],
+      "tasks": [
+        "ARCHITECTURE.md - extract patterns, decisions, constraints",
+        "SCHEMA.md - extract entities, relationships, constraints"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Auto-Generation",
+      "effort": "2 hours",
+      "files": ["generators/planning_analyzer.py", "tool_handlers.py"],
+      "tasks": [
+        "Auto-generate database.json if missing/stale (24hr default)",
+        "Auto-generate dependencies.json if missing/stale",
+        "Auto-detect api.json from code if missing"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Wire to Plan Generation",
+      "effort": "2 hours",
+      "files": ["generators/planning_generator.py"],
+      "tasks": [
+        "Section 0 (Preparation) uses foundation insights",
+        "Section 2 (Risk) uses dependency vulns + API gaps",
+        "Section 3 (Current State) uses detected patterns + similar features"
+      ]
+    }
+  ],
+  "new_analysis_schema": {
+    "foundation_insights": {
+      "architecture": { "patterns": [], "decisions": [], "constraints": [] },
+      "schema": { "entities": [], "relationships": [] }
+    },
+    "api_context": {
+      "documented": [],
+      "detected": [],
+      "gaps": { "undocumented": [], "stale_docs": [] }
+    },
+    "inventory": {
+      "database": {},
+      "dependencies": { "count": 0, "vulns": 0, "outdated": 0 }
+    },
+    "activity": {
+      "recent_commits": [],
+      "active_files": [],
+      "contributors": []
+    },
+    "patterns": {
+      "handlers": [],
+      "error_handling": [],
+      "decorators": []
+    },
+    "similar_features": []
+  },
+  "key_files": {
+    "generators/planning_analyzer.py": "Core restructure: new extraction methods, remove low-value",
+    "generators/planning_generator.py": "Use new context schema",
+    "tool_handlers.py": "Wire coderef-mcp queries",
+    "type_defs.py": "New TypedDicts"
+  }
+}

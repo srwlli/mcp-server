@@ -331,6 +331,25 @@ export const Button = ({ label }: { label: string }) => <button>{label}</button>
         components_path = integration_project / "coderef" / "foundation-docs" / "COMPONENTS.md"
         assert components_path.exists()
 
+    @pytest.mark.asyncio
+    async def test_api_md_created(self, integration_project):
+        """API.md is created."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(integration_project),
+            "use_coderef": False
+        })
+
+        api_path = integration_project / "coderef" / "foundation-docs" / "API.md"
+        assert api_path.exists()
+
+        # Verify it has expected sections
+        content = api_path.read_text(encoding='utf-8')
+        assert '# API Documentation' in content
+        assert '## Overview' in content
+        assert '## Endpoints' in content
+        assert '## Authentication' in content
+        assert '## Error Handling' in content
+
 
 # ============================================================================
 # CONTENT QUALITY TESTS
@@ -404,6 +423,24 @@ class TestContentQuality:
             "packages" in context
         )
         assert has_deps
+
+    @pytest.mark.asyncio
+    async def test_api_md_contains_detected_endpoints(self, integration_project):
+        """API.md contains detected endpoints from FastAPI project."""
+        await tool_handlers.handle_coderef_foundation_docs({
+            "project_path": str(integration_project),
+            "use_coderef": False
+        })
+
+        api_path = integration_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text(encoding='utf-8').lower()
+
+        # Should detect FastAPI framework
+        assert 'fastapi' in content
+
+        # Should list endpoints (the fixture has /, /users GET/POST)
+        assert 'get' in content
+        assert '/' in content
 
 
 # ============================================================================

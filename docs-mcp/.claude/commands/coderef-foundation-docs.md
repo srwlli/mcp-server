@@ -6,6 +6,7 @@ This unified command generates:
 - **ARCHITECTURE.md** - Patterns, decisions, constraints (deep extraction)
 - **SCHEMA.md** - Entities, relationships (deep extraction)
 - **COMPONENTS.md** - Component hierarchy, props (for UI projects only)
+- **API.md** - Endpoints, authentication, error handling
 - **project-context.json** - Structured context for planning
 
 The tool performs:

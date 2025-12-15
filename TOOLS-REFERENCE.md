@@ -1,7 +1,7 @@
 # Claude Code Tools Reference
 
-**Generated:** 2025-12-02
-**Total Tools:** ~70 across core functionality and 3 MCP servers
+**Generated:** 2025-12-15
+**Total Tools:** ~65 across core functionality and 3 MCP servers
 
 ---
 
@@ -78,9 +78,9 @@ Expert persona management system.
 
 ## MCP: docs-mcp
 
-Comprehensive documentation, planning, and project management system (37 tools).
+Comprehensive documentation, planning, and project management system (32 tools).
 
-### Documentation Generation (7 tools)
+### Documentation Generation (6 tools)
 
 | Tool | Description |
 |------|-------------|
@@ -89,6 +89,7 @@ Comprehensive documentation, planning, and project management system (37 tools).
 | `mcp__docs-mcp__generate_foundation_docs` | Generate all 5 foundation documents |
 | `mcp__docs-mcp__generate_individual_doc` | Generate single document from template |
 | `mcp__docs-mcp__generate_quickref_interactive` | Interactive interview-based quickref generation (150-250 lines) |
+| `mcp__docs-mcp__coderef_foundation_docs` | **NEW** Unified foundation docs with auto-detection (replaces 7 inventory tools) |
 
 ### Changelog Management (3 tools)
 
@@ -135,18 +136,6 @@ Comprehensive documentation, planning, and project management system (37 tools).
 | `mcp__docs-mcp__aggregate_agent_deliverables` | Aggregate metrics from multiple agents |
 | `mcp__docs-mcp__track_agent_status` | Real-time coordination dashboard |
 
-### Project Inventory (7 tools)
-
-| Tool | Description |
-|------|-------------|
-| `mcp__docs-mcp__inventory_manifest` | Generate complete file inventory with categorization |
-| `mcp__docs-mcp__dependency_inventory` | Analyze dependencies with security scanning |
-| `mcp__docs-mcp__api_inventory` | Discover API endpoints (FastAPI, Flask, Express, GraphQL) |
-| `mcp__docs-mcp__database_inventory` | Extract database schemas (SQL, MongoDB, ORMs) |
-| `mcp__docs-mcp__config_inventory` | Analyze config files with secret masking |
-| `mcp__docs-mcp__test_inventory` | Discover tests and coverage by framework |
-| `mcp__docs-mcp__documentation_inventory` | Analyze documentation quality and gaps |
-
 ### Workorder & Archive (4 tools)
 
 | Tool | Description |
@@ -167,10 +156,34 @@ Comprehensive documentation, planning, and project management system (37 tools).
 
 ```
 New Projects:     /establish-standards → /generate-docs
-Features:         /gather-context → /analyze-for-planning → /create-plan → /validate-plan
+Features:         /coderef-foundation-docs → /start-feature → /execute-plan
 Maintenance:      /audit-codebase → /check-consistency
 Post-Feature:     /update-deliverables → /update-docs → /archive-feature
 ```
+
+### coderef_foundation_docs Tool
+
+**Purpose:** Unified foundation docs generator that replaces 7 inventory tools.
+
+**Generates:**
+- `ARCHITECTURE.md` - Code patterns, API architecture, recent activity
+- `SCHEMA.md` - Database tables, relationships, migrations
+- `COMPONENTS.md` - UI component hierarchy (auto-detected for UI projects)
+- `API.md` - Endpoints, authentication, error handling
+- `project-context.json` - Structured context for planning workflows
+
+**Auto-detects:**
+- API endpoints (FastAPI, Flask, Express)
+- Database schemas (SQLAlchemy models)
+- Dependencies (requirements.txt, package.json, pyproject.toml)
+- Git activity (commits, active files, contributors)
+- Code patterns (handlers, decorators, error types)
+
+**Parameters:**
+- `project_path` (required) - Absolute path to project
+- `include_components` (optional) - Force COMPONENTS.md generation (default: auto-detect)
+- `deep_extraction` (optional) - Extract from existing docs (default: true)
+- `use_coderef` (optional) - Use coderef-mcp for patterns (default: true)
 
 ---
 
@@ -222,6 +235,7 @@ Generic MCP resource access tools.
 | Run a command | `Bash` |
 | Track tasks | `TodoWrite` |
 | Explore codebase | `Task` with `Explore` agent |
+| Generate project context | `mcp__docs-mcp__coderef_foundation_docs` |
 | Create implementation plan | `mcp__docs-mcp__create_plan` |
 | Activate expert persona | `mcp__personas-mcp__use_persona` |
 
@@ -229,9 +243,17 @@ Generic MCP resource access tools.
 
 Custom slash commands available via `SlashCommand` tool:
 
+**Persona Activation:**
 - `/ava` - Activate Ava (Frontend Specialist)
 - `/devon` - Activate Devon (Project Setup Specialist)
 - `/taylor` - Activate Taylor (General Purpose Agent)
+
+**docs-mcp Workflows:**
+- `/coderef-foundation-docs` - Generate unified foundation docs (ARCHITECTURE, SCHEMA, COMPONENTS)
+- `/start-feature` - Full planning workflow (gather → analyze → plan → validate)
+- `/execute-plan` - Generate TodoWrite task list from plan
+- `/update-docs` - Update all documentation after feature completion
+- `/archive-feature` - Archive completed features
 
 ---
 
@@ -249,4 +271,4 @@ Current servers:
 
 ---
 
-*This document is auto-generated. Update as new tools are added.*
+*Last updated: 2025-12-15 - Added coderef_foundation_docs tool, removed 7 inventory tools (WO-REFINE-CONTEXT-001)*

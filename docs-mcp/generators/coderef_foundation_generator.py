@@ -5,6 +5,7 @@ Generates comprehensive project context for planning workflows:
 - ARCHITECTURE.md (patterns, decisions, constraints)
 - SCHEMA.md (entities, relationships)
 - COMPONENTS.md (component hierarchy - UI projects only)
+- API.md (endpoints, auth, error handling)
 - project-context.json (structured context for planning)
 
 Replaces: api_inventory, database_inventory, dependency_inventory,
@@ -32,6 +33,7 @@ class CoderefFoundationGenerator:
     - ARCHITECTURE.md (patterns, decisions, constraints)
     - SCHEMA.md (entities, relationships)
     - COMPONENTS.md (component hierarchy - UI projects only)
+    - API.md (endpoints, auth, error handling)
     - project-context.json (structured context for planning)
     """
 
@@ -136,6 +138,12 @@ class CoderefFoundationGenerator:
             components_path = self.foundation_docs_dir / 'COMPONENTS.md'
             components_path.write_text(components_content, encoding='utf-8')
             files_generated.append('COMPONENTS.md')
+
+        # Generate API.md
+        api_content = self._generate_api_md(project_context, existing_docs)
+        api_path = self.foundation_docs_dir / 'API.md'
+        api_path.write_text(api_content, encoding='utf-8')
+        files_generated.append('API.md')
 
         # Save project-context.json
         context_path = self.foundation_docs_dir / 'project-context.json'
@@ -877,6 +885,114 @@ class CoderefFoundationGenerator:
                 lines.append('*No UI components detected.*')
 
         lines.append('')
+        lines.append(f"*Generated: {datetime.now().isoformat()}*")
+
+        return '\n'.join(lines)
+
+    def _generate_api_md(self, context: Dict, existing: Dict) -> str:
+        """Generate API.md content with all detected endpoints."""
+        lines = ['# API Documentation', '']
+
+        api = context.get('api_context', {})
+
+        # Overview section
+        lines.append('## Overview')
+        lines.append('')
+        frameworks = api.get('frameworks_detected', [])
+        lines.append(f"- **Framework:** {', '.join(frameworks) if frameworks else 'Unknown'}")
+        lines.append(f"- **Authentication:** {api.get('auth_method', 'Unknown')}")
+        lines.append(f"- **Error Format:** {api.get('error_format', 'Unknown')}")
+        lines.append(f"- **Total Endpoints:** {api.get('count', 0)}")
+        lines.append('')
+
+        # Endpoints section
+        endpoints = api.get('endpoints', [])
+        if endpoints:
+            lines.append('## Endpoints')
+            lines.append('')
+
+            # Group by framework
+            by_framework = {}
+            for ep in endpoints:
+                fw = ep.get('framework', 'Unknown')
+                if fw not in by_framework:
+                    by_framework[fw] = []
+                by_framework[fw].append(ep)
+
+            for framework, fw_endpoints in by_framework.items():
+                if len(by_framework) > 1:
+                    lines.append(f"### {framework}")
+                    lines.append('')
+
+                # Endpoints table
+                lines.append('| Method | Path | File |')
+                lines.append('|--------|------|------|')
+                for ep in fw_endpoints:
+                    method = ep.get('method', 'GET')
+                    path = ep.get('path', '/')
+                    file = ep.get('file', '')
+                    lines.append(f"| `{method}` | `{path}` | `{file}` |")
+                lines.append('')
+
+            # Detailed endpoint list
+            lines.append('### Endpoint Details')
+            lines.append('')
+            for ep in endpoints[:50]:  # Limit to 50 for readability
+                method = ep.get('method', 'GET')
+                path = ep.get('path', '/')
+                file = ep.get('file', '')
+                framework = ep.get('framework', 'Unknown')
+                lines.append(f"#### `{method}` {path}")
+                lines.append('')
+                lines.append(f"- **File:** `{file}`")
+                lines.append(f"- **Framework:** {framework}")
+                lines.append('')
+        else:
+            lines.append('## Endpoints')
+            lines.append('')
+            lines.append('*No API endpoints detected.*')
+            lines.append('')
+
+        # Authentication section
+        auth_method = api.get('auth_method', 'Unknown')
+        lines.append('## Authentication')
+        lines.append('')
+        if auth_method != 'Unknown':
+            lines.append(f"**Method:** {auth_method}")
+            lines.append('')
+            auth_notes = {
+                'JWT': 'JSON Web Tokens for stateless authentication. Pass in `Authorization: Bearer <token>` header.',
+                'OAuth': 'OAuth 2.0 authentication. See provider documentation for token endpoints.',
+                'Session': 'Session-based authentication with cookies. Ensure CSRF protection is enabled.',
+                'API Key': 'API key authentication. Pass in `X-API-Key` header or as query parameter.',
+                'Basic': 'HTTP Basic authentication. Credentials in `Authorization` header.'
+            }
+            if auth_method in auth_notes:
+                lines.append(auth_notes[auth_method])
+        else:
+            lines.append('*Authentication method not detected.*')
+        lines.append('')
+
+        # Error handling section
+        error_format = api.get('error_format', 'Unknown')
+        lines.append('## Error Handling')
+        lines.append('')
+        if error_format != 'Unknown':
+            lines.append(f"**Format:** {error_format}")
+            lines.append('')
+            error_examples = {
+                'JSON API': '```json\n{"errors": [{"status": "400", "title": "Bad Request", "detail": "..."}]}\n```',
+                'RFC 7807': '```json\n{"type": "about:blank", "status": 400, "title": "Bad Request", "detail": "..."}\n```',
+                'Custom': '```json\n{"error": "error_code", "message": "Human readable message"}\n```'
+            }
+            if error_format in error_examples:
+                lines.append('Example:')
+                lines.append('')
+                lines.append(error_examples[error_format])
+        else:
+            lines.append('*Error format not detected.*')
+        lines.append('')
+
         lines.append(f"*Generated: {datetime.now().isoformat()}*")
 
         return '\n'.join(lines)

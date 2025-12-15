@@ -918,3 +918,137 @@ app = FastAPI()
 
         assert result is not None
         assert elapsed < 10.0, f"Detection took {elapsed:.2f}s, expected < 10s"
+
+
+# ============================================================================
+# API.MD GENERATION TESTS
+# ============================================================================
+
+class TestApiMdGeneration:
+    """Test API.md generation."""
+
+    def test_api_md_generated(self, fastapi_project):
+        """API.md is generated."""
+        gen = CoderefFoundationGenerator(fastapi_project, use_coderef=False)
+        result = gen.generate()
+
+        assert 'API.md' in result['files_generated']
+
+        api_path = fastapi_project / "coderef" / "foundation-docs" / "API.md"
+        assert api_path.exists()
+
+    def test_api_md_contains_overview(self, fastapi_project):
+        """API.md contains overview section."""
+        gen = CoderefFoundationGenerator(fastapi_project, use_coderef=False)
+        gen.generate()
+
+        api_path = fastapi_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert '## Overview' in content
+        assert 'Framework' in content
+        assert 'Authentication' in content
+        assert 'Total Endpoints' in content
+
+    def test_api_md_contains_endpoints_table(self, fastapi_project):
+        """API.md contains endpoints table."""
+        gen = CoderefFoundationGenerator(fastapi_project, use_coderef=False)
+        gen.generate()
+
+        api_path = fastapi_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert '## Endpoints' in content
+        assert '| Method | Path | File |' in content
+
+    def test_api_md_lists_detected_endpoints(self, fastapi_project):
+        """API.md lists all detected endpoints."""
+        gen = CoderefFoundationGenerator(fastapi_project, use_coderef=False)
+        gen.generate()
+
+        api_path = fastapi_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text().lower()
+
+        # Should contain the endpoints from fastapi_project fixture
+        assert 'get' in content
+        assert 'post' in content or '/' in content
+
+    def test_api_md_auth_section(self, temp_project):
+        """API.md contains authentication section."""
+        # Create project with JWT auth
+        (temp_project / "requirements.txt").write_text("pyjwt==2.8.0\nfastapi==0.104.0")
+        (temp_project / "main.py").write_text('''
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"hello": "world"}
+''')
+
+        gen = CoderefFoundationGenerator(temp_project, use_coderef=False)
+        gen.generate()
+
+        api_path = temp_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert '## Authentication' in content
+        assert 'JWT' in content
+
+    def test_api_md_error_section(self, temp_project):
+        """API.md contains error handling section."""
+        (temp_project / "main.py").write_text('''
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"error": "something went wrong", "message": "details"}
+''')
+
+        gen = CoderefFoundationGenerator(temp_project, use_coderef=False)
+        gen.generate()
+
+        api_path = temp_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert '## Error Handling' in content
+
+    def test_api_md_empty_project(self, temp_project):
+        """API.md handles project with no endpoints."""
+        gen = CoderefFoundationGenerator(temp_project, use_coderef=False)
+        gen.generate()
+
+        api_path = temp_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert '## Overview' in content
+        assert 'Total Endpoints:** 0' in content
+        assert 'No API endpoints detected' in content
+
+    def test_api_md_multiple_frameworks(self, temp_project):
+        """API.md handles multiple frameworks."""
+        # FastAPI endpoints
+        (temp_project / "api.py").write_text('''
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/api/v1")
+def api_v1():
+    return {}
+''')
+
+        # Express endpoints
+        (temp_project / "server.js").write_text('''
+const app = express();
+app.get("/health", (req, res) => res.send("ok"));
+''')
+
+        gen = CoderefFoundationGenerator(temp_project, use_coderef=False)
+        gen.generate()
+
+        api_path = temp_project / "coderef" / "foundation-docs" / "API.md"
+        content = api_path.read_text()
+
+        assert 'FastAPI' in content
+        assert 'Express' in content

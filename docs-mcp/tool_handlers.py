@@ -3624,8 +3624,25 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
         }
     )
 
+    # Return only summary to reduce token usage (full data saved to project-context.json)
+    project_context = result.get('project_context', {})
+    summary = {
+        'files_generated': result.get('files_generated', []),
+        'output_dir': result.get('output_dir', ''),
+        'summary': {
+            'api_endpoints': project_context.get('api_context', {}).get('count', 0),
+            'frameworks': project_context.get('api_context', {}).get('frameworks_detected', []),
+            'dependencies': project_context.get('dependencies', {}).get('count', 0),
+            'database_tables': project_context.get('database', {}).get('table_count', 0),
+            'handlers': len(project_context.get('patterns', {}).get('handlers', [])),
+            'coderef_available': project_context.get('coderef', {}).get('available', False),
+            'coderef_elements': project_context.get('coderef', {}).get('element_count', 0),
+        },
+        'context_file': str(Path(result.get('output_dir', '')) / 'project-context.json')
+    }
+
     return format_success_response(
-        data=result,
+        data=summary,
         message=f"✅ Foundation docs generated: {', '.join(result.get('files_generated', []))}"
     )
 

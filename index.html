@@ -67,6 +67,7 @@
             <a href="./docs-mcp/index.html">docs-mcp</a>
             <a href="./personas-mcp/index.html">personas-mcp</a>
             <a href="./coderef-mcp/index.html">coderef-mcp</a>
+            <a href="./scriptboard-mcp/index.html">scriptboard-mcp</a>
         </nav>
 
         <header>
@@ -75,9 +76,9 @@
         </header>
 
         <div class="stats">
-            <div class="stat"><div class="stat-num">60</div><div class="stat-label">MCP Tools</div></div>
-            <div class="stat"><div class="stat-num">10</div><div class="stat-label">Personas</div></div>
-            <div class="stat"><div class="stat-num">3</div><div class="stat-label">Servers</div></div>
+            <div class="stat"><div class="stat-num">52</div><div class="stat-label">MCP Tools</div></div>
+            <div class="stat"><div class="stat-num">4</div><div class="stat-label">Personas</div></div>
+            <div class="stat"><div class="stat-num">4</div><div class="stat-label">Servers</div></div>
         </div>
 
         <div class="railway-box">
@@ -89,7 +90,7 @@
             <div class="server">
                 <div class="server-header">
                     <span class="server-name">docs-mcp</span>
-                    <span class="server-count">45 tools</span>
+                    <span class="server-count">32 tools</span>
                 </div>
                 <p class="server-desc">Documentation generation, planning workflows, standards auditing, multi-agent coordination</p>
             </div>
@@ -98,14 +99,21 @@
                     <span class="server-name">personas-mcp</span>
                     <span class="server-count">8 tools</span>
                 </div>
-                <p class="server-desc">Expert agent personas (mcp-expert, docs-expert, coderef-expert) + specialists (ava, marcus, quinn, taylor, devon)</p>
+                <p class="server-desc">Expert agent personas + specialists (ava, lloyd, taylor, devon)</p>
             </div>
             <div class="server">
                 <div class="server-header">
                     <span class="server-name">coderef-mcp</span>
                     <span class="server-count">8 tools</span>
                 </div>
-                <p class="server-desc">Code reference analysis, natural language queries, real-time scanning</p>
+                <p class="server-desc">Code reference analysis, natural language queries, real-time AST scanning</p>
+            </div>
+            <div class="server">
+                <div class="server-header">
+                    <span class="server-name">scriptboard-mcp</span>
+                    <span class="server-count">4 tools</span>
+                </div>
+                <p class="server-desc">Prompt staging and attachments for LLM export workflows</p>
             </div>
         </div>
 
@@ -122,18 +130,6 @@
                     <span class="cmd">/update-deliverables</span> <span class="arrow">-></span>
                     <span class="cmd">/update-docs</span> <span class="arrow">-></span>
                     <span class="cmd">/archive-feature</span>
-                </div>
-            </div>
-
-            <div class="workflow">
-                <div class="workflow-title">Context Experts</div>
-                <div class="workflow-desc">Create domain-specific agents for files/directories with persistent context</div>
-                <div class="workflow-flow">
-                    <span class="cmd">/suggest-experts</span> <span class="arrow">-></span>
-                    <span class="cmd">/create-expert</span> <span class="arrow">-></span>
-                    <span class="cmd">/activate-expert</span> <span class="arrow">-></span>
-                    <span class="action">query expert</span> <span class="arrow">-></span>
-                    <span class="cmd">/update-expert</span>
                 </div>
             </div>
 
@@ -204,21 +200,33 @@
                 <div class="cat-item">Multi-Agent <span>(5)</span></div>
                 <div class="cat-item">Deliverables <span>(2)</span></div>
                 <div class="cat-item">Workorders <span>(4)</span></div>
-                <div class="cat-item">Context Experts <span>(6)</span></div>
                 <div class="cat-item">Risk <span>(1)</span></div>
             </div>
 
             <h2>personas-mcp</h2>
             <div class="cat-list">
-                <div class="cat-item">Expert: mcp-expert</div>
-                <div class="cat-item">Expert: docs-expert</div>
-                <div class="cat-item">Expert: coderef-expert</div>
                 <div class="cat-item">Coordinator: lloyd</div>
                 <div class="cat-item">Specialist: ava (frontend)</div>
-                <div class="cat-item">Specialist: marcus (backend)</div>
-                <div class="cat-item">Specialist: quinn (testing)</div>
                 <div class="cat-item">Specialist: devon (setup)</div>
                 <div class="cat-item">Generalist: taylor</div>
+            </div>
+
+            <h2>coderef-mcp</h2>
+            <div class="cat-list">
+                <div class="cat-item">Query <span>(2)</span></div>
+                <div class="cat-item">Analyze <span>(1)</span></div>
+                <div class="cat-item">Validate <span>(2)</span></div>
+                <div class="cat-item">Generate <span>(1)</span></div>
+                <div class="cat-item">Scan <span>(1)</span></div>
+                <div class="cat-item">Audit <span>(1)</span></div>
+            </div>
+
+            <h2>scriptboard-mcp</h2>
+            <div class="cat-list">
+                <div class="cat-item">set_prompt</div>
+                <div class="cat-item">clear_prompt</div>
+                <div class="cat-item">add_attachment</div>
+                <div class="cat-item">clear_attachments</div>
             </div>
         </div>
 
@@ -314,32 +322,30 @@
             </div>
 
             <div class="cmd-section">
-                <h3>Context Experts</h3>
-                <div class="cmd-grid">
-                    <div class="cmd">/create-expert</div>
-                    <div class="cmd">/list-experts</div>
-                    <div class="cmd">/get-expert</div>
-                    <div class="cmd">/suggest-experts</div>
-                    <div class="cmd">/update-expert</div>
-                    <div class="cmd">/activate-expert</div>
-                </div>
-            </div>
-
-            <div class="cmd-section">
                 <h3>Personas</h3>
                 <div class="cmd-grid">
                     <div class="cmd">/use-persona</div>
-                    <div class="cmd">/docs-expert</div>
-                    <div class="cmd">/coderef-expert</div>
                     <div class="cmd">/ava</div>
                     <div class="cmd">/devon</div>
                     <div class="cmd">/taylor</div>
                 </div>
             </div>
+
+            <div class="cmd-section">
+                <h3>CodeRef</h3>
+                <div class="cmd-grid">
+                    <div class="cmd">/coderef-query</div>
+                    <div class="cmd">/coderef-analyze</div>
+                    <div class="cmd">/coderef-validate</div>
+                    <div class="cmd">/coderef-docs</div>
+                    <div class="cmd">/coderef-audit</div>
+                    <div class="cmd">/coderef-foundation-docs</div>
+                </div>
+            </div>
         </div>
 
         <footer>
-            <p>Last updated: 2025-12-07</p>
+            <p>Last updated: 2025-12-15</p>
         </footer>
     </div>
 </body>

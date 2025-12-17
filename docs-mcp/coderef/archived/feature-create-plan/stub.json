@@ -1,0 +1,8 @@
+{
+  "feature_name": "feature-create-plan",
+  "description": "Add pre-execution git commit and push as last action in /create-plan workflow, using feature name for easy identification",
+  "category": "feature",
+  "priority": "medium",
+  "created": "2025-12-06T08:45:00Z",
+  "status": "stub"
+}

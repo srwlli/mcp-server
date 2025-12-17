@@ -1,0 +1,659 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "workorder-tracking",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_date": "2025-10-18",
+    "has_context": true,
+    "has_analysis": false,
+    "template_version": "2.0.0"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "readme": {
+          "path": "README.md",
+          "exists": true,
+          "relevance": "High - describes docs-mcp MCP server and tool ecosystem"
+        },
+        "claude_md": {
+          "path": "CLAUDE.md",
+          "exists": true,
+          "relevance": "Critical - AI context for tool implementation patterns and planning workflow"
+        },
+        "planning_standard": {
+          "path": "mcp-specific-context/feature-implementation-planning-standard.json",
+          "exists": true,
+          "relevance": "Critical - defines section 5 task_id_system structure that needs workorder enhancement"
+        }
+      },
+      "coding_standards": {
+        "python_style": {
+          "source": "Inferred from existing codebase",
+          "key_patterns": [
+            "Async function signatures for MCP tools",
+            "@log_invocation and @mcp_error_handler decorators",
+            "Type hints with pathlib.Path for file paths",
+            "JSON response formatting with format_success_response()"
+          ]
+        },
+        "helper_functions": {
+          "pattern": "Extract reusable logic to helper functions",
+          "location": "handler_helpers.py or new workorder_helpers.py"
+        }
+      },
+      "reference_implementations": {
+        "similar_tools": [
+          {
+            "name": "gather_context",
+            "file": "tool_handlers.py:handle_gather_context",
+            "relevance": "Creates context.json with metadata - needs workorder assignment"
+          },
+          {
+            "name": "analyze_project_for_planning",
+            "file": "tool_handlers.py:handle_analyze_project_for_planning",
+            "relevance": "Creates analysis.json with metadata - needs workorder preservation"
+          },
+          {
+            "name": "create_plan",
+            "file": "tool_handlers.py:handle_create_plan",
+            "relevance": "Creates plan.json - needs workorder embedding in section 5"
+          },
+          {
+            "name": "generate_deliverables_template",
+            "file": "tool_handlers.py (to be implemented)",
+            "relevance": "Will create DELIVERABLES.md - needs workorder in header"
+          }
+        ],
+        "key_patterns_to_follow": [
+          "Use feature_dir pattern: project_path / 'coderef' / 'working' / feature_name",
+          "Add metadata to _metadata field (not top-level)",
+          "Use ISO 8601 format for timestamps",
+          "Read context.json before creating plan.json (check for existing workorder)"
+        ]
+      },
+      "technical_constraints": [
+        "Must be backward compatible with existing plans without workorders",
+        "Workorder ID format strictly enforced: WO-{FEATURE-NAME}-001",
+        "Cannot modify existing context/analysis/plan files (only new features)",
+        "Must work with async/await patterns for MCP tools"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Automatically assign unique workorder IDs to all features using the MCP planning workflow. Every feature that invokes gather-context, analyze-for-planning, or create-plan gets a workorder ID (WO-{FEATURE-NAME}-001) that persists across the entire lifecycle and links all planning artifacts.",
+      "business_value": "Provides automatic progress tracking, cross-file traceability, and unique identification for every planned feature without requiring any user configuration. Enables future reporting and analytics on feature delivery.",
+      "key_objectives": [
+        "Automatic workorder assignment at first MCP tool invocation",
+        "Workorder persistence across context.json → analysis.json → plan.json → DELIVERABLES.md",
+        "Zero configuration - fully automatic for all features in planning workflow",
+        "Backward compatibility - existing plans continue working unchanged"
+      ],
+      "success_metrics": {
+        "functional": "All new features using planning workflow get workorder IDs automatically",
+        "performance": "Workorder assignment adds <50ms overhead per tool invocation",
+        "adoption": "100% of features using /gather-context or /create-plan have workorder tracking"
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_estimate": {
+        "overall": "Medium",
+        "justification": "Requires modifications to 4 existing tools (gather_context, analyze_for_planning, create_plan, generate_deliverables_template) plus validation updates. Well-defined scope with clear requirements."
+      },
+      "technical_risks": [
+        {
+          "risk": "Breaking existing workflows if workorder implementation has bugs",
+          "likelihood": "Low",
+          "impact": "High",
+          "mitigation": "Comprehensive testing with existing features, backward compatibility checks, gradual rollout"
+        },
+        {
+          "risk": "Workorder ID format conflicts with existing naming conventions",
+          "likelihood": "Low",
+          "impact": "Medium",
+          "mitigation": "Use distinct WO- prefix, validate format strictly, document clearly"
+        },
+        {
+          "risk": "Performance overhead from reading/writing workorder metadata",
+          "likelihood": "Low",
+          "impact": "Low",
+          "mitigation": "Workorder operations are in-memory only, minimal file I/O overhead"
+        },
+        {
+          "risk": "Validation failures for plans without workorders (backward compatibility)",
+          "likelihood": "Medium",
+          "impact": "Medium",
+          "mitigation": "Make workorder validation optional, only check if workorder field exists"
+        }
+      },
+      "dependencies": [
+        {
+          "type": "Internal",
+          "name": "Planning standard schema",
+          "risk": "Schema changes could break existing plans if not careful",
+          "mitigation": "Make workorder field optional in schema, validate only when present"
+        },
+        {
+          "type": "Internal",
+          "name": "Deliverables generator feature",
+          "risk": "This feature may implement deliverables-generator before workorder tracking",
+          "mitigation": "Design workorder integration for deliverables as optional enhancement"
+        }
+      ],
+      "rollback_strategy": "Workorder metadata is additive only - removing workorder fields from tools will not break existing functionality. Can disable workorder generation without affecting core planning workflow."
+    },
+    "3_current_state_analysis": {
+      "existing_components": {
+        "mcp_tools": {
+          "gather_context": {
+            "file": "tool_handlers.py:handle_gather_context",
+            "current_behavior": "Creates context.json with feature metadata",
+            "modification_needed": "Generate workorder ID, add to _metadata field in context.json"
+          },
+          "analyze_project_for_planning": {
+            "file": "tool_handlers.py:handle_analyze_project_for_planning",
+            "current_behavior": "Creates analysis.json, optionally saves to feature folder",
+            "modification_needed": "Read workorder from context.json if exists, preserve in analysis.json _metadata"
+          },
+          "create_plan": {
+            "file": "tool_handlers.py:handle_create_plan",
+            "current_behavior": "Generates plan.json with 10-section structure",
+            "modification_needed": "Read workorder from context/analysis, embed in section 5, assign to all tasks"
+          },
+          "generate_deliverables_template": {
+            "file": "tool_handlers.py (to be implemented)",
+            "current_behavior": "Not yet implemented (part of deliverables-generator feature)",
+            "modification_needed": "Read workorder from plan.json, include in DELIVERABLES.md header"
+          }
+        },
+        "validation": {
+          "plan_validator": {
+            "file": "generators/plan_validator.py (if exists)",
+            "current_behavior": "Validates plan.json structure and quality",
+            "modification_needed": "Add workorder format validation, task reference validation"
+          }
+        },
+        "helpers": {
+          "handler_helpers": {
+            "file": "handler_helpers.py",
+            "current_behavior": "Provides format_success_response() helper",
+            "modification_needed": "Add generate_workorder_id() helper function"
+          }
+        }
+      },
+      "files_to_create": [
+        {
+          "path": "workorder_helpers.py",
+          "purpose": "Workorder ID generation and validation helpers",
+          "estimated_loc": 50
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "tool_handlers.py",
+          "changes": "Update handle_gather_context, handle_analyze_project_for_planning, handle_create_plan",
+          "estimated_loc": 80
+        },
+        {
+          "path": "handler_helpers.py",
+          "changes": "Add generate_workorder_id() function",
+          "estimated_loc": 20
+        },
+        {
+          "path": "mcp-specific-context/feature-implementation-planning-standard.json",
+          "changes": "Add workorder metadata structure to section 5",
+          "estimated_loc": 30
+        },
+        {
+          "path": "CLAUDE.md",
+          "changes": "Document workorder assignment logic and workflow",
+          "estimated_loc": 50
+        }
+      ]
+    },
+    "4_key_features": {
+      "F1": {
+        "id": "F1",
+        "name": "Automatic Workorder ID Generation",
+        "description": "Generate unique workorder IDs automatically when any MCP planning tool is invoked, using format WO-{FEATURE-NAME}-001",
+        "priority": "Critical",
+        "user_story": "As a developer using the planning workflow, I want every feature to automatically receive a unique workorder ID so I can track and reference features consistently without manual setup",
+        "acceptance_criteria": [
+          "Workorder ID format is WO-{FEATURE-NAME}-001 (uppercase, hyphens preserved)",
+          "Feature name 'auth-system' generates 'WO-AUTH-SYSTEM-001'",
+          "Workorder generation is deterministic (same feature name = same workorder ID)",
+          "Helper function generate_workorder_id(feature_name) returns formatted ID",
+          "No user input required for workorder ID"
+        ]
+      },
+      "F2": {
+        "id": "F2",
+        "name": "Workorder Assignment in gather_context",
+        "description": "Automatically assign workorder ID when gather_context tool is invoked and save to context.json _metadata",
+        "priority": "Critical",
+        "user_story": "As a developer running /gather-context, I want the tool to automatically assign a workorder ID to my feature so it's tracked from the very beginning of the planning workflow",
+        "acceptance_criteria": [
+          "gather_context generates workorder ID on invocation",
+          "Workorder saved to context.json in _metadata.workorder_id field",
+          "Timestamp saved to _metadata.workorder_assigned_at (ISO 8601 format)",
+          "Tool name saved to _metadata.workorder_assigned_by ('gather_context')",
+          "Existing gather_context functionality unchanged (backward compatible)"
+        ]
+      },
+      "F3": {
+        "id": "F3",
+        "name": "Workorder Preservation in analyze_project_for_planning",
+        "description": "Read existing workorder from context.json and preserve in analysis.json _metadata, or generate new workorder if context doesn't exist",
+        "priority": "Critical",
+        "user_story": "As a developer running /analyze-for-planning after /gather-context, I want the same workorder ID to carry forward to analysis.json so my feature has consistent tracking",
+        "acceptance_criteria": [
+          "If context.json exists with workorder_id, read and preserve it",
+          "If context.json missing or no workorder_id, generate new workorder",
+          "Workorder saved to analysis.json in _metadata.workorder_id field",
+          "Analysis tool output includes workorder ID in response",
+          "No breaking changes to existing analyze_project_for_planning behavior"
+        ]
+      },
+      "F4": {
+        "id": "F4",
+        "name": "Workorder Embedding in create_plan",
+        "description": "Read workorder from context/analysis and embed in plan.json section 5, assigning workorder_id to all tasks",
+        "priority": "Critical",
+        "user_story": "As a developer running /create-plan, I want the plan.json to include the workorder metadata and assign the workorder ID to all tasks so the implementation plan is fully tracked",
+        "acceptance_criteria": [
+          "Read workorder from context.json or analysis.json (prefer context)",
+          "If no workorder found, generate new one",
+          "Embed workorder in section 5 (5_task_id_system.workorder object)",
+          "Workorder object includes: id, name, feature_dir fields",
+          "All tasks in plan.json have workorder_id field matching workorder.id",
+          "Plan validator checks workorder consistency"
+        ]
+      },
+      "F5": {
+        "id": "F5",
+        "name": "Workorder Integration in Deliverables Template",
+        "description": "Read workorder from plan.json and include in DELIVERABLES.md header when generate_deliverables_template is invoked",
+        "priority": "High",
+        "user_story": "As a developer generating deliverables reports, I want the workorder ID prominently displayed in the header so I can easily identify which feature the deliverables represent",
+        "acceptance_criteria": [
+          "Read workorder from plan.json section 5",
+          "Include workorder ID in DELIVERABLES.md header",
+          "Header format: '# DELIVERABLES - {WORKORDER_ID}'",
+          "Include workorder metadata: ID, feature name, status",
+          "Gracefully handle plans without workorder (backward compatibility)"
+        ]
+      },
+      "F6": {
+        "id": "F6",
+        "name": "Workorder Validation in Plan Validator",
+        "description": "Validate workorder format, task references, and consistency when validating plan.json",
+        "priority": "High",
+        "user_story": "As a developer validating my implementation plan, I want the validator to check that workorder metadata is correct and all tasks reference the valid workorder so I catch errors early",
+        "acceptance_criteria": [
+          "Validate workorder ID format matches ^WO-[A-Z0-9-]+-001$",
+          "Validate all tasks have workorder_id field (if workorder exists)",
+          "Validate all task workorder_id values match plan's workorder.id",
+          "Validate workorder metadata includes required fields: id, name, feature_dir",
+          "Validation is optional - only run if workorder field exists (backward compatible)"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "task_breakdown": {
+        "F1_tasks": [
+          {
+            "id": "F1.1",
+            "description": "Create generate_workorder_id() helper function in handler_helpers.py",
+            "estimated_effort": "Small",
+            "dependencies": []
+          },
+          {
+            "id": "F1.2",
+            "description": "Add unit tests for workorder ID generation with various feature names",
+            "estimated_effort": "Small",
+            "dependencies": ["F1.1"]
+          }
+        ],
+        "F2_tasks": [
+          {
+            "id": "F2.1",
+            "description": "Update handle_gather_context to generate workorder ID on invocation",
+            "estimated_effort": "Small",
+            "dependencies": ["F1.1"]
+          },
+          {
+            "id": "F2.2",
+            "description": "Add workorder_id, workorder_assigned_at, workorder_assigned_by to context.json _metadata",
+            "estimated_effort": "Small",
+            "dependencies": ["F2.1"]
+          },
+          {
+            "id": "F2.3",
+            "description": "Update gather_context response to include workorder ID",
+            "estimated_effort": "Small",
+            "dependencies": ["F2.2"]
+          },
+          {
+            "id": "F2.4",
+            "description": "Test gather_context with new and existing features",
+            "estimated_effort": "Small",
+            "dependencies": ["F2.3"]
+          }
+        ],
+        "F3_tasks": [
+          {
+            "id": "F3.1",
+            "description": "Update handle_analyze_project_for_planning to read context.json for workorder",
+            "estimated_effort": "Medium",
+            "dependencies": ["F2.2"]
+          },
+          {
+            "id": "F3.2",
+            "description": "Generate new workorder if context missing or no workorder_id found",
+            "estimated_effort": "Small",
+            "dependencies": ["F3.1"]
+          },
+          {
+            "id": "F3.3",
+            "description": "Add workorder_id to analysis.json _metadata field",
+            "estimated_effort": "Small",
+            "dependencies": ["F3.2"]
+          },
+          {
+            "id": "F3.4",
+            "description": "Test analyze_for_planning with and without prior context.json",
+            "estimated_effort": "Small",
+            "dependencies": ["F3.3"]
+          }
+        ],
+        "F4_tasks": [
+          {
+            "id": "F4.1",
+            "description": "Update handle_create_plan to read workorder from context.json or analysis.json",
+            "estimated_effort": "Medium",
+            "dependencies": ["F3.3"]
+          },
+          {
+            "id": "F4.2",
+            "description": "Embed workorder object in section 5 (5_task_id_system.workorder)",
+            "estimated_effort": "Medium",
+            "dependencies": ["F4.1"]
+          },
+          {
+            "id": "F4.3",
+            "description": "Assign workorder_id to all tasks in plan.json",
+            "estimated_effort": "Medium",
+            "dependencies": ["F4.2"]
+          },
+          {
+            "id": "F4.4",
+            "description": "Update planning standard schema with workorder structure",
+            "estimated_effort": "Small",
+            "dependencies": ["F4.2"]
+          },
+          {
+            "id": "F4.5",
+            "description": "Test create_plan with various workflow paths (with/without context, with/without analysis)",
+            "estimated_effort": "Medium",
+            "dependencies": ["F4.3", "F4.4"]
+          }
+        ],
+        "F5_tasks": [
+          {
+            "id": "F5.1",
+            "description": "Update generate_deliverables_template to read plan.json",
+            "estimated_effort": "Small",
+            "dependencies": ["F4.3"]
+          },
+          {
+            "id": "F5.2",
+            "description": "Extract workorder from plan.json section 5",
+            "estimated_effort": "Small",
+            "dependencies": ["F5.1"]
+          },
+          {
+            "id": "F5.3",
+            "description": "Include workorder in DELIVERABLES.md header template",
+            "estimated_effort": "Small",
+            "dependencies": ["F5.2"]
+          },
+          {
+            "id": "F5.4",
+            "description": "Add backward compatibility handling for plans without workorder",
+            "estimated_effort": "Small",
+            "dependencies": ["F5.3"]
+          }
+        ],
+        "F6_tasks": [
+          {
+            "id": "F6.1",
+            "description": "Add workorder format validation (^WO-[A-Z0-9-]+-001$) to plan validator",
+            "estimated_effort": "Small",
+            "dependencies": ["F4.4"]
+          },
+          {
+            "id": "F6.2",
+            "description": "Add task workorder_id reference validation",
+            "estimated_effort": "Medium",
+            "dependencies": ["F6.1"]
+          },
+          {
+            "id": "F6.3",
+            "description": "Add workorder metadata completeness validation",
+            "estimated_effort": "Small",
+            "dependencies": ["F6.1"]
+          },
+          {
+            "id": "F6.4",
+            "description": "Make workorder validation optional (only if workorder field exists)",
+            "estimated_effort": "Small",
+            "dependencies": ["F6.2", "F6.3"]
+          }
+        ]
+      },
+      "total_tasks": 26,
+      "estimated_total_effort": "Medium (8-12 hours)"
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Core Workorder Infrastructure",
+        "description": "Build foundation: workorder ID generation and assignment in gather_context",
+        "tasks": ["F1.1", "F1.2", "F2.1", "F2.2", "F2.3", "F2.4"],
+        "deliverables": [
+          "generate_workorder_id() helper function",
+          "Updated gather_context tool with workorder assignment",
+          "context.json includes workorder_id in _metadata"
+        ],
+        "estimated_duration": "2-3 hours",
+        "dependencies": []
+      },
+      "phase_2": {
+        "name": "Workorder Persistence and Plan Integration",
+        "description": "Add workorder preservation in analyze and embedding in plan.json",
+        "tasks": ["F3.1", "F3.2", "F3.3", "F3.4", "F4.1", "F4.2", "F4.3", "F4.4", "F4.5"],
+        "deliverables": [
+          "Updated analyze_project_for_planning with workorder preservation",
+          "Updated create_plan with workorder embedding in section 5",
+          "All tasks in plan.json have workorder_id field",
+          "Updated planning standard schema"
+        ],
+        "estimated_duration": "4-6 hours",
+        "dependencies": ["phase_1"]
+      },
+      "phase_3": {
+        "name": "Deliverables Integration and Validation",
+        "description": "Add workorder to deliverables template and implement validation",
+        "tasks": ["F5.1", "F5.2", "F5.3", "F5.4", "F6.1", "F6.2", "F6.3", "F6.4"],
+        "deliverables": [
+          "Updated generate_deliverables_template with workorder header",
+          "Plan validator with workorder validation",
+          "Backward compatibility for plans without workorders"
+        ],
+        "estimated_duration": "2-3 hours",
+        "dependencies": ["phase_2"]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Individual helper functions and workorder generation logic",
+        "test_cases": [
+          {
+            "test_id": "UT-1",
+            "description": "Test generate_workorder_id() with various feature names",
+            "inputs": ["auth-system", "deliverables-generator", "multi-word-feature"],
+            "expected_output": ["WO-AUTH-SYSTEM-001", "WO-DELIVERABLES-GENERATOR-001", "WO-MULTI-WORD-FEATURE-001"]
+          },
+          {
+            "test_id": "UT-2",
+            "description": "Test generate_workorder_id() with edge cases",
+            "inputs": ["a", "feature-with-numbers-123", "ALREADY-UPPERCASE"],
+            "expected_output": ["WO-A-001", "WO-FEATURE-WITH-NUMBERS-123-001", "WO-ALREADY-UPPERCASE-001"]
+          },
+          {
+            "test_id": "UT-3",
+            "description": "Test workorder ID format validation regex",
+            "inputs": ["WO-AUTH-001", "WO-INVALID", "AUTH-001", "WO-auth-001"],
+            "expected_output": [true, false, false, false]
+          }
+        ]
+      },
+      "integration_tests": {
+        "scope": "Full workflow from gather-context to deliverables",
+        "test_scenarios": [
+          {
+            "test_id": "IT-1",
+            "description": "Test complete workflow: gather → analyze → plan → deliverables",
+            "steps": [
+              "Run gather_context for 'test-feature'",
+              "Verify context.json has workorder WO-TEST-FEATURE-001",
+              "Run analyze_project_for_planning",
+              "Verify analysis.json has same workorder ID",
+              "Run create_plan",
+              "Verify plan.json section 5 has workorder, all tasks have workorder_id",
+              "Run generate_deliverables_template",
+              "Verify DELIVERABLES.md header includes workorder ID"
+            ],
+            "expected_outcome": "Same workorder ID (WO-TEST-FEATURE-001) persists across all files"
+          },
+          {
+            "test_id": "IT-2",
+            "description": "Test workflow starting at create_plan (no prior context)",
+            "steps": [
+              "Run create_plan for 'new-feature' without prior context/analysis",
+              "Verify plan.json has workorder WO-NEW-FEATURE-001",
+              "Verify all tasks have workorder_id field"
+            ],
+            "expected_outcome": "Workorder generated automatically in create_plan"
+          },
+          {
+            "test_id": "IT-3",
+            "description": "Test backward compatibility with existing plans",
+            "steps": [
+              "Load existing plan.json without workorder field",
+              "Run validate_implementation_plan",
+              "Verify validation passes (workorder validation skipped)"
+            ],
+            "expected_outcome": "Existing plans without workorder continue working"
+          }
+        ]
+      },
+      "manual_testing": {
+        "critical_paths": [
+          "Test on real feature using full workflow (gather → analyze → plan → deliverables)",
+          "Test with deliverables-generator feature itself (dogfooding)",
+          "Test with existing features (fixing-gather-context) to ensure backward compatibility",
+          "Test validation errors (malformed workorder ID, missing task references)",
+          "Verify workorder appears correctly in generated DELIVERABLES.md"
+        ]
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "Automatic workorder assignment",
+          "measurement": "Every feature using planning workflow gets unique workorder ID",
+          "target": "100% of features have workorder after any MCP tool invocation"
+        },
+        {
+          "criterion": "Workorder persistence",
+          "measurement": "Same workorder ID appears in context.json, analysis.json, plan.json, DELIVERABLES.md",
+          "target": "100% consistency across all files"
+        },
+        {
+          "criterion": "Backward compatibility",
+          "measurement": "Existing plans without workorders continue working",
+          "target": "Zero breaking changes for existing plans"
+        },
+        {
+          "criterion": "Validation accuracy",
+          "measurement": "Plan validator correctly identifies workorder format errors",
+          "target": "100% detection of malformed workorder IDs and missing task references"
+        }
+      ],
+      "non_functional_requirements": [
+        {
+          "criterion": "Performance",
+          "measurement": "Overhead from workorder operations",
+          "target": "<50ms per tool invocation"
+        },
+        {
+          "criterion": "Documentation",
+          "measurement": "CLAUDE.md, workflow guides, and code comments updated",
+          "target": "Complete documentation with examples"
+        },
+        {
+          "criterion": "Code quality",
+          "measurement": "Follows existing patterns (decorators, error handling, validation)",
+          "target": "Passes code review, all patterns followed"
+        }
+      ],
+      "acceptance_gates": [
+        "All unit tests pass (workorder ID generation, validation)",
+        "All integration tests pass (full workflow, backward compatibility)",
+        "Manual testing confirms workorder appears in all files",
+        "Validation correctly handles plans with and without workorders",
+        "Documentation updated in CLAUDE.md with workorder workflow",
+        "Changelog entry added documenting workorder tracking feature"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Create generate_workorder_id() in handler_helpers.py",
+        "[ ] Add unit tests for workorder ID generation",
+        "[ ] Update handle_gather_context to generate workorder",
+        "[ ] Add workorder_id to context.json _metadata",
+        "[ ] Add workorder_assigned_at timestamp (ISO 8601)",
+        "[ ] Add workorder_assigned_by field ('gather_context')",
+        "[ ] Update gather_context response to include workorder",
+        "[ ] Test gather_context with new feature names"
+      ],
+      "phase_2_checklist": [
+        "[ ] Update handle_analyze_project_for_planning to read context.json",
+        "[ ] Read workorder_id from context if exists",
+        "[ ] Generate new workorder if context missing",
+        "[ ] Add workorder_id to analysis.json _metadata",
+        "[ ] Test analyze with and without prior context",
+        "[ ] Update handle_create_plan to read workorder from context/analysis",
+        "[ ] Create workorder object for section 5 (id, name, feature_dir)",
+        "[ ] Embed workorder in 5_task_id_system.workorder",
+        "[ ] Assign workorder_id to all tasks in plan.json",
+        "[ ] Update planning standard schema with workorder structure",
+        "[ ] Test create_plan with various workflow combinations"
+      ],
+      "phase_3_checklist": [
+        "[ ] Update generate_deliverables_template to read plan.json",
+        "[ ] Extract workorder from section 5",
+        "[ ] Add workorder to DELIVERABLES.md header",
+        "[ ] Handle plans without workorder gracefully",
+        "[ ] Add workorder format validation to plan validator",
+        "[ ] Add task workorder_id reference validation",
+        "[ ] Add workorder metadata completeness check",
+        "[ ] Make workorder validation optional (backward compatible)",
+        "[ ] Test validation with valid and invalid workorders",
+        "[ ] Update CLAUDE.md with workorder workflow documentation",
+        "[ ] Add changelog entry for workorder tracking",
+        "[ ] Final integration testing with real features"
+      ]
+    }
+  }
+}

@@ -1,0 +1,435 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "update-all-documentation",
+    "version": "1.0.0",
+    "created_at": "2025-10-18",
+    "description": "Automated documentation update system that systematically updates all project documentation files when a feature is completed",
+    "workflow_integration": "Feature Implementation → /update-deliverables → /update-docs → /archive-feature"
+  },
+  "0_preparation": {
+    "foundation_docs": {
+      "available": ["README.md", "CLAUDE.md", "user-guide.md", "my-guide.md"],
+      "missing": []
+    },
+    "coding_standards": {
+      "available": [],
+      "missing": []
+    },
+    "technology_stack": {
+      "language": "Python",
+      "framework": "MCP (Model Context Protocol)",
+      "testing": "pytest"
+    },
+    "reference_components": [
+      "tool_handlers.py - Existing handler patterns",
+      "handler_helpers.py - Helper functions like format_success_response",
+      "server.py - Tool definition patterns",
+      ".claude/commands/ - Slash command patterns"
+    ]
+  },
+  "1_executive_summary": {
+    "overview": "Create an automated documentation update tool that systematically updates all 5 project documentation files (README.md, CLAUDE.md, user-guide.md, my-guide.md, CHANGELOG.json) when a feature is completed. This tool will be the final step in the feature completion workflow, running after /update-deliverables and before /archive-feature.",
+    "key_goals": [
+      "Automate documentation updates across all files",
+      "Support multiple input modes (feature-based, git-based, manual)",
+      "Auto-increment version using semantic versioning",
+      "Integrate into feature completion workflow",
+      "Ensure consistency across all documentation"
+    ],
+    "success_criteria": [
+      "All 5 documentation files updated in one operation",
+      "Version auto-incremented correctly based on change type",
+      "Git analysis accurately captures changes",
+      "Slash command works seamlessly in workflow",
+      "All tests passing"
+    ]
+  },
+  "2_risk_assessment": {
+    "critical_risks": [
+      {
+        "risk": "Incorrect version increment logic",
+        "impact": "Breaking semantic versioning, confusion for users",
+        "mitigation": "Comprehensive unit tests for all versioning scenarios"
+      },
+      {
+        "risk": "Documentation file parsing failures",
+        "impact": "Incomplete or corrupted documentation updates",
+        "mitigation": "Backup original files before updating, validate changes"
+      }
+    ],
+    "major_risks": [
+      {
+        "risk": "Git analysis missing changes",
+        "impact": "Incomplete documentation of feature changes",
+        "mitigation": "Support manual override, validate git output"
+      }
+    ],
+    "dependencies": [
+      "Existing CHANGELOG tools (add_changelog_entry)",
+      "Git installed and repository initialized",
+      "DELIVERABLES.md format consistency"
+    ]
+  },
+  "3_current_state_analysis": {
+    "existing_functionality": [
+      "add_changelog_entry - Updates CHANGELOG.json",
+      "update_deliverables - Updates DELIVERABLES.md with git metrics",
+      "archive_feature - Archives completed features"
+    ],
+    "gaps": [
+      "No automated update for README.md, CLAUDE.md, user-guide.md, my-guide.md",
+      "Manual documentation updates required after features",
+      "No integration between feature completion and documentation",
+      "Version incrementing is manual"
+    ],
+    "constraints": [
+      "Must maintain backward compatibility with existing tools",
+      "Must follow existing handler patterns (@log_invocation, @mcp_error_handler)",
+      "Must use format_success_response for consistent output"
+    ]
+  },
+  "4_key_features": [
+    {
+      "id": "DOC-001",
+      "name": "Multi-Mode Input Processing",
+      "description": "Support feature-based (read DELIVERABLES.md), git-based (analyze commits), and manual input modes",
+      "priority": "critical",
+      "dependencies": []
+    },
+    {
+      "id": "DOC-002",
+      "name": "Semantic Version Auto-Increment",
+      "description": "Auto-increment version based on change type: breaking=major, feature=minor, bugfix=patch",
+      "priority": "critical",
+      "dependencies": []
+    },
+    {
+      "id": "DOC-003",
+      "name": "README.md Updater",
+      "description": "Update version, tool count, feature list, What's New section",
+      "priority": "critical",
+      "dependencies": ["DOC-002"]
+    },
+    {
+      "id": "DOC-004",
+      "name": "CLAUDE.md Updater",
+      "description": "Update version, tool count, slash command count, slash command docs, version history",
+      "priority": "critical",
+      "dependencies": ["DOC-002"]
+    },
+    {
+      "id": "DOC-005",
+      "name": "user-guide.md Updater",
+      "description": "Add new feature sections, update examples",
+      "priority": "high",
+      "dependencies": ["DOC-002"]
+    },
+    {
+      "id": "DOC-006",
+      "name": "my-guide.md Updater",
+      "description": "Update tool list, slash command count",
+      "priority": "high",
+      "dependencies": ["DOC-002"]
+    },
+    {
+      "id": "DOC-007",
+      "name": "CHANGELOG.json Integration",
+      "description": "Call existing add_changelog_entry tool",
+      "priority": "critical",
+      "dependencies": ["DOC-002"]
+    }
+  ],
+  "5_task_id_system": {
+    "naming_convention": "DOC-XXX",
+    "examples": [
+      "DOC-001: Multi-mode input processing",
+      "DOC-002: Version auto-increment logic",
+      "DOC-003: README.md updater"
+    ]
+  },
+  "6_implementation_phases": [
+    {
+      "phase_id": "PHASE-1",
+      "name": "Core Handler and Tool Definition",
+      "tasks": [
+        {
+          "task_id": "DOC-001-HANDLER",
+          "description": "Create handle_update_all_documentation in tool_handlers.py",
+          "details": [
+            "Add @log_invocation and @mcp_error_handler decorators",
+            "Validate project_path input",
+            "Parse feature_name, version, change_type (all optional)",
+            "Determine input mode (feature/git/manual)",
+            "Return formatted success response with update summary"
+          ],
+          "files": ["tool_handlers.py"],
+          "estimated_loc": 150
+        },
+        {
+          "task_id": "DOC-001-TOOL",
+          "description": "Add tool definition in server.py",
+          "details": [
+            "Name: update_all_documentation",
+            "Input schema: project_path (required), feature_name (optional), version (optional), change_type (optional)",
+            "Clear description of tool functionality"
+          ],
+          "files": ["server.py"],
+          "estimated_loc": 30
+        },
+        {
+          "task_id": "DOC-001-REGISTRY",
+          "description": "Register handler in TOOL_HANDLERS dict",
+          "files": ["tool_handlers.py"],
+          "estimated_loc": 1
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-2",
+      "name": "Version Auto-Increment Logic",
+      "tasks": [
+        {
+          "task_id": "DOC-002-VERSION",
+          "description": "Create version auto-increment function in handler_helpers.py",
+          "details": [
+            "Parse current version from README.md or CLAUDE.md",
+            "Apply semantic versioning rules based on change_type",
+            "breaking_change → major bump (1.x.x → 2.0.0)",
+            "feature → minor bump (1.0.x → 1.1.0)",
+            "bugfix/enhancement → patch bump (1.0.0 → 1.0.1)",
+            "Return new version string"
+          ],
+          "files": ["handler_helpers.py"],
+          "estimated_loc": 50
+        },
+        {
+          "task_id": "DOC-002-DETECT",
+          "description": "Create change type detection function",
+          "details": [
+            "Analyze DELIVERABLES.md or git diff",
+            "Detect breaking changes (API changes, removed features)",
+            "Detect new features (new files, new tools)",
+            "Default to bugfix/enhancement",
+            "Return change_type string"
+          ],
+          "files": ["handler_helpers.py"],
+          "estimated_loc": 60
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-3",
+      "name": "Documentation Update Functions",
+      "tasks": [
+        {
+          "task_id": "DOC-003-README",
+          "description": "Create update_readme function",
+          "details": [
+            "Update version number",
+            "Update tool count (search for 'X specialized tools')",
+            "Update feature list if new feature added",
+            "Add to What's New section",
+            "Use regex for robust parsing"
+          ],
+          "files": ["handler_helpers.py or new docs_updater.py"],
+          "estimated_loc": 80
+        },
+        {
+          "task_id": "DOC-004-CLAUDE",
+          "description": "Create update_claude_md function",
+          "details": [
+            "Update version number",
+            "Update tool count",
+            "Update slash command count",
+            "Add slash command documentation if new command",
+            "Add version history entry",
+            "Use regex for robust parsing"
+          ],
+          "files": ["handler_helpers.py or new docs_updater.py"],
+          "estimated_loc": 100
+        },
+        {
+          "task_id": "DOC-005-USERGUIDE",
+          "description": "Create update_user_guide function",
+          "details": [
+            "Add new feature section with examples",
+            "Update table of contents if needed",
+            "Template-based section insertion"
+          ],
+          "files": ["handler_helpers.py or new docs_updater.py"],
+          "estimated_loc": 70
+        },
+        {
+          "task_id": "DOC-006-MYGUIDE",
+          "description": "Create update_my_guide function",
+          "details": [
+            "Add new tool to tool list",
+            "Update slash command count",
+            "Maintain alphabetical/categorical ordering"
+          ],
+          "files": ["handler_helpers.py or new docs_updater.py"],
+          "estimated_loc": 50
+        },
+        {
+          "task_id": "DOC-007-CHANGELOG",
+          "description": "Integrate with add_changelog_entry",
+          "details": [
+            "Build changelog entry data structure",
+            "Call existing add_changelog_entry handler",
+            "Pass all required fields (version, change_type, severity, title, description, files, reason, impact)"
+          ],
+          "files": ["tool_handlers.py"],
+          "estimated_loc": 30
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-4",
+      "name": "Slash Command and Integration",
+      "tasks": [
+        {
+          "task_id": "DOC-008-COMMAND",
+          "description": "Create /update-docs slash command",
+          "details": [
+            "Create .claude/commands/update-docs.md",
+            "Prompt user for feature name or use git analysis",
+            "Call update_all_documentation tool",
+            "Update .claude/commands.json registry"
+          ],
+          "files": [".claude/commands/update-docs.md", ".claude/commands.json"],
+          "estimated_loc": 20
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-5",
+      "name": "Testing",
+      "tasks": [
+        {
+          "task_id": "DOC-009-UNIT",
+          "description": "Create unit tests for version logic",
+          "details": [
+            "Test version parsing from README/CLAUDE",
+            "Test major/minor/patch bumps",
+            "Test change type detection",
+            "Test all edge cases"
+          ],
+          "files": ["tests/unit/test_docs_updater.py"],
+          "estimated_loc": 150
+        },
+        {
+          "task_id": "DOC-010-INTEGRATION",
+          "description": "Create integration tests for full workflow",
+          "details": [
+            "Test feature-based mode with DELIVERABLES.md",
+            "Test git-based mode with commits",
+            "Test manual mode with explicit inputs",
+            "Test all 5 files updated correctly",
+            "Test version increments correctly"
+          ],
+          "files": ["tests/integration/test_update_docs_workflow.py"],
+          "estimated_loc": 200
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-6",
+      "name": "Documentation",
+      "tasks": [
+        {
+          "task_id": "DOC-011-DOCS",
+          "description": "Update project documentation",
+          "details": [
+            "Add tool to README.md and CLAUDE.md",
+            "Document workflow integration (implementation → update-deliverables → update-docs → archive)",
+            "Add examples to user-guide.md",
+            "Update my-guide.md tool list"
+          ],
+          "files": ["README.md", "CLAUDE.md", "user-guide.md", "my-guide.md"],
+          "estimated_loc": 100
+        }
+      ]
+    },
+    {
+      "phase_id": "PHASE-7",
+      "name": "Deployment",
+      "tasks": [
+        {
+          "task_id": "DOC-012-DEPLOY",
+          "description": "Deploy slash command globally",
+          "details": [
+            "Copy .claude/commands/update-docs.md to ~/.claude/commands/",
+            "Update global commands.json",
+            "Test command works globally"
+          ],
+          "files": ["~/.claude/commands/update-docs.md"],
+          "estimated_loc": 0
+        }
+      ]
+    }
+  ],
+  "7_testing_strategy": {
+    "unit_tests": [
+      "Version parsing from documentation files",
+      "Semantic version increment logic (major/minor/patch)",
+      "Change type detection from git/DELIVERABLES",
+      "Individual documentation updater functions"
+    ],
+    "integration_tests": [
+      "End-to-end workflow with feature-based input",
+      "End-to-end workflow with git-based input",
+      "End-to-end workflow with manual input",
+      "All 5 documentation files updated correctly",
+      "CHANGELOG.json integration"
+    ],
+    "edge_cases": [
+      "Missing DELIVERABLES.md (fallback to git)",
+      "No git repository (fallback to manual)",
+      "Version already at X.0.0 (major bump edge case)",
+      "Malformed version strings in existing docs"
+    ]
+  },
+  "8_success_criteria": {
+    "functional": [
+      "All 5 documentation files updated in single operation",
+      "Version auto-incremented correctly for all change types",
+      "Git analysis accurately captures feature changes",
+      "/update-docs slash command works seamlessly",
+      "All tests passing (unit + integration)"
+    ],
+    "non_functional": [
+      "Tool completes in <5 seconds for typical projects",
+      "Clear error messages for all failure modes",
+      "Backward compatible with existing tools",
+      "No breaking changes to existing workflows"
+    ],
+    "quality": [
+      "Code coverage >80% for new functions",
+      "Follows existing handler patterns",
+      "Uses decorators (@log_invocation, @mcp_error_handler)",
+      "Comprehensive logging for debugging"
+    ]
+  },
+  "9_implementation_checklist": {
+    "pre_implementation": [
+      "Review existing handler patterns",
+      "Review DELIVERABLES.md format",
+      "Review git output format",
+      "Identify regex patterns for version parsing"
+    ],
+    "during_implementation": [
+      "Write unit tests first (TDD approach)",
+      "Test each updater function independently",
+      "Validate regex patterns with real files",
+      "Test version increment logic thoroughly"
+    ],
+    "post_implementation": [
+      "Run all tests and verify passing",
+      "Test slash command in real workflow",
+      "Update all project documentation",
+      "Deploy slash command globally",
+      "Create DELIVERABLES.md for this feature",
+      "Use /update-docs to update docs for itself (dogfooding!)"
+    ]
+  }
+}

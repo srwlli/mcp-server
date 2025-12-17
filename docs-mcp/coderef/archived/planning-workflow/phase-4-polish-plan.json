@@ -1,0 +1,1503 @@
+{
+  "$schema": "./tool-implementation-template-schema.json",
+  "META_DOCUMENTATION": {
+    "plan_id": "PHASE-4",
+    "plan_name": "Phase 4: Polish & Reporting System (Tool #4: generate_plan_review_report)",
+    "status": "planning",
+    "created_date": "2025-10-10",
+    "dependencies": [
+      "Phase 1 (Tool #1: get_planning_template) - COMPLETED (commit 45e146b)",
+      "Phase 2 (Tool #2: analyze_project_for_planning) - COMPLETED (commit 7d6d18a)",
+      "Phase 3 (Tool #3: validate_implementation_plan) - COMPLETED (commit 7b0dbfb)"
+    ],
+    "estimated_effort": "2.5-3 hours",
+    "actual_effort": null,
+    "commits": [],
+    "context": {
+      "meta_plan": "coderef/planning-workflow/planning-workflow-system-meta-plan.json",
+      "current_progress": "Phases 1 & 2 complete. Phase 3 (Tool #3) has comprehensive plan ready. Phase 4 implements the final formatting/reporting tool that consumes ValidationResultDict from Tool #3 and creates human-readable markdown reports."
+    }
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "purpose": "Phase 4 implements Tool #4: generate_plan_review_report. This tool transforms ValidationResultDict (from Tool #3) into structured markdown reports. Creates ReviewFormatter class in generators/review_formatter.py (~150-200 lines). Simplest tool after Tool #1 - pure formatting logic with no analysis or validation.",
+
+      "foundation_documents_consulted": {
+        "planning_template": {
+          "file": "context/feature-implementation-planning-standard.json",
+          "relevant_sections": [
+            "Tool #4 specification (meta plan lines 140-165)",
+            "ReviewFormatter class specification (meta plan lines 622-657)",
+            "Report structure and formatting requirements"
+          ],
+          "key_insights": [
+            "Tool consumes ValidationResultDict from Tool #3",
+            "Returns PlanReviewDict with markdown report",
+            "Report structure: Executive Summary → Issues by Severity → Recommendations → Approval Status"
+          ]
+        },
+        "architecture": {
+          "file": "coderef/foundation-docs/ARCHITECTURE.md",
+          "relevant_sections": [
+            "Module Architecture - Generator pattern",
+            "Error Response Factory (ARCH-001)",
+            "Structured logging (ARCH-003)"
+          ],
+          "key_insights": [
+            "ReviewFormatter as standalone class (like PlanningAnalyzer, PlanValidator)",
+            "Use ErrorResponse factory for all errors",
+            "Log report generation operations"
+          ]
+        },
+        "type_defs": {
+          "file": "type_defs.py",
+          "relevant_sections": [
+            "Lines 270-284: ValidationResultDict (input from Phase 3)",
+            "ValidationIssueDict: severity, section, issue, suggestion",
+            "PlanReviewDict: report_markdown, summary, approval_status"
+          ],
+          "key_insights": [
+            "PlanReviewDict already defined in Phase 1",
+            "report_markdown: Complete markdown string",
+            "summary: Brief 1-sentence summary",
+            "approval_status: PASS/PASS_WITH_WARNINGS/NEEDS_REVISION/FAIL"
+          ]
+        },
+        "phase_3_reference": {
+          "file": "coderef/planning-workflow/phase-3-quality-system-plan.json",
+          "relevant_sections": [
+            "ValidationResultDict structure (what we consume)",
+            "Scoring algorithm (critical: -10, major: -5, minor: -1)",
+            "Result determination (PASS: 90+, PASS_WITH_WARNINGS: 85-89, NEEDS_REVISION: 70-84, FAIL: <70)"
+          ],
+          "key_insights": [
+            "Input structure is well-defined with 5 keys",
+            "issues array contains all detected problems",
+            "checklist_results has 24 boolean values",
+            "score is 0-100 integer"
+          ]
+        },
+        "existing_formatters_reference": {
+          "audit_generator": {
+            "file": "generators/audit_generator.py",
+            "relevant_sections": [
+              "Lines 400-500: Markdown report generation",
+              "format_compliance_summary() - similar to our executive summary",
+              "format_violations_section() - similar to our issues formatting"
+            ],
+            "reusable_patterns": [
+              "Markdown header generation with emoji",
+              "Issue grouping by severity",
+              "Table formatting for stats",
+              "Horizontal rule separators (---)"
+            ]
+          }
+        }
+      },
+
+      "coding_standards_and_conventions": {
+        "behavior_standards": {
+          "file": "coderef/standards/BEHAVIOR-STANDARDS.md",
+          "patterns_to_follow": [
+            "Error handling: Try-except with ErrorResponse factory (ARCH-001)",
+            "Logging: Use structured logging with extra fields (ARCH-003)",
+            "Validation: Validate inputs at boundaries (REF-003)",
+            "Constants: Use enums, no magic strings (REF-002)"
+          ]
+        },
+        "markdown_formatting_conventions": {
+          "heading_levels": "# for title, ## for main sections, ### for subsections",
+          "lists": "- for unordered, 1. for ordered recommendations",
+          "emphasis": "**bold** for labels/severity, *italic* for suggestions",
+          "code_blocks": "`code` for inline, ```language for fenced blocks",
+          "emoji_usage": "✅ (pass), ⚠️ (warnings), 🔄 (needs work), ❌ (fail), 🔴 (critical), 🟡 (major), 🟢 (minor)"
+        },
+        "project_specific": [
+          "Follow handler registry pattern (QUA-002)",
+          "Use TypedDict for return types (QUA-001)",
+          "Input validation on all user inputs",
+          "Report generation should complete in < 1 second"
+        ]
+      },
+
+      "reference_components_for_implementation": {
+        "primary_references": {
+          "component": "AuditGenerator (generators/audit_generator.py)",
+          "why_similar": "Generates markdown reports from validation results, formats issues by severity, creates summary sections",
+          "reusable_patterns": [
+            "Markdown template structure",
+            "Issue grouping and formatting",
+            "Summary statistics generation",
+            "Emoji usage for visual clarity"
+          ]
+        },
+        "secondary_references": {
+          "component": "PlanValidator (Phase 3, generators/plan_validator.py)",
+          "why_similar": "Produces ValidationResultDict that we consume",
+          "reusable_patterns": [
+            "Understanding of issue structure",
+            "Score interpretation logic",
+            "Result determination thresholds"
+          ]
+        }
+      },
+
+      "key_patterns_identified": [
+        "Markdown Generation Pattern: Template string → variable interpolation → return formatted string",
+        "Issue Grouping Pattern: Filter issues by severity → format each → combine into section",
+        "Recommendation Generation Pattern: Analyze issue patterns → generate actionable steps → prioritize by impact",
+        "Error Handling: Validate input dict structure → raise ValueError if malformed → ErrorResponse factory",
+        "Logging Pattern: Log operation start, issue counts, generation duration"
+      ],
+
+      "technology_stack_context": {
+        "language": "Python 3.11+",
+        "framework": "MCP (Model Context Protocol)",
+        "key_libraries": [
+          "pathlib - Path manipulation",
+          "json - JSON serialization for return values",
+          "datetime - Timestamp generation",
+          "typing - PlanReviewDict, ValidationResultDict TypedDicts"
+        ],
+        "testing": "Python unittest pattern (asyncio test functions)",
+        "deployment": "MCP server via stdio transport"
+      },
+
+      "project_structure_relevant_to_task": {
+        "files_to_create": [
+          {
+            "file": "generators/review_formatter.py",
+            "purpose": "ReviewFormatter class - Markdown report generation",
+            "size_estimate": "150-200 lines",
+            "structure": "class ReviewFormatter with __init__, format_report(), and 6 helper methods"
+          },
+          {
+            "file": "test_review_formatter.py",
+            "purpose": "Comprehensive tests for Tool #4",
+            "size_estimate": "150-200 lines",
+            "structure": "8-10 test functions covering perfect/flawed/failed plans, markdown validation"
+          }
+        ],
+        "files_to_modify": [
+          {
+            "file": "server.py",
+            "section": "list_tools() function",
+            "change": "Add generate_plan_review_report Tool definition",
+            "lines_added": "~40 lines (1 Tool object)",
+            "location": "After validate_implementation_plan tool definition"
+          },
+          {
+            "file": "tool_handlers.py",
+            "section": "Handler functions + TOOL_HANDLERS dict",
+            "change": "Add handle_generate_plan_review_report handler + register",
+            "lines_added": "~60 lines (handler function) + 1 line (registration)",
+            "imports_added": [
+              "from generators.review_formatter import ReviewFormatter"
+            ]
+          }
+        ]
+      },
+
+      "dependencies_and_relationships": {
+        "depends_on": [
+          "Phase 3: ValidationResultDict TypedDict (consumes this as input)",
+          "Phase 1: PlanReviewDict TypedDict (returns this)",
+          "Phase 1: validate_project_path_input, validate_plan_file_path functions"
+        ],
+        "blocks": [
+          "None - This is the final tool in the planning workflow system"
+        ],
+        "enables": [
+          "Human-readable validation reports",
+          "AI presentation of plan quality to users",
+          "Audit trail of plan reviews",
+          "User decision-making on plan approval"
+        ]
+      },
+
+      "potential_risks_and_gaps": {
+        "formatting_risks": [
+          {
+            "risk": "Invalid markdown syntax (broken headers, unclosed code blocks)",
+            "likelihood": "LOW - String templates are simple",
+            "impact": "MEDIUM - Renders poorly in markdown viewers",
+            "mitigation": "Test markdown validity with markdown parser; use consistent template structure"
+          },
+          {
+            "risk": "Overly verbose reports (50+ issues = huge report)",
+            "likelihood": "MEDIUM - Plans with many issues will have long reports",
+            "impact": "LOW - Still functional, just long",
+            "mitigation": "Group similar issues; summarize patterns; limit detailed issue display to top 20"
+          }
+        ],
+        "content_risks": [
+          {
+            "risk": "Generic recommendations (not actionable)",
+            "likelihood": "MEDIUM - Pattern matching may be too simple",
+            "impact": "HIGH - Defeats purpose of tool",
+            "mitigation": "Use specific recommendation templates; include examples; reference template sections"
+          }
+        ],
+        "performance_risks": [
+          {
+            "risk": "Slow formatting for large issue lists",
+            "likelihood": "LOW - String operations are fast",
+            "impact": "LOW - Minor delay",
+            "mitigation": "Target < 1 second for typical reports; optimize if needed"
+          }
+        ]
+      },
+
+      "implementation_notes": {
+        "critical_reminders": [
+          "Reference AuditGenerator markdown formatting patterns in generators/audit_generator.py (lines 400-500) for proven markdown generation approach",
+          "Test markdown validity EARLY during implementation - validate output with markdown parser (e.g., markdown library or commonmark) to catch syntax errors before they propagate",
+          "Measure performance during implementation to ensure <1s target - add timing logs in format_report() method"
+        ],
+        "optional_enhancements": [
+          "Consider adding checklist results section to report (show 24/24 checklist items with ✅/❌ for each) - mentioned as optional in feature_4, adds transparency",
+          "Consider limiting issue display to top 20 if >50 issues (show '... and 30 more issues' summary) - mentioned in risk mitigation, prevents overwhelming reports"
+        ],
+        "testing_priorities": [
+          "Markdown validity is HIGHEST priority test - broken markdown defeats entire purpose",
+          "Performance test with 50+ issues - ensure <1s target holds at scale",
+          "Pattern matching accuracy for recommendations - verify specific vs generic"
+        ]
+      }
+    },
+
+    "1_executive_summary": {
+      "feature_overview": "Phase 4 implements Tool #4: generate_plan_review_report. This tool transforms ValidationResultDict (from Tool #3) into human-readable markdown review reports. Creates structured reports with sections for executive summary (score/grade/result), issues grouped by severity (critical/major/minor), actionable recommendations, and approval status. Enables AI to present validation results to users in clear, scannable format.",
+
+      "value_proposition": "Without this tool, ValidationResultDict is raw JSON (score, issues array, checklist dict) - hard for humans to parse. With this tool: (1) Users see formatted reports with clear pass/fail status, (2) Issues grouped by severity for prioritization, (3) Recommendations provide specific next steps, (4) Emoji indicators improve scannability, (5) Approval requirements are explicit. Transforms technical validation output into actionable user guidance.",
+
+      "real_world_analogy": "Like a code review comment formatter. Linters output raw JSON (file:line:rule:message). Code review tools format this into readable comments with severity badges, grouped by file, with fix suggestions. Similarly, Tool #3 outputs validation data (score, issues), Tool #4 formats it into readable review report with sections, badges (emoji), and guidance.",
+
+      "primary_use_cases": [
+        {
+          "use_case": "AI presents plan quality to user",
+          "workflow": "AI generates plan → calls validate_implementation_plan (Tool #3) → receives ValidationResultDict → calls generate_plan_review_report (Tool #4) → receives formatted markdown → displays to user with clear pass/fail and recommendations"
+        },
+        {
+          "use_case": "User reviews plan before approval",
+          "workflow": "User receives formatted report → sees score 87/100 (B, PASS_WITH_WARNINGS) → reviews 2 major issues → reads recommendations → decides to approve or request fixes"
+        },
+        {
+          "use_case": "Documentation of plan iterations",
+          "workflow": "AI saves report to coderef/planning-reviews/ → creates audit trail → user can see plan evolution through iterations (v1: score 60, v2: score 75, v3: score 88)"
+        }
+      ],
+
+      "success_metrics": {
+        "readability": "Users can understand plan quality in < 30 seconds (clear score, obvious issues, actionable recommendations)",
+        "actionability": "100% of recommendations are specific enough to fix (not 'improve quality' but 'expand 3 task descriptions to 20+ words')",
+        "performance": "Report generation completes in < 1 second for typical plans (< 50 issues)",
+        "markdown_validity": "100% of generated reports are valid markdown (no syntax errors)"
+      }
+    },
+
+    "2_risk_assessment": {
+      "overall_risk_level": "LOW - Pure formatting logic, no complex analysis or validation",
+
+      "risk_breakdown": {
+        "technical_complexity": {
+          "level": "LOW",
+          "factors": [
+            "String templating is straightforward",
+            "No complex algorithms (just grouping and formatting)",
+            "Well-defined input (ValidationResultDict) and output (markdown string)",
+            "Pattern similar to existing AuditGenerator markdown formatting"
+          ],
+          "mitigation": "Use simple string templates; test markdown validity; reuse patterns from AuditGenerator"
+        },
+
+        "content_quality_impact": {
+          "level": "MEDIUM",
+          "factors": [
+            "Recommendations must be actionable, not generic",
+            "Issue presentation must be clear and scannable",
+            "Approval guidance must be explicit"
+          ],
+          "mitigation": "Use specific recommendation templates with examples; test with diverse ValidationResultDict inputs; gather user feedback"
+        },
+
+        "performance_impact": {
+          "level": "LOW",
+          "factors": [
+            "Formatting is CPU-bound string operations (fast)",
+            "Largest reports ~500 lines markdown (still quick)",
+            "No file I/O in formatting logic (just string building)"
+          ],
+          "mitigation": "Target < 1 second for all reports; log duration; optimize if needed"
+        },
+
+        "maintainability_impact": {
+          "level": "LOW",
+          "factors": [
+            "Isolated formatting logic (no side effects)",
+            "Clear separation: input validation → formatting → return",
+            "Easy to modify report structure (just change templates)"
+          ],
+          "mitigation": "Well-documented templates; clear method boundaries; comprehensive tests"
+        }
+      },
+
+      "deployment_risks": {
+        "backwards_compatibility": "NONE - Purely additive; no existing tools affected",
+        "rollback_plan": "Remove tool from server.py list_tools(); remove handler registration; existing system continues working",
+        "testing_requirements": "Test with: perfect plan (score 100), flawed plan (score 75), failed plan (score 45), edge cases (empty issues, 50+ issues)"
+      },
+
+      "dependencies_and_external_factors": {
+        "hard_dependencies": [
+          "Phase 3 complete (ValidationResultDict structure must match)",
+          "Phase 1 complete (PlanReviewDict, validation functions available)"
+        ],
+        "soft_dependencies": [
+          "Markdown viewers for rendering (users need markdown-capable tool)"
+        ],
+        "external_factors": [
+          "Report length depends on issue count (expected)",
+          "User preference for emoji vs text indicators (configurable in future)"
+        ]
+      }
+    },
+
+    "3_current_state_analysis": {
+      "existing_infrastructure": {
+        "from_phase_1": [
+          "✅ PlanReviewDict TypedDict - Return type for formatter",
+          "✅ validate_project_path_input() - Path validation",
+          "✅ validate_plan_file_path() - Plan file validation",
+          "✅ ErrorResponse factory - Consistent error handling",
+          "✅ Structured logging - logger, log_tool_call, log_error",
+          "✅ Handler registry pattern - TOOL_HANDLERS dict"
+        ],
+        "from_phase_3": [
+          "✅ ValidationResultDict TypedDict - Input for formatter",
+          "✅ ValidationIssueDict TypedDict - Structure of each issue",
+          "✅ Scoring algorithm understanding (critical: -10, major: -5, minor: -1)",
+          "✅ Result thresholds (PASS: 90+, PASS_WITH_WARNINGS: 85-89, NEEDS_REVISION: 70-84, FAIL: <70)"
+        ],
+        "from_existing_generators": [
+          "✅ AuditGenerator markdown formatting patterns",
+          "✅ Markdown template structure (headers, sections, emoji)"
+        ]
+      },
+
+      "files_to_create": [
+        {
+          "file": "generators/review_formatter.py",
+          "purpose": "ReviewFormatter class - Transforms ValidationResultDict to markdown",
+          "size_estimate": "150-200 lines",
+          "structure": "class ReviewFormatter with __init__, format_report(), format_header(), format_summary(), format_issues_by_severity(), format_issue_item(), generate_recommendations(), format_approval_status()"
+        },
+        {
+          "file": "test_review_formatter.py",
+          "purpose": "Comprehensive tests for Tool #4",
+          "size_estimate": "150-200 lines",
+          "structure": "10 test functions: perfect plan, flawed plan, failed plan, issue grouping, recommendations, markdown validity, edge cases"
+        }
+      },
+
+      "files_to_modify": [
+        {
+          "file": "server.py",
+          "section": "list_tools() function",
+          "change": "Add generate_plan_review_report Tool definition",
+          "lines_added": "~40 lines (1 Tool object)",
+          "location": "After validate_implementation_plan tool definition (after Tool #3)"
+        },
+        {
+          "file": "tool_handlers.py",
+          "section": "Handler functions + TOOL_HANDLERS dict",
+          "change": "Add handle_generate_plan_review_report handler + register in dict",
+          "lines_added": "~60 lines (handler function) + 1 line (registration)",
+          "imports_added": [
+            "from generators.review_formatter import ReviewFormatter",
+            "from datetime import datetime"
+          ]
+        }
+      },
+
+      "integration_points": {
+        "input_validation": "validate_project_path_input(), validate_plan_file_path() - Reuse from Phase 1",
+        "error_handling": "ErrorResponse.invalid_input(), .malformed_json() - Reuse factory",
+        "logging": "log_tool_call('generate_plan_review_report'), logger.info() - Reuse logging",
+        "return_type": "PlanReviewDict - Already defined in type_defs.py"
+      },
+
+      "testing_infrastructure": {
+        "test_patterns": "Follow test_analyze_project_basic.py structure from Phase 2",
+        "test_fixtures": [
+          "Create perfect_validation_result.json - score 100, no issues (minimal report)",
+          "Create flawed_validation_result.json - score 75, 2 critical, 3 major, 5 minor issues",
+          "Create failed_validation_result.json - score 45, many critical issues"
+        ],
+        "validation_approach": "Use markdown parser (e.g., markdown library) to validate syntax"
+      }
+    },
+
+    "4_key_features": {
+      "feature_1_executive_summary_section": {
+        "description": "Top-level summary showing plan name, validation date, score with grade (A-F), result (PASS/FAIL/etc.), and approval status with emoji indicator",
+        "technical_approach": "Map score to grade (90-100: A, 85-89: B, 70-84: C, 60-69: D, 0-59: F) → Map result to emoji (PASS: ✅, PASS_WITH_WARNINGS: ⚠️, NEEDS_REVISION: 🔄, FAIL: ❌) → Format as markdown with **bold** labels",
+        "user_benefit": "Users immediately see plan quality (score/grade) and approval status without reading full report",
+        "implementation_notes": "Simple dict mapping: score_to_grade = {90: 'A', 85: 'B', 70: 'C', 60: 'D', 0: 'F}; result_to_emoji = {'PASS': '✅', ...}"
+      },
+
+      "feature_2_issues_grouped_by_severity": {
+        "description": "Separate sections for critical (🔴), major (🟡), and minor (🟢) issues. Each issue shows: severity emoji, section name, issue description, and suggestion for fixing",
+        "technical_approach": "Filter issues by severity (critical/major/minor) → Format each issue with emoji prefix and section tag → Combine into ## Critical Issues, ## Major Issues, ## Minor Issues sections → Use --- separators",
+        "user_benefit": "Users can prioritize fixes (critical first) and see all issues of same severity together",
+        "implementation_notes": "critical_issues = [i for i in issues if i['severity'] == 'critical']; format_issue_item(issue) returns '### 🔴 {section}\\n**Issue:** {issue}\\n**Suggestion:** {suggestion}'"
+      },
+
+      "feature_3_actionable_recommendations": {
+        "description": "Numbered list of specific recommendations based on issue patterns. Example: 'Fix all 3 critical issues (missing sections 5, 7, 9)' not 'Improve plan quality'",
+        "technical_approach": "Analyze issues for patterns (missing sections, placeholders, circular deps, short descriptions) → Generate specific recommendations with counts and examples → Prioritize (critical fixes first) → Return numbered list (1., 2., 3.)",
+        "user_benefit": "Users know exactly what to fix without re-reading validation rules",
+        "implementation_notes": "Pattern detection: missing_sections = [i for i in issues if 'missing' in i['issue'].lower() and 'section' in i['issue'].lower()]; Recommendation: f'Complete all required sections - {len(missing_sections)} sections are missing'"
+      },
+
+      "feature_4_approval_status_section": {
+        "description": "Clear approval/rejection message with requirements. Example: '❌ Not Approved - Plan needs revision (score: 75, minimum: 90, issues: 10)'",
+        "technical_approach": "Check approved flag → If false, calculate gap (required score 90 - current score) → Count remaining issues by severity → Format with emoji and specific numbers",
+        "user_benefit": "Users understand approval requirements and gap to approval",
+        "implementation_notes": "if not approved: gap = 90 - score; critical_count = len([i for i in issues if i['severity'] == 'critical']); return f'❌ Not Approved - Score: {score}/100 (need 90), Issues: {critical_count} critical, {major_count} major'"
+      },
+
+      "feature_5_metadata_and_structure": {
+        "description": "Report includes: markdown title (# Implementation Plan Review Report), plan name, validation timestamp, horizontal rule separators (---) between sections, proper heading hierarchy (##, ###)",
+        "technical_approach": "Generate timestamp with datetime.now().strftime('%Y-%m-%d %H:%M:%S') → Use template structure with consistent heading levels → Insert horizontal rules between major sections",
+        "user_benefit": "Professional, scannable reports with clear section boundaries",
+        "implementation_notes": "Template: '# Implementation Plan Review Report\\n\\n**Plan:** {plan_name}\\n**Date:** {timestamp}\\n**Score:** {score}/100\\n\\n---\\n\\n## Summary\\n...'"
+      }
+    },
+
+    "5_task_id_system": {
+      "prefix_definitions": {
+        "INFRA": "Infrastructure setup for ReviewFormatter class",
+        "FORMAT": "Formatting method implementations",
+        "TOOL": "MCP tool definition and handler",
+        "TEST": "Testing and validation",
+        "DOC": "Documentation updates (if needed)"
+      },
+
+      "task_id_format": "PREFIX-NNN (e.g., INFRA-001, FORMAT-002)",
+
+      "dependency_notation": "depends_on: [TASK-ID, ...]",
+
+      "task_relationships": "Tasks within a phase are ordered by dependencies; tests depend on implementation; tool integration depends on ReviewFormatter complete"
+    },
+
+    "6_implementation_phases": {
+      "phase_1_infrastructure_setup": {
+        "goal": "Create ReviewFormatter class structure and basic scaffolding",
+        "duration": "30 minutes",
+        "tasks": [
+          {
+            "id": "INFRA-001",
+            "title": "Create generators/review_formatter.py file",
+            "description": "Create new file generators/review_formatter.py with ReviewFormatter class skeleton including imports and __init__ method",
+            "technical_details": "class ReviewFormatter: with __init__(self, validation_result: ValidationResultDict, plan_name: str) method. Import datetime, typing (PlanReviewDict, ValidationResultDict, ValidationIssueDict). Add class docstring.",
+            "code_template": [
+              "from datetime import datetime",
+              "from typing import Dict, List",
+              "from type_defs import PlanReviewDict, ValidationResultDict, ValidationIssueDict",
+              "",
+              "class ReviewFormatter:",
+              "    \"\"\"Formats validation results into markdown review reports.\"\"\"",
+              "    ",
+              "    def __init__(self, validation_result: ValidationResultDict, plan_name: str):",
+              "        \"\"\"Initialize formatter with validation result and plan name.\"\"\"",
+              "        self.validation_result = validation_result",
+              "        self.plan_name = plan_name",
+              "        self.timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')",
+              "        self.score = validation_result['score']",
+              "        self.result = validation_result['validation_result']",
+              "        self.issues = validation_result['issues']",
+              "        self.approved = validation_result['approved']"
+            ],
+            "depends_on": [],
+            "acceptance_criteria": [
+              "File exists at generators/review_formatter.py",
+              "Class ReviewFormatter defined with __init__ method",
+              "__init__ accepts validation_result and plan_name parameters",
+              "Instance variables: validation_result, plan_name, timestamp, score, result, issues, approved",
+              "File imports: datetime, PlanReviewDict, ValidationResultDict, ValidationIssueDict"
+            ],
+            "estimated_effort": "10 minutes"
+          },
+          {
+            "id": "INFRA-002",
+            "title": "Implement format_report() main method signature",
+            "description": "Create format_report() method that orchestrates all formatting operations. Initially returns placeholder structure.",
+            "technical_details": "def format_report(self) -> str: Calls helper methods to build each section → joins with separators → returns complete markdown string. Log operation start and end.",
+            "code_template": [
+              "def format_report(self) -> str:",
+              "    \"\"\"Generate complete markdown review report.\"\"\"",
+              "    sections = [",
+              "        self._format_header(),",
+              "        self._format_summary(),",
+              "        self._format_issues_by_severity('critical'),",
+              "        self._format_issues_by_severity('major'),",
+              "        self._format_issues_by_severity('minor'),",
+              "        self._generate_recommendations(),",
+              "        self._format_approval_status()",
+              "    ]",
+              "    ",
+              "    # Join sections with horizontal rule separators",
+              "    # Filter out empty sections (e.g., no critical issues)",
+              "    return '\\n\\n---\\n\\n'.join(filter(None, sections))"
+            ],
+            "depends_on": ["INFRA-001"],
+            "acceptance_criteria": [
+              "format_report() method exists and returns string",
+              "Calls all 6 helper methods in correct order",
+              "Joins sections with '\\n\\n---\\n\\n' separator",
+              "Filters out empty sections (None values)",
+              "Returns complete markdown string"
+            ],
+            "estimated_effort": "10 minutes"
+          },
+          {
+            "id": "INFRA-003",
+            "title": "Add method stubs for all formatting methods",
+            "description": "Create method signatures for all 6 helper methods. Each returns empty string or placeholder for now.",
+            "technical_details": "Add stubs: _format_header(), _format_summary(), _format_issues_by_severity(severity), _format_issue_item(issue), _generate_recommendations(), _format_approval_status(). Each has docstring and returns empty/placeholder.",
+            "code_template": [
+              "def _format_header(self) -> str:",
+              "    \"\"\"Format report header with title, plan name, date, score.\"\"\"",
+              "    return ''  # To be implemented",
+              "",
+              "def _format_summary(self) -> str:",
+              "    \"\"\"Format summary section with issue counts and brief assessment.\"\"\"",
+              "    return ''  # To be implemented",
+              "",
+              "def _format_issues_by_severity(self, severity: str) -> str:",
+              "    \"\"\"Format all issues of given severity into markdown section.\"\"\"",
+              "    return ''  # To be implemented",
+              "",
+              "def _format_issue_item(self, issue: ValidationIssueDict) -> str:",
+              "    \"\"\"Format single issue with emoji, section, description, suggestion.\"\"\"",
+              "    return ''  # To be implemented",
+              "",
+              "def _generate_recommendations(self) -> str:",
+              "    \"\"\"Generate actionable recommendations based on issue patterns.\"\"\"",
+              "    return ''  # To be implemented",
+              "",
+              "def _format_approval_status(self) -> str:",
+              "    \"\"\"Format approval status with emoji and requirements.\"\"\"",
+              "    return ''  # To be implemented"
+            ],
+            "depends_on": ["INFRA-002"],
+            "acceptance_criteria": [
+              "All 6 helper methods exist with docstrings",
+              "Each method has correct signature (parameters and return type)",
+              "format_report() calls all 6 methods without errors",
+              "Code runs and returns empty string (no issues)"
+            ],
+            "estimated_effort": "10 minutes"
+          }
+        ]
+      },
+
+      "phase_2_header_and_summary_formatting": {
+        "goal": "Implement header and summary sections",
+        "duration": "30 minutes",
+        "tasks": [
+          {
+            "id": "FORMAT-001",
+            "title": "Implement _format_header() method",
+            "description": "Generate report header with title, plan name, validation date, score/grade, result with emoji, approval status",
+            "technical_details": "Map score to grade (A-F) → map result to emoji → format markdown with **bold** labels",
+            "code_template": [
+              "def _format_header(self) -> str:",
+              "    \"\"\"Format report header.\"\"\"",
+              "    # Map score to grade",
+              "    if self.score >= 90:",
+              "        grade = 'A'",
+              "    elif self.score >= 85:",
+              "        grade = 'B'",
+              "    elif self.score >= 70:",
+              "        grade = 'C'",
+              "    elif self.score >= 60:",
+              "        grade = 'D'",
+              "    else:",
+              "        grade = 'F'",
+              "    ",
+              "    # Map result to emoji",
+              "    result_emoji = {",
+              "        'PASS': '✅',",
+              "        'PASS_WITH_WARNINGS': '⚠️',",
+              "        'NEEDS_REVISION': '🔄',",
+              "        'FAIL': '❌'",
+              "    }.get(self.result, '❓')",
+              "    ",
+              "    return f'''# Implementation Plan Review Report",
+              "",
+              "**Plan:** {self.plan_name}",
+              "**Validation Date:** {self.timestamp}",
+              "**Score:** {self.score}/100 ({grade})",
+              "**Result:** {self.result} {result_emoji}",
+              "**Approved:** {'Yes ✅' if self.approved else 'No ❌'}'''",
+              ""
+            ],
+            "depends_on": ["INFRA-003"],
+            "acceptance_criteria": [
+              "Returns markdown header with all required fields",
+              "Score to grade mapping correct (90+: A, 85-89: B, etc.)",
+              "Result emoji mapping correct (PASS: ✅, FAIL: ❌, etc.)",
+              "Approved shows Yes/No with emoji",
+              "Uses triple-quoted string for readability"
+            ],
+            "estimated_effort": "15 minutes"
+          },
+          {
+            "id": "FORMAT-002",
+            "title": "Implement _format_summary() method",
+            "description": "Generate summary section showing issue counts by severity and brief assessment",
+            "technical_details": "Count issues by severity → format as bullet list → add brief assessment based on result",
+            "code_template": [
+              "def _format_summary(self) -> str:",
+              "    \"\"\"Format summary section.\"\"\"",
+              "    # Count issues by severity",
+              "    critical_count = len([i for i in self.issues if i['severity'] == 'critical'])",
+              "    major_count = len([i for i in self.issues if i['severity'] == 'major'])",
+              "    minor_count = len([i for i in self.issues if i['severity'] == 'minor'])",
+              "    total_count = len(self.issues)",
+              "    ",
+              "    # Generate assessment based on result",
+              "    if self.result == 'PASS':",
+              "        assessment = 'Plan meets all quality requirements and is ready for implementation.'",
+              "    elif self.result == 'PASS_WITH_WARNINGS':",
+              "        assessment = 'Plan meets minimum quality requirements but has minor improvements recommended.'",
+              "    elif self.result == 'NEEDS_REVISION':",
+              "        assessment = 'Plan requires revisions to meet quality standards. Address issues below and re-validate.'",
+              "    else:  # FAIL",
+              "        assessment = 'Plan has significant quality issues and is not ready for implementation. Major revisions required.'",
+              "    ",
+              "    return f'''## Summary",
+              "",
+              "- **Critical Issues:** {critical_count} 🔴",
+              "- **Major Issues:** {major_count} 🟡",
+              "- **Minor Issues:** {minor_count} 🟢",
+              "- **Total Issues:** {total_count}",
+              "",
+              "{assessment}'''",
+              ""
+            ],
+            "depends_on": ["FORMAT-001"],
+            "acceptance_criteria": [
+              "Counts issues correctly by severity",
+              "Shows all 4 counts (critical, major, minor, total)",
+              "Includes emoji for each severity level",
+              "Assessment message matches result type",
+              "Returns properly formatted markdown"
+            ],
+            "estimated_effort": "15 minutes"
+          }
+        ]
+      },
+
+      "phase_3_issue_formatting": {
+        "goal": "Implement issue grouping and formatting",
+        "duration": "45 minutes",
+        "tasks": [
+          {
+            "id": "FORMAT-003",
+            "title": "Implement _format_issue_item() method",
+            "description": "Format single issue with emoji, section tag, description, and suggestion",
+            "technical_details": "Map severity to emoji → format markdown with ### heading, **bold** labels, section tag in brackets",
+            "code_template": [
+              "def _format_issue_item(self, issue: ValidationIssueDict) -> str:",
+              "    \"\"\"Format single issue.\"\"\"",
+              "    # Map severity to emoji",
+              "    emoji_map = {",
+              "        'critical': '🔴',",
+              "        'major': '🟡',",
+              "        'minor': '🟢'",
+              "    }",
+              "    emoji = emoji_map.get(issue['severity'], '⚪')",
+              "    ",
+              "    return f'''### {emoji} [{issue['section']}]",
+              "**Issue:** {issue['issue']}",
+              "**Suggestion:** {issue['suggestion']}",
+              "'''",
+              ""
+            ],
+            "depends_on": ["INFRA-003"],
+            "acceptance_criteria": [
+              "Returns formatted issue with emoji prefix",
+              "Section shown in brackets [section]",
+              "Issue and suggestion labeled with **bold**",
+              "Each issue separated by blank line",
+              "Handles all 3 severity levels"
+            ],
+            "estimated_effort": "15 minutes"
+          },
+          {
+            "id": "FORMAT-004",
+            "title": "Implement _format_issues_by_severity() method",
+            "description": "Group all issues of given severity and format into section with heading",
+            "technical_details": "Filter issues by severity → format each with _format_issue_item() → combine with section heading → return None if no issues of that severity",
+            "code_template": [
+              "def _format_issues_by_severity(self, severity: str) -> str:",
+              "    \"\"\"Format all issues of given severity.\"\"\"",
+              "    # Filter issues by severity",
+              "    severity_issues = [i for i in self.issues if i['severity'] == severity]",
+              "    ",
+              "    if not severity_issues:",
+              "        return None  # No section if no issues",
+              "    ",
+              "    # Section heading with emoji",
+              "    headings = {",
+              "        'critical': '## Critical Issues 🔴',",
+              "        'major': '## Major Issues 🟡',",
+              "        'minor': '## Minor Issues 🟢'",
+              "    }",
+              "    heading = headings.get(severity, f'## {severity.title()} Issues')",
+              "    ",
+              "    # Format each issue",
+              "    formatted_issues = [self._format_issue_item(issue) for issue in severity_issues]",
+              "    ",
+              "    # Combine with heading",
+              "    return heading + '\\n\\n' + '\\n'.join(formatted_issues)"
+            ],
+            "depends_on": ["FORMAT-003"],
+            "acceptance_criteria": [
+              "Filters issues correctly by severity",
+              "Returns None if no issues (allows filtering in format_report)",
+              "Section heading includes emoji",
+              "All issues formatted and combined",
+              "Proper spacing between issues"
+            ],
+            "estimated_effort": "20 minutes"
+          },
+          {
+            "id": "FORMAT-005",
+            "title": "Test issue formatting with sample data",
+            "description": "Create sample ValidationResultDict with mix of issues and verify formatting",
+            "technical_details": "Create test dict with 2 critical, 3 major, 5 minor issues → instantiate ReviewFormatter → verify issue sections format correctly",
+            "code_template": [
+              "# Test in test_review_formatter.py",
+              "def test_format_issues_by_severity():",
+              "    sample_result = {",
+              "        'score': 75,",
+              "        'validation_result': 'NEEDS_REVISION',",
+              "        'issues': [",
+              "            {'severity': 'critical', 'section': 'structure', 'issue': 'Missing section 5', 'suggestion': 'Add section 5'},",
+              "            {'severity': 'major', 'section': 'completeness', 'issue': 'Placeholder found', 'suggestion': 'Replace TBD'},",
+              "            {'severity': 'minor', 'section': 'quality', 'issue': 'Short description', 'suggestion': 'Expand to 20+ words'}",
+              "        ],",
+              "        'checklist_results': {},",
+              "        'approved': False",
+              "    }",
+              "    ",
+              "    formatter = ReviewFormatter(sample_result, 'test-plan')",
+              "    ",
+              "    # Test critical section",
+              "    critical_section = formatter._format_issues_by_severity('critical')",
+              "    assert '## Critical Issues 🔴' in critical_section",
+              "    assert 'Missing section 5' in critical_section",
+              "    ",
+              "    # Test major section",
+              "    major_section = formatter._format_issues_by_severity('major')",
+              "    assert '## Major Issues 🟡' in major_section",
+              "    ",
+              "    # Test no issues returns None",
+              "    formatter.issues = []",
+              "    assert formatter._format_issues_by_severity('critical') is None"
+            ],
+            "depends_on": ["FORMAT-004"],
+            "acceptance_criteria": [
+              "Test creates realistic sample data",
+              "Verifies critical section has correct heading and content",
+              "Verifies major and minor sections format correctly",
+              "Verifies None returned when no issues",
+              "Test passes"
+            ],
+            "estimated_effort": "10 minutes"
+          }
+        ]
+      },
+
+      "phase_4_recommendations_and_approval": {
+        "goal": "Implement recommendations generation and approval status formatting",
+        "duration": "45 minutes",
+        "tasks": [
+          {
+            "id": "FORMAT-006",
+            "title": "Implement _generate_recommendations() method",
+            "description": "Analyze issue patterns and generate specific, actionable recommendations",
+            "technical_details": "Detect patterns (missing sections, placeholders, circular deps, short descriptions, vague criteria) → generate specific recommendations with counts → prioritize (critical fixes first) → format as numbered list",
+            "code_template": [
+              "def _generate_recommendations(self) -> str:",
+              "    \"\"\"Generate actionable recommendations.\"\"\"",
+              "    if not self.issues:",
+              "        return None  # No recommendations if no issues",
+              "    ",
+              "    recommendations = []",
+              "    ",
+              "    # Analyze issue patterns",
+              "    missing_sections = [i for i in self.issues if 'missing' in i['issue'].lower() and 'section' in i['issue'].lower()]",
+              "    placeholders = [i for i in self.issues if 'placeholder' in i['issue'].lower() or 'tbd' in i['issue'].lower()]",
+              "    circular_deps = [i for i in self.issues if 'circular' in i['issue'].lower()]",
+              "    short_descriptions = [i for i in self.issues if 'description' in i['issue'].lower() and 'short' in i['issue'].lower()]",
+              "    vague_criteria = [i for i in self.issues if 'success criteria' in i['issue'].lower() and 'lack' in i['issue'].lower()]",
+              "    ambiguous = [i for i in self.issues if 'ambiguous' in i['issue'].lower() or 'question' in i['issue'].lower()]",
+              "    ",
+              "    # Generate specific recommendations",
+              "    if missing_sections:",
+              "        recommendations.append(f'Complete all required sections - {len(missing_sections)} sections are missing or incomplete')",
+              "    ",
+              "    if placeholders:",
+              "        recommendations.append(f'Replace all placeholder text - {len(placeholders)} instances of TBD/TODO/[placeholder] found')",
+              "    ",
+              "    if circular_deps:",
+              "        recommendations.append('Resolve circular dependencies by reordering tasks or splitting into independent phases')",
+              "    ",
+              "    if short_descriptions:",
+              "        recommendations.append(f'Expand task descriptions - {len(short_descriptions)} tasks have descriptions < 20 words')",
+              "    ",
+              "    if vague_criteria:",
+              "        recommendations.append('Make success criteria measurable with specific metrics (response time < 2s, test coverage > 90%)')",
+              "    ",
+              "    if ambiguous:",
+              "        recommendations.append(f'Remove ambiguous language - {len(ambiguous)} instances of questions or uncertain phrases found')",
+              "    ",
+              "    # Add priority guidance",
+              "    critical_count = len([i for i in self.issues if i['severity'] == 'critical'])",
+              "    if critical_count > 0:",
+              "        recommendations.insert(0, f'PRIORITY: Fix all {critical_count} critical issues first - these are blockers')",
+              "    ",
+              "    # Limit to top 5 recommendations",
+              "    recommendations = recommendations[:5]",
+              "    ",
+              "    # Format as numbered list",
+              "    formatted_recs = '\\n'.join(f'{i+1}. {rec}' for i, rec in enumerate(recommendations))",
+              "    ",
+              "    return f'''## Recommendations",
+              "",
+              "Based on the validation results, here are actionable next steps:",
+              "",
+              "{formatted_recs}'''",
+              ""
+            ],
+            "depends_on": ["FORMAT-005"],
+            "acceptance_criteria": [
+              "Detects all 6 issue patterns (missing sections, placeholders, etc.)",
+              "Generates specific recommendations with counts",
+              "Prioritizes critical issues (appears first)",
+              "Limits to top 5 recommendations",
+              "Formats as numbered list (1., 2., 3.)",
+              "Returns None if no issues"
+            ],
+            "estimated_effort": "30 minutes"
+          },
+          {
+            "id": "FORMAT-007",
+            "title": "Implement _format_approval_status() method",
+            "description": "Format approval status with clear requirements and gap to approval",
+            "technical_details": "Check approved flag → if false, show score gap (need 90, have X), issue counts, next steps → if true, show approval message",
+            "code_template": [
+              "def _format_approval_status(self) -> str:",
+              "    \"\"\"Format approval status.\"\"\"",
+              "    if self.approved:",
+              "        return f'''## Approval Status",
+              "",
+              "✅ **APPROVED** - Plan meets quality standards (score: {self.score}/100)",
+              "",
+              "This plan is ready for user approval and implementation.'''",
+              "    else:",
+              "        # Calculate gap to approval",
+              "        gap = 90 - self.score",
+              "        critical_count = len([i for i in self.issues if i['severity'] == 'critical'])",
+              "        major_count = len([i for i in self.issues if i['severity'] == 'major'])",
+              "        minor_count = len([i for i in self.issues if i['severity'] == 'minor'])",
+              "        ",
+              "        return f'''## Approval Status",
+              "",
+              "❌ **NOT APPROVED** - Plan needs revision before approval",
+              "",
+              "**Requirements:**",
+              "- Minimum score: 90 (current: {self.score}) - Gap: {gap} points",
+              "- Issues remaining: {critical_count} critical, {major_count} major, {minor_count} minor",
+              "",
+              "**Next Steps:**",
+              "1. Address all critical issues (if any) - these are blockers",
+              "2. Fix major issues to improve score above 85",
+              "3. Re-validate plan with validate_implementation_plan tool",
+              "4. Iterate until score ≥ 90 or seek user guidance'''",
+              ""
+            ],
+            "depends_on": ["FORMAT-006"],
+            "acceptance_criteria": [
+              "Shows APPROVED message if approved=true",
+              "Shows NOT APPROVED with requirements if approved=false",
+              "Calculates score gap (90 - current)",
+              "Shows issue counts by severity",
+              "Provides clear next steps",
+              "Uses emoji indicators (✅/❌)"
+            ],
+            "estimated_effort": "15 minutes"
+          }
+        ]
+      },
+
+      "phase_5_mcp_tool_integration": {
+        "goal": "Add MCP tool definition and handler",
+        "duration": "45 minutes",
+        "tasks": [
+          {
+            "id": "TOOL-001",
+            "title": "Add generate_plan_review_report tool definition in server.py",
+            "description": "Add Tool object to list_tools() for generate_plan_review_report. Define input schema (project_path, plan_file_path, validation_result required). Add comprehensive description.",
+            "technical_details": "Add Tool definition after validate_implementation_plan. Input schema: project_path (string), plan_file_path (string), validation_result (object). All required. Description explains report formatting and use in review loop.",
+            "code_template": [
+              "Tool(",
+              "    name='generate_plan_review_report',",
+              "    description='Formats validation results into structured markdown review report. Transforms ValidationResultDict from validate_implementation_plan into human-readable report with sections: Executive Summary (score/grade/result), Issues by Severity (critical/major/minor), Actionable Recommendations, Approval Status. Enables AI to present plan quality to users in clear, scannable format. Used in review loop to communicate validation results.',",
+              "    inputSchema={",
+              "        'type': 'object',",
+              "        'properties': {",
+              "            'project_path': {",
+              "                'type': 'string',",
+              "                'description': 'Absolute path to project directory'",
+              "            },",
+              "            'plan_file_path': {",
+              "                'type': 'string',",
+              "                'description': 'Relative path to plan JSON file within project (e.g., feature-auth-plan.json)'",
+              "            },",
+              "            'validation_result': {",
+              "                'type': 'object',",
+              "                'description': 'ValidationResultDict from validate_implementation_plan tool (score, validation_result, issues, checklist_results, approved)',",
+              "                'required': True",
+              "            }",
+              "        },",
+              "        'required': ['project_path', 'plan_file_path', 'validation_result']",
+              "    }",
+              ")"
+            ],
+            "depends_on": ["FORMAT-007"],
+            "acceptance_criteria": [
+              "Tool definition added to server.py list_tools()",
+              "Input schema requires project_path, plan_file_path, validation_result",
+              "validation_result is type 'object'",
+              "Description clearly explains purpose and use in review loop",
+              "Tool appears in MCP tool list when server starts"
+            ],
+            "estimated_effort": "10 minutes"
+          },
+          {
+            "id": "TOOL-002",
+            "title": "Implement handle_generate_plan_review_report in tool_handlers.py",
+            "description": "Create handler function following standard pattern: validate inputs, extract plan name, create ReviewFormatter, call format_report(), return PlanReviewDict. Handle errors (ValueError, KeyError, Exception).",
+            "technical_details": "async def handle_generate_plan_review_report(arguments: dict) -> list[TextContent]: Validate inputs → extract plan name from path → create ReviewFormatter → format_report() → return PlanReviewDict as JSON",
+            "code_template": [
+              "async def handle_generate_plan_review_report(arguments: dict) -> list[TextContent]:",
+              "    \"\"\"Handle generate_plan_review_report tool call.\"\"\"",
+              "    try:",
+              "        # Log invocation",
+              "        log_tool_call('generate_plan_review_report', args_keys=list(arguments.keys()))",
+              "        ",
+              "        # Validate inputs",
+              "        project_path_str = arguments.get('project_path', '')",
+              "        plan_file_str = arguments.get('plan_file_path', '')",
+              "        validation_result = arguments.get('validation_result', {})",
+              "        ",
+              "        project_path = Path(validate_project_path_input(project_path_str)).resolve()",
+              "        plan_path = validate_plan_file_path(project_path, plan_file_str)",
+              "        ",
+              "        # Validate validation_result structure",
+              "        required_keys = ['score', 'validation_result', 'issues', 'checklist_results', 'approved']",
+              "        for key in required_keys:",
+              "            if key not in validation_result:",
+              "                return ErrorResponse.invalid_input(",
+              "                    f'validation_result missing required key: {key}',",
+              "                    f'Ensure ValidationResultDict from validate_implementation_plan has all keys: {required_keys}'",
+              "                )",
+              "        ",
+              "        # Extract plan name from path",
+              "        plan_name = plan_path.stem",
+              "        ",
+              "        logger.info(f'Generating review report for plan: {plan_name}', extra={'score': validation_result['score']})",
+              "        ",
+              "        # Create formatter and generate report",
+              "        formatter = ReviewFormatter(validation_result, plan_name)",
+              "        report_markdown = formatter.format_report()",
+              "        ",
+              "        # Build result",
+              "        result: PlanReviewDict = {",
+              "            'report_markdown': report_markdown,",
+              "            'summary': f\"Plan validation: {validation_result['validation_result']} (score: {validation_result['score']}/100)\",",
+              "            'approval_status': validation_result['validation_result']",
+              "        }",
+              "        ",
+              "        logger.info(",
+              "            f'Review report generated: {len(report_markdown)} chars',",
+              "            extra={'plan_name': plan_name, 'score': validation_result['score']}",
+              "        )",
+              "        ",
+              "        # Return result as JSON",
+              "        return [TextContent(type='text', text=json.dumps(result, indent=2))]",
+              "        ",
+              "    except ValueError as e:",
+              "        log_error('generate_review_report_validation_error', str(e))",
+              "        return ErrorResponse.invalid_input(",
+              "            str(e),",
+              "            'Check project_path, plan_file_path, and validation_result structure'",
+              "        )",
+              "    except KeyError as e:",
+              "        log_error('generate_review_report_key_error', str(e))",
+              "        return ErrorResponse.invalid_input(",
+              "            f'Missing required key in validation_result: {str(e)}',",
+              "            'Ensure validation_result is a valid ValidationResultDict from validate_implementation_plan'",
+              "        )",
+              "    except Exception as e:",
+              "        log_error('generate_review_report_error', str(e))",
+              "        return ErrorResponse.generic_error(",
+              "            f'Failed to generate review report: {str(e)}'",
+              "        )"
+            ],
+            "depends_on": ["TOOL-001"],
+            "acceptance_criteria": [
+              "Handler validates all inputs (project_path, plan_file_path, validation_result)",
+              "Validates validation_result has all 5 required keys",
+              "Extracts plan name from plan_path.stem",
+              "Creates ReviewFormatter with validation_result and plan_name",
+              "Calls format_report() and gets markdown string",
+              "Returns PlanReviewDict with report_markdown, summary, approval_status",
+              "Handles all error types (ValueError, KeyError, Exception) with appropriate ErrorResponse",
+              "Logs tool invocation, generation progress, and errors"
+            ],
+            "estimated_effort": "25 minutes"
+          },
+          {
+            "id": "TOOL-003",
+            "title": "Register handler in TOOL_HANDLERS dict",
+            "description": "Add 'generate_plan_review_report': handle_generate_plan_review_report to TOOL_HANDLERS dict in tool_handlers.py",
+            "technical_details": "Add registration after validate_implementation_plan handler registration",
+            "code_template": [
+              "TOOL_HANDLERS = {",
+              "    # ... existing handlers ...",
+              "    'validate_implementation_plan': handle_validate_implementation_plan,",
+              "    'generate_plan_review_report': handle_generate_plan_review_report,",
+              "}"
+            ],
+            "depends_on": ["TOOL-002"],
+            "acceptance_criteria": [
+              "Handler registered in TOOL_HANDLERS dict",
+              "Key matches tool name exactly",
+              "Tool can be invoked via MCP"
+            ],
+            "estimated_effort": "5 minutes"
+          },
+          {
+            "id": "TOOL-004",
+            "title": "Add required imports to tool_handlers.py",
+            "description": "Add imports for ReviewFormatter and datetime in tool_handlers.py",
+            "technical_details": "Add 'from generators.review_formatter import ReviewFormatter' to imports section",
+            "code_template": [
+              "from generators.review_formatter import ReviewFormatter"
+            ],
+            "depends_on": ["TOOL-003"],
+            "acceptance_criteria": [
+              "Import added to tool_handlers.py",
+              "No import errors when server starts"
+            ],
+            "estimated_effort": "5 minutes"
+          }
+        ]
+      },
+
+      "phase_6_comprehensive_testing": {
+        "goal": "Create comprehensive test suite for Tool #4",
+        "duration": "45 minutes",
+        "tasks": [
+          {
+            "id": "TEST-001",
+            "title": "Create test_review_formatter.py with test fixtures",
+            "description": "Create test file with async test functions. Create 3 sample ValidationResultDict fixtures: perfect (score 100), flawed (score 75), failed (score 45)",
+            "technical_details": "Create test file following test_validate_plan.py pattern. Create fixtures with realistic data for different score ranges.",
+            "depends_on": ["TOOL-004"],
+            "acceptance_criteria": [
+              "test_review_formatter.py file exists",
+              "Imports tool_handlers, ReviewFormatter, asyncio",
+              "3 fixtures created: PERFECT_RESULT (score 100, no issues), FLAWED_RESULT (score 75, 2 critical + 3 major + 5 minor), FAILED_RESULT (score 45, many critical issues)",
+              "Each fixture has all 5 required ValidationResultDict keys"
+            ],
+            "estimated_effort": "15 minutes"
+          },
+          {
+            "id": "TEST-002",
+            "title": "Test perfect plan formatting",
+            "description": "Test that a perfect plan (score 100, no issues) generates minimal report with PASS status, no issue sections",
+            "technical_details": "Use PERFECT_RESULT fixture → call formatter → verify header shows 100/A/PASS, no issue sections, approved message",
+            "depends_on": ["TEST-001"],
+            "acceptance_criteria": [
+              "Test calls ReviewFormatter with perfect result",
+              "Verifies header contains '100/100 (A)'",
+              "Verifies result shows 'PASS ✅'",
+              "Verifies no issue sections (critical/major/minor return None)",
+              "Verifies approval status shows '✅ APPROVED'",
+              "Test passes"
+            ],
+            "estimated_effort": "10 minutes"
+          },
+          {
+            "id": "TEST-003",
+            "title": "Test flawed plan formatting",
+            "description": "Test that a flawed plan (score 75, mixed issues) generates complete report with all sections",
+            "technical_details": "Use FLAWED_RESULT fixture → call formatter → verify all sections present (header, summary, critical/major/minor issues, recommendations, approval status)",
+            "depends_on": ["TEST-002"],
+            "acceptance_criteria": [
+              "Test verifies header shows score 75 (C), NEEDS_REVISION 🔄",
+              "Verifies summary shows correct issue counts",
+              "Verifies critical/major/minor sections all present",
+              "Verifies recommendations section has numbered list",
+              "Verifies approval status shows '❌ NOT APPROVED' with gap",
+              "Test passes"
+            ],
+            "estimated_effort": "10 minutes"
+          },
+          {
+            "id": "TEST-004",
+            "title": "Test issue grouping correctness",
+            "description": "Verify issues are correctly grouped by severity and formatted with proper emoji/structure",
+            "technical_details": "Create result with specific issues → verify critical section has only critical issues, major has only major, etc.",
+            "depends_on": ["TEST-003"],
+            "acceptance_criteria": [
+              "Test creates result with known issues (1 critical, 2 major, 3 minor)",
+              "Verifies _format_issues_by_severity('critical') contains only 1 issue",
+              "Verifies correct emoji for each severity (🔴/🟡/🟢)",
+              "Verifies each issue has section tag, description, suggestion",
+              "Test passes"
+            ],
+            "estimated_effort": "10 minutes"
+          }
+        ]
+      }
+    },
+
+    "7_testing_strategy": {
+      "unit_tests": {
+        "approach": "Test each formatting method independently with controlled inputs",
+        "test_cases": [
+          {
+            "test": "test_format_header",
+            "verifies": "Header includes plan name, date, score/grade, result with emoji, approval status",
+            "input": "ValidationResultDict with score 87, result PASS_WITH_WARNINGS",
+            "expected": "Header contains '87/100 (B)', 'PASS_WITH_WARNINGS ⚠️', timestamp"
+          },
+          {
+            "test": "test_format_summary",
+            "verifies": "Summary shows correct issue counts and appropriate assessment",
+            "input": "3 critical, 5 major, 10 minor issues",
+            "expected": "Shows '3 🔴', '5 🟡', '10 🟢', 'Total: 18', assessment matches result"
+          },
+          {
+            "test": "test_format_issue_item_critical",
+            "verifies": "Critical issue formatted with 🔴, section tag, bold labels",
+            "input": "{'severity': 'critical', 'section': 'structure', 'issue': 'Missing section 5', 'suggestion': 'Add section 5'}",
+            "expected": "'### 🔴 [structure]', '**Issue:** Missing section 5', '**Suggestion:** Add section 5'"
+          },
+          {
+            "test": "test_format_issues_by_severity_groups_correctly",
+            "verifies": "All critical issues grouped together, separate from major/minor",
+            "input": "Mix of 2 critical, 3 major, 4 minor issues",
+            "expected": "Critical section has only 2 issues, major has 3, minor has 4"
+          },
+          {
+            "test": "test_generate_recommendations_missing_sections",
+            "verifies": "Detects missing sections pattern and generates specific recommendation",
+            "input": "3 issues with 'missing' and 'section' in description",
+            "expected": "Recommendation: 'Complete all required sections - 3 sections are missing'"
+          },
+          {
+            "test": "test_generate_recommendations_placeholders",
+            "verifies": "Detects placeholder pattern (TBD, TODO)",
+            "input": "5 issues with 'placeholder' or 'TBD' in description",
+            "expected": "Recommendation: 'Replace all placeholder text - 5 instances found'"
+          },
+          {
+            "test": "test_format_approval_status_pass",
+            "verifies": "Approved=true shows ✅ APPROVED message",
+            "input": "approved: true, score: 95",
+            "expected": "'✅ APPROVED', 'score: 95/100', 'ready for implementation'"
+          },
+          {
+            "test": "test_format_approval_status_fail",
+            "verifies": "Approved=false shows ❌ NOT APPROVED with gap and requirements",
+            "input": "approved: false, score: 75",
+            "expected": "'❌ NOT APPROVED', 'Minimum: 90 (current: 75)', 'Gap: 15 points', next steps"
+          }
+        ],
+        "assertions": [
+          "Return types are strings (markdown)",
+          "Markdown syntax is valid (headers, lists, emphasis)",
+          "Emoji indicators used consistently",
+          "All sections properly formatted with spacing",
+          "No missing content (all fields populated)"
+        ]
+      },
+
+      "integration_tests": {
+        "approach": "Test complete format_report() workflow with realistic ValidationResultDict fixtures",
+        "test_cases": [
+          {
+            "test": "test_format_perfect_plan_report",
+            "input": "score: 100, issues: [], approved: true",
+            "expected": "Header shows PASS ✅, summary shows 0 issues, no issue sections, APPROVED status, minimal report",
+            "validation": "Report length < 300 chars, no issue sections, positive tone"
+          },
+          {
+            "test": "test_format_flawed_plan_report",
+            "input": "score: 75, 2 critical + 3 major + 5 minor issues, approved: false",
+            "expected": "Header shows NEEDS_REVISION 🔄, all sections present, specific recommendations, NOT APPROVED with gap",
+            "validation": "All 7 sections present (header, summary, 3 issue sections, recommendations, approval), report length 1000-2000 chars"
+          },
+          {
+            "test": "test_format_failed_plan_report",
+            "input": "score: 45, many critical issues, approved: false",
+            "expected": "Header shows FAIL ❌, critical section dominant, urgent recommendations, clear rejection message",
+            "validation": "FAIL indicator prominent, critical issues first, strong rejection language"
+          },
+          {
+            "test": "test_markdown_validity",
+            "input": "Any ValidationResultDict",
+            "expected": "Generated markdown is valid (no unclosed blocks, proper heading hierarchy, valid list syntax)",
+            "validation": "Pass markdown through parser (e.g., markdown library), verify no syntax errors"
+          }
+        ],
+        "assertions": [
+          "All sections joined with '---' separator",
+          "Empty sections (None) filtered out",
+          "Report structure consistent across all score ranges",
+          "Performance < 1 second for typical reports"
+        ]
+      },
+
+      "error_handling_testing": {
+        "test_cases": [
+          {
+            "test": "test_invalid_validation_result_missing_keys",
+            "input": "validation_result missing 'score' key",
+            "expected": "ErrorResponse.invalid_input with message about missing key",
+            "handler": "handle_generate_plan_review_report"
+          },
+          {
+            "test": "test_invalid_project_path",
+            "input": "project_path is relative path './project'",
+            "expected": "ErrorResponse.invalid_input from validate_project_path_input",
+            "handler": "handle_generate_plan_review_report"
+          },
+          {
+            "test": "test_malformed_validation_result",
+            "input": "validation_result is not a dict (string instead)",
+            "expected": "ErrorResponse.invalid_input about validation_result structure",
+            "handler": "handle_generate_plan_review_report"
+          }
+        ],
+        "assertions": [
+          "All errors use ErrorResponse factory",
+          "Errors are logged with log_error()",
+          "Formatting doesn't crash on invalid input",
+          "Helpful error messages guide users to fix issue"
+        ]
+      },
+
+      "edge_case_testing": {
+        "test_cases": [
+          {
+            "case": "Empty issues list (perfect plan)",
+            "input": "issues: [], score: 100",
+            "expected": "No issue sections, no recommendations section, minimal report"
+          },
+          {
+            "case": "Only critical issues (failed plan)",
+            "input": "10 critical issues, 0 major, 0 minor, score: 0",
+            "expected": "Only critical section present, urgent recommendations, FAIL status"
+          },
+          {
+            "case": "Score exactly at threshold (85, 90)",
+            "input": "score: 85 (PASS_WITH_WARNINGS), score: 90 (PASS)",
+            "expected": "Correct result and emoji for each threshold"
+          },
+          {
+            "case": "Very long issue descriptions (500+ chars)",
+            "input": "Issue with 500-char description and 500-char suggestion",
+            "expected": "Markdown remains valid, proper wrapping, readable format"
+          },
+          {
+            "case": "50+ issues (large report)",
+            "input": "50 issues across all severities",
+            "expected": "Report generates successfully, all issues included, performance < 1 second"
+          },
+          {
+            "case": "Special characters in issue text (**bold**, `code`)",
+            "input": "Issue text contains markdown syntax characters",
+            "expected": "Characters escaped or handled gracefully, no broken markdown"
+          }
+        ]
+      }
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "Tool formats all ValidationResultDict inputs correctly",
+          "validation": "Test with perfect/flawed/failed plans; verify all generate valid markdown",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "Issue grouping works for all severity combinations",
+          "validation": "Test with only critical, only major, only minor, mixed, empty; verify correct grouping",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "Recommendations are specific and actionable",
+          "validation": "Review 10 sample reports; verify recommendations include counts, examples, clear steps",
+          "priority": "HIGH"
+        },
+        {
+          "criterion": "Approval status is clear and explicit",
+          "validation": "Test approved vs not approved; verify requirements and gap shown clearly",
+          "priority": "HIGH"
+        },
+        {
+          "criterion": "Report generation completes quickly",
+          "validation": "Test with 50-issue plan; measure duration; assert < 1 second",
+          "priority": "HIGH"
+        }
+      ],
+
+      "quality_requirements": [
+        {
+          "criterion": "Code follows all architecture patterns",
+          "validation": "Code review: ARCH-001 (ErrorResponse), QUA-001 (TypedDict), QUA-002 (handler registry), REF-002 (no magic strings), REF-003 (input validation), ARCH-003 (logging)",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "All error paths use ErrorResponse factory",
+          "validation": "Verify 3 error types handled: ValueError (invalid inputs), KeyError (missing keys), Exception (generic)",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "Returns valid PlanReviewDict",
+          "validation": "Call tool; verify return has all 3 required keys: report_markdown, summary, approval_status",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "Markdown is syntactically valid",
+          "validation": "Parse 10 sample reports with markdown library; verify no syntax errors",
+          "priority": "HIGH"
+        },
+        {
+          "criterion": "Report structure is consistent",
+          "validation": "Generate reports for 5 different scores; verify same sections in same order",
+          "priority": "MEDIUM"
+        }
+      ],
+
+      "usability_requirements": [
+        {
+          "criterion": "Reports are scannable in < 30 seconds",
+          "validation": "User testing: can user determine pass/fail, major issues, next steps in < 30s?",
+          "priority": "HIGH"
+        },
+        {
+          "criterion": "Emoji usage enhances readability",
+          "validation": "A/B test with/without emoji; verify emoji version is preferred",
+          "priority": "MEDIUM"
+        },
+        {
+          "criterion": "Reports are concise (< 500 lines for typical plan)",
+          "validation": "Test with typical plan (10-20 issues); verify report < 500 lines",
+          "priority": "MEDIUM"
+        }
+      ],
+
+      "performance_requirements": [
+        {
+          "criterion": "Report generation < 1 second",
+          "validation": "Test with 50-issue plan; measure duration; assert < 1 second",
+          "priority": "HIGH"
+        },
+        {
+          "criterion": "Report generation < 5 seconds for large plans",
+          "validation": "Test with 200-issue plan; measure duration; assert < 5 seconds",
+          "priority": "MEDIUM"
+        }
+      ],
+
+      "security_requirements": [
+        {
+          "criterion": "Path traversal prevention",
+          "validation": "Test with ../../../etc/passwd; verify blocked by validation",
+          "priority": "CRITICAL"
+        },
+        {
+          "criterion": "Input validation on all parameters",
+          "validation": "Test with missing/invalid project_path, plan_file_path, validation_result; verify ErrorResponse",
+          "priority": "CRITICAL"
+        }
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review Phase 4 plan for completeness",
+        "☐ Study AuditGenerator markdown formatting patterns",
+        "☐ Get user approval on Phase 4 approach"
+      ],
+      "infrastructure_setup": [
+        "☐ INFRA-001: Create generators/review_formatter.py with ReviewFormatter class",
+        "☐ INFRA-002: Implement format_report() main method signature",
+        "☐ INFRA-003: Add method stubs for all formatting methods"
+      ],
+      "header_and_summary": [
+        "☐ FORMAT-001: Implement _format_header() method",
+        "☐ FORMAT-002: Implement _format_summary() method"
+      ],
+      "issue_formatting": [
+        "☐ FORMAT-003: Implement _format_issue_item() method",
+        "☐ FORMAT-004: Implement _format_issues_by_severity() method",
+        "☐ FORMAT-005: Test issue formatting with sample data"
+      ],
+      "recommendations_and_approval": [
+        "☐ FORMAT-006: Implement _generate_recommendations() method",
+        "☐ FORMAT-007: Implement _format_approval_status() method"
+      ],
+      "mcp_integration": [
+        "☐ TOOL-001: Add generate_plan_review_report tool definition in server.py",
+        "☐ TOOL-002: Implement handle_generate_plan_review_report handler",
+        "☐ TOOL-003: Register handler in TOOL_HANDLERS dict",
+        "☐ TOOL-004: Add required imports to tool_handlers.py"
+      ],
+      "testing": [
+        "☐ TEST-001: Create test_review_formatter.py with fixtures",
+        "☐ TEST-002: Test perfect plan formatting",
+        "☐ TEST-003: Test flawed plan formatting",
+        "☐ TEST-004: Test issue grouping correctness"
+      ],
+      "validation": [
+        "☐ Run all tests and verify 100% pass",
+        "☐ Test with Phase 3 validation output - verify report formats correctly",
+        "☐ Test markdown validity with markdown parser",
+        "☐ Performance test: verify < 1s for typical reports",
+        "☐ Security test: verify path traversal blocked",
+        "☐ Error handling test: verify all error types handled"
+      ],
+      "finalization": [
+        "☐ Code review for architecture compliance",
+        "☐ Generate sample reports for documentation",
+        "☐ Commit Phase 4 implementation",
+        "☐ Update meta plan: mark Phase 4 tasks complete",
+        "☐ Proceed to Phase 5 (integration testing)"
+      ]
+    }
+  }
+}

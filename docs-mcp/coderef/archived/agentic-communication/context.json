@@ -1,0 +1,78 @@
+{
+  "feature_name": "agentic-communication",
+  "description": "Multi-agent task coordination system with structured JSON communication protocols. Enables parallel agent execution, automated verification, and integrated deliverables tracking for complex feature implementations.",
+  "goal": "Build the first MCP server with native multi-agent coordination capabilities. Enable 3x faster feature implementation through parallel agent execution while maintaining quality through automated verification protocols. Integrate seamlessly with existing workorder tracking, deliverables tracking, and planning workflow systems.",
+  "requirements": [
+    "Implement 5 new MCP tools for multi-agent coordination",
+    "Tool 1: generate_agent_communication - Auto-generate communication.json from plan.json with precise steps, forbidden files, and success criteria",
+    "Tool 2: assign_agent_task - Structured task assignment with workorder scoping and status validation",
+    "Tool 3: verify_agent_completion - Automated verification with git diff checks and success criteria validation",
+    "Tool 4: aggregate_agent_deliverables - Multi-agent DELIVERABLES.md merging with combined metrics",
+    "Tool 5: track_agent_status - Real-time coordination dashboard showing all agents' current tasks and blockers",
+    "Integrate with workorder tracking (v1.5.0) - Each agent task gets workorder-scoped ID",
+    "Integrate with deliverables tracking (v1.6.0) - Multi-agent deliverables aggregation",
+    "Integrate with planning workflow (v1.4.0) - Auto-generate agent tasks from plan.json phases",
+    "Support git verification - Automated forbidden file checks via git diff",
+    "Enable parallel agent execution - Multiple agents on different phases simultaneously",
+    "Implement quality assurance - Automated verification protocols",
+    "Provide task coordination - Clear handoff protocols and status tracking",
+    "Maintain documentation/audit trail - Complete record of who did what when",
+    "Automatic integration with /create-plan - Generates both plan.json AND communication.json",
+    "Optional multi-agent mode - Simple boolean flag to enable/disable agent coordination features",
+    "Support both single-agent and multi-agent workflows seamlessly"
+  ],
+  "out_of_scope": [
+    "Real-time agent messaging (WebSocket/SSE) - File-based communication only",
+    "External agent framework integration (LangGraph, AutoGen, CrewAI) - docs-mcp native only",
+    "Agent authentication/authorization systems - Trust-based model",
+    "AI agent selection logic - Manual agent assignment by user",
+    "Multi-user/multi-tenant agent coordination",
+    "Agent capability discovery/matching",
+    "Agent performance benchmarking/profiling"
+  ],
+  "constraints": [
+    "Must maintain backward compatibility - Existing /create-plan users not disrupted",
+    "Must support single-agent mode - System works both for solo and multi-agent workflows",
+    "Must have minimal performance overhead - Agent coordination < 1 second per handoff",
+    "Must use compact, git-friendly storage - communication.json files should be readable and diffable",
+    "Must follow existing docs-mcp patterns - @log_invocation, @mcp_error_handler decorators",
+    "Must integrate with existing file structure - coderef/working/{feature-name}/ directory pattern",
+    "Must preserve manual control - Users decide when/how to use multi-agent features",
+    "Optional multi-agent mode controlled by simple boolean flag"
+  ],
+  "decisions": [
+    "Use file-based communication via communication.json (proven pattern from existing examples)",
+    "Store communication files in coderef/working/{feature-name}/communication.json",
+    "Agent status field pattern: agent_N_status where N is agent number (1, 2, 3, 4, etc.)",
+    "Status progression: null → IN_PROGRESS → COMPLETE → VERIFIED",
+    "Forbidden files pattern: Array of strings with format 'file.ts - DO NOT MODIFY (reason)'",
+    "Success criteria pattern: Array of strings with format '✅ {outcome} - {verification method}'",
+    "Precise steps pattern: Array of strings with format 'Step N: {action} {file}:{line} {details}'",
+    "Integrate with /create-plan via optional --multi-agent flag (default: false for backward compatibility)",
+    "Use existing workorder ID format: WO-{FEATURE-NAME}-{AGENT-NUMBER} for agent-scoped tasks",
+    "Aggregate deliverables by merging metrics: sum LOC, count total commits, calculate total time",
+    "Verification uses git diff to confirm forbidden files unchanged",
+    "Track agent coordination in new agent_coordination.json file alongside communication.json"
+  ],
+  "success_criteria": [
+    "✅ All 5 MCP tools implemented and tested",
+    "✅ /create-plan generates communication.json when --multi-agent flag used",
+    "✅ Agent tasks automatically assigned workorder-scoped IDs",
+    "✅ Parallel agent execution demonstrated (3+ agents working simultaneously)",
+    "✅ Automated verification catches forbidden file modifications",
+    "✅ Multi-agent deliverables successfully aggregated with combined metrics",
+    "✅ Agent status dashboard shows real-time coordination state",
+    "✅ Backward compatibility maintained - single-agent workflows unaffected",
+    "✅ Performance overhead < 1 second per agent handoff",
+    "✅ Documentation complete with examples and quick-start guide",
+    "✅ Integration tests pass for all 5 tools",
+    "✅ Real-world test: 3-phase feature implemented by 3 agents in parallel"
+  ],
+  "_metadata": {
+    "created_date": "2025-10-18",
+    "created_by": "Claude (gather-context workflow)",
+    "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+    "workorder_assigned_at": "2025-10-18T04:30:00Z",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "feature_name": "docs-mcp-schema-fix",
+  "description": "Implement schema-first design for plan.json to ensure consistent structure between create_plan and all downstream consumers (generate_deliverables, execute_plan, etc.)",
+  "goal": "Make the planning workflow robust by enforcing a JSON schema contract - eliminating schema mismatch errors like 'string indices must be integers'",
+  "requirements": [
+    "Create plan.schema.json as single source of truth",
+    "Update create_plan to return schema with instructions",
+    "Update validate_plan to validate against schema before scoring",
+    "Update generate_deliverables_template to handle the defined schema",
+    "Add schema_version field to all generated plans",
+    "Provide clear error messages on schema violations"
+  ],
+  "out_of_scope": [
+    "Changing the 10-section plan structure",
+    "Adding new planning features",
+    "Modifying other MCP tools not related to planning"
+  ],
+  "constraints": [
+    "Must be backward compatible with existing plans where possible",
+    "Schema must be human-readable and AI-friendly",
+    "No breaking changes to MCP tool signatures"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-DOCS-MCP-SCHEMA-FIX-001",
+    "workorder_assigned_at": "2025-12-03T18:01:36.140210+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

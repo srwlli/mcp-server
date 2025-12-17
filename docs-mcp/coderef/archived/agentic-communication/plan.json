@@ -1,0 +1,1032 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "agentic-communication",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_date": "2025-10-18",
+    "has_context": true,
+    "has_analysis": true,
+    "template_version": "2.0.0"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_documents": {
+        "readme": {
+          "path": "README.md",
+          "exists": true,
+          "relevance": "High - describes docs-mcp features and tools"
+        },
+        "architecture": {
+          "path": "ARCHITECTURE.md",
+          "exists": true,
+          "relevance": "High - describes MCP server architecture patterns"
+        },
+        "claude_md": {
+          "path": "CLAUDE.md",
+          "exists": true,
+          "relevance": "High - AI context for tool implementation patterns"
+        },
+        "user_guide": {
+          "path": "user-guide.md",
+          "exists": true,
+          "relevance": "High - documents workflow patterns and tool usage"
+        }
+      },
+      "coding_standards": {
+        "python_style": {
+          "source": "Existing codebase",
+          "key_patterns": [
+            "Async function signatures for MCP tools",
+            "@log_invocation and @mcp_error_handler decorators",
+            "Type hints with pathlib.Path for file paths",
+            "JSON response formatting with format_success_response()",
+            "Input validation with validate_project_path_input() and validate_feature_name_input()"
+          ]
+        },
+        "error_handling": {
+          "pattern": "Raise ValueError/FileNotFoundError with descriptive messages",
+          "validation": "Use existing validation helpers from tool_handlers.py"
+        },
+        "git_integration": {
+          "pattern": "Use subprocess.run() with timeout for git commands",
+          "reference": "See git_parse_history(), git_calculate_loc() in handler_helpers.py"
+        }
+      },
+      "reference_implementations": {
+        "similar_tools": [
+          {
+            "name": "generate_deliverables_template",
+            "file": "tool_handlers.py:1817",
+            "relevance": "Template generation from plan.json - similar to generate_agent_communication"
+          },
+          {
+            "name": "update_deliverables",
+            "file": "tool_handlers.py:1932",
+            "relevance": "Git history parsing and metrics calculation - similar to verify_agent_completion"
+          },
+          {
+            "name": "create_plan",
+            "file": "tool_handlers.py:~1100",
+            "relevance": "Plan generation workflow - integration point for --multi-agent flag"
+          },
+          {
+            "name": "gather_context",
+            "file": "tool_handlers.py:1260",
+            "relevance": "Workorder assignment pattern - similar to assign_agent_task"
+          }
+        ],
+        "key_patterns_to_follow": [
+          "Use feature_dir pattern: project_path / 'coderef' / 'working' / feature_name",
+          "Load plan.json from feature_dir / 'plan.json'",
+          "Use git commands via subprocess for verification",
+          "Return formatted success response with file paths",
+          "Include workorder_id in all agent-related operations"
+        ]
+      },
+      "technical_constraints": [
+        "Must work with existing MCP server architecture",
+        "Must follow async/await patterns for MCP tools",
+        "Must handle Windows and Unix file paths",
+        "Must maintain backward compatibility with existing /create-plan",
+        "Must support both single-agent and multi-agent modes",
+        "Agent coordination overhead must be < 1 second per handoff",
+        "Communication files must be git-friendly (readable JSON)"
+      ],
+      "existing_agent_examples": {
+        "ast_analyzer_fixes": {
+          "path": "coderef/working/agentic-communication/agent-4.md",
+          "demonstrates": "3-phase workflow (Planning → Execution → Verification)",
+          "key_learnings": [
+            "Precise steps with file:line references",
+            "Forbidden files pattern prevents production modifications",
+            "Success criteria must be measurable",
+            "Git diff verifies boundaries",
+            "Agent status progression: null → COMPLETE → VERIFIED"
+          ]
+        },
+        "typescript_compiler_test": {
+          "path": "coderef/working/agentic-communication/agent-3.md",
+          "demonstrates": "Async multi-agent handoff workflow",
+          "key_learnings": [
+            "Context.json = immutable requirements",
+            "Communication.json = mutable status updates",
+            "Results documentation in structured format",
+            "Temporal tracking with dates",
+            "Complete audit trail"
+          ]
+        }
+      }
+    },
+    "1_executive_summary": {
+      "feature_overview": "Multi-agent task coordination system with structured JSON communication protocols. Implements 5 new MCP tools to enable parallel agent execution, automated verification, and integrated deliverables tracking. First MCP server with native multi-agent coordination capabilities.",
+      "business_value": "Enables 3x faster feature implementation through parallel agent execution while maintaining quality through automated verification protocols. Reduces implementation time from 6 hours (sequential) to 2 hours (parallel 3-agent workflow). Provides complete audit trail and automated quality gates.",
+      "key_objectives": [
+        "Implement 5 new MCP tools for multi-agent coordination",
+        "Integrate with existing workorder tracking (v1.5.0) and deliverables tracking (v1.6.0)",
+        "Enable parallel agent execution with clear boundaries and verification",
+        "Maintain backward compatibility with optional --multi-agent flag",
+        "Provide automated verification via git diff and success criteria validation",
+        "Create comprehensive documentation and examples"
+      ],
+      "success_metrics": {
+        "functional": "All 5 tools working with workorder integration and multi-agent deliverables aggregation",
+        "performance": "Agent coordination overhead < 1 second, parallel execution achieves 3x speedup",
+        "adoption": "/create-plan optionally generates communication.json, real-world 3-agent test passes"
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_estimate": {
+        "overall": "High",
+        "justification": "Requires 5 new MCP tools, integration with 3 existing systems (workorder, deliverables, planning), complex git verification logic, and multi-agent coordination state management. However, follows proven patterns from existing tools and has real-world examples to validate against."
+      },
+      "technical_risks": [
+        {
+          "risk": "Multi-agent coordination state conflicts if multiple agents modify same files",
+          "likelihood": "Medium",
+          "impact": "High",
+          "mitigation": "Use forbidden_files pattern to prevent conflicts. Validate file boundaries before assignment. Implement git diff verification in verify_agent_completion."
+        },
+        {
+          "risk": "Performance degradation from git operations and file I/O",
+          "likelihood": "Low",
+          "impact": "Medium",
+          "mitigation": "Use subprocess timeouts (5-10 seconds). Cache git status. Minimize file reads/writes. Benchmark against < 1 second requirement."
+        },
+        {
+          "risk": "Backward compatibility break if /create-plan changes behavior",
+          "likelihood": "Low",
+          "impact": "High",
+          "mitigation": "Make multi-agent mode opt-in via --multi-agent flag (default: false). Existing users see no change. Integration tests for both modes."
+        },
+        {
+          "risk": "Complex state management across agent_N_status fields",
+          "likelihood": "Medium",
+          "impact": "Medium",
+          "mitigation": "Use simple status progression (null → IN_PROGRESS → COMPLETE → VERIFIED). Store state in communication.json, not in-memory. Single source of truth."
+        },
+        {
+          "risk": "Git verification may miss edge cases (symlinks, submodules, binary files)",
+          "likelihood": "Medium",
+          "impact": "Low",
+          "mitigation": "Use git diff --name-only for simple file list. Document limitations. Focus on common cases (Python, JavaScript, JSON)."
+        }
+      ],
+      "dependencies": [
+        {
+          "type": "Internal",
+          "name": "Workorder tracking (v1.5.0)",
+          "risk": "Agent workorder IDs must follow WO-{FEATURE}-{AGENT} format",
+          "mitigation": "Extend generate_workorder_id() to support agent numbers"
+        },
+        {
+          "type": "Internal",
+          "name": "Deliverables tracking (v1.6.0)",
+          "risk": "Multi-agent metrics aggregation logic must handle edge cases",
+          "mitigation": "Use sum/count for metrics, handle missing data gracefully"
+        },
+        {
+          "type": "Internal",
+          "name": "Planning workflow (v1.4.0)",
+          "risk": "create_plan handler modification may affect existing workflows",
+          "mitigation": "Add optional parameters, don't change defaults"
+        },
+        {
+          "type": "External",
+          "name": "Git",
+          "risk": "Git must be available and repository valid",
+          "mitigation": "Use check_git_available() before verification operations"
+        }
+      ],
+      "rollback_strategy": "Feature is additive with opt-in flag. If issues arise, users can simply not use --multi-agent flag. Existing workflows unaffected. Can disable tools in server.py without removing code."
+    },
+    "3_current_state_analysis": {
+      "existing_components": {
+        "tool_handlers": {
+          "path": "tool_handlers.py",
+          "current_tools": 23,
+          "new_tools_needed": 5,
+          "modification_points": [
+            "Add handle_generate_agent_communication()",
+            "Add handle_assign_agent_task()",
+            "Add handle_verify_agent_completion()",
+            "Add handle_aggregate_agent_deliverables()",
+            "Add handle_track_agent_status()",
+            "Modify handle_create_plan() to support --multi-agent flag",
+            "Register 5 new handlers in TOOL_HANDLERS dict"
+          ]
+        },
+        "server": {
+          "path": "server.py",
+          "current_tools": 25,
+          "modification_needed": "Add 5 Tool definitions for new agent coordination tools"
+        },
+        "handler_helpers": {
+          "path": "handler_helpers.py",
+          "current_helpers": 8,
+          "new_helpers_needed": [
+            "generate_agent_workorder_id(feature_name, agent_number)",
+            "parse_agent_status(communication_data)",
+            "validate_forbidden_files(project_path, forbidden_files)",
+            "aggregate_agent_metrics(agent_deliverables_list)"
+          ]
+        },
+        "templates": {
+          "needed": "templates/communication_template.json - Template for communication.json generation"
+        }
+      },
+      "files_to_create": [
+        {
+          "path": "templates/communication_template.json",
+          "purpose": "Template for generating communication.json from plan.json",
+          "estimated_loc": 80
+        },
+        {
+          "path": "tests/unit/test_agent_communication.py",
+          "purpose": "Unit tests for agent communication helpers",
+          "estimated_loc": 200
+        },
+        {
+          "path": "tests/integration/test_multi_agent_workflow.py",
+          "purpose": "End-to-end test of 3-agent parallel workflow",
+          "estimated_loc": 150
+        },
+        {
+          "path": ".claude/commands/assign-agent.md",
+          "purpose": "Slash command for agent task assignment",
+          "estimated_loc": 30
+        },
+        {
+          "path": ".claude/commands/verify-agent.md",
+          "purpose": "Slash command for agent verification",
+          "estimated_loc": 30
+        },
+        {
+          "path": ".claude/commands/track-agents.md",
+          "purpose": "Slash command for agent status dashboard",
+          "estimated_loc": 25
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "handler_helpers.py",
+          "changes": "Add 4 new agent coordination helper functions",
+          "estimated_loc": 150
+        },
+        {
+          "path": "tool_handlers.py",
+          "changes": "Add 5 new handlers + modify create_plan handler",
+          "estimated_loc": 600
+        },
+        {
+          "path": "server.py",
+          "changes": "Add 5 Tool definitions",
+          "estimated_loc": 100
+        },
+        {
+          "path": ".claude/commands/create-plan.md",
+          "changes": "Document --multi-agent flag",
+          "estimated_loc": 15
+        },
+        {
+          "path": "README.md",
+          "changes": "Add agent coordination tools section",
+          "estimated_loc": 40
+        },
+        {
+          "path": "CLAUDE.md",
+          "changes": "Document new tools and slash commands",
+          "estimated_loc": 80
+        },
+        {
+          "path": "user-guide.md",
+          "changes": "Add multi-agent workflow section",
+          "estimated_loc": 100
+        }
+      ]
+    },
+    "4_key_features": {
+      "F1": {
+        "id": "F1",
+        "name": "generate_agent_communication Tool",
+        "description": "Auto-generate communication.json from plan.json with precise steps, forbidden files, and success criteria for agent task assignment",
+        "priority": "Critical",
+        "user_story": "As a user planning a multi-agent feature, I want /create-plan to automatically generate communication.json files so agents have clear instructions without manual setup",
+        "acceptance_criteria": [
+          "Reads plan.json from coderef/working/{feature-name}/",
+          "Generates communication.json with feature, precise_steps, forbidden_files, success_criteria",
+          "Assigns agent_1_status: 'Ready for execution' and agent_N_status: null",
+          "Includes workorder_id from plan.json section 5",
+          "Saves to coderef/working/{feature-name}/communication.json",
+          "Follows template structure from templates/communication_template.json"
+        ]
+      },
+      "F2": {
+        "id": "F2",
+        "name": "assign_agent_task Tool",
+        "description": "Structured task assignment with workorder scoping, status validation, and agent-specific instructions",
+        "priority": "Critical",
+        "user_story": "As a coordinator, I want to assign specific plan phases to agents with clear boundaries so they can work independently without conflicts",
+        "acceptance_criteria": [
+          "Validates agent number (1-10) and feature name",
+          "Generates agent-scoped workorder ID: WO-{FEATURE}-{AGENT}",
+          "Updates communication.json with agent_N_status: 'ASSIGNED'",
+          "Validates no conflicting assignments (same files to multiple agents)",
+          "Creates agent-specific instruction set from plan.json phase",
+          "Returns assignment confirmation with workorder ID and boundaries"
+        ]
+      },
+      "F3": {
+        "id": "F3",
+        "name": "verify_agent_completion Tool",
+        "description": "Automated verification with git diff checks, success criteria validation, and completion status updates",
+        "priority": "Critical",
+        "user_story": "As a quality coordinator, I want automated verification of agent work so I can ensure boundaries were respected and criteria met",
+        "acceptance_criteria": [
+          "Validates agent_N_status is 'COMPLETE' before verification",
+          "Runs git diff on all forbidden_files and confirms no changes",
+          "Checks each success_criteria item (manual or automated where possible)",
+          "Updates communication.json with agent_1_verification results",
+          "Updates agent_N_status to 'VERIFIED' on success",
+          "Returns verification report with pass/fail for each criterion"
+        ]
+      },
+      "F4": {
+        "id": "F4",
+        "name": "aggregate_agent_deliverables Tool",
+        "description": "Multi-agent DELIVERABLES.md merging with combined metrics (LOC, commits, time)",
+        "priority": "High",
+        "user_story": "As a project manager, I want a unified deliverables report combining all agent contributions so I can see total impact",
+        "acceptance_criteria": [
+          "Loads DELIVERABLES.md from each agent's working directory",
+          "Sums LOC metrics: total added, total deleted, net LOC",
+          "Counts total commits across all agents",
+          "Calculates total time from earliest to latest commit",
+          "Lists all contributors (unique agent list)",
+          "Merges task completion checklists",
+          "Saves aggregated report to coderef/working/{feature-name}/DELIVERABLES-COMBINED.md"
+        ]
+      },
+      "F5": {
+        "id": "F5",
+        "name": "track_agent_status Tool",
+        "description": "Real-time coordination dashboard showing all agents' current tasks, status, and blockers",
+        "priority": "High",
+        "user_story": "As a coordinator, I want a dashboard of all agent statuses so I can identify blockers and coordinate handoffs",
+        "acceptance_criteria": [
+          "Scans all coderef/working/*/communication.json files",
+          "Extracts agent_N_status fields for each feature",
+          "Identifies agents: null (available), IN_PROGRESS (busy), COMPLETE (ready for verify), VERIFIED (done)",
+          "Detects blockers: agents waiting for dependencies",
+          "Shows workorder IDs and task summaries",
+          "Returns formatted dashboard with agent availability and current assignments"
+        ]
+      },
+      "F6": {
+        "id": "F6",
+        "name": "Multi-Agent Mode Integration with /create-plan",
+        "description": "Optional --multi-agent flag for /create-plan to automatically generate communication.json alongside plan.json",
+        "priority": "Critical",
+        "user_story": "As a user, I want /create-plan to optionally set up multi-agent coordination automatically so I don't need extra steps",
+        "acceptance_criteria": [
+          "create_plan handler accepts optional multi_agent boolean parameter (default: false)",
+          "When multi_agent=true, calls generate_agent_communication after creating plan.json",
+          "Returns both plan.json and communication.json paths",
+          "When multi_agent=false, behavior unchanged (backward compatible)",
+          "Documentation updated in .claude/commands/create-plan.md",
+          "Integration test validates both modes work correctly"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-AGENTIC-COMMUNICATION-001",
+        "name": "Agentic Communication System",
+        "feature_dir": "coderef/working/agentic-communication"
+      },
+      "task_breakdown": {
+        "F1_tasks": [
+          {
+            "id": "F1.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Create communication_template.json in templates/",
+            "estimated_effort": "Small",
+            "dependencies": []
+          },
+          {
+            "id": "F1.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Implement handle_generate_agent_communication() in tool_handlers.py",
+            "estimated_effort": "Medium",
+            "dependencies": ["F1.1"]
+          },
+          {
+            "id": "F1.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add generate_agent_communication Tool definition to server.py",
+            "estimated_effort": "Small",
+            "dependencies": ["F1.2"]
+          },
+          {
+            "id": "F1.4",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Register handler in TOOL_HANDLERS dict",
+            "estimated_effort": "Small",
+            "dependencies": ["F1.2"]
+          }
+        ],
+        "F2_tasks": [
+          {
+            "id": "F2.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add generate_agent_workorder_id() helper to handler_helpers.py",
+            "estimated_effort": "Small",
+            "dependencies": []
+          },
+          {
+            "id": "F2.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Implement handle_assign_agent_task() in tool_handlers.py",
+            "estimated_effort": "Medium",
+            "dependencies": ["F2.1"]
+          },
+          {
+            "id": "F2.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add assign_agent_task Tool definition to server.py",
+            "estimated_effort": "Small",
+            "dependencies": ["F2.2"]
+          },
+          {
+            "id": "F2.4",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Register handler in TOOL_HANDLERS dict",
+            "estimated_effort": "Small",
+            "dependencies": ["F2.2"]
+          }
+        ],
+        "F3_tasks": [
+          {
+            "id": "F3.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add validate_forbidden_files() helper to handler_helpers.py",
+            "estimated_effort": "Medium",
+            "dependencies": []
+          },
+          {
+            "id": "F3.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Implement handle_verify_agent_completion() in tool_handlers.py",
+            "estimated_effort": "Large",
+            "dependencies": ["F3.1"]
+          },
+          {
+            "id": "F3.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add verify_agent_completion Tool definition to server.py",
+            "estimated_effort": "Small",
+            "dependencies": ["F3.2"]
+          },
+          {
+            "id": "F3.4",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Register handler in TOOL_HANDLERS dict",
+            "estimated_effort": "Small",
+            "dependencies": ["F3.2"]
+          }
+        ],
+        "F4_tasks": [
+          {
+            "id": "F4.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add aggregate_agent_metrics() helper to handler_helpers.py",
+            "estimated_effort": "Medium",
+            "dependencies": []
+          },
+          {
+            "id": "F4.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Implement handle_aggregate_agent_deliverables() in tool_handlers.py",
+            "estimated_effort": "Large",
+            "dependencies": ["F4.1"]
+          },
+          {
+            "id": "F4.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add aggregate_agent_deliverables Tool definition to server.py",
+            "estimated_effort": "Small",
+            "dependencies": ["F4.2"]
+          },
+          {
+            "id": "F4.4",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Register handler in TOOL_HANDLERS dict",
+            "estimated_effort": "Small",
+            "dependencies": ["F4.2"]
+          }
+        ],
+        "F5_tasks": [
+          {
+            "id": "F5.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add parse_agent_status() helper to handler_helpers.py",
+            "estimated_effort": "Small",
+            "dependencies": []
+          },
+          {
+            "id": "F5.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Implement handle_track_agent_status() in tool_handlers.py",
+            "estimated_effort": "Medium",
+            "dependencies": ["F5.1"]
+          },
+          {
+            "id": "F5.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Add track_agent_status Tool definition to server.py",
+            "estimated_effort": "Small",
+            "dependencies": ["F5.2"]
+          },
+          {
+            "id": "F5.4",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Register handler in TOOL_HANDLERS dict",
+            "estimated_effort": "Small",
+            "dependencies": ["F5.2"]
+          }
+        ],
+        "F6_tasks": [
+          {
+            "id": "F6.1",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Modify handle_create_plan() to accept optional multi_agent parameter",
+            "estimated_effort": "Medium",
+            "dependencies": ["F1.2"]
+          },
+          {
+            "id": "F6.2",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Update create_plan Tool definition in server.py to include multi_agent parameter",
+            "estimated_effort": "Small",
+            "dependencies": ["F6.1"]
+          },
+          {
+            "id": "F6.3",
+            "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+            "description": "Update .claude/commands/create-plan.md documentation",
+            "estimated_effort": "Small",
+            "dependencies": ["F6.2"]
+          }
+        ]
+      },
+      "total_tasks": 27,
+      "estimated_total_effort": "Large (24-32 hours)"
+    },
+    "6_implementation_phases": {
+      "phase_0": {
+        "name": "Foundation - Core Helpers and Template",
+        "description": "Build shared foundation: agent helper functions and communication.json template structure",
+        "tasks": ["F1.1", "F2.1", "F3.1", "F4.1", "F5.1"],
+        "deliverables": [
+          "templates/communication_template.json with complete structure",
+          "generate_agent_workorder_id() helper in handler_helpers.py",
+          "validate_forbidden_files() helper in handler_helpers.py",
+          "aggregate_agent_metrics() helper in handler_helpers.py",
+          "parse_agent_status() helper in handler_helpers.py",
+          "tests/unit/test_agent_helpers.py with 10+ test cases",
+          "All unit tests passing"
+        ],
+        "estimated_duration": "4-6 hours",
+        "dependencies": [],
+        "validation": [
+          "✅ All 4 helper functions implemented with type hints",
+          "✅ communication_template.json validates against example structure",
+          "✅ Unit tests for helpers all pass",
+          "✅ Helpers handle edge cases (missing files, invalid input)"
+        ]
+      },
+      "phase_1": {
+        "name": "Tool 1 - generate_agent_communication",
+        "description": "Implement communication.json generation from plan.json - foundation for all other tools",
+        "tasks": ["F1.2", "F1.3", "F1.4"],
+        "deliverables": [
+          "handle_generate_agent_communication() in tool_handlers.py",
+          "generate_agent_communication Tool definition in server.py",
+          "Handler registered in TOOL_HANDLERS dict",
+          "Unit tests for generation logic",
+          "Manual test: generate communication.json from workorder-tracking plan"
+        ],
+        "estimated_duration": "3-4 hours",
+        "dependencies": ["phase_0"],
+        "validation": [
+          "✅ Loads plan.json and generates valid communication.json",
+          "✅ Includes precise_steps, forbidden_files, success_criteria",
+          "✅ Workorder ID carried over from plan.json",
+          "✅ Agent status fields initialized correctly",
+          "✅ Manual test with existing plan works"
+        ]
+      },
+      "phase_2": {
+        "name": "Tool 2 - assign_agent_task",
+        "description": "Implement structured agent task assignment with workorder scoping and validation",
+        "tasks": ["F2.2", "F2.3", "F2.4"],
+        "deliverables": [
+          "handle_assign_agent_task() in tool_handlers.py",
+          "assign_agent_task Tool definition in server.py",
+          "Handler registered in TOOL_HANDLERS dict",
+          "Unit tests for assignment logic",
+          "Manual test: assign phase to agent-2 with conflict detection"
+        ],
+        "estimated_duration": "3-4 hours",
+        "dependencies": ["phase_1"],
+        "validation": [
+          "✅ Generates agent-scoped workorder ID (WO-FEATURE-002)",
+          "✅ Updates communication.json with agent_N_status: 'ASSIGNED'",
+          "✅ Detects conflicting file assignments",
+          "✅ Creates agent-specific instruction set",
+          "✅ Manual test with 2 agents on same feature works"
+        ]
+      },
+      "phase_3": {
+        "name": "Tool 3 - verify_agent_completion",
+        "description": "Implement automated verification with git diff checks and success criteria validation",
+        "tasks": ["F3.2", "F3.3", "F3.4"],
+        "deliverables": [
+          "handle_verify_agent_completion() in tool_handlers.py",
+          "verify_agent_completion Tool definition in server.py",
+          "Handler registered in TOOL_HANDLERS dict",
+          "Unit tests for verification logic",
+          "Manual test: verify completed agent work with git diff"
+        ],
+        "estimated_duration": "4-5 hours",
+        "dependencies": ["phase_2"],
+        "validation": [
+          "✅ Validates agent_N_status is 'COMPLETE' before verification",
+          "✅ Runs git diff on forbidden_files and detects changes",
+          "✅ Checks success_criteria items",
+          "✅ Updates agent_1_verification results in communication.json",
+          "✅ Manual test catches forbidden file modification"
+        ]
+      },
+      "phase_4": {
+        "name": "Tool 4 - aggregate_agent_deliverables",
+        "description": "Implement multi-agent DELIVERABLES.md merging with combined metrics",
+        "tasks": ["F4.2", "F4.3", "F4.4"],
+        "deliverables": [
+          "handle_aggregate_agent_deliverables() in tool_handlers.py",
+          "aggregate_agent_deliverables Tool definition in server.py",
+          "Handler registered in TOOL_HANDLERS dict",
+          "Unit tests for aggregation logic",
+          "Manual test: aggregate 3 agent deliverables"
+        ],
+        "estimated_duration": "4-5 hours",
+        "dependencies": ["phase_3"],
+        "validation": [
+          "✅ Loads multiple DELIVERABLES.md files",
+          "✅ Correctly sums LOC metrics (added, deleted, net)",
+          "✅ Counts total commits across agents",
+          "✅ Lists all unique contributors",
+          "✅ Creates DELIVERABLES-COMBINED.md with merged data"
+        ]
+      },
+      "phase_5": {
+        "name": "Tool 5 - track_agent_status",
+        "description": "Implement real-time coordination dashboard for agent status tracking",
+        "tasks": ["F5.2", "F5.3", "F5.4"],
+        "deliverables": [
+          "handle_track_agent_status() in tool_handlers.py",
+          "track_agent_status Tool definition in server.py",
+          "Handler registered in TOOL_HANDLERS dict",
+          "Unit tests for status tracking logic",
+          "Manual test: dashboard with 3+ concurrent agents"
+        ],
+        "estimated_duration": "3-4 hours",
+        "dependencies": ["phase_4"],
+        "validation": [
+          "✅ Scans all communication.json files in coderef/working/",
+          "✅ Extracts agent_N_status for all agents",
+          "✅ Identifies available, busy, complete, verified agents",
+          "✅ Detects blockers and dependencies",
+          "✅ Returns formatted dashboard with clear status"
+        ]
+      },
+      "phase_6": {
+        "name": "Integration - /create-plan Multi-Agent Mode",
+        "description": "Integrate with existing /create-plan workflow via optional --multi-agent flag",
+        "tasks": ["F6.1", "F6.2", "F6.3"],
+        "deliverables": [
+          "Modified handle_create_plan() with multi_agent parameter",
+          "Updated create_plan Tool definition with parameter",
+          "Updated .claude/commands/create-plan.md documentation",
+          "Integration test for both modes (single/multi-agent)",
+          "Backward compatibility validation"
+        ],
+        "estimated_duration": "3-4 hours",
+        "dependencies": ["phase_1"],
+        "validation": [
+          "✅ /create-plan --multi-agent=true generates both files",
+          "✅ /create-plan (default) only generates plan.json",
+          "✅ Workorder ID consistent across both files",
+          "✅ Existing single-agent workflows unaffected",
+          "✅ Integration test IT-1 passes"
+        ]
+      },
+      "phase_7": {
+        "name": "Slash Commands and Documentation",
+        "description": "Create slash commands and comprehensive documentation for all new tools",
+        "tasks": [],
+        "deliverables": [
+          ".claude/commands/assign-agent.md",
+          ".claude/commands/verify-agent.md",
+          ".claude/commands/track-agents.md",
+          "Updated README.md with agent coordination section",
+          "Updated CLAUDE.md with tool and command documentation",
+          "Updated user-guide.md with multi-agent workflow guide",
+          "Usage examples for each tool"
+        ],
+        "estimated_duration": "3-4 hours",
+        "dependencies": ["phase_5"],
+        "validation": [
+          "✅ All slash commands created and documented",
+          "✅ README.md updated with tool count and features",
+          "✅ CLAUDE.md has complete tool reference",
+          "✅ user-guide.md has step-by-step multi-agent workflow",
+          "✅ Examples validate against actual implementation"
+        ]
+      },
+      "phase_8": {
+        "name": "Integration Testing and Real-World Validation",
+        "description": "End-to-end testing with real 3-agent parallel workflow and performance validation",
+        "tasks": [],
+        "deliverables": [
+          "tests/integration/test_multi_agent_workflow.py",
+          "Real-world 3-agent test (3 phases, 3 agents)",
+          "Performance benchmarks (< 1 second requirement)",
+          "Backward compatibility test suite",
+          "CHANGELOG entry for v1.7.0"
+        ],
+        "estimated_duration": "4-5 hours",
+        "dependencies": ["phase_6", "phase_7"],
+        "validation": [
+          "✅ Integration test IT-2 (3-agent parallel) passes",
+          "✅ Integration test IT-3 (forbidden file) passes",
+          "✅ Integration test IT-4 (backward compat) passes",
+          "✅ Real-world test: 3 agents complete feature in parallel",
+          "✅ Performance benchmarks meet < 1 second target",
+          "✅ All existing tests still pass"
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Individual helper functions and tool handlers",
+        "test_cases": [
+          {
+            "test_id": "UT-1",
+            "description": "Test generate_agent_workorder_id() creates correct format",
+            "inputs": "feature_name='auth-system', agent_number=2",
+            "expected_output": "WO-AUTH-SYSTEM-002"
+          },
+          {
+            "test_id": "UT-2",
+            "description": "Test validate_forbidden_files() detects modifications",
+            "inputs": "Mock git diff output showing forbidden file changed",
+            "expected_output": "Raises ValueError with file path"
+          },
+          {
+            "test_id": "UT-3",
+            "description": "Test aggregate_agent_metrics() sums LOC correctly",
+            "inputs": "3 deliverables with LOC: 100, 200, 150",
+            "expected_output": "{added: 450, deleted: X, net: Y}"
+          },
+          {
+            "test_id": "UT-4",
+            "description": "Test parse_agent_status() extracts status from communication.json",
+            "inputs": "communication.json with agent_2_status: 'COMPLETE'",
+            "expected_output": "{agent: 2, status: 'COMPLETE'}"
+          },
+          {
+            "test_id": "UT-5",
+            "description": "Test generate_agent_communication creates valid communication.json",
+            "inputs": "plan.json with 3 phases",
+            "expected_output": "communication.json with precise_steps, forbidden_files, success_criteria"
+          }
+        ]
+      },
+      "integration_tests": {
+        "scope": "End-to-end multi-agent workflows",
+        "test_scenarios": [
+          {
+            "test_id": "IT-1",
+            "description": "Test /create-plan with --multi-agent generates both files",
+            "steps": [
+              "Run /create-plan --multi-agent for test-feature",
+              "Verify plan.json exists",
+              "Verify communication.json exists",
+              "Verify communication.json has workorder_id from plan"
+            ],
+            "expected_outcome": "Both files created with consistent workorder ID"
+          },
+          {
+            "test_id": "IT-2",
+            "description": "Test 3-agent parallel workflow",
+            "steps": [
+              "Create plan with 3 phases",
+              "Assign phase-1 to agent-2, phase-2 to agent-3, phase-3 to agent-4",
+              "Verify each agent has unique workorder ID (WO-FEATURE-002, WO-FEATURE-003, WO-FEATURE-004)",
+              "Simulate agent completion (update agent_N_status to COMPLETE)",
+              "Run verify_agent_completion for each agent",
+              "Run aggregate_agent_deliverables",
+              "Verify DELIVERABLES-COMBINED.md has summed metrics"
+            ],
+            "expected_outcome": "3 agents work independently, verification passes, combined deliverables accurate"
+          },
+          {
+            "test_id": "IT-3",
+            "description": "Test forbidden file protection",
+            "steps": [
+              "Assign task with forbidden_files: ['scanner.ts']",
+              "Simulate agent modifying scanner.ts",
+              "Run verify_agent_completion",
+              "Verify verification fails with forbidden file error"
+            ],
+            "expected_outcome": "Git diff detects forbidden file modification, verification fails"
+          },
+          {
+            "test_id": "IT-4",
+            "description": "Test backward compatibility (single-agent mode)",
+            "steps": [
+              "Run /create-plan WITHOUT --multi-agent flag",
+              "Verify only plan.json created (no communication.json)",
+              "Verify existing workflow unaffected"
+            ],
+            "expected_outcome": "Single-agent mode works as before, no breaking changes"
+          }
+        ]
+      },
+      "manual_testing": {
+        "critical_paths": [
+          "Real 3-phase feature implementation with 3 agents in parallel",
+          "Test on Windows and verify file path handling",
+          "Test with complex git history (merge commits, rebases)",
+          "Test agent status dashboard with 5+ concurrent agents",
+          "Test deliverables aggregation with varied metrics"
+        ]
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "All 5 MCP tools implemented and working",
+          "measurement": "Each tool callable via MCP, returns expected output",
+          "target": "100% tool availability"
+        },
+        {
+          "criterion": "/create-plan generates communication.json when --multi-agent used",
+          "measurement": "Integration test IT-1 passes",
+          "target": "100% success rate"
+        },
+        {
+          "criterion": "Agent tasks get workorder-scoped IDs",
+          "measurement": "WO-{FEATURE}-{AGENT} format validated",
+          "target": "100% ID format compliance"
+        },
+        {
+          "criterion": "Parallel agent execution works",
+          "measurement": "Integration test IT-2 with 3 agents passes",
+          "target": "3x speedup demonstrated"
+        },
+        {
+          "criterion": "Automated verification catches forbidden file modifications",
+          "measurement": "Integration test IT-3 passes",
+          "target": "100% detection rate"
+        },
+        {
+          "criterion": "Multi-agent deliverables aggregation accurate",
+          "measurement": "Manual verification of summed metrics",
+          "target": "±0 error in LOC/commit counts"
+        },
+        {
+          "criterion": "Backward compatibility maintained",
+          "measurement": "Integration test IT-4 passes",
+          "target": "0 breaking changes for existing users"
+        }
+      ],
+      "non_functional_requirements": [
+        {
+          "criterion": "Performance overhead",
+          "measurement": "Time agent coordination operations",
+          "target": "< 1 second per handoff"
+        },
+        {
+          "criterion": "Communication file size",
+          "measurement": "Check communication.json file sizes",
+          "target": "< 10KB for typical feature"
+        },
+        {
+          "criterion": "Documentation completeness",
+          "measurement": "README, CLAUDE, user-guide all updated with examples",
+          "target": "100% documentation coverage"
+        }
+      ],
+      "acceptance_gates": [
+        "All 27 unit tests pass",
+        "All 4 integration tests pass",
+        "Real-world 3-agent test completes successfully",
+        "Code review confirms follows existing patterns",
+        "/create-plan backward compatibility verified",
+        "Documentation reviewed and approved",
+        "Performance benchmarks meet < 1 second target"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_0_checklist": [
+        "[ ] Create templates/communication_template.json with complete structure",
+        "[ ] Implement generate_agent_workorder_id(feature_name, agent_number) helper",
+        "[ ] Implement validate_forbidden_files(project_path, forbidden_files) helper",
+        "[ ] Implement aggregate_agent_metrics(agent_deliverables_list) helper",
+        "[ ] Implement parse_agent_status(communication_data) helper",
+        "[ ] Create tests/unit/test_agent_helpers.py with 10+ test cases",
+        "[ ] Run unit tests and verify all pass",
+        "[ ] Commit Phase 0"
+      ],
+      "phase_1_checklist": [
+        "[ ] Implement handle_generate_agent_communication() in tool_handlers.py",
+        "[ ] Add generate_agent_communication Tool definition to server.py",
+        "[ ] Register handler in TOOL_HANDLERS dict",
+        "[ ] Add unit tests for generation logic",
+        "[ ] Manual test: generate from workorder-tracking plan",
+        "[ ] Verify all validation criteria pass",
+        "[ ] Commit Phase 1"
+      ],
+      "phase_2_checklist": [
+        "[ ] Implement handle_assign_agent_task() in tool_handlers.py",
+        "[ ] Add assign_agent_task Tool definition to server.py",
+        "[ ] Register handler in TOOL_HANDLERS dict",
+        "[ ] Add unit tests for assignment logic",
+        "[ ] Manual test: assign phase to agent-2",
+        "[ ] Verify conflict detection works",
+        "[ ] Commit Phase 2"
+      ],
+      "phase_3_checklist": [
+        "[ ] Implement handle_verify_agent_completion() in tool_handlers.py",
+        "[ ] Add verify_agent_completion Tool definition to server.py",
+        "[ ] Register handler in TOOL_HANDLERS dict",
+        "[ ] Add unit tests for verification logic",
+        "[ ] Manual test: verify with git diff",
+        "[ ] Verify forbidden file detection works",
+        "[ ] Commit Phase 3"
+      ],
+      "phase_4_checklist": [
+        "[ ] Implement handle_aggregate_agent_deliverables() in tool_handlers.py",
+        "[ ] Add aggregate_agent_deliverables Tool definition to server.py",
+        "[ ] Register handler in TOOL_HANDLERS dict",
+        "[ ] Add unit tests for aggregation logic",
+        "[ ] Manual test: aggregate 3 agent deliverables",
+        "[ ] Verify metrics sum correctly",
+        "[ ] Commit Phase 4"
+      ],
+      "phase_5_checklist": [
+        "[ ] Implement handle_track_agent_status() in tool_handlers.py",
+        "[ ] Add track_agent_status Tool definition to server.py",
+        "[ ] Register handler in TOOL_HANDLERS dict",
+        "[ ] Add unit tests for status tracking",
+        "[ ] Manual test: dashboard with 3+ agents",
+        "[ ] Verify all status types detected",
+        "[ ] Commit Phase 5"
+      ],
+      "phase_6_checklist": [
+        "[ ] Modify handle_create_plan() to accept multi_agent parameter",
+        "[ ] Update create_plan Tool definition with parameter",
+        "[ ] Update .claude/commands/create-plan.md documentation",
+        "[ ] Add integration test for both modes",
+        "[ ] Verify backward compatibility",
+        "[ ] Manual test: both single and multi-agent modes",
+        "[ ] Commit Phase 6"
+      ],
+      "phase_7_checklist": [
+        "[ ] Create .claude/commands/assign-agent.md",
+        "[ ] Create .claude/commands/verify-agent.md",
+        "[ ] Create .claude/commands/track-agents.md",
+        "[ ] Update README.md with agent coordination section",
+        "[ ] Update CLAUDE.md with tools and commands",
+        "[ ] Update user-guide.md with multi-agent workflow",
+        "[ ] Add usage examples for all tools",
+        "[ ] Verify documentation accuracy",
+        "[ ] Commit Phase 7"
+      ],
+      "phase_8_checklist": [
+        "[ ] Create tests/integration/test_multi_agent_workflow.py",
+        "[ ] Implement IT-2 (3-agent parallel test)",
+        "[ ] Implement IT-3 (forbidden file test)",
+        "[ ] Implement IT-4 (backward compat test)",
+        "[ ] Perform real-world 3-agent test",
+        "[ ] Run performance benchmarks (< 1 second)",
+        "[ ] Verify all existing tests pass",
+        "[ ] Add CHANGELOG entry for v1.7.0",
+        "[ ] Code review and final validation",
+        "[ ] Commit Phase 8 and push to remote"
+      ]
+    }
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "feature_name": "workorder-tracking",
+  "description": "Automatically assign workorder IDs to all features that enter the MCP planning workflow. Every feature that uses gather-context, analyze-for-planning, or create-plan gets a unique workorder ID (WO-{FEATURE-NAME}-001) that persists throughout the planning lifecycle and links context.json, analysis.json, plan.json, and DELIVERABLES.md.",
+  "goal": "Provide automatic workorder assignment and tracking for all features using the MCP planning workflow, enabling progress tracking and cross-file traceability without any user configuration",
+  "requirements": [
+    "Automatic workorder ID generation when any MCP planning tool is invoked",
+    "Workorder ID format: WO-{FEATURE-NAME}-001 (derived from feature directory name)",
+    "Workorder persists across entire workflow: context.json → analysis.json → plan.json → DELIVERABLES.md",
+    "Add workorder_id field to context.json metadata (from gather_context tool)",
+    "Add workorder_id field to analysis.json metadata (from analyze_project_for_planning tool)",
+    "Embed workorder in plan.json section 5 (from create_plan tool)",
+    "Reference workorder in DELIVERABLES.md header (from generate_deliverables_template tool)",
+    "All tasks in plan.json automatically get workorder_id field matching plan's workorder",
+    "Update gather_context tool to assign workorder on first invocation",
+    "Update analyze_project_for_planning to read/preserve existing workorder from context",
+    "Update create_plan to read workorder from context/analysis and embed in section 5",
+    "Update generate_deliverables_template to include workorder in report header",
+    "Schema update to planning standard section 5 (workorder metadata structure)",
+    "Plan validator ensures all tasks reference the plan's workorder ID",
+    "Workorder metadata includes: id, name, feature_dir, assigned_at timestamp"
+  ],
+  "out_of_scope": [
+    "Multiple workorders per plan (1:1 relationship enforced)",
+    "Manual workorder ID customization (always auto-generated from feature name)",
+    "Workorder tracking for features outside coderef/working/ directory",
+    "Cross-plan workorder dependencies (deferred to future)",
+    "Workorder status management tools (generate_workorder_report, update_workorder_status)",
+    "Workorder templates (reusable patterns)",
+    "Team assignment features",
+    "Dependency visualization graphs"
+  ],
+  "constraints": [
+    "Workorder ID must be derived from feature directory name (no user input)",
+    "Format strictly enforced: WO-{FEATURE-NAME}-001 (uppercase, hyphens preserved)",
+    "Workorder assigned at FIRST MCP tool invocation (gather-context, analyze, or create-plan)",
+    "Once assigned, workorder ID never changes for that feature",
+    "Must be backward compatible - existing plans without workorders continue working",
+    "No optional enable/disable - if feature uses MCP workflow, it gets a workorder",
+    "Workorder metadata must be included in _metadata fields (not top-level)",
+    "All tasks in plan must reference the plan's single workorder ID"
+  ],
+  "technical_details": {
+    "workorder_id_generation": {
+      "pattern": "WO-{FEATURE-NAME}-001",
+      "example": "auth-system → WO-AUTH-SYSTEM-001",
+      "transformation": "Convert feature name to uppercase, preserve hyphens, append -001"
+    },
+    "assignment_points": {
+      "gather_context": "First tool - creates workorder_id in context.json _metadata",
+      "analyze_for_planning": "Reads workorder from context if exists, creates if missing, includes in analysis.json _metadata",
+      "create_plan": "Reads workorder from context/analysis, embeds in plan.json section 5, assigns to all tasks"
+    },
+    "storage_locations": {
+      "context.json": "_metadata.workorder_id + _metadata.workorder_assigned_at",
+      "analysis.json": "_metadata.workorder_id (read from context)",
+      "plan.json": "5_task_id_system.workorder (full metadata object) + tasks[].workorder_id",
+      "DELIVERABLES.md": "Header section with Workorder ID and Feature name"
+    },
+    "validation_rules": [
+      "Format: ^WO-[A-Z0-9-]+-001$",
+      "All tasks must have workorder_id field",
+      "All task workorder_id values must match plan's workorder.id",
+      "Workorder metadata must include: id, name, feature_dir"
+    ]
+  },
+  "workflow_integration": {
+    "step_1_gather_context": {
+      "tool": "gather_context",
+      "input": "feature_name (e.g., 'auth-system')",
+      "action": "Generate WO-AUTH-SYSTEM-001, save to context.json _metadata",
+      "output": "context.json with workorder_id in _metadata"
+    },
+    "step_2_analyze": {
+      "tool": "analyze_project_for_planning",
+      "input": "feature_name + project_path",
+      "action": "Read workorder from context.json, include in analysis.json _metadata",
+      "output": "analysis.json with workorder_id preserved from context"
+    },
+    "step_3_create_plan": {
+      "tool": "create_plan",
+      "input": "feature_name + project_path",
+      "action": "Read workorder from context/analysis, embed in section 5, assign to all tasks",
+      "output": "plan.json with workorder in section 5 + all tasks have workorder_id"
+    },
+    "step_4_deliverables": {
+      "tool": "generate_deliverables_template",
+      "input": "feature_name + project_path",
+      "action": "Read workorder from plan.json, include in DELIVERABLES.md header",
+      "output": "DELIVERABLES.md with workorder ID in header"
+    }
+  },
+  "success_criteria": {
+    "functional": [
+      "gather_context automatically assigns workorder ID to new features",
+      "analyze_for_planning reads and preserves workorder from context",
+      "create_plan embeds workorder in section 5 and assigns to all tasks",
+      "generate_deliverables_template includes workorder in report header",
+      "Workorder ID format is consistent: WO-{FEATURE-NAME}-001",
+      "All tasks in plan have workorder_id field matching plan's workorder",
+      "Backward compatibility: existing plans without workorders still work"
+    ],
+    "validation": [
+      "Plan validator checks workorder format matches ^WO-[A-Z0-9-]+-001$",
+      "Validator ensures all tasks reference plan's workorder ID",
+      "Validator checks workorder metadata includes required fields (id, name, feature_dir)"
+    ],
+    "quality": [
+      "Zero user configuration required - fully automatic",
+      "Workorder ID derivation is deterministic and predictable",
+      "Workorder persists correctly across all workflow steps",
+      "No breaking changes to existing tools or workflows",
+      "Clear documentation of workorder assignment logic"
+    ]
+  },
+  "example_workflow": {
+    "scenario": "User creates new auth-system feature",
+    "steps": [
+      {
+        "step": 1,
+        "command": "/gather-context",
+        "user_input": "Feature name: auth-system",
+        "system_action": "Generate WO-AUTH-SYSTEM-001, save to context.json",
+        "file_created": "coderef/working/auth-system/context.json",
+        "workorder_metadata": {
+          "workorder_id": "WO-AUTH-SYSTEM-001",
+          "workorder_assigned_at": "2025-10-18T15:30:00",
+          "workorder_assigned_by": "gather_context"
+        }
+      },
+      {
+        "step": 2,
+        "command": "/analyze-for-planning auth-system",
+        "system_action": "Read WO-AUTH-SYSTEM-001 from context, include in analysis",
+        "file_created": "coderef/working/auth-system/analysis.json",
+        "workorder_metadata": {
+          "workorder_id": "WO-AUTH-SYSTEM-001"
+        }
+      },
+      {
+        "step": 3,
+        "command": "/create-plan auth-system",
+        "system_action": "Read workorder, embed in section 5, assign to all tasks",
+        "file_created": "coderef/working/auth-system/plan.json",
+        "workorder_structure": {
+          "5_task_id_system": {
+            "workorder": {
+              "id": "WO-AUTH-SYSTEM-001",
+              "name": "Auth System",
+              "feature_dir": "coderef/working/auth-system"
+            },
+            "tasks": [
+              {
+                "id": "SETUP-001",
+                "workorder_id": "WO-AUTH-SYSTEM-001",
+                "description": "..."
+              }
+            ]
+          }
+        }
+      },
+      {
+        "step": 4,
+        "command": "/generate-deliverables auth-system",
+        "system_action": "Read workorder from plan, include in header",
+        "file_created": "coderef/working/auth-system/DELIVERABLES.md",
+        "header_content": "# DELIVERABLES - WO-AUTH-SYSTEM-001\n\n**Workorder ID**: WO-AUTH-SYSTEM-001\n**Feature**: auth-system\n**Status**: 🚧 Not Started"
+      }
+    ]
+  },
+  "implementation_phases": {
+    "phase_1_core_infrastructure": {
+      "description": "Add workorder generation and persistence to planning tools",
+      "tasks": [
+        "Add workorder ID generation helper function (generate_workorder_id)",
+        "Update gather_context to generate and save workorder to context.json",
+        "Update analyze_project_for_planning to read/preserve workorder",
+        "Update create_plan to embed workorder in section 5",
+        "Update generate_deliverables_template to include workorder in header"
+      ]
+    },
+    "phase_2_validation": {
+      "description": "Ensure workorder consistency and validation",
+      "tasks": [
+        "Update planning standard schema with workorder metadata structure",
+        "Update plan validator to check workorder format",
+        "Validate all tasks reference plan's workorder ID",
+        "Add backward compatibility checks for plans without workorders"
+      ]
+    },
+    "phase_3_documentation": {
+      "description": "Document workorder system and update workflows",
+      "tasks": [
+        "Update CLAUDE.md with workorder assignment logic",
+        "Update slash command documentation",
+        "Add workorder examples to planning workflow guides",
+        "Update changelog with workorder tracking feature"
+      ]
+    }
+  }
+}

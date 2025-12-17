@@ -1,0 +1,727 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "fixing-gather-context",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant via /create-plan",
+    "generated_at": "2025-10-18T00:31:15",
+    "has_context": true,
+    "has_analysis": true,
+    "template_version": "AI-optimized (502 lines)"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": [
+        "README.md",
+        "ARCHITECTURE.md (coderef/foundation-docs)",
+        "API.md (coderef/foundation-docs)",
+        "COMPONENTS.md (coderef/foundation-docs)",
+        "USER-GUIDE.md"
+      ],
+      "coding_standards_available": [
+        "BEHAVIOR-STANDARDS.md",
+        "UI-STANDARDS.md",
+        "UX-PATTERNS.md",
+        "COMPONENT-INDEX.md"
+      ],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "Flask (MCP server)",
+        "testing": "pytest",
+        "validation": "jsonschema",
+        "logging": "structured logging (logger_config.py)",
+        "error_handling": "ErrorResponse factory pattern"
+      },
+      "key_patterns": [
+        "Handler registry pattern (TOOL_HANDLERS dict)",
+        "Decorator pattern (@log_invocation, @mcp_error_handler)",
+        "Input validation at MCP boundaries (validation.py)",
+        "Structured error responses (ErrorResponse factory)",
+        "Format helper pattern (format_success_response)",
+        "Path traversal protection (regex validation)"
+      ],
+      "reference_implementations": [
+        "tool_handlers.py:886 - handle_analyze_project_for_planning",
+        "tool_handlers.py:993 - handle_validate_implementation_plan",
+        "tool_handlers.py:1111 - handle_create_plan",
+        "handler_decorators.py - @mcp_error_handler, @log_invocation",
+        "handler_helpers.py - format_success_response()",
+        "validation.py - validate_project_path_input()"
+      ],
+      "project_structure": {
+        "main_files": [
+          "server.py - MCP tool registration",
+          "tool_handlers.py - Handler implementations",
+          "validation.py - Input validation",
+          "handler_decorators.py - Decorators",
+          "handler_helpers.py - Helper functions",
+          "error_responses.py - Error factory"
+        ],
+        "output_location": "coderef/working/{feature_name}/context.json"
+      },
+      "gaps_and_risks": [
+        "No JSON schema for context.json validation (deferred to Gap #3)",
+        "No automated tests yet (deferred to Gap #4)",
+        "CLAUDE.md documentation update needed (deferred to Gap #2)"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "gather_context MCP Tool",
+      "one_line_summary": "Implement MCP tool for /gather-context workflow to enable programmatic access and complete the planning workflow automation chain",
+      "problem_statement": "Currently /gather-context exists only as a slash command with instructions, while the other 3 planning tools (analyze-for-planning, create-plan, validate-plan) have both slash commands and MCP tool implementations. This breaks end-to-end automation of the planning workflow and creates architectural inconsistency.",
+      "proposed_solution": "Implement handle_gather_context() as a full MCP tool with input validation, error handling, and structured output. The tool will accept feature requirements as parameters, validate inputs, create the working directory structure, and save a properly formatted context.json file.",
+      "success_metrics": [
+        "MCP tool callable programmatically via mcp__docs_mcp__gather_context()",
+        "Creates valid context.json at correct path (coderef/working/{feature_name}/context.json)",
+        "/create-plan successfully loads generated context.json files",
+        "End-to-end workflow automation enabled (steps 1-4)",
+        "Zero breaking changes to existing slash command workflow"
+      ],
+      "estimated_effort": "4-6 hours (small feature)",
+      "target_completion": "Single sprint (1-2 days)"
+    },
+    "2_risk_assessment": {
+      "overall_risk_level": "LOW",
+      "complexity_score": 3,
+      "confidence_level": 95,
+      "risk_factors": [
+        {
+          "risk": "Breaking changes to existing /gather-context slash command workflow",
+          "likelihood": "LOW",
+          "impact": "MEDIUM",
+          "mitigation": "Keep slash command unchanged, maintain backward compatibility, add MCP tool as alternative access method"
+        },
+        {
+          "risk": "Input validation gaps allowing path traversal attacks",
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "mitigation": "Use existing validation.py functions, apply regex pattern ^[a-zA-Z0-9_-]+$ to feature_name, follow SEC-005 security pattern"
+        },
+        {
+          "risk": "Inconsistent context.json format between manual and programmatic creation",
+          "likelihood": "MEDIUM",
+          "impact": "MEDIUM",
+          "mitigation": "Define exact JSON structure, use same validation for both paths, test with /create-plan integration"
+        },
+        {
+          "risk": "/create-plan fails to load MCP-generated context.json",
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "mitigation": "Match exact format from existing context.json examples, integration test with /create-plan, verify JSON schema compliance"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "Existing MCP architecture",
+          "type": "INTERNAL",
+          "status": "AVAILABLE",
+          "notes": "server.py, tool_handlers.py, validation.py all in place"
+        },
+        {
+          "name": "ErrorResponse factory",
+          "type": "INTERNAL",
+          "status": "AVAILABLE",
+          "notes": "error_responses.py provides consistent error handling"
+        },
+        {
+          "name": "Decorator patterns",
+          "type": "INTERNAL",
+          "status": "AVAILABLE",
+          "notes": "@log_invocation and @mcp_error_handler ready to use"
+        }
+      ],
+      "blocking_issues": []
+    },
+    "3_current_state_analysis": {
+      "existing_functionality": {
+        "slash_command": {
+          "location": ".claude/commands/gather-context.md",
+          "status": "IMPLEMENTED",
+          "description": "Interactive Q&A workflow with instructions for AI to follow",
+          "notes": "Works but requires manual intervention, can't be called programmatically"
+        },
+        "other_planning_tools": {
+          "analyze-for-planning": "MCP tool + slash command (COMPLETE)",
+          "create-plan": "MCP tool + slash command (COMPLETE)",
+          "validate-plan": "MCP tool + slash command (COMPLETE)"
+        }
+      },
+      "files_to_create": [],
+      "files_to_modify": [
+        {
+          "file": "server.py",
+          "location": "Lines 75-450 (list_tools function)",
+          "changes": "Add Tool definition for gather_context with inputSchema",
+          "complexity": "LOW",
+          "estimated_lines": "+25 lines"
+        },
+        {
+          "file": "tool_handlers.py",
+          "location": "After line 1200 (after handle_create_plan)",
+          "changes": "Add handle_gather_context() async function with decorators",
+          "complexity": "MEDIUM",
+          "estimated_lines": "+60-80 lines"
+        },
+        {
+          "file": "tool_handlers.py",
+          "location": "Lines 1632-1655 (TOOL_HANDLERS registry)",
+          "changes": "Add 'gather_context': handle_gather_context entry",
+          "complexity": "LOW",
+          "estimated_lines": "+1 line"
+        }
+      ],
+      "architectural_changes": [
+        {
+          "component": "MCP Server",
+          "change": "Register new gather_context tool",
+          "rationale": "Complete the planning workflow tool suite"
+        },
+        {
+          "component": "Handler Registry",
+          "change": "Add gather_context handler mapping",
+          "rationale": "Enable tool dispatch via existing registry pattern"
+        }
+      ],
+      "integration_points": [
+        {
+          "system": "/create-plan tool",
+          "interaction": "Loads context.json generated by gather_context",
+          "protocol": "File-based (JSON)",
+          "notes": "Must match exact schema expected by handle_create_plan"
+        },
+        {
+          "system": "Slash command",
+          "interaction": "Can optionally call MCP tool after Q&A",
+          "protocol": "MCP call",
+          "notes": "Hybrid approach - interactive gathering, programmatic saving"
+        }
+      ]
+    },
+    "4_key_features": {
+      "feature_001": {
+        "id": "FEAT-001",
+        "name": "Tool Registration",
+        "description": "Register gather_context tool in server.py with complete inputSchema",
+        "priority": "CRITICAL",
+        "requirements": [
+          "Add Tool definition to list_tools() function",
+          "Define inputSchema with 5 required fields (project_path, feature_name, description, goal, requirements)",
+          "Define 4 optional fields (out_of_scope, constraints, decisions, success_criteria)",
+          "Set proper field types and validation rules"
+        ],
+        "acceptance_criteria": [
+          "Tool appears in mcp tool list",
+          "Input schema validates correctly",
+          "Tool description is clear and accurate"
+        ]
+      },
+      "feature_002": {
+        "id": "FEAT-002",
+        "name": "Handler Implementation",
+        "description": "Implement handle_gather_context() with full input validation and error handling",
+        "priority": "CRITICAL",
+        "requirements": [
+          "Create async function handle_gather_context(arguments: dict) -> list[TextContent]",
+          "Apply @log_invocation decorator",
+          "Apply @mcp_error_handler decorator",
+          "Validate project_path using validate_project_path_input()",
+          "Validate feature_name format with regex ^[a-zA-Z0-9_-]+$",
+          "Validate feature_name length (max 100 chars)",
+          "Validate required fields exist and have correct types",
+          "Set defaults for optional fields (empty arrays/objects)"
+        ],
+        "acceptance_criteria": [
+          "Handler function exists and is properly decorated",
+          "All inputs validated at MCP boundary",
+          "Invalid inputs rejected with clear error messages",
+          "Path traversal attempts blocked"
+        ]
+      },
+      "feature_003": {
+        "id": "FEAT-003",
+        "name": "Context.json Creation",
+        "description": "Create and save context.json with validated structure",
+        "priority": "CRITICAL",
+        "requirements": [
+          "Create working directory: coderef/working/{feature_name}/",
+          "Build context_data dict with all fields",
+          "Serialize to JSON with 2-space indentation",
+          "Save to correct path: coderef/working/{feature_name}/context.json",
+          "Handle file I/O errors gracefully"
+        ],
+        "acceptance_criteria": [
+          "context.json created at correct location",
+          "JSON is valid and properly formatted",
+          "All required fields present",
+          "Optional fields included (empty if not provided)",
+          "File is readable by /create-plan"
+        ]
+      },
+      "feature_004": {
+        "id": "FEAT-004",
+        "name": "Success Response",
+        "description": "Return structured success response with file path and metadata",
+        "priority": "HIGH",
+        "requirements": [
+          "Use format_success_response() helper",
+          "Include context_file path (relative to project root)",
+          "Include feature_name",
+          "Include requirements_count",
+          "Include success message"
+        ],
+        "acceptance_criteria": [
+          "Response format matches other handlers",
+          "Response is valid JSON",
+          "Response includes all required metadata",
+          "User can see confirmation of file creation"
+        ]
+      },
+      "feature_005": {
+        "id": "FEAT-005",
+        "name": "Handler Registry",
+        "description": "Register handler in TOOL_HANDLERS dictionary",
+        "priority": "CRITICAL",
+        "requirements": [
+          "Add 'gather_context': handle_gather_context to TOOL_HANDLERS dict",
+          "Maintain alphabetical or logical ordering",
+          "Verify dispatcher can find handler"
+        ],
+        "acceptance_criteria": [
+          "Handler callable via TOOL_HANDLERS['gather_context']",
+          "Tool dispatch works end-to-end",
+          "No registration errors on server startup"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "task_prefix": "GC",
+      "tasks": [
+        {
+          "id": "GC-001",
+          "feature_id": "FEAT-001",
+          "title": "Add Tool definition to server.py",
+          "description": "Register gather_context tool in list_tools() with complete inputSchema",
+          "estimated_effort": "30 minutes",
+          "dependencies": []
+        },
+        {
+          "id": "GC-002",
+          "feature_id": "FEAT-002",
+          "title": "Create handle_gather_context skeleton",
+          "description": "Create async function with decorators and basic structure",
+          "estimated_effort": "15 minutes",
+          "dependencies": ["GC-001"]
+        },
+        {
+          "id": "GC-003",
+          "feature_id": "FEAT-002",
+          "title": "Implement input validation",
+          "description": "Validate project_path, feature_name, and all required fields",
+          "estimated_effort": "45 minutes",
+          "dependencies": ["GC-002"]
+        },
+        {
+          "id": "GC-004",
+          "feature_id": "FEAT-002",
+          "title": "Implement optional field defaults",
+          "description": "Set empty arrays/objects for optional fields if not provided",
+          "estimated_effort": "15 minutes",
+          "dependencies": ["GC-003"]
+        },
+        {
+          "id": "GC-005",
+          "feature_id": "FEAT-003",
+          "title": "Implement directory creation",
+          "description": "Create coderef/working/{feature_name}/ directory structure",
+          "estimated_effort": "15 minutes",
+          "dependencies": ["GC-003"]
+        },
+        {
+          "id": "GC-006",
+          "feature_id": "FEAT-003",
+          "title": "Implement context.json building",
+          "description": "Build context_data dict with all validated fields",
+          "estimated_effort": "20 minutes",
+          "dependencies": ["GC-004", "GC-005"]
+        },
+        {
+          "id": "GC-007",
+          "feature_id": "FEAT-003",
+          "title": "Implement file saving",
+          "description": "Serialize to JSON and write to context.json with error handling",
+          "estimated_effort": "20 minutes",
+          "dependencies": ["GC-006"]
+        },
+        {
+          "id": "GC-008",
+          "feature_id": "FEAT-004",
+          "title": "Implement success response",
+          "description": "Return structured response using format_success_response()",
+          "estimated_effort": "15 minutes",
+          "dependencies": ["GC-007"]
+        },
+        {
+          "id": "GC-009",
+          "feature_id": "FEAT-005",
+          "title": "Register in TOOL_HANDLERS",
+          "description": "Add handler to TOOL_HANDLERS registry dict",
+          "estimated_effort": "5 minutes",
+          "dependencies": ["GC-008"]
+        },
+        {
+          "id": "GC-010",
+          "title": "Manual integration test",
+          "description": "Test calling gather_context and loading result with /create-plan",
+          "estimated_effort": "30 minutes",
+          "dependencies": ["GC-009"]
+        },
+        {
+          "id": "GC-011",
+          "title": "Test path traversal prevention",
+          "description": "Verify feature_name validation blocks ../../../etc/passwd attempts",
+          "estimated_effort": "15 minutes",
+          "dependencies": ["GC-009"]
+        },
+        {
+          "id": "GC-012",
+          "title": "Test error handling",
+          "description": "Verify missing required fields return proper error responses",
+          "estimated_effort": "20 minutes",
+          "dependencies": ["GC-009"]
+        }
+      ],
+      "total_tasks": 12,
+      "total_estimated_effort": "4.5 hours"
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Core Implementation",
+        "duration": "2-3 hours",
+        "tasks": ["GC-001", "GC-002", "GC-003", "GC-004", "GC-005", "GC-006", "GC-007", "GC-008", "GC-009"],
+        "deliverables": [
+          "Tool registered in server.py",
+          "Handler implemented in tool_handlers.py",
+          "Handler registered in TOOL_HANDLERS",
+          "Basic functionality working"
+        ],
+        "success_criteria": [
+          "Tool callable via MCP",
+          "Creates context.json at correct location",
+          "Returns success response",
+          "No errors on basic happy path"
+        ]
+      },
+      "phase_2": {
+        "name": "Testing and Validation",
+        "duration": "1-1.5 hours",
+        "tasks": ["GC-010", "GC-011", "GC-012"],
+        "deliverables": [
+          "Integration test with /create-plan",
+          "Security validation test",
+          "Error handling test"
+        ],
+        "success_criteria": [
+          "/create-plan loads generated context.json",
+          "Path traversal blocked",
+          "Error messages clear and helpful",
+          "Edge cases handled gracefully"
+        ]
+      },
+      "phase_3": {
+        "name": "Documentation and Deployment",
+        "duration": "30-45 minutes",
+        "tasks": [],
+        "deliverables": [
+          "Commit implementation",
+          "Update changelog",
+          "Note documentation gaps for future"
+        ],
+        "success_criteria": [
+          "Code committed with proper message",
+          "Changelog entry added",
+          "Gaps documented (CLAUDE.md, schema, tests)"
+        ],
+        "notes": "Full documentation (CLAUDE.md, schema, automated tests) deferred to separate tasks"
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Deferred to Gap #4",
+        "note": "Will create test_gather_context.py with pytest tests",
+        "tests_needed": [
+          "test_gather_context_creates_file()",
+          "test_gather_context_validates_feature_name()",
+          "test_gather_context_blocks_path_traversal()",
+          "test_gather_context_handles_missing_fields()",
+          "test_gather_context_sets_optional_defaults()"
+        ]
+      },
+      "integration_tests": {
+        "scope": "Manual for Phase 1",
+        "tests": [
+          {
+            "name": "End-to-end workflow test",
+            "description": "Call gather_context → /create-plan → verify plan uses context",
+            "expected": "Plan includes requirements from context.json",
+            "manual_steps": [
+              "Call mcp__docs_mcp__gather_context with test data",
+              "Verify context.json created",
+              "Run /create-plan with same feature_name",
+              "Verify plan.json references context data"
+            ]
+          },
+          {
+            "name": "Security validation test",
+            "description": "Attempt path traversal with feature_name",
+            "expected": "Error response with validation message",
+            "manual_steps": [
+              "Call gather_context with feature_name='../../../etc/passwd'",
+              "Verify error returned",
+              "Verify no file created outside working directory"
+            ]
+          },
+          {
+            "name": "Missing required field test",
+            "description": "Call tool without description field",
+            "expected": "Error response indicating missing field",
+            "manual_steps": [
+              "Call gather_context without 'description' parameter",
+              "Verify error response",
+              "Verify error message mentions missing field"
+            ]
+          }
+        ]
+      },
+      "test_data": {
+        "valid_request": {
+          "project_path": "C:/Users/willh/.mcp-servers/docs-mcp",
+          "feature_name": "test-feature",
+          "description": "Test feature for validation",
+          "goal": "Verify gather_context works correctly",
+          "requirements": ["Must create valid JSON", "Must save to correct path"]
+        },
+        "invalid_feature_name": {
+          "project_path": "C:/Users/willh/.mcp-servers/docs-mcp",
+          "feature_name": "../../../etc/passwd",
+          "description": "Path traversal attempt",
+          "goal": "Should be rejected",
+          "requirements": ["Should not execute"]
+        }
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "id": "FR-001",
+          "requirement": "MCP tool callable programmatically",
+          "acceptance": "Can call mcp__docs_mcp__gather_context() from code",
+          "test": "Import and call from Python script"
+        },
+        {
+          "id": "FR-002",
+          "requirement": "Creates valid JSON file",
+          "acceptance": "context.json is valid JSON with all required fields",
+          "test": "Parse with json.loads(), verify schema"
+        },
+        {
+          "id": "FR-003",
+          "requirement": "Saves to correct location",
+          "acceptance": "File at coderef/working/{feature_name}/context.json",
+          "test": "Verify file path after creation"
+        },
+        {
+          "id": "FR-004",
+          "requirement": "Feature name validation",
+          "acceptance": "Path traversal attempts blocked",
+          "test": "Try ../../../etc/passwd, verify error"
+        },
+        {
+          "id": "FR-005",
+          "requirement": "/create-plan integration",
+          "acceptance": "Generated context.json loads successfully in /create-plan",
+          "test": "Run gather_context → /create-plan workflow"
+        }
+      ],
+      "non_functional_requirements": [
+        {
+          "id": "NFR-001",
+          "requirement": "Performance",
+          "acceptance": "Tool responds in < 100ms for typical input",
+          "test": "Time execution with sample data"
+        },
+        {
+          "id": "NFR-002",
+          "requirement": "Error handling",
+          "acceptance": "All errors return structured ErrorResponse format",
+          "test": "Trigger various errors, verify format"
+        },
+        {
+          "id": "NFR-003",
+          "requirement": "Logging",
+          "acceptance": "All operations logged with proper context",
+          "test": "Check logs for tool_call, errors, success"
+        },
+        {
+          "id": "NFR-004",
+          "requirement": "Code quality",
+          "acceptance": "Follows existing patterns (decorators, validation, errors)",
+          "test": "Code review against handler pattern"
+        }
+      ],
+      "definition_of_done": [
+        "Tool registered in server.py",
+        "Handler implemented in tool_handlers.py",
+        "Handler registered in TOOL_HANDLERS",
+        "All required fields validated",
+        "Feature name security validation working",
+        "context.json created at correct path",
+        "Success response returns metadata",
+        "Integration test with /create-plan passes",
+        "Path traversal test passes",
+        "Error handling test passes",
+        "Code committed with changelog entry",
+        "No breaking changes to existing workflows"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_core_implementation": [
+        {
+          "task": "Add Tool definition to server.py",
+          "details": "In list_tools() function, add Tool(...) for gather_context",
+          "files": ["server.py"],
+          "estimated_time": "30 min",
+          "status": "pending"
+        },
+        {
+          "task": "Create handler function skeleton",
+          "details": "async def handle_gather_context(arguments: dict) -> list[TextContent]",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Add decorators",
+          "details": "@log_invocation and @mcp_error_handler",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "5 min",
+          "status": "pending"
+        },
+        {
+          "task": "Implement project_path validation",
+          "details": "project_path = validate_project_path_input(arguments.get('project_path'))",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Implement feature_name validation",
+          "details": "Regex ^[a-zA-Z0-9_-]+$ and max length 100",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "20 min",
+          "status": "pending"
+        },
+        {
+          "task": "Validate required fields",
+          "details": "Check description, goal, requirements exist and are correct types",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Set optional field defaults",
+          "details": "out_of_scope=[], constraints=[], decisions={}, success_criteria={}",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Create working directory",
+          "details": "working_dir.mkdir(parents=True, exist_ok=True)",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Build context_data dict",
+          "details": "Assemble all fields into structured dict",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Save context.json",
+          "details": "json.dumps(context_data, indent=2), handle I/O errors",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Return success response",
+          "details": "format_success_response(data={...}, message='...')",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Register in TOOL_HANDLERS",
+          "details": "Add 'gather_context': handle_gather_context to dict",
+          "files": ["tool_handlers.py"],
+          "estimated_time": "5 min",
+          "status": "pending"
+        }
+      ],
+      "phase_2_testing": [
+        {
+          "task": "Test basic functionality",
+          "details": "Call tool with valid data, verify context.json created",
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Test /create-plan integration",
+          "details": "Run gather_context → /create-plan, verify plan loads context",
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Test path traversal prevention",
+          "details": "Try feature_name='../../../etc/passwd', verify error",
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Test missing required fields",
+          "details": "Omit description, goal, requirements - verify errors",
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Test optional field defaults",
+          "details": "Omit optional fields, verify empty arrays/objects in output",
+          "estimated_time": "10 min",
+          "status": "pending"
+        }
+      ],
+      "phase_3_documentation": [
+        {
+          "task": "Commit implementation",
+          "details": "git commit with descriptive message and co-author",
+          "estimated_time": "10 min",
+          "status": "pending"
+        },
+        {
+          "task": "Add changelog entry",
+          "details": "Use /add-changelog with feature details",
+          "estimated_time": "15 min",
+          "status": "pending"
+        },
+        {
+          "task": "Document remaining gaps",
+          "details": "Note: CLAUDE.md update, schema creation, automated tests deferred",
+          "estimated_time": "5 min",
+          "status": "pending"
+        }
+      ]
+    }
+  }
+}

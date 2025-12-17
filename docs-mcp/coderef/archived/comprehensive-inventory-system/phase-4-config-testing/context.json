@@ -1,0 +1,147 @@
+{
+  "feature_name": "phase-4-config-testing",
+  "feature_type": "multi-tool-inventory-phase",
+  "description": "Phase 4 of Comprehensive Inventory System: Configuration file discovery and test infrastructure analysis. Delivers two MCP tools: config_inventory (Tool #18) and test_inventory (Tool #19).",
+  "goals": [
+    "Implement config_inventory tool for configuration file discovery and analysis",
+    "Implement test_inventory tool for test discovery and coverage analysis",
+    "Support multiple configuration formats (JSON, YAML, TOML, INI, ENV)",
+    "Support multiple test frameworks (pytest, unittest, jest, mocha, vitest)",
+    "Detect sensitive values in config files (API keys, passwords, tokens)",
+    "Calculate test coverage metrics and identify untested files",
+    "Generate structured JSON manifests with comprehensive metadata",
+    "Integrate both tools into MCP server with proper handlers",
+    "Document both tools in README, API.md, my-guide.md",
+    "Create slash commands for quick access",
+    "Validate schemas and ensure security (no credential leakage)"
+  ],
+  "user_requirements": [
+    "Configuration file discovery across multiple formats",
+    "Sensitive value detection with pattern matching",
+    "Environment variable tracking (.env files)",
+    "Test framework detection and classification",
+    "Test coverage calculation (if coverage data available)",
+    "Untested file identification",
+    "Test execution metrics (pass/fail ratios if available)",
+    "JSON schema validation for all outputs",
+    "Security: Mask sensitive values in output",
+    "Performance: <2 seconds for 50 config files, <3 seconds for 500 test files"
+  ],
+  "constraints": [
+    "Two tools in one phase - similar complexity to Phase 3",
+    "Sensitive data handling requires security controls",
+    "Coverage data may not be available (optional feature)",
+    "Test execution requires runtime analysis (deferred to Phase 4.5)",
+    "Must maintain consistency with Phase 1-3 patterns",
+    "Sequential implementation: config_inventory first, test_inventory second"
+  ],
+  "success_criteria": [
+    "config_inventory detects 5+ file formats (JSON, YAML, TOML, INI, ENV minimum)",
+    "config_inventory identifies sensitive value patterns (API keys, passwords, tokens)",
+    "config_inventory extracts configuration keys and types",
+    "config_inventory masks sensitive values in output",
+    "test_inventory detects 3+ frameworks (pytest, jest, mocha minimum)",
+    "test_inventory discovers test files with accurate classification",
+    "test_inventory calculates coverage metrics if .coverage or coverage.json exists",
+    "test_inventory identifies untested files by comparing source vs test files",
+    "Both tools have JSON schema validation",
+    "Both tools meet performance targets",
+    "All documentation complete (README, API.md, my-guide.md)",
+    "Slash commands created for both tools",
+    "Changelog entry for v1.9.0",
+    "Git commit + push checkpoint"
+  ],
+  "technical_approach": {
+    "config_inventory": {
+      "file_detection": "Pattern matching for config file extensions and names",
+      "format_parsing": "Format-specific parsers (json, yaml, toml, configparser, dotenv)",
+      "sensitive_detection": "Regex patterns for API keys, tokens, passwords",
+      "output": "coderef/inventory/config.json"
+    },
+    "test_inventory": {
+      "framework_detection": "Import analysis + file naming patterns",
+      "test_discovery": "Pattern matching for test_*.py, *.test.js, *.spec.ts",
+      "coverage_analysis": "Parse .coverage, coverage.json, or lcov.info if exists",
+      "untested_analysis": "Compare source files to test files",
+      "output": "coderef/inventory/tests.json"
+    }
+  },
+  "risks": [
+    {
+      "risk": "Scope too large (2 tools in one phase)",
+      "severity": "high",
+      "mitigation": "Sequential implementation with checkpoints. Build config_inventory completely first (Phases 4A-4F), then test_inventory (4G-4L). If time-constrained, split releases: v1.9.0 (Config only) + v1.9.1 (Tests)."
+    },
+    {
+      "risk": "Sensitive data leakage in manifests",
+      "severity": "critical",
+      "mitigation": "Implement masking for all detected sensitive values. Use regex patterns to detect API keys, passwords, tokens. Replace values with '[REDACTED]' in manifest output. Log security events for sensitive detections."
+    },
+    {
+      "risk": "Configuration format diversity",
+      "severity": "medium",
+      "mitigation": "Focus on common formats (JSON, YAML, TOML, INI, ENV). Use standard libraries (json, pyyaml, toml, configparser, python-dotenv). Accept 90% coverage vs 100%."
+    },
+    {
+      "risk": "Test coverage data may not exist",
+      "severity": "medium",
+      "mitigation": "Make coverage analysis optional. If .coverage or coverage.json not found, skip coverage metrics and only report discovered tests. Mark as 'coverage_unavailable' in manifest."
+    },
+    {
+      "risk": "Test framework diversity",
+      "severity": "medium",
+      "mitigation": "Focus on Python (pytest, unittest) and JavaScript (jest, mocha, vitest) frameworks. Use file naming patterns and import analysis. Defer Ruby/Java/Go frameworks to Phase 4.5."
+    }
+  ],
+  "estimated_effort": {
+    "total_hours": 20,
+    "breakdown": {
+      "config_inventory": 10,
+      "test_inventory": 10
+    },
+    "complexity": "high"
+  },
+  "dependencies": {
+    "python_packages": [
+      "toml>=0.10.2",
+      "python-dotenv>=1.0.0",
+      "coverage>=7.0.0 (optional - for coverage parsing)"
+    ],
+    "external_apis": []
+  },
+  "outputs": [
+    "generators/config_generator.py",
+    "generators/test_generator.py",
+    "coderef/inventory/config-schema.json",
+    "coderef/inventory/tests-schema.json",
+    ".claude/commands/config-inventory.md",
+    ".claude/commands/test-inventory.md",
+    "Updated: server.py (Tool #18, #19)",
+    "Updated: tool_handlers.py (handle_config_inventory, handle_test_inventory)",
+    "Updated: constants.py (ConfigFormat, TestFramework enums)",
+    "Updated: type_defs.py (ConfigFileDict, TestManifestDict, etc.)",
+    "Updated: README.md (tool count 18→20, examples)",
+    "Updated: coderef/foundation-docs/API.md (Tool #18, #19)",
+    "Updated: my-guide.md (tools, slash commands)",
+    "Updated: coderef/quickref.md (tool count, version)",
+    "Updated: CLAUDE.md (tool count, slash commands)",
+    "Updated: coderef/changelog/CHANGELOG.json (v1.9.0)"
+  ],
+  "reference_implementations": [
+    "Phase 1: inventory_manifest (file inventory pattern)",
+    "Phase 2: dependency_inventory (multi-parser pattern)",
+    "Phase 3: api_inventory + database_inventory (AST parsing, multi-framework support)",
+    "generators/inventory_generator.py (file categorization)",
+    "generators/dependency_generator.py (multi-ecosystem parsers)",
+    "generators/api_generator.py (framework detection, AST parsing)",
+    "generators/database_generator.py (ORM detection, schema parsing)"
+  ],
+  "security_considerations": [
+    "Mask sensitive values (API keys, passwords, tokens, secrets) in all outputs",
+    "Log security events when sensitive patterns detected",
+    "Never write raw credentials to manifest files",
+    "Validate all config file paths to prevent traversal attacks",
+    "Handle malformed config files gracefully (no crashes)",
+    "Document sensitive detection patterns in security section"
+  ]
+}

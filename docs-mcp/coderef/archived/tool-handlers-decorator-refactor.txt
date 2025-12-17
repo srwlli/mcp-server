@@ -1,0 +1,28 @@
+IDEA: TOOL-HANDLERS-DECORATOR-REFACTOR
+DATE: 2025-10-16
+STATUS: Proposed
+
+DESCRIPTION:
+Refactor tool_handlers.py to reduce repetitive boilerplate using decorators and helper abstractions.
+
+CONTEXT:
+Current file has 2168 lines with ~35% repetitive error handling, validation, and logging patterns across 21 handlers. Extracting common patterns would improve maintainability and reduce code duplication.
+
+RELATIONSHIP TO MCP:
+Core MCP server implementation - affects all 21 tool handlers.
+
+RELATED WORK:
+- tool_handlers.py (target file)
+- error_responses.py (ARCH-001 error factory)
+- validation.py (REF-003 input validation)
+- logger_config.py (ARCH-003 logging)
+
+PRELIMINARY THOUGHTS:
+- Create decorators for common patterns (error handling, validation, logging)
+- Extract response formatting helpers
+- Reduce boilerplate by 25-35% (~500-800 lines)
+
+NEXT STEPS:
+- [ ] Use /gather-context to capture requirements
+- [ ] Design decorator interface
+- [ ] Create implementation plan

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Clipboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 20px;
+        }
+
+        .counter {
+            font-size: 48px;
+            font-weight: 600;
+            color: #58a6ff;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .paste-target {
+            width: 100%;
+            padding: 12px;
+            background: #161b22;
+            border: 2px dashed #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: text;
+        }
+
+        .paste-target:focus {
+            outline: none;
+            border-color: #58a6ff;
+            background: #1c2128;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #238636;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+
+        .btn-secondary {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+
+        .btn-secondary:hover {
+            background: #30363d;
+        }
+
+        .btn-danger {
+            background: #21262d;
+            border: 1px solid #f85149;
+            color: #f85149;
+        }
+
+        .btn-danger:hover {
+            background: #f85149;
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #8b949e;
+        }
+
+        .btn-outline:hover {
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        .preview {
+            margin-top: 20px;
+        }
+
+        .preview.hidden {
+            display: none;
+        }
+
+        .preview-box {
+            width: 100%;
+            min-height: 200px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            color: #c9d1d9;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #238636;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MCP Clipboard</h1>
+
+        <!-- Paste counter -->
+        <div class="counter" id="counter">0 responses</div>
+
+        <!-- Paste target (hidden) -->
+        <input type="text" id="pasteTarget" class="paste-target" placeholder="Click here, then Ctrl+V to paste">
+
+        <!-- Action buttons -->
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="copyAll()">Copy All</button>
+            <button class="btn btn-outline" onclick="toggleView()">View</button>
+            <button class="btn btn-danger" onclick="clearAll()">Clear</button>
+        </div>
+
+        <!-- Toggleable preview -->
+        <div id="preview" class="preview hidden">
+            <textarea id="previewBox" class="preview-box" readonly></textarea>
+        </div>
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script>
+        let responses = [];
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text.trim()) {
+                    responses.push(text.trim());
+                    updateCounter();
+                    showToast('Response added');
+                } else {
+                    showToast('Clipboard empty');
+                }
+            } catch (err) {
+                showToast('Clipboard access denied');
+            }
+        }
+
+        function copyAll() {
+            if (responses.length > 0) {
+                const combined = responses.join('\n\n');
+                navigator.clipboard.writeText(combined).then(() => {
+                    showToast('Copied ' + responses.length + ' responses');
+                });
+            } else {
+                showToast('Nothing to copy');
+            }
+        }
+
+        function clearAll() {
+            responses = [];
+            updateCounter();
+            showToast('Cleared');
+        }
+
+        function updateCounter() {
+            const count = responses.length;
+            document.getElementById('counter').textContent =
+                count + (count === 1 ? ' response' : ' responses');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            document.getElementById('previewBox').value = responses.join('\n\n');
+        }
+
+        function toggleView() {
+            const preview = document.getElementById('preview');
+            preview.classList.toggle('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+</body>
+</html>

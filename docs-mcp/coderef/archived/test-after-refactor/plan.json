@@ -1,0 +1,620 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-after-refactor",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code AI",
+    "generated_at": "2025-10-16T09:40:00",
+    "has_context": true,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "project_context": {
+        "project_name": "docs-mcp",
+        "project_type": "MCP server for documentation generation",
+        "primary_language": "Python 3.11+",
+        "framework": "MCP Protocol 1.0",
+        "current_version": "2.0.1"
+      },
+      "foundation_docs": {
+        "available": [
+          "README.md",
+          "CLAUDE.md",
+          "user-guide.md",
+          "index.html",
+          "CHANGELOG.json"
+        ],
+        "missing": []
+      },
+      "coding_standards": {
+        "available": [],
+        "notes": "Code follows PEP 8, uses type hints, async/await patterns"
+      },
+      "reference_components": {
+        "primary": [
+          "handler_decorators.py - Decorator implementations",
+          "handler_helpers.py - Helper functions",
+          "tool_handlers.py - All 21 refactored handlers",
+          "server.py - MCP server entry point"
+        ],
+        "secondary": [
+          "error_responses.py - ErrorResponse factory",
+          "validation.py - Input validation",
+          "logger_config.py - Structured logging"
+        ]
+      },
+      "technology_stack": {
+        "runtime": "Python 3.11+",
+        "protocol": "MCP 1.0",
+        "testing": "Direct async function calls",
+        "logging": "Python logging module"
+      },
+      "key_patterns": [
+        "Decorator pattern for cross-cutting concerns",
+        "Factory pattern for error responses",
+        "Registry pattern for handler dispatch",
+        "Async/await for all handlers"
+      ],
+      "gaps_and_risks": [
+        "No pytest installed for formal test suite",
+        "Manual testing required via Python scripts",
+        "Windows console emoji encoding issues",
+        "Need to verify MCP client compatibility"
+      ]
+    },
+    "1_executive_summary": {
+      "overview": "Comprehensive testing of the docs-mcp server following a major decorator refactor that reduced code by 489 lines (22.5%) across 21 handlers. The refactor extracted error handling and logging into reusable decorators, moving implementations to separate modules.",
+      "problem_statement": "The decorator refactor (Phase 1: applied decorators, Phase 2: extracted to modules) may have introduced breaking changes, performance regressions, or functional issues. All 23 MCP tool handlers must be verified to work correctly through the MCP interface.",
+      "proposed_solution": "Execute a comprehensive test plan covering handler execution, decorator functionality, error handling, input validation, JSON responses, performance measurement, and MCP interface compatibility. Tests will run through actual MCP call_tool interface to simulate real-world usage.",
+      "success_definition": "All 23 handlers execute without errors, decorator overhead <1ms, error handling works, input validation catches invalid inputs, 100% backward compatibility maintained",
+      "estimated_effort": "2-3 hours (test script creation: 1h, execution: 30min, documentation: 1h)",
+      "dependencies": [
+        "Server must start without import errors",
+        "TEMPLATES_DIR must be initialized by server.py",
+        "All handler modules must import successfully"
+      ]
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Decorator stacking order incorrect",
+          "severity": "high",
+          "likelihood": "low",
+          "mitigation": "Already verified @log_invocation (outer) → @mcp_error_handler (inner) order is correct",
+          "impact": "Would cause logging to miss errors or errors to not be caught"
+        },
+        {
+          "risk": "TEMPLATES_DIR not initialized before handler calls",
+          "severity": "critical",
+          "likelihood": "low",
+          "mitigation": "server.py calls set_templates_dir() on line 49, already verified working",
+          "impact": "Would cause AttributeError: 'NoneType' object has no attribute 'exists'"
+        },
+        {
+          "risk": "Error handling broken by decorators",
+          "severity": "high",
+          "likelihood": "low",
+          "mitigation": "Test with invalid inputs to verify ErrorResponse objects returned",
+          "impact": "Uncaught exceptions would crash handlers"
+        },
+        {
+          "risk": "Performance regression from decorator overhead",
+          "severity": "medium",
+          "likelihood": "low",
+          "mitigation": "Measure average call time, target <1ms overhead",
+          "impact": "Slower handler execution could impact user experience"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "Testing reveals critical bugs requiring code changes",
+          "severity": "medium",
+          "likelihood": "low",
+          "mitigation": "Initial verification already passed, unlikely to find new issues",
+          "impact": "Would require additional refactor iteration"
+        }
+      ],
+      "security_risks": [
+        {
+          "risk": "Input validation compromised by decorator changes",
+          "severity": "high",
+          "likelihood": "very-low",
+          "mitigation": "Validation happens before decorators, unchanged by refactor",
+          "impact": "Could allow path traversal or injection attacks"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "what_exists_now": [
+        "handler_decorators.py - 188 lines with @mcp_error_handler and @log_invocation",
+        "handler_helpers.py - 49 lines with format_success_response()",
+        "tool_handlers.py - 1679 lines (reduced from 2168) with 21 refactored handlers",
+        "TOOL_HANDLERS registry - All 23 handlers registered",
+        "Comprehensive decorator documentation in CLAUDE.md Section 5"
+      ],
+      "what_needs_modification": [],
+      "what_needs_creation": [
+        "test_comprehensive_verification.py - Main test script",
+        "test_results.md - Test execution report",
+        "test_performance.py - Performance benchmark script (optional)"
+      ],
+      "compatibility_considerations": [
+        "Must maintain 100% backward compatibility with existing MCP clients",
+        "All tool input schemas unchanged",
+        "All tool output formats unchanged",
+        "Error response formats unchanged"
+      ],
+      "migration_strategy": "No migration needed - this is verification only, no code changes"
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Handler Execution Verification",
+        "description": "Test all 23 MCP tool handlers execute without errors through the MCP call_tool interface",
+        "capabilities": [
+          "Execute list_templates (no arguments)",
+          "Execute get_template (with template_name)",
+          "Execute get_planning_template (JSON response)",
+          "Execute update_changelog (meta-tool)",
+          "Execute get_changelog (with validation)"
+        ],
+        "acceptance_criteria": [
+          "All handlers return list[TextContent]",
+          "No unhandled exceptions raised",
+          "Response types match expectations (text, json)",
+          "Handler registry complete (23 entries)"
+        ]
+      },
+      "feature_2": {
+        "name": "Decorator Functionality Verification",
+        "description": "Verify @log_invocation and @mcp_error_handler decorators work correctly",
+        "capabilities": [
+          "Check log entries created for each invocation",
+          "Verify log_tool_call() called with handler name",
+          "Confirm error logging includes context",
+          "Validate decorator stacking order preserved"
+        ],
+        "acceptance_criteria": [
+          "Logs show 'Tool called: {handler_name}' for each invocation",
+          "Error logs show '{handler_name}_error' for exceptions",
+          "functools.wraps preserves function metadata",
+          "Async compatibility maintained"
+        ]
+      },
+      "feature_3": {
+        "name": "Error Handling Verification",
+        "description": "Test that decorators properly catch exceptions and return ErrorResponse objects",
+        "capabilities": [
+          "Test with invalid template name (FileNotFoundError)",
+          "Test with invalid project path (ValueError)",
+          "Test with malformed JSON (JSONDecodeError)",
+          "Test with missing required fields (ValueError)"
+        ],
+        "acceptance_criteria": [
+          "All exceptions caught by decorator",
+          "ErrorResponse factory methods called",
+          "Error responses contain helpful messages",
+          "No uncaught exceptions propagate"
+        ]
+      },
+      "feature_4": {
+        "name": "Performance Measurement",
+        "description": "Measure decorator overhead to ensure <1ms target met",
+        "capabilities": [
+          "Benchmark 100+ handler calls",
+          "Calculate average execution time",
+          "Compare with baseline (if available)",
+          "Identify performance bottlenecks"
+        ],
+        "acceptance_criteria": [
+          "Average call time <1ms per handler",
+          "Decorator overhead negligible",
+          "No memory leaks from repeated calls",
+          "Performance acceptable for production use"
+        ]
+      },
+      "feature_5": {
+        "name": "MCP Interface Compatibility",
+        "description": "Verify handlers work through actual MCP call_tool interface, not just direct calls",
+        "capabilities": [
+          "Test through server.call_tool() function",
+          "Verify MCP protocol compliance",
+          "Check TextContent response format",
+          "Validate tool schema compatibility"
+        ],
+        "acceptance_criteria": [
+          "All handlers accessible via MCP interface",
+          "Response format matches MCP spec",
+          "No breaking changes to tool schemas",
+          "Claude Code can invoke all tools"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "prefix": "TEST",
+      "format": "TEST-XXX (e.g., TEST-001, TEST-002)",
+      "categories": {
+        "TEST-0XX": "Test script creation and setup",
+        "TEST-1XX": "Handler execution tests",
+        "TEST-2XX": "Decorator functionality tests",
+        "TEST-3XX": "Error handling tests",
+        "TEST-4XX": "Performance measurement tests",
+        "TEST-5XX": "Documentation and reporting"
+      },
+      "task_list": [
+        {
+          "id": "TEST-001",
+          "description": "Create comprehensive test script with all test cases",
+          "estimated_time": "30 minutes"
+        },
+        {
+          "id": "TEST-002",
+          "description": "Set up test environment and verify imports work",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-101",
+          "description": "Test all 23 handlers execute without errors",
+          "estimated_time": "15 minutes"
+        },
+        {
+          "id": "TEST-102",
+          "description": "Verify handler registry completeness",
+          "estimated_time": "5 minutes"
+        },
+        {
+          "id": "TEST-103",
+          "description": "Test handlers with valid arguments",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-201",
+          "description": "Verify @log_invocation creates log entries",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-202",
+          "description": "Verify @mcp_error_handler catches exceptions",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-203",
+          "description": "Check decorator stacking order correct",
+          "estimated_time": "5 minutes"
+        },
+        {
+          "id": "TEST-301",
+          "description": "Test error handling with invalid inputs",
+          "estimated_time": "15 minutes"
+        },
+        {
+          "id": "TEST-302",
+          "description": "Verify ErrorResponse factory methods called",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-303",
+          "description": "Test input validation catches invalid paths/values",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-401",
+          "description": "Benchmark handler call performance (100+ iterations)",
+          "estimated_time": "10 minutes"
+        },
+        {
+          "id": "TEST-402",
+          "description": "Calculate decorator overhead and verify <1ms",
+          "estimated_time": "5 minutes"
+        },
+        {
+          "id": "TEST-501",
+          "description": "Generate test results report (test_results.md)",
+          "estimated_time": "20 minutes"
+        },
+        {
+          "id": "TEST-502",
+          "description": "Update CHANGELOG.json with test verification entry",
+          "estimated_time": "10 minutes"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Test Infrastructure Setup",
+        "duration": "1 hour",
+        "tasks": ["TEST-001", "TEST-002"],
+        "deliverables": [
+          "test_comprehensive_verification.py script",
+          "Test environment verified",
+          "All imports working"
+        ],
+        "dependencies": [],
+        "parallel_work": [],
+        "risks": [
+          "Import errors if modules not found",
+          "TEMPLATES_DIR initialization issues"
+        ]
+      },
+      "phase_2": {
+        "name": "Handler Execution Tests",
+        "duration": "30 minutes",
+        "tasks": ["TEST-101", "TEST-102", "TEST-103"],
+        "deliverables": [
+          "All 23 handlers tested",
+          "Registry verification complete",
+          "Valid argument tests passing"
+        ],
+        "dependencies": ["phase_1"],
+        "parallel_work": [],
+        "risks": [
+          "Handler failures requiring code fixes",
+          "Missing handlers in registry"
+        ]
+      },
+      "phase_3": {
+        "name": "Decorator and Error Handling Tests",
+        "duration": "45 minutes",
+        "tasks": ["TEST-201", "TEST-202", "TEST-203", "TEST-301", "TEST-302", "TEST-303"],
+        "deliverables": [
+          "Decorator logging verified",
+          "Error handling verified",
+          "Input validation verified"
+        ],
+        "dependencies": ["phase_2"],
+        "parallel_work": [
+          "Can run decorator tests and error tests in parallel"
+        ],
+        "risks": [
+          "Decorator issues requiring refactor changes",
+          "Error handling broken"
+        ]
+      },
+      "phase_4": {
+        "name": "Performance Measurement",
+        "duration": "15 minutes",
+        "tasks": ["TEST-401", "TEST-402"],
+        "deliverables": [
+          "Performance benchmarks",
+          "Decorator overhead measurement",
+          "Verification of <1ms target"
+        ],
+        "dependencies": ["phase_2"],
+        "parallel_work": [
+          "Can run independently of phase_3"
+        ],
+        "risks": [
+          "Performance regression detected"
+        ]
+      },
+      "phase_5": {
+        "name": "Documentation and Reporting",
+        "duration": "30 minutes",
+        "tasks": ["TEST-501", "TEST-502"],
+        "deliverables": [
+          "test_results.md report",
+          "CHANGELOG.json updated",
+          "Test verification documented"
+        ],
+        "dependencies": ["phase_2", "phase_3", "phase_4"],
+        "parallel_work": [],
+        "risks": []
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_name": "test_handler_execution",
+          "scope": "All 23 handlers",
+          "approach": "Call each handler through MCP interface with valid arguments",
+          "validation": "Assert no exceptions, returns list[TextContent]"
+        },
+        {
+          "test_name": "test_decorator_logging",
+          "scope": "@log_invocation decorator",
+          "approach": "Check logs after handler execution",
+          "validation": "Assert log entries contain 'Tool called: {handler_name}'"
+        },
+        {
+          "test_name": "test_error_handling",
+          "scope": "@mcp_error_handler decorator",
+          "approach": "Call handlers with invalid inputs",
+          "validation": "Assert ErrorResponse returned, no uncaught exceptions"
+        },
+        {
+          "test_name": "test_input_validation",
+          "scope": "validation.py functions",
+          "approach": "Test with invalid paths, versions, template names",
+          "validation": "Assert ValueError raised or ErrorResponse returned"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_name": "test_mcp_interface",
+          "scope": "server.call_tool() function",
+          "approach": "Invoke handlers through MCP protocol",
+          "validation": "Verify MCP compliance and response format"
+        },
+        {
+          "test_name": "test_templates_dir_injection",
+          "scope": "TEMPLATES_DIR initialization",
+          "approach": "Verify set_templates_dir() called by server.py",
+          "validation": "Assert TEMPLATES_DIR is not None and exists"
+        }
+      ],
+      "performance_tests": [
+        {
+          "test_name": "benchmark_decorator_overhead",
+          "scope": "Decorator performance",
+          "approach": "Measure 100+ handler calls, calculate average",
+          "validation": "Assert average time <1ms per call"
+        }
+      ],
+      "edge_cases": [
+        "Empty arguments dict",
+        "Missing required parameters",
+        "Invalid data types (string instead of list)",
+        "Path traversal attempts (../../etc/passwd)",
+        "Very long strings (>10000 chars)",
+        "Unicode characters in inputs",
+        "Null/None values"
+      ],
+      "test_data": {
+        "valid_project_path": "C:/Users/willh/.mcp-servers/docs-mcp",
+        "invalid_project_path": "/this/does/not/exist/xyz123",
+        "valid_template_name": "readme",
+        "invalid_template_name": "nonexistent_template_xyz",
+        "valid_version": "1.0.0",
+        "invalid_version": "v1.0.0"
+      }
+    },
+    "8_success_criteria": {
+      "must_have": [
+        "All 23 handlers execute without errors",
+        "Decorator overhead <1ms per call",
+        "Error handling returns ErrorResponse objects",
+        "Input validation catches invalid inputs",
+        "100% backward compatibility maintained",
+        "Handler registry complete (23 entries)"
+      ],
+      "should_have": [
+        "Comprehensive test report (test_results.md)",
+        "Performance benchmarks documented",
+        "All test cases passing",
+        "Changelog entry added"
+      ],
+      "nice_to_have": [
+        "Automated test suite for future refactors",
+        "CI/CD integration for continuous testing",
+        "Performance comparison with pre-refactor baseline"
+      ],
+      "measurable_outcomes": {
+        "handler_success_rate": "100% (23/23 handlers)",
+        "decorator_overhead": "<1ms average",
+        "error_handling_coverage": "100% (all exception types caught)",
+        "test_execution_time": "<5 minutes total",
+        "backward_compatibility": "100% (no breaking changes)"
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        {
+          "task": "Create test_comprehensive_verification.py",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Include all test cases from testing_strategy"
+        },
+        {
+          "task": "Verify imports work (server, tool_handlers)",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Check for ImportError or ModuleNotFoundError"
+        },
+        {
+          "task": "Verify TEMPLATES_DIR initialized",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Assert tool_handlers.TEMPLATES_DIR is not None"
+        }
+      ],
+      "phase_2_checklist": [
+        {
+          "task": "Test list_templates handler",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "No arguments required"
+        },
+        {
+          "task": "Test get_template handler",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "With valid template_name"
+        },
+        {
+          "task": "Test get_planning_template handler",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Verify JSON response"
+        },
+        {
+          "task": "Test update_changelog handler",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Meta-tool test"
+        },
+        {
+          "task": "Verify TOOL_HANDLERS registry",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Assert len(TOOL_HANDLERS) == 23"
+        }
+      ],
+      "phase_3_checklist": [
+        {
+          "task": "Test @log_invocation decorator",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Check logs for 'Tool called:' entries"
+        },
+        {
+          "task": "Test @mcp_error_handler with invalid input",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Use invalid template name"
+        },
+        {
+          "task": "Test error handling with invalid path",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Should return ErrorResponse"
+        },
+        {
+          "task": "Test input validation catches invalid version",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Try 'v1.0.0' instead of '1.0.0'"
+        }
+      ],
+      "phase_4_checklist": [
+        {
+          "task": "Benchmark 100 handler calls",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Use time.perf_counter()"
+        },
+        {
+          "task": "Calculate average execution time",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Should be <1ms"
+        },
+        {
+          "task": "Document performance results",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Include in test_results.md"
+        }
+      ],
+      "phase_5_checklist": [
+        {
+          "task": "Generate test_results.md report",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Include all test results and metrics"
+        },
+        {
+          "task": "Add changelog entry for test verification",
+          "status": "pending",
+          "assigned_to": "AI Assistant",
+          "notes": "Use add_changelog_entry MCP tool"
+        },
+        {
+          "task": "Review and sign off on test completion",
+          "status": "pending",
+          "assigned_to": "User",
+          "notes": "User approval required"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "feature_name": "fixing-gather-context",
+  "description": "Implement MCP tool for /gather-context workflow to enable programmatic access to context gathering, completing the planning workflow automation chain. Currently /gather-context exists only as a slash command with instructions, while the other 3 planning tools (analyze-for-planning, create-plan, validate-plan) have both slash commands and MCP tool implementations.",
+  "goal": "Enable end-to-end automation of the planning workflow (steps 1-4) by implementing the missing MCP tool for gathering feature context. This allows external systems (CI/CD, Jira, automation scripts) to programmatically create context.json files, and ensures architectural consistency across all planning tools.",
+  "requirements": [
+    "Implement handle_gather_context() handler function in tool_handlers.py",
+    "Register gather_context tool in server.py list_tools()",
+    "Add gather_context to TOOL_HANDLERS registry",
+    "Validate all required fields (project_path, feature_name, description, goal, requirements)",
+    "Validate feature_name format (alphanumeric, hyphens, underscores only, max 100 chars)",
+    "Create working directory structure: coderef/working/{feature_name}/",
+    "Save context.json with validated structure to correct location",
+    "Apply decorators: @log_invocation and @mcp_error_handler",
+    "Return success response with context_file path and requirements_count",
+    "Maintain backward compatibility with existing slash command workflow",
+    "Support optional fields: out_of_scope, constraints, decisions, success_criteria"
+  ],
+  "out_of_scope": [
+    "Modifying the existing slash command file (.claude/commands/gather-context.md)",
+    "Changing the interactive Q&A workflow (keep as-is for manual use)",
+    "Auto-running prerequisites like /analyze-for-planning",
+    "Implementing JSON schema validation (separate task, Gap #3)",
+    "Adding automated tests (separate task, Gap #4)",
+    "Updating CLAUDE.md documentation (separate task, Gap #2)",
+    "Creating context-schema.json file (tracked as Gap #3)"
+  ],
+  "constraints": [
+    "Must follow existing MCP tool architecture (handlers, validation, logging, error responses)",
+    "Must use ErrorResponse factory pattern for all errors",
+    "Must use existing validation functions (validate_project_path_input, etc.)",
+    "Must save to exact location: coderef/working/{feature_name}/context.json",
+    "Must validate feature_name to prevent path traversal (security: SEC-005)",
+    "Must use structured logging (log_tool_call, log_error)",
+    "Must return list[TextContent] format consistent with other handlers",
+    "Must handle missing optional fields gracefully (set to empty arrays/objects)",
+    "File must be valid JSON with 2-space indentation",
+    "Must work with existing /create-plan tool (which loads context.json)"
+  ],
+  "decisions": {
+    "hybrid_approach": "Keep both slash command (interactive) and MCP tool (programmatic) - slash command can call MCP tool after gathering user input",
+    "validation_strategy": "Use existing validation.py functions for project_path and feature_name, validate required fields in handler",
+    "error_handling": "Use @mcp_error_handler decorator for consistent error responses across all error types",
+    "optional_fields": "Set defaults to empty arrays ([]) for out_of_scope/constraints and empty objects ({}) for decisions/success_criteria",
+    "schema_validation": "Defer JSON schema validation to separate implementation (Gap #3) - for now just validate required fields exist",
+    "feature_name_security": "Use regex pattern ^[a-zA-Z0-9_-]+$ to prevent path traversal, same as other tools"
+  },
+  "success_criteria": {
+    "functional": [
+      "MCP tool callable via mcp__docs_mcp__gather_context()",
+      "Creates valid JSON file at correct path",
+      "All required fields present in output: feature_name, description, goal, requirements",
+      "Optional fields handled correctly (empty if not provided)",
+      "Feature name validation prevents path traversal attempts",
+      "/create-plan can successfully load the generated context.json"
+    ],
+    "operational": [
+      "Tool registered in server.py and appears in tool list",
+      "Handler registered in TOOL_HANDLERS registry",
+      "Decorators applied correctly (@log_invocation, @mcp_error_handler)",
+      "Errors logged with proper context (log_tool_call, log_error)",
+      "Success response includes context_file path",
+      "Working directory created if doesn't exist"
+    ],
+    "quality": [
+      "Follows existing handler pattern from tool_handlers.py",
+      "Uses format_success_response() helper for consistent output",
+      "Input validation at MCP boundary using validation.py functions",
+      "Security: Feature name sanitized to prevent directory traversal",
+      "Consistent with other planning tools (analyze, create, validate)",
+      "Code documented with docstring explaining purpose and parameters"
+    ],
+    "integration": [
+      "Can be called programmatically from automation scripts",
+      "Can be chained with other planning tools (analyze → create → validate)",
+      "Output format matches what /create-plan expects to load",
+      "Works with existing slash command (command can call tool)",
+      "Enables end-to-end automation of planning workflow"
+    ]
+  },
+  "technical_notes": {
+    "input_schema": {
+      "required": ["project_path", "feature_name", "description", "goal", "requirements"],
+      "optional": ["out_of_scope", "constraints", "decisions", "success_criteria"],
+      "types": {
+        "project_path": "string (absolute path)",
+        "feature_name": "string (pattern: ^[a-zA-Z0-9_-]+$, maxLength: 100)",
+        "description": "string (minLength: 10)",
+        "goal": "string (minLength: 10)",
+        "requirements": "array of strings (minItems: 1)",
+        "out_of_scope": "array of strings",
+        "constraints": "array of strings",
+        "decisions": "object (key-value pairs)",
+        "success_criteria": "object (nested structure)"
+      }
+    },
+    "output_format": {
+      "type": "list[TextContent]",
+      "content": "JSON with keys: context_file, feature_name, requirements_count, message"
+    },
+    "file_location": "coderef/working/{feature_name}/context.json",
+    "similar_implementations": [
+      "handle_analyze_project_for_planning (line 886 in tool_handlers.py)",
+      "handle_create_plan (line 1111 in tool_handlers.py)"
+    ]
+  },
+  "implementation_phases": {
+    "phase_1": {
+      "name": "Core MCP Tool Implementation",
+      "tasks": [
+        "Add tool definition to server.py list_tools()",
+        "Create handle_gather_context() function in tool_handlers.py",
+        "Add to TOOL_HANDLERS registry",
+        "Implement input validation (required fields, feature name format)",
+        "Implement context.json creation and saving",
+        "Add error handling and logging"
+      ]
+    },
+    "phase_2": {
+      "name": "Documentation and Testing",
+      "tasks": [
+        "Update CLAUDE.md to document the new tool (Gap #2)",
+        "Create JSON schema for context.json validation (Gap #3)",
+        "Write unit tests for handler (Gap #4)",
+        "Update slash command to optionally call MCP tool",
+        "Add examples to user-guide.md"
+      ]
+    },
+    "phase_3": {
+      "name": "Integration and Validation",
+      "tasks": [
+        "Test end-to-end workflow: gather → analyze → create → validate",
+        "Verify /create-plan loads context.json correctly",
+        "Test automation scenarios (scripting, CI/CD integration)",
+        "Update changelog with new feature",
+        "Deploy globally (if slash command updated)"
+      ]
+    }
+  },
+  "references": {
+    "existing_handlers": [
+      "tool_handlers.py:886 (handle_analyze_project_for_planning)",
+      "tool_handlers.py:993 (handle_validate_implementation_plan)",
+      "tool_handlers.py:1111 (handle_create_plan)"
+    ],
+    "validation_functions": [
+      "validation.py:validate_project_path_input()",
+      "validation.py:validate_version_format() (reference for pattern validation)"
+    ],
+    "patterns_to_follow": [
+      "handler_decorators.py:@mcp_error_handler",
+      "handler_decorators.py:@log_invocation",
+      "handler_helpers.py:format_success_response()",
+      "error_responses.py:ErrorResponse factory"
+    ],
+    "example_context_files": [
+      "coderef/archived/create-plan/context.json",
+      "coderef/archived/comprehensive-inventory-system/phase-3-apis-databases/context.json"
+    ]
+  }
+}

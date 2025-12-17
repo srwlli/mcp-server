@@ -1,0 +1,384 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "comprehensive-inventory-system-phase-5",
+    "version": "2.0.0",
+    "status": "ready_to_implement",
+    "generated_by": "Claude",
+    "has_context": true,
+    "has_analysis": true,
+    "previous_phases_complete": 4
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [
+          "README.md",
+          "CLAUDE.md (server documentation)",
+          "coderef/foundation-docs/API.md"
+        ],
+        "reference_patterns": [
+          "Phases 1-4 generators for pattern consistency",
+          "inventory_manifest (Phase 1) for file discovery",
+          "config_generator (Phase 4) for multi-parser architecture",
+          "test_generator (Phase 4) for quality scoring"
+        ]
+      },
+      "coding_standards": {
+        "established_patterns": [
+          "Generator base class inheritance",
+          "MCP handler with error responses",
+          "TypedDict for type safety",
+          "Structured logging with log_tool_call/log_error",
+          "Input validation at boundaries",
+          "JSON schema validation"
+        ]
+      },
+      "reference_components": {
+        "generators": "generators/inventory_generator.py, config_generator.py, test_generator.py",
+        "handlers": "tool_handlers.py (19 existing handlers pattern)",
+        "constants": "constants.py (Paths, Files, Enums)",
+        "type_definitions": "type_defs.py (23+ existing TypedDicts)"
+      },
+      "key_patterns_identified": [
+        "Multi-parser architecture (formats, asset types)",
+        "Quality/optimization scoring algorithms",
+        "File discovery with glob patterns",
+        "Manifest generation and validation",
+        "Performance optimization targets"
+      ],
+      "technology_stack": {
+        "languages": ["Python 3.11+"],
+        "frameworks": ["MCP Protocol", "FastAPI"],
+        "key_libraries": [
+          "pathlib (file discovery)",
+          "json (manifest serialization)",
+          "jsonschema (validation)",
+          "re (regex patterns)",
+          "ast (docstring parsing)"
+        ]
+      },
+      "gaps_and_risks": [
+        "Quality scoring algorithm must be meaningful (not arbitrary)",
+        "Optimization scoring needs domain knowledge about formats",
+        "Asset analysis (dimensions, MIME types) requires careful implementation",
+        "Performance must stay under 3-4s for large projects"
+      ]
+    },
+    "1_executive_summary": {
+      "purpose": "Add comprehensive documentation and assets inventory capabilities to docs-mcp, enabling users to analyze documentation coverage, quality, and static asset optimization",
+      "value_proposition": "Users can now automatically discover all documentation and assets, understand coverage gaps, assess quality metrics, and identify asset optimization opportunities - reducing manual audits and improving project visibility",
+      "real_world_analogy": "Like a building inspector analyzing documentation completeness and infrastructure efficiency - discovers what's documented, assesses quality, and identifies improvement areas",
+      "use_case": "Project manager runs documentation_inventory → identifies 30% undocumented APIs → prioritizes documentation sprint. Simultaneously runs assets_inventory → discovers 5MB of oversized PNGs → schedules compression task",
+      "output": [
+        "documentation.json manifest with coverage metrics",
+        "assets.json manifest with optimization recommendations",
+        "Quality scores (0-100) for documentation",
+        "Optimization scores (0-100) for assets",
+        "Actionable improvement recommendations"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "medium (pattern-matching + scoring algorithms)",
+      "scope": "2 generators, ~1200 lines total code; 5 documentation updates",
+      "file_system_risk": "low (read-only operations)",
+      "dependencies": [
+        "Existing generators (inventory, config, test) as patterns",
+        "Existing handlers and schemas as templates"
+      ],
+      "performance_concerns": [
+        "Documentation discovery across nested directories",
+        "Asset scanning with dimension extraction (Pillow optional)",
+        "Scoring algorithm efficiency"
+      ],
+      "security_considerations": [
+        "Path traversal protection in file discovery",
+        "Symlink validation",
+        "Large file handling"
+      ],
+      "breaking_changes": "none (additive feature)"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "server.py (add 2 tool definitions)",
+        "tool_handlers.py (add 2 handlers)",
+        "constants.py (add 3 enums)",
+        "type_defs.py (add 6 TypedDicts)",
+        "README.md (update examples)",
+        "coderef/foundation-docs/API.md (add tool docs)",
+        "my-guide.md (add references)",
+        "coderef/quickref.md (update version)",
+        "CLAUDE.md (add tools list)",
+        "coderef/changelog/CHANGELOG.json (v2.0.0 entry)"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "generators/base_generator.py",
+          "error_responses.py",
+          "validation.py",
+          "logger_config.py",
+          "constants.py"
+        ],
+        "existing_external": [
+          "pathlib",
+          "json",
+          "jsonschema",
+          "re",
+          "ast"
+        ],
+        "new_external": [
+          "Pillow>=9.0.0 (optional)"
+        ]
+      },
+      "architecture_context": "Extends existing inventory system (Phase 1-4). Documentation tool analyzes coverage and quality. Assets tool analyzes optimization. Both follow established generator + handler + schema pattern. Integrates with MCP tool registry."
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Multi-format documentation discovery (Markdown, RST, AsciiDoc, HTML, Org-mode)",
+        "Documentation quality scoring (coverage + freshness + completeness)",
+        "Coverage analysis (documented vs undocumented components)",
+        "Multi-asset type discovery (images, CSS, JS, fonts, media, archives, data)",
+        "Asset optimization scoring (compression + format + deduplication)"
+      ],
+      "secondary_features": [
+        "Code example extraction from documentation",
+        "Link validation and extraction",
+        "Image dimension extraction",
+        "Asset deduplication detection",
+        "Documentation gap identification"
+      ],
+      "edge_case_handling": [
+        "Empty documentation directories",
+        "Mixed language documentation (English + other languages)",
+        "Very large assets (>100MB)",
+        "Broken symlinks in assets",
+        "Non-existent documentation references"
+      ],
+      "configuration_options": [
+        "documentation_inventory: filter by format, analyze depth",
+        "assets_inventory: filter by asset type, include/exclude patterns"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "DOC-001: Create documentation_generator.py with file discovery",
+        "DOC-002: Implement quality scoring algorithm",
+        "DOC-003: Implement coverage analysis",
+        "DOC-004: Add Tool #20 to server.py",
+        "DOC-005: Create handle_documentation_inventory() handler",
+        "DOC-006: Add DocumentationType enum",
+        "DOC-007: Add DocumentationFileDict TypedDicts",
+        "DOC-008: Create documentation-schema.json",
+        "DOC-009: Update documentation (README, API, my-guide, quickref, CLAUDE)",
+        "DOC-010: Create /documentation-inventory slash command",
+        "DOC-011: Test on docs-mcp project",
+        "DOC-012: Add CHANGELOG entry (Phase 5A-5F)",
+        "ASSET-001: Create assets_generator.py with asset discovery",
+        "ASSET-002: Implement asset analysis (dimensions, MIME types)",
+        "ASSET-003: Implement optimization scoring algorithm",
+        "ASSET-004: Add Tool #21 to server.py",
+        "ASSET-005: Create handle_assets_inventory() handler",
+        "ASSET-006: Add AssetType, ImageFormat enums",
+        "ASSET-007: Add AssetFileDict TypedDicts",
+        "ASSET-008: Create assets-schema.json",
+        "ASSET-009: Update documentation (README, API, my-guide, quickref, CLAUDE)",
+        "ASSET-010: Create /assets-inventory slash command",
+        "ASSET-011: Test on docs-mcp project",
+        "ASSET-012: Update CHANGELOG entry (Phase 5G-5L)",
+        "FINAL-001: Git commit Phase 5A-5F checkpoint",
+        "FINAL-002: Git commit Phase 5G-5L checkpoint"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "title": "Phase 5A-5F: Documentation Inventory (10 hours)",
+          "purpose": "Implement documentation discovery, analysis, and quality scoring",
+          "complexity": "medium",
+          "effort_level": 4,
+          "tasks": [
+            "DOC-001 through DOC-012"
+          ],
+          "completion_criteria": "documentation_inventory discovers all docs, calculates quality scores, CHANGELOG updated"
+        },
+        {
+          "title": "Phase 5G-5L: Assets Inventory (10 hours)",
+          "purpose": "Implement asset discovery, analysis, and optimization scoring",
+          "complexity": "medium",
+          "effort_level": 4,
+          "tasks": [
+            "ASSET-001 through ASSET-012"
+          ],
+          "completion_criteria": "assets_inventory discovers all assets, calculates optimization scores, CHANGELOG updated"
+        },
+        {
+          "title": "Finalization: Git Checkpoints",
+          "purpose": "Commit and push Phase 5 complete",
+          "complexity": "low",
+          "effort_level": 1,
+          "tasks": [
+            "FINAL-001",
+            "FINAL-002"
+          ],
+          "completion_criteria": "Two commits pushed, v2.0.0 released"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "File discovery returns correct count",
+        "Quality scoring ranges 0-100",
+        "Optimization scoring ranges 0-100",
+        "Coverage percentage calculation accurate",
+        "Asset dimensions extracted correctly",
+        "JSON schema validation passes"
+      ],
+      "integration_tests": [
+        "documentation_inventory runs end-to-end",
+        "assets_inventory runs end-to-end",
+        "Both tools save manifests correctly",
+        "Both tools integrate with MCP handler",
+        "Error handling works (missing files, malformed data)"
+      ],
+      "end_to_end_tests": [
+        "Run on docs-mcp project, verify results reasonable",
+        "Compare documentation count with manual count",
+        "Verify asset types match discovery results"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Empty documentation directory",
+          "setup": "Project with no docs",
+          "expected_behavior": "Coverage score 0, manifest created",
+          "verification": "Check metrics show 0 docs",
+          "error_handling": "No error"
+        },
+        {
+          "scenario": "Very large image file",
+          "setup": "Asset > 100MB",
+          "expected_behavior": "File processed, optimization score < 50",
+          "verification": "Check asset in manifest",
+          "error_handling": "No error, process efficiently"
+        },
+        {
+          "scenario": "Broken symlink in assets",
+          "setup": "Symlink pointing to deleted file",
+          "expected_behavior": "Symlink skipped, continue processing",
+          "verification": "Check asset count excludes broken symlink",
+          "error_handling": "Graceful skip"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Documentation discovery finds all doc files",
+          "metric": "File count accuracy",
+          "target": ">95% accuracy vs manual count",
+          "validation": "Test on docs-mcp project"
+        },
+        {
+          "requirement": "Quality scoring is meaningful",
+          "metric": "Score distribution",
+          "target": "Scores vary (not all 50)",
+          "validation": "Check min/max/avg scores"
+        },
+        {
+          "requirement": "Asset optimization identifies real opportunities",
+          "metric": "Recommendation actionability",
+          "target": "Recommendations are specific",
+          "validation": "Review sample recommendations"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run coverage tool"
+        },
+        {
+          "requirement": "Error handling",
+          "metric": "All error paths handled",
+          "target": "No unhandled exceptions",
+          "validation": "Test with malformed inputs"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Documentation inventory performance",
+          "metric": "Execution time",
+          "target": "<3 seconds for 200 files",
+          "validation": "Measure on docs-mcp"
+        },
+        {
+          "requirement": "Assets inventory performance",
+          "metric": "Execution time",
+          "target": "<4 seconds for 500 assets",
+          "validation": "Measure on docs-mcp"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Path traversal protection",
+          "metric": "No directory escape",
+          "target": "All paths canonicalized",
+          "validation": "Code review + path validation tests"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review all Phase 1-4 generators for patterns",
+        "☐ Review CLAUDE.md thoroughly",
+        "☐ Plan quality/optimization scoring algorithms",
+        "☐ Set up test environment"
+      ],
+      "phase_5a_5f": [
+        "☐ DOC-001: Create documentation_generator.py",
+        "☐ DOC-002: Implement quality scoring",
+        "☐ DOC-003: Implement coverage analysis",
+        "☐ DOC-004 through DOC-010: MCP integration",
+        "☐ DOC-011: Test on docs-mcp",
+        "☐ DOC-012: CHANGELOG entry"
+      ],
+      "phase_5g_5l": [
+        "☐ ASSET-001: Create assets_generator.py",
+        "☐ ASSET-002: Implement asset analysis",
+        "☐ ASSET-003: Implement optimization scoring",
+        "☐ ASSET-004 through ASSET-010: MCP integration",
+        "☐ ASSET-011: Test on docs-mcp",
+        "☐ ASSET-012: CHANGELOG update"
+      ],
+      "finalization": [
+        "☐ All tests passing",
+        "☐ No type errors (mypy clean)",
+        "☐ Performance targets met",
+        "☐ FINAL-001: Phase 5A-5F commit",
+        "☐ FINAL-002: Phase 5G-5L commit",
+        "☐ Git push to origin/main"
+      ]
+    }
+  },
+  "NOTES": {
+    "key_implementation_insights": [
+      "Quality scoring should weight coverage heavily (40%), freshness (30%), completeness (30%)",
+      "Optimization scoring should weight compression (40%), format efficiency (30%), deduplication (20%), aging (10%)",
+      "Use pathlib.glob() for efficient recursive discovery",
+      "Cache quality/optimization scores during manifest generation",
+      "Consider using ast.parse() for docstring extraction"
+    ],
+    "potential_blockers": [
+      "Image dimension extraction requires Pillow (make optional)",
+      "MIME type detection may need magic library (use mimetypes built-in fallback)",
+      "Large file handling needs streaming/sampling approach"
+    ],
+    "measurement_success": [
+      "Both generators run in target time",
+      "Scores are meaningful (wide distribution, not all same value)",
+      "Schema validation passes all tests",
+      "No unhandled exceptions in error paths",
+      "All MCP handlers work correctly"
+    ]
+  }
+}

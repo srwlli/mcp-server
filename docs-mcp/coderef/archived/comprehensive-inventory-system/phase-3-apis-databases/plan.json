@@ -1,0 +1,1593 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "phase-3-apis-databases",
+    "version": "1.0.0",
+    "status": "complete",
+    "created_at": "2025-10-15T00:45:00.000000",
+    "generated_by": "Claude Code AI",
+    "has_context": true,
+    "has_analysis": false,
+    "template_version": "1.1.0"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [
+          "README.md",
+          "ARCHITECTURE.md",
+          "API.md",
+          "COMPONENTS.md",
+          "SCHEMA.md",
+          "USER-GUIDE.md"
+        ],
+        "missing": [],
+        "notes": "Complete foundation documentation available for reference"
+      },
+      "coding_standards": {
+        "available": [
+          "BEHAVIOR-STANDARDS.md",
+          "UI-STANDARDS.md",
+          "UX-PATTERNS.md",
+          "COMPONENT-INDEX.md"
+        ],
+        "missing": [
+          "COMPONENT-PATTERN.md"
+        ],
+        "notes": "Standards established but need component patterns for generators"
+      },
+      "reference_components": [
+        {
+          "component": "generators/inventory_generator.py",
+          "lines": 590,
+          "purpose": "File inventory with categorization and risk scoring - pattern for api_generator.py",
+          "key_patterns": [
+            "File discovery",
+            "Categorization logic",
+            "Risk scoring",
+            "Manifest generation"
+          ]
+        },
+        {
+          "component": "generators/dependency_generator.py",
+          "lines": 700,
+          "purpose": "Multi-ecosystem dependency parsing - pattern for database_generator.py",
+          "key_patterns": [
+            "Multi-parser architecture",
+            "Ecosystem detection",
+            "External validation",
+            "Metrics calculation"
+          ]
+        },
+        {
+          "component": "generators/base_generator.py",
+          "purpose": "Base generator pattern for template operations",
+          "key_patterns": [
+            "Base class structure",
+            "Common utilities"
+          ]
+        }
+      ],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "MCP SDK",
+        "parsing": "ast module (Python AST), regex patterns",
+        "validation": "JSON schema validation",
+        "dependencies": [
+          "pyyaml>=6.0",
+          "sqlparse>=0.4.0"
+        ]
+      },
+      "architecture_patterns": [
+        "Generator Pattern (BaseGenerator \u2192 ApiGenerator, DatabaseGenerator)",
+        "Handler Registry Pattern (TOOL_HANDLERS dict in tool_handlers.py)",
+        "ErrorResponse Factory (ARCH-001)",
+        "TypedDict Return Types (QUA-001)",
+        "JSON Schema Validation (SEC-002)",
+        "Multi-Parser Architecture (Phase 2 pattern)"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Phase 3 of the Comprehensive Inventory System delivers two complementary MCP tools for discovering and analyzing project APIs and databases. Tool #16 (api_inventory) discovers REST/GraphQL endpoints across multiple frameworks, while Tool #17 (database_inventory) analyzes database schemas, relationships, and migration files.",
+      "value_proposition": "Provides comprehensive visibility into project API surface area and data layer architecture. Enables developers to understand endpoint documentation coverage, identify undocumented APIs, map database schema relationships, and track migration history - critical for onboarding, security audits, and API governance.",
+      "target_users": [
+        "Backend developers discovering API endpoints in new projects",
+        "DevOps engineers auditing API documentation coverage",
+        "Database administrators mapping schema relationships",
+        "Security teams identifying undocumented endpoints",
+        "Technical writers tracking API documentation gaps",
+        "Project managers assessing codebase complexity"
+      ],
+      "use_cases": [
+        "Onboarding: Discover all API endpoints and database tables in 30 seconds",
+        "Documentation Audit: Calculate API documentation coverage percentage",
+        "Security Review: Identify undocumented or public endpoints",
+        "Schema Mapping: Visualize database relationships and foreign keys",
+        "Migration Tracking: Monitor applied vs pending database migrations",
+        "Refactoring: Understand API surface before making breaking changes"
+      ],
+      "scope": {
+        "in_scope": [
+          "API framework detection (FastAPI, Flask, Express)",
+          "REST endpoint extraction (path, method, parameters)",
+          "GraphQL schema parsing (queries, mutations)",
+          "OpenAPI/Swagger documentation parsing",
+          "Database/ORM detection (SQLAlchemy, Django ORM, Prisma)",
+          "Table schema parsing (columns, types, constraints)",
+          "Relationship mapping (foreign keys, references)",
+          "Migration file tracking (Alembic, Django migrations)",
+          "JSON manifest generation for both tools",
+          "MCP integration with handlers and schemas"
+        ],
+        "out_of_scope": [
+          "Runtime API testing or performance benchmarking",
+          "Automated API documentation generation",
+          "Database query optimization recommendations",
+          "Schema migration generation",
+          "API versioning analysis",
+          "Database backup/restore operations",
+          "Support for Java, Ruby, Go frameworks (future phases)"
+        ],
+        "deferred": [
+          "GraphQL mutation analysis (focus on queries first)",
+          "Transitive database relationships (focus on direct foreign keys)",
+          "Migration rollback detection",
+          "API authentication/authorization analysis"
+        ]
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_score": 8.5,
+      "complexity_justification": "High complexity due to: (1) Two distinct tools in one phase, (2) AST parsing for multiple frameworks, (3) Framework-specific decorator patterns, (4) ORM model parsing complexity, (5) Migration file format variations across frameworks. Higher than Phases 1-2 which had single tools.",
+      "risks": [
+        {
+          "id": "RISK-001",
+          "category": "scope",
+          "severity": "high",
+          "description": "Scope too large: Two complex tools in one phase may exceed time estimate",
+          "impact": "May delay Phase 3 completion by 50-100% (11-22 extra hours) if scope creep occurs",
+          "probability": "medium",
+          "mitigation_strategy": "Sequential implementation with checkpoints. Build api_inventory completely first (Phases 3A-3F), then database_inventory (3G-3L). If time-constrained, split releases: v1.7.0 (API only) + v1.7.1 (Database).",
+          "contingency_plan": "Reduce framework support to Python-only (FastAPI + Flask, SQLAlchemy + Django). Defer Express and Prisma to Phase 3.5."
+        },
+        {
+          "id": "RISK-002",
+          "category": "technical",
+          "severity": "medium",
+          "description": "Framework diversity: Supporting 3+ API frameworks and 3+ ORMs increases parser complexity",
+          "impact": "Each additional framework adds 2-3 hours of parser development and testing",
+          "probability": "high",
+          "mitigation_strategy": "Focus on Python/Node.js frameworks (most common in target audience). Use plugin architecture for parsers. Implement FastAPI parser first as reference, then adapt pattern for Flask and Express.",
+          "contingency_plan": "Limit to 2 frameworks per tool: FastAPI + Flask for APIs, SQLAlchemy + Django ORM for databases."
+        },
+        {
+          "id": "RISK-003",
+          "category": "technical",
+          "severity": "medium",
+          "description": "AST parsing complexity: Python ast module required for accurate endpoint extraction",
+          "impact": "AST parsing failures may miss 20-30% of endpoints in complex codebases without regex fallbacks",
+          "probability": "medium",
+          "mitigation_strategy": "Implement regex fallbacks for simple patterns. Accept 80% accuracy vs 100% perfection. Test against docs-mcp project (FastAPI) for validation. Log unparseable patterns for future improvement.",
+          "contingency_plan": "Use hybrid approach: AST for primary detection, regex for fallback, manual patterns for edge cases."
+        },
+        {
+          "id": "RISK-004",
+          "category": "technical",
+          "severity": "medium",
+          "description": "Migration file format variations: Alembic, Django, Flyway use different formats",
+          "impact": "May only achieve 60-70% migration detection accuracy across all frameworks",
+          "probability": "high",
+          "mitigation_strategy": "Support major frameworks only (Alembic + Django). Focus on file detection and counting rather than deep semantic analysis. Defer applied/pending detection to Phase 3.5 if complex.",
+          "contingency_plan": "Simplify to file-based detection only: count migration files, detect framework, skip version tracking."
+        },
+        {
+          "id": "RISK-005",
+          "category": "integration",
+          "severity": "low",
+          "description": "External dependency additions (pyyaml, sqlparse) may conflict with existing packages",
+          "impact": "Potential installation issues or version conflicts",
+          "probability": "low",
+          "mitigation_strategy": "Pin versions in requirements.txt, test installation on clean virtualenv. Both packages are widely used and stable.",
+          "contingency_plan": "Make pyyaml optional (only needed for OpenAPI parsing). Use pure Python SQL parsing as fallback for sqlparse."
+        }
+      ],
+      "dependencies": {
+        "internal": [
+          "generators/base_generator.py (base class)",
+          "constants.py (enums)",
+          "type_defs.py (TypedDict definitions)",
+          "validation.py (input validation)",
+          "error_responses.py (error handling)"
+        ],
+        "external": [
+          "pyyaml>=6.0 (OpenAPI/Swagger parsing)",
+          "sqlparse>=0.4.0 (SQL file parsing - optional)"
+        ],
+        "blocking": []
+      }
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "generators/api_generator.py",
+          "estimated_lines": 650,
+          "purpose": "API endpoint discovery and documentation parsing",
+          "key_components": [
+            "ApiGenerator class",
+            "Framework detectors",
+            "Endpoint extractors",
+            "OpenAPI parser",
+            "Metrics calculator"
+          ]
+        },
+        {
+          "path": "generators/database_generator.py",
+          "estimated_lines": 700,
+          "purpose": "Database schema analysis and migration tracking",
+          "key_components": [
+            "DatabaseGenerator class",
+            "ORM detectors",
+            "Schema parsers",
+            "Migration scanners",
+            "Relationship mapper"
+          ]
+        },
+        {
+          "path": "coderef/inventory/api-schema.json",
+          "estimated_lines": 200,
+          "purpose": "JSON schema for API inventory manifest validation"
+        },
+        {
+          "path": "coderef/inventory/database-schema.json",
+          "estimated_lines": 250,
+          "purpose": "JSON schema for database inventory manifest validation"
+        },
+        {
+          "path": ".claude/commands/api-inventory.md",
+          "estimated_lines": 2,
+          "purpose": "Slash command for api_inventory tool"
+        },
+        {
+          "path": ".claude/commands/database-inventory.md",
+          "estimated_lines": 2,
+          "purpose": "Slash command for database_inventory tool"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "server.py",
+          "changes": [
+            "Add Tool #16: api_inventory",
+            "Add Tool #17: database_inventory",
+            "Input schemas for both tools"
+          ],
+          "estimated_lines_added": 80
+        },
+        {
+          "path": "tool_handlers.py",
+          "changes": [
+            "Add handle_api_inventory function",
+            "Add handle_database_inventory function",
+            "Register both handlers in TOOL_HANDLERS"
+          ],
+          "estimated_lines_added": 180
+        },
+        {
+          "path": "constants.py",
+          "changes": [
+            "Add APIFramework enum",
+            "Add HTTPMethod enum",
+            "Add DatabaseType enum",
+            "Add ORMFramework enum",
+            "Update __all__"
+          ],
+          "estimated_lines_added": 40
+        },
+        {
+          "path": "type_defs.py",
+          "changes": [
+            "Add APIEndpointDict",
+            "Add APIManifestDict",
+            "Add APIResultDict",
+            "Add TableDict",
+            "Add DatabaseManifestDict",
+            "Add DatabaseResultDict"
+          ],
+          "estimated_lines_added": 120
+        },
+        {
+          "path": "requirements.txt",
+          "changes": [
+            "Add pyyaml>=6.0",
+            "Add sqlparse>=0.4.0"
+          ],
+          "estimated_lines_added": 2
+        },
+        {
+          "path": "README.md",
+          "changes": [
+            "Update tool count: 17 \u2192 19",
+            "Add API Inventory section",
+            "Add Database Inventory section",
+            "Add Example 7: API Discovery",
+            "Add Example 8: Database Schema Analysis"
+          ],
+          "estimated_lines_added": 120
+        },
+        {
+          "path": "coderef/foundation-docs/API.md",
+          "changes": [
+            "Add Tool #16: api_inventory documentation",
+            "Add Tool #17: database_inventory documentation",
+            "Update Category 5 header"
+          ],
+          "estimated_lines_added": 500
+        },
+        {
+          "path": "my-guide.md",
+          "changes": [
+            "Add api_inventory and database_inventory to tools list",
+            "Add /api-inventory and /database-inventory slash commands",
+            "Update total: 20 \u2192 22 slash commands"
+          ],
+          "estimated_lines_added": 4
+        },
+        {
+          "path": "coderef/changelog/CHANGELOG.json",
+          "changes": [
+            "Add v1.7.0 entry",
+            "Document both tools",
+            "List all affected files"
+          ],
+          "estimated_lines_added": 50
+        }
+      ],
+      "affected_systems": [
+        "MCP tool registry (server.py)",
+        "Generator system (new generators added)",
+        "Constants and type definitions",
+        "Documentation (3 files updated)",
+        "Slash commands (2 new commands)"
+      ]
+    },
+    "4_key_features": {
+      "API-001": {
+        "name": "API Framework Detection",
+        "description": "Automatically detect API frameworks by analyzing imports and decorator patterns. Supports FastAPI, Flask, and Express.",
+        "priority": "critical",
+        "user_story": "As a developer, I want to discover all API frameworks used in a project so I can understand the technology stack.",
+        "acceptance_criteria": [
+          "Detects FastAPI by @app.get/@app.post decorators",
+          "Detects Flask by @app.route decorators",
+          "Detects Express by app.get/app.post patterns",
+          "Returns framework list with confidence scores",
+          "Logs framework detection for debugging"
+        ]
+      },
+      "API-002": {
+        "name": "REST Endpoint Extraction",
+        "description": "Parse source code to extract REST endpoints including HTTP method, path, parameters, and file location.",
+        "priority": "critical",
+        "user_story": "As a developer, I want to see all API endpoints in one place so I can understand the API surface area.",
+        "acceptance_criteria": [
+          "Extracts endpoint path (e.g., /api/users/{id})",
+          "Extracts HTTP method (GET, POST, PUT, DELETE, PATCH)",
+          "Extracts query and path parameters",
+          "Records file path and line number",
+          "Handles dynamic routes and wildcards"
+        ]
+      },
+      "API-003": {
+        "name": "OpenAPI/Swagger Documentation Parsing",
+        "description": "Parse OpenAPI 3.0 and Swagger 2.0 YAML/JSON files to extract API documentation.",
+        "priority": "high",
+        "user_story": "As a technical writer, I want to know the documentation status of all APIs so I can fill documentation gaps.",
+        "acceptance_criteria": [
+          "Parses openapi.yaml and swagger.json files",
+          "Extracts endpoint descriptions and summaries",
+          "Links OpenAPI specs to source code endpoints",
+          "Calculates per-endpoint documentation status",
+          "Reports overall documentation coverage percentage"
+        ]
+      },
+      "API-004": {
+        "name": "API Documentation Coverage Analysis",
+        "description": "Calculate percentage of endpoints with documentation (docstrings, OpenAPI specs, or inline comments).",
+        "priority": "high",
+        "user_story": "As a project manager, I want to know API documentation coverage so I can prioritize documentation work.",
+        "acceptance_criteria": [
+          "Calculates coverage as documented_endpoints / total_endpoints * 100",
+          "Considers docstrings, OpenAPI specs, and inline comments",
+          "Reports coverage by framework and endpoint",
+          "Identifies undocumented endpoints",
+          "Includes coverage in metrics section"
+        ]
+      },
+      "DB-001": {
+        "name": "Database/ORM Detection",
+        "description": "Detect database types and ORM frameworks by analyzing imports and configuration files.",
+        "priority": "critical",
+        "user_story": "As a developer, I want to know all databases and ORMs used in the project so I can understand the data layer.",
+        "acceptance_criteria": [
+          "Detects SQLAlchemy by from sqlalchemy imports",
+          "Detects Django ORM by django.db.models imports",
+          "Detects Prisma by @prisma/client imports",
+          "Infers database type from ORM (PostgreSQL, MySQL, SQLite)",
+          "Returns ORM + database list"
+        ]
+      },
+      "DB-002": {
+        "name": "Table Schema Parsing",
+        "description": "Parse ORM model definitions to extract table schemas including columns, types, constraints, and indexes.",
+        "priority": "critical",
+        "user_story": "As a database administrator, I want to see all table schemas so I can understand the data model.",
+        "acceptance_criteria": [
+          "Extracts table name from class name",
+          "Extracts column names and types",
+          "Identifies primary keys and unique constraints",
+          "Detects nullable/non-nullable columns",
+          "Lists indexes defined on tables"
+        ]
+      },
+      "DB-003": {
+        "name": "Relationship Mapping",
+        "description": "Identify foreign key relationships between tables and generate relationship graph.",
+        "priority": "high",
+        "user_story": "As a developer, I want to understand table relationships so I can write correct JOIN queries.",
+        "acceptance_criteria": [
+          "Detects ForeignKey columns in ORM models",
+          "Maps relationships (one-to-many, many-to-one, many-to-many)",
+          "Records source and target tables",
+          "Includes relationship type in manifest",
+          "Counts total relationships for metrics"
+        ]
+      },
+      "DB-004": {
+        "name": "Migration File Tracking",
+        "description": "Scan migration directories to track database migrations and their application status.",
+        "priority": "high",
+        "user_story": "As a DevOps engineer, I want to know the status of all migrations applied to the database so I can manage database versioning.",
+        "acceptance_criteria": [
+          "Detects Alembic migrations in migrations/ or alembic/versions/",
+          "Detects Django migrations in */migrations/ directories",
+          "Counts total migration files",
+          "Lists migration files by version order",
+          "Includes migration framework in manifest"
+        ]
+      },
+      "SHARED-001": {
+        "name": "JSON Schema Validation",
+        "description": "Validate generated manifests against JSON schemas to ensure data integrity.",
+        "priority": "critical",
+        "user_story": "As a tool user, I want consistent manifest formats so I can reliably parse output.",
+        "acceptance_criteria": [
+          "api-schema.json validates api_inventory output",
+          "database-schema.json validates database_inventory output",
+          "Validation occurs before saving manifest",
+          "Validation errors are logged and returned",
+          "Schemas follow JSON Schema Draft 7 specification"
+        ]
+      },
+      "SHARED-002": {
+        "name": "Performance Optimization",
+        "description": "Ensure both tools meet performance targets for typical project sizes.",
+        "priority": "high",
+        "user_story": "As a developer, I want fast inventory generation so I can iterate quickly.",
+        "acceptance_criteria": [
+          "api_inventory: <3 seconds for 100 endpoints",
+          "database_inventory: <5 seconds for 50 tables",
+          "Parallel processing where possible",
+          "Caching of parsed ASTs",
+          "Progress logging for long operations"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "prefix": "P3",
+      "format": "P3-XXX",
+      "categories": {
+        "API": "P3-API-XXX (api_inventory tasks)",
+        "DB": "P3-DB-XXX (database_inventory tasks)",
+        "INT": "P3-INT-XXX (Integration tasks)",
+        "DOC": "P3-DOC-XXX (Documentation tasks)",
+        "TEST": "P3-TEST-XXX (Testing tasks)"
+      },
+      "examples": [
+        "P3-API-001: Create ApiGenerator class structure",
+        "P3-DB-005: Implement SQLAlchemy schema parser",
+        "P3-INT-002: Register api_inventory handler in TOOL_HANDLERS",
+        "P3-DOC-007: Update README.md with Tool #16 example",
+        "P3-TEST-003: Test api_inventory on docs-mcp project"
+      ]
+    },
+    "6_implementation_phases": {
+      "PHASE-3A": {
+        "name": "API Tool Foundation",
+        "description": "Create api_generator.py with framework detection and basic endpoint extraction",
+        "estimated_hours": 3,
+        "complexity": "medium",
+        "effort_level": 3,
+        "tasks": [
+          {
+            "task_id": "P3-API-001",
+            "description": "Create generators/api_generator.py with ApiGenerator class inheriting from BaseGenerator. Include __init__ method for initialization, detect_frameworks() for multi-framework detection, extract_endpoints() for REST/GraphQL parsing, generate_manifest() for JSON output, and save() method with proper error handling and logging.",
+            "estimated_hours": 1,
+            "dependencies": [],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-002",
+            "description": "Implement framework detection logic for FastAPI, Flask, and Express. Use import analysis and decorator pattern matching with regex. Return list of detected frameworks with confidence scores.",
+            "estimated_hours": 1.5,
+            "dependencies": [
+              "P3-API-001"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-003",
+            "description": "Create coderef/inventory/api-schema.json JSON Schema for API manifest validation following JSON Schema Draft 7 specification. Define endpoint objects with path/method/parameters, framework detection structures, metrics objects for coverage calculation, and manifest root structure following Phase 1-2 validation patterns.",
+            "estimated_hours": 0.5,
+            "dependencies": [],
+            "files": [
+              "coderef/inventory/api-schema.json"
+            ]
+          }
+        ]
+      },
+      "PHASE-3B": {
+        "name": "API Parsers",
+        "description": "Implement framework-specific endpoint parsers using AST and regex",
+        "estimated_hours": 4,
+        "complexity": "high",
+        "effort_level": 4,
+        "tasks": [
+          {
+            "task_id": "P3-API-004",
+            "description": "Implement FastAPI endpoint parser using Python ast module. Extract @app.get/@app.post decorators, parse path strings, extract parameters from function signatures. Handle path parameters and query parameters.",
+            "estimated_hours": 1.5,
+            "dependencies": [
+              "P3-API-001"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-005",
+            "description": "Implement Flask endpoint parser using Python ast module for @app.route decorator extraction. Extract route decorators, parse methods parameter array for HTTP verbs, parse path strings with variable syntax, detect blueprint registration patterns, and handle nested blueprints following Flask framework conventions.",
+            "estimated_hours": 1,
+            "dependencies": [
+              "P3-API-004"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-006",
+            "description": "Implement Express endpoint parser using regex patterns. Match app.get/post/put/delete/patch calls, extract path strings, identify middleware. Note: JavaScript AST parsing deferred to Phase 3.5.",
+            "estimated_hours": 1,
+            "dependencies": [
+              "P3-API-004"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-007",
+            "description": "Implement GraphQL schema parser as optional feature for .graphql file parsing. Parse schema definitions using regex patterns, extract query types with field names and arguments, extract mutation types with input parameters, handle schema directives and type definitions. Mark as optional - skip if time-constrained or defer to Phase 3.5.",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-API-001"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3C": {
+        "name": "API Documentation Scanner",
+        "description": "Parse OpenAPI/Swagger specs and calculate documentation coverage",
+        "estimated_hours": 2,
+        "complexity": "medium",
+        "effort_level": 2,
+        "tasks": [
+          {
+            "task_id": "P3-API-008",
+            "description": "Implement OpenAPI/Swagger YAML/JSON parser using pyyaml library for documentation file scanning. Search project root and docs directories for openapi.yaml, swagger.json, openapi.json files. Extract endpoint descriptions and operation summaries, parse parameter definitions including query/path/body parameters, handle OpenAPI 3.0 and Swagger 2.0 format differences with appropriate parsing logic.",
+            "estimated_hours": 1,
+            "dependencies": [
+              "P3-API-001"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-API-009",
+            "description": "Implement documentation coverage calculator. Match OpenAPI endpoints to source endpoints. Check for docstrings in endpoint functions. Calculate coverage as documented/total * 100. Include coverage in metrics.",
+            "estimated_hours": 1,
+            "dependencies": [
+              "P3-API-008"
+            ],
+            "files": [
+              "generators/api_generator.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3D": {
+        "name": "API MCP Integration",
+        "description": "Integrate api_inventory into MCP server with handler and types",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-INT-001",
+            "description": "Add Tool #16 api_inventory to server.py. Define input schema with project_path, frameworks, include_graphql, scan_documentation parameters. Follow Phase 1-2 patterns.",
+            "estimated_hours": 0.25,
+            "dependencies": [
+              "P3-API-001"
+            ],
+            "files": [
+              "server.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-002",
+            "description": "Create handle_api_inventory function in tool_handlers.py. Validate inputs, instantiate ApiGenerator, call generate_manifest(), handle errors, return TextContent with JSON output. Register in TOOL_HANDLERS dict.",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-INT-001"
+            ],
+            "files": [
+              "tool_handlers.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-003",
+            "description": "Add APIFramework enum to constants.py with values for FastAPI, Flask, Express, GraphQL frameworks. Add HTTPMethod enum with GET, POST, PUT, DELETE, PATCH methods. Add INVENTORY_API_MANIFEST constant for default manifest filename. Update __all__ exports list to include new enums following existing pattern.",
+            "estimated_hours": 0.1,
+            "dependencies": [],
+            "files": [
+              "constants.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-004",
+            "description": "Add APIEndpointDict TypedDict with path, method, parameters, file location fields. Add APIManifestDict with endpoints array, frameworks detected, metrics object, and metadata. Add APIResultDict for handler response with success status and manifest data. Follow Phase 1-2 TypedDict patterns for consistent structure and required vs optional field annotations.",
+            "estimated_hours": 0.15,
+            "dependencies": [],
+            "files": [
+              "type_defs.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3E": {
+        "name": "API Documentation",
+        "description": "Document api_inventory in README, API.md, my-guide.md and create slash command",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-DOC-001",
+            "description": "Update README.md: Change tool count 17\u219218, add API Inventory section to Project Inventory Tools table, add Example 7: API Endpoint Discovery with code sample and output.",
+            "estimated_hours": 0.3,
+            "dependencies": [
+              "P3-INT-002"
+            ],
+            "files": [
+              "README.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-002",
+            "description": "Add Tool #16 api_inventory documentation to coderef/foundation-docs/API.md. Include input schema, request/response examples, manifest structure (200+ lines), use cases, performance characteristics. Update Category 5 header to show 3 tools.",
+            "estimated_hours": 0.4,
+            "dependencies": [
+              "P3-INT-002"
+            ],
+            "files": [
+              "coderef/foundation-docs/API.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-003",
+            "description": "Update my-guide.md quickref: Add api_inventory to Project Inventory tools section with description and usage example. Add /api-inventory slash command to slash commands table with trigger and description. Update total tool count from 20 to 21 slash commands in document header and summary section.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-INT-002"
+            ],
+            "files": [
+              "my-guide.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-004",
+            "description": "Create .claude/commands/api-inventory.md slash command file following MCP slash command format. Configure tool invocation to call api_inventory with scan_documentation=true for OpenAPI parsing, frameworks=['all'] to detect all supported frameworks by default, and use current working directory as project_path automatically.",
+            "estimated_hours": 0.05,
+            "dependencies": [
+              "P3-INT-002"
+            ],
+            "files": [
+              ".claude/commands/api-inventory.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-005",
+            "description": "Add pyyaml>=6.0 dependency to requirements.txt for OpenAPI/Swagger YAML file parsing support. This library is required for parsing openapi.yaml and swagger.yaml documentation files during API inventory generation. Include version constraint to ensure compatibility with Python 3.11+.",
+            "estimated_hours": 0.05,
+            "dependencies": [],
+            "files": [
+              "requirements.txt"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-006",
+            "description": "Update DELIVERABLES.md tracking document to mark all api_inventory tasks (P3-API-001 through P3-API-009, P3-INT-001 through P3-INT-004, P3-DOC-001 through P3-DOC-005) as complete with checkmarks. Recalculate and update Phase 3 overall progress percentage based on completed tasks. Update timestamp for checkpoint milestone.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-DOC-001",
+              "P3-DOC-002",
+              "P3-DOC-003"
+            ],
+            "files": [
+              "coderef/working/comprehensive-inventory-system/DELIVERABLES.md"
+            ]
+          }
+        ]
+      },
+      "PHASE-3F": {
+        "name": "API Testing & Checkpoint",
+        "description": "Test api_inventory and create checkpoint commit",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-TEST-001",
+            "description": "Test api_inventory on docs-mcp project (FastAPI). Verify framework detection, endpoint extraction, manifest generation. Validate against api-schema.json. Check performance (<3s for ~20 endpoints).",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-INT-002",
+              "P3-DOC-005"
+            ],
+            "files": []
+          },
+          {
+            "task_id": "P3-TEST-002",
+            "description": "Test api_inventory on sample Express Node.js project if available in test environment. Otherwise test on Flask Python application as fallback. Verify multi-framework detection logic works correctly, endpoints from both frameworks are detected, and manifest properly segregates endpoints by framework with appropriate metadata tags.",
+            "estimated_hours": 0.25,
+            "dependencies": [
+              "P3-TEST-001"
+            ],
+            "files": []
+          },
+          {
+            "task_id": "P3-INT-005",
+            "description": "Add CHANGELOG.json entry for v1.7.0 covering api_inventory tool. Include change-024 with feature description, affected files, and impact statement. Note: database_inventory will be added to same version later.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-TEST-001"
+            ],
+            "files": [
+              "coderef/changelog/CHANGELOG.json"
+            ]
+          },
+          {
+            "task_id": "P3-INT-006",
+            "description": "Git commit all api_inventory implementation files including generators/api_generator.py, server.py, tool_handlers.py, constants.py, type_defs.py, documentation updates, and tests with comprehensive multi-paragraph commit message. Tag commit as Phase 3A-3F checkpoint milestone. Push all changes to remote origin repository branch.",
+            "estimated_hours": 0.15,
+            "dependencies": [
+              "P3-INT-005"
+            ],
+            "files": []
+          }
+        ]
+      },
+      "PHASE-3G": {
+        "name": "Database Tool Foundation",
+        "description": "Create database_generator.py with ORM detection and basic schema extraction",
+        "estimated_hours": 2,
+        "complexity": "medium",
+        "effort_level": 2,
+        "tasks": [
+          {
+            "task_id": "P3-DB-001",
+            "description": "Create generators/database_generator.py with DatabaseGenerator class inheriting from BaseGenerator. Include __init__, detect_databases(), parse_schemas(), detect_migrations(), generate_manifest(), and save() methods.",
+            "estimated_hours": 1,
+            "dependencies": [],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-002",
+            "description": "Implement database and ORM detection logic for SQLAlchemy, Django ORM, and Prisma. Use import analysis to detect ORMs. Infer database type from ORM configuration or connection strings. Return list of databases and ORMs detected.",
+            "estimated_hours": 0.75,
+            "dependencies": [
+              "P3-DB-001"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-003",
+            "description": "Create coderef/inventory/database-schema.json JSON Schema for database manifest validation following JSON Schema Draft 7 specification. Define table objects with columns array and metadata, column objects with type/nullable/constraints, relationship objects for foreign keys with source/target tables, metrics objects for statistics, and manifest root structure following Phase 1-2 validation patterns.",
+            "estimated_hours": 0.25,
+            "dependencies": [],
+            "files": [
+              "coderef/inventory/database-schema.json"
+            ]
+          }
+        ]
+      },
+      "PHASE-3H": {
+        "name": "Database Schema Parsers",
+        "description": "Implement ORM-specific schema parsers using AST",
+        "estimated_hours": 3,
+        "complexity": "high",
+        "effort_level": 3,
+        "tasks": [
+          {
+            "task_id": "P3-DB-004",
+            "description": "Implement SQLAlchemy schema parser using Python ast module. Parse Table and Column definitions. Extract table names from __tablename__ or class names. Extract column types, nullable, default, and primary_key attributes.",
+            "estimated_hours": 1.5,
+            "dependencies": [
+              "P3-DB-001"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-005",
+            "description": "Implement Django ORM schema parser using Python ast module. Parse Model class definitions. Extract fields from django.db.models Field definitions. Handle CharField, IntegerField, ForeignKey, etc. Extract table name from Meta.db_table or class name.",
+            "estimated_hours": 1,
+            "dependencies": [
+              "P3-DB-004"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-006",
+            "description": "Implement Prisma schema parser as optional feature for schema.prisma file parsing. Parse Prisma DSL using custom regex patterns, extract model definitions with field types and attributes, handle relation directives for foreign keys, parse enums and composite types. Note: Prisma uses custom DSL requiring specialized parser. Mark as optional - skip if time-constrained or defer to Phase 3.5.",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-DB-001"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3I": {
+        "name": "Migration Scanner & Relationship Mapper",
+        "description": "Scan migration files and map table relationships",
+        "estimated_hours": 2,
+        "complexity": "medium",
+        "effort_level": 2,
+        "tasks": [
+          {
+            "task_id": "P3-DB-007",
+            "description": "Implement Alembic migration scanner. Search for migrations/ or alembic/versions/ directories. Count migration files. Extract version numbers from filenames. Detect applied migrations by checking alembic_version table (if accessible). List migration files in manifest.",
+            "estimated_hours": 0.75,
+            "dependencies": [
+              "P3-DB-001"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-008",
+            "description": "Implement Django migration scanner. Search for */migrations/ directories. Count migration files. Extract migration names and order. Note: Applied detection requires database access - skip for Phase 3, defer to Phase 3.5.",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-DB-007"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          },
+          {
+            "task_id": "P3-DB-009",
+            "description": "Implement relationship mapper for foreign keys. Parse ForeignKey definitions in ORM models. Extract source table, target table, and relationship type (one-to-many, many-to-one). Count total relationships for metrics. Include relationships in table definitions.",
+            "estimated_hours": 0.75,
+            "dependencies": [
+              "P3-DB-004",
+              "P3-DB-005"
+            ],
+            "files": [
+              "generators/database_generator.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3J": {
+        "name": "Database MCP Integration",
+        "description": "Integrate database_inventory into MCP server with handler and types",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-INT-007",
+            "description": "Add Tool #17 database_inventory to server.py. Define input schema with project_path, database_types, include_migrations, scan_relationships parameters. Follow Phase 1-2 patterns.",
+            "estimated_hours": 0.25,
+            "dependencies": [
+              "P3-DB-001"
+            ],
+            "files": [
+              "server.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-008",
+            "description": "Create handle_database_inventory function in tool_handlers.py. Validate inputs, instantiate DatabaseGenerator, call generate_manifest(), handle errors, return TextContent with JSON output. Register in TOOL_HANDLERS dict.",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-INT-007"
+            ],
+            "files": [
+              "tool_handlers.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-009",
+            "description": "Add DatabaseType enum to constants.py with values for PostgreSQL, MySQL, SQLite, MongoDB database types. Add ORMFramework enum with SQLAlchemy, Django, Prisma, TypeORM frameworks. Add INVENTORY_DATABASE_MANIFEST constant for default manifest filename. Update __all__ exports list to include new enums following existing pattern.",
+            "estimated_hours": 0.1,
+            "dependencies": [],
+            "files": [
+              "constants.py"
+            ]
+          },
+          {
+            "task_id": "P3-INT-010",
+            "description": "Add TableDict TypedDict with name, columns array, relationships array, and metadata fields. Add ColumnDict with name, type, nullable, constraints. Add RelationshipDict with source table, target table, type, and foreign key column. Add DatabaseManifestDict with tables array, ORMs detected, migrations, and metrics. Add DatabaseResultDict for handler response. Follow Phase 1-2 TypedDict patterns for consistent structure.",
+            "estimated_hours": 0.15,
+            "dependencies": [],
+            "files": [
+              "type_defs.py"
+            ]
+          }
+        ]
+      },
+      "PHASE-3K": {
+        "name": "Database Documentation",
+        "description": "Document database_inventory in README, API.md, my-guide.md and create slash command",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-DOC-007",
+            "description": "Update README.md: Change tool count 18\u219219, add Database Inventory section to Project Inventory Tools table, add Example 8: Database Schema Analysis with code sample and output.",
+            "estimated_hours": 0.3,
+            "dependencies": [
+              "P3-INT-008"
+            ],
+            "files": [
+              "README.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-008",
+            "description": "Add Tool #17 database_inventory documentation to coderef/foundation-docs/API.md. Include input schema, request/response examples, manifest structure (250+ lines), use cases, performance characteristics. Update Category 5 header to show 4 tools.",
+            "estimated_hours": 0.4,
+            "dependencies": [
+              "P3-INT-008"
+            ],
+            "files": [
+              "coderef/foundation-docs/API.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-009",
+            "description": "Update my-guide.md quickref: Add database_inventory to Project Inventory tools section with description and usage example. Add /database-inventory slash command to slash commands table with trigger and description. Update total tool count from 21 to 22 slash commands in document header and summary section.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-INT-008"
+            ],
+            "files": [
+              "my-guide.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-010",
+            "description": "Create .claude/commands/database-inventory.md slash command file following MCP slash command format. Configure tool invocation to call database_inventory with include_migrations=true for migration file scanning, scan_relationships=true to enable foreign key mapping by default, and use current working directory as project_path automatically.",
+            "estimated_hours": 0.05,
+            "dependencies": [
+              "P3-INT-008"
+            ],
+            "files": [
+              ".claude/commands/database-inventory.md"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-011",
+            "description": "Add sqlparse>=0.4.0 optional dependency to requirements.txt for SQL migration file parsing support. This library enables parsing of raw SQL migration files for schema change detection. Include version constraint to ensure compatibility with Python 3.11+. Mark as optional dependency in comments.",
+            "estimated_hours": 0.05,
+            "dependencies": [],
+            "files": [
+              "requirements.txt"
+            ]
+          },
+          {
+            "task_id": "P3-DOC-012",
+            "description": "Update DELIVERABLES.md tracking document to mark all database_inventory tasks (P3-DB-001 through P3-DB-009, P3-INT-007 through P3-INT-010, P3-DOC-007 through P3-DOC-011) as complete with checkmarks. Recalculate and update Phase 3 overall progress to 100% complete. Update final timestamp for Phase 3 completion milestone.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-DOC-007",
+              "P3-DOC-008",
+              "P3-DOC-009"
+            ],
+            "files": [
+              "coderef/working/comprehensive-inventory-system/DELIVERABLES.md"
+            ]
+          }
+        ]
+      },
+      "PHASE-3L": {
+        "name": "Database Testing & Final Commit",
+        "description": "Test database_inventory and create final Phase 3 commit",
+        "estimated_hours": 1,
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          {
+            "task_id": "P3-TEST-003",
+            "description": "Test database_inventory on docs-mcp project if it has database models. Otherwise create minimal SQLAlchemy test models. Verify ORM detection, schema parsing, relationship mapping. Validate against database-schema.json. Check performance (<5s for test schema).",
+            "estimated_hours": 0.5,
+            "dependencies": [
+              "P3-INT-008",
+              "P3-DOC-011"
+            ],
+            "files": []
+          },
+          {
+            "task_id": "P3-TEST-004",
+            "description": "Test database_inventory on Django project if available in test environment. Verify multi-ORM support works correctly by detecting both SQLAlchemy and Django models if present. Test migration detection for both Alembic and Django migration frameworks, verify migration file counting and framework identification are accurate across different migration directory structures.",
+            "estimated_hours": 0.25,
+            "dependencies": [
+              "P3-TEST-003"
+            ],
+            "files": []
+          },
+          {
+            "task_id": "P3-INT-011",
+            "description": "Update CHANGELOG.json v1.7.0 entry to include database_inventory tool alongside existing api_inventory entry. Update change-024 description to comprehensively cover both tools with feature summaries. List all Phase 3 affected files including generators, handlers, types, documentation files, and test files with appropriate change categorization.",
+            "estimated_hours": 0.1,
+            "dependencies": [
+              "P3-TEST-003"
+            ],
+            "files": [
+              "coderef/changelog/CHANGELOG.json"
+            ]
+          },
+          {
+            "task_id": "P3-INT-012",
+            "description": "Git commit all database_inventory implementation files including generators/database_generator.py, server.py updates, tool_handlers.py changes, constants.py enums, type_defs.py additions, documentation updates, and tests with comprehensive multi-paragraph commit message. Tag commit as Phase 3G-3L final checkpoint milestone. Update DELIVERABLES.md with git commit hash. Push all changes to remote origin repository branch.",
+            "estimated_hours": 0.15,
+            "dependencies": [
+              "P3-INT-011"
+            ],
+            "files": []
+          }
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_id": "UT-API-001",
+          "description": "Test FastAPI framework detection with sample FastAPI code",
+          "target": "ApiGenerator.detect_frameworks()",
+          "method": "Create mock FastAPI file, verify framework detection returns ['fastapi']"
+        },
+        {
+          "test_id": "UT-API-002",
+          "description": "Test REST endpoint extraction from FastAPI decorators",
+          "target": "ApiGenerator._parse_fastapi_endpoints()",
+          "method": "Parse sample @app.get('/users') decorator, verify path and method extracted"
+        },
+        {
+          "test_id": "UT-API-003",
+          "description": "Test OpenAPI YAML parsing",
+          "target": "ApiGenerator._parse_openapi()",
+          "method": "Load sample openapi.yaml, verify endpoints and descriptions extracted"
+        },
+        {
+          "test_id": "UT-API-004",
+          "description": "Test documentation coverage calculation",
+          "target": "ApiGenerator._calculate_coverage()",
+          "method": "Create 10 endpoints with 7 documented, verify coverage = 70%"
+        },
+        {
+          "test_id": "UT-DB-001",
+          "description": "Test SQLAlchemy ORM detection with sample models",
+          "target": "DatabaseGenerator.detect_databases()",
+          "method": "Create mock SQLAlchemy file, verify ORM detection returns ['sqlalchemy']"
+        },
+        {
+          "test_id": "UT-DB-002",
+          "description": "Test table schema extraction from SQLAlchemy models",
+          "target": "DatabaseGenerator._parse_sqlalchemy_schema()",
+          "method": "Parse sample User model, verify table name, columns, and types extracted"
+        },
+        {
+          "test_id": "UT-DB-003",
+          "description": "Test foreign key relationship detection",
+          "target": "DatabaseGenerator._map_relationships()",
+          "method": "Parse model with ForeignKey, verify relationship extracted correctly"
+        },
+        {
+          "test_id": "UT-DB-004",
+          "description": "Test Alembic migration file detection",
+          "target": "DatabaseGenerator._detect_alembic_migrations()",
+          "method": "Create mock migrations/ directory with 3 files, verify count = 3"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_id": "IT-001",
+          "description": "Test api_inventory on docs-mcp project (FastAPI)",
+          "target": "Full api_inventory workflow on real project",
+          "method": "Run api_inventory on docs-mcp, verify 15-20 endpoints detected, manifest generated"
+        },
+        {
+          "test_id": "IT-002",
+          "description": "Test api_inventory on Flask sample project",
+          "target": "Flask endpoint detection and documentation parsing",
+          "method": "Run on Flask app, verify @app.route decorators parsed correctly"
+        },
+        {
+          "test_id": "IT-003",
+          "description": "Test database_inventory on SQLAlchemy project",
+          "target": "Full database_inventory workflow on real models",
+          "method": "Run on project with SQLAlchemy models, verify tables and relationships extracted"
+        },
+        {
+          "test_id": "IT-004",
+          "description": "Test database_inventory on Django project",
+          "target": "Django ORM detection and migration tracking",
+          "method": "Run on Django project, verify Model classes parsed, migrations counted"
+        }
+      ],
+      "edge_cases": [
+        {
+          "case_id": "EC-001",
+          "description": "No API framework detected",
+          "expected_behavior": "Return empty frameworks list, log warning, generate manifest with 0 endpoints"
+        },
+        {
+          "case_id": "EC-002",
+          "description": "Multiple API frameworks in same project",
+          "expected_behavior": "Detect all frameworks, aggregate endpoints, mark framework per endpoint"
+        },
+        {
+          "case_id": "EC-003",
+          "description": "OpenAPI file invalid or malformed YAML",
+          "expected_behavior": "Log parsing error, continue with source-based extraction, mark documentation as incomplete"
+        },
+        {
+          "case_id": "EC-004",
+          "description": "Endpoints with complex dynamic routes (e.g., /{id:int})",
+          "expected_behavior": "Extract base path, mark parameter types if available, include in manifest"
+        },
+        {
+          "case_id": "EC-005",
+          "description": "No database models found in project",
+          "expected_behavior": "Return empty databases list, log warning, generate manifest with 0 tables"
+        },
+        {
+          "case_id": "EC-006",
+          "description": "Multiple ORMs in same project (SQLAlchemy + Django)",
+          "expected_behavior": "Detect both ORMs, parse both model types, aggregate in single manifest"
+        },
+        {
+          "case_id": "EC-007",
+          "description": "Circular foreign key relationships",
+          "expected_behavior": "Detect relationship, handle gracefully, avoid infinite loops in relationship mapping"
+        },
+        {
+          "case_id": "EC-008",
+          "description": "Migration directory exists but empty",
+          "expected_behavior": "Return migration_count = 0, include framework detection, log info"
+        },
+        {
+          "case_id": "EC-009",
+          "description": "Very large project (500+ endpoints or 200+ tables)",
+          "expected_behavior": "Process successfully, may exceed performance targets, log progress for user"
+        },
+        {
+          "case_id": "EC-010",
+          "description": "AST parsing fails on complex decorator or model",
+          "expected_behavior": "Fall back to regex parsing, log parsing failure, continue with other endpoints/tables"
+        }
+      ],
+      "performance_tests": [
+        {
+          "test_id": "PT-001",
+          "description": "api_inventory performance on 100 endpoints",
+          "target": "P3-TEST-001",
+          "threshold": "<3 seconds",
+          "method": "Generate test project with 100 simple endpoints, measure execution time"
+        },
+        {
+          "test_id": "PT-002",
+          "description": "database_inventory performance on 50 tables",
+          "target": "P3-TEST-003",
+          "threshold": "<5 seconds",
+          "method": "Generate test project with 50 simple models, measure execution time"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "SC-001": {
+        "category": "functionality",
+        "description": "api_inventory detects 3+ frameworks (FastAPI, Flask, Express minimum)",
+        "measurement": "Test on projects using each framework, verify framework list returned",
+        "target": "100% detection rate on test projects",
+        "critical": true
+      },
+      "SC-002": {
+        "category": "functionality",
+        "description": "api_inventory extracts REST endpoints with method and path",
+        "measurement": "Compare extracted endpoints against manual count on test project",
+        "target": "95%+ accuracy on typical projects",
+        "critical": true
+      },
+      "SC-003": {
+        "category": "functionality",
+        "description": "api_inventory parses OpenAPI/Swagger specs",
+        "measurement": "Test with valid OpenAPI 3.0 and Swagger 2.0 files",
+        "target": "Successfully parse and link to endpoints",
+        "critical": true
+      },
+      "SC-004": {
+        "category": "functionality",
+        "description": "api_inventory calculates documentation coverage percentage",
+        "measurement": "Verify coverage calculation on project with known documented/undocumented ratio",
+        "target": "Coverage matches manual calculation within 5%",
+        "critical": false
+      },
+      "SC-005": {
+        "category": "functionality",
+        "description": "database_inventory detects 2+ ORMs (SQLAlchemy, Django minimum)",
+        "measurement": "Test on projects using each ORM, verify ORM list returned",
+        "target": "100% detection rate on test projects",
+        "critical": true
+      },
+      "SC-006": {
+        "category": "functionality",
+        "description": "database_inventory parses table schemas with columns and types",
+        "measurement": "Compare extracted schema against actual model definitions",
+        "target": "95%+ accuracy on typical models",
+        "critical": true
+      },
+      "SC-007": {
+        "category": "functionality",
+        "description": "database_inventory identifies relationships (foreign keys)",
+        "measurement": "Test on models with ForeignKey fields, verify relationships extracted",
+        "target": "90%+ accuracy on typical relationships",
+        "critical": true
+      },
+      "SC-008": {
+        "category": "functionality",
+        "description": "database_inventory tracks migrations (Alembic, Django)",
+        "measurement": "Test with migration directories, verify file count and framework detection",
+        "target": "100% detection of migration files",
+        "critical": false
+      },
+      "SC-009": {
+        "category": "quality",
+        "description": "Both tools have JSON schema validation",
+        "measurement": "Verify api-schema.json and database-schema.json validate output",
+        "target": "All generated manifests pass schema validation",
+        "critical": true
+      },
+      "SC-010": {
+        "category": "performance",
+        "description": "api_inventory meets performance target (<3s for 100 endpoints)",
+        "measurement": "Run performance test PT-001",
+        "target": "<3 seconds execution time",
+        "critical": false
+      },
+      "SC-011": {
+        "category": "performance",
+        "description": "database_inventory meets performance target (<5s for 50 tables)",
+        "measurement": "Run performance test PT-002",
+        "target": "<5 seconds execution time",
+        "critical": false
+      },
+      "SC-012": {
+        "category": "documentation",
+        "description": "All documentation complete (README, API.md, my-guide.md)",
+        "measurement": "Review all docs, verify Tool #16 and #17 documented with examples",
+        "target": "Complete documentation for both tools",
+        "critical": true
+      },
+      "SC-013": {
+        "category": "integration",
+        "description": "Slash commands created for both tools",
+        "measurement": "Test /api-inventory and /database-inventory commands",
+        "target": "Both commands work correctly",
+        "critical": true
+      },
+      "SC-014": {
+        "category": "integration",
+        "description": "Changelog entry for v1.7.0",
+        "measurement": "Verify CHANGELOG.json has v1.7.0 entry covering both tools",
+        "target": "Complete changelog entry",
+        "critical": true
+      },
+      "SC-015": {
+        "category": "integration",
+        "description": "Git commit and push checkpoint",
+        "measurement": "Verify all files committed and pushed to origin/main",
+        "target": "Clean working tree after push",
+        "critical": true
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_3a_api_foundation": {
+        "phase_name": "API Tool Foundation",
+        "tasks": [
+          {
+            "task_id": "P3-API-001",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-002",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-003",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3b_api_parsers": {
+        "phase_name": "API Parsers",
+        "tasks": [
+          {
+            "task_id": "P3-API-004",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-005",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-006",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-007",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3c_api_documentation_scanner": {
+        "phase_name": "API Documentation Scanner",
+        "tasks": [
+          {
+            "task_id": "P3-API-008",
+            "completed": false
+          },
+          {
+            "task_id": "P3-API-009",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3d_api_mcp_integration": {
+        "phase_name": "API MCP Integration",
+        "tasks": [
+          {
+            "task_id": "P3-INT-001",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-002",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-003",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-004",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3e_api_documentation": {
+        "phase_name": "API Documentation",
+        "tasks": [
+          {
+            "task_id": "P3-DOC-001",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-002",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-003",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-004",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-005",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-006",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3f_api_testing_checkpoint": {
+        "phase_name": "API Testing & Checkpoint",
+        "tasks": [
+          {
+            "task_id": "P3-TEST-001",
+            "completed": false
+          },
+          {
+            "task_id": "P3-TEST-002",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-005",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-006",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3g_database_foundation": {
+        "phase_name": "Database Tool Foundation",
+        "tasks": [
+          {
+            "task_id": "P3-DB-001",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-002",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-003",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3h_database_schema_parsers": {
+        "phase_name": "Database Schema Parsers",
+        "tasks": [
+          {
+            "task_id": "P3-DB-004",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-005",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-006",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3i_migration_scanner_relationship_mapper": {
+        "phase_name": "Migration Scanner & Relationship Mapper",
+        "tasks": [
+          {
+            "task_id": "P3-DB-007",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-008",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DB-009",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3j_database_mcp_integration": {
+        "phase_name": "Database MCP Integration",
+        "tasks": [
+          {
+            "task_id": "P3-INT-007",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-008",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-009",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-010",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3k_database_documentation": {
+        "phase_name": "Database Documentation",
+        "tasks": [
+          {
+            "task_id": "P3-DOC-007",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-008",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-009",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-010",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-011",
+            "completed": false
+          },
+          {
+            "task_id": "P3-DOC-012",
+            "completed": false
+          }
+        ]
+      },
+      "phase_3l_database_testing_final_commit": {
+        "phase_name": "Database Testing & Final Commit",
+        "tasks": [
+          {
+            "task_id": "P3-TEST-003",
+            "completed": false
+          },
+          {
+            "task_id": "P3-TEST-004",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-011",
+            "completed": false
+          },
+          {
+            "task_id": "P3-INT-012",
+            "completed": false
+          }
+        ]
+      }
+    }
+  }
+}

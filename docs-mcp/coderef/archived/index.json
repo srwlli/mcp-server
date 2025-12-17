@@ -1,0 +1,61 @@
+{
+  "archived_features": [
+    {
+      "feature_name": "Complete Workflow Docs",
+      "folder_name": "complete-workflow-docs",
+      "archived_at": "2025-12-05T18:39:09.002447+00:00"
+    },
+    {
+      "feature_name": "Handoff Automation",
+      "folder_name": "handoff-automation",
+      "archived_at": "2025-12-05T18:47:02.596049+00:00"
+    },
+    {
+      "feature_name": "Risk Assessment",
+      "folder_name": "risk-assessment",
+      "archived_at": "2025-12-05T18:47:02.875655+00:00"
+    },
+    {
+      "feature_name": "Root Cleanup",
+      "folder_name": "root-cleanup",
+      "archived_at": "2025-12-05T18:48:08.223621+00:00"
+    },
+    {
+      "feature_name": "Consolidate Planning",
+      "folder_name": "consolidate-planning",
+      "archived_at": "2025-12-05T18:49:12.878687+00:00"
+    },
+    {
+      "feature_name": "Docs Mcp Schema Fix",
+      "folder_name": "docs-mcp-schema-fix",
+      "archived_at": "2025-12-05T18:49:13.178914+00:00"
+    },
+    {
+      "feature_name": "Clean Templates Structure",
+      "folder_name": "clean-templates-structure",
+      "archived_at": "2025-12-05T18:49:13.509058+00:00"
+    },
+    {
+      "feature_name": "Test New Command",
+      "folder_name": "test-new-command",
+      "archived_at": "2025-12-05T18:49:13.853419+00:00"
+    },
+    {
+      "feature_name": "Llm Workflow",
+      "folder_name": "llm-workflow",
+      "archived_at": "2025-12-08T22:41:51.939687+00:00"
+    },
+    {
+      "feature_name": "fix-agent-communication-schema",
+      "folder_name": "fix-agent-communication-schema",
+      "archived_at": "2025-12-08T22:41:52.128205+00:00"
+    },
+    {
+      "feature_name": "stub-workflow-command",
+      "folder_name": "stub-workflow-command",
+      "archived_at": "2025-12-08T22:41:57.547269+00:00"
+    }
+  ],
+  "total_archived": 11,
+  "last_updated": "2025-12-08T22:41:57.547269+00:00"
+}

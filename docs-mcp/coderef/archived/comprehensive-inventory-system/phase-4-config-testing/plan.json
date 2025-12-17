@@ -1,0 +1,1816 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "phase-4-config-testing",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude AI Assistant",
+    "generated_at": "2025-10-15T17:36:34Z",
+    "has_context": true,
+    "has_analysis": true,
+    "phase": "Phase 4A-4L: Configuration & Testing Inventory",
+    "estimated_effort_hours": 20,
+    "complexity": "high"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": [
+        "README.md",
+        "API.md",
+        "ARCHITECTURE.md",
+        "COMPONENTS.md",
+        "SCHEMA.md",
+        "USER-GUIDE.md"
+      ],
+      "foundation_docs_missing": [],
+      "coding_standards_available": [
+        "BEHAVIOR-STANDARDS.md",
+        "UI-STANDARDS.md",
+        "UX-PATTERNS.md",
+        "COMPONENT-INDEX.md"
+      ],
+      "coding_standards_missing": [
+        "COMPONENT-PATTERN.md"
+      ],
+      "reference_implementations": [
+        "generators/inventory_generator.py (Phase 1: file inventory pattern)",
+        "generators/dependency_generator.py (Phase 2: multi-parser architecture)",
+        "generators/api_generator.py (Phase 3: AST parsing, framework detection)",
+        "generators/database_generator.py (Phase 3: ORM detection, schema parsing)"
+      ],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "MCP (Model Context Protocol)",
+        "libraries": [
+          "mcp (Model Context Protocol SDK)",
+          "jsonschema (JSON schema validation)",
+          "toml (TOML parsing - NEW)",
+          "python-dotenv (ENV file parsing - NEW)",
+          "pyyaml (YAML parsing - already installed)"
+        ],
+        "testing": "pytest (existing test infrastructure)",
+        "logging": "Structured logging via logger_config.py"
+      },
+      "key_patterns_to_follow": [
+        "Generator class pattern: __init__, _load_schema, validate_manifest, generate_manifest, save_manifest",
+        "MCP handler pattern: validate inputs → generate → build result → error handling",
+        "Multi-parser architecture: separate parser methods per format/framework",
+        "Security patterns: path resolution, sensitive value masking, security event logging",
+        "ErrorResponse factory for consistent error formatting",
+        "TypedDict definitions for all complex return types",
+        "Constants/Enums instead of magic strings",
+        "Structured logging with extra kwargs"
+      ],
+      "project_structure": {
+        "main_directories": [
+          "generators/ (generator classes)",
+          ".claude/commands/ (slash commands)",
+          "coderef/inventory/ (manifest output)",
+          "constants.py (enums and constants)",
+          "type_defs.py (TypedDict definitions)",
+          "validation.py (input validation)",
+          "tool_handlers.py (MCP handlers)",
+          "server.py (MCP tool definitions)"
+        ],
+        "output_locations": [
+          "coderef/inventory/config.json (config manifest)",
+          "coderef/inventory/tests.json (test manifest)",
+          "coderef/inventory/config-schema.json (JSON schema)",
+          "coderef/inventory/tests-schema.json (JSON schema)"
+        ]
+      },
+      "gaps_and_risks": [
+        "Missing COMPONENT-PATTERN.md coding standard (low priority)",
+        "No CI configuration - manual testing required",
+        "Sensitive data handling is CRITICAL - must implement masking",
+        "Two tools in one phase - high scope risk",
+        "Coverage data may not exist in all projects"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Phase 4 of Comprehensive Inventory System implements two MCP tools: config_inventory (Tool #18) for configuration file discovery and analysis, and test_inventory (Tool #19) for test infrastructure analysis. This phase extends the inventory system to cover configuration management and testing infrastructure.",
+      "business_value": [
+        "AI agents can discover and analyze configuration files across multiple formats (JSON, YAML, TOML, INI, ENV)",
+        "Automatic detection and masking of sensitive values (API keys, passwords, tokens) prevents credential leakage",
+        "Test infrastructure analysis provides visibility into test coverage and framework usage",
+        "Enables AI-driven configuration audits and test gap analysis",
+        "Completes 66% of the 6-phase inventory system roadmap"
+      ],
+      "success_metrics": [
+        "config_inventory detects 5+ file formats with 100% parsing accuracy",
+        "Sensitive value detection catches 95%+ of common credential patterns",
+        "test_inventory detects 3+ test frameworks with accurate classification",
+        "Performance targets: <2s for 50 config files, <3s for 500 test files",
+        "Zero credential leakage in manifest outputs",
+        "JSON schema validation passes for all manifests"
+      ],
+      "user_impact": "AI agents gain the ability to comprehensively analyze project configuration and testing infrastructure, enabling automated security audits, test coverage analysis, and configuration management recommendations.",
+      "timeline_estimate": "20 hours total: 10 hours for config_inventory (Phases 4A-4F), 10 hours for test_inventory (Phases 4G-4L)"
+    },
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Sensitive data leakage in manifests",
+          "severity": "CRITICAL",
+          "probability": "HIGH",
+          "impact": "Security breach, credential exposure",
+          "mitigation": "Implement comprehensive regex patterns for API keys, passwords, tokens, secrets. Mask all matches with '[REDACTED]'. Log security events for sensitive detections. Add test cases for all credential patterns.",
+          "contingency": "If masking fails, abort manifest generation and return error. Never write partial manifests with unmasked credentials."
+        },
+        {
+          "risk": "Scope too large (2 tools in one phase)",
+          "severity": "HIGH",
+          "probability": "MEDIUM",
+          "impact": "Timeline overrun, incomplete implementation",
+          "mitigation": "Sequential implementation with checkpoints. Complete config_inventory fully (4A-4F) before starting test_inventory (4G-4L). Commit after each sub-phase.",
+          "contingency": "If time-constrained, split into v1.9.0 (config only) and v1.9.1 (tests). Config tool has higher priority due to security implications."
+        },
+        {
+          "risk": "Configuration format diversity (edge cases)",
+          "severity": "MEDIUM",
+          "probability": "MEDIUM",
+          "impact": "Parsing failures, incomplete config discovery",
+          "mitigation": "Focus on common formats (JSON, YAML, TOML, INI, ENV). Use standard libraries. Graceful error handling for malformed files. Target 90% coverage, not 100%.",
+          "contingency": "Log parsing errors, skip malformed files, continue processing remaining files. Report partial results."
+        },
+        {
+          "risk": "Test coverage data unavailable in many projects",
+          "severity": "MEDIUM",
+          "probability": "HIGH",
+          "impact": "Incomplete test inventory metrics",
+          "mitigation": "Make coverage analysis optional. If .coverage or coverage.json not found, skip coverage metrics and only report discovered tests. Mark as 'coverage_unavailable' in manifest.",
+          "contingency": "Test inventory remains useful without coverage data - framework detection and test discovery still provide value."
+        }
+      ],
+      "dependencies": [
+        {
+          "dependency": "toml library (NEW)",
+          "type": "external",
+          "criticality": "HIGH",
+          "mitigation": "Add toml>=0.10.2 to requirements.txt. Standard library, low risk."
+        },
+        {
+          "dependency": "python-dotenv library (NEW)",
+          "type": "external",
+          "criticality": "HIGH",
+          "mitigation": "Add python-dotenv>=1.0.0 to requirements.txt. Well-maintained library, low risk."
+        },
+        {
+          "dependency": "pyyaml library (EXISTING)",
+          "type": "external",
+          "criticality": "MEDIUM",
+          "mitigation": "Already in requirements.txt from Phase 3. No action needed."
+        }
+      ],
+      "rollback_plan": "If critical issues discovered post-deployment: 1) Remove tool definitions from server.py, 2) Remove handlers from TOOL_HANDLERS registry, 3) Git revert to pre-Phase-4 commit, 4) Redeploy server. All changes are additive, rollback is clean."
+    },
+    "3_current_state_analysis": {
+      "existing_files_to_modify": [
+        {
+          "file": "server.py",
+          "reason": "Add Tool #18 (config_inventory) and Tool #19 (test_inventory) definitions to list_tools()",
+          "complexity": "LOW",
+          "estimated_lines": "+120 lines (60 per tool)"
+        },
+        {
+          "file": "tool_handlers.py",
+          "reason": "Add handle_config_inventory() and handle_test_inventory() handlers, register in TOOL_HANDLERS dict",
+          "complexity": "MEDIUM",
+          "estimated_lines": "+200 lines (100 per handler)"
+        },
+        {
+          "file": "constants.py",
+          "reason": "Add ConfigFormat, SensitivePattern, TestFramework enums. Add INVENTORY_CONFIG_MANIFEST and INVENTORY_TESTS_MANIFEST to Files class",
+          "complexity": "LOW",
+          "estimated_lines": "+30 lines"
+        },
+        {
+          "file": "type_defs.py",
+          "reason": "Add ConfigFileDict, ConfigManifestDict, ConfigResultDict, TestFileDict, TestManifestDict, TestResultDict TypedDicts",
+          "complexity": "LOW",
+          "estimated_lines": "+80 lines"
+        },
+        {
+          "file": "requirements.txt",
+          "reason": "Add toml>=0.10.2 and python-dotenv>=1.0.0 dependencies",
+          "complexity": "LOW",
+          "estimated_lines": "+2 lines"
+        },
+        {
+          "file": "README.md",
+          "reason": "Update tool count from 18 to 20, add Example 9 (Configuration Discovery) and Example 10 (Test Inventory)",
+          "complexity": "MEDIUM",
+          "estimated_lines": "+40 lines"
+        },
+        {
+          "file": "coderef/foundation-docs/API.md",
+          "reason": "Add Tool #18 and Tool #19 documentation (200+ lines each)",
+          "complexity": "HIGH",
+          "estimated_lines": "+400 lines"
+        },
+        {
+          "file": "my-guide.md",
+          "reason": "Add config_inventory and test_inventory to Project Inventory section. Add /config-inventory and /test-inventory slash commands. Update total: 22→24 slash commands",
+          "complexity": "MEDIUM",
+          "estimated_lines": "+60 lines"
+        },
+        {
+          "file": "coderef/quickref.md",
+          "reason": "Update version to 1.9.0, update tool count to 20, add config and test inventory entries",
+          "complexity": "LOW",
+          "estimated_lines": "+10 lines"
+        },
+        {
+          "file": "CLAUDE.md",
+          "reason": "Update tool count to 20, add config_inventory and test_inventory to available tools, add slash commands",
+          "complexity": "MEDIUM",
+          "estimated_lines": "+80 lines"
+        },
+        {
+          "file": "coderef/changelog/CHANGELOG.json",
+          "reason": "Add v1.9.0 entry covering both tools, list all affected files",
+          "complexity": "LOW",
+          "estimated_lines": "+50 lines (one version entry)"
+        }
+      ],
+      "new_files_to_create": [
+        {
+          "file": "generators/config_generator.py",
+          "purpose": "ConfigGenerator class for configuration file discovery, parsing, and sensitive value detection",
+          "complexity": "HIGH",
+          "estimated_lines": "~600 lines",
+          "key_methods": [
+            "__init__(project_path)",
+            "_load_schema()",
+            "validate_manifest(data)",
+            "detect_config_files() -> List[Path]",
+            "parse_config_file(file_path) -> Dict",
+            "detect_sensitive_values(config_data) -> List[str]",
+            "mask_sensitive_values(config_data, sensitive_keys) -> Dict",
+            "generate_manifest(**kwargs) -> Dict",
+            "save_manifest(manifest, output_file) -> Path"
+          ]
+        },
+        {
+          "file": "generators/test_generator.py",
+          "purpose": "TestGenerator class for test framework detection, test discovery, and coverage analysis",
+          "complexity": "HIGH",
+          "estimated_lines": "~650 lines",
+          "key_methods": [
+            "__init__(project_path)",
+            "_load_schema()",
+            "validate_manifest(data)",
+            "detect_test_frameworks() -> List[str]",
+            "discover_test_files() -> List[Path]",
+            "parse_coverage_data() -> Dict",
+            "identify_untested_files() -> List[str]",
+            "generate_manifest(**kwargs) -> Dict",
+            "save_manifest(manifest, output_file) -> Path"
+          ]
+        },
+        {
+          "file": "coderef/inventory/config-schema.json",
+          "purpose": "JSON schema for config manifest validation",
+          "complexity": "MEDIUM",
+          "estimated_lines": "~150 lines",
+          "validation_rules": [
+            "Required fields: project_name, project_path, generated_at, formats, config_files, metrics",
+            "formats: array of enum (json, yaml, toml, ini, env)",
+            "config_files: array of ConfigFileDict objects",
+            "metrics: object with file counts and sensitive file count"
+          ]
+        },
+        {
+          "file": "coderef/inventory/tests-schema.json",
+          "purpose": "JSON schema for test manifest validation",
+          "complexity": "MEDIUM",
+          "estimated_lines": "~180 lines",
+          "validation_rules": [
+            "Required fields: project_name, project_path, generated_at, frameworks, test_files, metrics",
+            "frameworks: array of enum (pytest, unittest, jest, mocha, vitest)",
+            "test_files: array of TestFileDict objects",
+            "metrics: object with framework counts, coverage data, untested file count"
+          ]
+        },
+        {
+          "file": ".claude/commands/config-inventory.md",
+          "purpose": "Slash command for quick config inventory generation",
+          "complexity": "LOW",
+          "estimated_lines": "~10 lines",
+          "content": "Execute config_inventory for the current project. Call mcp__docs-mcp__config_inventory with current working directory."
+        },
+        {
+          "file": ".claude/commands/test-inventory.md",
+          "purpose": "Slash command for quick test inventory generation",
+          "complexity": "LOW",
+          "estimated_lines": "~10 lines",
+          "content": "Execute test_inventory for the current project. Call mcp__docs-mcp__test_inventory with current working directory."
+        }
+      ],
+      "files_to_delete": [],
+      "breaking_changes": "None. All changes are additive. Backward compatible with existing tools."
+    },
+    "4_key_features": {
+      "feature_list": [
+        {
+          "feature_id": "F1",
+          "name": "Configuration File Discovery",
+          "description": "Discover configuration files across project using pattern matching for common config file names and extensions",
+          "priority": "CRITICAL",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Detects .json, .yaml, .yml, .toml, .ini, .env, .env.example files",
+            "Identifies config files by name patterns (config.*, settings.*, .env*, package.json, tsconfig.json, pyproject.toml, etc.)",
+            "Returns list of Path objects for all discovered config files",
+            "Excludes common directories (node_modules, .git, dist, build, venv)"
+          ]
+        },
+        {
+          "feature_id": "F2",
+          "name": "Multi-Format Config Parsing",
+          "description": "Parse configuration files using format-specific parsers for JSON, YAML, TOML, INI, and ENV formats",
+          "priority": "CRITICAL",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "JSON parsing via json.load() with error handling",
+            "YAML parsing via yaml.safe_load() with pyyaml library",
+            "TOML parsing via toml.load() with toml library",
+            "INI parsing via configparser.ConfigParser()",
+            "ENV parsing via dotenv.dotenv_values() with python-dotenv library",
+            "Graceful error handling for malformed files (log error, continue processing)",
+            "Returns Dict[str, Any] with parsed configuration data"
+          ]
+        },
+        {
+          "feature_id": "F3",
+          "name": "Sensitive Value Detection",
+          "description": "Detect sensitive values in configuration files using regex pattern matching for API keys, passwords, tokens, and secrets",
+          "priority": "CRITICAL",
+          "complexity": "HIGH",
+          "acceptance_criteria": [
+            "Regex patterns for API keys: api_key, apikey, API_KEY, x-api-key, etc.",
+            "Regex patterns for passwords: password, passwd, pwd, pass, secret_key, etc.",
+            "Regex patterns for tokens: token, auth_token, access_token, bearer_token, etc.",
+            "Regex patterns for secrets: secret, private_key, client_secret, etc.",
+            "Case-insensitive matching",
+            "Returns List[str] of detected sensitive key names",
+            "Test coverage: all common credential patterns detected"
+          ]
+        },
+        {
+          "feature_id": "F4",
+          "name": "Sensitive Value Masking",
+          "description": "Replace detected sensitive values with '[REDACTED]' in manifest output to prevent credential leakage",
+          "priority": "CRITICAL",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Replaces values for all detected sensitive keys with '[REDACTED]'",
+            "Preserves non-sensitive values unchanged",
+            "Returns masked Dict[str, Any]",
+            "Logs security event for each sensitive value detected",
+            "Test coverage: verify no credentials in manifest output"
+          ]
+        },
+        {
+          "feature_id": "F5",
+          "name": "Configuration Manifest Generation",
+          "description": "Generate comprehensive configuration inventory manifest with file metadata, parsed data, and metrics",
+          "priority": "CRITICAL",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Manifest structure: project_name, project_path, generated_at, formats, config_files, metrics",
+            "config_files: array of {file_path, format, key_count, sensitive_keys, has_sensitive, last_modified, size_bytes}",
+            "metrics: {total_files, formats_detected, sensitive_files, total_keys}",
+            "JSON schema validation passes",
+            "Saves to coderef/inventory/config.json"
+          ]
+        },
+        {
+          "feature_id": "F6",
+          "name": "Test Framework Detection",
+          "description": "Detect test frameworks used in project via import analysis and file naming patterns",
+          "priority": "HIGH",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Python frameworks: pytest (import pytest, test_*.py), unittest (import unittest, *_test.py)",
+            "JavaScript frameworks: jest (describe/it/test patterns, *.test.js), mocha (describe/it patterns, *.spec.js), vitest (similar to jest)",
+            "Returns List[str] of detected framework names",
+            "Minimum 3 frameworks supported: pytest, jest, mocha"
+          ]
+        },
+        {
+          "feature_id": "F7",
+          "name": "Test File Discovery",
+          "description": "Discover test files using framework-specific naming patterns and directory conventions",
+          "priority": "HIGH",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Python: test_*.py, *_test.py in tests/ directories",
+            "JavaScript: *.test.js, *.test.ts, *.spec.js, *.spec.ts in __tests__/ or tests/ directories",
+            "Returns List[Path] of discovered test files",
+            "Categorizes by framework",
+            "Excludes node_modules, .venv, dist, build"
+          ]
+        },
+        {
+          "feature_id": "F8",
+          "name": "Test Coverage Analysis (Optional)",
+          "description": "Parse coverage data if available (.coverage, coverage.json, lcov.info) and calculate coverage metrics",
+          "priority": "MEDIUM",
+          "complexity": "HIGH",
+          "acceptance_criteria": [
+            "Detects .coverage (Python coverage.py format)",
+            "Parses coverage.json or coverage/coverage-final.json (JavaScript)",
+            "Parses lcov.info (alternative JavaScript format)",
+            "Graceful handling if coverage data missing (sets coverage_available: false)",
+            "Returns Dict with coverage percentage per file",
+            "Returns overall project coverage percentage"
+          ]
+        },
+        {
+          "feature_id": "F9",
+          "name": "Untested File Identification",
+          "description": "Compare source files to test files and identify source files without corresponding tests",
+          "priority": "MEDIUM",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Maps test files to source files (e.g., test_auth.py → auth.py)",
+            "Identifies source files without corresponding test files",
+            "Returns List[str] of untested file paths",
+            "Calculates test coverage ratio (tested_files / total_source_files)"
+          ]
+        },
+        {
+          "feature_id": "F10",
+          "name": "Test Manifest Generation",
+          "description": "Generate comprehensive test inventory manifest with framework data, test files, and metrics",
+          "priority": "HIGH",
+          "complexity": "MEDIUM",
+          "acceptance_criteria": [
+            "Manifest structure: project_name, project_path, generated_at, frameworks, test_files, metrics",
+            "test_files: array of {file_path, framework, line_count, test_count}",
+            "metrics: {total_tests, frameworks_detected, coverage_percentage, untested_files_count}",
+            "JSON schema validation passes",
+            "Saves to coderef/inventory/tests.json"
+          ]
+        }
+      ],
+      "feature_dependencies": [
+        "F1 → F2: Config discovery must complete before parsing",
+        "F2 → F3: Parsing must complete before sensitive detection",
+        "F3 → F4: Detection must complete before masking",
+        "F4 → F5: Masking must complete before manifest generation",
+        "F6 → F7: Framework detection guides test discovery patterns",
+        "F7 → F8: Test discovery must complete before coverage analysis",
+        "F7 → F9: Test discovery required for untested file comparison",
+        "F6, F7, F8, F9 → F10: All test features feed into manifest generation"
+      ]
+    },
+    "5_task_id_system": {
+      "task_breakdown": [
+        {
+          "task_id": "T1.1",
+          "phase": "4A",
+          "feature": "F1, F2, F5",
+          "description": "Create generators/config_generator.py with ConfigGenerator class skeleton",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T1.2",
+          "phase": "4A",
+          "feature": "F1",
+          "description": "Implement detect_config_files() method with pattern matching",
+          "estimated_time": "45 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T1.3",
+          "phase": "4A",
+          "feature": "F5",
+          "description": "Create coderef/inventory/config-schema.json JSON schema",
+          "estimated_time": "45 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T2.1",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement JSON parser (parse_json_file method)",
+          "estimated_time": "30 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T2.2",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement YAML parser (parse_yaml_file method)",
+          "estimated_time": "30 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T2.3",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement TOML parser (parse_toml_file method) - add toml to requirements.txt",
+          "estimated_time": "30 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T2.4",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement INI parser (parse_ini_file method)",
+          "estimated_time": "30 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T2.5",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement ENV parser (parse_env_file method) - add python-dotenv to requirements.txt",
+          "estimated_time": "30 min",
+          "dependencies": ["T1.1"]
+        },
+        {
+          "task_id": "T2.6",
+          "phase": "4B",
+          "feature": "F2",
+          "description": "Implement parse_config_file() dispatcher that routes to format-specific parsers",
+          "estimated_time": "30 min",
+          "dependencies": ["T2.1", "T2.2", "T2.3", "T2.4", "T2.5"]
+        },
+        {
+          "task_id": "T3.1",
+          "phase": "4C",
+          "feature": "F3",
+          "description": "Define regex patterns for API keys (api_key, apikey, x-api-key, etc.)",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T3.2",
+          "phase": "4C",
+          "feature": "F3",
+          "description": "Define regex patterns for passwords (password, passwd, pwd, secret_key, etc.)",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T3.3",
+          "phase": "4C",
+          "feature": "F3",
+          "description": "Define regex patterns for tokens (token, auth_token, access_token, bearer_token, etc.)",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T3.4",
+          "phase": "4C",
+          "feature": "F3",
+          "description": "Implement detect_sensitive_values() method with all regex patterns",
+          "estimated_time": "45 min",
+          "dependencies": ["T3.1", "T3.2", "T3.3"]
+        },
+        {
+          "task_id": "T3.5",
+          "phase": "4C",
+          "feature": "F4",
+          "description": "Implement mask_sensitive_values() method with [REDACTED] replacement",
+          "estimated_time": "30 min",
+          "dependencies": ["T3.4"]
+        },
+        {
+          "task_id": "T3.6",
+          "phase": "4C",
+          "feature": "F4",
+          "description": "Add security logging via log_security_event() for sensitive detections",
+          "estimated_time": "15 min",
+          "dependencies": ["T3.5"]
+        },
+        {
+          "task_id": "T4.1",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Add ConfigFormat enum to constants.py",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T4.2",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Add SensitivePattern enum to constants.py",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T4.3",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Add ConfigFileDict, ConfigManifestDict, ConfigResultDict to type_defs.py",
+          "estimated_time": "15 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T4.4",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Add Tool #18 definition to server.py list_tools()",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T4.5",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Create handle_config_inventory() in tool_handlers.py",
+          "estimated_time": "60 min",
+          "dependencies": ["T1.1", "T1.2", "T2.6", "T3.6", "T4.3"]
+        },
+        {
+          "task_id": "T4.6",
+          "phase": "4D",
+          "feature": "F5",
+          "description": "Register handle_config_inventory in TOOL_HANDLERS dict",
+          "estimated_time": "5 min",
+          "dependencies": ["T4.5"]
+        },
+        {
+          "task_id": "T5.1",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Update README.md (tool count 18→19, add Example 9: Configuration Discovery)",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T5.2",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Update API.md (add Tool #18 documentation, ~200 lines)",
+          "estimated_time": "60 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T5.3",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Update my-guide.md (add config_inventory)",
+          "estimated_time": "20 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T5.4",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Update quickref.md (version 1.9.0, tool count update)",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T5.5",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Update CLAUDE.md (tool count 20, slash commands)",
+          "estimated_time": "20 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T5.6",
+          "phase": "4E",
+          "feature": "F5",
+          "description": "Create .claude/commands/config-inventory.md slash command",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T6.1",
+          "phase": "4F",
+          "feature": "F5",
+          "description": "Test config_inventory on docs-mcp project (should find pyproject.toml, .env examples)",
+          "estimated_time": "30 min",
+          "dependencies": ["T4.5", "T4.6"]
+        },
+        {
+          "task_id": "T6.2",
+          "phase": "4F",
+          "feature": "F4",
+          "description": "Verify sensitive masking works (test with sample API keys)",
+          "estimated_time": "20 min",
+          "dependencies": ["T6.1"]
+        },
+        {
+          "task_id": "T6.3",
+          "phase": "4F",
+          "feature": "F5",
+          "description": "Add CHANGELOG entry for v1.9.0 (config_inventory)",
+          "estimated_time": "15 min",
+          "dependencies": ["T6.1", "T6.2"]
+        },
+        {
+          "task_id": "T6.4",
+          "phase": "4F",
+          "feature": "F5",
+          "description": "Git commit + push checkpoint (Phase 4A-4F complete)",
+          "estimated_time": "10 min",
+          "dependencies": ["T6.3"]
+        },
+        {
+          "task_id": "T7.1",
+          "phase": "4G",
+          "feature": "F6, F7, F10",
+          "description": "Create generators/test_generator.py with TestGenerator class skeleton",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T7.2",
+          "phase": "4G",
+          "feature": "F7",
+          "description": "Implement discover_test_files() method with pattern matching",
+          "estimated_time": "45 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T7.3",
+          "phase": "4G",
+          "feature": "F10",
+          "description": "Create coderef/inventory/tests-schema.json JSON schema",
+          "estimated_time": "45 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T8.1",
+          "phase": "4H",
+          "feature": "F6",
+          "description": "Implement pytest detection (import pytest, test_*.py patterns)",
+          "estimated_time": "30 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T8.2",
+          "phase": "4H",
+          "feature": "F6",
+          "description": "Implement unittest detection (import unittest, *_test.py patterns)",
+          "estimated_time": "30 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T8.3",
+          "phase": "4H",
+          "feature": "F6",
+          "description": "Implement jest detection (describe/it/test patterns, *.test.js)",
+          "estimated_time": "40 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T8.4",
+          "phase": "4H",
+          "feature": "F6",
+          "description": "Implement mocha/vitest detection (describe/it patterns, *.spec.js)",
+          "estimated_time": "40 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T8.5",
+          "phase": "4H",
+          "feature": "F6",
+          "description": "Implement detect_test_frameworks() orchestrator method",
+          "estimated_time": "20 min",
+          "dependencies": ["T8.1", "T8.2", "T8.3", "T8.4"]
+        },
+        {
+          "task_id": "T9.1",
+          "phase": "4I",
+          "feature": "F8",
+          "description": "Implement .coverage parser (Python coverage.py format)",
+          "estimated_time": "60 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T9.2",
+          "phase": "4I",
+          "feature": "F8",
+          "description": "Implement coverage.json parser (JavaScript Jest format)",
+          "estimated_time": "45 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T9.3",
+          "phase": "4I",
+          "feature": "F8",
+          "description": "Implement lcov.info parser (alternative JavaScript format)",
+          "estimated_time": "45 min",
+          "dependencies": ["T7.1"]
+        },
+        {
+          "task_id": "T9.4",
+          "phase": "4I",
+          "feature": "F8",
+          "description": "Handle missing coverage gracefully (set coverage_available: false)",
+          "estimated_time": "20 min",
+          "dependencies": ["T9.1", "T9.2", "T9.3"]
+        },
+        {
+          "task_id": "T9.5",
+          "phase": "4I",
+          "feature": "F8, F9",
+          "description": "Calculate coverage metrics and untested file identification",
+          "estimated_time": "30 min",
+          "dependencies": ["T9.4", "T7.2"]
+        },
+        {
+          "task_id": "T10.1",
+          "phase": "4J",
+          "feature": "F10",
+          "description": "Add TestFramework enum to constants.py",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T10.2",
+          "phase": "4J",
+          "feature": "F10",
+          "description": "Add TestFileDict, TestManifestDict, TestResultDict to type_defs.py",
+          "estimated_time": "15 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T10.3",
+          "phase": "4J",
+          "feature": "F10",
+          "description": "Add Tool #19 definition to server.py list_tools()",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T10.4",
+          "phase": "4J",
+          "feature": "F10",
+          "description": "Create handle_test_inventory() in tool_handlers.py",
+          "estimated_time": "60 min",
+          "dependencies": ["T7.1", "T7.2", "T8.5", "T9.5", "T10.2"]
+        },
+        {
+          "task_id": "T10.5",
+          "phase": "4J",
+          "feature": "F10",
+          "description": "Register handle_test_inventory in TOOL_HANDLERS dict",
+          "estimated_time": "5 min",
+          "dependencies": ["T10.4"]
+        },
+        {
+          "task_id": "T11.1",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Update README.md (tool count 19→20, add Example 10: Test Inventory)",
+          "estimated_time": "30 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T11.2",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Update API.md (add Tool #19 documentation, ~200 lines)",
+          "estimated_time": "60 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T11.3",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Update my-guide.md (add test_inventory, 24 slash commands)",
+          "estimated_time": "20 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T11.4",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Update quickref.md (tool count 20, 14 slash commands)",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T11.5",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Update CLAUDE.md (tool count 20)",
+          "estimated_time": "20 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T11.6",
+          "phase": "4K",
+          "feature": "F10",
+          "description": "Create .claude/commands/test-inventory.md slash command",
+          "estimated_time": "10 min",
+          "dependencies": []
+        },
+        {
+          "task_id": "T12.1",
+          "phase": "4L",
+          "feature": "F10",
+          "description": "Test test_inventory on docs-mcp project (should find pytest tests)",
+          "estimated_time": "30 min",
+          "dependencies": ["T10.4", "T10.5"]
+        },
+        {
+          "task_id": "T12.2",
+          "phase": "4L",
+          "feature": "F8",
+          "description": "Verify coverage parsing if .coverage exists",
+          "estimated_time": "20 min",
+          "dependencies": ["T12.1"]
+        },
+        {
+          "task_id": "T12.3",
+          "phase": "4L",
+          "feature": "F10",
+          "description": "Update CHANGELOG entry for v1.9.0 (add test_inventory)",
+          "estimated_time": "15 min",
+          "dependencies": ["T12.1", "T12.2"]
+        },
+        {
+          "task_id": "T12.4",
+          "phase": "4L",
+          "feature": "F10",
+          "description": "Git commit + push final Phase 4 checkpoint (Phase 4G-4L complete)",
+          "estimated_time": "10 min",
+          "dependencies": ["T12.3"]
+        }
+      ],
+      "total_tasks": 62,
+      "task_dependency_graph": "Sequential phases 4A→4B→4C→4D→4E→4F (config), then 4G→4H→4I→4J→4K→4L (tests). Within each phase, tasks can be parallelized where dependencies allow."
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase_id": "4A",
+          "name": "Config Tool Foundation",
+          "duration": "2 hours",
+          "tasks": ["T1.1", "T1.2", "T1.3"],
+          "deliverables": [
+            "generators/config_generator.py skeleton",
+            "detect_config_files() implementation",
+            "coderef/inventory/config-schema.json"
+          ],
+          "exit_criteria": [
+            "ConfigGenerator class created with __init__, _load_schema, validate_manifest stubs",
+            "detect_config_files() discovers config files by pattern matching",
+            "JSON schema created with required fields defined",
+            "Code compiles without errors"
+          ]
+        },
+        {
+          "phase_id": "4B",
+          "name": "Config Parsers",
+          "duration": "3 hours",
+          "tasks": ["T2.1", "T2.2", "T2.3", "T2.4", "T2.5", "T2.6"],
+          "deliverables": [
+            "JSON parser (parse_json_file)",
+            "YAML parser (parse_yaml_file)",
+            "TOML parser (parse_toml_file)",
+            "INI parser (parse_ini_file)",
+            "ENV parser (parse_env_file)",
+            "Format dispatcher (parse_config_file)",
+            "Updated requirements.txt (+toml, +python-dotenv)"
+          ],
+          "exit_criteria": [
+            "All 5 format parsers implemented and working",
+            "Graceful error handling for malformed files",
+            "parse_config_file() correctly routes to format-specific parsers",
+            "dependencies added to requirements.txt",
+            "Manual testing: can parse sample config files in all 5 formats"
+          ]
+        },
+        {
+          "phase_id": "4C",
+          "name": "Sensitive Value Detection",
+          "duration": "2 hours",
+          "tasks": ["T3.1", "T3.2", "T3.3", "T3.4", "T3.5", "T3.6"],
+          "deliverables": [
+            "Regex patterns for API keys, passwords, tokens, secrets",
+            "detect_sensitive_values() implementation",
+            "mask_sensitive_values() implementation",
+            "Security logging via log_security_event()"
+          ],
+          "exit_criteria": [
+            "All common credential patterns detected (api_key, password, token, secret)",
+            "Case-insensitive regex matching works",
+            "Sensitive values replaced with '[REDACTED]'",
+            "Security events logged for each detection",
+            "Manual testing: verify masking with sample credentials"
+          ]
+        },
+        {
+          "phase_id": "4D",
+          "name": "Config MCP Integration",
+          "duration": "1 hour",
+          "tasks": ["T4.1", "T4.2", "T4.3", "T4.4", "T4.5", "T4.6"],
+          "deliverables": [
+            "ConfigFormat enum in constants.py",
+            "SensitivePattern enum in constants.py",
+            "ConfigFileDict, ConfigManifestDict, ConfigResultDict in type_defs.py",
+            "Tool #18 definition in server.py",
+            "handle_config_inventory() in tool_handlers.py",
+            "Handler registered in TOOL_HANDLERS"
+          ],
+          "exit_criteria": [
+            "Enums and TypedDicts added to respective files",
+            "Tool #18 defined with correct input schema",
+            "Handler implements full pattern: validate → generate → build result → error handling",
+            "Handler registered in TOOL_HANDLERS dict",
+            "MCP server compiles and starts without errors"
+          ]
+        },
+        {
+          "phase_id": "4E",
+          "name": "Config Documentation",
+          "duration": "1 hour",
+          "tasks": ["T5.1", "T5.2", "T5.3", "T5.4", "T5.5", "T5.6"],
+          "deliverables": [
+            "Updated README.md (tool count 18→19, Example 9)",
+            "Updated API.md (Tool #18 documentation)",
+            "Updated my-guide.md (config_inventory)",
+            "Updated quickref.md (version 1.9.0)",
+            "Updated CLAUDE.md (tool count, slash commands)",
+            ".claude/commands/config-inventory.md"
+          ],
+          "exit_criteria": [
+            "All 5 documentation files updated",
+            "Slash command created and functional",
+            "Documentation accurate and complete",
+            "Examples include config_inventory usage"
+          ]
+        },
+        {
+          "phase_id": "4F",
+          "name": "Config Testing & Checkpoint",
+          "duration": "1 hour",
+          "tasks": ["T6.1", "T6.2", "T6.3", "T6.4"],
+          "deliverables": [
+            "Test results from docs-mcp project",
+            "Verified sensitive value masking",
+            "CHANGELOG entry for v1.9.0 (config)",
+            "Git commit checkpoint"
+          ],
+          "exit_criteria": [
+            "config_inventory successfully runs on docs-mcp",
+            "Finds pyproject.toml and other config files",
+            "Sensitive masking verified (no credentials in output)",
+            "Performance: <2 seconds for 50 config files",
+            "CHANGELOG entry added",
+            "Git commit created and pushed",
+            "No errors or failures"
+          ]
+        },
+        {
+          "phase_id": "4G",
+          "name": "Test Tool Foundation",
+          "duration": "2 hours",
+          "tasks": ["T7.1", "T7.2", "T7.3"],
+          "deliverables": [
+            "generators/test_generator.py skeleton",
+            "discover_test_files() implementation",
+            "coderef/inventory/tests-schema.json"
+          ],
+          "exit_criteria": [
+            "TestGenerator class created with __init__, _load_schema, validate_manifest stubs",
+            "discover_test_files() finds test files by pattern matching",
+            "JSON schema created with required fields defined",
+            "Code compiles without errors"
+          ]
+        },
+        {
+          "phase_id": "4H",
+          "name": "Framework Detection",
+          "duration": "2 hours",
+          "tasks": ["T8.1", "T8.2", "T8.3", "T8.4", "T8.5"],
+          "deliverables": [
+            "pytest detection",
+            "unittest detection",
+            "jest detection",
+            "mocha/vitest detection",
+            "detect_test_frameworks() orchestrator"
+          ],
+          "exit_criteria": [
+            "All 3+ frameworks detected correctly",
+            "Import analysis and file patterns working",
+            "detect_test_frameworks() returns List[str] of frameworks",
+            "Manual testing: detects frameworks in sample projects"
+          ]
+        },
+        {
+          "phase_id": "4I",
+          "name": "Coverage Analysis",
+          "duration": "3 hours",
+          "tasks": ["T9.1", "T9.2", "T9.3", "T9.4", "T9.5"],
+          "deliverables": [
+            ".coverage parser (Python)",
+            "coverage.json parser (JavaScript)",
+            "lcov.info parser (alternative)",
+            "Graceful handling for missing coverage",
+            "Coverage metrics calculation"
+          ],
+          "exit_criteria": [
+            "All 3 coverage formats parsable",
+            "Missing coverage handled gracefully (coverage_available: false)",
+            "Coverage percentage calculated per file and overall",
+            "Untested files identified",
+            "Manual testing: parses sample coverage files"
+          ]
+        },
+        {
+          "phase_id": "4J",
+          "name": "Test MCP Integration",
+          "duration": "1 hour",
+          "tasks": ["T10.1", "T10.2", "T10.3", "T10.4", "T10.5"],
+          "deliverables": [
+            "TestFramework enum in constants.py",
+            "TestFileDict, TestManifestDict, TestResultDict in type_defs.py",
+            "Tool #19 definition in server.py",
+            "handle_test_inventory() in tool_handlers.py",
+            "Handler registered in TOOL_HANDLERS"
+          ],
+          "exit_criteria": [
+            "Enums and TypedDicts added",
+            "Tool #19 defined with correct input schema",
+            "Handler implements full pattern",
+            "Handler registered in TOOL_HANDLERS",
+            "MCP server compiles and starts without errors"
+          ]
+        },
+        {
+          "phase_id": "4K",
+          "name": "Test Documentation",
+          "duration": "1 hour",
+          "tasks": ["T11.1", "T11.2", "T11.3", "T11.4", "T11.5", "T11.6"],
+          "deliverables": [
+            "Updated README.md (tool count 19→20, Example 10)",
+            "Updated API.md (Tool #19 documentation)",
+            "Updated my-guide.md (test_inventory, 24 slash commands)",
+            "Updated quickref.md (tool count 20, 14 slash commands)",
+            "Updated CLAUDE.md (tool count 20)",
+            ".claude/commands/test-inventory.md"
+          ],
+          "exit_criteria": [
+            "All 5 documentation files updated",
+            "Slash command created and functional",
+            "Documentation accurate and complete",
+            "Examples include test_inventory usage"
+          ]
+        },
+        {
+          "phase_id": "4L",
+          "name": "Test Testing & Final Commit",
+          "duration": "1 hour",
+          "tasks": ["T12.1", "T12.2", "T12.3", "T12.4"],
+          "deliverables": [
+            "Test results from docs-mcp project",
+            "Verified coverage parsing",
+            "Updated CHANGELOG entry for v1.9.0",
+            "Final git commit checkpoint"
+          ],
+          "exit_criteria": [
+            "test_inventory successfully runs on docs-mcp",
+            "Finds pytest tests",
+            "Coverage parsing verified (if .coverage exists)",
+            "Performance: <3 seconds for 500 test files",
+            "CHANGELOG entry updated",
+            "Git commit created and pushed",
+            "No errors or failures",
+            "Phase 4 COMPLETE"
+          ]
+        }
+      ],
+      "critical_path": "4A → 4B → 4C → 4D → 4E → 4F (10 hours) → 4G → 4H → 4I → 4J → 4K → 4L (10 hours) = 20 hours total",
+      "parallelization_opportunities": [
+        "4A and 4G can start simultaneously if team has 2 developers",
+        "Documentation tasks (4E, 4K) can be done in parallel with testing (4F, 4L) if needed",
+        "Schema creation (T1.3, T7.3) can be done independently early"
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_file": "tests/test_config_generator.py",
+          "purpose": "Test ConfigGenerator methods in isolation",
+          "test_cases": [
+            "test_detect_config_files_finds_json_yaml_toml",
+            "test_parse_json_file_valid_json",
+            "test_parse_json_file_malformed_json_graceful_error",
+            "test_parse_yaml_file_valid_yaml",
+            "test_parse_toml_file_valid_toml",
+            "test_parse_ini_file_valid_ini",
+            "test_parse_env_file_valid_env",
+            "test_detect_sensitive_values_api_key",
+            "test_detect_sensitive_values_password",
+            "test_detect_sensitive_values_token",
+            "test_detect_sensitive_values_case_insensitive",
+            "test_mask_sensitive_values_replaces_with_redacted",
+            "test_mask_sensitive_values_preserves_non_sensitive",
+            "test_generate_manifest_complete_structure",
+            "test_validate_manifest_passes_valid_data",
+            "test_validate_manifest_fails_invalid_data"
+          ]
+        },
+        {
+          "test_file": "tests/test_test_generator.py",
+          "purpose": "Test TestGenerator methods in isolation",
+          "test_cases": [
+            "test_discover_test_files_finds_pytest_files",
+            "test_discover_test_files_finds_jest_files",
+            "test_detect_test_frameworks_pytest",
+            "test_detect_test_frameworks_jest",
+            "test_detect_test_frameworks_mocha",
+            "test_parse_coverage_data_python_coverage",
+            "test_parse_coverage_data_jest_coverage_json",
+            "test_parse_coverage_data_lcov_info",
+            "test_parse_coverage_data_missing_graceful",
+            "test_identify_untested_files",
+            "test_generate_manifest_complete_structure",
+            "test_validate_manifest_passes_valid_data"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_file": "tests/test_config_inventory_integration.py",
+          "purpose": "Test config_inventory MCP tool end-to-end",
+          "test_cases": [
+            "test_config_inventory_on_sample_project",
+            "test_config_inventory_with_sensitive_values",
+            "test_config_inventory_with_malformed_files",
+            "test_config_inventory_empty_project",
+            "test_config_inventory_validates_schema"
+          ]
+        },
+        {
+          "test_file": "tests/test_test_inventory_integration.py",
+          "purpose": "Test test_inventory MCP tool end-to-end",
+          "test_cases": [
+            "test_test_inventory_on_sample_project",
+            "test_test_inventory_with_coverage_data",
+            "test_test_inventory_without_coverage_data",
+            "test_test_inventory_empty_project",
+            "test_test_inventory_validates_schema"
+          ]
+        }
+      ],
+      "manual_tests": [
+        {
+          "test_name": "Config discovery on docs-mcp",
+          "procedure": "Run config_inventory on docs-mcp project, verify finds pyproject.toml, requirements.txt, etc.",
+          "expected_result": "All config files discovered, no errors"
+        },
+        {
+          "test_name": "Sensitive value masking",
+          "procedure": "Create .env file with API_KEY=abc123, run config_inventory, check manifest",
+          "expected_result": "Manifest shows API_KEY: [REDACTED], security event logged"
+        },
+        {
+          "test_name": "Test discovery on docs-mcp",
+          "procedure": "Run test_inventory on docs-mcp project, verify finds pytest tests",
+          "expected_result": "Test files discovered, frameworks detected, no errors"
+        },
+        {
+          "test_name": "Performance: 50 config files <2s",
+          "procedure": "Create project with 50 config files, run config_inventory, time execution",
+          "expected_result": "Completes in <2 seconds"
+        },
+        {
+          "test_name": "Performance: 500 test files <3s",
+          "procedure": "Create project with 500 test files, run test_inventory, time execution",
+          "expected_result": "Completes in <3 seconds"
+        }
+      ],
+      "security_tests": [
+        {
+          "test_name": "No credential leakage in config manifest",
+          "procedure": "Create config with multiple credential patterns, run config_inventory, search manifest for unmasked values",
+          "expected_result": "All credentials masked, zero leakage"
+        },
+        {
+          "test_name": "Security events logged",
+          "procedure": "Run config_inventory with sensitive config, check logs",
+          "expected_result": "log_security_event() called for each sensitive key"
+        },
+        {
+          "test_name": "Path traversal protection",
+          "procedure": "Attempt to pass ../../../etc/passwd as project_path",
+          "expected_result": "Validation error, path traversal blocked"
+        }
+      ],
+      "test_coverage_target": "80% code coverage minimum for generator classes, 100% coverage for sensitive value detection logic"
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "config_inventory detects 5+ file formats",
+          "acceptance_test": "Run on sample project with JSON, YAML, TOML, INI, ENV files. Verify all detected.",
+          "pass_criteria": "All 5 formats detected and parsed correctly"
+        },
+        {
+          "requirement": "config_inventory identifies sensitive patterns",
+          "acceptance_test": "Create config with api_key, password, token, secret. Run config_inventory.",
+          "pass_criteria": "All 4 credential types detected"
+        },
+        {
+          "requirement": "config_inventory masks sensitive values",
+          "acceptance_test": "Check manifest output for masked values",
+          "pass_criteria": "All sensitive values show '[REDACTED]', no raw credentials visible"
+        },
+        {
+          "requirement": "test_inventory detects 3+ frameworks",
+          "acceptance_test": "Run on sample project with pytest, jest, mocha tests",
+          "pass_criteria": "All 3 frameworks detected correctly"
+        },
+        {
+          "requirement": "test_inventory discovers test files",
+          "acceptance_test": "Run on project with test_*.py and *.test.js files",
+          "pass_criteria": "All test files discovered and categorized by framework"
+        },
+        {
+          "requirement": "test_inventory calculates coverage if available",
+          "acceptance_test": "Run on project with .coverage file",
+          "pass_criteria": "Coverage data parsed, metrics calculated"
+        },
+        {
+          "requirement": "test_inventory identifies untested files",
+          "acceptance_test": "Run on project with some source files missing tests",
+          "pass_criteria": "Untested files listed in manifest"
+        },
+        {
+          "requirement": "Both tools validate against JSON schemas",
+          "acceptance_test": "Generate manifests, validate against schemas",
+          "pass_criteria": "jsonschema.validate() passes for all manifests"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "config_inventory: <2s for 50 files",
+          "acceptance_test": "Time execution on 50-file project",
+          "pass_criteria": "Total execution time <2 seconds"
+        },
+        {
+          "requirement": "test_inventory: <3s for 500 files",
+          "acceptance_test": "Time execution on 500-test-file project",
+          "pass_criteria": "Total execution time <3 seconds"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Zero credential leakage",
+          "acceptance_test": "Comprehensive security audit of manifest outputs",
+          "pass_criteria": "No raw credentials found in any manifest"
+        },
+        {
+          "requirement": "Security events logged",
+          "acceptance_test": "Check logs after processing sensitive configs",
+          "pass_criteria": "log_security_event() called for each detection"
+        }
+      ],
+      "documentation_requirements": [
+        {
+          "requirement": "All 5 docs updated",
+          "acceptance_test": "Check README, API, my-guide, quickref, CLAUDE",
+          "pass_criteria": "All mention config_inventory and test_inventory"
+        },
+        {
+          "requirement": "Slash commands functional",
+          "acceptance_test": "Test /config-inventory and /test-inventory commands",
+          "pass_criteria": "Both commands execute successfully"
+        },
+        {
+          "requirement": "CHANGELOG entry complete",
+          "acceptance_test": "Check coderef/changelog/CHANGELOG.json",
+          "pass_criteria": "v1.9.0 entry lists all changes and files"
+        }
+      ],
+      "release_criteria": [
+        "All functional requirements met",
+        "All performance requirements met",
+        "All security requirements met",
+        "All documentation requirements met",
+        "Git commits created for checkpoints (4F, 4L)",
+        "No critical or high-severity bugs",
+        "Phase 4 complete, ready for Phase 5"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_4A_config_foundation": [
+        {
+          "item": "Create generators/config_generator.py",
+          "status": "pending"
+        },
+        {
+          "item": "Implement ConfigGenerator.__init__()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement _load_schema()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement validate_manifest()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement detect_config_files()",
+          "status": "pending"
+        },
+        {
+          "item": "Create coderef/inventory/config-schema.json",
+          "status": "pending"
+        },
+        {
+          "item": "Test: ConfigGenerator compiles",
+          "status": "pending"
+        }
+      ],
+      "phase_4B_config_parsers": [
+        {
+          "item": "Implement parse_json_file()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement parse_yaml_file()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement parse_toml_file()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement parse_ini_file()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement parse_env_file()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement parse_config_file() dispatcher",
+          "status": "pending"
+        },
+        {
+          "item": "Add toml>=0.10.2 to requirements.txt",
+          "status": "pending"
+        },
+        {
+          "item": "Add python-dotenv>=1.0.0 to requirements.txt",
+          "status": "pending"
+        },
+        {
+          "item": "Test: All parsers handle valid input",
+          "status": "pending"
+        },
+        {
+          "item": "Test: Graceful error handling for malformed files",
+          "status": "pending"
+        }
+      ],
+      "phase_4C_sensitive_detection": [
+        {
+          "item": "Define API key regex patterns",
+          "status": "pending"
+        },
+        {
+          "item": "Define password regex patterns",
+          "status": "pending"
+        },
+        {
+          "item": "Define token regex patterns",
+          "status": "pending"
+        },
+        {
+          "item": "Define secret regex patterns",
+          "status": "pending"
+        },
+        {
+          "item": "Implement detect_sensitive_values()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement mask_sensitive_values()",
+          "status": "pending"
+        },
+        {
+          "item": "Add log_security_event() calls",
+          "status": "pending"
+        },
+        {
+          "item": "Test: All credential patterns detected",
+          "status": "pending"
+        },
+        {
+          "item": "Test: Masking replaces with [REDACTED]",
+          "status": "pending"
+        },
+        {
+          "item": "Test: No credential leakage",
+          "status": "pending"
+        }
+      ],
+      "phase_4D_config_mcp_integration": [
+        {
+          "item": "Add ConfigFormat enum to constants.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add SensitivePattern enum to constants.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add ConfigFileDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add ConfigManifestDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add ConfigResultDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add Tool #18 to server.py list_tools()",
+          "status": "pending"
+        },
+        {
+          "item": "Create handle_config_inventory() in tool_handlers.py",
+          "status": "pending"
+        },
+        {
+          "item": "Register handle_config_inventory in TOOL_HANDLERS",
+          "status": "pending"
+        },
+        {
+          "item": "Test: MCP server starts without errors",
+          "status": "pending"
+        },
+        {
+          "item": "Test: config_inventory tool callable via MCP",
+          "status": "pending"
+        }
+      ],
+      "phase_4E_config_documentation": [
+        {
+          "item": "Update README.md (tool count, Example 9)",
+          "status": "pending"
+        },
+        {
+          "item": "Update API.md (Tool #18 docs)",
+          "status": "pending"
+        },
+        {
+          "item": "Update my-guide.md (config_inventory)",
+          "status": "pending"
+        },
+        {
+          "item": "Update quickref.md (version 1.9.0)",
+          "status": "pending"
+        },
+        {
+          "item": "Update CLAUDE.md (tool count 20)",
+          "status": "pending"
+        },
+        {
+          "item": "Create .claude/commands/config-inventory.md",
+          "status": "pending"
+        },
+        {
+          "item": "Test: /config-inventory slash command works",
+          "status": "pending"
+        }
+      ],
+      "phase_4F_config_testing_checkpoint": [
+        {
+          "item": "Run config_inventory on docs-mcp",
+          "status": "pending"
+        },
+        {
+          "item": "Verify finds pyproject.toml, requirements.txt",
+          "status": "pending"
+        },
+        {
+          "item": "Verify sensitive masking works",
+          "status": "pending"
+        },
+        {
+          "item": "Measure performance (should be <2s)",
+          "status": "pending"
+        },
+        {
+          "item": "Add CHANGELOG entry for v1.9.0",
+          "status": "pending"
+        },
+        {
+          "item": "Git commit checkpoint (Phase 4A-4F)",
+          "status": "pending"
+        },
+        {
+          "item": "Git push to remote",
+          "status": "pending"
+        }
+      ],
+      "phase_4G_test_foundation": [
+        {
+          "item": "Create generators/test_generator.py",
+          "status": "pending"
+        },
+        {
+          "item": "Implement TestGenerator.__init__()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement _load_schema()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement validate_manifest()",
+          "status": "pending"
+        },
+        {
+          "item": "Implement discover_test_files()",
+          "status": "pending"
+        },
+        {
+          "item": "Create coderef/inventory/tests-schema.json",
+          "status": "pending"
+        },
+        {
+          "item": "Test: TestGenerator compiles",
+          "status": "pending"
+        }
+      ],
+      "phase_4H_framework_detection": [
+        {
+          "item": "Implement pytest detection",
+          "status": "pending"
+        },
+        {
+          "item": "Implement unittest detection",
+          "status": "pending"
+        },
+        {
+          "item": "Implement jest detection",
+          "status": "pending"
+        },
+        {
+          "item": "Implement mocha detection",
+          "status": "pending"
+        },
+        {
+          "item": "Implement vitest detection",
+          "status": "pending"
+        },
+        {
+          "item": "Implement detect_test_frameworks() orchestrator",
+          "status": "pending"
+        },
+        {
+          "item": "Test: All frameworks detected on samples",
+          "status": "pending"
+        }
+      ],
+      "phase_4I_coverage_analysis": [
+        {
+          "item": "Implement .coverage parser (Python)",
+          "status": "pending"
+        },
+        {
+          "item": "Implement coverage.json parser (Jest)",
+          "status": "pending"
+        },
+        {
+          "item": "Implement lcov.info parser",
+          "status": "pending"
+        },
+        {
+          "item": "Handle missing coverage gracefully",
+          "status": "pending"
+        },
+        {
+          "item": "Calculate coverage metrics",
+          "status": "pending"
+        },
+        {
+          "item": "Identify untested files",
+          "status": "pending"
+        },
+        {
+          "item": "Test: Coverage parsing works for all formats",
+          "status": "pending"
+        },
+        {
+          "item": "Test: Graceful handling when coverage missing",
+          "status": "pending"
+        }
+      ],
+      "phase_4J_test_mcp_integration": [
+        {
+          "item": "Add TestFramework enum to constants.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add TestFileDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add TestManifestDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add TestResultDict to type_defs.py",
+          "status": "pending"
+        },
+        {
+          "item": "Add Tool #19 to server.py list_tools()",
+          "status": "pending"
+        },
+        {
+          "item": "Create handle_test_inventory() in tool_handlers.py",
+          "status": "pending"
+        },
+        {
+          "item": "Register handle_test_inventory in TOOL_HANDLERS",
+          "status": "pending"
+        },
+        {
+          "item": "Test: MCP server starts without errors",
+          "status": "pending"
+        },
+        {
+          "item": "Test: test_inventory tool callable via MCP",
+          "status": "pending"
+        }
+      ],
+      "phase_4K_test_documentation": [
+        {
+          "item": "Update README.md (tool count 20, Example 10)",
+          "status": "pending"
+        },
+        {
+          "item": "Update API.md (Tool #19 docs)",
+          "status": "pending"
+        },
+        {
+          "item": "Update my-guide.md (test_inventory, 24 slash commands)",
+          "status": "pending"
+        },
+        {
+          "item": "Update quickref.md (20 tools, 14 slash commands)",
+          "status": "pending"
+        },
+        {
+          "item": "Update CLAUDE.md (tool count 20)",
+          "status": "pending"
+        },
+        {
+          "item": "Create .claude/commands/test-inventory.md",
+          "status": "pending"
+        },
+        {
+          "item": "Test: /test-inventory slash command works",
+          "status": "pending"
+        }
+      ],
+      "phase_4L_test_testing_final": [
+        {
+          "item": "Run test_inventory on docs-mcp",
+          "status": "pending"
+        },
+        {
+          "item": "Verify finds pytest tests",
+          "status": "pending"
+        },
+        {
+          "item": "Verify coverage parsing (if .coverage exists)",
+          "status": "pending"
+        },
+        {
+          "item": "Measure performance (should be <3s)",
+          "status": "pending"
+        },
+        {
+          "item": "Update CHANGELOG entry for v1.9.0",
+          "status": "pending"
+        },
+        {
+          "item": "Git commit final checkpoint (Phase 4G-4L)",
+          "status": "pending"
+        },
+        {
+          "item": "Git push to remote",
+          "status": "pending"
+        },
+        {
+          "item": "Verify Phase 4 complete: all success criteria met",
+          "status": "pending"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "feature_name": "test-after-refactor",
+  "description": "The decorator refactor may have upset the server and needs comprehensive review and testing to ensure all functionality remains intact",
+  "goal": "Verify that the decorator refactor (Phase 1 and Phase 2) did not break any server functionality and that all 23 MCP tools work correctly",
+  "requirements": [
+    "Test all 23 MCP tool handlers through the MCP interface",
+    "Verify decorator functionality (@log_invocation and @mcp_error_handler)",
+    "Confirm error handling works correctly",
+    "Validate input validation still functions",
+    "Check JSON response handlers",
+    "Measure decorator performance overhead",
+    "Verify TEMPLATES_DIR initialization",
+    "Test handler registry completeness"
+  ],
+  "out_of_scope": [
+    "Adding new features",
+    "Modifying existing functionality",
+    "Performance optimizations beyond decorator overhead measurement",
+    "Adding new tests (use existing verification methods)"
+  ],
+  "constraints": [
+    "Must not modify any handler code during testing",
+    "Must verify 100% backward compatibility",
+    "Testing should complete within reasonable time (<5 minutes)",
+    "Must test through actual MCP call_tool interface, not just direct handler calls"
+  ],
+  "refactor_details": {
+    "phase_1": "Applied @log_invocation and @mcp_error_handler decorators to all 21 handlers",
+    "phase_2": "Extracted decorators to handler_decorators.py (188 lines) and helpers to handler_helpers.py (49 lines)",
+    "lines_removed": 489,
+    "percentage_reduction": "22.5%",
+    "handlers_affected": 21,
+    "total_handlers": 23,
+    "commits": [
+      "3733fbb - Phase 1: Applied decorators",
+      "85136f9 - Phase 2: Module extraction",
+      "985dae7 - Documentation updates"
+    ]
+  },
+  "test_criteria": {
+    "success_conditions": [
+      "All 23 handlers execute without errors",
+      "Decorator overhead < 1ms per call",
+      "Error handling returns proper ErrorResponse objects",
+      "Input validation catches invalid inputs",
+      "JSON responses parse correctly",
+      "No handler registry issues"
+    ],
+    "failure_conditions": [
+      "Any handler raises unhandled exceptions",
+      "Missing handlers in registry",
+      "TEMPLATES_DIR not initialized",
+      "Decorator overhead > 1ms",
+      "Error handling broken"
+    ]
+  }
+}

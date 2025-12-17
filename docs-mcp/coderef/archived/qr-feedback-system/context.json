@@ -1,0 +1,143 @@
+{
+  "feature_name": "qr-feedback-system",
+  "description": "Minimal feedback dots on UI elements during dev. Click to report bugs/ideas with context that flows directly into MCP planning pipeline.",
+  "created": "2025-12-07T13:15:00Z",
+  "status": "context-gathered",
+
+  "mvp_scope": {
+    "in_scope": [
+      "Tiny dot indicator on elements (bottom-right corner)",
+      "Dot expands to icon on hover",
+      "Click opens form modal (in-app)",
+      "Form: type, description, priority, screenshot (paste/upload)",
+      "Submit POSTs to localhost dev server",
+      "Writes context.json + screenshot to coderef/working/{feature}/",
+      "Toggle via Ctrl+Shift+F",
+      "Dev-only (NODE_ENV=development)"
+    ],
+    "deferred": [
+      "Mobile (floating button, shake to report)",
+      "QR code for cross-device scanning",
+      "Railway remote endpoint",
+      "Screenshot annotation",
+      "GitHub issue creation"
+    ]
+  },
+
+  "user_flow": [
+    "Dev opens app (dots hidden by default)",
+    "Press Ctrl+Shift+F → dots appear on all elements",
+    "Hover element → dot expands to bug icon",
+    "Click → form modal opens with context pre-filled",
+    "Add description + paste/upload screenshot",
+    "Submit → writes to coderef/working/{feature-slug}/",
+    "Run /start-feature {feature-slug} → context already there"
+  ],
+
+  "toggle_system": {
+    "build_time": "Only bundled when NODE_ENV=development",
+    "keyboard": "Ctrl+Shift+F toggles visibility",
+    "persistence": "localStorage remembers preference",
+    "default": "Off (dots hidden until toggled)"
+  },
+
+  "dot_indicator": {
+    "size": "8px dot, expands on hover",
+    "position": "Bottom-right corner of element",
+    "hover_state": "Expands to small bug icon",
+    "click_action": "Opens form modal"
+  },
+
+  "form_modal": {
+    "context_display": {
+      "file_path": "Read-only, from element data attribute",
+      "element_id": "Read-only",
+      "line_number": "Read-only",
+      "git_sha": "Read-only, from build"
+    },
+    "user_input": {
+      "type": "Dropdown: bug | idea | question",
+      "description": "Textarea, required",
+      "priority": "Dropdown: low | medium | high (default: medium)",
+      "screenshot": "Paste zone + file upload button"
+    },
+    "submit": "POST to localhost:{port}/api/feedback"
+  },
+
+  "local_endpoint": {
+    "route": "POST /api/feedback",
+    "runs_on": "Dev server (localhost)",
+    "receives": {
+      "context": "{ file_path, element_id, line_number, git_sha }",
+      "user_input": "{ type, description, priority }",
+      "screenshot": "Base64 or file"
+    },
+    "actions": [
+      "Generate feature slug from description",
+      "Create coderef/working/{feature-slug}/",
+      "Write context.json",
+      "Save screenshot to screenshots/ folder"
+    ]
+  },
+
+  "output_structure": {
+    "path": "coderef/working/{feature-slug}/",
+    "files": {
+      "context.json": {
+        "feature_name": "{feature-slug}",
+        "description": "{user description}",
+        "type": "bug | idea | question",
+        "priority": "low | medium | high",
+        "created": "ISO timestamp",
+        "source": "feedback-system",
+        "context": {
+          "file_path": "src/components/Button.tsx",
+          "element_id": "submit-btn",
+          "line_number": 42,
+          "git_sha": "abc123"
+        },
+        "screenshot": "screenshots/{timestamp}.png"
+      }
+    }
+  },
+
+  "pipeline_integration": {
+    "command": "/start-feature {feature-slug}",
+    "behavior": "Detects existing context.json, skips gather-context",
+    "continues_with": "analyze → plan → validate"
+  },
+
+  "implementation_files": [
+    {
+      "file": "FeedbackDot.tsx",
+      "purpose": "React component for the dot indicator"
+    },
+    {
+      "file": "FeedbackModal.tsx",
+      "purpose": "Form modal with context display and inputs"
+    },
+    {
+      "file": "FeedbackProvider.tsx",
+      "purpose": "Context provider for toggle state, keyboard listener"
+    },
+    {
+      "file": "useFeedbackContext.ts",
+      "purpose": "Hook to get element context from data attributes"
+    },
+    {
+      "file": "api/feedback.ts",
+      "purpose": "Local endpoint handler that writes context.json"
+    }
+  ],
+
+  "element_markup": {
+    "example": "<Button data-feedback-file='src/components/Button.tsx' data-feedback-line='42' data-feedback-id='submit-btn'>Submit</Button>",
+    "attributes": [
+      "data-feedback-file",
+      "data-feedback-line",
+      "data-feedback-id"
+    ]
+  },
+
+  "notes": "MVP is local-only, dev-only. No remote/mobile yet. Focus on: see issue → click → describe → submit → pipeline ready."
+}

@@ -1,0 +1,676 @@
+{
+  "$schema": "./tool-implementation-template-schema.json",
+  "META_DOCUMENTATION": {
+    "plan_id": "PHASE-5",
+    "plan_name": "Phase 5: Integration & End-to-End Testing (REVISED)",
+    "status": "approved",
+    "created_date": "2025-10-10",
+    "last_revised": "2025-10-10",
+    "revision_note": "Redesigned Phase 2 (documentation tests), increased TEST-003 effort to 1.5-2h, added handler tests for Tools #3 and #4, simplified fixture approach, clarified performance test fixtures",
+    "dependencies": [
+      "Phase 1 (Tool #1: get_planning_template) - COMPLETED (commit 45e146b)",
+      "Phase 2 (Tool #2: analyze_project_for_planning) - COMPLETED (commit 7d6d18a)",
+      "Phase 3 (Tool #3: validate_implementation_plan) - COMPLETED (commit 7b0dbfb)",
+      "Phase 4 (Tool #4: generate_plan_review_report) - COMPLETED (commits 530e61b, 9cdbbbe)"
+    ],
+    "estimated_effort": "5-6 hours (increased from 3-4h due to handler tests and fixture complexity)",
+    "actual_effort": null,
+    "commits": [],
+    "context": {
+      "meta_plan": "coderef/planning-workflow/planning-workflow-system-meta-plan.json",
+      "current_progress": "All 4 tools implemented and unit-tested. Phase 5 tests complete workflow integration: analyze → plan → validate → review → approve → execute.",
+      "dependencies_note": "Requires ALL 4 tools implemented. Tests integration between tools AND individual tool handlers."
+    }
+  },
+
+  "PREPARATION": {
+    "foundation_docs": {
+      "available": [
+        "coderef/planning-workflow/planning-workflow-system-meta-plan.json - Complete system architecture with data flow diagram",
+        "context/feature-implementation-planning-standard.json - Template structure reference for mock plans",
+        "CLAUDE.md - AI usage guidance and workflow patterns (should document review loop workflow)"
+      ],
+      "missing": []
+    },
+    "coding_standards": {
+      "available": [
+        "Test files already exist: test_get_planning_template.py, test_analyze_project_basic.py, test_review_formatter.py",
+        "Python testing conventions: pytest framework, assert statements, fixture pattern",
+        "Async testing: asyncio.run() for async tool handlers"
+      ],
+      "missing": ["No formal TESTING-STANDARDS.md (will infer from existing tests)"]
+    },
+    "reference_components": {
+      "primary": "test_review_formatter.py - Most recent comprehensive test suite (602 lines, 9 test functions, 3 fixtures)",
+      "secondary": [
+        "test_get_planning_template.py - Simple tool test example (handler test pattern)",
+        "test_analyze_project_basic.py - Tool test with project scanning"
+      ]
+    },
+    "key_patterns_identified": [
+      "All test files follow pattern: import test module → create fixtures → write test functions → run with pytest",
+      "Test functions named test_<feature_being_tested>()",
+      "Fixtures stored as module-level constants (UPPERCASE_NAMES)",
+      "Use assert statements for validation",
+      "Print statements for progress tracking (avoid Unicode emoji for Windows compatibility)",
+      "Test files include comprehensive docstrings",
+      "Async handlers tested with asyncio.run(handler(arguments))"
+    ],
+    "technology_stack": {
+      "language": "Python 3.11+",
+      "testing_framework": "pytest",
+      "async_support": "asyncio for MCP tool handlers",
+      "file_operations": "pathlib.Path",
+      "json_handling": "json module",
+      "temp_files": "tempfile.TemporaryDirectory for test isolation"
+    },
+    "gaps_and_risks": [
+      "No existing integration tests - this phase creates first comprehensive integration test suite",
+      "No existing handler tests for Tools #3 and #4 - need to create",
+      "Mock plan fixtures are complex (1.5-2h effort) - need complete JSON structure that triggers specific scores",
+      "Performance testing on large codebases may be slow (need timeout handling)"
+    ]
+  },
+
+  "EXECUTIVE_SUMMARY": {
+    "purpose": "Verify complete planning workflow system integration through comprehensive end-to-end testing, workflow documentation validation, handler testing for Tools #3 and #4, and performance benchmarking",
+    "value_proposition": "Ensures 4 tools work correctly together; validates workflow documentation guides AI through review loop; confirms handlers work correctly; establishes performance baselines; prevents regressions through automated test suite",
+    "real_world_analogy": "Like testing an assembly line end-to-end after installing all machines - verify parts flow correctly from station 1 to station 4, instruction manuals explain the process, individual machines work independently, system meets speed requirements",
+    "use_case": "AI calls analyze_project → generates plan draft → validates plan (score 75) → reads workflow documentation → refines plan → validates again (score 88) → presents to user → user approves → executes implementation",
+    "output": "6 comprehensive test files (test_planning_workflow_e2e.py, test_workflow_documentation.py, test_validate_plan_handler.py, test_generate_review_report_handler.py, test_user_approval_gate.py, test_performance.py) with 16-18 test functions total"
+  },
+
+  "RISK_ASSESSMENT": {
+    "overall_risk": "Low",
+    "complexity": "Medium",
+    "scope": "Small - 6 new test files, no production code changes",
+    "risk_factors": {
+      "file_system": "Low - Tests only read existing project files and template files; writes to temp directories only",
+      "dependencies": "Low - Uses only pytest (already installed); no new external dependencies",
+      "performance": "Medium - Performance tests may take 1-5 minutes to complete on large codebases; need timeout handling to prevent indefinite hangs",
+      "security": "None - Tests only validate behavior; no security implications",
+      "breaking_changes": "None - Purely additive; no changes to existing tools or code"
+    },
+    "mitigation_strategies": {
+      "performance_risk": "Set pytest timeouts (--timeout=300) for performance tests; use sample projects of known sizes",
+      "async_testing": "Use asyncio.run() for async tool handler tests; ensure proper cleanup",
+      "test_isolation": "Each test uses isolated temp directories; no shared state between tests",
+      "fixture_complexity": "Use partial plan JSON (minimal structure to trigger scores) rather than complete plans"
+    }
+  },
+
+  "CURRENT_STATE_ANALYSIS": {
+    "affected_files": [
+      "NEW: test_planning_workflow_e2e.py - End-to-end workflow integration tests",
+      "NEW: test_workflow_documentation.py - Workflow documentation validation tests (REDESIGNED Phase 2)",
+      "NEW: test_validate_plan_handler.py - Handler tests for Tool #3 (validate_implementation_plan)",
+      "NEW: test_generate_review_report_handler.py - Handler tests for Tool #4 (generate_plan_review_report)",
+      "NEW: test_user_approval_gate.py - User approval gate enforcement tests",
+      "NEW: test_performance.py - Performance benchmarking tests"
+    ],
+    "dependencies": {
+      "existing_internal": [
+        "tool_handlers.py - All 4 tool handlers (handle_get_planning_template, handle_analyze_project_for_planning, handle_validate_implementation_plan, handle_generate_plan_review_report)",
+        "generators/planning_analyzer.py - PlanningAnalyzer class",
+        "generators/plan_validator.py - PlanValidator class",
+        "generators/review_formatter.py - ReviewFormatter class",
+        "type_defs.py - PreparationSummaryDict, ValidationResultDict, PlanReviewDict, TemplateInfoDict",
+        "CLAUDE.md - Should contain workflow documentation",
+        "coderef/planning-workflow/planning-workflow-system-meta-plan.json - Contains data flow diagram"
+      ],
+      "existing_external": [
+        "pytest - Testing framework (already installed)",
+        "pathlib - File path handling (Python stdlib)",
+        "json - JSON parsing (Python stdlib)",
+        "asyncio - Async support (Python stdlib)",
+        "tempfile - Temp directory creation (Python stdlib)"
+      ],
+      "new_external": [],
+      "new_internal": []
+    },
+    "architecture_context": "Tests operate at multiple layers: (1) Integration layer - verifying multiple MCP tools work together, (2) Handler layer - testing individual MCP tool handlers, (3) Documentation layer - validating workflow guidance for AI. Tests call tool handlers directly (not via MCP protocol) for simplicity. Each test creates realistic scenarios mimicking AI agent workflow: analyze project → create plan → validate → review → approve. Tests verify data flows correctly between tools and validation logic works as specified in meta plan."
+  },
+
+  "KEY_FEATURES": {
+    "primary_features": [
+      "End-to-end workflow test - Verifies complete planning workflow from analyze to review completion",
+      "Workflow documentation validation - Confirms CLAUDE.md and meta-plan document review loop workflow clearly",
+      "Handler tests for Tool #3 - Validates validate_implementation_plan handler works correctly with various plan qualities",
+      "Handler tests for Tool #4 - Validates generate_plan_review_report handler creates correct markdown reports",
+      "User approval gate test - Ensures execution workflow includes mandatory user approval"
+    ],
+    "secondary_features": [
+      "Performance benchmarking - Measures analyze_project_for_planning and validate_implementation_plan duration",
+      "Error handling validation - Verifies graceful degradation on missing docs/standards",
+      "Partial plan fixtures - Simplified mock plans with minimal structure to trigger target scores"
+    ],
+    "edge_case_handling": [
+      "Project with no documentation - Verify analyzer returns gaps_and_risks warnings",
+      "Plan with structural issues - Verify validator catches missing sections",
+      "Very large project (1000+ files) - Verify analyzer completes within timeout (optional)",
+      "Invalid plan JSON - Verify validator returns appropriate error"
+    ],
+    "configuration_options": [
+      "Configurable timeout for performance tests (default: 300 seconds)",
+      "Configurable score threshold for validation tests (can test different thresholds)"
+    ]
+  },
+
+  "IMPLEMENTATION_PHASES": {
+    "phase_1_e2e_workflow_test": {
+      "title": "Phase 1: End-to-End Workflow Test",
+      "duration": "2.5 hours (increased due to fixture complexity)",
+      "description": "Create comprehensive test simulating complete planning workflow: analyze sample project → generate mock plan → validate → review → verify workflow data flow",
+      "tasks": [
+        {
+          "id": "TEST-001",
+          "task": "Create test_planning_workflow_e2e.py file structure",
+          "details": "Set up file with imports (tool_handlers, asyncio, pathlib, json, tempfile), docstring explaining E2E workflow test, module-level constants for paths",
+          "effort": "15 minutes",
+          "location": "test_planning_workflow_e2e.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-002",
+          "task": "Create sample project fixture",
+          "details": "Create SAMPLE_PROJECT_PATH fixture pointing to docs-mcp project itself (Path(__file__).parent.resolve()); verify path exists in test setup; document that this project has all foundation docs",
+          "effort": "15 minutes",
+          "location": "test_planning_workflow_e2e.py",
+          "dependencies": ["TEST-001"]
+        },
+        {
+          "id": "TEST-003",
+          "task": "Create partial mock plan JSON fixtures",
+          "details": "Create 3 fixtures using PARTIAL PLAN approach (minimal structure to trigger target scores): (1) MOCK_PLAN_GOOD - Partial plan with score ~88 (has most required fields, minor issues only), (2) MOCK_PLAN_FLAWED - Partial plan with score ~75 (missing 1-2 sections, has placeholders), (3) MOCK_PLAN_FAILED - Partial plan with score ~45 (missing 4+ sections, many critical issues). Each fixture only needs: META_DOCUMENTATION (basic), minimal sections to trigger specific validation failures. Reference feature-implementation-planning-standard.json structure but don't fill in all details.",
+          "effort": "1.5-2 hours",
+          "location": "test_planning_workflow_e2e.py",
+          "dependencies": ["TEST-001"],
+          "note": "INCREASED EFFORT from 30 min - creating plans that trigger specific scores requires understanding validation algorithm"
+        },
+        {
+          "id": "TEST-004",
+          "task": "Implement test_e2e_workflow_complete()",
+          "details": "Test complete workflow: (1) Call handle_analyze_project_for_planning(arguments={'project_path': str(SAMPLE_PROJECT_PATH)}) with asyncio.run(), verify PreparationSummaryDict returned with foundation_docs found, (2) Create temp directory, save MOCK_PLAN_GOOD to temp file, (3) Call handle_validate_implementation_plan(arguments={'project_path': str(SAMPLE_PROJECT_PATH), 'plan_file_path': plan_filename}) with asyncio.run(), verify ValidationResultDict with score ~88, (4) Call handle_generate_plan_review_report(arguments={'project_path': str(SAMPLE_PROJECT_PATH), 'plan_file_path': plan_filename}) with asyncio.run(), verify markdown report contains expected sections, (5) Cleanup temp directory",
+          "effort": "45 minutes",
+          "location": "test_planning_workflow_e2e.py:test_e2e_workflow_complete",
+          "dependencies": ["TEST-002", "TEST-003"]
+        }
+      ],
+      "completion_criteria": "test_e2e_workflow_complete() passes; workflow from analyze → validate → review completes successfully; all data structures match expected types; temp files cleaned up",
+      "verification": "Run: pytest test_planning_workflow_e2e.py::test_e2e_workflow_complete -v"
+    },
+
+    "phase_2_workflow_documentation_tests": {
+      "title": "Phase 2: Workflow Documentation Validation Tests (REDESIGNED)",
+      "duration": "1 hour",
+      "description": "Test that workflow documentation (CLAUDE.md and meta-plan) properly explains the review loop workflow pattern - NOT testing programmatic loop code (there is none), but validating that AI has clear guidance on how to perform iterative refinement",
+      "rationale": "Review loop is procedural (AI-driven), not programmatic - there's no code to test. Instead, test that documentation exists and is clear enough for AI to follow the pattern: validate → check score → if < 85 refine → repeat (max 5 times) → if ≥85 present to user",
+      "tasks": [
+        {
+          "id": "TEST-005",
+          "task": "Create test_workflow_documentation.py file structure",
+          "details": "Set up file with imports (pathlib, json), docstring explaining purpose: 'Validates that workflow documentation provides clear guidance for AI to execute review loop pattern'",
+          "effort": "10 minutes",
+          "location": "test_workflow_documentation.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-006",
+          "task": "Implement test_claude_md_documents_review_loop()",
+          "details": "Read CLAUDE.md file; search for review loop documentation keywords: 'score ≥ 85', 'max 5 iterations', 'refine plan', 'validate again', 'review loop'; verify section exists explaining: (1) How to check validation score, (2) Threshold value (85), (3) Max iterations (5), (4) What to do if score < 85, (5) What to do if max iterations reached. Assert that all 5 concepts are documented. Print found sections for visibility.",
+          "effort": "25 minutes",
+          "location": "test_workflow_documentation.py:test_claude_md_documents_review_loop",
+          "dependencies": ["TEST-005"]
+        },
+        {
+          "id": "TEST-007",
+          "task": "Implement test_meta_plan_shows_review_loop_in_workflow()",
+          "details": "Read coderef/planning-workflow/planning-workflow-system-meta-plan.json; parse architecture_design.data_flow_diagram section (array of strings); search for review loop pattern in diagram: 'REVIEW LOOP', 'max 5 iterations', 'score ≥ 85', 'Loop until'; verify diagram includes: (1) Loop construct, (2) Threshold condition, (3) Max iteration limit. Assert workflow shows iterative refinement pattern.",
+          "effort": "20 minutes",
+          "location": "test_workflow_documentation.py:test_meta_plan_shows_review_loop_in_workflow",
+          "dependencies": ["TEST-005"]
+        },
+        {
+          "id": "TEST-008",
+          "task": "Implement test_workflow_examples_show_iteration_pattern()",
+          "details": "Read CLAUDE.md; find workflow examples section; verify examples show multi-iteration pattern: 'iteration 1 (score 60)', 'iteration 2 (score 75)', 'iteration 3 (score 88)', 'STOP'; confirm examples demonstrate: (1) Starting with low score, (2) Improving through iterations, (3) Stopping when threshold reached. Assert examples exist and demonstrate pattern correctly.",
+          "effort": "15 minutes",
+          "location": "test_workflow_documentation.py:test_workflow_examples_show_iteration_pattern",
+          "dependencies": ["TEST-005"]
+        }
+      ],
+      "completion_criteria": "All 3 documentation tests pass; CLAUDE.md documents review loop threshold (≥85) and max iterations (5); meta-plan workflow diagram shows iterative refinement; examples demonstrate multi-iteration pattern",
+      "verification": "Run: pytest test_workflow_documentation.py -v"
+    },
+
+    "phase_3_handler_tests_tool_3": {
+      "title": "Phase 3: Handler Tests for Tool #3 (validate_implementation_plan)",
+      "duration": "1 hour",
+      "description": "Create handler tests for validate_implementation_plan tool - verify handler correctly calls PlanValidator, handles errors, returns proper response format",
+      "tasks": [
+        {
+          "id": "TEST-009",
+          "task": "Create test_validate_plan_handler.py file structure",
+          "details": "Set up file with imports (tool_handlers, asyncio, pathlib, json, tempfile), docstring explaining handler test purpose",
+          "effort": "10 minutes",
+          "location": "test_validate_plan_handler.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-010",
+          "task": "Create minimal plan fixtures for handler tests",
+          "details": "Create 2 simple fixtures: VALID_PLAN_MINIMAL (has required META_DOCUMENTATION, passes basic structure validation), INVALID_PLAN_MISSING_KEYS (missing META_DOCUMENTATION, fails structure validation). Keep fixtures small (~20 lines each).",
+          "effort": "15 minutes",
+          "location": "test_validate_plan_handler.py",
+          "dependencies": ["TEST-009"]
+        },
+        {
+          "id": "TEST-011",
+          "task": "Implement test_validate_plan_handler_valid_plan()",
+          "details": "Create temp directory, save VALID_PLAN_MINIMAL to file; call asyncio.run(tool_handlers.handle_validate_implementation_plan({'project_path': temp_dir, 'plan_file_path': 'plan.json'})); verify response is list[TextContent]; parse JSON from response text; verify ValidationResultDict structure (has keys: score, validation_result, issues, checklist_results, approved); verify score is int 0-100; cleanup temp dir",
+          "effort": "20 minutes",
+          "location": "test_validate_plan_handler.py:test_validate_plan_handler_valid_plan",
+          "dependencies": ["TEST-010"]
+        },
+        {
+          "id": "TEST-012",
+          "task": "Implement test_validate_plan_handler_invalid_plan()",
+          "details": "Create temp directory, save INVALID_PLAN_MISSING_KEYS to file; call handler; verify response indicates error (validation_result = 'FAIL'); verify issues array contains structural error about missing META_DOCUMENTATION; verify score < 70; cleanup",
+          "effort": "15 minutes",
+          "location": "test_validate_plan_handler.py:test_validate_plan_handler_invalid_plan",
+          "dependencies": ["TEST-010"]
+        }
+      ],
+      "completion_criteria": "Both handler tests pass; valid plan returns ValidationResultDict with score 0-100; invalid plan returns FAIL with structural issues identified",
+      "verification": "Run: pytest test_validate_plan_handler.py -v"
+    },
+
+    "phase_4_handler_tests_tool_4": {
+      "title": "Phase 4: Handler Tests for Tool #4 (generate_plan_review_report)",
+      "duration": "1 hour",
+      "description": "Create handler tests for generate_plan_review_report tool - verify handler correctly formats validation results into markdown report",
+      "tasks": [
+        {
+          "id": "TEST-013",
+          "task": "Create test_generate_review_report_handler.py file structure",
+          "details": "Set up file with imports (tool_handlers, asyncio, pathlib, json, tempfile), docstring explaining handler test purpose",
+          "effort": "10 minutes",
+          "location": "test_generate_review_report_handler.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-014",
+          "task": "Create validation result fixture and plan file",
+          "details": "Create MOCK_VALIDATION_RESULT fixture (ValidationResultDict with score 75, validation_result='NEEDS_REVISION', 3 issues: 1 critical, 1 major, 1 minor); create simple MOCK_PLAN_FILE (minimal JSON for handler to validate and generate report from)",
+          "effort": "15 minutes",
+          "location": "test_generate_review_report_handler.py",
+          "dependencies": ["TEST-013"]
+        },
+        {
+          "id": "TEST-015",
+          "task": "Implement test_generate_review_report_handler_creates_report()",
+          "details": "Create temp directory, save MOCK_PLAN_FILE; call asyncio.run(tool_handlers.handle_generate_plan_review_report({'project_path': temp_dir, 'plan_file_path': 'plan.json'})); verify response is list[TextContent]; verify response text contains: 'review report generated successfully', report file path; read generated report file; verify markdown contains: '# Implementation Plan Review Report', '**Score:** 75/100', '## Critical Issues', '## Major Issues', '## Minor Issues', '## Recommendations', '## Approval Status'; cleanup",
+          "effort": "25 minutes",
+          "location": "test_generate_review_report_handler.py:test_generate_review_report_handler_creates_report",
+          "dependencies": ["TEST-014"]
+        },
+        {
+          "id": "TEST-016",
+          "task": "Implement test_generate_review_report_handler_markdown_structure()",
+          "details": "Use same setup as TEST-015; verify markdown structure is valid: (1) Has single # heading, (2) Has multiple ## section headings, (3) Has ### for issues, (4) Has horizontal rules (---) between sections, (5) Has bold labels (**label:**), (6) Has emoji indicators (or can find them in report). This test focuses on format correctness.",
+          "effort": "15 minutes",
+          "location": "test_generate_review_report_handler.py:test_generate_review_report_handler_markdown_structure",
+          "dependencies": ["TEST-014"]
+        }
+      ],
+      "completion_criteria": "Both handler tests pass; handler creates markdown report file; report contains all expected sections; markdown structure is valid",
+      "verification": "Run: pytest test_generate_review_report_handler.py -v"
+    },
+
+    "phase_5_user_approval_gate_test": {
+      "title": "Phase 5: User Approval Gate Test",
+      "duration": "30 minutes",
+      "description": "Create test verifying user approval gate is clearly communicated in workflow documentation; validate procedural gate exists in documentation",
+      "tasks": [
+        {
+          "id": "TEST-017",
+          "task": "Create test_user_approval_gate.py file structure",
+          "details": "Set up file with imports (pathlib, json), docstring explaining approval gate test purpose",
+          "effort": "10 minutes",
+          "location": "test_user_approval_gate.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-018",
+          "task": "Implement test_approval_gate_documentation()",
+          "details": "Read CLAUDE.md; search for user approval gate keywords: 'USER APPROVAL', 'MANDATORY', 'cannot be bypassed', 'wait for user approval', 'user approves'; verify documentation includes: (1) Approval is required before execution, (2) AI must wait for user approval, (3) Approval cannot be bypassed; assert all 3 concepts documented; print found sections",
+          "effort": "15 minutes",
+          "location": "test_user_approval_gate.py:test_approval_gate_documentation",
+          "dependencies": ["TEST-017"]
+        },
+        {
+          "id": "TEST-019",
+          "task": "Implement test_workflow_includes_approval_step()",
+          "details": "Read meta-plan JSON; parse data_flow_diagram; search for approval gate step: 'USER APPROVAL GATE', 'REQUIRED', appears after review step and before execute step; verify diagram shows: (1) Gate exists, (2) Located between review and execute, (3) Marked as required/mandatory; assert workflow includes approval gate correctly",
+          "effort": "10 minutes",
+          "location": "test_user_approval_gate.py:test_workflow_includes_approval_step",
+          "dependencies": ["TEST-017"]
+        }
+      ],
+      "completion_criteria": "Both approval gate tests pass; CLAUDE.md documents approval requirement; meta-plan workflow includes approval gate between review and execute",
+      "verification": "Run: pytest test_user_approval_gate.py -v"
+    },
+
+    "phase_6_performance_testing": {
+      "title": "Phase 6: Performance Benchmarking",
+      "duration": "45 minutes",
+      "description": "Create performance tests measuring analyze_project_for_planning and validate_implementation_plan duration; establish baseline metrics",
+      "tasks": [
+        {
+          "id": "TEST-020",
+          "task": "Create test_performance.py file structure",
+          "details": "Set up file with imports (tool_handlers, asyncio, pathlib, time, json, tempfile), pytest markers (@pytest.mark.slow), docstring explaining performance benchmarking",
+          "effort": "10 minutes",
+          "location": "test_performance.py",
+          "dependencies": []
+        },
+        {
+          "id": "TEST-021",
+          "task": "Create project fixture for performance tests",
+          "details": "Define SMALL_PROJECT fixture: Path to docs-mcp project itself (~50 Python files, has foundation docs). DO NOT create MEDIUM or LARGE fixtures for Phase 5 - those would require additional test projects. Focus on establishing baseline with known small project.",
+          "effort": "10 minutes",
+          "location": "test_performance.py",
+          "dependencies": ["TEST-020"],
+          "note": "CLARIFIED - Only SMALL_PROJECT for Phase 5; MEDIUM/LARGE are future enhancements"
+        },
+        {
+          "id": "TEST-022",
+          "task": "Implement test_analyze_performance_small_project()",
+          "details": "Record start time; call asyncio.run(handle_analyze_project_for_planning({'project_path': str(SMALL_PROJECT)})); record end time; calculate duration = end - start; verify PreparationSummaryDict returned; verify duration < 60 seconds; print performance log: '[PERF] analyze_project: {duration:.2f}s for {file_count} files'; assert duration < 60",
+          "effort": "20 minutes",
+          "location": "test_performance.py:test_analyze_performance_small_project",
+          "dependencies": ["TEST-021"]
+        },
+        {
+          "id": "TEST-023",
+          "task": "Implement test_validate_performance()",
+          "details": "Create temp directory, save minimal valid plan fixture (~50 line JSON); record start time; call asyncio.run(handle_validate_implementation_plan({'project_path': temp_dir, 'plan_file_path': 'plan.json'})); record end time; calculate duration; verify ValidationResultDict returned; verify duration < 2 seconds; print performance log: '[PERF] validate_plan: {duration:.2f}s (score: {score})'; assert duration < 2; cleanup",
+          "effort": "15 minutes",
+          "location": "test_performance.py:test_validate_performance",
+          "dependencies": ["TEST-021"]
+        }
+      ],
+      "completion_criteria": "Performance tests pass with baseline metrics established; analyze < 60s for docs-mcp (~50 files); validate < 2s; performance logs printed for review",
+      "verification": "Run: pytest test_performance.py -v --timeout=300; review duration logs"
+    }
+  },
+
+  "TESTING_STRATEGY": {
+    "test_structure": "6 test files with 17 test functions total (increased from 10 due to handler tests)",
+    "test_files": [
+      "test_planning_workflow_e2e.py (1 test) - Integration test",
+      "test_workflow_documentation.py (3 tests) - Documentation validation",
+      "test_validate_plan_handler.py (2 tests) - Tool #3 handler tests",
+      "test_generate_review_report_handler.py (2 tests) - Tool #4 handler tests",
+      "test_user_approval_gate.py (2 tests) - Approval gate documentation",
+      "test_performance.py (2 tests, marked @pytest.mark.slow) - Performance benchmarks"
+    ],
+    "unit_tests": [
+      "test_e2e_workflow_complete() - Verify complete workflow integration",
+      "test_claude_md_documents_review_loop() - Verify CLAUDE.md explains review loop",
+      "test_meta_plan_shows_review_loop_in_workflow() - Verify meta-plan shows iterative pattern",
+      "test_workflow_examples_show_iteration_pattern() - Verify examples demonstrate iterations",
+      "test_validate_plan_handler_valid_plan() - Test Tool #3 handler with valid plan",
+      "test_validate_plan_handler_invalid_plan() - Test Tool #3 handler with invalid plan",
+      "test_generate_review_report_handler_creates_report() - Test Tool #4 handler creates report",
+      "test_generate_review_report_handler_markdown_structure() - Test Tool #4 report format",
+      "test_approval_gate_documentation() - Verify approval gate documented",
+      "test_workflow_includes_approval_step() - Verify workflow includes approval",
+      "test_analyze_performance_small_project() - Measure analyze duration",
+      "test_validate_performance() - Measure validate duration"
+    ],
+    "integration_tests": [
+      "test_e2e_workflow_complete() - Full workflow from analyze → validate → review"
+    ],
+    "edge_cases": [
+      {
+        "scenario": "Project with no documentation",
+        "test": "Covered by analyze handler (existing tests)",
+        "expected_behavior": "analyze_project returns gaps_and_risks warnings",
+        "verification": "Check gaps_and_risks array in PreparationSummaryDict"
+      },
+      {
+        "scenario": "Plan with structural issues",
+        "test": "test_validate_plan_handler_invalid_plan()",
+        "expected_behavior": "Validator returns FAIL with structural issues",
+        "verification": "validation_result = 'FAIL', issues contains missing META_DOCUMENTATION"
+      },
+      {
+        "scenario": "Invalid plan JSON syntax",
+        "test": "Can add to handler tests if needed",
+        "expected_behavior": "Handler returns error response for malformed JSON",
+        "verification": "Response indicates JSON parsing error"
+      },
+      {
+        "scenario": "Very large project (1000+ files)",
+        "test": "Optional for Phase 5 - would need large test project",
+        "expected_behavior": "analyze_project completes within 5 minutes",
+        "verification": "Duration < 300 seconds"
+      },
+      {
+        "scenario": "Missing workflow documentation",
+        "test": "test_claude_md_documents_review_loop(), test_meta_plan_shows_review_loop_in_workflow()",
+        "expected_behavior": "Tests FAIL if documentation incomplete",
+        "verification": "Tests verify required documentation exists"
+      }
+    ],
+    "manual_validation": [
+      {
+        "step": "Run all test files together",
+        "command": "pytest test_planning_workflow_e2e.py test_workflow_documentation.py test_validate_plan_handler.py test_generate_review_report_handler.py test_user_approval_gate.py test_performance.py -v",
+        "expected": "All 12 tests pass (17 if counting internal test functions); total duration < 5 minutes",
+        "verify": "No failures; no warnings; performance logs show reasonable durations"
+      },
+      {
+        "step": "Run performance tests separately with timeout",
+        "command": "pytest test_performance.py -v --timeout=300 -m slow",
+        "expected": "Performance tests complete within 5 minutes; baseline metrics logged",
+        "verify": "Duration logs show analyze < 60s, validate < 2s"
+      },
+      {
+        "step": "Run non-performance tests quickly",
+        "command": "pytest test_planning_workflow_e2e.py test_workflow_documentation.py test_validate_plan_handler.py test_generate_review_report_handler.py test_user_approval_gate.py -v",
+        "expected": "Non-performance tests complete in < 30 seconds",
+        "verify": "Fast feedback for development"
+      }
+    ]
+  },
+
+  "SUCCESS_CRITERIA": {
+    "functional_requirements": [
+      {
+        "requirement": "End-to-end workflow test passes",
+        "metric": "test_e2e_workflow_complete() completes without errors",
+        "target": "All workflow steps complete; data types match expected; temp files cleaned up",
+        "validation": "Run: pytest test_planning_workflow_e2e.py::test_e2e_workflow_complete -v"
+      },
+      {
+        "requirement": "Workflow documentation validates review loop",
+        "metric": "Documentation tests pass",
+        "target": "CLAUDE.md documents threshold (≥85), max iterations (5), refinement process; meta-plan shows review loop in workflow; examples demonstrate iterations",
+        "validation": "Run: pytest test_workflow_documentation.py -v"
+      },
+      {
+        "requirement": "Tool #3 handler works correctly",
+        "metric": "Handler tests pass for valid and invalid plans",
+        "target": "Valid plan returns ValidationResultDict with score 0-100; invalid plan returns FAIL with structural issues",
+        "validation": "Run: pytest test_validate_plan_handler.py -v"
+      },
+      {
+        "requirement": "Tool #4 handler creates valid reports",
+        "metric": "Handler tests pass for report creation and format",
+        "target": "Handler creates markdown report file; report contains all sections; markdown structure valid",
+        "validation": "Run: pytest test_generate_review_report_handler.py -v"
+      },
+      {
+        "requirement": "User approval gate documented",
+        "metric": "Approval gate tests pass",
+        "target": "CLAUDE.md documents approval requirement; meta-plan workflow includes approval gate between review and execute",
+        "validation": "Run: pytest test_user_approval_gate.py -v"
+      },
+      {
+        "requirement": "Performance baselines established",
+        "metric": "Performance tests pass with logged durations",
+        "target": "analyze < 60s for docs-mcp (~50 files); validate < 2s for typical plan",
+        "validation": "Run: pytest test_performance.py -v --timeout=300; check logs"
+      }
+    ],
+    "quality_requirements": [
+      {
+        "requirement": "All tests pass",
+        "metric": "pytest exit code",
+        "target": "Exit code 0 (all 12 test functions pass)",
+        "validation": "Run: pytest [all 6 files] -v"
+      },
+      {
+        "requirement": "Test code follows conventions",
+        "metric": "Test structure matches existing patterns",
+        "target": "Uses same patterns as test_review_formatter.py (fixtures, assert statements, docstrings, asyncio.run for handlers)",
+        "validation": "Code review of test files"
+      },
+      {
+        "requirement": "Tests are deterministic",
+        "metric": "Tests pass consistently",
+        "target": "Run tests 3 times, all 3 runs pass",
+        "validation": "Run: pytest [files] -v; repeat 3 times"
+      },
+      {
+        "requirement": "Tests are documented",
+        "metric": "Each test function has docstring",
+        "target": "100% of test functions have docstrings explaining what they test",
+        "validation": "Manual inspection of test files"
+      },
+      {
+        "requirement": "Tests clean up after themselves",
+        "metric": "No temp files left after test runs",
+        "target": "All tests using tempfile.TemporaryDirectory clean up properly",
+        "validation": "Check temp directory after test run"
+      }
+    ],
+    "performance_requirements": [
+      {
+        "requirement": "Test suite execution time",
+        "metric": "Total duration for all 12 tests",
+        "target": "< 5 minutes total (300 seconds)",
+        "validation": "Run: pytest [all 6 files] -v; check total duration"
+      },
+      {
+        "requirement": "analyze_project baseline",
+        "metric": "Duration for small project analysis",
+        "target": "< 60 seconds for ~50 file project",
+        "validation": "Test logs show duration < 60s"
+      },
+      {
+        "requirement": "validate_plan baseline",
+        "metric": "Duration for plan validation",
+        "target": "< 2 seconds",
+        "validation": "Test logs show duration < 2s"
+      },
+      {
+        "requirement": "Non-performance tests are fast",
+        "metric": "Duration for non-@pytest.mark.slow tests",
+        "target": "< 30 seconds for 10 non-performance tests",
+        "validation": "Run without performance tests; check duration"
+      }
+    ],
+    "security_requirements": []
+  },
+
+  "IMPLEMENTATION_CHECKLIST": {
+    "pre_implementation": [
+      "☐ Review revised Phase 5 plan for completeness",
+      "☐ Understand Phase 2 redesign: testing documentation, not code",
+      "☐ Understand mock fixture simplification: partial plans only",
+      "☐ Verify Phases 1-4 are complete (all 4 tools implemented and tested)",
+      "☐ Check pytest is installed (pip list | grep pytest)",
+      "☐ Review existing test files for pattern reference"
+    ],
+    "phase_1_e2e_workflow": [
+      "☐ TEST-001: Create test_planning_workflow_e2e.py file structure",
+      "☐ TEST-002: Create sample project fixture",
+      "☐ TEST-003: Create partial mock plan JSON fixtures (GOOD, FLAWED, FAILED) - 1.5-2 hours",
+      "☐ TEST-004: Implement test_e2e_workflow_complete()"
+    ],
+    "phase_2_workflow_documentation": [
+      "☐ TEST-005: Create test_workflow_documentation.py file structure",
+      "☐ TEST-006: Implement test_claude_md_documents_review_loop()",
+      "☐ TEST-007: Implement test_meta_plan_shows_review_loop_in_workflow()",
+      "☐ TEST-008: Implement test_workflow_examples_show_iteration_pattern()"
+    ],
+    "phase_3_tool_3_handler": [
+      "☐ TEST-009: Create test_validate_plan_handler.py file structure",
+      "☐ TEST-010: Create minimal plan fixtures for handler tests",
+      "☐ TEST-011: Implement test_validate_plan_handler_valid_plan()",
+      "☐ TEST-012: Implement test_validate_plan_handler_invalid_plan()"
+    ],
+    "phase_4_tool_4_handler": [
+      "☐ TEST-013: Create test_generate_review_report_handler.py file structure",
+      "☐ TEST-014: Create validation result fixture and plan file",
+      "☐ TEST-015: Implement test_generate_review_report_handler_creates_report()",
+      "☐ TEST-016: Implement test_generate_review_report_handler_markdown_structure()"
+    ],
+    "phase_5_approval_gate": [
+      "☐ TEST-017: Create test_user_approval_gate.py file structure",
+      "☐ TEST-018: Implement test_approval_gate_documentation()",
+      "☐ TEST-019: Implement test_workflow_includes_approval_step()"
+    ],
+    "phase_6_performance": [
+      "☐ TEST-020: Create test_performance.py file structure",
+      "☐ TEST-021: Create SMALL_PROJECT fixture (docs-mcp itself)",
+      "☐ TEST-022: Implement test_analyze_performance_small_project()",
+      "☐ TEST-023: Implement test_validate_performance()"
+    ],
+    "finalization": [
+      "☐ Run all tests together: pytest [all 6 files] -v",
+      "☐ Verify all 12 test functions pass",
+      "☐ Review performance logs (analyze < 60s, validate < 2s)",
+      "☐ Verify no temp files left behind",
+      "☐ Run tests 3 times to verify determinism",
+      "☐ Commit test suite with descriptive message",
+      "☐ Push to GitHub",
+      "☐ Update phase-5-integration-plan.json status to 'implemented'",
+      "☐ Mark Phase 5 complete in meta-plan"
+    ]
+  },
+
+  "REVISION_SUMMARY": {
+    "changes_made": [
+      "PRIORITY #1: Redesigned Phase 2 - Replaced 'review loop code tests' with 'workflow documentation validation tests'. Rationale: No programmatic loop exists to test; review loop is procedural (AI-driven). Tests now validate that CLAUDE.md and meta-plan provide clear workflow guidance.",
+      "PRIORITY #2: Increased TEST-003 effort from 30 min to 1.5-2 hours. Rationale: Creating mock plans that trigger specific validation scores (45, 75, 88) requires understanding validation algorithm and crafting plans with specific structural issues.",
+      "PRIORITY #3: Added Phase 3 (Tool #3 handler tests) and Phase 4 (Tool #4 handler tests). 4 new test tasks (TEST-009 through TEST-016). Rationale: Currently no focused handler tests for these tools - only class tests exist.",
+      "CONSIDER #4: Simplified mock fixture approach - TEST-003 now uses PARTIAL PLANS (minimal structure to trigger scores) rather than complete plans. Reduces complexity.",
+      "CONSIDER #5: Tool #3 handler tests covered by new Phase 3.",
+      "UPDATE #6: Fixed TEST-021 - Clarified SMALL_PROJECT only for Phase 5. Removed confusing MEDIUM_PROJECT reference. MEDIUM/LARGE are future enhancements requiring additional test projects."
+    ],
+    "impact_on_effort": "Estimated effort increased from 3-4 hours to 5-6 hours due to: (1) Fixture complexity (TEST-003: +1h), (2) Additional handler test phases (+2h total for Phases 3 and 4)",
+    "impact_on_deliverables": "Increased from 4 test files with 10 functions to 6 test files with 12 functions",
+    "key_improvements": [
+      "More comprehensive test coverage - now includes handler tests for Tools #3 and #4",
+      "Clearer focus - Phase 2 now tests documentation (what actually needs testing) rather than non-existent code",
+      "Realistic effort estimates - TEST-003 now has appropriate 1.5-2h allocation",
+      "Simplified approach - Partial plan fixtures reduce complexity while still validating scoring algorithm"
+    ]
+  },
+
+  "NOTES": {
+    "test_execution_order": "Tests are independent; can run in any order; recommend running non-performance tests first for fast feedback",
+    "pytest_markers": "Use @pytest.mark.slow for performance tests (TEST-022, TEST-023)",
+    "timeout_handling": "Use pytest --timeout=300 flag for safety on performance tests",
+    "fixtures_approach": "Use PARTIAL PLANS (minimal JSON structure) rather than complete plans - reduces fixture complexity",
+    "async_handlers": "Test async handlers with asyncio.run(handler(arguments)) pattern",
+    "temp_directory_cleanup": "All tests using tempfile.TemporaryDirectory() automatically clean up",
+    "windows_compatibility": "Avoid Unicode emoji in print statements (use [PASS], [FAIL], [PERF] instead)",
+    "documentation_validation": "Phase 2 tests are documentation tests - they WILL FAIL if CLAUDE.md or meta-plan lack review loop guidance (this is intentional - forces documentation to be complete)",
+    "next_phase": "After Phase 5 complete, proceed to Phase 6 (Documentation) - update README, API docs, CLAUDE.md with complete workflow examples including review loop pattern"
+  }
+}

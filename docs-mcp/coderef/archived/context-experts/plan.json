@@ -1,0 +1,377 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "context-experts",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "generated_at": "2025-12-07T15:00:00Z",
+    "has_context": true,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["CLAUDE.md", "README.md"],
+      "coding_standards": ["coderef/standards/"],
+      "reference_components": ["tool_handlers.py", "generators/"],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "MCP (Model Context Protocol)",
+        "patterns": ["Handler decorators", "Generator classes", "TypedDict schemas"]
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Context Experts",
+      "description": "Create domain-specific context experts that are onboarded by Lloyd and maintain deep context about their assigned area of the codebase (UI, DB, Script, Docs, API, Core, Test, Infra)",
+      "goal": "Provide Lloyd with meta-tools to create project-specific context-experts for ANY project. The tool provides infrastructure, Lloyd handles project-specific configuration.",
+      "scope": "6 MCP tools, data models, generator class, slash commands, Lloyd integration"
+    },
+    "2_risk_assessment": {
+      "complexity": "medium",
+      "estimated_tasks": 25,
+      "risks": [
+        {
+          "risk": "AST parsing complexity for multiple languages",
+          "mitigation": "Start with Python, use regex fallback for JS/TS"
+        },
+        {
+          "risk": "Performance with large codebases",
+          "mitigation": "Implement caching and incremental updates"
+        },
+        {
+          "risk": "Git history extraction speed",
+          "mitigation": "Limit commits and cache results"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {"path": "context_expert_models.py", "purpose": "Pydantic/TypedDict data schemas"},
+        {"path": "generators/context_expert_generator.py", "purpose": "Core generator class"},
+        {"path": ".claude/commands/create-context-expert.md", "purpose": "Slash command"},
+        {"path": ".claude/commands/list-context-experts.md", "purpose": "Slash command"},
+        {"path": ".claude/commands/suggest-context-experts.md", "purpose": "Slash command"},
+        {"path": ".claude/commands/activate-context-expert.md", "purpose": "Slash command"}
+      ],
+      "files_to_modify": [
+        {"path": "constants.py", "purpose": "Add enums and paths"},
+        {"path": "validation.py", "purpose": "Add validation functions"},
+        {"path": "tool_handlers.py", "purpose": "Add 6 handler functions"},
+        {"path": "server.py", "purpose": "Register 6 tools"},
+        {"path": "CLAUDE.md", "purpose": "Add tool documentation"}
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Expert Data Models",
+          "description": "TypedDict schemas for ContextExpertDefinition, CodeStructure, RelationshipContext"
+        },
+        {
+          "id": "F2",
+          "name": "Context Collection Engine",
+          "description": "Generator class with AST parsing, git history, relationship detection"
+        },
+        {
+          "id": "F3",
+          "name": "Core MCP Tools",
+          "description": "create_context_expert, list_context_experts, get_context_expert"
+        },
+        {
+          "id": "F4",
+          "name": "Advanced MCP Tools",
+          "description": "suggest_context_experts, update_context_expert, activate_context_expert"
+        },
+        {
+          "id": "F5",
+          "name": "Lloyd Integration",
+          "description": "communication.json support, assign_agent_task enhancement"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CONTEXT-EXPERTS-001",
+        "name": "Context Experts",
+        "feature_dir": "coderef/working/context-experts"
+      },
+      "tasks": [
+        {
+          "id": "CONST-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add ContextExpertPaths class to constants.py",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "CONST-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add ContextExpertStatus, ContextExpertCapability, ResourceType, ExpertDomain enums",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "MODEL-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Create context_expert_models.py with GitHistoryEntry, CodeStructure TypedDicts",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "MODEL-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add RelationshipContext, UsagePattern, ContextExpertDefinition TypedDicts",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "MODEL-003",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add ExpertOnboarding TypedDict for Lloyd briefing data",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "VALID-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add validate_resource_path() to validation.py",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "VALID-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add validate_expert_id() with CE-{hash}-NNN format",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "VALID-003",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add validate_context_expert_inputs() for full validation",
+          "feature": "F1",
+          "priority": "P0"
+        },
+        {
+          "id": "GEN-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Create generators/context_expert_generator.py with ContextExpertGenerator class",
+          "feature": "F2",
+          "priority": "P0"
+        },
+        {
+          "id": "GEN-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement analyze_code_structure() with Python AST parsing",
+          "feature": "F2",
+          "priority": "P0"
+        },
+        {
+          "id": "GEN-003",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement analyze_code_structure() JS/TS regex fallback",
+          "feature": "F2",
+          "priority": "P1"
+        },
+        {
+          "id": "GEN-004",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement extract_git_history() using git log",
+          "feature": "F2",
+          "priority": "P0"
+        },
+        {
+          "id": "GEN-005",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement detect_relationships() for imports/exports",
+          "feature": "F2",
+          "priority": "P0"
+        },
+        {
+          "id": "GEN-006",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement calculate_staleness() based on content hash",
+          "feature": "F2",
+          "priority": "P1"
+        },
+        {
+          "id": "GEN-007",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement suggest_candidates() for auto-discovery",
+          "feature": "F2",
+          "priority": "P1"
+        },
+        {
+          "id": "TOOL-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_create_context_expert() handler",
+          "feature": "F3",
+          "priority": "P0"
+        },
+        {
+          "id": "TOOL-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_list_context_experts() handler",
+          "feature": "F3",
+          "priority": "P0"
+        },
+        {
+          "id": "TOOL-003",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_get_context_expert() handler",
+          "feature": "F3",
+          "priority": "P0"
+        },
+        {
+          "id": "TOOL-004",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_suggest_context_experts() handler",
+          "feature": "F4",
+          "priority": "P1"
+        },
+        {
+          "id": "TOOL-005",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_update_context_expert() handler",
+          "feature": "F4",
+          "priority": "P1"
+        },
+        {
+          "id": "TOOL-006",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Implement handle_activate_context_expert() handler",
+          "feature": "F4",
+          "priority": "P1"
+        },
+        {
+          "id": "REG-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Register all 6 tools in server.py with input schemas",
+          "feature": "F3",
+          "priority": "P0"
+        },
+        {
+          "id": "REG-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Add handlers to TOOL_HANDLERS registry",
+          "feature": "F3",
+          "priority": "P0"
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Create slash commands in .claude/commands/",
+          "feature": "F5",
+          "priority": "P1"
+        },
+        {
+          "id": "CMD-002",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Deploy slash commands to ~/.claude/commands/",
+          "feature": "F5",
+          "priority": "P1"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-CONTEXT-EXPERTS-001",
+          "description": "Update CLAUDE.md with full tool documentation",
+          "feature": "F5",
+          "priority": "P1"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Foundation",
+          "description": "Constants, data models, and validation",
+          "tasks": ["CONST-001", "CONST-002", "MODEL-001", "MODEL-002", "MODEL-003", "VALID-001", "VALID-002", "VALID-003"],
+          "deliverables": ["constants.py updates", "context_expert_models.py", "validation.py updates"]
+        },
+        {
+          "phase": 2,
+          "name": "Context Engine",
+          "description": "Generator class with code analysis",
+          "tasks": ["GEN-001", "GEN-002", "GEN-003", "GEN-004", "GEN-005", "GEN-006", "GEN-007"],
+          "deliverables": ["generators/context_expert_generator.py"]
+        },
+        {
+          "phase": 3,
+          "name": "MCP Tools",
+          "description": "Handler implementations and registration",
+          "tasks": ["TOOL-001", "TOOL-002", "TOOL-003", "TOOL-004", "TOOL-005", "TOOL-006", "REG-001", "REG-002"],
+          "deliverables": ["tool_handlers.py updates", "server.py updates"]
+        },
+        {
+          "phase": 4,
+          "name": "Integration",
+          "description": "Slash commands and documentation",
+          "tasks": ["CMD-001", "CMD-002", "DOC-001"],
+          "deliverables": ["Slash commands", "CLAUDE.md updates"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test ContextExpertGenerator.analyze_code_structure() with Python files",
+        "Test ContextExpertGenerator.extract_git_history() output format",
+        "Test validation functions with valid/invalid inputs"
+      ],
+      "integration_tests": [
+        "Test create_context_expert end-to-end",
+        "Test list_context_experts with multiple experts",
+        "Test expert activation and context retrieval"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 6 MCP tools pass validation tests",
+        "Expert creation completes in < 5 seconds",
+        "Code structure analysis accurate for Python/JS/TS"
+      ],
+      "quality": [
+        "Follows existing docs-mcp patterns",
+        "Full CLAUDE.md documentation",
+        "Slash commands deployed globally"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        {"task": "CONST-001", "status": "pending"},
+        {"task": "CONST-002", "status": "pending"},
+        {"task": "MODEL-001", "status": "pending"},
+        {"task": "MODEL-002", "status": "pending"},
+        {"task": "MODEL-003", "status": "pending"},
+        {"task": "VALID-001", "status": "pending"},
+        {"task": "VALID-002", "status": "pending"},
+        {"task": "VALID-003", "status": "pending"}
+      ],
+      "phase_2": [
+        {"task": "GEN-001", "status": "pending"},
+        {"task": "GEN-002", "status": "pending"},
+        {"task": "GEN-003", "status": "pending"},
+        {"task": "GEN-004", "status": "pending"},
+        {"task": "GEN-005", "status": "pending"},
+        {"task": "GEN-006", "status": "pending"},
+        {"task": "GEN-007", "status": "pending"}
+      ],
+      "phase_3": [
+        {"task": "TOOL-001", "status": "pending"},
+        {"task": "TOOL-002", "status": "pending"},
+        {"task": "TOOL-003", "status": "pending"},
+        {"task": "TOOL-004", "status": "pending"},
+        {"task": "TOOL-005", "status": "pending"},
+        {"task": "TOOL-006", "status": "pending"},
+        {"task": "REG-001", "status": "pending"},
+        {"task": "REG-002", "status": "pending"}
+      ],
+      "phase_4": [
+        {"task": "CMD-001", "status": "pending"},
+        {"task": "CMD-002", "status": "pending"},
+        {"task": "DOC-001", "status": "pending"}
+      ]
+    }
+  }
+}

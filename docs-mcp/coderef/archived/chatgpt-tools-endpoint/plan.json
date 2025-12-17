@@ -1,0 +1,415 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+    "plan_name": "ChatGPT Tools Discovery Endpoint",
+    "feature_name": "chatgpt-tools-endpoint",
+    "version": "1.0.0",
+    "status": "ready_for_implementation",
+    "generated_at": "2025-10-20T22:00:00Z",
+    "estimated_effort": "1-2 hours",
+    "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+    "has_context": false,
+    "has_analysis": false
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["README.md", "CLAUDE.md", "USER-GUIDE.md", "API.md", "ARCHITECTURE.md", "COMPONENTS.md", "SCHEMA.md"],
+        "missing": []
+      },
+      "coding_standards": {
+        "available": ["BEHAVIOR-STANDARDS.md", "UI-STANDARDS.md", "UX-PATTERNS.md", "COMPONENT-INDEX.md"],
+        "missing": []
+      },
+      "reference_components": {
+        "primary": "http_server.py - Existing Flask app with /health and /mcp endpoints",
+        "secondary": ["server.py list_tools() - 33 MCP tool definitions with schemas", "tool_handlers.py - TOOL_HANDLERS registry"]
+      },
+      "key_patterns_identified": [
+        "Flask route pattern: @app.route('/endpoint', methods=['GET'])",
+        "JSON response pattern: jsonify({...})",
+        "All 33 tools already defined in server.py with inputSchema",
+        "MCP Tool schema format: {name, description, inputSchema}",
+        "OpenRPC 1.3.2 spec format for tool discovery"
+      ],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "Flask 3.0.0",
+        "server": "gunicorn on Railway.app",
+        "protocol": "JSON-RPC 2.0 + OpenRPC discovery"
+      },
+      "gaps_and_risks": [
+        "No existing /tools endpoint (need to create)",
+        "No OpenRPC spec generation (need to implement transformation)",
+        "ChatGPT integration untested (will test after implementation)"
+      ]
+    },
+
+    "1_executive_summary": {
+      "purpose": "Add GET /tools discovery endpoint to existing HTTP server that exposes all 33 MCP tool schemas in OpenRPC 1.3.2 format, enabling ChatGPT to dynamically discover available tools without manual configuration",
+      "value_proposition": [
+        "Enables ChatGPT integration with automatic tool discovery",
+        "Zero changes to existing MCP server logic (server.py unchanged)",
+        "Maintains Claude Code compatibility (stdio MCP unchanged)",
+        "Reuses existing tool schemas from server.py (no duplication)"
+      ],
+      "real_world_analogy": "Like adding a menu board to a restaurant - the kitchen (MCP server) stays the same, but now ChatGPT customers can see what's available before ordering",
+      "use_case": "ChatGPT calls GET /tools → receives OpenRPC spec with 33 tools → displays available capabilities → user selects tool → ChatGPT calls POST /mcp with JSON-RPC request → receives tool output",
+      "output": "New GET /tools endpoint in http_server.py (~80 lines), returns OpenRPC 1.3.2 JSON spec with 33 method definitions"
+    },
+
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "low (1 file modified, ~80 lines added, data transformation only)",
+      "scope": "Small - 1 file (http_server.py), adds 1 route, no business logic changes",
+      "file_system_risk": "none (read-only operation, no file I/O)",
+      "dependencies": {
+        "existing_internal": ["server.py (read tool definitions)", "tool_handlers.py (reference only)"],
+        "existing_external": ["flask (already installed)", "json (stdlib)"],
+        "new_external": [],
+        "new_internal": []
+      },
+      "performance_concerns": [
+        "Tool schema generation happens once per request - acceptable for discovery endpoint",
+        "Response size ~15-20KB for 33 tools - well within limits",
+        "No caching needed initially (discovery is infrequent operation)"
+      ],
+      "security_considerations": [
+        "GET endpoint with no parameters - no input validation needed",
+        "Exposes tool schemas only (no sensitive data)",
+        "Same security posture as existing /health endpoint",
+        "Open access acceptable (discovery is public information)"
+      ],
+      "breaking_changes": "none - purely additive feature"
+    },
+
+    "3_current_state_analysis": {
+      "affected_files": [
+        "MODIFIED: http_server.py (~80 lines added for /tools route)",
+        "READ-ONLY: server.py (import list_tools() to read tool definitions)",
+        "NO CHANGE: tool_handlers.py",
+        "NO CHANGE: server.py MCP logic"
+      ],
+      "dependencies": {
+        "existing_internal": {
+          "server.py": "Contains list_tools() async function with 33 Tool definitions",
+          "http_server.py": "Existing Flask app with /health and /mcp endpoints"
+        },
+        "existing_external": {
+          "flask": "Web framework - already installed",
+          "json": "Standard library for JSON serialization"
+        }
+      },
+      "architecture_context": "HTTP server acts as transport adapter for MCP tools. Current endpoints: GET /health (status), POST /mcp (JSON-RPC invocation). Adding: GET /tools (OpenRPC discovery). MCP server (server.py) remains unchanged - uses stdio for Claude Code. HTTP layer provides alternative transport for ChatGPT."
+    },
+
+    "4_key_features": {
+      "primary_features": [
+        "GET /tools endpoint returns OpenRPC 1.3.2 compliant JSON spec",
+        "Dynamically reads tool definitions from server.py list_tools()",
+        "Transforms MCP Tool schema → OpenRPC method schema",
+        "Returns all 33 tools with names, descriptions, parameter schemas",
+        "Zero hardcoding - automatically includes new tools when added to server.py"
+      ],
+      "secondary_features": [
+        "Includes OpenRPC metadata (version, title, description)",
+        "Properly formats JSON-RPC 2.0 method schemas",
+        "Returns 200 OK with application/json content type",
+        "Error handling for import failures"
+      ],
+      "edge_case_handling": [
+        "If server.py import fails: return 503 with error message",
+        "If list_tools() call fails: return 500 with error message",
+        "Empty tool list: return valid OpenRPC spec with empty methods array"
+      ],
+      "configuration_options": []
+    },
+
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+        "name": "ChatGPT Tools Endpoint",
+        "feature_dir": "coderef/working/chatgpt-tools-endpoint"
+      },
+      "tasks": [
+        {
+          "id": "IMPL-001",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Add import statement for server.py list_tools() at top of http_server.py",
+          "details": "Import asyncio and server module to access list_tools() function"
+        },
+        {
+          "id": "IMPL-002",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Create _build_openrpc_spec() helper function that transforms MCP tools to OpenRPC format",
+          "details": "Function accepts list[Tool] and returns OpenRPC 1.3.2 dict with methods array"
+        },
+        {
+          "id": "IMPL-003",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Create _transform_tool_to_openrpc_method() helper function for single tool transformation",
+          "details": "Converts MCP Tool (name, description, inputSchema) to OpenRPC method (name, description, params, result)"
+        },
+        {
+          "id": "IMPL-004",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Add @app.route('/tools', methods=['GET']) route handler in http_server.py",
+          "details": "Route calls asyncio.run(server.list_tools()), transforms to OpenRPC, returns jsonify(spec)"
+        },
+        {
+          "id": "IMPL-005",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Add error handling for import failures and async call failures in /tools route",
+          "details": "Catch ImportError, return 503; catch Exception during list_tools(), return 500"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Test /tools endpoint locally returns 200 with valid JSON",
+          "details": "curl http://localhost:5000/tools | jq . (verify parseable JSON)"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Verify /tools response contains openrpc field with value 1.3.2",
+          "details": "Check spec version compliance"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Verify /tools response contains methods array with 33 elements",
+          "details": "jq '.methods | length' confirms 33 tools"
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Verify each method has name, description, params fields",
+          "details": "Check first 3 tools have required OpenRPC fields"
+        },
+        {
+          "id": "TEST-005",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Test /tools endpoint on Railway after deployment returns 200",
+          "details": "curl https://docs-mcp-production.up.railway.app/tools"
+        },
+        {
+          "id": "DEPLOY-001",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Commit changes to http_server.py with descriptive message",
+          "details": "Git commit message: Add /tools OpenRPC discovery endpoint for ChatGPT integration"
+        },
+        {
+          "id": "DEPLOY-002",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Push to Railway and verify deployment succeeds",
+          "details": "Check Railway logs for successful restart"
+        },
+        {
+          "id": "INTEGRATE-001",
+          "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+          "description": "Send OpenRPC spec to ChatGPT agent for integration review",
+          "details": "Provide full /tools response and request feedback"
+        }
+      ]
+    },
+
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "title": "Implementation",
+        "purpose": "Add /tools endpoint to http_server.py",
+        "complexity": "low",
+        "effort_level": 2,
+        "tasks": ["IMPL-001", "IMPL-002", "IMPL-003", "IMPL-004", "IMPL-005"],
+        "completion_criteria": "Code compiles, endpoint exists, returns JSON locally"
+      },
+      {
+        "phase": 2,
+        "title": "Local Testing",
+        "purpose": "Verify /tools endpoint works correctly",
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": ["TEST-001", "TEST-002", "TEST-003", "TEST-004"],
+        "completion_criteria": "All local tests pass, OpenRPC spec valid, 33 tools present"
+      },
+      {
+        "phase": 3,
+        "title": "Deployment",
+        "purpose": "Deploy to Railway and verify",
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": ["DEPLOY-001", "DEPLOY-002", "TEST-005"],
+        "completion_criteria": "Railway deployment successful, /tools endpoint returns 200"
+      },
+      {
+        "phase": 4,
+        "title": "ChatGPT Integration",
+        "purpose": "Coordinate with ChatGPT agent",
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": ["INTEGRATE-001"],
+        "completion_criteria": "ChatGPT agent confirms spec is compatible"
+      }
+    ],
+
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Helper functions in isolation",
+        "coverage_target": "100% for transformation functions",
+        "tests": [
+          "test_transform_tool_to_openrpc_method() with sample Tool object",
+          "test_build_openrpc_spec() with list of 3 tools",
+          "test_build_openrpc_spec() with empty list"
+        ]
+      },
+      "integration_tests": {
+        "scope": "Full HTTP request flow",
+        "focus": "/tools endpoint returns valid OpenRPC spec",
+        "tests": [
+          "test_tools_endpoint_returns_200",
+          "test_tools_response_is_valid_json",
+          "test_tools_contains_all_33_methods",
+          "test_openrpc_version_is_1_3_2"
+        ]
+      },
+      "edge_case_scenarios": [
+        {
+          "scenario": "server.py import fails",
+          "setup": "Rename server.py temporarily",
+          "expected_behavior": "503 Service Unavailable with error message",
+          "verification": "Response status 503, body contains error",
+          "error_handling": "Try/except ImportError"
+        },
+        {
+          "scenario": "list_tools() raises exception",
+          "setup": "Mock list_tools() to raise Exception",
+          "expected_behavior": "500 Internal Server Error",
+          "verification": "Response status 500, body contains error",
+          "error_handling": "Try/except Exception"
+        },
+        {
+          "scenario": "Concurrent requests to /tools",
+          "setup": "Send 10 simultaneous requests",
+          "expected_behavior": "All return 200 with identical responses",
+          "verification": "All responses match",
+          "error_handling": "Flask handles concurrency"
+        }
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional": [
+        {
+          "requirement": "/tools endpoint operational",
+          "metric": "Returns 200 OK",
+          "target": "GET /tools returns 200 status",
+          "validation": "curl test"
+        },
+        {
+          "requirement": "OpenRPC spec valid",
+          "metric": "Contains required fields",
+          "target": "openrpc:1.3.2, info, methods array",
+          "validation": "JSON structure check"
+        },
+        {
+          "requirement": "All tools included",
+          "metric": "Tool count",
+          "target": "33 methods in response",
+          "validation": "jq '.methods | length'"
+        },
+        {
+          "requirement": "Tool schemas accurate",
+          "metric": "Schema matches server.py",
+          "target": "Parameters match inputSchema",
+          "validation": "Manual comparison of 3 tools"
+        }
+      ],
+      "quality": [
+        {
+          "requirement": "Code follows patterns",
+          "metric": "Uses Flask route decorator",
+          "target": "Matches existing /health pattern",
+          "validation": "Code review"
+        },
+        {
+          "requirement": "Error handling present",
+          "metric": "Try/except blocks",
+          "target": "Catches ImportError, Exception",
+          "validation": "Code review"
+        },
+        {
+          "requirement": "No breaking changes",
+          "metric": "Existing endpoints work",
+          "target": "/health and /mcp still return 200",
+          "validation": "Regression test"
+        }
+      ],
+      "performance": [
+        {
+          "requirement": "/tools response time",
+          "metric": "P95 latency",
+          "target": "<500ms",
+          "validation": "Load test 10 requests"
+        },
+        {
+          "requirement": "Response size",
+          "metric": "JSON size",
+          "target": "<50KB",
+          "validation": "Check Content-Length"
+        }
+      ],
+      "security": [
+        {
+          "requirement": "No sensitive data exposed",
+          "metric": "Manual review",
+          "target": "Only tool schemas visible",
+          "validation": "Review response content"
+        },
+        {
+          "requirement": "No new attack surface",
+          "metric": "GET with no params",
+          "target": "Read-only, no user input",
+          "validation": "Security review"
+        }
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "pre": [
+        "☐ Review existing http_server.py structure",
+        "☐ Review server.py list_tools() format",
+        "☐ Read OpenRPC 1.3.2 spec documentation"
+      ],
+      "phase_1": [
+        "☐ IMPL-001: Import server module",
+        "☐ IMPL-002: Create _build_openrpc_spec()",
+        "☐ IMPL-003: Create _transform_tool_to_openrpc_method()",
+        "☐ IMPL-004: Add /tools route",
+        "☐ IMPL-005: Add error handling"
+      ],
+      "phase_2": [
+        "☐ TEST-001: Local curl returns 200",
+        "☐ TEST-002: openrpc field present",
+        "☐ TEST-003: 33 methods present",
+        "☐ TEST-004: Required fields present"
+      ],
+      "phase_3": [
+        "☐ DEPLOY-001: Git commit",
+        "☐ DEPLOY-002: Push to Railway",
+        "☐ TEST-005: Railway /tools returns 200"
+      ],
+      "phase_4": [
+        "☐ INTEGRATE-001: Send spec to ChatGPT agent"
+      ],
+      "final": [
+        "☐ All tests pass",
+        "☐ Railway deployment successful",
+        "☐ /health still works (no regression)",
+        "☐ /mcp still works (no regression)",
+        "☐ /tools returns valid OpenRPC spec",
+        "☐ ChatGPT agent confirms compatibility"
+      ]
+    }
+  }
+}

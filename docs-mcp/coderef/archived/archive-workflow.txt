@@ -1,0 +1,88 @@
+================================================================================
+ARCHIVE WORKFLOW DOCUMENTATION
+================================================================================
+
+PROJECT LOCATION: C:\Users\willh\Desktop\projects - current-location\noted\coderef
+
+FOLDER STRUCTURE:
+  /archived           - Completed/executed plans with all artifacts
+  /working            - Active plans currently being developed
+  /foundation-docs    - Foundation documentation
+  /standards          - Standards documentation
+  /future             - Planned features and future work
+
+================================================================================
+ARCHIVE WORKFLOW PROCESS
+================================================================================
+
+1. ACTIVE PLAN LOCATION:
+   - Plans are stored in /working/{feature-name}/
+   - Each working plan contains:
+     * plan.json      - Implementation plan (primary artifact)
+     * analysis.json  - Project analysis performed before planning
+     * context.json   - Context and reference materials
+
+2. EXECUTION COMPLETION TRIGGER:
+   When a plan has been fully executed and implementation is complete:
+   - All tasks in the plan have been completed
+   - Code has been implemented and integrated
+   - Testing has been performed
+   - Documentation has been updated
+   - The feature is merged/deployed
+
+3. ARCHIVAL PROCESS:
+   Step 1: Move entire feature folder from /working to /archived
+   - Source: /working/{feature-name}/
+   - Destination: /archived/{feature-name}/
+
+   Step 2: Preserve all artifacts in archived location:
+   - plan.json remains as record of executed implementation
+   - analysis.json provides context for future reference
+   - context.json preserves decision rationale
+
+   Step 3: Clear working directory
+   - Remove feature folder from /working after successful move
+   - Confirm no references remain to old location
+
+4. ARCHIVED FOLDER STRUCTURE EXAMPLE:
+   /archived/
+     note-filtering-sorting-ux/
+       ├── plan.json
+       ├── analysis.json
+       └── context.json
+     note-metadata-display/
+       ├── plan.json
+       ├── analysis.json
+       └── context.json
+
+5. NAMING CONVENTION:
+   - Feature names use kebab-case (lowercase, hyphens only)
+   - Examples:
+     * folder-filter-sort
+     * note-filtering-sorting-ux
+     * note-metadata-display
+
+6. ARCHIVAL BENEFITS:
+   - Complete audit trail of executed implementations
+   - Easy lookup of past plans for similar features
+   - Reference material for code review and patterns
+   - Historical tracking of feature development
+   - Decision context preservation
+
+7. RETRIEVAL FROM ARCHIVE:
+   To reference an archived plan:
+   - Query /archived/{feature-name}/plan.json
+   - Review analysis.json for project state at execution time
+   - Use context.json for decision rationale
+
+================================================================================
+IMPLEMENTATION NOTES
+================================================================================
+
+- Archive operation should be automated or documented as manual process
+- Consider git history as primary version control (if applicable)
+- Archive folder acts as secondary record for quick reference
+- No deletion of archived plans - maintain permanent history
+- Timestamp or version tracking could enhance archived metadata
+
+================================================================================

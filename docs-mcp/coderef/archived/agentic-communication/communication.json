@@ -1,0 +1,150 @@
+{
+  "feature": "AGENTIC_COMMUNICATION",
+  "workorder_id": "WO-AGENTIC-COMMUNICATION-001",
+  "from": "Agent 1",
+  "to": "Agent N",
+  "date": "2025-10-18",
+  "task": "Implement AGENTIC_COMMUNICATION following 9 implementation phases",
+  "instruction": "Execute all tasks for AGENTIC_COMMUNICATION following the precise steps and respecting boundaries",
+  "precise_steps": [
+    "Step 1: Review Foundation - Core Helpers and Template requirements",
+    "Step 2: Create communication_template.json in templates/",
+    "Step 3: Add generate_agent_workorder_id() helper to handler_helpers.py",
+    "Step 4: Add validate_forbidden_files() helper to handler_helpers.py",
+    "Step 5: Add aggregate_agent_metrics() helper to handler_helpers.py",
+    "Step 6: Add parse_agent_status() helper to handler_helpers.py",
+    "Step 7: Review Tool 1 - generate_agent_communication requirements",
+    "Step 8: Implement handle_generate_agent_communication() in tool_handlers.py",
+    "Step 9: Add generate_agent_communication Tool definition to server.py",
+    "Step 10: Register handler in TOOL_HANDLERS dict",
+    "Step 11: Review Tool 2 - assign_agent_task requirements",
+    "Step 12: Implement handle_assign_agent_task() in tool_handlers.py",
+    "Step 13: Add assign_agent_task Tool definition to server.py",
+    "Step 14: Register handler in TOOL_HANDLERS dict",
+    "Step 15: Review Tool 3 - verify_agent_completion requirements",
+    "Step 16: Implement handle_verify_agent_completion() in tool_handlers.py",
+    "Step 17: Add verify_agent_completion Tool definition to server.py",
+    "Step 18: Register handler in TOOL_HANDLERS dict",
+    "Step 19: Review Tool 4 - aggregate_agent_deliverables requirements",
+    "Step 20: Implement handle_aggregate_agent_deliverables() in tool_handlers.py"
+  ],
+  "details": {
+    "work_area": "coderef\\working\\agentic-communication",
+    "forbidden_files": [
+      "server.py - DO NOT MODIFY (production MCP server)",
+      "tool_handlers.py - DO NOT MODIFY (existing handlers)"
+    ],
+    "allowed_files": [
+      "Modified handle_create_plan() with multi_agent parameter",
+      "Updated create_plan Tool definition with parameter",
+      "Updated .claude/commands/create-plan.md documentation",
+      "Updated README.md with agent coordination section",
+      "Updated CLAUDE.md with tool and command documentation",
+      "Updated user-guide.md with multi-agent workflow guide"
+    ],
+    "context": {
+      "feature_name": "agentic-communication",
+      "goal": "Multi-agent task coordination system with structured JSON communication protocols. Implements 5 new MCP tools to enable parallel agent execution, automated verification, and integrated deliverables tracking. First MCP server with native multi-agent coordination capabilities.",
+      "dependencies": [],
+      "references": [
+        "plan.json section 4_key_features",
+        "plan.json section 6_implementation_phases"
+      ]
+    }
+  },
+  "testing_checklist": [
+    "1. Run all unit tests for the feature",
+    "2. Verify integration tests pass",
+    "3. Check forbidden files unchanged (git diff)",
+    "4. Build project successfully",
+    "5. Manual test of feature functionality"
+  ],
+  "success_criteria": [
+    "\u2705 All 4 helper functions implemented with type hints",
+    "\u2705 communication_template.json validates against example structure",
+    "\u2705 Unit tests for helpers all pass",
+    "\u2705 Helpers handle edge cases (missing files, invalid input)",
+    "\u2705 Loads plan.json and generates valid communication.json",
+    "\u2705 Includes precise_steps, forbidden_files, success_criteria",
+    "\u2705 Workorder ID carried over from plan.json",
+    "\u2705 Agent status fields initialized correctly",
+    "\u2705 Manual test with existing plan works",
+    "\u2705 Generates agent-scoped workorder ID (WO-FEATURE-002)"
+  ],
+  "agent_1_status": "READY - Planning complete, awaiting agent assignment",
+  "agent_N_status": null,
+  "agent_N_assigned_at": null,
+  "agent_N_completion": {
+    "status": null,
+    "timestamp": null,
+    "changes_made": [],
+    "verification": {
+      "forbidden_files_unchanged": null,
+      "tests_passing": null,
+      "build_successful": null
+    },
+    "commit_hash": null,
+    "commit_message": null
+  },
+  "agent_1_verification": {
+    "status": null,
+    "verified_at": null,
+    "verified_by": "Agent 1",
+    "code_review": {
+      "passed": null,
+      "comments": []
+    },
+    "independent_tests": {
+      "passed": null,
+      "test_results": []
+    },
+    "forbidden_files_check": {
+      "passed": null,
+      "files_verified": []
+    },
+    "production_integration": {
+      "passed": null,
+      "integration_tests": []
+    },
+    "final_approval": null
+  },
+  "metadata": {
+    "created_at": "2025-10-18T05:23:03.544247",
+    "updated_at": "2025-10-18T05:27:31.574675",
+    "version": "1.0.0",
+    "template_version": "1.0.0",
+    "generated_from_plan": "coderef\\working\\agentic-communication\\plan.json"
+  },
+  "agent_2_status": "VERIFICATION_FAILED - Agent 2 work needs revision",
+  "agent_2_assigned_at": "2025-10-18T05:25:35.465955",
+  "agent_2_workorder": "WO-AGENTIC-COMMUNICATION-002",
+  "agent_2_phase": "phase_2",
+  "agent_2_verification": {
+    "verified_at": "2025-10-18T05:27:31.574653",
+    "verified_by": "Agent 1",
+    "forbidden_files_check": {
+      "passed": false,
+      "violations": [
+        {
+          "file": "server.py",
+          "status": "modified",
+          "reason": "Uncommitted changes detected"
+        },
+        {
+          "file": "tool_handlers.py",
+          "status": "modified",
+          "reason": "Uncommitted changes detected"
+        }
+      ],
+      "checked": [
+        "server.py",
+        "tool_handlers.py"
+      ]
+    },
+    "success_criteria": {
+      "total": 10,
+      "manual_review_count": 10
+    },
+    "overall_status": "FAILED"
+  }
+}

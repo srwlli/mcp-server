@@ -1,0 +1,644 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "execute-plan",
+    "version": "1.0.0",
+    "status": "in_progress",
+    "generated_by": "AI Assistant (Claude Code)",
+    "generated_at": "2025-10-20",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-EXECUTE-PLAN-001",
+    "estimated_complexity": "low",
+    "estimated_effort": 2
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": [
+        "README.md - Project overview and setup instructions",
+        "USER-GUIDE.md - Comprehensive usage documentation",
+        "CLAUDE.md - AI assistant context and tool documentation"
+      ],
+      "foundation_docs_missing": [
+        "API.md - API reference documentation",
+        "ARCHITECTURE.md - System architecture documentation"
+      ],
+      "coding_standards_available": [],
+      "coding_standards_missing": [
+        "Must infer patterns from existing tool_handlers.py code",
+        "Follow existing MCP tool patterns (@mcp_error_handler decorator)",
+        "Follow handler registry pattern (TOOL_HANDLERS dict)"
+      ],
+      "reference_components": [
+        "tool_handlers.py:handle_create_plan() - Example of reading plan.json and extracting data",
+        "tool_handlers.py:handle_assign_agent_task() - Example of parsing task IDs from plan",
+        "generators/planning_generator.py - Example of plan.json structure parsing",
+        ".claude/commands/create-plan.md - Example slash command structure",
+        "coderef/working/handoff-automation/plan.json - Example plan structure with tasks"
+      ],
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "MCP server (Flask-based)",
+        "testing": "pytest",
+        "dependencies": "pathlib, json, datetime",
+        "file_handling": "pathlib.Path for cross-platform compatibility"
+      },
+      "project_structure": {
+        "tool_definitions": "server.py (register new tool)",
+        "tool_handlers": "tool_handlers.py (add handle_execute_plan function)",
+        "slash_commands": ".claude/commands/ (create execute-plan.md)",
+        "feature_directory": "coderef/working/execute-plan/ (current working directory)"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Execute Plan Tool",
+      "primary_goal": "Automate the generation of properly formatted TodoWrite task lists when executing implementation plans, including workorder ID and task ID prefixes for better tracking visibility in Lloyd's CLI checklist display",
+      "target_users": [
+        "Lloyd (AI coordinator) - Primary user who executes plans",
+        "AI agents - Use TodoWrite format for task tracking",
+        "Human developers - Review formatted task lists in CLI"
+      ],
+      "key_capabilities": [
+        "Read and parse plan.json from coderef/working/{feature}/ directory",
+        "Extract workorder_id from META_DOCUMENTATION section",
+        "Parse all tasks from section 9 (9_implementation_checklist)",
+        "Generate TodoWrite format: WO-{FEATURE}-{NUM} | TASK-ID: Description",
+        "Generate activeForm for in-progress display",
+        "Support multi-agent mode by reading communication.json (optional)",
+        "Log execution details in coderef/working/{feature}/execution-log.json",
+        "Provide /execute-plan slash command for quick access"
+      ],
+      "success_metrics": [
+        "Tool successfully reads and parses plan.json without errors",
+        "TodoWrite format includes both workorder ID and task ID",
+        "Slash command /execute-plan invokes tool correctly",
+        "Execution log captures timestamp and task list",
+        "Lloyd can display formatted checklist in CLI",
+        "Zero manual formatting required by users"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_rating": "low",
+      "effort_estimate": 2,
+      "risk_factors": [
+        {
+          "risk": "Plan.json structure varies across features",
+          "severity": "medium",
+          "mitigation": "Validate plan structure and handle missing fields gracefully with clear error messages"
+        },
+        {
+          "risk": "Workorder ID may be missing in older plans",
+          "severity": "low",
+          "mitigation": "Fall back to feature name if workorder_id not found: WO-{FEATURE-NAME}-001"
+        },
+        {
+          "risk": "Task ID formats may vary (SETUP-001 vs PHASE1-TASK1)",
+          "severity": "low",
+          "mitigation": "Accept any format, extract as-is from plan.json without validation"
+        },
+        {
+          "risk": "TodoWrite tool integration unclear",
+          "severity": "medium",
+          "mitigation": "Return formatted JSON that Lloyd can directly pass to TodoWrite tool"
+        }
+      ],
+      "dependencies": [
+        "plan.json must exist in coderef/working/{feature}/ (required)",
+        "META_DOCUMENTATION section must contain workorder_id (preferred)",
+        "Section 9 (9_implementation_checklist) must contain task lists (required)",
+        "TodoWrite tool available in Claude CLI environment (required)"
+      ],
+      "estimated_duration_phases": {
+        "phase_1": "0.5 days - Core parsing and generation logic",
+        "phase_2": "0.5 days - MCP tool integration and slash command",
+        "phase_3": "0.5 days - Testing and error handling",
+        "phase_4": "0.5 days - Documentation and deployment"
+      }
+    },
+    "3_current_state_analysis": {
+      "existing_files_to_modify": [
+        {
+          "file": "tool_handlers.py",
+          "reason": "Add handle_execute_plan() handler function",
+          "scope": "Add new handler (~50-80 lines with error handling)"
+        },
+        {
+          "file": "server.py",
+          "reason": "Register execute_plan tool in list_tools() and TOOL_HANDLERS dict",
+          "scope": "Add tool definition (~20 lines) and registry entry (1 line)"
+        }
+      ],
+      "new_files_to_create": [
+        {
+          "file": ".claude/commands/execute-plan.md",
+          "reason": "Slash command definition for /execute-plan",
+          "content": "Markdown file with tool invocation instructions"
+        },
+        {
+          "file": "coderef/working/execute-plan/execution-log.json",
+          "reason": "Log file to track execution history",
+          "content": "JSON log with timestamps and generated task lists"
+        }
+      ],
+      "files_to_read": [
+        {
+          "file": "coderef/working/{feature}/plan.json",
+          "reason": "Source data for task extraction",
+          "sections": "META_DOCUMENTATION (workorder_id), section 9 (tasks)"
+        },
+        {
+          "file": "coderef/working/{feature}/communication.json",
+          "reason": "Optional multi-agent coordination data",
+          "sections": "agent status fields (if multi-agent mode)"
+        }
+      ],
+      "integration_points": [
+        "/create-plan workflow - Generates plan.json that execute-plan reads",
+        "TodoWrite tool - Consumes formatted task list output",
+        "Lloyd persona - Primary user of execute-plan tool",
+        "/assign-agent-task - Multi-agent coordination integration point"
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Plan Parsing and Task Extraction",
+        "description": "Read plan.json from coderef/working/{feature}/ directory, validate structure, extract workorder_id from META_DOCUMENTATION, and parse all tasks from section 9 (9_implementation_checklist) across all phase lists (phase_1_foundation, phase_2_parsing_logic, etc.)",
+        "priority": "critical",
+        "complexity": "low",
+        "dependencies": [],
+        "acceptance_criteria": [
+          "Successfully reads plan.json using pathlib.Path with error handling",
+          "Extracts workorder_id from META_DOCUMENTATION.workorder_id field",
+          "Falls back to WO-{FEATURE-NAME}-001 if workorder_id missing",
+          "Parses section 9 (9_implementation_checklist) and extracts all phase lists",
+          "Identifies all tasks marked with ☐, ☑, ⏳, or 🚫 prefixes",
+          "Handles malformed JSON with clear error messages",
+          "Validates required sections exist before parsing"
+        ],
+        "edge_cases": [
+          "plan.json file does not exist - Return clear error",
+          "plan.json is malformed JSON - Return JSON parse error",
+          "META_DOCUMENTATION section missing - Use generic workorder",
+          "workorder_id field missing - Generate from feature name",
+          "Section 9 missing - Return error (cannot execute without tasks)",
+          "Empty task lists - Return empty TodoWrite array",
+          "Tasks without TASK-ID format - Extract description as-is"
+        ]
+      },
+      "feature_2": {
+        "name": "TodoWrite Format Generation",
+        "description": "Transform parsed tasks into TodoWrite format with structure: {content: 'WO-ID | TASK-ID: Description', activeForm: 'WO-ID | TASK-ID: Active description', status: 'pending'}. Generate activeForm by converting description to present continuous tense (e.g., 'Install' → 'Installing').",
+        "priority": "critical",
+        "complexity": "low",
+        "dependencies": ["feature_1"],
+        "acceptance_criteria": [
+          "Each task formatted as: WO-{FEATURE}-{NUM} | TASK-ID: Description",
+          "content field contains full workorder ID prefix + task ID + description",
+          "activeForm field contains workorder ID + task ID + gerund form",
+          "status field set to 'pending' for all tasks initially",
+          "Maintains task order from plan.json phase lists",
+          "Returns valid JSON array that TodoWrite tool accepts",
+          "Example: WO-AUTH-001 | SETUP-001: Install dependencies"
+        ],
+        "edge_cases": [
+          "Task description too long (>200 chars) - Truncate with ellipsis",
+          "Task missing TASK-ID prefix - Use description as task ID",
+          "Multiple colons in description - Only split on first colon",
+          "Unicode characters in description - Preserve encoding",
+          "Empty description - Use TASK-ID as fallback",
+          "Completed tasks (☑) - Mark status as 'completed' instead of 'pending'",
+          "In-progress tasks (⏳) - Mark status as 'in_progress'"
+        ]
+      },
+      "feature_3": {
+        "name": "Execution Logging",
+        "description": "Create execution-log.json in coderef/working/{feature}/ directory to track each execution with timestamp, workorder ID, task count, and generated task list. Append to log file if it exists, creating new entries without overwriting previous executions.",
+        "priority": "nice-to-have",
+        "complexity": "low",
+        "dependencies": ["feature_1", "feature_2"],
+        "acceptance_criteria": [
+          "Creates execution-log.json on first execution",
+          "Appends new entry for each subsequent execution",
+          "Logs timestamp in ISO 8601 format",
+          "Logs workorder ID, feature name, task count",
+          "Logs generated TodoWrite task list",
+          "Preserves existing log entries",
+          "Handles file permissions and I/O errors gracefully"
+        ],
+        "edge_cases": [
+          "Log file doesn't exist - Create new file with first entry",
+          "Log file is malformed - Backup and create new file",
+          "Log file is read-only - Log warning and continue (non-fatal)",
+          "Disk full - Log error and continue (non-fatal)",
+          "Invalid JSON in log - Backup and start fresh"
+        ]
+      },
+      "feature_4": {
+        "name": "Slash Command Integration",
+        "description": "Create /execute-plan slash command in .claude/commands/ that invokes the execute_plan MCP tool with current working directory as project_path. Supports optional feature_name parameter; if omitted, prompts user or detects from current directory context.",
+        "priority": "critical",
+        "complexity": "low",
+        "dependencies": ["feature_1", "feature_2"],
+        "acceptance_criteria": [
+          "Slash command file created at .claude/commands/execute-plan.md",
+          "Command invokes mcp__docs-mcp__execute_plan tool",
+          "Passes project_path from current working directory",
+          "Supports feature_name parameter (optional)",
+          "Returns formatted TodoWrite task list to user",
+          "Command appears in /command autocomplete list",
+          "Help text explains usage and parameters"
+        ],
+        "edge_cases": [
+          "No feature_name provided - Prompt user or list available features",
+          "Invalid feature_name - Return clear error message",
+          "Multiple features in working directory - List options",
+          "No features in working directory - Return helpful message"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-EXECUTE-PLAN-001",
+        "name": "Execute Plan Tool Implementation",
+        "feature_dir": "coderef/working/execute-plan",
+        "description": "Implement MCP tool to generate TodoWrite task lists from plan.json with workorder ID and task ID prefixes"
+      },
+      "task_prefixes": {
+        "SETUP": "Setup and initialization tasks",
+        "PARSER": "Plan parsing and data extraction tasks",
+        "GENERATOR": "TodoWrite format generation tasks",
+        "LOG": "Execution logging tasks",
+        "HANDLER": "MCP handler implementation tasks",
+        "COMMAND": "Slash command creation tasks",
+        "TEST": "Testing and validation tasks",
+        "DOCS": "Documentation tasks"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "setup",
+          "description": "Review existing plan.json structure in coderef/working/handoff-automation/ to understand section 9 format and task ID patterns",
+          "files": ["coderef/working/handoff-automation/plan.json"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "PARSER-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "parsing",
+          "description": "Implement load_plan() function to read plan.json from coderef/working/{feature}/ using pathlib.Path with error handling for missing files and malformed JSON",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "PARSER-002",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "parsing",
+          "description": "Implement extract_workorder_id() function to read META_DOCUMENTATION.workorder_id field, with fallback to generate WO-{FEATURE-NAME}-001 if missing",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "PARSER-003",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "parsing",
+          "description": "Implement parse_tasks() function to extract all tasks from section 9 (9_implementation_checklist) across all phase lists, handling ☐/☑/⏳/🚫 prefixes and TASK-ID: Description format",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "GENERATOR-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "generation",
+          "description": "Implement generate_todowrite_format() function to transform parsed tasks into TodoWrite JSON format with content, activeForm, and status fields using workorder ID prefix",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "GENERATOR-002",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "generation",
+          "description": "Implement generate_active_form() helper function to convert task descriptions to present continuous tense for activeForm field (e.g., 'Install' → 'Installing', 'Create' → 'Creating')",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "LOG-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "logging",
+          "description": "Implement log_execution() function to append execution details to execution-log.json in feature directory with timestamp, workorder ID, task count, and task list",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "HANDLER-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "handler",
+          "description": "Implement handle_execute_plan() async function in tool_handlers.py with @mcp_error_handler decorator, integrating all parser/generator functions and returning formatted TodoWrite JSON",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "HANDLER-002",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "handler",
+          "description": "Add execute_plan tool definition to server.py list_tools() with inputSchema requiring project_path and optional feature_name parameter",
+          "files": ["server.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "HANDLER-003",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "handler",
+          "description": "Register handle_execute_plan in TOOL_HANDLERS dict in tool_handlers.py with key 'execute_plan'",
+          "files": ["tool_handlers.py"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "COMMAND-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "command",
+          "description": "Create .claude/commands/execute-plan.md slash command definition that invokes mcp__docs-mcp__execute_plan with current directory and optional feature_name parameter",
+          "files": [".claude/commands/execute-plan.md"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "testing",
+          "description": "Write unit tests for load_plan() function covering success case, missing file, and malformed JSON scenarios",
+          "files": ["tests/unit/test_execute_plan.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "testing",
+          "description": "Write unit tests for parse_tasks() function covering multiple phases, different task statuses (☐/☑/⏳/🚫), and edge cases",
+          "files": ["tests/unit/test_execute_plan.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "testing",
+          "description": "Write unit tests for generate_todowrite_format() function verifying correct format with workorder ID, task ID, description, and activeForm generation",
+          "files": ["tests/unit/test_execute_plan.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "testing",
+          "description": "Write integration test for handle_execute_plan() using existing handoff-automation plan.json as test data",
+          "files": ["tests/integration/test_execute_plan_e2e.py"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "DOCS-001",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "documentation",
+          "description": "Update CLAUDE.md with execute_plan tool documentation including purpose, input parameters, output format, usage examples, and integration with TodoWrite",
+          "files": ["CLAUDE.md"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "DOCS-002",
+          "workorder_id": "WO-EXECUTE-PLAN-001",
+          "category": "documentation",
+          "description": "Update USER-GUIDE.md with /execute-plan slash command usage instructions and examples showing TodoWrite output format",
+          "files": ["USER-GUIDE.md"],
+          "estimated_complexity": "low"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phase_1": {
+        "name": "Setup and Planning Parsing",
+        "description": "Set up foundation and implement core plan.json parsing logic to extract workorder ID and tasks from section 9",
+        "tasks": ["SETUP-001", "PARSER-001", "PARSER-002", "PARSER-003"],
+        "estimated_effort": 0.5,
+        "deliverables": [
+          "load_plan() function with error handling",
+          "extract_workorder_id() function with fallback logic",
+          "parse_tasks() function extracting all tasks from section 9"
+        ],
+        "testing_requirements": [
+          "Unit tests for load_plan() with missing/malformed files",
+          "Unit tests for extract_workorder_id() with missing field",
+          "Unit tests for parse_tasks() with multiple phases"
+        ]
+      },
+      "phase_2": {
+        "name": "TodoWrite Format Generation",
+        "description": "Implement TodoWrite format generation logic to transform parsed tasks into properly formatted JSON with workorder ID and task ID prefixes",
+        "tasks": ["GENERATOR-001", "GENERATOR-002", "LOG-001"],
+        "estimated_effort": 0.5,
+        "deliverables": [
+          "generate_todowrite_format() function with WO-ID | TASK-ID format",
+          "generate_active_form() helper for gerund conversion",
+          "log_execution() function for execution tracking"
+        ],
+        "testing_requirements": [
+          "Unit tests for generate_todowrite_format() verifying format",
+          "Unit tests for generate_active_form() with various verbs",
+          "Unit tests for log_execution() with append behavior"
+        ]
+      },
+      "phase_3": {
+        "name": "MCP Integration and Slash Command",
+        "description": "Integrate parsing and generation logic into MCP handler, register tool in server.py, and create slash command for easy access",
+        "tasks": ["HANDLER-001", "HANDLER-002", "HANDLER-003", "COMMAND-001"],
+        "estimated_effort": 0.5,
+        "deliverables": [
+          "handle_execute_plan() handler in tool_handlers.py",
+          "execute_plan tool registered in server.py",
+          "TOOL_HANDLERS registry entry",
+          "/execute-plan slash command in .claude/commands/"
+        ],
+        "testing_requirements": [
+          "Integration test for handle_execute_plan() end-to-end",
+          "Manual test of /execute-plan slash command",
+          "Verify TodoWrite output works with Lloyd"
+        ]
+      },
+      "phase_4": {
+        "name": "Testing and Documentation",
+        "description": "Write comprehensive tests, validate against existing plans, and update documentation with tool usage and examples",
+        "tasks": ["TEST-001", "TEST-002", "TEST-003", "TEST-004", "DOCS-001", "DOCS-002"],
+        "estimated_effort": 0.5,
+        "deliverables": [
+          "Unit tests for all parser and generator functions",
+          "Integration test using real plan.json data",
+          "Updated CLAUDE.md with tool documentation",
+          "Updated USER-GUIDE.md with slash command examples"
+        ],
+        "testing_requirements": [
+          "All unit tests passing with >80% coverage",
+          "Integration test passes with handoff-automation plan",
+          "Manual testing with Lloyd showing formatted checklist",
+          "Documentation reviewed for accuracy"
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Individual functions (load_plan, parse_tasks, generate_todowrite_format)",
+        "approach": "pytest with mocked file I/O and JSON parsing",
+        "coverage_target": "85%",
+        "test_cases": [
+          "test_load_plan_success() - Valid plan.json loads successfully",
+          "test_load_plan_missing_file() - Handles FileNotFoundError gracefully",
+          "test_load_plan_malformed_json() - Handles JSONDecodeError with clear message",
+          "test_extract_workorder_id_present() - Extracts workorder from META_DOCUMENTATION",
+          "test_extract_workorder_id_missing() - Generates fallback WO-{FEATURE}-001",
+          "test_parse_tasks_multiple_phases() - Extracts tasks across all phase lists",
+          "test_parse_tasks_different_statuses() - Handles ☐/☑/⏳/🚫 prefixes",
+          "test_generate_todowrite_format() - Creates correct JSON structure",
+          "test_generate_active_form() - Converts verbs to gerunds correctly",
+          "test_log_execution_append() - Appends to existing log file"
+        ]
+      },
+      "integration_tests": {
+        "scope": "Full workflow from plan.json to TodoWrite output",
+        "approach": "Use existing handoff-automation plan.json as test data",
+        "test_cases": [
+          "test_execute_plan_handoff_automation() - Process real plan successfully",
+          "test_execute_plan_output_format() - Verify TodoWrite JSON structure",
+          "test_execute_plan_workorder_prefix() - Confirm WO-ID in all tasks",
+          "test_execute_plan_execution_log() - Verify log file creation"
+        ]
+      },
+      "edge_case_tests": {
+        "scenarios": [
+          "Plan with no workorder_id - Uses fallback generation",
+          "Plan with empty task lists - Returns empty array",
+          "Plan with completed tasks (☑) - Marks status as 'completed'",
+          "Plan with very long task descriptions - Truncates appropriately",
+          "Plan with missing section 9 - Returns clear error message",
+          "Plan with unicode characters - Preserves encoding"
+        ]
+      },
+      "manual_testing": {
+        "checklist": [
+          "☐ Run /execute-plan on execute-plan feature itself",
+          "☐ Verify Lloyd displays formatted checklist in CLI",
+          "☐ Test with handoff-automation plan.json",
+          "☐ Test error handling with missing/malformed plans",
+          "☐ Verify execution-log.json created and updated",
+          "☐ Confirm TodoWrite output works with Lloyd's TodoWrite tool"
+        ]
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        "✓ Tool reads plan.json from coderef/working/{feature}/ successfully",
+        "✓ Extracts workorder_id from META_DOCUMENTATION section",
+        "✓ Falls back to WO-{FEATURE-NAME}-001 if workorder_id missing",
+        "✓ Parses all tasks from section 9 implementation checklist",
+        "✓ Generates TodoWrite format: WO-ID | TASK-ID: Description",
+        "✓ Creates activeForm field with gerund conversion",
+        "✓ Logs execution to execution-log.json with timestamp",
+        "✓ /execute-plan slash command invokes tool correctly",
+        "✓ Returns valid JSON array that TodoWrite tool accepts",
+        "✓ Lloyd displays formatted checklist in CLI successfully"
+      ],
+      "error_handling_requirements": [
+        "✓ Clear error message when plan.json not found",
+        "✓ Graceful handling of malformed JSON with error details",
+        "✓ Fallback to generic workorder when META_DOCUMENTATION missing",
+        "✓ Error message when section 9 missing (cannot execute)",
+        "✓ Handles empty task lists without crashing",
+        "✓ Preserves unicode characters in task descriptions"
+      ],
+      "integration_requirements": [
+        "✓ Works seamlessly after /create-plan workflow",
+        "✓ Compatible with TodoWrite tool format",
+        "✓ Lloyd persona can use output directly",
+        "✓ Execution log integrates with coderef/working structure",
+        "✓ Slash command appears in autocomplete",
+        "✓ No breaking changes to existing MCP tools"
+      ],
+      "performance_requirements": [
+        "✓ Parses plan.json in < 1 second for typical plans",
+        "✓ Generates TodoWrite format in < 0.5 seconds",
+        "✓ Execution logging completes in < 0.2 seconds",
+        "✓ Total execution time < 2 seconds for typical plan"
+      ],
+      "quality_requirements": [
+        "✓ Unit test coverage > 85% for all functions",
+        "✓ All error scenarios have dedicated tests",
+        "✓ Integration test passes with real plan.json data",
+        "✓ Code follows existing patterns (@mcp_error_handler)",
+        "✓ Documentation complete in CLAUDE.md and USER-GUIDE.md",
+        "✓ No regressions in existing tool functionality"
+      ],
+      "user_acceptance_criteria": [
+        "✓ Lloyd can execute plans with single /execute-plan command",
+        "✓ CLI checklist displays WO-ID | TASK-ID: Description format",
+        "✓ 100% of tasks extracted from plan without manual intervention",
+        "✓ Zero manual formatting required by users",
+        "✓ Execution log provides audit trail for future reference",
+        "✓ Error messages are clear and actionable"
+      ]
+    },
+    "9_implementation_checklist": {
+      "CRITICAL_AGENTIC_WORKFLOW": {
+        "purpose": "Enable real-time progress tracking during implementation",
+        "instructions": [
+          "IMMEDIATELY after completing each task, update plan.json to mark task as complete",
+          "Change ☐ to ☑ for the completed task in section 9",
+          "If using multi-agent coordination: Update communication.json agent status",
+          "If blocked: Update plan.json with blocker notes in task description"
+        ],
+        "workflow_integration": {
+          "single_agent": "After completing TASK-ID → Edit plan.json section 9 → Change ☐ to ☑ for TASK-ID → Save → Continue next task",
+          "multi_agent": "After completing TASK-ID → Update communication.json with agent_X_status → Update plan.json section 9 → Save both → Continue next task"
+        },
+        "status_values": {
+          "not_started": "☐ TASK-ID: Description",
+          "in_progress": "⏳ TASK-ID: Description (IN PROGRESS)",
+          "blocked": "🚫 TASK-ID: Description (BLOCKED: reason)",
+          "completed": "☑ TASK-ID: Description"
+        },
+        "benefits": [
+          "Real-time visibility into implementation progress",
+          "Clear tracking of what's done, in-progress, or blocked",
+          "Easy handoffs between agents (see exact state)",
+          "Accurate % completion metrics at any time",
+          "Historical record of implementation flow"
+        ],
+        "example": {
+          "before": "☐ PARSER-001: Implement load_plan() function",
+          "after_complete": "☑ PARSER-001: Implement load_plan() function",
+          "during_work": "⏳ PARSER-001: Implement load_plan() function (IN PROGRESS)",
+          "if_blocked": "🚫 PARSER-001: Implement load_plan() function (BLOCKED: Need JSON schema example)"
+        }
+      },
+      "phase_1_setup_and_parsing": [
+        "☐ SETUP-001: Review existing plan.json structure in coderef/working/handoff-automation/ to understand section 9 format and task ID patterns",
+        "☐ PARSER-001: Implement load_plan() function to read plan.json from coderef/working/{feature}/ using pathlib.Path with error handling for missing files and malformed JSON",
+        "☐ PARSER-002: Implement extract_workorder_id() function to read META_DOCUMENTATION.workorder_id field, with fallback to generate WO-{FEATURE-NAME}-001 if missing",
+        "☐ PARSER-003: Implement parse_tasks() function to extract all tasks from section 9 (9_implementation_checklist) across all phase lists, handling ☐/☑/⏳/🚫 prefixes and TASK-ID: Description format"
+      ],
+      "phase_2_generation": [
+        "☐ GENERATOR-001: Implement generate_todowrite_format() function to transform parsed tasks into TodoWrite JSON format with content, activeForm, and status fields using workorder ID prefix",
+        "☐ GENERATOR-002: Implement generate_active_form() helper function to convert task descriptions to present continuous tense for activeForm field (e.g., 'Install' → 'Installing', 'Create' → 'Creating')",
+        "☐ LOG-001: Implement log_execution() function to append execution details to execution-log.json in feature directory with timestamp, workorder ID, task count, and task list"
+      ],
+      "phase_3_mcp_integration": [
+        "☐ HANDLER-001: Implement handle_execute_plan() async function in tool_handlers.py with @mcp_error_handler decorator, integrating all parser/generator functions and returning formatted TodoWrite JSON",
+        "☐ HANDLER-002: Add execute_plan tool definition to server.py list_tools() with inputSchema requiring project_path and optional feature_name parameter",
+        "☐ HANDLER-003: Register handle_execute_plan in TOOL_HANDLERS dict in tool_handlers.py with key 'execute_plan'",
+        "☐ COMMAND-001: Create .claude/commands/execute-plan.md slash command definition that invokes mcp__docs-mcp__execute_plan with current directory and optional feature_name parameter"
+      ],
+      "phase_4_testing_and_docs": [
+        "☐ TEST-001: Write unit tests for load_plan() function covering success case, missing file, and malformed JSON scenarios",
+        "☐ TEST-002: Write unit tests for parse_tasks() function covering multiple phases, different task statuses (☐/☑/⏳/🚫), and edge cases",
+        "☐ TEST-003: Write unit tests for generate_todowrite_format() function verifying correct format with workorder ID, task ID, description, and activeForm generation",
+        "☐ TEST-004: Write integration test for handle_execute_plan() using existing handoff-automation plan.json as test data",
+        "☐ DOCS-001: Update CLAUDE.md with execute_plan tool documentation including purpose, input parameters, output format, usage examples, and integration with TodoWrite",
+        "☐ DOCS-002: Update USER-GUIDE.md with /execute-plan slash command usage instructions and examples showing TodoWrite output format"
+      ]
+    }
+  }
+}

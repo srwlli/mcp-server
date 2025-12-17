@@ -1,0 +1,580 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "workorder-log",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant (Claude)",
+    "generated_at": "2025-10-20T20:53:00.000000",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-WORKORDER-LOG-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": ["README.md", "USER-GUIDE.md"],
+        "missing": ["API.md", "ARCHITECTURE.md", "COMPONENTS.md", "SCHEMA.md"]
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": ["All standards documents"]
+      },
+      "reference_components": {
+        "existing_tools": [
+          "server.py - MCP tool registration pattern",
+          "tool_handlers.py - Handler registry pattern",
+          "handler_decorators.py - @mcp_error_handler, @log_invocation",
+          "constants.py - Paths, Files enums",
+          "validation.py - Input validation layer",
+          "error_responses.py - ErrorResponse factory",
+          "logger_config.py - Structured logging"
+        ]
+      },
+      "technology_stack": {
+        "language": "Python 3.11+",
+        "framework": "MCP SDK (stdio transport)",
+        "testing": "pytest",
+        "key_libraries": ["pathlib", "datetime", "json"]
+      },
+      "project_structure": {
+        "organization": "Modular MCP server with handler registry pattern",
+        "key_directories": ["generators/", ".claude/commands/", "coderef/", "tests/"]
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Workorder Log System",
+      "primary_goal": "Track workorders, enable traceability, improve coordination, simplify reporting, and allow devs to see project updates with a quick glance",
+      "description": "Simple one-line log system for tracking workorders with latest entries at top. Format: WO-ID | Project | Description | Timestamp. Global log file with auto-logging on workorder completion and slash command invocation.",
+      "target_users": ["AI agents (Agent 2-4)", "Lloyd (coordinator)", "Human developers"],
+      "value_proposition": "Provides instant visibility into all workorder activity across projects with a single text file that can be viewed with any editor",
+      "scope": "Add 2 new MCP tools (log_workorder, get_workorder_log), integrate auto-logging into existing tools, create global log file with prepend operations"
+    },
+    "2_risk_assessment": {
+      "complexity_score": 3,
+      "complexity_justification": "Low complexity - simple file append operations, no external dependencies, straightforward MCP tool pattern",
+      "risks": [
+        {
+          "risk": "File locking conflicts with concurrent writes",
+          "severity": "medium",
+          "mitigation": "Use file locking mechanism (fcntl on Unix, msvcrt on Windows) for thread-safe writes"
+        },
+        {
+          "risk": "Log file grows unbounded",
+          "severity": "low",
+          "mitigation": "Document log rotation out of scope for MVP, add warning if file > 10MB"
+        },
+        {
+          "risk": "Integration with existing tools may break functionality",
+          "severity": "medium",
+          "mitigation": "Add optional auto_log parameter, thoroughly test with existing tool workflows"
+        },
+        {
+          "risk": "Timestamp format inconsistency across systems",
+          "severity": "low",
+          "mitigation": "Use ISO 8601 format (YYYY-MM-DD HH:MM:SS) consistently"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "Python standard library",
+          "type": "internal",
+          "status": "available"
+        },
+        {
+          "name": "MCP SDK",
+          "type": "external",
+          "status": "available"
+        }
+      ],
+      "estimated_effort": "2-3 hours for implementation, 1 hour for testing"
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        "server.py - Add 2 new tool definitions (log_workorder, get_workorder_log)",
+        "tool_handlers.py - Add 2 new handler functions and register in TOOL_HANDLERS",
+        "constants.py - Add WORKORDER_LOG_FILE constant"
+      ],
+      "files_to_create": [
+        "workorder-log.txt - Global log file (created on first write)",
+        ".claude/commands/log-workorder.md - Slash command for manual logging",
+        ".claude/commands/get-workorder-log.md - Slash command to view log",
+        "tests/test_workorder_log.py - Unit tests for new tools"
+      ],
+      "integration_points": [
+        "update_all_documentation - Add auto-logging after successful update",
+        "create_plan - Add auto-logging when plan is created",
+        "archive_feature - Add auto-logging when feature is archived"
+      ],
+      "existing_patterns_to_follow": [
+        "Use @mcp_error_handler decorator for error handling",
+        "Use @log_invocation decorator for logging",
+        "Use validate_*_input functions for input validation",
+        "Use ErrorResponse factory for errors",
+        "Use TOOL_HANDLERS registry pattern",
+        "Use format_success_response for success responses"
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "log_workorder MCP Tool",
+          "description": "Append new workorder entry to global log file with prepend operation (latest at top)",
+          "priority": "critical",
+          "complexity": "low",
+          "user_story": "As an AI agent, I want to log my completed workorder so that there's a permanent record of what was done"
+        },
+        {
+          "name": "get_workorder_log MCP Tool",
+          "description": "Read and optionally filter workorder log entries",
+          "priority": "critical",
+          "complexity": "low",
+          "user_story": "As a developer, I want to quickly view recent workorder activity so I can see project updates at a glance"
+        },
+        {
+          "name": "One-line Format",
+          "description": "Consistent format: WO-ID | Project | Description (50 chars) | Timestamp",
+          "priority": "critical",
+          "complexity": "low",
+          "user_story": "As a user, I want each log entry to be scannable on a single line"
+        },
+        {
+          "name": "Latest Entries at Top",
+          "description": "Prepend new entries (reverse chronological order) so most recent work is immediately visible",
+          "priority": "high",
+          "complexity": "low",
+          "user_story": "As a developer, I want to see the latest activity first without scrolling"
+        },
+        {
+          "name": "Auto-logging Integration",
+          "description": "Integrate with update_all_documentation, create_plan, archive_feature to auto-log on completion",
+          "priority": "high",
+          "complexity": "medium",
+          "user_story": "As an AI agent, I want my workorders logged automatically when I complete work"
+        },
+        {
+          "name": "Global Centralized Log",
+          "description": "Single workorder-log.txt file in docs-mcp directory accessible from all projects",
+          "priority": "critical",
+          "complexity": "low",
+          "user_story": "As a developer, I want one place to see all workorder activity across all projects"
+        },
+        {
+          "name": "Slash Commands",
+          "description": "/log-workorder and /get-workorder-log for quick access",
+          "priority": "medium",
+          "complexity": "low",
+          "user_story": "As a user, I want quick slash commands to log and view workorders"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-WORKORDER-LOG-001",
+        "name": "Workorder Log System",
+        "feature_dir": "coderef/working/workorder-log"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Add WORKORDER_LOG_FILE constant to constants.py",
+          "type": "setup",
+          "estimated_time": "5min",
+          "dependencies": []
+        },
+        {
+          "id": "TOOL-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Define log_workorder tool in server.py list_tools()",
+          "type": "implementation",
+          "estimated_time": "10min",
+          "dependencies": ["SETUP-001"]
+        },
+        {
+          "id": "TOOL-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Define get_workorder_log tool in server.py list_tools()",
+          "type": "implementation",
+          "estimated_time": "10min",
+          "dependencies": ["SETUP-001"]
+        },
+        {
+          "id": "HANDLER-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Implement handle_log_workorder in tool_handlers.py with prepend logic and file locking",
+          "type": "implementation",
+          "estimated_time": "30min",
+          "dependencies": ["TOOL-001"]
+        },
+        {
+          "id": "HANDLER-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Implement handle_get_workorder_log in tool_handlers.py with optional filtering",
+          "type": "implementation",
+          "estimated_time": "20min",
+          "dependencies": ["TOOL-002"]
+        },
+        {
+          "id": "VALIDATE-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Add workorder_id validation function to validation.py",
+          "type": "implementation",
+          "estimated_time": "10min",
+          "dependencies": []
+        },
+        {
+          "id": "INTEGRATE-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Add auto-logging to handle_update_all_documentation",
+          "type": "integration",
+          "estimated_time": "15min",
+          "dependencies": ["HANDLER-001"]
+        },
+        {
+          "id": "INTEGRATE-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Add auto-logging to handle_create_plan",
+          "type": "integration",
+          "estimated_time": "10min",
+          "dependencies": ["HANDLER-001"]
+        },
+        {
+          "id": "INTEGRATE-003",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Add auto-logging to handle_archive_feature",
+          "type": "integration",
+          "estimated_time": "10min",
+          "dependencies": ["HANDLER-001"]
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Create /log-workorder slash command",
+          "type": "documentation",
+          "estimated_time": "5min",
+          "dependencies": ["HANDLER-001"]
+        },
+        {
+          "id": "CMD-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Create /get-workorder-log slash command",
+          "type": "documentation",
+          "estimated_time": "5min",
+          "dependencies": ["HANDLER-002"]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Write unit tests for log_workorder (prepend, formatting, locking)",
+          "type": "testing",
+          "estimated_time": "30min",
+          "dependencies": ["HANDLER-001"]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Write unit tests for get_workorder_log (reading, filtering)",
+          "type": "testing",
+          "estimated_time": "20min",
+          "dependencies": ["HANDLER-002"]
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Write integration tests for auto-logging workflows",
+          "type": "testing",
+          "estimated_time": "20min",
+          "dependencies": ["INTEGRATE-001", "INTEGRATE-002", "INTEGRATE-003"]
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Update CLAUDE.md with new tools documentation",
+          "type": "documentation",
+          "estimated_time": "20min",
+          "dependencies": ["HANDLER-001", "HANDLER-002"]
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-WORKORDER-LOG-001",
+          "description": "Update README.md feature list",
+          "type": "documentation",
+          "estimated_time": "5min",
+          "dependencies": ["DOC-001"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "id": "phase_1",
+          "name": "Core Implementation",
+          "description": "Implement basic log_workorder and get_workorder_log tools with prepend logic",
+          "tasks": ["SETUP-001", "TOOL-001", "TOOL-002", "HANDLER-001", "HANDLER-002", "VALIDATE-001"],
+          "estimated_time": "1.5 hours",
+          "deliverables": [
+            "Working log_workorder tool that prepends entries to workorder-log.txt",
+            "Working get_workorder_log tool that reads and optionally filters log",
+            "File locking mechanism for concurrent write safety",
+            "Input validation for workorder IDs and parameters"
+          ],
+          "success_criteria": [
+            "Can manually log workorder with proper format: WO-ID | Project | Description | Timestamp",
+            "Latest entries appear at top of file",
+            "Can read full log or filter by project/date",
+            "No race conditions with concurrent writes"
+          ]
+        },
+        {
+          "id": "phase_2",
+          "name": "Integration & Automation",
+          "description": "Integrate auto-logging into existing tools and create slash commands",
+          "tasks": ["INTEGRATE-001", "INTEGRATE-002", "INTEGRATE-003", "CMD-001", "CMD-002"],
+          "estimated_time": "45 minutes",
+          "deliverables": [
+            "Auto-logging in update_all_documentation",
+            "Auto-logging in create_plan",
+            "Auto-logging in archive_feature",
+            "/log-workorder slash command",
+            "/get-workorder-log slash command"
+          ],
+          "success_criteria": [
+            "Workorders automatically logged when tools complete successfully",
+            "Slash commands work and invoke correct MCP tools",
+            "No breaking changes to existing tool behavior",
+            "Auto-logging can be verified in workorder-log.txt"
+          ]
+        },
+        {
+          "id": "phase_3",
+          "name": "Testing & Validation",
+          "description": "Comprehensive unit and integration testing",
+          "tasks": ["TEST-001", "TEST-002", "TEST-003"],
+          "estimated_time": "1 hour",
+          "deliverables": [
+            "Unit tests for log_workorder (15+ test cases)",
+            "Unit tests for get_workorder_log (10+ test cases)",
+            "Integration tests for auto-logging workflows (5+ scenarios)",
+            "All tests passing with > 90% coverage"
+          ],
+          "success_criteria": [
+            "All tests pass",
+            "Test coverage >= 90% for new code",
+            "Edge cases covered (empty log, concurrent writes, invalid IDs)",
+            "Integration workflows verified end-to-end"
+          ]
+        },
+        {
+          "id": "phase_4",
+          "name": "Documentation & Deployment",
+          "description": "Update documentation and deploy globally",
+          "tasks": ["DOC-001", "DOC-002"],
+          "estimated_time": "30 minutes",
+          "deliverables": [
+            "Updated CLAUDE.md with tool catalog entries",
+            "Updated README.md feature list",
+            "Slash commands deployed to ~/.claude/commands/",
+            "Example usage documented"
+          ],
+          "success_criteria": [
+            "CLAUDE.md includes log_workorder and get_workorder_log in Tool Catalog",
+            "README.md mentions workorder logging in features",
+            "Slash commands available globally in all projects",
+            "Usage examples clear and accurate"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_id": "UT-001",
+          "description": "Test log_workorder creates file if not exists",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_log_workorder_creates_file"
+        },
+        {
+          "test_id": "UT-002",
+          "description": "Test log_workorder prepends entries (latest at top)",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_log_workorder_prepends_entries"
+        },
+        {
+          "test_id": "UT-003",
+          "description": "Test log_workorder formats entry correctly",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_log_workorder_format"
+        },
+        {
+          "test_id": "UT-004",
+          "description": "Test log_workorder validates workorder_id format",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_log_workorder_validates_id"
+        },
+        {
+          "test_id": "UT-005",
+          "description": "Test log_workorder truncates description to 50 chars",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_log_workorder_truncates_description"
+        },
+        {
+          "test_id": "UT-006",
+          "description": "Test get_workorder_log reads full log",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_get_workorder_log_full"
+        },
+        {
+          "test_id": "UT-007",
+          "description": "Test get_workorder_log filters by project",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_get_workorder_log_filter_project"
+        },
+        {
+          "test_id": "UT-008",
+          "description": "Test get_workorder_log returns empty for nonexistent file",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_get_workorder_log_empty"
+        },
+        {
+          "test_id": "UT-009",
+          "description": "Test get_workorder_log limits results",
+          "file": "tests/test_workorder_log.py",
+          "function": "test_get_workorder_log_limit"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_id": "IT-001",
+          "description": "Test auto-logging in update_all_documentation workflow",
+          "file": "tests/test_workorder_log_integration.py",
+          "function": "test_update_all_documentation_auto_logs"
+        },
+        {
+          "test_id": "IT-002",
+          "description": "Test auto-logging in create_plan workflow",
+          "file": "tests/test_workorder_log_integration.py",
+          "function": "test_create_plan_auto_logs"
+        },
+        {
+          "test_id": "IT-003",
+          "description": "Test concurrent logging from multiple agents",
+          "file": "tests/test_workorder_log_integration.py",
+          "function": "test_concurrent_logging"
+        }
+      ],
+      "edge_cases": [
+        "Empty log file",
+        "Concurrent writes from multiple processes",
+        "Invalid workorder ID format",
+        "Description > 50 characters",
+        "Missing required fields",
+        "File permission errors",
+        "Disk full scenarios"
+      ],
+      "coverage_target": 90
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "criterion": "log_workorder tool successfully appends entries",
+          "measurement": "Manual test: Call log_workorder, verify entry appears at top of workorder-log.txt",
+          "threshold": "100% success rate"
+        },
+        {
+          "criterion": "Entries formatted correctly with WO-ID | Project | Description | Timestamp",
+          "measurement": "Visual inspection of log entries",
+          "threshold": "All entries match format exactly"
+        },
+        {
+          "criterion": "Latest entries at top (reverse chronological)",
+          "measurement": "Add 3 entries, verify newest is line 1",
+          "threshold": "100% correct ordering"
+        },
+        {
+          "criterion": "get_workorder_log retrieves and filters correctly",
+          "measurement": "Query with project filter, verify only matching entries returned",
+          "threshold": "Correct filtering in all test cases"
+        },
+        {
+          "criterion": "Auto-logging works in integrated tools",
+          "measurement": "Run update_all_documentation, verify entry logged automatically",
+          "threshold": "100% auto-log success"
+        },
+        {
+          "criterion": "Slash commands work globally",
+          "measurement": "Use /log-workorder and /get-workorder-log from any project",
+          "threshold": "Commands available and functional"
+        }
+      ],
+      "non_functional_requirements": [
+        {
+          "criterion": "Performance < 50ms per log operation",
+          "measurement": "Time 100 log operations, calculate average",
+          "threshold": "Average < 50ms"
+        },
+        {
+          "criterion": "Thread-safe concurrent writes",
+          "measurement": "Spawn 10 concurrent writes, verify no lost entries or corruption",
+          "threshold": "0 data loss, 0 corruption"
+        },
+        {
+          "criterion": "No breaking changes to existing tools",
+          "measurement": "Run existing test suite, verify all pass",
+          "threshold": "100% existing tests pass"
+        }
+      ],
+      "acceptance_criteria": [
+        "All unit tests pass (15+ tests)",
+        "All integration tests pass (3+ tests)",
+        "Test coverage >= 90%",
+        "Documentation updated (CLAUDE.md, README.md)",
+        "Slash commands deployed globally",
+        "Manual testing confirms all features work",
+        "No regressions in existing functionality",
+        "Workorder WO-WORKORDER-LOG-001 logged on completion"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "☐ Add WORKORDER_LOG_FILE constant to constants.py",
+        "☐ Define log_workorder tool in server.py",
+        "☐ Define get_workorder_log tool in server.py",
+        "☐ Implement handle_log_workorder with prepend logic",
+        "☐ Implement file locking mechanism (fcntl/msvcrt)",
+        "☐ Implement handle_get_workorder_log with filtering",
+        "☐ Add workorder_id validation to validation.py",
+        "☐ Test manually: log entry, verify format and ordering",
+        "☐ Test manually: read log, verify filtering works"
+      ],
+      "phase_2_checklist": [
+        "☐ Add auto-logging to handle_update_all_documentation",
+        "☐ Add auto-logging to handle_create_plan",
+        "☐ Add auto-logging to handle_archive_feature",
+        "☐ Test auto-logging in each tool",
+        "☐ Create /log-workorder slash command",
+        "☐ Create /get-workorder-log slash command",
+        "☐ Deploy slash commands to ~/.claude/commands/",
+        "☐ Test slash commands from different project"
+      ],
+      "phase_3_checklist": [
+        "☐ Write UT-001 through UT-009 (unit tests)",
+        "☐ Write IT-001 through IT-003 (integration tests)",
+        "☐ Run pytest, verify all tests pass",
+        "☐ Check coverage report, ensure >= 90%",
+        "☐ Test edge cases manually (concurrent writes, invalid IDs)",
+        "☐ Run existing test suite, verify no regressions"
+      ],
+      "phase_4_checklist": [
+        "☐ Update CLAUDE.md Tool Catalog with log_workorder",
+        "☐ Update CLAUDE.md Tool Catalog with get_workorder_log",
+        "☐ Update README.md features section",
+        "☐ Add usage examples to documentation",
+        "☐ Verify slash commands work globally",
+        "☐ Run /update-deliverables",
+        "☐ Run /update-docs with WO-WORKORDER-LOG-001",
+        "☐ Final manual testing of complete workflow",
+        "☐ Commit and push all changes"
+      ]
+    }
+  }
+}

@@ -1,0 +1,125 @@
+================================================================================
+IDEA LOGGING: /HANDOFF WORKFLOW
+================================================================================
+
+IDEA: SLASH COMMAND FOR AGENT HANDOFF AUTOMATION
+DATE: 2025-10-16 [Current Session]
+STATUS: Proposed
+
+DESCRIPTION:
+Create a /handoff slash command that automatically generates agent context files
+(claude.md) at project and phase levels to enable seamless continuity when
+agents change mid-project. Streamlines the handoff process documented in
+agent-context-workflow.txt.
+
+CONTEXT:
+Mid-project agent changes are common in development workflows. Currently, creating
+context files for handoffs is a manual process requiring developers to copy
+templates and fill them out. This creates friction and inconsistency. A /handoff
+command would automate context capture, reduce handoff time from 20-30 minutes to
+2-3 minutes, and ensure consistency across all handoffs.
+
+RELATIONSHIP TO MCP:
+Core docs-mcp workflow tool that complements existing planning and documentation
+tools. Integrates with /create-plan, /analyze-for-planning, and /generate-docs
+to provide mid-project continuity. Extends the MCP ecosystem with agent-to-agent
+handoff capabilities.
+
+RELATED WORK:
+- coderef/future/agent-context-workflow.txt (defines manual handoff process)
+- coderef/future/idea-logging-workflow.txt (this template source)
+- /create-plan (creates plan.json that handoff references)
+- /analyze-for-planning (provides project analysis for context)
+- coderef/working/{feature-name}/ structure (target for context files)
+
+PRELIMINARY THOUGHTS:
+- Command should create both project-level and phase-level claude.md files
+- Auto-detect current phase from plan.json or working directory structure
+- Extract project goals, architecture, and decisions from plan.json
+- Parse git history for recent changes and current progress
+- Include option to create minimal vs. full context files
+- Should intelligently populate "What's Been Completed" from git commits
+- Could integrate with TODO tracking for "What's Currently In Progress"
+- Generate file references (hot spots) from git diff statistics
+- Support both initial handoff (project start) and mid-phase handoff
+- Consider auto-populating "Notes from Last Agent" from conversation context
+
+IMPLEMENTATION CONSIDERATIONS:
+1. MCP Tool: `generate_handoff_context`
+   - Input: project_path, feature_name, phase_number (optional), mode (full|minimal)
+   - Output: Created files (project-level and/or phase-level claude.md)
+
+2. Data Sources for Auto-Population:
+   - plan.json → Project goals, architecture, phase objectives
+   - analysis.json → Tech stack, dependencies, file structure
+   - Git history → Recent changes, progress tracking
+   - Current directory structure → Phase detection
+   - Existing claude.md files → Update vs. create logic
+
+3. Template Selection:
+   - Full mode: Use complete templates from agent-context-workflow.txt
+   - Minimal mode: Use minimal template for quick capture
+   - Auto-detect: Choose based on project complexity
+
+4. Smart Features:
+   - Parse plan.json tasks and map to completed/in-progress sections
+   - Extract blocker information from TODO comments in code
+   - Generate "How to Get Started" from README and package.json
+   - Auto-link to related files (plan.json, analysis.json, etc.)
+   - Timestamp all updates automatically
+   - Preserve "Notes from Last Agent" history across handoffs
+
+NEXT STEPS:
+- [ ] Use /gather-context to capture detailed requirements
+  * Interview questions: What handoff scenarios to support?
+  * User stories: Who uses /handoff and when?
+  * Acceptance criteria: What makes a successful handoff?
+- [ ] Move to planning phase when ready
+- [ ] Create implementation plan with /create-plan
+- [ ] Archive to /archived/ once executed
+
+POTENTIAL CHALLENGES:
+- Phase detection: How to reliably detect current phase without explicit input?
+- Stale data: How to handle outdated plan.json or analysis.json?
+- Merge conflicts: How to update existing claude.md without overwriting manual edits?
+- Context accuracy: How to validate auto-generated context is correct?
+
+USER EXPERIENCE FLOW:
+```
+# Scenario 1: Initial project handoff (agent starting work)
+/handoff
+# → Creates project-level claude.md
+# → Creates phase-1/claude.md if plan.json exists
+# → Populates from plan.json and analysis.json
+# → Returns: "Handoff context created at coderef/working/{feature}/claude.md"
+
+# Scenario 2: Mid-phase handoff (agent switching mid-work)
+/handoff --phase 2 --mode minimal
+# → Updates phase-2/claude.md with current state
+# → Extracts progress from git commits
+# → Adds "Notes from Last Agent" section
+# → Returns: "Phase 2 handoff context updated"
+
+# Scenario 3: Phase transition handoff (completing phase, starting next)
+/handoff --transition
+# → Marks current phase claude.md as "Complete"
+# → Creates next phase claude.md
+# → Updates project-level claude.md with current phase
+# → Returns: "Phase 2 → 3 transition handoff complete"
+```
+
+BENEFITS:
+- Fast context capture: 2-3 minutes vs. 20-30 minutes manual
+- Consistency: All handoffs follow same template structure
+- Reduced errors: Auto-population prevents missing critical info
+- Better continuity: New agents can start immediately with clear context
+- Historical tracking: Preserves decision history across agents
+- Low friction: Single command vs. copying templates and filling manually
+
+SUCCESS METRICS:
+- Agent handoff time reduced by 80% (20-30 min → 2-3 min)
+- 100% handoff consistency (all use same template structure)
+- Zero missing critical context fields
+- New agent productive within 5-10 minutes (vs. 1+ hour)
+
+================================================================================

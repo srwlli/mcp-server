@@ -1,0 +1,9 @@
+{
+  "feature_name": "create-plan-auto-docs",
+  "description": "Enhance create_plan workflow to automatically generate plan.json and DELIVERABLES.md instead of returning instructions. The meta-tool should synthesize context into a complete plan and write files directly.",
+  "category": "improvement",
+  "priority": "medium",
+  "created": "2025-12-07T15:10:00Z",
+  "status": "stub",
+  "notes": "Currently create_plan returns instructions for AI to manually write files. Should auto-generate using internal LLM call or structured template filling."
+}

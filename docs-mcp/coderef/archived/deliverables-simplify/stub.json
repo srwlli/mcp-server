@@ -1,9 +1,0 @@
-{
-  "feature_name": "deliverables-simplify",
-  "description": "Simplify DELIVERABLES.md to single consolidated task checklist for agent accountability and progress tracking",
-  "category": "improvement",
-  "priority": "medium",
-  "created": "2025-12-07T23:30:00Z",
-  "status": "stub",
-  "user_intent": "accountability and reference - you can see where agent is"
-}

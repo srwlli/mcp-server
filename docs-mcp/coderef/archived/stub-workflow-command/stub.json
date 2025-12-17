@@ -1,8 +1,0 @@
-{
-  "feature_name": "stub-workflow-command",
-  "description": "Create /stub command to quickly log ideas as JSON entries",
-  "category": "feature",
-  "priority": "medium",
-  "created": "2025-12-05T19:00:00Z",
-  "status": "complete"
-}

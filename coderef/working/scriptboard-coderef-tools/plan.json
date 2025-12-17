@@ -1,0 +1,206 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "scriptboard-coderef-tools",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": false
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": ["scriptboard-mcp/server.py", "scriptboard-mcp/http_client.py"],
+      "reference_implementations": ["coderef_api.py patterns"],
+      "constraints": [
+        "Use port 8042 for coderef endpoints",
+        "Follow mcp__scriptboard__* naming pattern",
+        "Skip dashboard endpoint (HTML not useful for agents)"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Scriptboard CodeRef Tools",
+      "goal": "Enable AI agents to use CodeRef functionality through scriptboard-mcp tools",
+      "scope": "Add 4 CodeRef tools to scriptboard-mcp server",
+      "estimated_complexity": "low",
+      "files_affected": 2
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Port mismatch",
+          "mitigation": "Use separate CODEREF_URL constant for port 8042",
+          "severity": "low"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "scriptboard-mcp/http_client.py",
+          "purpose": "Add CodeRef HTTP methods"
+        },
+        {
+          "path": "scriptboard-mcp/server.py",
+          "purpose": "Add CodeRef MCP tools"
+        }
+      ],
+      "files_to_create": [],
+      "dependencies": ["Backend coderef_api.py already running on port 8042"]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "coderef_status",
+          "description": "Check if CodeRef CLI is available"
+        },
+        {
+          "name": "coderef_scan",
+          "description": "Scan directory for code elements (functions, classes, etc.)"
+        },
+        {
+          "name": "coderef_query",
+          "description": "Query element dependencies"
+        },
+        {
+          "name": "coderef_impact",
+          "description": "Analyze change impact for an element"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+        "name": "Scriptboard CodeRef Tools",
+        "feature_dir": "coderef/working/scriptboard-coderef-tools"
+      },
+      "tasks": [
+        {
+          "id": "CLIENT-001",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add CODEREF_URL constant to http_client.py",
+          "file": "scriptboard-mcp/http_client.py",
+          "complexity": "trivial"
+        },
+        {
+          "id": "CLIENT-002",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_status method to ScriptboardClient",
+          "file": "scriptboard-mcp/http_client.py",
+          "complexity": "low"
+        },
+        {
+          "id": "CLIENT-003",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_scan method to ScriptboardClient",
+          "file": "scriptboard-mcp/http_client.py",
+          "complexity": "low"
+        },
+        {
+          "id": "CLIENT-004",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_query method to ScriptboardClient",
+          "file": "scriptboard-mcp/http_client.py",
+          "complexity": "low"
+        },
+        {
+          "id": "CLIENT-005",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_impact method to ScriptboardClient",
+          "file": "scriptboard-mcp/http_client.py",
+          "complexity": "low"
+        },
+        {
+          "id": "SERVER-001",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_status tool definition to list_tools()",
+          "file": "scriptboard-mcp/server.py",
+          "complexity": "low"
+        },
+        {
+          "id": "SERVER-002",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_scan tool definition to list_tools()",
+          "file": "scriptboard-mcp/server.py",
+          "complexity": "low"
+        },
+        {
+          "id": "SERVER-003",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_query tool definition to list_tools()",
+          "file": "scriptboard-mcp/server.py",
+          "complexity": "low"
+        },
+        {
+          "id": "SERVER-004",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add coderef_impact tool definition to list_tools()",
+          "file": "scriptboard-mcp/server.py",
+          "complexity": "low"
+        },
+        {
+          "id": "SERVER-005",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Add tool handlers for all 4 coderef tools in call_tool()",
+          "file": "scriptboard-mcp/server.py",
+          "complexity": "medium"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-SCRIPTBOARD-CODEREF-TOOLS-001",
+          "description": "Test coderef tools via MCP",
+          "file": "N/A",
+          "complexity": "low"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "HTTP Client",
+          "description": "Add CodeRef methods to http_client.py",
+          "tasks": ["CLIENT-001", "CLIENT-002", "CLIENT-003", "CLIENT-004", "CLIENT-005"],
+          "deliverables": ["http_client.py with coderef methods"]
+        },
+        {
+          "phase": 2,
+          "name": "MCP Server",
+          "description": "Add CodeRef tools to server.py",
+          "tasks": ["SERVER-001", "SERVER-002", "SERVER-003", "SERVER-004", "SERVER-005"],
+          "deliverables": ["server.py with coderef tools"]
+        },
+        {
+          "phase": 3,
+          "name": "Testing",
+          "description": "Verify tools work via MCP",
+          "tasks": ["TEST-001"],
+          "deliverables": ["Verified working tools"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [],
+      "integration_tests": [
+        "Call coderef_status via MCP - verify CLI available",
+        "Call coderef_scan on test directory - verify elements returned",
+        "Call coderef_query on known element - verify results"
+      ]
+    },
+    "8_success_criteria": {
+      "criteria": [
+        "All 4 coderef tools visible in MCP tool list",
+        "coderef_status returns CLI availability",
+        "coderef_scan successfully scans a directory",
+        "coderef_query returns element dependencies",
+        "coderef_impact returns change analysis"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": ["Add CODEREF_URL", "Add 4 coderef methods"],
+      "phase_2": ["Add 4 tool definitions", "Add tool handlers"],
+      "phase_3": ["Test all tools"]
+    }
+  }
+}

@@ -25,6 +25,7 @@
     "shadcn/ui component library (copy-paste components, Radix UI + Tailwind)",
     "shadcn/ui component library (Radix UI + Tailwind)",
     "Browser APIs (Intersection Observer, localStorage, etc.)",
+    "Chrome DevTools MCP for browser debugging (console, network, performance, screenshots)",
     "Multi-agent coordination via communication.json protocol",
     "Workorder execution (WO-{FEATURE}-002 assignments from Lloyd)",
     "docs-mcp 37 tools across 7 domains",
@@ -41,7 +42,8 @@
     "TodoWrite",
     "mcp__docs-mcp__generate_technical_doc",
     "mcp__docs-mcp__check_consistency",
-    "mcp__docs-mcp__update_changelog"
+    "mcp__docs-mcp__update_changelog",
+    "mcp__chrome-devtools__*"
   ],
   "use_cases": [
     "Building responsive React components (navbars, cards, modals, forms)",
@@ -60,6 +62,8 @@
     "Building Next.js applications with App Router and Server Components",
     "Writing Storybook stories for component documentation and testing",
     "Integrating shadcn/ui components with React Hook Form and Zod validation",
+    "Debugging UI issues with Chrome DevTools MCP (console errors, network requests, DOM inspection)",
+    "Taking screenshots and performance traces via DevTools MCP",
     "Receiving workorders from Lloyd via communication.json",
     "Executing precise_steps for frontend tasks",
     "Respecting forbidden_files boundaries",

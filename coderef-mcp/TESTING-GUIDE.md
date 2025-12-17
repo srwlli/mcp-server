@@ -63,7 +63,7 @@ Add to `claude_desktop_config.json`:
       "command": "python",
       "args": ["C:/Users/willh/.mcp-servers/coderef-mcp/server.py"],
       "env": {
-        "CODEREF_CLI_PATH": "C:/Users/willh/Desktop/projects - current-location/coderef-system/packages/cli",
+        "CODEREF_CLI_PATH": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli",
         "CODEREF_LOG_LEVEL": "INFO"
       }
     }

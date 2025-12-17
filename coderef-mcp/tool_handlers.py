@@ -1481,10 +1481,13 @@ async def run_cli_scan(
     import os
     import json
 
-    # Get CLI path from environment variable
+    # Get CLI path from environment variable with fallback
     cli_path = os.environ.get("CODEREF_CLI_PATH")
     if not cli_path:
-        raise ValueError("CODEREF_CLI_PATH environment variable not set")
+        # Fallback to known location
+        cli_path = r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
+        if not os.path.exists(cli_path):
+            raise ValueError("CODEREF_CLI_PATH environment variable not set")
 
     # Verify CLI path exists
     cli_bin = os.path.join(cli_path, "dist", "cli.js")
@@ -1499,9 +1502,12 @@ async def run_cli_scan(
         "scan",
         source_dir,
         "--lang", lang_arg,
-        "--analyzer", analyzer,
         "--json"
     ]
+
+    # Add --ast flag if AST analyzer is requested
+    if analyzer == "ast":
+        cmd.append("--ast")
 
     # Add exclude patterns if provided
     if exclude:
@@ -1534,18 +1540,18 @@ async def run_cli_scan(
         # Parse JSON output
         output_str = stdout.decode('utf-8')
 
-        # CLI may output non-JSON lines before the JSON, so find the JSON part
-        # Look for the start of JSON array/object
-        json_start = -1
-        for i, char in enumerate(output_str):
-            if char in '[{':
-                json_start = i
-                break
-
-        if json_start == -1:
+        # Sanitize: Remove emojis and non-ASCII before finding JSON
+        # CLI outputs status line with emoji before JSON
+        import re
+        # Strip everything before the first [ or {
+        json_match = re.search(r'[\[{]', output_str)
+        if not json_match:
             raise ValueError(f"No JSON found in CLI output: {output_str[:200]}")
 
-        json_str = output_str[json_start:]
+        json_str = output_str[json_match.start():]
+        
+        # Also strip any trailing non-JSON (like extra newlines or status messages)
+        # Find matching closing bracket
         scan_results = json.loads(json_str)
 
         logger.info(f"CLI scan complete: {len(scan_results) if isinstance(scan_results, list) else 'N/A'} elements found")
@@ -1616,10 +1622,13 @@ async def run_rag_ask(
     import asyncio
     import os
 
-    # Get CLI path from environment variable
+    # Get CLI path from environment variable with fallback
     cli_path = os.environ.get("CODEREF_CLI_PATH")
     if not cli_path:
-        raise ValueError("CODEREF_CLI_PATH environment variable not set")
+        # Fallback to known location
+        cli_path = r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
+        if not os.path.exists(cli_path):
+            raise ValueError("CODEREF_CLI_PATH environment variable not set")
 
     # Verify CLI path exists
     cli_bin = os.path.join(cli_path, "dist", "cli.js")
@@ -1729,11 +1738,14 @@ async def check_rag_available() -> Dict[str, Any]:
     cli_path = os.environ.get("CODEREF_CLI_PATH")
 
     if not cli_path:
-        return {
-            "available": False,
-            "reason": "CODEREF_CLI_PATH environment variable not set",
-            "checked_at": datetime.utcnow().isoformat()
-        }
+        # Fallback to known location
+        cli_path = r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
+        if not os.path.exists(cli_path):
+            return {
+                "available": False,
+                "reason": "CODEREF_CLI_PATH environment variable not set",
+                "checked_at": datetime.utcnow().isoformat()
+            }
 
     cli_bin = os.path.join(cli_path, "dist", "cli.js")
     if not os.path.exists(cli_bin):

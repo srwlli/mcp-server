@@ -10,7 +10,7 @@
 
 **Main Project Directory**:
 ```
-C:\Users\willh\Desktop\projects - current-location\next-scraper\
+C:\Users\willh\Desktop\projects\next-scraper\
 ```
 
 ---
@@ -20,31 +20,31 @@ C:\Users\willh\Desktop\projects - current-location\next-scraper\
 ### For New Agents - READ IN THIS ORDER:
 
 1. **PROJECT-MAP.md** - 🎯 START HERE
-   - **Location**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\PROJECT-MAP.md`
+   - **Location**: `C:\Users\willh\Desktop\projects\next-scraper\PROJECT-MAP.md`
    - **Purpose**: Complete navigation guide with file locations
    - **Contains**: Project structure tree, absolute paths, task-based navigation
    - **Length**: 350+ lines
 
 2. **CLAUDE.md** - Project History & Overview
-   - **Location**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\CLAUDE.md`
+   - **Location**: `C:\Users\willh\Desktop\projects\next-scraper\CLAUDE.md`
    - **Purpose**: Full development log across all 4 sessions
    - **Contains**: Scraper details, database schema, performance metrics
    - **Status**: References PROJECT-MAP.md at top (line 3)
 
 3. **communication.json** - Session Changelog
-   - **Location**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\communication.json`
+   - **Location**: `C:\Users\willh\Desktop\projects\next-scraper\communication.json`
    - **Purpose**: Session-by-session changes log
    - **Contains**: What each agent did, files modified, commits made
    - **Status**: References PROJECT-MAP.md in header (lines 1-21)
 
 4. **DATABASE-ACCESS-GUIDE.md** - Database Instructions
-   - **Location**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\DATABASE-ACCESS-GUIDE.md`
+   - **Location**: `C:\Users\willh\Desktop\projects\next-scraper\DATABASE-ACCESS-GUIDE.md`
    - **Purpose**: Step-by-step database connection & query patterns
    - **Contains**: 600+ lines with schema patterns, troubleshooting, examples
    - **Status**: Has "WHERE TO FIND CRITICAL FILES" section at top (lines 9-56)
 
 5. **SESSION-PHASE-1-DEPLOYMENT.md** - Latest Technical Details
-   - **Location**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\SESSION-PHASE-1-DEPLOYMENT.md`
+   - **Location**: `C:\Users\willh\Desktop\projects\next-scraper\SESSION-PHASE-1-DEPLOYMENT.md`
    - **Purpose**: Phase 1 deployment technical details
    - **Contains**: Migration fixes, testing results, performance metrics
    - **Status**: Has "QUICK FILE REFERENCE" section at top (lines 10-33)
@@ -56,12 +56,12 @@ C:\Users\willh\Desktop\projects - current-location\next-scraper\
 ### Supabase Project Details:
 
 **Project Reference**:
-- **File**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\supabase\.temp\project-ref`
+- **File**: `C:\Users\willh\Desktop\projects\next-scraper\supabase\.temp\project-ref`
 - **Contents**: `fuzouuxhxluqjmiyabal`
 - **Purpose**: Required for `supabase link` command
 
 **Database Credentials**:
-- **File**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\.env.local`
+- **File**: `C:\Users\willh\Desktop\projects\next-scraper\.env.local`
 - **Variables**:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `SUPABASE_SERVICE_ROLE_KEY`
@@ -242,7 +242,7 @@ When an agent starts work on this project:
 ## 🔧 COMMON TROUBLESHOOTING
 
 ### "Cannot find project ref"
-- **File**: `C:\Users\willh\Desktop\projects - current-location\next-scraper\supabase\.temp\project-ref`
+- **File**: `C:\Users\willh\Desktop\projects\next-scraper\supabase\.temp\project-ref`
 - **Command**: `cat supabase/.temp/project-ref`
 - **Should show**: `fuzouuxhxluqjmiyabal`
 - **Note**: CLI linking is NOT persistent across sessions
@@ -328,7 +328,7 @@ If an agent needs specific information:
 **When greeting new agents**:
 ```
 "Welcome! Before we start, please read PROJECT-MAP.md for complete navigation:
-C:\Users\willh\Desktop\projects - current-location\next-scraper\PROJECT-MAP.md
+C:\Users\willh\Desktop\projects\next-scraper\PROJECT-MAP.md
 
 Then verify database connection:
 supabase link --project-ref fuzouuxhxluqjmiyabal

@@ -2,8 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python:*)",
-      "Read(//c/Users/willh/Desktop/projects - current-location/coderef-system/packages/core/**)",
-      "Read(//c/Users/willh/Desktop/projects - current-location/coderef-system/packages/cli/src/**)",
+      "Read(//c/Users/willh/Desktop/projects/coderef-system/packages/core/**)",
+      "Read(//c/Users/willh/Desktop/projects/coderef-system/packages/cli/src/**)",
       "Bash(claude mcp:*)",
       "mcp__docs-mcp__validate_implementation_plan",
       "Bash(curl:*)",
@@ -46,19 +46,33 @@
       "mcp__docs-mcp__suggest_context_experts",
       "mcp__docs-mcp__get_context_expert",
       "mcp__docs-mcp__gather_context",
-      "Bash(pyinstaller:*)"
+      "Bash(pyinstaller:*)",
+      "Bash(dir \"C:\\Users\\willh\\Desktop\\clipboard_compannion\\next\\backend\" /b)",
+      "Bash(uv sync:*)",
+      "Bash(uv run python:*)",
+      "mcp__scriptboard-mcp__mcp__scriptboard__add_attachment",
+      "Bash(cp:*)",
+      "Bash(python3:*)",
+      "mcp__docs-mcp__list_context_experts",
+      "WebSearch",
+      "Bash(dir /B \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\coderef\\inventory\")",
+      "Bash(.claude/commands/coderef-foundation-docs.md )",
+      "Bash(generators/coderef_foundation_generator.py )",
+      "Bash(generators/mermaid_formatter.py )",
+      "Bash(tests/unit/generators/test_coderef_foundation_generator.py )",
+      "Bash(tests/unit/generators/test_mermaid_formatter.py )",
+      "Bash(tests/integration/test_coderef_foundation_docs.py)",
+      "mcp__coderef-mcp__mcp__coderef__scan_realtime"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "coderef-mcp",
-    "docs-mcp",
-    "personas-mcp",
-    "hello-world-mcp",
     "personas",
     "coderef",
     "docs",
-    "hello-world"
+    "hello-world",
+    "scriptboard-mcp"
   ]
 }

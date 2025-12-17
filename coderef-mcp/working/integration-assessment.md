@@ -21,7 +21,7 @@ You have **two separate but complementary systems**:
 
 ### Location
 ```
-C:\Users\willh\Desktop\projects - current-location\coderef-system\
+C:\Users\willh\Desktop\projects\coderef-system\
 ```
 
 ### Technology Stack

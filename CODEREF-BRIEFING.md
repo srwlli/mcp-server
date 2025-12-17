@@ -116,8 +116,8 @@ nl_query: "find functions with no callers"
 | Component | Path |
 |-----------|------|
 | MCP Server | `C:\Users\willh\.mcp-servers\coderef-mcp\` |
-| CLI | `C:\Users\willh\Desktop\projects - current-location\coderef-system\packages\cli\` |
-| Core | `C:\Users\willh\Desktop\projects - current-location\coderef-system\packages\core\` |
+| CLI | `C:\Users\willh\Desktop\projects\coderef-system\packages\cli\` |
+| Core | `C:\Users\willh\Desktop\projects\coderef-system\packages\core\` |
 
 ---
 

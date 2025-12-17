@@ -2,24 +2,51 @@
   "mcpServers": {
     "personas": {
       "command": "uv",
-      "args": ["run", "server.py"],
+      "args": [
+        "run",
+        "server.py"
+      ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\personas-mcp"
     },
     "coderef": {
       "command": "uv",
-      "args": ["run", "server.py"],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp"
+      "args": [
+        "run",
+        "server.py"
+      ],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+      "env": {
+        "CODEREF_CLI_PATH": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli"
+      }
     },
     "docs": {
       "command": "uv",
-      "args": ["run", "server.py"],
+      "args": [
+        "run",
+        "server.py"
+      ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\docs-mcp"
     },
     "hello-world": {
       "command": "uv",
-      "args": ["run", "server.py"],
+      "args": [
+        "run",
+        "server.py"
+      ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp"
     },
+    "scriptboard-mcp": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py"
+      ],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp"
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ]
     }
   }
 }

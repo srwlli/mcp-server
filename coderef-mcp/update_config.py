@@ -10,7 +10,7 @@ with open(config_path, 'r') as f:
     config = json.load(f)
 
 # Get current project path (with proper escaping)
-project_path = r'C:\Users\willh\Desktop\projects - current-location\coderef-system'
+project_path = r'C:\Users\willh\Desktop\projects\coderef-system'
 
 # Initialize project config if it doesn't exist
 if project_path not in config.get('projects', {}):

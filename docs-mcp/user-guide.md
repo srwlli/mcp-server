@@ -429,7 +429,7 @@ Generate foundation documentation for my project at <absolute-path-to-project>
 #### Real Example
 
 ```
-Generate foundation documentation for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app
+Generate foundation documentation for my project at C:\Users\willh\Desktop\projects\sidebar-app
 ```
 
 #### What Happens
@@ -494,22 +494,22 @@ Generate individual doc for my project at <absolute-path-to-project> using templ
 
 **Update API Documentation:**
 ```
-Generate individual doc for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app using template api
+Generate individual doc for my project at C:\Users\willh\Desktop\projects\sidebar-app using template api
 ```
 
 **Update Components Documentation:**
 ```
-Generate individual doc for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app using template components
+Generate individual doc for my project at C:\Users\willh\Desktop\projects\sidebar-app using template components
 ```
 
 **Update Schema Documentation:**
 ```
-Generate individual doc for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app using template schema
+Generate individual doc for my project at C:\Users\willh\Desktop\projects\sidebar-app using template schema
 ```
 
 **Update User Guide Documentation:**
 ```
-Generate individual doc for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app using template user-guide
+Generate individual doc for my project at C:\Users\willh\Desktop\projects\sidebar-app using template user-guide
 ```
 
 #### What Happens
@@ -2320,7 +2320,7 @@ Generate foundation documentation for my project at Users\willh\Desktop\project
 Generate foundation documentation for my project at C:\Users\willh\Desktop\my-project
 
 # ✅ Correct: Path with spaces (quotes not needed in command)
-Generate foundation documentation for my project at C:\Users\willh\Desktop\projects - current-location\sidebar-app
+Generate foundation documentation for my project at C:\Users\willh\Desktop\projects\sidebar-app
 ```
 
 ---

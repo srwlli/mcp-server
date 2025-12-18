@@ -1,0 +1,286 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "mcp-tools-review",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Assistant)",
+    "has_context": true,
+    "has_analysis": true,
+    "created_at": "2025-12-18T05:35:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "docs-mcp/server.py",
+        "coderef-mcp/server.py",
+        "personas-mcp/server.py",
+        "scriptboard-mcp/server.py"
+      ],
+      "reference_implementations": [
+        "docs-mcp/tool_handlers.py",
+        "coderef-mcp/tool_handlers.py"
+      ],
+      "constraints": [
+        "Maintain backward compatibility for existing workflows",
+        "Each MCP server should remain independently functional",
+        "Minimize disruption to active users"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "MCP Tools Review and Consolidation",
+      "goal": "Merge redundant tools and simplify the MCP ecosystem to reduce context token usage and improve maintainability",
+      "scope": "Audit all tools across docs-mcp, coderef-mcp, personas-mcp, and scriptboard-mcp; identify redundancies; consolidate similar tools; remove unused tools",
+      "estimated_complexity": "medium",
+      "files_affected": 8
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "risks": [
+        {
+          "risk": "Breaking existing slash commands that depend on tools",
+          "mitigation": "Audit all .claude/commands/ files before removing tools",
+          "severity": "high"
+        },
+        {
+          "risk": "Removing tools that are used infrequently but critically",
+          "mitigation": "Create usage audit before removal decisions",
+          "severity": "medium"
+        },
+        {
+          "risk": "Merging tools incorrectly causing functionality loss",
+          "mitigation": "Test merged tools thoroughly before deployment",
+          "severity": "medium"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "existing_functionality": [
+        "docs-mcp: ~35 tools for documentation, planning, and workflow",
+        "coderef-mcp: ~8 tools for code analysis and querying",
+        "personas-mcp: ~8 tools for persona management and plan execution",
+        "scriptboard-mcp: ~6 tools for clipboard and coderef integration"
+      ],
+      "gaps": [
+        "Potential overlap between docs-mcp and scriptboard-mcp coderef tools",
+        "Similar functionality in personas-mcp plan tools and docs-mcp plan tools",
+        "No clear documentation of tool dependencies"
+      ],
+      "files_to_modify": [
+        { "path": "docs-mcp/server.py", "purpose": "Remove/consolidate redundant tool registrations" },
+        { "path": "docs-mcp/tool_handlers.py", "purpose": "Remove/consolidate redundant handlers" },
+        { "path": "coderef-mcp/server.py", "purpose": "Review tool registrations" },
+        { "path": "personas-mcp/server.py", "purpose": "Review tool registrations" },
+        { "path": "scriptboard-mcp/server.py", "purpose": "Review tool registrations" }
+      ],
+      "files_to_create": [
+        { "path": "docs/MCP-TOOLS-INVENTORY.md", "purpose": "Document all tools with usage and recommendations" }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Tool Audit",
+          "description": "Complete audit of all tools across all MCP servers"
+        },
+        {
+          "id": "F2",
+          "name": "Redundancy Identification",
+          "description": "Identify tools with overlapping functionality"
+        },
+        {
+          "id": "F3",
+          "name": "Tool Consolidation",
+          "description": "Merge similar tools into unified implementations"
+        },
+        {
+          "id": "F4",
+          "name": "Cleanup",
+          "description": "Remove unused or deprecated tools"
+        },
+        {
+          "id": "F5",
+          "name": "Documentation",
+          "description": "Document all remaining tools with clear use cases"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-MCP-TOOLS-REVIEW-001",
+        "name": "MCP Tools Review",
+        "feature_dir": "coderef/working/mcp-tools-review"
+      },
+      "tasks": [
+        {
+          "id": "AUDIT-001",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "List all tools in docs-mcp with descriptions",
+          "feature": "F1",
+          "estimated_effort": "medium",
+          "status": "pending"
+        },
+        {
+          "id": "AUDIT-002",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "List all tools in coderef-mcp with descriptions",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "AUDIT-003",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "List all tools in personas-mcp with descriptions",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "AUDIT-004",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "List all tools in scriptboard-mcp with descriptions",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REDUN-001",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Identify tools with overlapping functionality across servers",
+          "feature": "F2",
+          "estimated_effort": "medium",
+          "status": "pending"
+        },
+        {
+          "id": "REDUN-002",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Identify tools that duplicate Claude Code built-in capabilities",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "CONSOL-001",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Create consolidation plan for redundant tools",
+          "feature": "F3",
+          "estimated_effort": "medium",
+          "status": "pending"
+        },
+        {
+          "id": "CONSOL-002",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Execute tool consolidation (if approved)",
+          "feature": "F3",
+          "estimated_effort": "large",
+          "status": "pending"
+        },
+        {
+          "id": "CLEAN-001",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Identify unused tools for removal",
+          "feature": "F4",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "CLEAN-002",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Remove approved unused tools",
+          "feature": "F4",
+          "estimated_effort": "medium",
+          "status": "pending"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+          "description": "Create MCP-TOOLS-INVENTORY.md with all tools documented",
+          "feature": "F5",
+          "estimated_effort": "medium",
+          "status": "pending"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Audit",
+          "description": "Complete audit of all tools across all MCP servers",
+          "tasks": ["AUDIT-001", "AUDIT-002", "AUDIT-003", "AUDIT-004"],
+          "deliverables": ["Tool inventory spreadsheet/table for each server"]
+        },
+        {
+          "phase": 2,
+          "name": "Analysis",
+          "description": "Identify redundancies and consolidation opportunities",
+          "tasks": ["REDUN-001", "REDUN-002", "CONSOL-001"],
+          "deliverables": ["Redundancy report", "Consolidation recommendations"]
+        },
+        {
+          "phase": 3,
+          "name": "Execution",
+          "description": "Execute consolidation and cleanup",
+          "tasks": ["CONSOL-002", "CLEAN-001", "CLEAN-002"],
+          "deliverables": ["Updated server.py files", "Removed unused tools"]
+        },
+        {
+          "phase": 4,
+          "name": "Documentation",
+          "description": "Document final tool landscape",
+          "tasks": ["DOC-001"],
+          "deliverables": ["MCP-TOOLS-INVENTORY.md"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Verify each remaining tool still functions correctly",
+        "Test consolidated tools handle all previous use cases"
+      ],
+      "integration_tests": [
+        "Run /create-workorder end-to-end after changes",
+        "Verify all slash commands still work"
+      ],
+      "manual_tests": [
+        "Restart Claude Code and verify MCP servers load",
+        "Test common workflows like /create-plan, /execute-plan"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All MCP servers start without errors",
+        "All slash commands continue to function",
+        "No critical workflows broken"
+      ],
+      "quality": [
+        "Reduced total tool count by at least 10%",
+        "Each remaining tool has clear documentation",
+        "No duplicate functionality across servers"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] List docs-mcp tools",
+        "[ ] List coderef-mcp tools",
+        "[ ] List personas-mcp tools",
+        "[ ] List scriptboard-mcp tools"
+      ],
+      "phase_2": [
+        "[ ] Identify cross-server redundancies",
+        "[ ] Identify Claude Code duplicates",
+        "[ ] Create consolidation plan"
+      ],
+      "phase_3": [
+        "[ ] Execute consolidation",
+        "[ ] Identify unused tools",
+        "[ ] Remove unused tools"
+      ],
+      "phase_4": [
+        "[ ] Create MCP-TOOLS-INVENTORY.md"
+      ]
+    }
+  }
+}

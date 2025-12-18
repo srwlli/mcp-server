@@ -1,0 +1,20 @@
+{
+  "feature_name": "mcp-tools-review",
+  "description": "Review and consolidate all MCP tools across the ecosystem to reduce redundancy, improve documentation, and simplify the tool landscape. This involves auditing existing tools, identifying overlaps, merging similar functionality, and removing unused tools.",
+  "goal": "Merge redundant tools and simplify the MCP ecosystem to reduce context token usage and improve maintainability",
+  "requirements": [
+    "Identify redundant tools across all MCP servers",
+    "Document all tools with clear descriptions and use cases",
+    "Consolidate similar tools into unified implementations",
+    "Remove unused or deprecated tools"
+  ],
+  "out_of_scope": [],
+  "constraints": [],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+    "workorder_assigned_at": "2025-12-18T05:28:20.982067+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

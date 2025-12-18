@@ -156,7 +156,7 @@ Comprehensive documentation, planning, and project management system (32 tools).
 
 ```
 New Projects:     /establish-standards → /generate-docs
-Features:         /coderef-foundation-docs → /start-feature → /execute-plan
+Features:         /coderef-foundation-docs → /create-workorder → /execute-plan
 Maintenance:      /audit-codebase → /check-consistency
 Post-Feature:     /update-deliverables → /update-docs → /archive-feature
 ```
@@ -250,7 +250,7 @@ Custom slash commands available via `SlashCommand` tool:
 
 **docs-mcp Workflows:**
 - `/coderef-foundation-docs` - Generate unified foundation docs (ARCHITECTURE, SCHEMA, COMPONENTS)
-- `/start-feature` - Full planning workflow (gather → analyze → plan → validate)
+- `/create-workorder` - Full planning workflow (gather → analyze → plan → validate)
 - `/execute-plan` - Generate TodoWrite task list from plan
 - `/update-docs` - Update all documentation after feature completion
 - `/archive-feature` - Archive completed features

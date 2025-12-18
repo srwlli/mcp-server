@@ -240,24 +240,27 @@ Quick consistency check on modified files (pre-commit gate).
 # Claude checks only modified files for standards violations
 ```
 
-#### `/start-feature` (RECOMMENDED)
+#### `/create-workorder` (RECOMMENDED)
 **Primary entry point for feature planning.** Orchestrates the full workflow in one command.
 - Asks for feature name
 - Runs gather-context (interactive Q&A)
+- Runs coderef-foundation-docs (automatic)
 - Runs analyze-project-for-planning (automatic)
 - Runs create-plan (automatic)
 - Runs validate-plan (auto-fixes until score >= 90)
+- Logs workorder to both local and orchestrator
 - Commits planning artifacts to git
 
 ```bash
-# User types: /start-feature
-# Claude runs entire planning pipeline: gather → analyze → plan → validate → commit
+# User types: /create-workorder
+# Claude runs entire planning pipeline: gather → foundation docs → analyze → plan → validate → commit
 # Creates: context.json, analysis.json, plan.json, DELIVERABLES.md
+# Logs workorder to local and orchestrator workorder-log.txt
 ```
 
 **Complete Feature Lifecycle:**
 ```
-/start-feature → /execute-plan → implement → /update-deliverables → /update-docs → /update-foundation-docs → /archive-feature
+/create-workorder → /execute-plan → implement → /update-deliverables → /update-docs → /update-foundation-docs → /archive-feature
      │                │              │                │                  │                  │                    │
      │                │              │                │                  │                  │                    └─ Archive to coderef/archived/
      │                │              │                │                  │                  └─ Update API.md, user-guide.md, etc.
@@ -277,7 +280,7 @@ Standalone project analysis - use when you already have context or need fine-gra
 - Calls `analyze_project_for_planning` with current directory
 - Discovers foundation docs, standards, patterns
 - Identifies tech stack and reference components
-- **Note:** Usually not needed - `/start-feature` runs this automatically
+- **Note:** Usually not needed - `/create-workorder` runs this automatically
 
 ```bash
 # User types: /analyze-for-planning
@@ -313,7 +316,7 @@ Get feature implementation planning template for AI reference.
 
 #### `/create-plan` (Advanced)
 Standalone plan creation - use when you already have context.json and analysis.json.
-- **Tip:** Use `/start-feature` instead for the full automated workflow
+- **Tip:** Use `/create-workorder` instead for the full automated workflow
 - Asks user for feature name (alphanumeric, hyphens, underscores only)
 - Calls `create_plan` with current directory and feature name
 - Loads context.json and analysis.json if available
@@ -323,7 +326,7 @@ Standalone plan creation - use when you already have context.json and analysis.j
 ```bash
 # User types: /create-plan
 # Claude asks for feature name, then generates implementation plan
-# Best results require both context and analysis (use /start-feature)
+# Best results require both context and analysis (use /create-workorder)
 ```
 
 #### `/generate-plan-review`
@@ -469,9 +472,10 @@ Track agent status across features with real-time dashboard.
 
 ```bash
 # Step 1: Create plan (single agent)
-/start-feature
+/create-workorder
 # Feature name: auth-system
 # Creates: plan.json with workorder WO-AUTH-SYSTEM-001
+# Logs workorder to local and orchestrator
 
 # Step 2: Generate communication protocol
 /generate-agent-communication
@@ -573,6 +577,63 @@ Track agent status across features with real-time dashboard.
 - **Conflict Prevention**: Forbidden files prevent agents from stepping on each other
 - **Traceability**: Each agent has unique workorder for audit trail
 - **Verification**: Automated checks ensure quality before merge
+
+### Agent Handoff Protocol (STUB-015)
+
+When transferring work between agents, use the standardized handoff protocol:
+
+**1. Generate Handoff Context:**
+```bash
+/generate-handoff-context
+# Feature name: auth-system
+# Mode: full (or minimal for quick summary)
+```
+
+**2. Handoff Template Variables:**
+The `communication.json` includes a `handoff_prompt_template` field with these variables:
+
+| Variable | Source |
+|----------|--------|
+| `{{feature_name}}` | communication.json `feature` field |
+| `{{workorder_id}}` | communication.json `workorder_id` field |
+| `{{progress_percent}}` | communication.json `progress.percent` field |
+| `{{next_tasks_list}}` | First 3 pending tasks from `tasks` array |
+| `{{forbidden_files}}` | communication.json `details.forbidden_files` |
+| `{{success_criteria}}` | communication.json `success_criteria` |
+
+**3. Handoff Checklist:**
+Before handing off:
+- [ ] Update all task statuses in plan.json
+- [ ] Commit any uncommitted changes
+- [ ] Generate handoff context via `/generate-handoff-context`
+- [ ] Document any blockers or known issues
+- [ ] Verify communication.json `progress` is current
+
+After receiving handoff:
+- [ ] Read plan.json and communication.json
+- [ ] Check current task status and progress
+- [ ] Review forbidden files list
+- [ ] Continue from next pending task
+- [ ] Update task status as you work
+
+**4. Example Handoff Message:**
+```
+You are being handed off: auth-system
+
+Workorder: WO-AUTH-SYSTEM-001
+Progress: 45% (9/20 tasks complete)
+
+Files:
+- Plan: coderef/working/auth-system/plan.json
+- Communication: coderef/working/auth-system/communication.json
+
+Next Tasks:
+1. IMPL-003: Add refresh token logic
+2. IMPL-004: Implement logout endpoint
+3. TEST-002: Write integration tests
+
+Forbidden Files: server.py, tool_handlers.py
+```
 
 ---
 
@@ -791,6 +852,77 @@ M tests/test_auth.py
 - Agent handoff time < 5 minutes (vs 20-30 minutes manual)
 
 **Reduces handoff time from 20-30 minutes to under 5 minutes** by automatically extracting context from existing project files.
+
+#### `/audit-plans` **NEW in v3.0.0**
+Audit all plans in coderef/working/ directory for health and issues.
+- Calls `audit_plans` with current directory
+- Validates plan format (must be JSON)
+- Extracts progress status from tasks
+- Detects stale plans (>7 days without update)
+- Calculates health score (0-100)
+- Identifies issues and provides recommendations
+
+```bash
+# User types: /audit-plans
+# Claude scans all working features
+# Output: health score, issues, recommendations
+```
+
+**Health Score Calculation:**
+- Valid plans: +10 points each
+- Active progress: +5 points each
+- Invalid plans: -15 points each
+- Stale plans: -10 points each
+
+**When to use:**
+- Regular project health checks
+- Before starting new features
+- During sprint reviews
+- Identifying blocked or forgotten work
+
+#### `/git-release` **NEW in v3.0.0**
+Create a git release with tag and changelog-based release notes.
+- Asks for version number
+- Extracts release notes from CHANGELOG.json
+- Creates annotated git tag
+- Pushes tag to remote
+
+```bash
+# User types: /git-release
+# Claude asks for version (e.g., 1.5.0)
+# Creates tag v1.5.0 with changelog as release notes
+# Pushes tag to origin
+```
+
+**When to use:**
+- After completing a set of features/fixes
+- When ready to create a versioned release
+- For standardized release process
+
+#### `/features-inventory` **NEW in v3.0.0**
+Generate inventory of all features with status, progress, and workorder tracking.
+- Calls `generate_features_inventory` with current directory
+- Scans coderef/working/ and coderef/archived/
+- Extracts feature info from plan.json and context.json
+- Generates JSON or markdown output
+
+```bash
+# User types: /features-inventory
+# Claude generates inventory
+# Shows: active count, archived count, workorder coverage
+```
+
+**Output includes:**
+- Active features with status and progress
+- Archived features with timestamps
+- Statistics on workflow coverage
+- Workorder tracking information
+
+**When to use:**
+- Project status overview
+- Onboarding new team members
+- Audit trail documentation
+- Sprint planning reference
 
 **When to use slash commands:**
 - Faster than typing full MCP tool names
@@ -2553,6 +2685,175 @@ get_workorder_log(
    - Allow users to add their own templates
    - Store in `templates/custom/` directory
    - Extend beyond POWER framework
+
+---
+
+## Plan.json Format Enforcement (STUB-032)
+
+**Implementation Phase:** Phase 1 - Foundation
+
+### Standard Format
+All implementation plans MUST use the standard format:
+
+| Requirement | Value |
+|------------|-------|
+| **Format** | JSON (not .md, .txt, .yaml) |
+| **Location** | `coderef/working/{feature}/plan.json` |
+| **Creation** | Via `/create-plan` workflow |
+| **Schema** | Must include META_DOCUMENTATION and UNIVERSAL_PLANNING_STRUCTURE |
+
+### Why JSON Format?
+1. **Machine-readable** - Orchestrator can discover and index plans
+2. **Schema validation** - Validates against plan.schema.json
+3. **Workorder tracking** - Enables WO-{FEATURE}-001 ID system
+4. **Automated metrics** - Supports progress tracking and auditing
+5. **Timestamp support** - ISO 8601 timestamps on all outputs (STUB-036)
+
+### Invalid Formats (REJECTED)
+- `plan.md`, `PLAN.md` - Markdown plans
+- `implementation-plan.md` - Non-standard naming
+- `*.txt` plans - Plaintext plans
+- Plans outside `coderef/working/` directory
+
+### Enforcement Points
+
+1. **Lloyd Persona (STUB-039)**
+   - Operates in strict_mode by default
+   - Validates plan format before executing tasks
+   - Rejects non-JSON plans with guidance
+
+2. **Tool Handlers**
+   - `execute_plan` validates plan.json format
+   - `update_deliverables` requires valid plan.json
+   - Planning tools enforce standard location
+
+3. **Validation Module**
+   - `plan_format_validator.py` provides enforcement functions
+   - `enforce_plan_format()` - Main validation entry point
+   - `check_for_invalid_plans()` - Scans for non-compliant files
+
+### Using the Enforcement System
+
+```python
+from plan_format_validator import enforce_plan_format, check_for_invalid_plans
+
+# Validate a plan file
+is_valid, errors, feature = enforce_plan_format(
+    plan_path=Path('coderef/working/auth/plan.json'),
+    project_path=Path('.'),
+    strict=True
+)
+
+# Scan for invalid plans in working directory
+invalid = check_for_invalid_plans(Path('coderef/working'))
+for item in invalid:
+    print(f"{item['path']}: {item['issue']}")
+```
+
+### Response Timestamps (STUB-036)
+
+All tool responses using `format_success_response()` automatically include ISO 8601 timestamps:
+
+```json
+{
+  "success": true,
+  "files": ["plan.json"],
+  "timestamp": "2025-12-17T20:15:00.123456+00:00"
+}
+```
+
+This enables:
+- Workflow output tracking
+- Stale plan detection
+- Audit trail for compliance
+
+---
+
+## Naming Conventions (STUB-041)
+
+### Command Naming
+
+| Pattern | Example | Use For |
+|---------|---------|---------|
+| `/verb-noun` | `/create-plan` | Actions that create something |
+| `/verb-target` | `/update-deliverables` | Actions on specific targets |
+| `/noun-inventory` | `/features-inventory` | Listing/cataloging commands |
+| `/audit-noun` | `/audit-plans` | Inspection/validation commands |
+
+### Feature Naming
+
+- Use lowercase with hyphens: `auth-system`, `user-dashboard`
+- Be descriptive but concise: 3-4 words max
+- Avoid abbreviations unless well-known: `api`, `ui`, `db`
+- Workorder IDs follow: `WO-{FEATURE-NAME}-{NUMBER}`
+
+### File Naming
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Plan | `plan.json` | `coderef/working/auth-system/plan.json` |
+| Context | `context.json` | `coderef/working/auth-system/context.json` |
+| Deliverables | `DELIVERABLES.md` | `coderef/working/auth-system/DELIVERABLES.md` |
+| Communication | `communication.json` | `coderef/working/auth-system/communication.json` |
+
+---
+
+## Workflow Automation (STUB-042)
+
+### Complete Feature Lifecycle
+
+```
+/create-workorder
+    ├── Creates feature directory
+    ├── Generates context.json
+    ├── Generates foundation docs
+    ├── Runs analysis
+    ├── Creates plan.json
+    ├── Validates plan (score >= 90)
+    ├── Logs workorder to local and orchestrator
+    └── Commits planning artifacts
+
+/execute-plan
+    ├── Loads plan.json
+    ├── Generates TodoWrite tasks
+    └── Logs execution
+
+[Implementation Phase]
+    ├── Agent implements tasks
+    ├── Updates task status in plan.json
+    └── Runs verify_step for each task
+
+/update-deliverables
+    ├── Parses git history
+    ├── Calculates metrics (LOC, commits, time)
+    └── Updates DELIVERABLES.md
+
+/update-docs
+    ├── Auto-increments version
+    ├── Updates README.md
+    ├── Updates CLAUDE.md
+    └── Adds CHANGELOG.json entry
+
+/archive-feature
+    ├── Verifies completion status
+    ├── Moves to coderef/archived/
+    ├── Updates index.json
+    └── Logs to workorder-log.txt
+```
+
+### Automation Opportunities
+
+1. **Pre-commit hooks**: Run `/check-consistency` before commits
+2. **CI/CD integration**: Run `/audit-plans` in pipelines
+3. **Scheduled audits**: Weekly `/audit-plans` for project health
+4. **Auto-archive**: Archive features after 30 days in complete status
+
+### Best Practices
+
+- Always complete the full lifecycle (don't skip /update-docs)
+- Use workorder IDs for traceability
+- Keep plan.json status updated during implementation
+- Run /features-inventory periodically for project overview
 
 ---
 

@@ -14,7 +14,7 @@ Run this **after** `/update-docs` and **before** `/archive-feature` when your fe
 ## Workflow Position
 
 ```
-/start-feature → implement → /update-deliverables → /update-docs → /update-foundation-docs → /archive-feature
+/create-workorder → implement → /update-deliverables → /update-docs → /update-foundation-docs → /archive-feature
 ```
 
 ## Instructions

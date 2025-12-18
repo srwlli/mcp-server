@@ -10,14 +10,14 @@
 
 The working directory is currently empty. All previous features have been archived to `coderef/archived/`.
 
-To start a new feature, run `/start-feature`.
+To start a new feature, run `/create-workorder`.
 
 ---
 
 ## Complete Feature Lifecycle
 
 ```
-/start-feature ─┬─> /gather-context        → context.json
+/create-workorder ─┬─> /gather-context        → context.json
                 ├─> /analyze-for-planning  → analysis.json
                 ├─> /create-plan           → plan.json + DELIVERABLES.md
                 └─> /validate-plan         → Score 0-100
@@ -48,7 +48,7 @@ To start a new feature, run `/start-feature`.
 ### Planning Phase
 | Command | Description | Output |
 |---------|-------------|--------|
-| `/start-feature` | **Full automated workflow** | Runs all planning steps |
+| `/create-workorder` | **Full automated workflow** | Runs all planning steps |
 | `/gather-context` | Collect feature requirements | `context.json` |
 | `/analyze-for-planning` | Discover docs, patterns | `analysis.json` |
 | `/create-plan` | Generate implementation plan | `plan.json` + `DELIVERABLES.md` |
@@ -94,7 +94,7 @@ coderef/working/{feature-name}/
 
 ### Start a New Feature
 ```bash
-/start-feature
+/create-workorder
 # Follow the interactive prompts
 # Creates: context.json, analysis.json, plan.json, DELIVERABLES.md
 ```

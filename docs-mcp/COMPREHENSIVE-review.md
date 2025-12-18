@@ -118,7 +118,7 @@
 
 | Command | Rating | Agentic Value |
 |---------|--------|---------------|
-| `/start-feature` | **9/10** | ⭐ RECOMMENDED - Full pipeline orchestration |
+| `/create-workorder` | **9/10** | ⭐ RECOMMENDED - Full pipeline orchestration |
 | `/gather-context` | **8/10** | Structured requirements capture |
 | `/analyze-for-planning` | **9/10** | Automates context gathering |
 | `/create-plan` | **9/10** | Core planning engine |
@@ -199,7 +199,7 @@
 
 ## Top 10 Slash Commands (Agentic Value)
 
-1. `/start-feature` (9) - ⭐ Full pipeline orchestration
+1. `/create-workorder` (9) - ⭐ Full pipeline orchestration
 2. `/quick-inventory` (9) - ⭐ All 7 tools in one call
 3. `/create-plan` (9) - Core planning engine
 4. `/analyze-for-planning` (9) - Automates context gathering
@@ -216,7 +216,7 @@
 
 ### Completed ✅
 
-1. ~~**Consolidate planning entry points**~~ → `/start-feature` is now RECOMMENDED
+1. ~~**Consolidate planning entry points**~~ → `/create-workorder` is now RECOMMENDED
 2. ~~**Enhance dependency_inventory**~~ → Added `fix_command` field
 3. ~~**Add `/quick-inventory`**~~ → Runs all 7 inventory tools
 4. ~~**Add reference commands**~~ → `/list-tools` and `/list-commands`
@@ -287,7 +287,7 @@ The agentic perspective recognizes that tools rated low for human use are essent
 docs-mcp is a comprehensive **agentic toolkit** designed for AI agents to autonomously manage documentation, planning, and project analysis.
 
 ### Standout Features
-- **Planning Pipeline**: `/start-feature` → `/execute-plan` → implement → `/archive-feature`
+- **Planning Pipeline**: `/create-workorder` → `/execute-plan` → implement → `/archive-feature`
 - **Inventory Suite**: `/quick-inventory` runs 7 analysis tools in one call
 - **Self-Documentation**: Agents track their own work via changelogs, deliverables, workorders
 - **Multi-Agent Coordination**: 5 tools for parallel agent workflows

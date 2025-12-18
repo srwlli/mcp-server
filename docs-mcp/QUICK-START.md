@@ -4,7 +4,7 @@
 
 | Command | Description |
 |----------|--------------|
-| `/start-feature` | **RECOMMENDED** - Full planning workflow (gather → analyze → plan → validate) |
+| `/create-workorder` | **RECOMMENDED** - Full planning workflow (gather → analyze → plan → validate) |
 | `/quick-inventory` | **RECOMMENDED** - Run all 7 inventory tools at once |
 | `/generate-docs` | Generate all foundation docs |
 
@@ -46,7 +46,7 @@
 
 | Command | Description |
 |----------|--------------|
-| `/start-feature` ⭐ | **RECOMMENDED** - Complete planning pipeline |
+| `/create-workorder` ⭐ | **RECOMMENDED** - Complete planning pipeline |
 | `/gather-context` | Gather feature requirements |
 | `/analyze-for-planning` | Analyze project for planning (Advanced) |
 | `/create-plan` | Create implementation plan (Advanced) |
@@ -56,7 +56,7 @@
 
 **Recommended Workflow:**
 ```
-/start-feature → /execute-plan → implement → /update-deliverables → /archive-feature
+/create-workorder → /execute-plan → implement → /update-deliverables → /archive-feature
 ```
 
 ---

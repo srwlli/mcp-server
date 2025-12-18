@@ -19,7 +19,7 @@
   - check_consistency - Lightweight pre-commit quality gate
 
   Planning & Validation:
-  - Use /start-feature command for full workflow (recommended)
+  - Use /create-workorder command for full workflow (recommended)
   - execute_plan - Generate TodoWrite task list from plan.json
   - validate_implementation_plan - Validate plan quality (scores 0-100)
   - generate_plan_review_report - Create human-readable plan review
@@ -87,15 +87,15 @@
   - /check-consistency - Quick consistency check on modified files (pre-commit gate)
 
   Planning & Validation:
-  - /start-feature - RECOMMENDED: Full planning workflow (gather → analyze → plan → validate → commit)
+  - /create-workorder - RECOMMENDED: Full planning workflow (gather → analyze → plan → validate → commit)
   - /execute-plan - Generate TodoWrite task list from plan.json
   - /validate-plan - Validate implementation plan quality (scores 0-100)
   - /generate-plan-review - Generate human-readable plan review report
 
   Advanced (standalone):
-  - /gather-context - Gather feature requirements (use /start-feature instead)
-  - /analyze-for-planning - Analyze project for planning (use /start-feature instead)
-  - /create-plan - Create implementation plan (use /start-feature instead)
+  - /gather-context - Gather feature requirements (use /create-workorder instead)
+  - /analyze-for-planning - Analyze project for planning (use /create-workorder instead)
+  - /create-plan - Create implementation plan (use /create-workorder instead)
   - /get-planning-template - Get implementation planning template
 
   Deliverables Tracking:

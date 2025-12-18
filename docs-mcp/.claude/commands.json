@@ -37,8 +37,8 @@
       "category": "planning"
     },
     {
-      "name": "start-feature",
-      "description": "Start new feature with full planning workflow (gather, analyze, plan, validate)",
+      "name": "create-workorder",
+      "description": "Create new workorder with full planning workflow (gather, analyze, plan, validate)",
       "category": "planning"
     },
     {
@@ -261,7 +261,7 @@
     "planning": {
       "description": "Implementation planning workflow commands",
       "commands": [
-        "start-feature",
+        "create-workorder",
         "gather-context",
         "analyze-for-planning",
         "get-planning-template",

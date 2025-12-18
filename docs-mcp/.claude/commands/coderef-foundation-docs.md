@@ -73,4 +73,4 @@ After generation, read each file and fill these markers with context-aware conte
 
 ## Usage
 
-Use this command at the start of the /start-feature workflow to gather comprehensive project context for planning.
+Use this command at the start of the /create-workorder workflow to gather comprehensive project context for planning.

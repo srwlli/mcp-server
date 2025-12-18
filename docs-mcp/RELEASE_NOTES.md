@@ -11,7 +11,7 @@
 ### v2.7.0 - Consolidated Planning & Reference Commands
 
 **New Slash Commands:**
-- `/start-feature` ⭐ **RECOMMENDED** - Single entry point for complete planning workflow (replaces 4 commands)
+- `/create-workorder` ⭐ **RECOMMENDED** - Single entry point for complete planning workflow (replaces 4 commands)
 - `/quick-inventory` ⭐ **RECOMMENDED** - Run all 7 inventory tools in one command
 - `/list-tools` - Display all 54 MCP tools across 3 servers
 - `/list-commands` - Display all 40 slash commands by category
@@ -25,7 +25,7 @@
 - Simplified command format for better slash command recognition
 
 **Documentation Updates:**
-- Consolidated planning entry points to `/start-feature`
+- Consolidated planning entry points to `/create-workorder`
 - Updated workflow examples to use recommended commands
 - Added Reference Commands category
 

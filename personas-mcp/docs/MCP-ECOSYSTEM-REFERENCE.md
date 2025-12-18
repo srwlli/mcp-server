@@ -209,6 +209,6 @@ coderef/working/{feature}/
 `CE-{slug}-NNN` (e.g., CE-server_py-001)
 
 ### Integration Points
-- During /start-feature: Check for relevant experts
+- During /create-workorder: Check for relevant experts
 - During /execute-plan: Load expert context for files
 - After implementation: Update stale experts

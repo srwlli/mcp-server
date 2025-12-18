@@ -53,7 +53,7 @@ from logger_config import logger
 
 # Import decorators and helpers (ARCH-004, ARCH-005, QUA-004)
 from handler_decorators import mcp_error_handler, log_invocation
-from handler_helpers import format_success_response, generate_workorder_id, get_workorder_timestamp
+from handler_helpers import format_success_response, generate_workorder_id, get_workorder_timestamp, add_response_timestamp
 
 
 @log_invocation
@@ -1369,6 +1369,21 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f"Save the plan to:\n"
     result += f"  {project_path}/coderef/working/{feature_name}/plan.json\n\n"
 
+    # NEW in v3.1.0: Log workorder to orchestrator
+    result += f"=" * 60 + "\n\n"
+    result += f"📋 WORKORDER LOGGING (AUTOMATIC)\n"
+    result += f"-" * 60 + "\n\n"
+    result += f"After saving plan.json, AUTOMATICALLY call:\n\n"
+    result += f"  mcp__docs-mcp__log_workorder(\n"
+    result += f"    project_path='{project_path}',\n"
+    result += f"    workorder_id='{workorder_id}',\n"
+    result += f"    project_name='{project_path.name}',\n"
+    result += f"    description='{feature_name} implementation plan'\n"
+    result += f"  )\n\n"
+    result += f"This logs the workorder to both:\n"
+    result += f"- Local: {project_path}/coderef/workorder-log.txt\n"
+    result += f"- Orchestrator: ~/.mcp-servers/coderef/workorder-log.txt\n\n"
+
     # NEW in v1.11.0: Auto-generate DELIVERABLES.md
     result += f"=" * 60 + "\n\n"
     result += f"📊 DELIVERABLES GENERATION (AUTOMATIC)\n"
@@ -1657,30 +1672,13 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     """
     Handle update_deliverables tool call.
 
-    Updates DELIVERABLES.md with actual metrics from git history.
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
+    Marks DELIVERABLES.md as complete. Simple status update without git analysis.
     """
-    from handler_helpers import (
-        format_success_response,
-        git_parse_history,
-        git_calculate_loc,
-        git_calculate_time_spent,
-        check_git_available
-    )
+    from handler_helpers import format_success_response
 
     # Validate inputs
     project_path = validate_project_path_input(arguments.get("project_path", ""))
     feature_name = validate_feature_name_input(arguments.get("feature_name", ""))
-
-    logger.info(
-        f"Updating DELIVERABLES.md with git metrics for feature: {feature_name}",
-        extra={'project_path': str(project_path), 'feature_name': feature_name}
-    )
-
-    # Check if git is available
-    if not check_git_available(Path(project_path)):
-        raise ValueError("Git repository not found or git command not available")
 
     # Define feature directory
     feature_dir = Path(project_path) / 'coderef' / 'working' / feature_name
@@ -1688,62 +1686,24 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
 
     # Check if DELIVERABLES.md exists
     if not deliverables_path.exists():
-        raise FileNotFoundError(f"DELIVERABLES.md not found for feature '{feature_name}'. Run /create-plan first to generate template.")
+        raise FileNotFoundError(f"DELIVERABLES.md not found for feature '{feature_name}'. Run /create-plan first.")
 
-    # Parse git history for metrics
-    commits = git_parse_history(Path(project_path), feature_name)
-    loc = git_calculate_loc(Path(project_path), feature_name)
-    time_spent = git_calculate_time_spent(Path(project_path), feature_name)
-
-    # Read current DELIVERABLES.md
-    with open(deliverables_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # Replace metric placeholders with actual values
-    # LOC metrics
-    content = content.replace('**Lines of Code Added**: TBD', f"**Lines of Code Added**: {loc['added']}")
-    content = content.replace('**Lines of Code Deleted**: TBD', f"**Lines of Code Deleted**: {loc['deleted']}")
-    content = content.replace('**Net LOC**: TBD', f"**Net LOC**: {loc['net']}")
-
-    # Commit metrics
-    content = content.replace('**Total Commits**: TBD', f"**Total Commits**: {len(commits)}")
-    if commits:
-        contributors = list(set(c['author'] for c in commits))
-        content = content.replace('**Contributors**: TBD', f"**Contributors**: {', '.join(contributors)}")
-
-    # Time metrics
-    if time_spent['first_commit']:
-        content = content.replace('**First Commit**: TBD', f"**First Commit**: {time_spent['first_commit']}")
-        content = content.replace('**Last Commit**: TBD', f"**Last Commit**: {time_spent['last_commit']}")
-        content = content.replace('**Days Elapsed**: TBD', f"**Days Elapsed**: {time_spent['days']}")
-        content = content.replace('**Hours Spent (Wall Clock)**: TBD', f"**Hours Spent (Wall Clock)**: {time_spent['hours']}")
-
-    # Update status if metrics show completion
-    if len(commits) > 0:
-        content = content.replace('**Status**: 🚧 Not Started', '**Status**: ✅ Complete')
-
-    # Update last updated timestamp
+    # Read, update status, write
+    content = deliverables_path.read_text(encoding='utf-8')
+    content = content.replace('**Status**: 🚧 Not Started', '**Status**: ✅ Complete')
     content = content.replace('**Last Updated**: ', f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Previous: ")
+    deliverables_path.write_text(content, encoding='utf-8')
 
-    # Save updated DELIVERABLES.md
-    with open(deliverables_path, 'w', encoding='utf-8') as f:
-        f.write(content)
-
-    logger.info(f"DELIVERABLES.md updated successfully with {len(commits)} commits, {loc['net']} net LOC")
+    logger.info(f"DELIVERABLES.md marked complete for feature: {feature_name}")
 
     return format_success_response(
         data={
             'deliverables_path': str(deliverables_path.relative_to(Path(project_path))),
             'feature_name': feature_name,
-            'commits_found': len(commits),
-            'loc_added': loc['added'],
-            'loc_deleted': loc['deleted'],
-            'net_loc': loc['net'],
-            'days_elapsed': time_spent['days'],
-            'hours_spent': time_spent['hours'],
+            'status': 'complete',
             'success': True
         },
-        message=f"✅ DELIVERABLES.md updated with metrics from {len(commits)} commits"
+        message=f"✅ DELIVERABLES.md marked complete for {feature_name}"
     )
 
 
@@ -3204,9 +3164,40 @@ async def handle_log_workorder(arguments: dict) -> list[TextContent]:
             f.write(log_entry)
             f.write(existing_content)
 
-        logger.info(f"Workorder logged successfully: {workorder_id}")
+        logger.info(f"Workorder logged successfully to local: {workorder_id}")
     except IOError as e:
         raise IOError(f"Failed to write workorder log: {e}")
+
+    # Dual logging: Also write to orchestrator's workorder-log.txt
+    orchestrator_logged = False
+    orchestrator_log_path = None
+    try:
+        from constants import OrchestratorPaths
+        orchestrator_root = Path(OrchestratorPaths.ROOT)
+        orchestrator_log_path = orchestrator_root / OrchestratorPaths.WORKORDER_LOG
+
+        # Ensure orchestrator coderef directory exists
+        orchestrator_log_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Read existing orchestrator log content
+        orchestrator_existing = ""
+        if orchestrator_log_path.exists():
+            with open(orchestrator_log_path, 'r', encoding='utf-8') as f:
+                orchestrator_existing = f.read()
+
+        # Write new entry at top of orchestrator log
+        with open(orchestrator_log_path, 'w', encoding='utf-8') as f:
+            f.write(log_entry)
+            f.write(orchestrator_existing)
+
+        orchestrator_logged = True
+        logger.info(f"Workorder logged successfully to orchestrator: {workorder_id}")
+    except Exception as e:
+        # Graceful failure - log warning but don't fail the operation
+        logger.warning(
+            f"Failed to log workorder to orchestrator (non-blocking): {e}",
+            extra={'workorder_id': workorder_id, 'orchestrator_path': str(orchestrator_log_path) if orchestrator_log_path else 'unknown'}
+        )
 
     return format_success_response(
         data={
@@ -3215,9 +3206,11 @@ async def handle_log_workorder(arguments: dict) -> list[TextContent]:
             'description': description,
             'timestamp': timestamp,
             'log_file': str(log_file.relative_to(Path(project_path))),
+            'orchestrator_logged': orchestrator_logged,
+            'orchestrator_log_file': str(orchestrator_log_path) if orchestrator_logged else None,
             'success': True
         },
-        message=f"✅ Logged workorder {workorder_id} to {Files.WORKORDER_LOG}"
+        message=f"✅ Logged workorder {workorder_id} to {Files.WORKORDER_LOG}" + (" + orchestrator" if orchestrator_logged else "")
     )
 
 
@@ -3591,13 +3584,15 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
     include_components = arguments.get('include_components')  # None = auto-detect
     deep_extraction = arguments.get('deep_extraction', True)
     use_coderef = arguments.get('use_coderef', True)
+    force_regenerate = arguments.get('force_regenerate', False)
 
     logger.info(
         f"Starting coderef foundation docs generation for: {project_path_obj}",
         extra={
             'include_components': include_components,
             'deep_extraction': deep_extraction,
-            'use_coderef': use_coderef
+            'use_coderef': use_coderef,
+            'force_regenerate': force_regenerate
         }
     )
 
@@ -3609,7 +3604,8 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
         project_path_obj,
         include_components=include_components,
         deep_extraction=deep_extraction,
-        use_coderef=use_coderef
+        use_coderef=use_coderef,
+        force_regenerate=force_regenerate
     )
 
     # Run generation
@@ -3626,24 +3622,507 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
 
     # Return only summary to reduce token usage (full data saved to project-context.json)
     project_context = result.get('project_context', {})
+    coderef_info = project_context.get('coderef', {})
+
+    # Include progress information in summary
     summary = {
         'files_generated': result.get('files_generated', []),
+        'files_skipped': result.get('files_skipped', []),
+        'generated_count': result.get('generated_count', 0),
+        'skipped_count': result.get('skipped_count', 0),
+        'doc_timings': result.get('doc_timings', {}),
         'output_dir': result.get('output_dir', ''),
+        'duration_seconds': result.get('duration_seconds', 0),
+        'force_regenerate': result.get('force_regenerate', False),
         'summary': {
             'api_endpoints': project_context.get('api_context', {}).get('count', 0),
             'frameworks': project_context.get('api_context', {}).get('frameworks_detected', []),
             'dependencies': project_context.get('dependencies', {}).get('count', 0),
             'database_tables': project_context.get('database', {}).get('table_count', 0),
             'handlers': len(project_context.get('patterns', {}).get('handlers', [])),
-            'coderef_available': project_context.get('coderef', {}).get('available', False),
-            'coderef_elements': project_context.get('coderef', {}).get('element_count', 0),
+            'coderef_available': coderef_info.get('available', False),
+            'coderef_elements': coderef_info.get('element_count', 0),
+            'auto_scan_performed': result.get('auto_scan_performed', False),
         },
         'context_file': str(Path(result.get('output_dir', '')) / 'project-context.json')
     }
 
+    # Build message with progress info
+    generated_count = result.get('generated_count', 0)
+    skipped_count = result.get('skipped_count', 0)
+    duration = result.get('duration_seconds', 0)
+
+    if skipped_count > 0:
+        progress_msg = f"generated {generated_count}, skipped {skipped_count}"
+    else:
+        progress_msg = f"generated {generated_count}"
+
+    if result.get('auto_scan_performed'):
+        message = f"✅ Foundation docs complete ({progress_msg}) - auto-scanned {coderef_info.get('element_count', 0)} elements in {duration}s"
+    elif coderef_info.get('available'):
+        message = f"✅ Foundation docs complete ({progress_msg}) - {coderef_info.get('element_count', 0)} elements from existing index in {duration}s"
+    else:
+        message = f"✅ Foundation docs complete ({progress_msg}) - regex fallback in {duration}s"
+
     return format_success_response(
         data=summary,
-        message=f"✅ Foundation docs generated: {', '.join(result.get('files_generated', []))}"
+        message=message
+    )
+
+
+# =============================================================================
+# Progress Tracking (STUB-009)
+# =============================================================================
+
+@log_invocation
+@mcp_error_handler
+async def handle_update_task_status(arguments: dict) -> list[TextContent]:
+    """
+    Handle update_task_status tool call (STUB-009).
+
+    Updates task status in plan.json as agents complete work.
+    Enables progress tracking during execution.
+
+    Args (in arguments):
+        project_path: Absolute path to project directory
+        feature_name: Feature name (folder in coderef/working/)
+        task_id: Task ID to update (e.g., "SETUP-001", "IMPL-002")
+        status: New status ("pending", "in_progress", "completed", "blocked")
+        notes: Optional notes about the status change
+
+    Returns:
+        Success response with updated task info and progress summary
+    """
+    # Validate inputs
+    project_path_str = arguments.get('project_path', '')
+    feature_name = arguments.get('feature_name', '')
+    task_id = arguments.get('task_id', '')
+    status = arguments.get('status', '')
+    notes = arguments.get('notes', '')
+
+    project_path = Path(validate_project_path_input(project_path_str)).resolve()
+    feature_name = validate_feature_name_input(feature_name)
+
+    # Validate status
+    valid_statuses = ['pending', 'in_progress', 'completed', 'blocked']
+    if status not in valid_statuses:
+        raise ValueError(f"Invalid status '{status}'. Must be one of: {', '.join(valid_statuses)}")
+
+    if not task_id:
+        raise ValueError("task_id is required")
+
+    # Load plan.json
+    plan_path = project_path / 'coderef' / 'working' / feature_name / 'plan.json'
+    if not plan_path.exists():
+        raise FileNotFoundError(f"Plan not found: {plan_path}")
+
+    with open(plan_path, 'r', encoding='utf-8') as f:
+        plan_data = json.load(f)
+
+    # Find and update task in section 9 (implementation checklist)
+    structure = plan_data.get('UNIVERSAL_PLANNING_STRUCTURE', {})
+    checklist = structure.get('9_implementation_checklist', {})
+
+    task_found = False
+    old_status = None
+
+    # Search through checklist categories
+    for category_name, category_tasks in checklist.items():
+        if isinstance(category_tasks, list):
+            for task in category_tasks:
+                if isinstance(task, dict) and task.get('id') == task_id:
+                    old_status = task.get('status', 'pending')
+                    task['status'] = status
+                    task['updated_at'] = get_workorder_timestamp()
+                    if notes:
+                        task['notes'] = notes
+                    task_found = True
+                    break
+        if task_found:
+            break
+
+    # Also search in section 5 tasks array
+    if not task_found:
+        task_section = structure.get('5_task_id_system', {})
+        tasks = task_section.get('tasks', [])
+        for task in tasks:
+            if isinstance(task, dict) and task.get('id') == task_id:
+                old_status = task.get('status', 'pending')
+                task['status'] = status
+                task['updated_at'] = get_workorder_timestamp()
+                if notes:
+                    task['notes'] = notes
+                task_found = True
+                break
+
+    if not task_found:
+        raise ValueError(f"Task '{task_id}' not found in plan.json")
+
+    # Update META_DOCUMENTATION with last_updated timestamp
+    if 'META_DOCUMENTATION' in plan_data:
+        plan_data['META_DOCUMENTATION']['last_updated'] = get_workorder_timestamp()
+
+    # Save updated plan
+    with open(plan_path, 'w', encoding='utf-8') as f:
+        json.dump(plan_data, f, indent=2, ensure_ascii=False)
+        f.write('\n')
+
+    # Calculate progress summary
+    total_tasks = 0
+    completed_tasks = 0
+    in_progress_tasks = 0
+    blocked_tasks = 0
+
+    for category_name, category_tasks in checklist.items():
+        if isinstance(category_tasks, list):
+            for task in category_tasks:
+                if isinstance(task, dict):
+                    total_tasks += 1
+                    task_status = task.get('status', 'pending')
+                    if task_status == 'completed':
+                        completed_tasks += 1
+                    elif task_status == 'in_progress':
+                        in_progress_tasks += 1
+                    elif task_status == 'blocked':
+                        blocked_tasks += 1
+
+    progress_percent = round((completed_tasks / total_tasks) * 100, 1) if total_tasks > 0 else 0
+
+    logger.info(f"Task status updated: {task_id} ({old_status} -> {status})", extra={
+        'feature_name': feature_name,
+        'task_id': task_id,
+        'old_status': old_status,
+        'new_status': status,
+        'progress_percent': progress_percent
+    })
+
+    return format_success_response(
+        data={
+            'task_id': task_id,
+            'old_status': old_status,
+            'new_status': status,
+            'notes': notes,
+            'plan_path': str(plan_path.relative_to(project_path)),
+            'progress': {
+                'total': total_tasks,
+                'completed': completed_tasks,
+                'in_progress': in_progress_tasks,
+                'blocked': blocked_tasks,
+                'pending': total_tasks - completed_tasks - in_progress_tasks - blocked_tasks,
+                'percent': progress_percent
+            }
+        },
+        message=f"✅ Task {task_id} status updated: {old_status} → {status}"
+    )
+
+
+@log_invocation
+@mcp_error_handler
+async def handle_audit_plans(arguments: dict) -> list[TextContent]:
+    """
+    Handle audit_plans tool call (STUB-011).
+
+    Audits all plans in coderef/working/ directory to provide:
+    - Plan format validation (must be JSON)
+    - Progress status extraction
+    - Stale plan detection (>7 days since last update)
+    - Issue identification and recommendations
+
+    Args (in arguments):
+        project_path: Absolute path to project directory
+        stale_days: Days without update to consider stale (default: 7)
+        include_archived: Whether to also audit archived plans (default: False)
+
+    Returns:
+        Success response with audit results for all plans
+    """
+    from plan_format_validator import enforce_plan_format, check_for_invalid_plans
+
+    # Validate inputs
+    project_path_str = arguments.get('project_path', '')
+    stale_days = arguments.get('stale_days', 7)
+    include_archived = arguments.get('include_archived', False)
+
+    project_path = Path(validate_project_path_input(project_path_str)).resolve()
+
+    # Validate stale_days is reasonable
+    if not isinstance(stale_days, int) or stale_days < 1 or stale_days > 365:
+        raise ValueError("stale_days must be an integer between 1 and 365")
+
+    # Build paths
+    working_dir = project_path / 'coderef' / 'working'
+    archived_dir = project_path / 'coderef' / 'archived'
+
+    if not working_dir.exists():
+        raise FileNotFoundError(f"Working directory not found: {working_dir}")
+
+    audit_results = {
+        'total_features': 0,
+        'valid_plans': 0,
+        'invalid_plans': 0,
+        'stale_plans': 0,
+        'active_plans': 0,
+        'completed_plans': 0,
+        'features': [],
+        'issues': [],
+        'recommendations': []
+    }
+
+    # Scan for invalid plan files first
+    invalid_files = check_for_invalid_plans(working_dir)
+    for invalid in invalid_files:
+        audit_results['issues'].append({
+            'type': 'invalid_format',
+            'severity': 'critical',
+            'path': str(invalid['path']),
+            'issue': invalid['issue']
+        })
+
+    # Scan working directory for features
+    dirs_to_scan = [working_dir]
+    if include_archived and archived_dir.exists():
+        dirs_to_scan.append(archived_dir)
+
+    current_time = datetime.now()
+    stale_threshold = current_time.timestamp() - (stale_days * 24 * 60 * 60)
+
+    for scan_dir in dirs_to_scan:
+        is_archived = scan_dir == archived_dir
+
+        for feature_dir in scan_dir.iterdir():
+            if not feature_dir.is_dir():
+                continue
+
+            audit_results['total_features'] += 1
+            feature_name = feature_dir.name
+            plan_path = feature_dir / 'plan.json'
+
+            feature_audit = {
+                'feature_name': feature_name,
+                'location': 'archived' if is_archived else 'working',
+                'has_plan': False,
+                'plan_valid': False,
+                'is_stale': False,
+                'progress': None,
+                'workorder_id': None,
+                'last_updated': None,
+                'issues': []
+            }
+
+            if not plan_path.exists():
+                feature_audit['issues'].append('No plan.json found')
+                audit_results['issues'].append({
+                    'type': 'missing_plan',
+                    'severity': 'major',
+                    'feature': feature_name,
+                    'issue': 'No plan.json found in feature directory'
+                })
+            else:
+                feature_audit['has_plan'] = True
+
+                # Validate plan format
+                is_valid, errors, _ = enforce_plan_format(
+                    plan_path=plan_path,
+                    project_path=project_path,
+                    strict=False
+                )
+
+                if is_valid:
+                    feature_audit['plan_valid'] = True
+                    audit_results['valid_plans'] += 1
+
+                    # Load plan to extract details
+                    try:
+                        with open(plan_path, 'r', encoding='utf-8') as f:
+                            plan_data = json.load(f)
+
+                        # Extract workorder ID
+                        meta = plan_data.get('META_DOCUMENTATION', {})
+                        feature_audit['workorder_id'] = meta.get('workorder_id')
+                        feature_audit['last_updated'] = meta.get('last_updated')
+
+                        # Check staleness
+                        last_modified = plan_path.stat().st_mtime
+                        if last_modified < stale_threshold:
+                            feature_audit['is_stale'] = True
+                            audit_results['stale_plans'] += 1
+                            feature_audit['issues'].append(
+                                f'Plan is stale (not updated in {stale_days}+ days)'
+                            )
+
+                        # Extract progress from section 9
+                        structure = plan_data.get('UNIVERSAL_PLANNING_STRUCTURE', {})
+                        checklist = structure.get('9_implementation_checklist', {})
+
+                        total = 0
+                        completed = 0
+                        in_progress = 0
+                        blocked = 0
+
+                        for category, tasks in checklist.items():
+                            if isinstance(tasks, list):
+                                for task in tasks:
+                                    if isinstance(task, dict):
+                                        total += 1
+                                        status = task.get('status', 'pending')
+                                        if status == 'completed':
+                                            completed += 1
+                                        elif status == 'in_progress':
+                                            in_progress += 1
+                                        elif status == 'blocked':
+                                            blocked += 1
+
+                        if total > 0:
+                            percent = round((completed / total) * 100, 1)
+                            feature_audit['progress'] = {
+                                'total': total,
+                                'completed': completed,
+                                'in_progress': in_progress,
+                                'blocked': blocked,
+                                'pending': total - completed - in_progress - blocked,
+                                'percent': percent
+                            }
+
+                            # Determine plan status
+                            if percent == 100:
+                                audit_results['completed_plans'] += 1
+                            elif in_progress > 0 or completed > 0:
+                                audit_results['active_plans'] += 1
+
+                            # Check for blocked tasks
+                            if blocked > 0:
+                                feature_audit['issues'].append(
+                                    f'{blocked} task(s) are blocked'
+                                )
+                                audit_results['issues'].append({
+                                    'type': 'blocked_tasks',
+                                    'severity': 'major',
+                                    'feature': feature_name,
+                                    'issue': f'{blocked} blocked task(s) need attention'
+                                })
+
+                    except json.JSONDecodeError as e:
+                        feature_audit['issues'].append(f'Invalid JSON: {e.msg}')
+                        audit_results['issues'].append({
+                            'type': 'invalid_json',
+                            'severity': 'critical',
+                            'feature': feature_name,
+                            'issue': f'plan.json is malformed: {e.msg}'
+                        })
+
+                else:
+                    audit_results['invalid_plans'] += 1
+                    for error in errors:
+                        feature_audit['issues'].append(error)
+                        audit_results['issues'].append({
+                            'type': 'validation_error',
+                            'severity': 'major',
+                            'feature': feature_name,
+                            'issue': error
+                        })
+
+            audit_results['features'].append(feature_audit)
+
+    # Generate recommendations based on issues
+    if audit_results['invalid_plans'] > 0:
+        audit_results['recommendations'].append(
+            f"Fix {audit_results['invalid_plans']} invalid plan(s) using /create-plan"
+        )
+
+    if audit_results['stale_plans'] > 0:
+        audit_results['recommendations'].append(
+            f"Review {audit_results['stale_plans']} stale plan(s) - consider archiving if complete"
+        )
+
+    blocked_count = sum(1 for issue in audit_results['issues'] if issue.get('type') == 'blocked_tasks')
+    if blocked_count > 0:
+        audit_results['recommendations'].append(
+            f"Resolve blockers in {blocked_count} feature(s) to continue progress"
+        )
+
+    missing_count = sum(1 for issue in audit_results['issues'] if issue.get('type') == 'missing_plan')
+    if missing_count > 0:
+        audit_results['recommendations'].append(
+            f"Create plans for {missing_count} feature(s) using /create-workorder"
+        )
+
+    # Calculate summary stats
+    audit_results['health_score'] = 0
+    if audit_results['total_features'] > 0:
+        # Score calculation: valid plans get points, issues subtract points
+        valid_ratio = audit_results['valid_plans'] / audit_results['total_features']
+        issue_penalty = min(len(audit_results['issues']) * 5, 50)  # Max 50 point penalty
+        audit_results['health_score'] = max(0, round(valid_ratio * 100 - issue_penalty))
+
+    logger.info(f"Plan audit complete: {audit_results['valid_plans']}/{audit_results['total_features']} valid plans, health score: {audit_results['health_score']}")
+
+    return format_success_response(
+        data={
+            'total_features': audit_results['total_features'],
+            'valid_plans': audit_results['valid_plans'],
+            'invalid_plans': audit_results['invalid_plans'],
+            'stale_plans': audit_results['stale_plans'],
+            'active_plans': audit_results['active_plans'],
+            'completed_plans': audit_results['completed_plans'],
+            'health_score': audit_results['health_score'],
+            'issues_count': len(audit_results['issues']),
+            'issues': audit_results['issues'][:20],  # Limit to first 20 issues
+            'recommendations': audit_results['recommendations'],
+            'features': audit_results['features']
+        },
+        message=f"✅ Plan audit: {audit_results['valid_plans']}/{audit_results['total_features']} valid, health score: {audit_results['health_score']}/100"
+    )
+
+
+@log_invocation
+@mcp_error_handler
+async def handle_generate_features_inventory(arguments: dict) -> list[TextContent]:
+    """
+    Handle generate_features_inventory tool call.
+
+    Scans coderef/working/ and coderef/archived/ to generate a comprehensive
+    inventory of all features with their status, progress, and workorder tracking.
+
+    Args (in arguments):
+        project_path: Absolute path to project directory
+        format: Output format - 'json' or 'markdown' (default: 'json')
+        include_archived: Whether to include archived features (default: True)
+        save_to_file: Whether to save output to coderef/ directory (default: False)
+
+    Returns:
+        Success response with features inventory
+    """
+    from generators.features_inventory_generator import FeaturesInventoryGenerator
+
+    # Validate inputs
+    project_path_str = arguments.get('project_path', '')
+    output_format = arguments.get('format', 'json')
+    include_archived = arguments.get('include_archived', True)
+    save_to_file = arguments.get('save_to_file', False)
+
+    project_path = Path(validate_project_path_input(project_path_str)).resolve()
+
+    # Validate format
+    if output_format not in ('json', 'markdown'):
+        raise ValueError("format must be 'json' or 'markdown'")
+
+    # Generate inventory
+    generator = FeaturesInventoryGenerator(project_path)
+
+    if output_format == 'json':
+        inventory = generator.generate_inventory(include_archived=include_archived)
+        result = inventory
+    else:
+        result = {'content': generator.generate_markdown(include_archived=include_archived)}
+
+    # Optionally save to file
+    if save_to_file:
+        output_path = generator.save_inventory(format=output_format)
+        result['saved_to'] = str(output_path.relative_to(project_path))
+
+    return format_success_response(
+        data=result,
+        message=f"[OK] Features inventory generated: {result.get('summary', {}).get('total_count', 'N/A')} features"
     )
 
 
@@ -3677,11 +4156,14 @@ TOOL_HANDLERS = {
     'archive_feature': handle_archive_feature,
     'update_all_documentation': handle_update_all_documentation,
     'execute_plan': handle_execute_plan,
+    'update_task_status': handle_update_task_status,
+    'audit_plans': handle_audit_plans,
     'log_workorder': handle_log_workorder,
     'get_workorder_log': handle_get_workorder_log,
     'generate_handoff_context': handle_generate_handoff_context,
     'assess_risk': handle_assess_risk,
     'coderef_foundation_docs': handle_coderef_foundation_docs,
+    'generate_features_inventory': handle_generate_features_inventory,
 }
 
 

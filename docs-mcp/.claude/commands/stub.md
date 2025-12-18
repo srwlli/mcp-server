@@ -22,4 +22,4 @@ Then:
 
 Confirm with: "Stubbed: coderef/working/{feature-name}/stub.json"
 
-Note: When /start-feature runs, it will detect stub.json and use it as initial context.
+Note: When /create-workorder runs, it will detect stub.json and use it as initial context.

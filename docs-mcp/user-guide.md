@@ -1604,7 +1604,7 @@ AI: You can now run /analyze-for-planning to create implementation plan
 
 #### Planning Commands (6)
 
-##### `/start-feature` ⭐ RECOMMENDED
+##### `/create-workorder` ⭐ RECOMMENDED
 **Primary entry point for feature planning.** Orchestrates the full workflow in one command.
 
 **What it does:**
@@ -1622,12 +1622,12 @@ AI: You can now run /analyze-for-planning to create implementation plan
 
 **Workflow:**
 ```
-/start-feature → /execute-plan → implement → /update-deliverables → /archive-feature
+/create-workorder → /execute-plan → implement → /update-deliverables → /archive-feature
 ```
 
 **Example:**
 ```
-You: /start-feature
+You: /create-workorder
 AI: What feature would you like to plan? auth-system
 AI: [Runs full planning pipeline automatically]
 AI: Created: context.json, analysis.json, plan.json, DELIVERABLES.md
@@ -1880,7 +1880,7 @@ Display all slash commands organized by category.
 | `/validate-plan` | `validate_implementation_plan` | Prompts for filename |
 | `/generate-plan-review` | `generate_plan_review_report` | Prompts for filename |
 | `/handoff` | `generate_handoff_context` | Prompts for feature name and mode |
-| `/start-feature` ⭐ | (Workflow) | Orchestrates full planning pipeline |
+| `/create-workorder` ⭐ | (Workflow) | Orchestrates full planning pipeline |
 | `/execute-plan` | `execute_plan` | Prompts for feature name |
 | `/quick-inventory` ⭐ | (Runs all 7 inventory tools) | Uses current directory |
 | `/list-tools` | (Reference only) | Displays all MCP tools |
@@ -1905,7 +1905,7 @@ You: /generate-docs
 AI: Creates 5 foundation docs: README, ARCHITECTURE, API, COMPONENTS, SCHEMA
 
 # 3. Plan a new feature (one command runs full planning pipeline)
-You: /start-feature
+You: /create-workorder
 AI: What feature? "auth-system"
 AI: [Runs gather-context, analyze, create-plan, validate automatically]
 AI: Created: context.json, analysis.json, plan.json, DELIVERABLES.md
@@ -1931,7 +1931,7 @@ AI: Feature name? "auth-system"
 AI: Archived to coderef/archived/auth-system/
 ```
 
-**Key insight:** `/start-feature` + `/execute-plan` replaces 6-8 manual steps!
+**Key insight:** `/create-workorder` + `/execute-plan` replaces 6-8 manual steps!
 
 ---
 

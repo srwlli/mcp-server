@@ -4,9 +4,9 @@
 
 ---
 
-## /start-feature Workflow
+## /create-workorder Workflow
 
-### When to Use /start-feature
+### When to Use /create-workorder
 - Starting ANY new feature implementation
 - User says "help me build...", "I want to add...", "let's implement..."
 - Work requires planning before coding
@@ -21,7 +21,7 @@
 
 ### Command Relationship
 ```
-/start-feature = /gather-context + /analyze-for-planning + /create-plan + /validate-plan
+/create-workorder = /gather-context + /analyze-for-planning + /create-plan + /validate-plan
 ```
 
 ---
@@ -35,7 +35,7 @@
 - Creates context.json with WO-{FEATURE}-001
 
 ### Step 2 - Analyze Project
-- Runs automatically in /start-feature
+- Runs automatically in /create-workorder
 - Discovers existing patterns, standards, docs
 - Identifies gaps and risks early
 - Creates analysis.json

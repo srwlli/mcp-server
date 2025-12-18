@@ -1,0 +1,177 @@
+{
+  "feature_name": "create-plan-workflow-improvements",
+  "description": "Comprehensive improvements to the create-plan workflow lifecycle: enforce plan.json format, track progress during execution, add timestamps, include testing, standardize git workflow as final step, improve handoff protocol, and generate features.md for all projects.",
+  "goal": "Make the create-plan workflow robust, consistent, and fully trackable from start (gather-context) to finish (archive-feature) with proper enforcement, progress tracking, git integration, and standardized feature documentation across all projects.",
+  "requirements": [
+    "Enforce plan.json as the only plan format (no plan.md, PLAN.md, etc.)",
+    "Standard location: coderef/working/{feature}/plan.json",
+    "Agents must update task status as they complete work",
+    "Timestamps on all workflow outputs (ISO 8601)",
+    "Optional incremental testing within each task",
+    "Git workflow as final step (bump, commit, push, deploy)",
+    "Lloyd persona strict mode for plan.json execution",
+    "Standard features.md template for all projects at coderef/user/features.md",
+    "Features.md documents current state (tools, APIs, features) per project"
+  ],
+  "constraints": [
+    "Backwards compatible with existing plan.json files",
+    "Must work across all projects using docs-mcp",
+    "Minimal additional overhead for agents"
+  ],
+  "merged_stubs": [
+    {
+      "stub_id": "STUB-032",
+      "feature_name": "enforce-plan-json",
+      "description": "Agents must save plans as plan.json in standard format for orchestrator discovery",
+      "priority": "high",
+      "solution": {
+        "standard_location": "coderef/working/{feature}/plan.json",
+        "standard_format": "Use docs-mcp /create-plan workflow",
+        "enforcement": "Add to CLAUDE.md in all projects, MCP persona instructions"
+      }
+    },
+    {
+      "stub_id": "STUB-009",
+      "feature_name": "plan-progress-tracking",
+      "description": "Agents update task status as they complete work",
+      "priority": "high",
+      "problem": "Agents execute tasks but plan.json task statuses remain unchanged",
+      "solutions": [
+        "Add explicit instruction in plan.json template",
+        "Add post-task hook to update status",
+        "Include status update in task definition",
+        "DELIVERABLES.md sync with plan.json"
+      ]
+    },
+    {
+      "stub_id": "STUB-028",
+      "feature_name": "plan-audit-workflow",
+      "description": "Scan and index all plan.json, surface stale/active plans",
+      "priority": "high",
+      "queries": [
+        "What plans are stale (no update > 7 days)?",
+        "What plans are in progress?",
+        "What plans are blocked?",
+        "What's the completion rate per project?"
+      ]
+    },
+    {
+      "stub_id": "STUB-010",
+      "feature_name": "incremental-testing-workflow",
+      "description": "Include test step within each task during implementation",
+      "priority": "medium",
+      "implementation_options": [
+        "Add test_step field to task schema in plan.json",
+        "Include 'verify' sub-task for each main task",
+        "Flag in plan template: include_incremental_tests: true/false"
+      ]
+    },
+    {
+      "stub_id": "STUB-036",
+      "feature_name": "timestamp-enforcement",
+      "description": "Timestamps on all workflow outputs",
+      "priority": "medium",
+      "affected": [
+        "docs-mcp tool outputs",
+        "personas-mcp tool outputs",
+        "Slash command executions",
+        "Workorder status updates",
+        "Plan phase transitions"
+      ]
+    },
+    {
+      "stub_id": "STUB-038",
+      "feature_name": "git-workflow-mcp",
+      "description": "Git workflow as final step of plan.json completion",
+      "priority": "medium",
+      "lifecycle": "implement → update-deliverables → git-workflow → archive-feature",
+      "steps": ["version bump", "commit changes", "push to remote", "optionally package/deploy"]
+    },
+    {
+      "stub_id": "STUB-039",
+      "feature_name": "enforce-plan-json-lloyd",
+      "description": "Lloyd persona strict mode for plan.json execution",
+      "priority": "medium"
+    },
+    {
+      "stub_id": "STUB-040",
+      "feature_name": "start-feature-workflow-update",
+      "description": "Pre-execution commit and /execute-plan before implementation",
+      "priority": "medium"
+    },
+    {
+      "stub_id": "STUB-041",
+      "feature_name": "rename-workflows",
+      "description": "Better naming for start-feature and other workflows",
+      "priority": "medium"
+    },
+    {
+      "stub_id": "STUB-042",
+      "feature_name": "automated-workflows",
+      "description": "General workflow automation ideas",
+      "priority": "medium"
+    },
+    {
+      "stub_id": "STUB-008",
+      "feature_name": "workorder-handoff-protocol",
+      "description": "Standard protocol for delegating to project agents",
+      "priority": "high",
+      "desired_state": [
+        "Standard workorder prompt format",
+        "Shared file protocol (communication.json)",
+        "Status tracking across agents",
+        "Results aggregation"
+      ]
+    },
+    {
+      "stub_id": "STUB-002",
+      "feature_name": "tool-inventory-workflow",
+      "description": "Generate features.md for all projects documenting current tools, APIs, and features",
+      "priority": "high",
+      "workorder_id": "WO-TOOL-INVENTORY-001",
+      "status": "approved",
+      "template": {
+        "location": "coderef/user/features.md",
+        "sections": [
+          "Summary (category counts)",
+          "Core Features (feature, description, status)",
+          "Tools/Commands (name, description, usage)",
+          "API Endpoints (endpoint, method, description)",
+          "Planned/Roadmap (feature, priority, related stub)"
+        ]
+      },
+      "rollout": [
+        "Scriptboard",
+        "Scrapper",
+        "Gridiron",
+        "Noted",
+        "App-Documents",
+        "Multi-tenant",
+        "MCP Servers (docs-mcp, coderef-mcp, personas-mcp, scriptboard-mcp)"
+      ]
+    }
+  ],
+  "workflow_lifecycle": {
+    "current": "gather-context → create-plan → execute-plan → update-deliverables → archive-feature",
+    "proposed": "gather-context → create-plan → execute-plan (with progress tracking + testing) → update-deliverables → git-workflow → archive-feature"
+  },
+  "success_criteria": {
+    "functional": [
+      "All agents use plan.json format consistently",
+      "Task status updates during execution",
+      "Timestamps on all outputs",
+      "Git workflow integrated as final step"
+    ],
+    "quality": [
+      "Orchestrator can discover and track all plans",
+      "Stale plan detection works reliably",
+      "Progress visible at any point in workflow"
+    ]
+  },
+  "_metadata": {
+    "created": "2025-12-17T00:00:00Z",
+    "updated": "2025-12-17T00:00:00Z",
+    "source": "Merged from 12 orchestrator stubs",
+    "target_project": "docs-mcp"
+  }
+}

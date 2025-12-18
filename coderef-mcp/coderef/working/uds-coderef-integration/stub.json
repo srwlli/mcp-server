@@ -1,0 +1,8 @@
+{
+  "feature_name": "uds-coderef-integration",
+  "description": "Review UDS material and integrate it into coderef system",
+  "category": "idea",
+  "priority": "medium",
+  "created": "2025-12-15T12:23:00.000Z",
+  "status": "stub"
+}

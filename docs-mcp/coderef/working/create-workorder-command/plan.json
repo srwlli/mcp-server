@@ -1,0 +1,202 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "create-workorder-command",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Assistant)",
+    "has_context": false,
+    "has_analysis": true,
+    "created_at": "2025-12-17T21:00:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "docs-mcp/CLAUDE.md",
+        "docs-mcp/constants.py",
+        "docs-mcp/tool_handlers.py",
+        "docs-mcp/.claude/commands/start-feature.md"
+      ],
+      "reference_implementations": [
+        "handle_log_workorder() in tool_handlers.py",
+        "handle_create_plan() in tool_handlers.py"
+      ],
+      "constraints": [
+        "Backwards compatible with existing /start-feature usage",
+        "Graceful failure if orchestrator path not accessible",
+        "Must work on Windows paths"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Rename /start-feature to /create-workorder + Dual Logging",
+      "goal": "Rename command for clarity and add automatic logging to both local project AND orchestrator's workorder-log.txt for central tracking",
+      "scope": "Rename command, add orchestrator path constant, modify log_workorder for dual logging, call log_workorder in create_plan",
+      "estimated_complexity": "low",
+      "files_affected": 4
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Orchestrator path not accessible",
+          "mitigation": "Graceful failure - log warning, don't fail primary operation",
+          "severity": "low"
+        },
+        {
+          "risk": "Breaking existing /start-feature references",
+          "mitigation": "Update all references in CLAUDE.md",
+          "severity": "low"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "existing_functionality": [
+        "/start-feature creates plan.json and DELIVERABLES.md",
+        "log_workorder writes to {project}/coderef/workorder-log.txt only",
+        "log_workorder is called only during archive-feature, not create_plan"
+      ],
+      "gaps": [
+        "No central workorder discovery for orchestrator",
+        "Workorders not logged when created, only when archived",
+        "Command name doesn't reflect workorder terminology"
+      ],
+      "files_to_modify": [
+        { "path": ".claude/commands/start-feature.md", "purpose": "Rename to create-workorder.md" },
+        { "path": "constants.py", "purpose": "Add OrchestratorPaths class" },
+        { "path": "tool_handlers.py", "purpose": "Dual logging + call in create_plan" },
+        { "path": "CLAUDE.md", "purpose": "Update command references" }
+      ],
+      "files_to_create": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Rename Command",
+          "description": "Rename /start-feature to /create-workorder"
+        },
+        {
+          "id": "F2",
+          "name": "Dual Logging",
+          "description": "log_workorder writes to both local and orchestrator paths"
+        },
+        {
+          "id": "F3",
+          "name": "Auto-Log on Create",
+          "description": "Call log_workorder when plan.json is created"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CREATE-WORKORDER-COMMAND-001",
+        "name": "Create Workorder Command",
+        "feature_dir": "coderef/working/create-workorder-command"
+      },
+      "tasks": [
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-CREATE-WORKORDER-COMMAND-001",
+          "description": "Rename start-feature.md to create-workorder.md",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "completed"
+        },
+        {
+          "id": "CMD-002",
+          "workorder_id": "WO-CREATE-WORKORDER-COMMAND-001",
+          "description": "Add OrchestratorPaths class to constants.py with ROOT path",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "completed"
+        },
+        {
+          "id": "CMD-003",
+          "workorder_id": "WO-CREATE-WORKORDER-COMMAND-001",
+          "description": "Modify handle_log_workorder() to also write to orchestrator path",
+          "feature": "F2",
+          "estimated_effort": "medium",
+          "status": "completed"
+        },
+        {
+          "id": "CMD-004",
+          "workorder_id": "WO-CREATE-WORKORDER-COMMAND-001",
+          "description": "Add log_workorder call in handle_create_plan() after plan.json creation",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "completed"
+        },
+        {
+          "id": "CMD-005",
+          "workorder_id": "WO-CREATE-WORKORDER-COMMAND-001",
+          "description": "Update CLAUDE.md references from /start-feature to /create-workorder",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "completed"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Rename & Constants",
+          "description": "Rename command and add orchestrator path constant",
+          "tasks": ["CMD-001", "CMD-002"],
+          "deliverables": ["create-workorder.md exists", "OrchestratorPaths in constants.py"]
+        },
+        {
+          "phase": 2,
+          "name": "Dual Logging",
+          "description": "Modify log_workorder for dual logging and call in create_plan",
+          "tasks": ["CMD-003", "CMD-004"],
+          "deliverables": ["log_workorder writes to both paths", "create_plan calls log_workorder"]
+        },
+        {
+          "phase": 3,
+          "name": "Documentation",
+          "description": "Update all references in CLAUDE.md",
+          "tasks": ["CMD-005"],
+          "deliverables": ["CLAUDE.md updated"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test log_workorder writes to local path",
+        "Test log_workorder writes to orchestrator path",
+        "Test graceful failure when orchestrator path not accessible"
+      ],
+      "integration_tests": [
+        "Run /create-workorder and verify both log files updated"
+      ],
+      "manual_tests": [
+        "Verify orchestrator can read workorder-log.txt"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "/create-workorder command works",
+        "Workorder logged to local coderef/workorder-log.txt",
+        "Workorder logged to orchestrator coderef/workorder-log.txt"
+      ],
+      "quality": [
+        "Graceful failure if orchestrator not accessible",
+        "No breaking changes to existing functionality"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[x] Rename start-feature.md to create-workorder.md",
+        "[x] Add OrchestratorPaths class to constants.py"
+      ],
+      "phase_2": [
+        "[x] Modify handle_log_workorder() for dual logging",
+        "[x] Add log_workorder call in handle_create_plan()"
+      ],
+      "phase_3": [
+        "[x] Update CLAUDE.md references"
+      ]
+    }
+  }
+}

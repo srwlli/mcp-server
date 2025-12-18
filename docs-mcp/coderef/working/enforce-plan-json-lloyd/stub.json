@@ -1,0 +1,10 @@
+{
+  "stub_id": "STUB-039",
+  "feature_name": "enforce-plan-json-lloyd",
+  "description": "Enforce plan.json in Lloyd persona and no other planning tool for execution. Start-feature strict mode.",
+  "category": "idea",
+  "priority": "medium",
+  "tags": ["mcp", "workflow"],
+  "created": "2025-12-15T12:18:00.000Z",
+  "status": "stub"
+}

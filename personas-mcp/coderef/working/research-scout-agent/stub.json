@@ -1,0 +1,11 @@
+{
+  "stub_id": "STUB-024",
+  "feature_name": "research-scout-agent",
+  "description": "A research assistant persona/agent that scouts new tasks, explores feasibility, gathers context, and helps refine ideas before they become workorders. Can research APIs, libraries, patterns, and provide summaries to inform planning.",
+  "category": "feature",
+  "priority": "medium",
+  "tags": ["orchestrator", "workflow"],
+  "created": "2025-12-16T00:00:00Z",
+  "status": "stub",
+  "notes": "Could be MCP persona or standalone agent. Helps bridge gap between raw idea and actionable stub."
+}

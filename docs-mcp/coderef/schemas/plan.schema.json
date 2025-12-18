@@ -2,50 +2,40 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "plan.schema.json",
   "title": "Implementation Plan Schema",
-  "description": "Single source of truth for plan.json structure. Used by /create-plan and plan_validator.py",
-  "version": "1.0.0",
+  "description": "Schema for plan.json files - single source of truth for all planning tools",
+  "version": "1.1.0",
   "type": "object",
   "required": ["META_DOCUMENTATION", "UNIVERSAL_PLANNING_STRUCTURE"],
   "properties": {
     "META_DOCUMENTATION": {
       "type": "object",
-      "required": ["feature_name", "schema_version", "version", "status"],
+      "required": ["feature_name", "schema_version", "status"],
       "properties": {
         "feature_name": {
           "type": "string",
-          "description": "Name of the feature being planned"
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Feature name (alphanumeric, hyphens, underscores)"
         },
         "schema_version": {
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
-          "description": "Version of this schema (should be 1.0.0)"
+          "description": "Schema version this plan conforms to",
+          "default": "1.0.0"
         },
         "version": {
           "type": "string",
-          "pattern": "^\\d+\\.\\d+\\.\\d+$",
-          "description": "Version of this plan document"
+          "description": "Plan document version"
         },
         "status": {
           "type": "string",
-          "enum": ["draft", "ready", "in_progress", "complete", "archived"],
-          "description": "Current status of the plan"
+          "enum": ["draft", "complete", "approved", "archived"]
         },
         "generated_by": {
+          "type": "string"
+        },
+        "generated_at": {
           "type": "string",
-          "description": "Agent or tool that generated this plan"
-        },
-        "has_context": {
-          "type": "boolean",
-          "description": "Whether context.json was available during generation"
-        },
-        "has_analysis": {
-          "type": "boolean",
-          "description": "Whether analysis.json was available during generation"
-        },
-        "priority": {
-          "type": "string",
-          "enum": ["low", "medium", "high", "critical"],
-          "description": "Priority level of the feature"
+          "format": "date"
         }
       }
     },
@@ -65,154 +55,142 @@
       ],
       "properties": {
         "0_preparation": {
-          "$ref": "#/definitions/preparation"
+          "$ref": "#/$defs/preparation"
         },
         "1_executive_summary": {
-          "$ref": "#/definitions/executive_summary"
+          "$ref": "#/$defs/executive_summary"
         },
         "2_risk_assessment": {
-          "$ref": "#/definitions/risk_assessment"
+          "$ref": "#/$defs/risk_assessment"
         },
         "3_current_state_analysis": {
-          "$ref": "#/definitions/current_state_analysis"
+          "$ref": "#/$defs/current_state_analysis"
         },
         "4_key_features": {
-          "$ref": "#/definitions/key_features"
+          "$ref": "#/$defs/key_features"
         },
         "5_task_id_system": {
-          "$ref": "#/definitions/task_id_system"
+          "$ref": "#/$defs/task_id_system"
         },
         "6_implementation_phases": {
-          "$ref": "#/definitions/implementation_phases"
+          "$ref": "#/$defs/implementation_phases"
         },
         "7_testing_strategy": {
-          "$ref": "#/definitions/testing_strategy"
+          "$ref": "#/$defs/testing_strategy"
         },
         "8_success_criteria": {
-          "$ref": "#/definitions/success_criteria"
+          "$ref": "#/$defs/success_criteria"
         },
         "9_implementation_checklist": {
-          "$ref": "#/definitions/implementation_checklist"
+          "$ref": "#/$defs/implementation_checklist"
         }
       }
     }
   },
-  "definitions": {
+  "$defs": {
     "preparation": {
       "type": "object",
       "properties": {
-        "foundation_docs": {
-          "type": "array",
-          "items": {"type": "string"},
-          "description": "List of foundation documents to reference"
+        "project_type": {
+          "type": "string",
+          "enum": ["greenfield", "enhancement", "refactor", "bugfix"]
         },
-        "coding_standards": {
-          "type": "array",
-          "items": {"type": "string"},
-          "description": "List of coding standards documents"
+        "tech_stack": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
         },
-        "reference_components": {
+        "key_dependencies": {
           "type": "array",
-          "items": {"type": "string"},
-          "description": "Reference components with descriptions"
+          "items": { "type": "string" }
         },
         "project_structure": {
           "type": "object",
-          "additionalProperties": {"type": "string"},
-          "description": "Key directories in the project"
+          "additionalProperties": { "type": "string" }
         }
       }
     },
     "executive_summary": {
       "type": "object",
-      "required": ["goal", "description", "scope"],
+      "required": ["feature_name", "description", "goal"],
       "properties": {
-        "goal": {
-          "type": "string",
-          "minLength": 10,
-          "description": "Primary goal of the feature"
-        },
-        "description": {
-          "type": "string",
-          "minLength": 20,
-          "description": "Detailed description of what will be built"
-        },
-        "scope": {
-          "type": "string",
-          "minLength": 10,
-          "description": "Scope boundaries for the implementation"
-        },
+        "feature_name": { "type": "string" },
+        "description": { "type": "string" },
+        "goal": { "type": "string" },
         "estimated_complexity": {
           "type": "string",
-          "description": "Complexity estimate (Low/Medium/High)"
+          "enum": ["low", "medium", "high", "critical"]
         },
-        "priority": {
-          "type": "string",
-          "description": "Priority and rationale"
+        "estimated_tasks": { "type": "integer" },
+        "key_deliverables": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },
     "risk_assessment": {
       "type": "object",
-      "required": ["risks"],
       "properties": {
-        "risks": {
+        "technical_risks": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["risk", "mitigation", "severity"],
-            "properties": {
-              "risk": {"type": "string"},
-              "mitigation": {"type": "string"},
-              "severity": {
-                "type": "string",
-                "enum": ["low", "medium", "high", "critical"]
-              }
-            }
-          }
+          "items": { "$ref": "#/$defs/risk_item" }
         },
-        "complexity_score": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 10,
-          "description": "1-10 complexity score"
+        "scope_risks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/risk_item" }
         },
-        "confidence_level": {
-          "type": "string",
-          "enum": ["Low", "Medium", "High"],
-          "description": "Confidence in the plan"
+        "dependency_risks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/risk_item" }
         }
+      }
+    },
+    "risk_item": {
+      "type": "object",
+      "required": ["risk", "severity", "mitigation"],
+      "properties": {
+        "risk": { "type": "string" },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "mitigation": { "type": "string" }
       }
     },
     "current_state_analysis": {
       "type": "object",
       "properties": {
-        "files_to_modify": {
+        "existing_files": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["path", "purpose"],
-            "properties": {
-              "path": {"type": "string"},
-              "purpose": {"type": "string"}
-            }
-          }
+          "items": { "type": "string" }
         },
         "files_to_create": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["path", "purpose"],
-            "properties": {
-              "path": {"type": "string"},
-              "purpose": {"type": "string"}
-            }
-          }
+          "items": { "$ref": "#/$defs/file_entry" }
         },
-        "dependencies": {
+        "files_to_modify": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": { "$ref": "#/$defs/file_modification" }
+        },
+        "dependencies_to_add": {
+          "type": "array",
+          "items": { "type": "string" }
         }
+      }
+    },
+    "file_entry": {
+      "type": "object",
+      "required": ["path", "purpose"],
+      "properties": {
+        "path": { "type": "string" },
+        "purpose": { "type": "string" }
+      }
+    },
+    "file_modification": {
+      "type": "object",
+      "required": ["path", "changes"],
+      "properties": {
+        "path": { "type": "string" },
+        "changes": { "type": "string" }
       }
     },
     "key_features": {
@@ -221,15 +199,24 @@
       "properties": {
         "features": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id", "name", "description"],
-            "properties": {
-              "id": {"type": "string"},
-              "name": {"type": "string"},
-              "description": {"type": "string"}
-            }
-          }
+          "items": { "$ref": "#/$defs/feature_item" }
+        }
+      }
+    },
+    "feature_item": {
+      "type": "object",
+      "required": ["id", "name", "description", "priority", "tasks"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^F\\d+$" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "tasks": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },
@@ -241,27 +228,54 @@
           "type": "object",
           "required": ["id", "name", "feature_dir"],
           "properties": {
-            "id": {
-              "type": "string",
-              "pattern": "^WO-[A-Z0-9-]+-\\d{3}$"
-            },
-            "name": {"type": "string"},
-            "feature_dir": {"type": "string"}
+            "id": { "type": "string", "pattern": "^WO-[A-Z0-9-]+-\\d{3}$" },
+            "name": { "type": "string" },
+            "feature_dir": { "type": "string" }
           }
         },
         "tasks": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id", "workorder_id", "description"],
-            "properties": {
-              "id": {"type": "string"},
-              "workorder_id": {"type": "string"},
-              "description": {"type": "string"},
-              "file": {"type": "string"},
-              "acceptance": {"type": "string"}
-            }
-          }
+          "items": { "$ref": "#/$defs/task_item" }
+        }
+      }
+    },
+    "task_item": {
+      "type": "object",
+      "required": ["id", "workorder_id", "description", "type", "files"],
+      "properties": {
+        "id": { "type": "string" },
+        "workorder_id": { "type": "string" },
+        "description": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["setup", "feature", "component", "test", "docs", "refactor"]
+        },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "estimated_loc": { "type": "integer" },
+        "dependencies": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "verify_step": {
+          "type": "string",
+          "description": "How to verify task completion (e.g., 'Run pytest tests/test_auth.py', 'Check file exists', 'Verify endpoint returns 200')"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "blocked"],
+          "default": "pending"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of last status update"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes about status change or blockers"
         }
       }
     },
@@ -271,77 +285,94 @@
       "properties": {
         "phases": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["phase", "name", "description", "tasks", "deliverables"],
-            "properties": {
-              "phase": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "name": {"type": "string"},
-              "description": {"type": "string"},
-              "tasks": {
-                "type": "array",
-                "items": {"type": "string"}
-              },
-              "deliverables": {
-                "type": "array",
-                "items": {"type": "string"}
-              }
-            }
-          }
+          "items": { "$ref": "#/$defs/phase_item" }
+        }
+      }
+    },
+    "phase_item": {
+      "type": "object",
+      "required": ["phase", "name", "description", "tasks", "deliverables"],
+      "properties": {
+        "phase": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "tasks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "deliverables": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },
     "testing_strategy": {
       "type": "object",
       "properties": {
-        "approach": {"type": "string"},
-        "commands": {
+        "unit_tests": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": { "$ref": "#/$defs/test_target" }
         },
-        "coverage_targets": {
-          "type": "object",
-          "additionalProperties": {"type": "string"}
-        },
-        "edge_cases": {
+        "integration_tests": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": { "$ref": "#/$defs/test_target" }
+        },
+        "e2e_tests": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/e2e_test" }
+        },
+        "manual_testing": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "test_target": {
+      "type": "object",
+      "required": ["target", "tests"],
+      "properties": {
+        "target": { "type": "string" },
+        "tests": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "e2e_test": {
+      "type": "object",
+      "required": ["flow", "steps"],
+      "properties": {
+        "flow": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },
     "success_criteria": {
       "type": "object",
-      "required": ["criteria"],
       "properties": {
-        "criteria": {
+        "functional": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": { "type": "string" }
         },
-        "measurable_targets": {
-          "type": "object",
-          "additionalProperties": {"type": "string"}
+        "performance": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "quality": {
+          "type": "array",
+          "items": { "type": "string" }
         }
       }
     },
     "implementation_checklist": {
       "type": "object",
-      "properties": {
-        "pre_implementation": {
-          "type": "array",
-          "items": {"type": "string"}
-        },
-        "implementation": {
-          "type": "array",
-          "items": {"type": "string"}
-        },
-        "post_implementation": {
-          "type": "array",
-          "items": {"type": "string"}
-        }
-      }
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "description": "Keys are phase names (e.g., 'phase_1_schema'), values are task arrays"
     }
   }
 }

@@ -1,0 +1,14 @@
+WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage for cross-session surv... | 2025-12-18T08:36:32.076716+00:00
+WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage implementation plan | 2025-12-18T08:26:53.453837+00:00
+WO-FIX-20251218-001 | docs-mcp | Add /fix command for lightweight changes | 2025-12-18T08:19:17.164219+00:00
+WO-SCOUTING-HUB-001 | gridiron-franchise | Enhanced Scouting Hub implementation | 2025-12-18T07:50:50.524805+00:00
+WO-SEQUENTIAL-FOUNDATION-DOCS-001 | docs-mcp | Archived feature: Sequential Foundation Docs | 2025-12-18T07:29:32.071020+00:00
+WO-SCRAPER-ECOSYSTEM-ANALYSIS-001 | next-scraper | scraper-ecosystem-analysis implementation plan | 2025-12-18T07:27:48.683074+00:00
+WO-DATA-MAPPING-001 | next-scraper | data-mapping implementation plan | 2025-12-18T07:21:13.130087+00:00
+WO-FILE-EXPLORER-TREE-PICKER-001 | Scriptboard | File explorer tree picker implementation | 2025-12-18T07:11:52.628721+00:00
+WO-RENAME-START-FEATURE-001 | docs-mcp | Rename /start-feature to /create-workorder | 2025-12-18T07:06:13.611193+00:00
+WO-SEQUENTIAL-FOUNDATION-DOCS-001 | docs-mcp | Sequential foundation docs with progress feedback | 2025-12-18T06:48:41.828728+00:00
+WO-TERMINAL-PROFILE-ICONS-001 | next | terminal-profile-icons implementation plan | 2025-12-18T06:28:45.318975+00:00
+WO-MCP-TOOLS-REVIEW-001 | .mcp-servers | MCP tools review and consolidation | 2025-12-18T05:35:26.163105+00:00
+WO-MCP-TOOLS-REVIEW-001 | .mcp-servers | MCP tools review and consolidation | 2025-12-18T05:35:26.163105+00:00
+WO-OFFSEASON-FLOW-001 | gridiron-franchise | offseason-flow implementation plan | 2025-12-18T05:28:42.285076+00:00

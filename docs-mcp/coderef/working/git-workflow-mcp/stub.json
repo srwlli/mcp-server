@@ -1,0 +1,11 @@
+{
+  "stub_id": "STUB-038",
+  "feature_name": "git-workflow-mcp",
+  "description": "MCP tool for standardized git workflow as final step of plan.json completion: version bump, commit changes, push to remote, optionally package/deploy. Integrates with /update-deliverables and /archive-feature.",
+  "category": "feature",
+  "priority": "medium",
+  "tags": ["mcp", "workflow", "orchestrator"],
+  "created": "2025-12-17T00:00:00Z",
+  "status": "stub",
+  "notes": "Final step in plan lifecycle: implement → update-deliverables → git-workflow → archive-feature"
+}

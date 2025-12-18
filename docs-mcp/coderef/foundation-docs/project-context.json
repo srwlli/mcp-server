@@ -1,0 +1,783 @@
+{
+  "api_context": {
+    "endpoints": [
+      {
+        "method": "'GET'",
+        "path": "/",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/health",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/debug",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/tools",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/openapi.json",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/sse",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET', 'POST'",
+        "path": "/api/hello",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/api/<tool_name>",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/mcp",
+        "file": "http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/users",
+        "file": "tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/users",
+        "file": "tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/users/{user_id}",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/users",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "PUT",
+        "path": "/users/{user_id}",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "DELETE",
+        "path": "/users/{user_id}",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/data",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/endpoint{i}",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "\"GET\", \"POST\"",
+        "path": "/api/items",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "\"GET\", \"PUT\", \"DELETE\"",
+        "path": "/api/items/<int:item_id>",
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/health",
+        "file": "coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/tools",
+        "file": "coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/mcp",
+        "file": "coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      }
+    ],
+    "count": 27,
+    "frameworks_detected": [
+      "Flask",
+      "FastAPI"
+    ],
+    "auth_method": "Unknown",
+    "error_format": "RFC 7807"
+  },
+  "dependencies": {
+    "count": 10,
+    "production": [
+      {
+        "name": "mcp",
+        "version": "1.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "jsonschema",
+        "version": "4.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "toml",
+        "version": "0.10.2",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "python-dotenv",
+        "version": "1.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "flask",
+        "version": "3.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pydantic",
+        "version": "2.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "gunicorn",
+        "version": "21.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pytest",
+        "version": "7.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pytest-cov",
+        "version": "4.0.0",
+        "ecosystem": "pip"
+      }
+    ],
+    "development": [],
+    "outdated": [],
+    "vulns": []
+  },
+  "database": {
+    "tables": [
+      {
+        "name": "FoundationGenerator",
+        "columns": [],
+        "file": "generators\\foundation_generator.py"
+      },
+      {
+        "name": "HandoffGenerator",
+        "columns": [],
+        "file": "generators\\handoff_generator.py"
+      },
+      {
+        "name": "QuickrefGenerator",
+        "columns": [],
+        "file": "generators\\quickref_generator.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          }
+        ],
+        "file": "tests\\integration\\test_coderef_foundation_docs.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "Post",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "Comment",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      }
+    ],
+    "relationships": [],
+    "migrations": [],
+    "table_count": 8,
+    "has_migrations": false
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_files": [],
+    "contributors": [],
+    "has_git": false
+  },
+  "patterns": {
+    "handlers": [
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_list_templates",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_template",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_foundation_docs",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_individual_doc",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_changelog",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_add_changelog_entry",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_update_changelog",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_quickref_interactive",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_establish_standards",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_audit_codebase",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_check_consistency",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_planning_template",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_analyze_project_for_planning",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_validate_implementation_plan",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_plan_review_report",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_create_plan",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_gather_context",
+        "file": "tool_handlers.py"
+      }
+    ],
+    "decorators": [
+      {
+        "name": "pytest.mark.asyncio",
+        "count": 131
+      },
+      {
+        "name": "mcp_error_handler",
+        "count": 79
+      },
+      {
+        "name": "log_invocation",
+        "count": 69
+      },
+      {
+        "name": "pytest.fixture",
+        "count": 62
+      },
+      {
+        "name": "app.route",
+        "count": 18
+      },
+      {
+        "name": "pytest.mark.performance",
+        "count": 14
+      },
+      {
+        "name": "staticmethod",
+        "count": 10
+      },
+      {
+        "name": "app.get",
+        "count": 9
+      },
+      {
+        "name": "test.com",
+        "count": 6
+      },
+      {
+        "name": "example.com",
+        "count": 3
+      },
+      {
+        "name": "pytest.mark.slow",
+        "count": 3
+      },
+      {
+        "name": "patch",
+        "count": 3
+      },
+      {
+        "name": "classmethod",
+        "count": 2
+      },
+      {
+        "name": "wraps",
+        "count": 2
+      },
+      {
+        "name": "app.list_tools",
+        "count": 2
+      }
+    ],
+    "error_handling": [
+      "TimeoutError",
+      "FileNotFoundError",
+      "PermissionError",
+      "RuntimeError",
+      "ValueError",
+      "UnicodeEncodeError",
+      "ImportError",
+      "IOError",
+      "OSError",
+      "UnicodeDecodeError",
+      "AssertionError"
+    ]
+  },
+  "similar_features": [
+    {
+      "name": "agentic-communication",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "archive-feature",
+      "workorder_id": "WO-ARCHIVE-FEATURE-001",
+      "goal": ""
+    },
+    {
+      "name": "chatgpt-tools-endpoint",
+      "workorder_id": "WO-CHATGPT-TOOLS-ENDPOINT-001",
+      "goal": ""
+    },
+    {
+      "name": "clean-templates-structure",
+      "workorder_id": "WO-CLEAN-TEMPLATES-STRUCTURE-001",
+      "goal": ""
+    },
+    {
+      "name": "complete-workflow-docs",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "comprehensive-inventory-system",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "consolidate-planning",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "context-experts",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "deliverables-generator",
+      "workorder_id": "",
+      "goal": ""
+    },
+    {
+      "name": "docs-mcp-schema-fix",
+      "workorder_id": "",
+      "goal": ""
+    }
+  ],
+  "existing_docs": {
+    "architecture": null,
+    "schema": null,
+    "api": null,
+    "components": null,
+    "readme": {
+      "sections": {
+        "docs-mcp": "**Enterprise-Grade MCP Server for Documentation Generation**\n\n**Version:** 2.9.0 | **Date:** 2025-12-06 | **Maintainers:** willh, Claude Code AI\n\n---",
+        "overview": "**docs-mcp** is a production-ready Model Context Protocol (MCP) server that provides AI assistants with professional documentation generation, changelog management, codebase consistency auditing, universal quickref generation, implementation planning workflow, automatic deliverables tracking, **multi-agent task coordination**, **feature archiving**, **global workorder tracking**, **multi-LLM prompt generation and consolidation**, and comprehensive project inventory analysis. Built with enterprise-grade patterns, it offers **39 specialized tools** with comprehensive logging, type safety, and security hardening.\n\n### What It Does\n\n- **Documentation Generation**: Create professional README, ARCHITECTURE, API, COMPONENTS, SCHEMA, and USER-GUIDE documents using POWER framework templates\n- **Universal Quickref Generation**: AI-assisted interview workflow to create scannable 150-250 line quickref guides for ANY application (CLI, Web, API, Desktop, Library)\n- **Changelog Management**: Maintain structured, schema-validated changelogs with agent-friendly tooling\n- **Consistency Management**: Establish baseline standards and audit codebases for UI/UX/behavior violations\n- **Planning Workflow**: AI-assisted implementation planning with automated analysis, validation, and iterative review loops\n- **Deliverables Tracking**: Automatic DELIVERABLES.md generation with git metrics (LOC, commits, time) - NEW in v1.6.0\n- **Multi-Agent Coordination**: Parallel agent execution with automated verification and integrated deliverables tracking - NEW in v1.9.0\n- **Agent Handoff Automation**: Auto-generate comprehensive handoff context files in under 5 minutes (vs 20-30 min manual) - **NEW in v1.12.0**\n- **Feature Archiving**: Automated archiving of completed features with status checking and searchable index - NEW in v1.10.0\n- **LLM Workflow**: Multi-LLM prompt generation and response consolidation for code reviews, architecture analysis, security audits - **NEW in v2.9.0**\n- **Agentic Workflows**: Enable AI agents to self-document changes, maintain code quality, and create high-quality plans\n- **Production-Ready**: Full logging, error handling, type hints, and security features\n\n### Key Features\n\n\u2705 **39 MCP Tools** - Complete toolkit for documentation, changelog, consistency, quickref generation, planning workflow, deliverables tracking, **multi-agent coordination**, **agent handoff automation**, **feature archiving**, **workorder tracking**, **LLM workflow**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations)\n\u2705 **42 Slash Commands** - Quick access to common workflows via `/command` syntax\n\u2705 **Reference Commands** - `/list-tools` (54 tools across 3 servers) and `/list-commands` with Unicode box art display\n\u2705 **Workorder Tracking** - Automatic unique ID assignment for all features in MCP planning workflow (NEW in v1.5.0)\n\u2705 **Deliverables Tracking** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (NEW in v1.6.0)\n\u2705 **Multi-Agent Coordination** - First MCP server with native parallel agent execution and automated verification (NEW in v1.9.0)\n\u2705 **Feature Archive System** - Automated archiving with status checking, user confirmation, and searchable index tracking (NEW in v1.10.0)\n\u2705 **LLM Workflow** - Multi-LLM prompt generation with structured JSON output and response consolidation (NEW in v2.9.0)\n\u2705 **Modular Architecture** - Handler registry pattern with 97% reduction in main dispatcher (407 \u2192 13 lines)\n\u2705 **Enterprise Patterns** - ErrorResponse factory, TypedDict type hints, enum constants, comprehensive logging\n\u2705 **Security Hardened** - Path traversal protection, schema validation, input sanitization, audit trails\n\u2705 **POWER Framework** - Structured templates ensure comprehensive documentation\n\u2705 **Changelog Trilogy** - Read, write, and instruct pattern for changelog management\n\u2705 **Multi-Project Support** - Generic design works with any project\n\n### Architecture Highlights (v1.0.7)\n\n\ud83c\udfd7\ufe0f **Modular Design**: Tool handlers separated into `tool_handlers.py` with registry pattern\n\ud83c\udfaf **Type Safety**: Full TypedDict coverage for all complex return types\n\ud83d\udcca **Observability**: Structured logging with security audit trails and performance monitoring\n\ud83d\udee1\ufe0f **Error Handling**: Consistent ErrorResponse factory for all error scenarios\n\ud83d\udd27 **Maintainability**: 59% reduction in server.py size (644 \u2192 264 lines)\n\n### Security & Quality\n\n\ud83d\udd12 **SEC-001**: Path traversal protection - All paths canonicalized with `.resolve()`\n\ud83d\udd12 **SEC-002**: JSON schema validation - Automatic validation on all changelog operations\n\ud83d\udd12 **SEC-003**: Smart output routing - README \u2192 root, others \u2192 `coderef/foundation-docs/`\n\ud83d\udd12 **SEC-005**: Template sanitization - Regex validation prevents path traversal\n\ud83d\udcca **ARCH-003**: Comprehensive logging - All operations logged to stderr (MCP-safe)\n\ud83c\udfaf **QUA-001**: Type hints - Full TypedDict coverage for IDE support\n\ud83d\udd27 **QUA-002**: Modular handlers - Each tool independently testable\n\ud83c\udfa8 **QUA-003**: Enum constants - Zero magic strings throughout codebase\n\n---",
+        "prerequisites": "Before using docs-mcp, ensure you have:\n\n- **Python 3.10+** - Required for MCP server\n- **MCP-compatible AI client** - Claude Code CLI, Cursor, Windsurf, or VS Code with MCP support\n- **pip package manager** - For installing Python dependencies\n\n### Verify Requirements\n\n```bash",
+        "check_python_version": "python --version",
+        "should_show:_python_3.10.x_or_higher": "",
+        "check_mcp_capability": "claude mcp list\n```\n\n---",
+        "installation": "### Quick Install (Claude Code)\n\n```bash",
+        "add_docs-mcp_as_a_user-scoped_mcp_server_(globally_accessible_to_all_cli_instances)": "claude mcp add --scope user docs-mcp python \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py\"\n```\n\n**Expected Output:**\n```\nAdded stdio MCP server docs-mcp with command: python C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py to user config\n```\n\n**Note**: The `--scope user` flag ensures docs-mcp is available globally to all Claude CLI instances, not just the current session.\n\n### Manual Installation (Other IDEs)\n\n**For Cursor:**\nEdit `C:\\Users\\<username>\\.cursor\\mcp.json`:\n```json\n{\n  \"mcpServers\": {\n    \"docs-mcp\": {\n      \"command\": \"python\",\n      \"args\": [\"C:\\\\Users\\\\willh\\\\.mcp-servers\\\\docs-mcp\\\\server.py\"]\n    }\n  }\n}\n```\n\n**For Windsurf/VS Code:**\nSimilar configuration in IDE-specific MCP config file.\n\n### Verify Installation\n\n```bash\nclaude mcp list\n```\n\n**Expected Output:**\n```\ndocs-mcp: python C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py - \u2713 Connected\n```\n\n---",
+        "available_tools": "### Documentation Generation Tools (4)\n\n| Tool | Purpose | Required Parameters |\n|------|---------|---------------------|\n| `list_templates` | List available POWER templates | None |\n| `get_template` | Get template content | `template_name` |\n| `generate_foundation_docs` | Generate 5 foundation docs | `project_path` |\n| `generate_individual_doc` | Generate single document | `project_path`, `template_name` |\n\n### Agent Handoff Tool (1) **NEW in v1.12.0**\n\n| Tool | Purpose | Required Parameters |\n|------|---------|---------------------|\n| `generate_handoff_context` | Auto-generate agent handoff context files from plan.json, analysis.json, and git history | `project_path`, `feature_name`, `mode` (optional: \"full\" or \"minimal\") |\n\n**Reduces agent handoff time from 20-30 minutes to under 5 minutes** by automatically extracting context from existing project files.\n\n### Changelog Management Tools (3)\n\n| Tool | Purpose | Pattern | Required Parameters |\n|------|---------|---------|---------------------|\n| `get_changelog` | Query changelog history | **READ** | `project_path` |\n| `add_changelog_entry` | Add changelog entry | **WRITE** | `project_path`, `version`, `change_type`, `severity`, `title`, `description`, `files`, `reason`, `impact` |\n| `update_changelog` | Agentic workflow guide | **INSTRUCT** | `project_path`, `version` |\n\n### Universal Quickref Generation (1)\n\n| Tool | Purpose | Pattern | Required Parameters |\n|------|---------|---------|---------------------|\n| `generate_quickref_interactive` | AI-driven interview to create scannable quickref.md for any app type | **INTERACTIVE** | `project_path` |\n\n**Workflow**: AI asks 9 interview questions \u2192 User answers in plain English \u2192 AI generates quickref.md (150-250 lines) following universal 8-section pattern \u2192 Saves to `coderef/quickref.md`\n\n**Supported App Types**: CLI, Web App, API, Desktop App, Library/Framework\n\n### Consistency Management Tools (3)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `establish_standards` | Scan codebase and document UI/UX/behavior patterns | **ONCE** per project to create baseline | `project_path` |\n| `audit_codebase` | Audit code against established standards | **PERIODICALLY** (weekly/monthly) or before releases | `project_path` |\n| `check_consistency` | Quick consistency check on modified files (pre-commit gate) | **BEFORE COMMITS** - Run on staged files only | `project_path` |\n\n**The Consistency Trilogy:**\n1. **establish_standards** (Tool #8) - Document what's standard in your codebase\n2. **audit_codebase** (Tool #9) - Find violations of those standards\n3. **check_consistency** (Tool #10) - Quality gate for new code\n\n### Deliverables Tracking Tools (2)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `generate_deliverables_template` | Generate DELIVERABLES.md template from plan.json | **AUTOMATIC** - Called by /create-plan workflow | `project_path`, `feature_name` |\n| `update_deliverables` | Update DELIVERABLES.md with git metrics (LOC, commits, time) | **AFTER IMPLEMENTATION** - Run after feature completion | `project_path`, `feature_name` |\n\n**Deliverables Workflow**:\n1. `/create-plan` - Automatically generates both plan.json and DELIVERABLES.md template\n2. **Implement feature** - Code your feature, commit with feature name in messages\n3. `/update-deliverables` - Parses git history to calculate actual metrics (LOC, commits, time)\n\n**Git Integration**:\n- Searches commit messages for feature name (case-insensitive)\n- Calculates LOC from `git diff --stat`\n- Counts commits with `git log --grep`\n- Measures time from first to last commit timestamp\n\n### Planning Workflow Tools (6)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `get_planning_template` | Get planning template sections | **REFERENCE** - View template structure before planning | None (or `section` for specific section) |\n| `gather_context` | Gather feature requirements and assign workorder ID | **STEP 0** - Before analyzing project | `project_path`, `feature_name` |\n| `analyze_project_for_planning` | Analyze project for planning context | **STEP 1** - Before creating implementation plan | `project_path` (optional: `feature_name` to save) |\n| `create_plan` | Generate implementation plan from context and analysis | **STEP 2** - After gathering context and analysis | `project_path`, `feature_name` |\n| `validate_implementation_plan` | Validate plan quality with 0-100 scoring | **STEP 2** - After creating plan draft | `project_path`, `plan_file_path` |\n| `generate_plan_review_report` | Generate markdown review report | **STEP 3** - After validation for review | `project_path`, `plan_file_path`, `output_path` |\n\n**Planning Workflow Pattern:**\n1. **gather_context** (optional) - Collect feature requirements \u2192 assigns workorder ID (WO-{FEATURE-NAME}-001) \u2192 saves to context.json\n2. **analyze_project_for_planning** - Discover foundation docs, standards, patterns (optionally save to feature folder) \u2192 automates section 0 (Preparation) \u2192 preserves workorder\n3. **create_plan** - Generate implementation plan \u2192 embeds workorder in section 5 \u2192 all tasks reference workorder\n4. **validate_implementation_plan** - Score plan (0-100) with issue detection \u2192 validates workorder consistency \u2192 iterate until score \u2265 90\n5. **generate_plan_review_report** - Format validation results as markdown for user review\n6. **User approval gate** - User must approve plan before execution (MANDATORY)\n7. **Execute implementation** - Follow approved plan step-by-step\n\n### Project Inventory Tools (7)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `inventory_manifest` | Generate comprehensive file inventory with metadata | **ONBOARDING** - Understand project structure, or **ANALYSIS** - Track project evolution | `project_path` |\n| `dependency_inventory` | Analyze dependencies across ecosystems with security scanning | **SECURITY AUDIT** - Find vulnerabilities, or **DEPENDENCY REVIEW** - Track outdated packages | `project_path` |\n| `api_inventory` | Discover API endpoints across multiple frameworks (FastAPI, Flask, Express, GraphQL) | **API DOCUMENTATION** - Catalog endpoints, or **COVERAGE ANALYSIS** - Track documentation gaps | `project_path` |\n| `database_inventory` | Discover database schemas across multiple systems (PostgreSQL, MySQL, MongoDB, SQLite) | **SCHEMA DOCUMENTATION** - Catalog tables/collections, or **MIGRATION AUDIT** - Track schema definitions | `project_path` |\n| `config_inventory` | Discover and analyze configuration files with sensitive value detection | **SECURITY AUDIT** - Find exposed credentials, or **CONFIG REVIEW** - Catalog configuration | `project_path` |\n| `test_inventory` | Discover test files and analyze coverage metrics | **TEST COVERAGE** - Identify gaps, or **QUALITY AUDIT** - Track test infrastructure | `project_path` |\n| `documentation_inventory` | Discover and analyze documentation files with quality metrics | **DOCS AUDIT** - Track freshness and coverage | `project_path` |\n| `config_inventory` | Discover and analyze configuration files across formats (JSON, YAML, TOML, INI, ENV) with sensitive value detection | **SECURITY AUDIT** - Find exposed credentials, or **CONFIG REVIEW** - Catalog configuration files | `project_path` |\n\n#### File Inventory (`inventory_manifest`)\n\n**What it captures:**\n- **File metadata**: path, name, size, lines, category, risk level, language\n- **Project metrics**: total files/size/lines, category distribution, risk distribution, language breakdown\n- **Dependencies**: Detected imports for Python and JavaScript/TypeScript files\n- **Universal taxonomy**: 7 file categories (core, source, template, config, test, docs, unknown)\n- **Risk scoring**: 4 levels (low, medium, high, critical) based on category, size, complexity, sensitivity\n\n**Analysis depth options:**\n- `quick` - Basic file enumeration (~1-2 seconds, 500+ files/sec)\n- `standard` - Full metadata + dependencies (~3-5 seconds, 200+ files/sec)\n- `deep` - Standard + complexity analysis (~10-15 seconds, 50+ files/sec)\n\n**Output**: `coderef/inventory/manifest.json` - JSON manifest with file metadata and project metrics\n\n#### Dependency Inventory (`dependency_inventory`)\n\n**What it captures:**\n- **Multi-ecosystem support**: npm (Node.js), pip (Python), cargo (Rust), composer (PHP)\n- **Dependency analysis**: Direct, dev, peer, and transitive dependencies\n- **Security scanning**: Vulnerability detection via OSV API (all ecosystems)\n- **Version tracking**: Current vs latest versions from package registries\n- **License detection**: Identify dependency licenses\n- **Comprehensive metrics**: Total deps, outdated count, vulnerable count, severity breakdown\n\n**Features:**\n- **Security vulnerabilities**: CVE IDs, severity (critical/high/medium/low), CVSS scores, fix versions\n- **Outdated detection**: Compare installed vs latest versions\n- **Metrics calculation**: Aggregated stats by ecosystem, type, severity\n- **Schema validation**: JSON schema ensures manifest integrity\n\n**Output**: `coderef/inventory/dependencies.json` - JSON manifest with dependency metadata and security findings\n\n#### API Inventory (`api_inventory`)\n\n**What it captures:**\n- **Multi-framework support**: FastAPI, Flask, Express.js, GraphQL\n- **Endpoint metadata**: Path, HTTP method, function name, file location, line number\n- **Documentation coverage**: Percentage of documented vs undocumented endpoints\n- **OpenAPI/Swagger parsing**: Extracts endpoint docs from spec files\n- **Parameter detection**: Function parameters for each endpoint\n- **Framework breakdown**: Endpoints by framework type\n- **Method distribution**: Endpoints by HTTP method (GET, POST, PUT, DELETE, etc.)\n\n**Detection methods:**\n- **AST parsing**: Python decorators (@app.get, @app.route)\n- **Regex extraction**: Express.js route definitions (app.get, app.post)\n- **GraphQL schema parsing**: Query and Mutation type analysis\n- **OpenAPI/Swagger**: YAML/JSON specification parsing\n\n**Output**: `coderef/inventory/api.json` - JSON manifest with endpoint metadata and coverage metrics\n\n#### Database Inventory (`database_inventory`)\n\n**What it captures:**\n- **Multi-database support**: PostgreSQL, MySQL, MongoDB, SQLite\n- **Schema metadata**: Table/collection name, type (table/collection), database type (sql/nosql)\n- **Column/field definitions**: Data types, constraints, defaults\n- **ORM detection**: SQLAlchemy, Sequelize, Mongoose models\n- **Migration parsing**: Alembic and Knex.js migration files\n- **Relationship mapping**: Foreign keys, ORM relationships (one-to-one, one-to-many, many-to-many)\n- **Index tracking**: Database indexes with uniqueness flags\n- **System breakdown**: Schema count by database system and ORM/source\n\n**Detection methods:**\n- **AST parsing**: SQLAlchemy ORM models (Python `class` with `__tablename__`)\n- **Regex extraction**: Sequelize models (Node.js), Mongoose schemas (Node.js)\n- **Migration parsing**: Alembic migrations (`op.create_table`), Knex.js migrations\n\n**Output**: `coderef/inventory/database.json` - JSON manifest with schema metadata and database metrics\n\n### Workorder Tracking Tools (2) **NEW in v1.11.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `log_workorder` | Log new workorder entry to global log file | **AFTER COMPLETION** - Log finished workorders for traceability | `project_path`, `workorder_id`, `project_name`, `description` |\n| `get_workorder_log` | Query global workorder log with filters | **ANYTIME** - View workorder history or search by project/pattern | `project_path` (optional: `project_name`, `workorder_pattern`, `limit`) |\n\n**Global Workorder Log:**\n- Simple one-line format: `WO-ID | Project | Description | Timestamp`\n- Latest entries at top (reverse chronological)\n- Saved to: `coderef/workorder-log.txt`\n- Auto-truncation at 50 chars for readability\n- Workorder ID validation: `^WO-[A-Z0-9-]+-\\d{3}$`\n\n**Example log entries:**\n```\nWO-WORKORDER-LOG-001 | docs-mcp | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51+00:00\nWO-AUTH-001 | personas-mcp | Auth system workorder | 2025-10-21T01:45:20+00:00\n```\n\n**Use cases:**\n- Track workorder completion across projects\n- Maintain global activity log\n- Quick visibility into recent work\n- Integration with planning workflows\n- Traceability for feature implementation\n\n**Slash command shortcuts:**\n- `/log-workorder` - Interactive prompt for logging new entry\n- `/get-workorder-log` - Interactive query with optional filters\n\n---\n\n### Multi-Agent Coordination Tools (5) **NEW in v1.9.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `generate_agent_communication` | Generate communication.json from plan.json | **AFTER PLANNING** - Create coordination file for parallel agents | `project_path`, `feature_name` |\n| `assign_agent_task` | Assign task to specific agent with workorder scoping | **BEFORE WORK** - Assign agent 2, 3, etc. with unique workorder | `project_path`, `feature_name`, `agent_number` (1-10) |\n| `verify_agent_completion` | Verify agent work with automated checks | **AFTER WORK** - Validate forbidden files unchanged and success criteria met | `project_path`, `feature_name`, `agent_number` |\n| `aggregate_agent_deliverables` | Combine metrics from multiple agent DELIVERABLES.md files | **FINAL STEP** - Generate combined deliverables report | `project_path`, `feature_name` |\n| `track_agent_status` | Track agent status across features with real-time dashboard | **ANYTIME** - Monitor agent progress and detect blockers | `project_path` (optional: `feature_name`) |\n\n**Multi-Agent Coordination Workflow:**\n1. **create_plan** with `multi_agent=True` - Generates plan.json + communication.json automatically\n2. **assign_agent_task** - Assign Agent 2 to phase_0, Agent 3 to phase_1, etc.\n   - Each agent gets unique workorder ID (WO-FEATURE-002, WO-FEATURE-003)\n   - Agent status: null \u2192 ASSIGNED \u2192 IN_PROGRESS \u2192 COMPLETE\n3. **Parallel execution** - Multiple agents work simultaneously on different phases\n4. **verify_agent_completion** - Automated verification with git diff on forbidden files\n   - Validates success criteria from communication.json\n   - Updates status to VERIFIED or VERIFICATION_FAILED\n5. **aggregate_agent_deliverables** - Combines metrics (LOC, commits, time) from all agents\n6. **track_agent_status** - Real-time dashboard shows overall workflow status\n\n**Key Features:**\n- \u2705 **Agent-scoped workorder IDs** - WO-FEATURE-001, WO-FEATURE-002, WO-FEATURE-003\n- \u2705 **Automated verification** - Git diff validation, success criteria checks, blocker detection\n- \u2705 **Metrics aggregation** - Combines LOC, commits, contributors, time from multiple agents\n- \u2705 **Real-time tracking** - Dashboard with status counts (available, assigned, in_progress, complete, verified, blocked)\n- \u2705 **Forbidden files protection** - Prevents agents from modifying production files (server.py, tool_handlers.py)\n\n**Performance:**\n- 3x faster implementation through parallel agent execution\n- <600ms total coordination overhead per complete workflow\n- <100ms per status tracking operation\n\n---\n\n### Feature Management Tools (3) **NEW in v1.10.0+**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `archive_feature` | Archive completed features from working to archived directory | **AFTER COMPLETION** - Archive feature after running update-deliverables | `project_path`, `feature_name` |\n| `update_all_documentation` | Update all docs (README, CLAUDE, CHANGELOG) with auto version bump | **BEFORE ARCHIVING** - Update docs after implementation | `project_path`, `change_type`, `feature_description`, `workorder_id` |\n| `execute_plan` | Generate TodoWrite task list from plan.json with TASK-ID first format | **START IMPLEMENTATION** - Convert plan to executable checklist | `project_path`, `feature_name` |\n\n**Feature Lifecycle:**\n1. **create_plan** - Generate implementation plan\n2. **execute_plan** - Convert to TodoWrite checklist\n3. **Implementation** - Complete tasks\n4. **update_deliverables** - Calculate metrics from git history\n5. **update_all_documentation** - Auto-increment version and update docs\n6. **archive_feature** - Move to archive with status checking\n\n---\n\n### LLM Workflow Tools (1) **NEW in v2.9.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `consolidate_llm_outputs` | Parse and merge responses from multiple LLMs into unified JSON | **AFTER COLLECTING RESPONSES** - Merge ChatGPT, Claude, Gemini outputs | `input_file_path` |\n\n**LLM Workflow:**\n1. `/llm-prompt` - Generate structured prompt with JSON output schema\n2. Copy prompt to ChatGPT, Claude, Gemini\n3. Paste responses into `llm-responses.txt` with markers (`=== ChatGPT ===`, etc.)\n4. `/consolidate` - Merge all responses into unified JSON\n\n**Task Types:**\n- `code-review` - Analyze code for issues and improvements\n- `architecture` - Evaluate design and suggest patterns\n- `security-audit` - Identify vulnerabilities and risks\n- `implementation` - Suggest approaches for requirements\n- `refactor` - Identify improvement opportunities\n\n**Output Structure:**\n- **findings** - Merged with consensus tracking (which LLMs agreed)\n- **recommendations** - Aggregated with priority and effort\n- **risks** - Combined with severity/likelihood\n- **metrics** - Averaged confidence scores\n- **unique insights** - Findings only one LLM caught (worth extra attention)\n- **conflicts** - Where LLMs disagreed (needs human decision)\n\n**Files (in `coderef/working/{feature}/`):**\n- `llm-prompt.json` - Generated structured prompt\n- `llm-responses.txt` - Pasted LLM responses with markers\n- `llm-consolidated.json` - Merged output\n\n---",
+        "quick_start": "### Generate Documentation for Your Project\n\n```bash",
+        "ask_claude_code_to_generate_all_docs": "\"Generate foundation documentation for my project at C:\\path\\to\\my-project\"\n```\n\nThis creates 5 foundation documents:\n- **README.md** \u2192 `my-project/README.md` (project root)\n- **ARCHITECTURE.md** \u2192 `my-project/coderef/foundation-docs/`\n- **API.md** \u2192 `my-project/coderef/foundation-docs/`\n- **COMPONENTS.md** \u2192 `my-project/coderef/foundation-docs/`\n- **SCHEMA.md** \u2192 `my-project/coderef/foundation-docs/`\n\n**Note:** USER-GUIDE.md is optional and generated separately using `generate_individual_doc`\n\n### Maintain a Changelog\n\n**Basic Workflow:**\n```bash",
+        "2._ask_agent_to_document_them": "\"Use update_changelog to document my changes for version 1.0.3\"",
+        "-_update_changelog.json": "```\n\n**Manual Entry:**\n```bash",
+        "add_specific_changelog_entry": "add_changelog_entry(\n    project_path=\"C:/path/to/project\",\n    version=\"1.0.3\",\n    change_type=\"feature\",\n    severity=\"major\",\n    title=\"Added new feature X\",\n    description=\"Implemented X with capabilities Y and Z\",\n    files=[\"server.py\", \"lib/feature.py\"],\n    reason=\"Users requested ability to...\",\n    impact=\"Users can now...\",\n    contributors=[\"your_name\"]\n)\n```\n\n---",
+        "usage_examples": "### Example 1: Generate Project Documentation\n\n```python",
+        "list_available_templates": "list_templates()",
+        "returns:_readme,_architecture,_api,_components,_schema,_user-guide": "",
+        "generate_all_foundation_documents": "generate_foundation_docs(project_path=\"C:/Users/willh/my-project\")",
+        "or_generate_just_one_document": "generate_individual_doc(\n    project_path=\"C:/Users/willh/my-project\",\n    template_name=\"api\"\n)\n```\n\n### Example 2: Query Changelog History\n\n```python",
+        "get_full_changelog": "get_changelog(project_path=\"C:/Users/willh/my-project\")",
+        "get_specific_version": "get_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    version=\"1.0.2\"\n)",
+        "get_all_breaking_changes": "get_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    breaking_only=true\n)",
+        "filter_by_type": "get_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    change_type=\"feature\"\n)\n```\n\n### Example 3: Agentic Self-Documentation\n\n```python",
+        "agent_calls_update_changelog": "update_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    version=\"1.0.3\"\n)",
+        "step_3:_call_add_changelog_entry": "",
+        "changelog_updated!": "```\n\n### Example 4: Audit Codebase for Consistency\n\n```python",
+        "step_1:_establish_baseline_standards_(run_once)": "establish_standards(\n    project_path=\"C:/Users/willh/my-react-app\",\n    scan_depth=\"standard\",  # quick | standard | deep\n    focus_areas=[\"all\"]      # ui_components, behavior_patterns, ux_flows, all\n)",
+        "creates_4_standards_documents_in_coderef/standards/": "",
+        "step_2:_audit_codebase_against_standards_(run_periodically)": "audit_codebase(\n    project_path=\"C:/Users/willh/my-react-app\",\n    standards_dir=\"coderef/standards\",  # default location\n    severity_filter=\"all\",               # critical | major | minor | all\n    scope=[\"all\"],                       # ui_patterns, behavior_patterns, ux_patterns, all\n    generate_fixes=true                  # include fix suggestions\n)",
+        "-_audit_report_saved_to:_coderef/audits/audit-report-yyyy-mm-dd-hhmmss.md": "",
+        "step_4:_re-run_audit_to_verify_improvements": "```\n\n### Example 5: Generate Project Inventory Manifest\n\n```python",
+        "generate_comprehensive_file_inventory": "inventory_manifest(\n    project_path=\"C:/Users/willh/my-project\",\n    analysis_depth=\"standard\",  # quick | standard | deep\n    exclude_dirs=[\"node_modules\", \".git\", \"__pycache__\"],  # Optional\n    max_file_size=10485760  # Optional: 10MB limit\n)",
+        "}": "",
+        "-_last_modified_timestamp": "```\n\n**Use cases:**\n- **Project Onboarding**: Understand structure and tech stack\n- **Dependency Analysis**: Track import relationships\n- **Risk Assessment**: Identify high-risk files requiring attention\n- **Documentation**: Generate file inventory for documentation\n- **Evolution Tracking**: Compare manifests over time to track growth\n\n### Example 6: Analyze Project Dependencies with Security Scanning\n\n```python",
+        "generate_comprehensive_dependency_inventory_with_security_scanning": "dependency_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    scan_security=True,          # Enable vulnerability scanning\n    ecosystems=[\"all\"],          # Analyze all detected ecosystems (npm, pip, cargo, composer)\n    include_transitive=False     # Only direct and dev dependencies\n)",
+        "-_fix_versions_and_references": "```\n\n**Use cases:**\n- **Security Audits**: Find known vulnerabilities in dependencies\n- **Dependency Management**: Track outdated packages\n- **License Compliance**: Audit dependency licenses\n- **Supply Chain Security**: Monitor dependency health\n- **Update Planning**: Prioritize package updates by risk\n\n**Security scanning features:**\n- **OSV API Integration**: Queries Open Source Vulnerabilities database\n- **Multi-ecosystem**: npm (Node.js), PyPI (Python), crates.io (Rust), Packagist (PHP)\n- **Severity levels**: Critical, High, Medium, Low with CVSS scores\n- **Fix guidance**: Identifies versions that fix vulnerabilities\n\n### Example 7: Discover API Endpoints Across Multiple Frameworks\n\n```python",
+        "generate_comprehensive_api_inventory_with_documentation_coverage_analysis": "api_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    frameworks=[\"all\"],          # Detect all frameworks: fastapi, flask, express, graphql\n    include_graphql=False,       # Set to True to parse GraphQL schemas\n    scan_documentation=True      # Parse OpenAPI/Swagger docs for coverage\n)",
+        "-_openapi/swagger_metadata_(description,_summary,_tags,_deprecated_flag)": "```\n\n**Use cases:**\n- **API Documentation**: Generate comprehensive endpoint catalog\n- **Documentation Coverage**: Track which endpoints lack documentation\n- **API Auditing**: Identify undocumented or deprecated endpoints\n- **Framework Migration**: Understand endpoint distribution before refactoring\n- **OpenAPI Compliance**: Verify all endpoints have OpenAPI/Swagger docs\n\n**Framework detection methods:**\n- **AST parsing**: Python decorators (@app.get, @app.route)\n- **Regex extraction**: Express.js route definitions (app.get, app.post)\n- **GraphQL schema parsing**: Query and Mutation type analysis\n- **OpenAPI/Swagger**: YAML/JSON specification parsing\n\n### Example 8: Discover Database Schemas Across Multiple Systems\n\n```python",
+        "generate_comprehensive_database_schema_inventory": "database_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    database_systems=[\"all\"],      # Detect all systems: postgresql, mysql, mongodb, sqlite\n    include_migrations=True         # Parse migration files for schema definitions\n)",
+        "-_validators_(nosql):_schema_validation_rules": "```\n\n**Use cases:**\n- **Database Documentation**: Generate comprehensive schema catalog\n- **Schema Discovery**: Understand database structure across multiple systems\n- **Migration Auditing**: Track schema definitions from ORM models and migrations\n- **Multi-Database Projects**: Analyze projects using SQL and NoSQL together\n- **Schema Validation**: Verify all tables/collections are documented\n\n**Database system support:**\n- **PostgreSQL**: SQLAlchemy models, Alembic migrations\n- **MySQL**: SQLAlchemy models, Alembic migrations\n- **MongoDB**: Mongoose schemas (Node.js)\n- **SQLite**: SQLAlchemy models\n\n**ORM detection methods:**\n- **AST parsing**: SQLAlchemy models (Python `class` with `__tablename__`)\n- **Regex extraction**: Sequelize models (Node.js), Mongoose schemas (Node.js)\n- **Migration parsing**: Alembic migrations (`op.create_table`), Knex migrations\n\n---",
+        "project_structure": "```\ndocs-mcp/\n\u251c\u2500\u2500 server.py                    # MCP server entry (264 lines, -59% from refactor)\n\u251c\u2500\u2500 tool_handlers.py            # 7 tool handlers + registry (516 lines)\n\u251c\u2500\u2500 error_responses.py          # ErrorResponse factory (ARCH-001)\n\u251c\u2500\u2500 type_defs.py                # TypedDict definitions (QUA-001)\n\u251c\u2500\u2500 logger_config.py            # Structured logging (ARCH-003)\n\u251c\u2500\u2500 constants.py                # Paths, Files, enums (REF-002, QUA-003)\n\u251c\u2500\u2500 validation.py               # Input validation layer (REF-003)\n\u251c\u2500\u2500 generators/\n\u2502   \u251c\u2500\u2500 base_generator.py         # Base template generator\n\u2502   \u251c\u2500\u2500 foundation_generator.py   # Multi-doc generator\n\u2502   \u251c\u2500\u2500 changelog_generator.py    # Changelog CRUD with schema validation\n\u2502   \u251c\u2500\u2500 standards_generator.py    # Codebase standards discovery (Tool #8)\n\u2502   \u2514\u2500\u2500 audit_generator.py        # Standards compliance auditing (Tool #9)\n\u251c\u2500\u2500 templates/power/              # POWER framework templates\n\u2502   \u251c\u2500\u2500 readme.txt\n\u2502   \u251c\u2500\u2500 architecture.txt\n\u2502   \u251c\u2500\u2500 api.txt\n\u2502   \u251c\u2500\u2500 components.txt\n\u2502   \u251c\u2500\u2500 schema.txt\n\u2502   \u2514\u2500\u2500 user-guide.txt\n\u251c\u2500\u2500 coderef/\n\u2502   \u251c\u2500\u2500 changelog/                # Changelog system\n\u2502   \u2502   \u251c\u2500\u2500 CHANGELOG.json       # Structured changelog data\n\u2502   \u2502   \u2514\u2500\u2500 schema.json          # JSON schema validation\n\u2502   \u251c\u2500\u2500 standards/                # Codebase standards (Tool #8 output)\n\u2502   \u2502   \u251c\u2500\u2500 UI-STANDARDS.md      # UI component patterns\n\u2502   \u2502   \u251c\u2500\u2500 BEHAVIOR-STANDARDS.md # Behavior patterns\n\u2502   \u2502   \u251c\u2500\u2500 UX-PATTERNS.md       # UX and accessibility patterns\n\u2502   \u2502   \u2514\u2500\u2500 COMPONENT-INDEX.md   # Component inventory\n\u2502   \u251c\u2500\u2500 audits/                   # Compliance audit reports (Tool #9 output)\n\u2502   \u2502   \u2514\u2500\u2500 AUDIT-REPORT-*.md    # Timestamped audit reports\n\u2502   \u251c\u2500\u2500 inventory/                # Project inventory (Tool #14 output)\n\u2502   \u2502   \u251c\u2500\u2500 manifest.json        # Comprehensive file inventory\n\u2502   \u2502   \u2514\u2500\u2500 schema.json          # JSON schema validation\n\u2502   \u251c\u2500\u2500 foundation-docs/          # Generated documentation\n\u2502   \u2514\u2500\u2500 quickref.md              # Quick reference guide\n\u251c\u2500\u2500 CLAUDE.md                   # AI assistant context documentation\n\u251c\u2500\u2500 user-guide.md               # Comprehensive user guide\n\u2514\u2500\u2500 test_security_fixes.py      # Security test suite\n```\n\n---",
+        "troubleshooting": "### Issue: \"No such tool available: mcp__docs-mcp__*\"\n\n**Symptom:** MCP tools not found after adding server\n\n**Cause:** MCP server not restarted or not properly registered\n\n**Resolution:**\n```bash",
+        "1._verify_server_is_registered": "claude mcp list",
+        "2._if_not_listed,_re-add_with_user_scope_for_global_access": "claude mcp add --scope user docs-mcp python \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py\"",
+        "3._restart_claude_code_or_ide": "```\n\n---\n\n### Issue: \"Invalid project path\"\n\n**Symptom:** Error when calling tools with project_path parameter\n\n**Cause:** Using relative path instead of absolute path\n\n**Resolution:**\n```bash",
+        "\u274c_wrong:_relative_path": "generate_foundation_docs(project_path=\"./my-project\")",
+        "\u2705_correct:_absolute_path": "generate_foundation_docs(project_path=\"C:/Users/willh/my-project\")\n```\n\n---\n\n### Issue: \"Changelog not found\"\n\n**Symptom:** get_changelog or add_changelog_entry fails\n\n**Cause:** No changelog exists at `project_path/coderef/changelog/CHANGELOG.json`\n\n**Resolution:**\n```bash",
+        "just_call_it_with_your_first_entry:": "add_changelog_entry(\n    project_path=\"C:/path/to/project\",\n    version=\"1.0.0\",\n    change_type=\"feature\",\n    severity=\"major\",\n    title=\"Initial release\",\n    description=\"Created project with...\",\n    files=[\"*\"],\n    reason=\"Initial development\",\n    impact=\"Project created\"\n)\n```\n\n---\n\n### Issue: Generated docs are generic\n\n**Symptom:** Documentation doesn't mention specific project features\n\n**Cause:** Minimal code in project or AI needs more context\n\n**Resolution:**\n1. Ensure project has actual implementation code\n2. Add code comments explaining key features\n3. Provide additional context to AI during generation\n4. Manually enhance generated docs if needed\n\n---",
+        "the_changelog_trilogy_pattern": "docs-mcp implements a unique **meta-tool pattern** for changelog management:\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 get_changelog (READ)                    \u2502\n\u2502 Query changelog history                 \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n         \u2193\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 add_changelog_entry (WRITE)             \u2502\n\u2502 Execute changelog update                \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n         \u2193\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 update_changelog (INSTRUCT)             \u2502\n\u2502 Orchestrate agentic workflow            \u2502\n\u2502 \u2192 Agent analyzes context                \u2502\n\u2502 \u2192 Agent determines details              \u2502\n\u2502 \u2192 Agent calls add_changelog_entry       \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n**Why This Matters:**\n- **Separation of Concerns**: Read/write/orchestrate are distinct operations\n- **Agentic Design**: Agents can self-document without explicit prompting\n- **Flexibility**: Use WRITE directly or INSTRUCT for autonomous workflows\n\n---",
+        "additional_resources": "- **[user-guide.md](../user-guide.md)** - Comprehensive user guide with best practices\n- **[coderef/quickref.md](../coderef/quickref.md)** - Quick reference for all 7 tools\n- **[coderef/changelog/CHANGELOG.json](../coderef/changelog/CHANGELOG.json)** - Project changelog\n- **[MCP-SETUP-GUIDE.md](../MCP-SETUP-GUIDE.md)** - General MCP server setup\n- **[MCP Specification](https://spec.modelcontextprotocol.io/)** - Official MCP docs\n- **[MCP Python SDK](https://github.com/anthropics/mcp-python)** - SDK documentation\n\n---",
+        "version_history": "| Version | Date | Highlights |\n|---------|------|------------|\n| 2.9.0 | 2025-12-06 | **LLM Workflow** - Multi-LLM prompt generation and response consolidation with /llm-prompt and /consolidate commands. Supports code-review, architecture, security-audit, implementation, and refactor task types |\n| 1.12.0 | 2025-10-23 | **Agent Handoff Automation** - Auto-generate comprehensive agent handoff context files from plan.json, analysis.json, and git history, reducing handoff time from 20-30 minutes to under 5 minutes with 80%+ auto-population |\n| 1.11.0 | 2025-10-21 | **Global Workorder Logging** - Simple one-line workorder tracking system for global activity log across projects with 2 new tools (log_workorder, get_workorder_log) |\n| 1.10.0 | 2025-10-20 | **Feature Archive System** - Automated archiving of completed features from working to archived directory with status checking and searchable index tracking |\n| 1.9.0 | 2025-10-19 | **Multi-Agent Coordination System** - Parallel agent execution with 5 new tools for task assignment, verification, deliverables aggregation, and status tracking |\n| 1.6.0 | 2025-10-18 | **Deliverables Tracking System** - Automatic DELIVERABLES.md generation integrated into /create-plan workflow with git-based metrics (LOC, commits, time), template generation, and metrics update tools |\n| 1.5.0 | 2025-10-18 | **Workorder Tracking System** - Automatic unique workorder ID assignment for all features in MCP planning workflow, cross-file persistence (context \u2192 analysis \u2192 plan \u2192 deliverables), and validation integration |\n| 1.4.0 | 2025-10-11 | **Planning Workflow System** - Added 4 planning tools for AI-assisted implementation planning with automated analysis, validation (0-100 scoring), iterative review loops, and comprehensive integration tests (18/18 passing, 100%) |\n| 1.3.0 | 2025-10-10 | **Consistency Trilogy Complete** - Added audit_codebase tool for compliance auditing with weighted scoring, comprehensive reports, and fix suggestions |\n| 1.2.0 | 2025-10-10 | **Standards Discovery** - Added establish_standards tool for extracting UI/UX/behavior patterns |\n| 1.0.9 | 2025-10-09 | **AI Context Docs** - Added CLAUDE.md for AI assistant guidance |\n| 1.0.8 | 2025-10-09 | **Workflow Demo** - Demonstrated proper MCP changelog workflow |\n| 1.0.7 | 2025-10-09 | **\ud83c\udfd7\ufe0f Architecture Refactor** - Modular handlers, logging, type safety, error factory (5 major improvements) |\n| 1.0.6 | 2025-10-09 | **Phase 2 Refactor** - Constants extraction, input validation layer |\n| 1.0.5 | 2025-10-09 | JSON schema validation, README routing fix (SEC-002, SEC-003) |\n| 1.0.4 | 2025-10-09 | **\ud83d\udd12 Security Fixes** - Path traversal protection, jsonschema dependency |\n| 1.0.3 | 2025-10-09 | Added update_changelog agentic workflow tool |\n| 1.0.2 | 2025-10-09 | Added changelog system (get_changelog, add_changelog_entry) |\n\nSee [CHANGELOG.json](coderef/changelog/CHANGELOG.json) for complete change history with detailed entries.\n\n---",
+        "contributing": "We welcome contributions! When making changes:\n\n1. **Make your changes** to the codebase\n2. **Test thoroughly** to ensure everything works\n3. **Document your changes** using update_changelog:\n   ```bash\n   update_changelog(\n       project_path=\"C:/Users/willh/.mcp-servers/docs-mcp\",\n       version=\"1.0.x\"\n   )\n   ```\n4. **Commit with clear message** describing what changed\n5. **Submit pull request** with reference to changelog entry\n\n---",
+        "license": "[Specify license here - MIT, Apache 2.0, etc.]\n\n---",
+        "ai_integration_footer": "This MCP server is **optimized for AI assistant integration**. It provides:\n\n- **Structured templates** that guide documentation generation with consistent quality\n- **Decision trees** for content selection embedded in templates\n- **Command sequences** for systematic documentation workflows\n- **Agent-friendly tools** that enable autonomous self-documentation\n\n**For AI Assistants**: Use the POWER framework templates to ensure comprehensive documentation. Follow the `work` section for systematic analysis and the `requirements` section for mandatory elements. The update_changelog tool demonstrates the meta-tool pattern for orchestrating agent workflows.\n\n---\n\n**\ud83e\udd16 Generated with docs-mcp v1.4.0**\n**Maintained by**: willh, Claude Code AI\n**Planning Workflow System**: 4/4 Tools Complete (analyze \u2713, validate \u2713, review \u2713, template \u2713)\n**Integration Tests**: 18/18 Passing (100%)"
+      },
+      "full_content": "# docs-mcp\n\n**Enterprise-Grade MCP Server for Documentation Generation**\n\n**Version:** 2.9.0 | **Date:** 2025-12-06 | **Maintainers:** willh, Claude Code AI\n\n---\n\n## Overview\n\n**docs-mcp** is a production-ready Model Context Protocol (MCP) server that provides AI assistants with professional documentation generation, changelog management, codebase consistency auditing, universal quickref generation, implementation planning workflow, automatic deliverables tracking, **multi-agent task coordination**, **feature archiving**, **global workorder tracking**, **multi-LLM prompt generation and consolidation**, and comprehensive project inventory analysis. Built with enterprise-grade patterns, it offers **39 specialized tools** with comprehensive logging, type safety, and security hardening.\n\n### What It Does\n\n- **Documentation Generation**: Create professional README, ARCHITECTURE, API, COMPONENTS, SCHEMA, and USER-GUIDE documents using POWER framework templates\n- **Universal Quickref Generation**: AI-assisted interview workflow to create scannable 150-250 line quickref guides for ANY application (CLI, Web, API, Desktop, Library)\n- **Changelog Management**: Maintain structured, schema-validated changelogs with agent-friendly tooling\n- **Consistency Management**: Establish baseline standards and audit codebases for UI/UX/behavior violations\n- **Planning Workflow**: AI-assisted implementation planning with automated analysis, validation, and iterative review loops\n- **Deliverables Tracking**: Automatic DELIVERABLES.md generation with git metrics (LOC, commits, time) - NEW in v1.6.0\n- **Multi-Agent Coordination**: Parallel agent execution with automated verification and integrated deliverables tracking - NEW in v1.9.0\n- **Agent Handoff Automation**: Auto-generate comprehensive handoff context files in under 5 minutes (vs 20-30 min manual) - **NEW in v1.12.0**\n- **Feature Archiving**: Automated archiving of completed features with status checking and searchable index - NEW in v1.10.0\n- **LLM Workflow**: Multi-LLM prompt generation and response consolidation for code reviews, architecture analysis, security audits - **NEW in v2.9.0**\n- **Agentic Workflows**: Enable AI agents to self-document changes, maintain code quality, and create high-quality plans\n- **Production-Ready**: Full logging, error handling, type hints, and security features\n\n### Key Features\n\n\u2705 **39 MCP Tools** - Complete toolkit for documentation, changelog, consistency, quickref generation, planning workflow, deliverables tracking, **multi-agent coordination**, **agent handoff automation**, **feature archiving**, **workorder tracking**, **LLM workflow**, and comprehensive project inventory (files, dependencies, APIs, databases, configurations)\n\u2705 **42 Slash Commands** - Quick access to common workflows via `/command` syntax\n\u2705 **Reference Commands** - `/list-tools` (54 tools across 3 servers) and `/list-commands` with Unicode box art display\n\u2705 **Workorder Tracking** - Automatic unique ID assignment for all features in MCP planning workflow (NEW in v1.5.0)\n\u2705 **Deliverables Tracking** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (NEW in v1.6.0)\n\u2705 **Multi-Agent Coordination** - First MCP server with native parallel agent execution and automated verification (NEW in v1.9.0)\n\u2705 **Feature Archive System** - Automated archiving with status checking, user confirmation, and searchable index tracking (NEW in v1.10.0)\n\u2705 **LLM Workflow** - Multi-LLM prompt generation with structured JSON output and response consolidation (NEW in v2.9.0)\n\u2705 **Modular Architecture** - Handler registry pattern with 97% reduction in main dispatcher (407 \u2192 13 lines)\n\u2705 **Enterprise Patterns** - ErrorResponse factory, TypedDict type hints, enum constants, comprehensive logging\n\u2705 **Security Hardened** - Path traversal protection, schema validation, input sanitization, audit trails\n\u2705 **POWER Framework** - Structured templates ensure comprehensive documentation\n\u2705 **Changelog Trilogy** - Read, write, and instruct pattern for changelog management\n\u2705 **Multi-Project Support** - Generic design works with any project\n\n### Architecture Highlights (v1.0.7)\n\n\ud83c\udfd7\ufe0f **Modular Design**: Tool handlers separated into `tool_handlers.py` with registry pattern\n\ud83c\udfaf **Type Safety**: Full TypedDict coverage for all complex return types\n\ud83d\udcca **Observability**: Structured logging with security audit trails and performance monitoring\n\ud83d\udee1\ufe0f **Error Handling**: Consistent ErrorResponse factory for all error scenarios\n\ud83d\udd27 **Maintainability**: 59% reduction in server.py size (644 \u2192 264 lines)\n\n### Security & Quality\n\n\ud83d\udd12 **SEC-001**: Path traversal protection - All paths canonicalized with `.resolve()`\n\ud83d\udd12 **SEC-002**: JSON schema validation - Automatic validation on all changelog operations\n\ud83d\udd12 **SEC-003**: Smart output routing - README \u2192 root, others \u2192 `coderef/foundation-docs/`\n\ud83d\udd12 **SEC-005**: Template sanitization - Regex validation prevents path traversal\n\ud83d\udcca **ARCH-003**: Comprehensive logging - All operations logged to stderr (MCP-safe)\n\ud83c\udfaf **QUA-001**: Type hints - Full TypedDict coverage for IDE support\n\ud83d\udd27 **QUA-002**: Modular handlers - Each tool independently testable\n\ud83c\udfa8 **QUA-003**: Enum constants - Zero magic strings throughout codebase\n\n---\n\n## Prerequisites\n\nBefore using docs-mcp, ensure you have:\n\n- **Python 3.10+** - Required for MCP server\n- **MCP-compatible AI client** - Claude Code CLI, Cursor, Windsurf, or VS Code with MCP support\n- **pip package manager** - For installing Python dependencies\n\n### Verify Requirements\n\n```bash\n# Check Python version\npython --version\n# Should show: Python 3.10.x or higher\n\n# Check MCP capability\nclaude mcp list\n```\n\n---\n\n## Installation\n\n### Quick Install (Claude Code)\n\n```bash\n# Add docs-mcp as a user-scoped MCP server (globally accessible to all CLI instances)\nclaude mcp add --scope user docs-mcp python \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py\"\n```\n\n**Expected Output:**\n```\nAdded stdio MCP server docs-mcp with command: python C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py to user config\n```\n\n**Note**: The `--scope user` flag ensures docs-mcp is available globally to all Claude CLI instances, not just the current session.\n\n### Manual Installation (Other IDEs)\n\n**For Cursor:**\nEdit `C:\\Users\\<username>\\.cursor\\mcp.json`:\n```json\n{\n  \"mcpServers\": {\n    \"docs-mcp\": {\n      \"command\": \"python\",\n      \"args\": [\"C:\\\\Users\\\\willh\\\\.mcp-servers\\\\docs-mcp\\\\server.py\"]\n    }\n  }\n}\n```\n\n**For Windsurf/VS Code:**\nSimilar configuration in IDE-specific MCP config file.\n\n### Verify Installation\n\n```bash\nclaude mcp list\n```\n\n**Expected Output:**\n```\ndocs-mcp: python C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py - \u2713 Connected\n```\n\n---\n\n## Available Tools\n\n### Documentation Generation Tools (4)\n\n| Tool | Purpose | Required Parameters |\n|------|---------|---------------------|\n| `list_templates` | List available POWER templates | None |\n| `get_template` | Get template content | `template_name` |\n| `generate_foundation_docs` | Generate 5 foundation docs | `project_path` |\n| `generate_individual_doc` | Generate single document | `project_path`, `template_name` |\n\n### Agent Handoff Tool (1) **NEW in v1.12.0**\n\n| Tool | Purpose | Required Parameters |\n|------|---------|---------------------|\n| `generate_handoff_context` | Auto-generate agent handoff context files from plan.json, analysis.json, and git history | `project_path`, `feature_name`, `mode` (optional: \"full\" or \"minimal\") |\n\n**Reduces agent handoff time from 20-30 minutes to under 5 minutes** by automatically extracting context from existing project files.\n\n### Changelog Management Tools (3)\n\n| Tool | Purpose | Pattern | Required Parameters |\n|------|---------|---------|---------------------|\n| `get_changelog` | Query changelog history | **READ** | `project_path` |\n| `add_changelog_entry` | Add changelog entry | **WRITE** | `project_path`, `version`, `change_type`, `severity`, `title`, `description`, `files`, `reason`, `impact` |\n| `update_changelog` | Agentic workflow guide | **INSTRUCT** | `project_path`, `version` |\n\n### Universal Quickref Generation (1)\n\n| Tool | Purpose | Pattern | Required Parameters |\n|------|---------|---------|---------------------|\n| `generate_quickref_interactive` | AI-driven interview to create scannable quickref.md for any app type | **INTERACTIVE** | `project_path` |\n\n**Workflow**: AI asks 9 interview questions \u2192 User answers in plain English \u2192 AI generates quickref.md (150-250 lines) following universal 8-section pattern \u2192 Saves to `coderef/quickref.md`\n\n**Supported App Types**: CLI, Web App, API, Desktop App, Library/Framework\n\n### Consistency Management Tools (3)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `establish_standards` | Scan codebase and document UI/UX/behavior patterns | **ONCE** per project to create baseline | `project_path` |\n| `audit_codebase` | Audit code against established standards | **PERIODICALLY** (weekly/monthly) or before releases | `project_path` |\n| `check_consistency` | Quick consistency check on modified files (pre-commit gate) | **BEFORE COMMITS** - Run on staged files only | `project_path` |\n\n**The Consistency Trilogy:**\n1. **establish_standards** (Tool #8) - Document what's standard in your codebase\n2. **audit_codebase** (Tool #9) - Find violations of those standards\n3. **check_consistency** (Tool #10) - Quality gate for new code\n\n### Deliverables Tracking Tools (2)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `generate_deliverables_template` | Generate DELIVERABLES.md template from plan.json | **AUTOMATIC** - Called by /create-plan workflow | `project_path`, `feature_name` |\n| `update_deliverables` | Update DELIVERABLES.md with git metrics (LOC, commits, time) | **AFTER IMPLEMENTATION** - Run after feature completion | `project_path`, `feature_name` |\n\n**Deliverables Workflow**:\n1. `/create-plan` - Automatically generates both plan.json and DELIVERABLES.md template\n2. **Implement feature** - Code your feature, commit with feature name in messages\n3. `/update-deliverables` - Parses git history to calculate actual metrics (LOC, commits, time)\n\n**Git Integration**:\n- Searches commit messages for feature name (case-insensitive)\n- Calculates LOC from `git diff --stat`\n- Counts commits with `git log --grep`\n- Measures time from first to last commit timestamp\n\n### Planning Workflow Tools (6)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `get_planning_template` | Get planning template sections | **REFERENCE** - View template structure before planning | None (or `section` for specific section) |\n| `gather_context` | Gather feature requirements and assign workorder ID | **STEP 0** - Before analyzing project | `project_path`, `feature_name` |\n| `analyze_project_for_planning` | Analyze project for planning context | **STEP 1** - Before creating implementation plan | `project_path` (optional: `feature_name` to save) |\n| `create_plan` | Generate implementation plan from context and analysis | **STEP 2** - After gathering context and analysis | `project_path`, `feature_name` |\n| `validate_implementation_plan` | Validate plan quality with 0-100 scoring | **STEP 2** - After creating plan draft | `project_path`, `plan_file_path` |\n| `generate_plan_review_report` | Generate markdown review report | **STEP 3** - After validation for review | `project_path`, `plan_file_path`, `output_path` |\n\n**Planning Workflow Pattern:**\n1. **gather_context** (optional) - Collect feature requirements \u2192 assigns workorder ID (WO-{FEATURE-NAME}-001) \u2192 saves to context.json\n2. **analyze_project_for_planning** - Discover foundation docs, standards, patterns (optionally save to feature folder) \u2192 automates section 0 (Preparation) \u2192 preserves workorder\n3. **create_plan** - Generate implementation plan \u2192 embeds workorder in section 5 \u2192 all tasks reference workorder\n4. **validate_implementation_plan** - Score plan (0-100) with issue detection \u2192 validates workorder consistency \u2192 iterate until score \u2265 90\n5. **generate_plan_review_report** - Format validation results as markdown for user review\n6. **User approval gate** - User must approve plan before execution (MANDATORY)\n7. **Execute implementation** - Follow approved plan step-by-step\n\n### Project Inventory Tools (7)\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `inventory_manifest` | Generate comprehensive file inventory with metadata | **ONBOARDING** - Understand project structure, or **ANALYSIS** - Track project evolution | `project_path` |\n| `dependency_inventory` | Analyze dependencies across ecosystems with security scanning | **SECURITY AUDIT** - Find vulnerabilities, or **DEPENDENCY REVIEW** - Track outdated packages | `project_path` |\n| `api_inventory` | Discover API endpoints across multiple frameworks (FastAPI, Flask, Express, GraphQL) | **API DOCUMENTATION** - Catalog endpoints, or **COVERAGE ANALYSIS** - Track documentation gaps | `project_path` |\n| `database_inventory` | Discover database schemas across multiple systems (PostgreSQL, MySQL, MongoDB, SQLite) | **SCHEMA DOCUMENTATION** - Catalog tables/collections, or **MIGRATION AUDIT** - Track schema definitions | `project_path` |\n| `config_inventory` | Discover and analyze configuration files with sensitive value detection | **SECURITY AUDIT** - Find exposed credentials, or **CONFIG REVIEW** - Catalog configuration | `project_path` |\n| `test_inventory` | Discover test files and analyze coverage metrics | **TEST COVERAGE** - Identify gaps, or **QUALITY AUDIT** - Track test infrastructure | `project_path` |\n| `documentation_inventory` | Discover and analyze documentation files with quality metrics | **DOCS AUDIT** - Track freshness and coverage | `project_path` |\n| `config_inventory` | Discover and analyze configuration files across formats (JSON, YAML, TOML, INI, ENV) with sensitive value detection | **SECURITY AUDIT** - Find exposed credentials, or **CONFIG REVIEW** - Catalog configuration files | `project_path` |\n\n#### File Inventory (`inventory_manifest`)\n\n**What it captures:**\n- **File metadata**: path, name, size, lines, category, risk level, language\n- **Project metrics**: total files/size/lines, category distribution, risk distribution, language breakdown\n- **Dependencies**: Detected imports for Python and JavaScript/TypeScript files\n- **Universal taxonomy**: 7 file categories (core, source, template, config, test, docs, unknown)\n- **Risk scoring**: 4 levels (low, medium, high, critical) based on category, size, complexity, sensitivity\n\n**Analysis depth options:**\n- `quick` - Basic file enumeration (~1-2 seconds, 500+ files/sec)\n- `standard` - Full metadata + dependencies (~3-5 seconds, 200+ files/sec)\n- `deep` - Standard + complexity analysis (~10-15 seconds, 50+ files/sec)\n\n**Output**: `coderef/inventory/manifest.json` - JSON manifest with file metadata and project metrics\n\n#### Dependency Inventory (`dependency_inventory`)\n\n**What it captures:**\n- **Multi-ecosystem support**: npm (Node.js), pip (Python), cargo (Rust), composer (PHP)\n- **Dependency analysis**: Direct, dev, peer, and transitive dependencies\n- **Security scanning**: Vulnerability detection via OSV API (all ecosystems)\n- **Version tracking**: Current vs latest versions from package registries\n- **License detection**: Identify dependency licenses\n- **Comprehensive metrics**: Total deps, outdated count, vulnerable count, severity breakdown\n\n**Features:**\n- **Security vulnerabilities**: CVE IDs, severity (critical/high/medium/low), CVSS scores, fix versions\n- **Outdated detection**: Compare installed vs latest versions\n- **Metrics calculation**: Aggregated stats by ecosystem, type, severity\n- **Schema validation**: JSON schema ensures manifest integrity\n\n**Output**: `coderef/inventory/dependencies.json` - JSON manifest with dependency metadata and security findings\n\n#### API Inventory (`api_inventory`)\n\n**What it captures:**\n- **Multi-framework support**: FastAPI, Flask, Express.js, GraphQL\n- **Endpoint metadata**: Path, HTTP method, function name, file location, line number\n- **Documentation coverage**: Percentage of documented vs undocumented endpoints\n- **OpenAPI/Swagger parsing**: Extracts endpoint docs from spec files\n- **Parameter detection**: Function parameters for each endpoint\n- **Framework breakdown**: Endpoints by framework type\n- **Method distribution**: Endpoints by HTTP method (GET, POST, PUT, DELETE, etc.)\n\n**Detection methods:**\n- **AST parsing**: Python decorators (@app.get, @app.route)\n- **Regex extraction**: Express.js route definitions (app.get, app.post)\n- **GraphQL schema parsing**: Query and Mutation type analysis\n- **OpenAPI/Swagger**: YAML/JSON specification parsing\n\n**Output**: `coderef/inventory/api.json` - JSON manifest with endpoint metadata and coverage metrics\n\n#### Database Inventory (`database_inventory`)\n\n**What it captures:**\n- **Multi-database support**: PostgreSQL, MySQL, MongoDB, SQLite\n- **Schema metadata**: Table/collection name, type (table/collection), database type (sql/nosql)\n- **Column/field definitions**: Data types, constraints, defaults\n- **ORM detection**: SQLAlchemy, Sequelize, Mongoose models\n- **Migration parsing**: Alembic and Knex.js migration files\n- **Relationship mapping**: Foreign keys, ORM relationships (one-to-one, one-to-many, many-to-many)\n- **Index tracking**: Database indexes with uniqueness flags\n- **System breakdown**: Schema count by database system and ORM/source\n\n**Detection methods:**\n- **AST parsing**: SQLAlchemy ORM models (Python `class` with `__tablename__`)\n- **Regex extraction**: Sequelize models (Node.js), Mongoose schemas (Node.js)\n- **Migration parsing**: Alembic migrations (`op.create_table`), Knex.js migrations\n\n**Output**: `coderef/inventory/database.json` - JSON manifest with schema metadata and database metrics\n\n### Workorder Tracking Tools (2) **NEW in v1.11.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `log_workorder` | Log new workorder entry to global log file | **AFTER COMPLETION** - Log finished workorders for traceability | `project_path`, `workorder_id`, `project_name`, `description` |\n| `get_workorder_log` | Query global workorder log with filters | **ANYTIME** - View workorder history or search by project/pattern | `project_path` (optional: `project_name`, `workorder_pattern`, `limit`) |\n\n**Global Workorder Log:**\n- Simple one-line format: `WO-ID | Project | Description | Timestamp`\n- Latest entries at top (reverse chronological)\n- Saved to: `coderef/workorder-log.txt`\n- Auto-truncation at 50 chars for readability\n- Workorder ID validation: `^WO-[A-Z0-9-]+-\\d{3}$`\n\n**Example log entries:**\n```\nWO-WORKORDER-LOG-001 | docs-mcp | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51+00:00\nWO-AUTH-001 | personas-mcp | Auth system workorder | 2025-10-21T01:45:20+00:00\n```\n\n**Use cases:**\n- Track workorder completion across projects\n- Maintain global activity log\n- Quick visibility into recent work\n- Integration with planning workflows\n- Traceability for feature implementation\n\n**Slash command shortcuts:**\n- `/log-workorder` - Interactive prompt for logging new entry\n- `/get-workorder-log` - Interactive query with optional filters\n\n---\n\n### Multi-Agent Coordination Tools (5) **NEW in v1.9.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `generate_agent_communication` | Generate communication.json from plan.json | **AFTER PLANNING** - Create coordination file for parallel agents | `project_path`, `feature_name` |\n| `assign_agent_task` | Assign task to specific agent with workorder scoping | **BEFORE WORK** - Assign agent 2, 3, etc. with unique workorder | `project_path`, `feature_name`, `agent_number` (1-10) |\n| `verify_agent_completion` | Verify agent work with automated checks | **AFTER WORK** - Validate forbidden files unchanged and success criteria met | `project_path`, `feature_name`, `agent_number` |\n| `aggregate_agent_deliverables` | Combine metrics from multiple agent DELIVERABLES.md files | **FINAL STEP** - Generate combined deliverables report | `project_path`, `feature_name` |\n| `track_agent_status` | Track agent status across features with real-time dashboard | **ANYTIME** - Monitor agent progress and detect blockers | `project_path` (optional: `feature_name`) |\n\n**Multi-Agent Coordination Workflow:**\n1. **create_plan** with `multi_agent=True` - Generates plan.json + communication.json automatically\n2. **assign_agent_task** - Assign Agent 2 to phase_0, Agent 3 to phase_1, etc.\n   - Each agent gets unique workorder ID (WO-FEATURE-002, WO-FEATURE-003)\n   - Agent status: null \u2192 ASSIGNED \u2192 IN_PROGRESS \u2192 COMPLETE\n3. **Parallel execution** - Multiple agents work simultaneously on different phases\n4. **verify_agent_completion** - Automated verification with git diff on forbidden files\n   - Validates success criteria from communication.json\n   - Updates status to VERIFIED or VERIFICATION_FAILED\n5. **aggregate_agent_deliverables** - Combines metrics (LOC, commits, time) from all agents\n6. **track_agent_status** - Real-time dashboard shows overall workflow status\n\n**Key Features:**\n- \u2705 **Agent-scoped workorder IDs** - WO-FEATURE-001, WO-FEATURE-002, WO-FEATURE-003\n- \u2705 **Automated verification** - Git diff validation, success criteria checks, blocker detection\n- \u2705 **Metrics aggregation** - Combines LOC, commits, contributors, time from multiple agents\n- \u2705 **Real-time tracking** - Dashboard with status counts (available, assigned, in_progress, complete, verified, blocked)\n- \u2705 **Forbidden files protection** - Prevents agents from modifying production files (server.py, tool_handlers.py)\n\n**Performance:**\n- 3x faster implementation through parallel agent execution\n- <600ms total coordination overhead per complete workflow\n- <100ms per status tracking operation\n\n---\n\n### Feature Management Tools (3) **NEW in v1.10.0+**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `archive_feature` | Archive completed features from working to archived directory | **AFTER COMPLETION** - Archive feature after running update-deliverables | `project_path`, `feature_name` |\n| `update_all_documentation` | Update all docs (README, CLAUDE, CHANGELOG) with auto version bump | **BEFORE ARCHIVING** - Update docs after implementation | `project_path`, `change_type`, `feature_description`, `workorder_id` |\n| `execute_plan` | Generate TodoWrite task list from plan.json with TASK-ID first format | **START IMPLEMENTATION** - Convert plan to executable checklist | `project_path`, `feature_name` |\n\n**Feature Lifecycle:**\n1. **create_plan** - Generate implementation plan\n2. **execute_plan** - Convert to TodoWrite checklist\n3. **Implementation** - Complete tasks\n4. **update_deliverables** - Calculate metrics from git history\n5. **update_all_documentation** - Auto-increment version and update docs\n6. **archive_feature** - Move to archive with status checking\n\n---\n\n### LLM Workflow Tools (1) **NEW in v2.9.0**\n\n| Tool | Purpose | When to Use | Required Parameters |\n|------|---------|-------------|---------------------|\n| `consolidate_llm_outputs` | Parse and merge responses from multiple LLMs into unified JSON | **AFTER COLLECTING RESPONSES** - Merge ChatGPT, Claude, Gemini outputs | `input_file_path` |\n\n**LLM Workflow:**\n1. `/llm-prompt` - Generate structured prompt with JSON output schema\n2. Copy prompt to ChatGPT, Claude, Gemini\n3. Paste responses into `llm-responses.txt` with markers (`=== ChatGPT ===`, etc.)\n4. `/consolidate` - Merge all responses into unified JSON\n\n**Task Types:**\n- `code-review` - Analyze code for issues and improvements\n- `architecture` - Evaluate design and suggest patterns\n- `security-audit` - Identify vulnerabilities and risks\n- `implementation` - Suggest approaches for requirements\n- `refactor` - Identify improvement opportunities\n\n**Output Structure:**\n- **findings** - Merged with consensus tracking (which LLMs agreed)\n- **recommendations** - Aggregated with priority and effort\n- **risks** - Combined with severity/likelihood\n- **metrics** - Averaged confidence scores\n- **unique insights** - Findings only one LLM caught (worth extra attention)\n- **conflicts** - Where LLMs disagreed (needs human decision)\n\n**Files (in `coderef/working/{feature}/`):**\n- `llm-prompt.json` - Generated structured prompt\n- `llm-responses.txt` - Pasted LLM responses with markers\n- `llm-consolidated.json` - Merged output\n\n---\n\n\n## Quick Start\n\n### Generate Documentation for Your Project\n\n```bash\n# Ask Claude Code to generate all docs\n\"Generate foundation documentation for my project at C:\\path\\to\\my-project\"\n```\n\nThis creates 5 foundation documents:\n- **README.md** \u2192 `my-project/README.md` (project root)\n- **ARCHITECTURE.md** \u2192 `my-project/coderef/foundation-docs/`\n- **API.md** \u2192 `my-project/coderef/foundation-docs/`\n- **COMPONENTS.md** \u2192 `my-project/coderef/foundation-docs/`\n- **SCHEMA.md** \u2192 `my-project/coderef/foundation-docs/`\n\n**Note:** USER-GUIDE.md is optional and generated separately using `generate_individual_doc`\n\n### Maintain a Changelog\n\n**Basic Workflow:**\n```bash\n# 1. Make code changes\n# 2. Ask agent to document them\n\"Use update_changelog to document my changes for version 1.0.3\"\n\n# Agent will:\n# - Analyze changes autonomously\n# - Determine change type and severity\n# - Call add_changelog_entry with details\n# - Update CHANGELOG.json\n```\n\n**Manual Entry:**\n```bash\n# Add specific changelog entry\nadd_changelog_entry(\n    project_path=\"C:/path/to/project\",\n    version=\"1.0.3\",\n    change_type=\"feature\",\n    severity=\"major\",\n    title=\"Added new feature X\",\n    description=\"Implemented X with capabilities Y and Z\",\n    files=[\"server.py\", \"lib/feature.py\"],\n    reason=\"Users requested ability to...\",\n    impact=\"Users can now...\",\n    contributors=[\"your_name\"]\n)\n```\n\n---\n\n## Usage Examples\n\n### Example 1: Generate Project Documentation\n\n```python\n# List available templates\nlist_templates()\n# Returns: readme, architecture, api, components, schema, user-guide\n\n# Generate all foundation documents\ngenerate_foundation_docs(project_path=\"C:/Users/willh/my-project\")\n\n# Or generate just one document\ngenerate_individual_doc(\n    project_path=\"C:/Users/willh/my-project\",\n    template_name=\"api\"\n)\n```\n\n### Example 2: Query Changelog History\n\n```python\n# Get full changelog\nget_changelog(project_path=\"C:/Users/willh/my-project\")\n\n# Get specific version\nget_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    version=\"1.0.2\"\n)\n\n# Get all breaking changes\nget_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    breaking_only=true\n)\n\n# Filter by type\nget_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    change_type=\"feature\"\n)\n```\n\n### Example 3: Agentic Self-Documentation\n\n```python\n# Agent calls update_changelog\nupdate_changelog(\n    project_path=\"C:/Users/willh/my-project\",\n    version=\"1.0.3\"\n)\n\n# Tool returns 3-step instructions:\n# STEP 1: Analyze Your Changes\n# STEP 2: Determine Change Details\n# STEP 3: Call add_changelog_entry\n\n# Agent analyzes context autonomously\n# Agent executes add_changelog_entry(...)\n# Changelog updated!\n```\n\n### Example 4: Audit Codebase for Consistency\n\n```python\n# Step 1: Establish baseline standards (run once)\nestablish_standards(\n    project_path=\"C:/Users/willh/my-react-app\",\n    scan_depth=\"standard\",  # quick | standard | deep\n    focus_areas=[\"all\"]      # ui_components, behavior_patterns, ux_flows, all\n)\n# Creates 4 standards documents in coderef/standards/\n\n# Step 2: Audit codebase against standards (run periodically)\naudit_codebase(\n    project_path=\"C:/Users/willh/my-react-app\",\n    standards_dir=\"coderef/standards\",  # default location\n    severity_filter=\"all\",               # critical | major | minor | all\n    scope=[\"all\"],                       # ui_patterns, behavior_patterns, ux_patterns, all\n    generate_fixes=true                  # include fix suggestions\n)\n\n# Returns:\n# - Compliance Score: 85/100 (B)\n# - Violations: 12 total (0 critical, 5 major, 7 minor)\n# - Audit report saved to: coderef/audits/AUDIT-REPORT-YYYY-MM-DD-HHmmss.md\n\n# Step 3: Review report and fix violations\n# Step 4: Re-run audit to verify improvements\n```\n\n### Example 5: Generate Project Inventory Manifest\n\n```python\n# Generate comprehensive file inventory\ninventory_manifest(\n    project_path=\"C:/Users/willh/my-project\",\n    analysis_depth=\"standard\",  # quick | standard | deep\n    exclude_dirs=[\"node_modules\", \".git\", \"__pycache__\"],  # Optional\n    max_file_size=10485760  # Optional: 10MB limit\n)\n\n# Returns:\n# {\n#   \"manifest_path\": \"coderef/inventory/manifest.json\",\n#   \"files_analyzed\": 247,\n#   \"project_name\": \"my-project\",\n#   \"analysis_depth\": \"standard\",\n#   \"metrics\": {\n#     \"total_files\": 247,\n#     \"total_size\": 5242880,\n#     \"total_lines\": 12543,\n#     \"file_categories\": {\n#       \"source\": 120,\n#       \"test\": 45,\n#       \"config\": 18,\n#       \"docs\": 12,\n#       \"core\": 8,\n#       \"template\": 3,\n#       \"unknown\": 41\n#     },\n#     \"risk_distribution\": {\n#       \"low\": 180,\n#       \"medium\": 45,\n#       \"high\": 18,\n#       \"critical\": 4\n#     },\n#     \"language_breakdown\": {\n#       \"python\": 165,\n#       \"javascript\": 35,\n#       \"markdown\": 25,\n#       \"json\": 22\n#     }\n#   },\n#   \"success\": true\n# }\n\n# The manifest.json includes detailed metadata for each file:\n# - File path, name, extension, size, lines\n# - Category (core, source, template, config, test, docs, unknown)\n# - Risk level (low, medium, high, critical)\n# - Language and complexity\n# - Dependencies (imports detected in Python/JS/TS files)\n# - Last modified timestamp\n```\n\n**Use cases:**\n- **Project Onboarding**: Understand structure and tech stack\n- **Dependency Analysis**: Track import relationships\n- **Risk Assessment**: Identify high-risk files requiring attention\n- **Documentation**: Generate file inventory for documentation\n- **Evolution Tracking**: Compare manifests over time to track growth\n\n### Example 6: Analyze Project Dependencies with Security Scanning\n\n```python\n# Generate comprehensive dependency inventory with security scanning\ndependency_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    scan_security=True,          # Enable vulnerability scanning\n    ecosystems=[\"all\"],          # Analyze all detected ecosystems (npm, pip, cargo, composer)\n    include_transitive=False     # Only direct and dev dependencies\n)\n\n# Returns:\n# {\n#   \"manifest_path\": \"coderef/inventory/dependencies.json\",\n#   \"package_managers\": [\"npm\", \"pip\"],\n#   \"total_dependencies\": 127,\n#   \"vulnerable_count\": 3,\n#   \"outdated_count\": 18,\n#   \"metrics\": {\n#     \"total_dependencies\": 127,\n#     \"direct_count\": 45,\n#     \"dev_count\": 82,\n#     \"outdated_count\": 18,\n#     \"vulnerable_count\": 3,\n#     \"critical_vulnerabilities\": 0,\n#     \"high_vulnerabilities\": 1,\n#     \"medium_vulnerabilities\": 2,\n#     \"low_vulnerabilities\": 0,\n#     \"ecosystem_breakdown\": {\n#       \"npm\": 85,\n#       \"pip\": 42\n#     }\n#   },\n#   \"success\": true\n# }\n\n# The dependencies.json manifest includes:\n# - Complete dependency list by ecosystem and type\n# - Security vulnerabilities with CVE IDs and severity levels\n# - Latest versions and outdated indicators\n# - License information\n# - CVSS scores for vulnerabilities\n# - Fix versions and references\n```\n\n**Use cases:**\n- **Security Audits**: Find known vulnerabilities in dependencies\n- **Dependency Management**: Track outdated packages\n- **License Compliance**: Audit dependency licenses\n- **Supply Chain Security**: Monitor dependency health\n- **Update Planning**: Prioritize package updates by risk\n\n**Security scanning features:**\n- **OSV API Integration**: Queries Open Source Vulnerabilities database\n- **Multi-ecosystem**: npm (Node.js), PyPI (Python), crates.io (Rust), Packagist (PHP)\n- **Severity levels**: Critical, High, Medium, Low with CVSS scores\n- **Fix guidance**: Identifies versions that fix vulnerabilities\n\n### Example 7: Discover API Endpoints Across Multiple Frameworks\n\n```python\n# Generate comprehensive API inventory with documentation coverage analysis\napi_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    frameworks=[\"all\"],          # Detect all frameworks: fastapi, flask, express, graphql\n    include_graphql=False,       # Set to True to parse GraphQL schemas\n    scan_documentation=True      # Parse OpenAPI/Swagger docs for coverage\n)\n\n# Returns:\n# {\n#   \"manifest_path\": \"coderef/inventory/api.json\",\n#   \"frameworks\": [\"fastapi\", \"flask\"],\n#   \"total_endpoints\": 48,\n#   \"documented_endpoints\": 32,\n#   \"documentation_coverage\": 67,\n#   \"metrics\": {\n#     \"total_endpoints\": 48,\n#     \"documented_endpoints\": 32,\n#     \"documentation_coverage\": 67,\n#     \"frameworks_detected\": [\"fastapi\", \"flask\"],\n#     \"framework_breakdown\": {\n#       \"fastapi\": 35,\n#       \"flask\": 13\n#     },\n#     \"method_breakdown\": {\n#       \"GET\": 22,\n#       \"POST\": 15,\n#       \"PUT\": 7,\n#       \"DELETE\": 4\n#     },\n#     \"rest_endpoints\": 48,\n#     \"graphql_endpoints\": 0\n#   },\n#   \"success\": true\n# }\n\n# The api.json manifest includes detailed metadata for each endpoint:\n# - Endpoint path (e.g., /api/users/{id})\n# - HTTP method (GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD)\n# - Framework (fastapi, flask, express, graphql)\n# - File location and line number\n# - Function name and parameters\n# - Documentation status and coverage score (0-100)\n# - OpenAPI/Swagger metadata (description, summary, tags, deprecated flag)\n```\n\n**Use cases:**\n- **API Documentation**: Generate comprehensive endpoint catalog\n- **Documentation Coverage**: Track which endpoints lack documentation\n- **API Auditing**: Identify undocumented or deprecated endpoints\n- **Framework Migration**: Understand endpoint distribution before refactoring\n- **OpenAPI Compliance**: Verify all endpoints have OpenAPI/Swagger docs\n\n**Framework detection methods:**\n- **AST parsing**: Python decorators (@app.get, @app.route)\n- **Regex extraction**: Express.js route definitions (app.get, app.post)\n- **GraphQL schema parsing**: Query and Mutation type analysis\n- **OpenAPI/Swagger**: YAML/JSON specification parsing\n\n### Example 8: Discover Database Schemas Across Multiple Systems\n\n```python\n# Generate comprehensive database schema inventory\ndatabase_inventory(\n    project_path=\"C:/Users/willh/my-project\",\n    database_systems=[\"all\"],      # Detect all systems: postgresql, mysql, mongodb, sqlite\n    include_migrations=True         # Parse migration files for schema definitions\n)\n\n# Returns:\n# {\n#   \"manifest_path\": \"coderef/inventory/database.json\",\n#   \"database_systems\": [\"postgresql\", \"mongodb\"],\n#   \"total_schemas\": 15,\n#   \"sql_tables\": 12,\n#   \"nosql_collections\": 3,\n#   \"metrics\": {\n#     \"total_schemas\": 15,\n#     \"sql_tables\": 12,\n#     \"nosql_collections\": 3,\n#     \"database_systems_detected\": [\"postgresql\", \"mongodb\"],\n#     \"system_breakdown\": {\n#       \"postgresql\": 12,\n#       \"mongodb\": 3\n#     },\n#     \"orm_breakdown\": {\n#       \"sqlalchemy\": 8,\n#       \"alembic_migration\": 4,\n#       \"mongoose\": 3\n#     },\n#     \"total_columns\": 87,\n#     \"total_relationships\": 23\n#   },\n#   \"success\": true\n# }\n\n# The database.json manifest includes detailed metadata for each schema:\n# - Table/collection name and type (table, collection)\n# - Database type (sql, nosql)\n# - ORM/source (sqlalchemy, sequelize, mongoose, alembic_migration, knex_migration)\n# - File location and line number\n# - Class name (for ORM models)\n# - Columns (for SQL): name, type, nullable, primary_key, unique, foreign_key, default\n# - Fields (for NoSQL): name, type, required, default\n# - Relationships: name, related_table, type (one-to-one, one-to-many, many-to-many)\n# - Indexes: name, columns, unique flag\n# - Constraints (SQL): primary_key, foreign_key, unique, check\n# - Validators (NoSQL): schema validation rules\n```\n\n**Use cases:**\n- **Database Documentation**: Generate comprehensive schema catalog\n- **Schema Discovery**: Understand database structure across multiple systems\n- **Migration Auditing**: Track schema definitions from ORM models and migrations\n- **Multi-Database Projects**: Analyze projects using SQL and NoSQL together\n- **Schema Validation**: Verify all tables/collections are documented\n\n**Database system support:**\n- **PostgreSQL**: SQLAlchemy models, Alembic migrations\n- **MySQL**: SQLAlchemy models, Alembic migrations\n- **MongoDB**: Mongoose schemas (Node.js)\n- **SQLite**: SQLAlchemy models\n\n**ORM detection methods:**\n- **AST parsing**: SQLAlchemy models (Python `class` with `__tablename__`)\n- **Regex extraction**: Sequelize models (Node.js), Mongoose schemas (Node.js)\n- **Migration parsing**: Alembic migrations (`op.create_table`), Knex migrations\n\n---\n\n## Project Structure\n\n```\ndocs-mcp/\n\u251c\u2500\u2500 server.py                    # MCP server entry (264 lines, -59% from refactor)\n\u251c\u2500\u2500 tool_handlers.py            # 7 tool handlers + registry (516 lines)\n\u251c\u2500\u2500 error_responses.py          # ErrorResponse factory (ARCH-001)\n\u251c\u2500\u2500 type_defs.py                # TypedDict definitions (QUA-001)\n\u251c\u2500\u2500 logger_config.py            # Structured logging (ARCH-003)\n\u251c\u2500\u2500 constants.py                # Paths, Files, enums (REF-002, QUA-003)\n\u251c\u2500\u2500 validation.py               # Input validation layer (REF-003)\n\u251c\u2500\u2500 generators/\n\u2502   \u251c\u2500\u2500 base_generator.py         # Base template generator\n\u2502   \u251c\u2500\u2500 foundation_generator.py   # Multi-doc generator\n\u2502   \u251c\u2500\u2500 changelog_generator.py    # Changelog CRUD with schema validation\n\u2502   \u251c\u2500\u2500 standards_generator.py    # Codebase standards discovery (Tool #8)\n\u2502   \u2514\u2500\u2500 audit_generator.py        # Standards compliance auditing (Tool #9)\n\u251c\u2500\u2500 templates/power/              # POWER framework templates\n\u2502   \u251c\u2500\u2500 readme.txt\n\u2502   \u251c\u2500\u2500 architecture.txt\n\u2502   \u251c\u2500\u2500 api.txt\n\u2502   \u251c\u2500\u2500 components.txt\n\u2502   \u251c\u2500\u2500 schema.txt\n\u2502   \u2514\u2500\u2500 user-guide.txt\n\u251c\u2500\u2500 coderef/\n\u2502   \u251c\u2500\u2500 changelog/                # Changelog system\n\u2502   \u2502   \u251c\u2500\u2500 CHANGELOG.json       # Structured changelog data\n\u2502   \u2502   \u2514\u2500\u2500 schema.json          # JSON schema validation\n\u2502   \u251c\u2500\u2500 standards/                # Codebase standards (Tool #8 output)\n\u2502   \u2502   \u251c\u2500\u2500 UI-STANDARDS.md      # UI component patterns\n\u2502   \u2502   \u251c\u2500\u2500 BEHAVIOR-STANDARDS.md # Behavior patterns\n\u2502   \u2502   \u251c\u2500\u2500 UX-PATTERNS.md       # UX and accessibility patterns\n\u2502   \u2502   \u2514\u2500\u2500 COMPONENT-INDEX.md   # Component inventory\n\u2502   \u251c\u2500\u2500 audits/                   # Compliance audit reports (Tool #9 output)\n\u2502   \u2502   \u2514\u2500\u2500 AUDIT-REPORT-*.md    # Timestamped audit reports\n\u2502   \u251c\u2500\u2500 inventory/                # Project inventory (Tool #14 output)\n\u2502   \u2502   \u251c\u2500\u2500 manifest.json        # Comprehensive file inventory\n\u2502   \u2502   \u2514\u2500\u2500 schema.json          # JSON schema validation\n\u2502   \u251c\u2500\u2500 foundation-docs/          # Generated documentation\n\u2502   \u2514\u2500\u2500 quickref.md              # Quick reference guide\n\u251c\u2500\u2500 CLAUDE.md                   # AI assistant context documentation\n\u251c\u2500\u2500 user-guide.md               # Comprehensive user guide\n\u2514\u2500\u2500 test_security_fixes.py      # Security test suite\n```\n\n---\n\n## Troubleshooting\n\n### Issue: \"No such tool available: mcp__docs-mcp__*\"\n\n**Symptom:** MCP tools not found after adding server\n\n**Cause:** MCP server not restarted or not properly registered\n\n**Resolution:**\n```bash\n# 1. Verify server is registered\nclaude mcp list\n\n# 2. If not listed, re-add with user scope for global access\nclaude mcp add --scope user docs-mcp python \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\server.py\"\n\n# 3. Restart Claude Code or IDE\n```\n\n---\n\n### Issue: \"Invalid project path\"\n\n**Symptom:** Error when calling tools with project_path parameter\n\n**Cause:** Using relative path instead of absolute path\n\n**Resolution:**\n```bash\n# \u274c Wrong: Relative path\ngenerate_foundation_docs(project_path=\"./my-project\")\n\n# \u2705 Correct: Absolute path\ngenerate_foundation_docs(project_path=\"C:/Users/willh/my-project\")\n```\n\n---\n\n### Issue: \"Changelog not found\"\n\n**Symptom:** get_changelog or add_changelog_entry fails\n\n**Cause:** No changelog exists at `project_path/coderef/changelog/CHANGELOG.json`\n\n**Resolution:**\n```bash\n# add_changelog_entry automatically creates changelog structure\n# Just call it with your first entry:\nadd_changelog_entry(\n    project_path=\"C:/path/to/project\",\n    version=\"1.0.0\",\n    change_type=\"feature\",\n    severity=\"major\",\n    title=\"Initial release\",\n    description=\"Created project with...\",\n    files=[\"*\"],\n    reason=\"Initial development\",\n    impact=\"Project created\"\n)\n```\n\n---\n\n### Issue: Generated docs are generic\n\n**Symptom:** Documentation doesn't mention specific project features\n\n**Cause:** Minimal code in project or AI needs more context\n\n**Resolution:**\n1. Ensure project has actual implementation code\n2. Add code comments explaining key features\n3. Provide additional context to AI during generation\n4. Manually enhance generated docs if needed\n\n---\n\n## The Changelog Trilogy Pattern\n\ndocs-mcp implements a unique **meta-tool pattern** for changelog management:\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 get_changelog (READ)                    \u2502\n\u2502 Query changelog history                 \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n         \u2193\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 add_changelog_entry (WRITE)             \u2502\n\u2502 Execute changelog update                \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n         \u2193\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 update_changelog (INSTRUCT)             \u2502\n\u2502 Orchestrate agentic workflow            \u2502\n\u2502 \u2192 Agent analyzes context                \u2502\n\u2502 \u2192 Agent determines details              \u2502\n\u2502 \u2192 Agent calls add_changelog_entry       \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n**Why This Matters:**\n- **Separation of Concerns**: Read/write/orchestrate are distinct operations\n- **Agentic Design**: Agents can self-document without explicit prompting\n- **Flexibility**: Use WRITE directly or INSTRUCT for autonomous workflows\n\n---\n\n## Additional Resources\n\n- **[user-guide.md](../user-guide.md)** - Comprehensive user guide with best practices\n- **[coderef/quickref.md](../coderef/quickref.md)** - Quick reference for all 7 tools\n- **[coderef/changelog/CHANGELOG.json](../coderef/changelog/CHANGELOG.json)** - Project changelog\n- **[MCP-SETUP-GUIDE.md](../MCP-SETUP-GUIDE.md)** - General MCP server setup\n- **[MCP Specification](https://spec.modelcontextprotocol.io/)** - Official MCP docs\n- **[MCP Python SDK](https://github.com/anthropics/mcp-python)** - SDK documentation\n\n---\n\n## Version History\n\n| Version | Date | Highlights |\n|---------|------|------------|\n| 2.9.0 | 2025-12-06 | **LLM Workflow** - Multi-LLM prompt generation and response consolidation with /llm-prompt and /consolidate commands. Supports code-review, architecture, security-audit, implementation, and refactor task types |\n| 1.12.0 | 2025-10-23 | **Agent Handoff Automation** - Auto-generate comprehensive agent handoff context files from plan.json, analysis.json, and git history, reducing handoff time from 20-30 minutes to under 5 minutes with 80%+ auto-population |\n| 1.11.0 | 2025-10-21 | **Global Workorder Logging** - Simple one-line workorder tracking system for global activity log across projects with 2 new tools (log_workorder, get_workorder_log) |\n| 1.10.0 | 2025-10-20 | **Feature Archive System** - Automated archiving of completed features from working to archived directory with status checking and searchable index tracking |\n| 1.9.0 | 2025-10-19 | **Multi-Agent Coordination System** - Parallel agent execution with 5 new tools for task assignment, verification, deliverables aggregation, and status tracking |\n| 1.6.0 | 2025-10-18 | **Deliverables Tracking System** - Automatic DELIVERABLES.md generation integrated into /create-plan workflow with git-based metrics (LOC, commits, time), template generation, and metrics update tools |\n| 1.5.0 | 2025-10-18 | **Workorder Tracking System** - Automatic unique workorder ID assignment for all features in MCP planning workflow, cross-file persistence (context \u2192 analysis \u2192 plan \u2192 deliverables), and validation integration |\n| 1.4.0 | 2025-10-11 | **Planning Workflow System** - Added 4 planning tools for AI-assisted implementation planning with automated analysis, validation (0-100 scoring), iterative review loops, and comprehensive integration tests (18/18 passing, 100%) |\n| 1.3.0 | 2025-10-10 | **Consistency Trilogy Complete** - Added audit_codebase tool for compliance auditing with weighted scoring, comprehensive reports, and fix suggestions |\n| 1.2.0 | 2025-10-10 | **Standards Discovery** - Added establish_standards tool for extracting UI/UX/behavior patterns |\n| 1.0.9 | 2025-10-09 | **AI Context Docs** - Added CLAUDE.md for AI assistant guidance |\n| 1.0.8 | 2025-10-09 | **Workflow Demo** - Demonstrated proper MCP changelog workflow |\n| 1.0.7 | 2025-10-09 | **\ud83c\udfd7\ufe0f Architecture Refactor** - Modular handlers, logging, type safety, error factory (5 major improvements) |\n| 1.0.6 | 2025-10-09 | **Phase 2 Refactor** - Constants extraction, input validation layer |\n| 1.0.5 | 2025-10-09 | JSON schema validation, README routing fix (SEC-002, SEC-003) |\n| 1.0.4 | 2025-10-09 | **\ud83d\udd12 Security Fixes** - Path traversal protection, jsonschema dependency |\n| 1.0.3 | 2025-10-09 | Added update_changelog agentic workflow tool |\n| 1.0.2 | 2025-10-09 | Added changelog system (get_changelog, add_changelog_entry) |\n\nSee [CHANGELOG.json](coderef/changelog/CHANGELOG.json) for complete change history with detailed entries.\n\n---\n\n## Contributing\n\nWe welcome contributions! When making changes:\n\n1. **Make your changes** to the codebase\n2. **Test thoroughly** to ensure everything works\n3. **Document your changes** using update_changelog:\n   ```bash\n   update_changelog(\n       project_path=\"C:/Users/willh/.mcp-servers/docs-mcp\",\n       version=\"1.0.x\"\n   )\n   ```\n4. **Commit with clear message** describing what changed\n5. **Submit pull request** with reference to changelog entry\n\n---\n\n## License\n\n[Specify license here - MIT, Apache 2.0, etc.]\n\n---\n\n## AI Integration Footer\n\nThis MCP server is **optimized for AI assistant integration**. It provides:\n\n- **Structured templates** that guide documentation generation with consistent quality\n- **Decision trees** for content selection embedded in templates\n- **Command sequences** for systematic documentation workflows\n- **Agent-friendly tools** that enable autonomous self-documentation\n\n**For AI Assistants**: Use the POWER framework templates to ensure comprehensive documentation. Follow the `work` section for systematic analysis and the `requirements` section for mandatory elements. The update_changelog tool demonstrates the meta-tool pattern for orchestrating agent workflows.\n\n---\n\n**\ud83e\udd16 Generated with docs-mcp v1.4.0**\n**Maintained by**: willh, Claude Code AI\n**Planning Workflow System**: 4/4 Tools Complete (analyze \u2713, validate \u2713, review \u2713, template \u2713)\n**Integration Tests**: 18/18 Passing (100%)\n\n",
+      "word_count": 5798
+    }
+  },
+  "coderef": {
+    "available": false,
+    "element_count": 0,
+    "has_graph": false
+  },
+  "_metadata": {
+    "generated_at": "2025-12-15T15:05:23.283304",
+    "generator": "coderef_foundation_generator",
+    "version": "2.0.0"
+  }
+}

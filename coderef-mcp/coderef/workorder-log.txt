@@ -1,0 +1,2 @@
+WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage for cross-session surv... | 2025-12-18T08:36:32.076716+00:00
+WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage implementation plan | 2025-12-18T08:26:53.453837+00:00

@@ -41,7 +41,9 @@
         "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py"
       ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp"
-    },
+    }
+  },
+  "_disabled": {
     "chrome-devtools": {
       "command": "npx",
       "args": [

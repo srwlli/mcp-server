@@ -789,6 +789,64 @@ Run after /update-deliverables and before /archive-feature.''',
             }
         ),
         Tool(
+            name='update_task_status',
+            description='Update task status in plan.json as agents complete work (STUB-009). Enables progress tracking during execution. Updates task status and calculates progress summary.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'feature_name': {
+                        'type': 'string',
+                        'description': 'Feature name (folder in coderef/working/)',
+                        'pattern': '^[a-zA-Z0-9_-]+$'
+                    },
+                    'task_id': {
+                        'type': 'string',
+                        'description': 'Task ID to update (e.g., "SETUP-001", "IMPL-002")'
+                    },
+                    'status': {
+                        'type': 'string',
+                        'description': 'New status',
+                        'enum': ['pending', 'in_progress', 'completed', 'blocked']
+                    },
+                    'notes': {
+                        'type': 'string',
+                        'description': 'Optional notes about the status change'
+                    }
+                },
+                'required': ['project_path', 'feature_name', 'task_id', 'status']
+            }
+        ),
+        Tool(
+            name='audit_plans',
+            description='Audit all plans in coderef/working/ directory (STUB-011). Provides plan format validation, progress status extraction, stale plan detection, issue identification and recommendations. Returns health score (0-100).',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'stale_days': {
+                        'type': 'integer',
+                        'description': 'Days without update to consider stale (default: 7)',
+                        'default': 7,
+                        'minimum': 1,
+                        'maximum': 365
+                    },
+                    'include_archived': {
+                        'type': 'boolean',
+                        'description': 'Whether to also audit archived plans (default: false)',
+                        'default': False
+                    }
+                },
+                'required': ['project_path']
+            }
+        ),
+        Tool(
             name='log_workorder',
             description='Log a new workorder entry to the global workorder log file. Creates simple one-line entry with format: WO-ID | Project | Description | Timestamp. Latest entries appear at top (prepend, reverse chronological). Thread-safe with file locking for concurrent access.',
             inputSchema={
@@ -979,6 +1037,36 @@ Replaces: api_inventory, database_inventory, dependency_inventory, config_invent
                         'type': 'boolean',
                         'description': 'Use coderef-mcp for code pattern detection. Default: true',
                         'default': True
+                    }
+                },
+                'required': ['project_path']
+            }
+        ),
+        Tool(
+            name='generate_features_inventory',
+            description='Generate inventory of all features in coderef/working/ and coderef/archived/. Returns structured list of features with status, progress, workorder tracking, and workflow coverage. Supports JSON and markdown output formats.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'format': {
+                        'type': 'string',
+                        'enum': ['json', 'markdown'],
+                        'description': 'Output format (default: json)',
+                        'default': 'json'
+                    },
+                    'include_archived': {
+                        'type': 'boolean',
+                        'description': 'Include archived features (default: true)',
+                        'default': True
+                    },
+                    'save_to_file': {
+                        'type': 'boolean',
+                        'description': 'Save output to coderef/features-inventory.json or .md (default: false)',
+                        'default': False
                     }
                 },
                 'required': ['project_path']

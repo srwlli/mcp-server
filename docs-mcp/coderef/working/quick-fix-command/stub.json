@@ -1,0 +1,19 @@
+{
+  "stub_id": "STUB-045",
+  "feature_name": "quick-fix-command",
+  "description": "Add /fix command for small changes (debug, typo, small tweak) that don't warrant a full workorder. Lightweight alternative to /create-workorder.",
+  "category": "feature",
+  "priority": "medium",
+  "tags": ["mcp", "workflow"],
+  "created": "2025-12-17T00:00:00Z",
+  "status": "stub",
+  "use_cases": [
+    "Debug statement removal",
+    "Typo fix",
+    "Small config change",
+    "Quick refactor (< 10 lines)",
+    "Documentation update"
+  ],
+  "no_workorder_needed": true,
+  "output": "Simple commit message, no plan.json or DELIVERABLES.md"
+}

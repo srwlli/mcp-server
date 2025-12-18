@@ -1,0 +1,10 @@
+{
+  "stub_id": "STUB-041",
+  "feature_name": "rename-workflows",
+  "description": "Rename the workflows. Start-feature might not be the best name.",
+  "category": "idea",
+  "priority": "medium",
+  "tags": ["mcp", "workflow"],
+  "created": "2025-12-15T12:24:00.000Z",
+  "status": "stub"
+}

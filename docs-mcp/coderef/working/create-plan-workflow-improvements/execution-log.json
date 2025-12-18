@@ -1,0 +1,120 @@
+[
+  {
+    "timestamp": "2025-12-17T20:12:57.016129",
+    "workorder_id": "WO-CREATE-PLAN-WORKFLOW-IMPROVEMENTS-001",
+    "feature_name": "create-plan-workflow-improvements",
+    "task_count": 22,
+    "tasks": [
+      {
+        "content": "[ ] TS-001: Add timestamp wrapper function",
+        "activeForm": "[ ] TS-001: Adding timestamp wrapper function",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] TS-002: Update all handler responses with timestamp",
+        "activeForm": "[ ] TS-002: Updating all handler responses with timestamp",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] ENF-001: Create plan_format_validator.py",
+        "activeForm": "[ ] ENF-001: Creating plan_format_validator.py",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] ENF-002: Update Lloyd persona with strict_mode",
+        "activeForm": "[ ] ENF-002: Updating Lloyd persona with strict_mode",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] ENF-003: Document enforcement in CLAUDE.md",
+        "activeForm": "[ ] ENF-003: Documenting enforcement in CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] PROG-001: Add update_task_status tool",
+        "activeForm": "[ ] PROG-001: Adding update_task_status tool",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] PROG-002: Register update_task_status in server.py",
+        "activeForm": "[ ] PROG-002: Registering update_task_status in server.py",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] PROG-003: Add progress instructions to plan template",
+        "activeForm": "[ ] PROG-003: Adding progress instructions to plan template",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AUDIT-001: Create audit_plans tool",
+        "activeForm": "[ ] AUDIT-001: Creating audit_plans tool",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AUDIT-002: Register audit_plans in server.py",
+        "activeForm": "[ ] AUDIT-002: Registering audit_plans in server.py",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] AUDIT-003: Create /audit-plans slash command",
+        "activeForm": "[ ] AUDIT-003: Creating /audit-plans slash command",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] GIT-001: Update /start-feature with git commit",
+        "activeForm": "[ ] GIT-001: Updating /start-feature with git commit",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] GIT-002: Create /git-release slash command",
+        "activeForm": "[ ] GIT-002: Creating /git-release slash command",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] TEST-001: Add verify_step field to task schema",
+        "activeForm": "[ ] TEST-001: Adding verify_step field to task schema",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] HAND-001: Add handoff_prompt_template to communication.json",
+        "activeForm": "[ ] HAND-001: Adding handoff_prompt_template to communication.json",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] HAND-002: Document handoff protocol in CLAUDE.md",
+        "activeForm": "[ ] HAND-002: Documenting handoff protocol in CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] INV-001: Create features_inventory_generator.py",
+        "activeForm": "[ ] INV-001: Creating features_inventory_generator.py",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] INV-002: Create features.md.template",
+        "activeForm": "[ ] INV-002: Creating features.md.template",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] INV-003: Add generate_features_inventory tool",
+        "activeForm": "[ ] INV-003: Adding generate_features_inventory tool",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] INV-004: Register generate_features_inventory in server.py",
+        "activeForm": "[ ] INV-004: Registering generate_features_inventory in server.py",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] DOC-001: Update CLAUDE.md with complete workflow docs",
+        "activeForm": "[ ] DOC-001: Updating CLAUDE.md with complete workflow docs",
+        "status": "pending"
+      },
+      {
+        "content": "[ ] DOC-002: Document naming considerations (STUB-041, STUB-042)",
+        "activeForm": "[ ] DOC-002: Documenting naming considerations (STUB-041, STUB-042)",
+        "status": "pending"
+      }
+    ]
+  }
+]

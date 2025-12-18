@@ -1,0 +1,65 @@
+[
+  {
+    "timestamp": "2025-12-18T00:37:04.804362",
+    "workorder_id": "WO-MCP-TOOLS-REVIEW-001",
+    "feature_name": "mcp-tools-review",
+    "task_count": 11,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] List docs-mcp tools",
+        "activeForm": "PHASE-1-001: [ing ] List docs-mcp tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] List coderef-mcp tools",
+        "activeForm": "PHASE-1-002: [ing ] List coderef-mcp tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] List personas-mcp tools",
+        "activeForm": "PHASE-1-003: [ing ] List personas-mcp tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] List scriptboard-mcp tools",
+        "activeForm": "PHASE-1-004: [ing ] List scriptboard-mcp tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Identify cross-server redundancies",
+        "activeForm": "PHASE-2-001: [ing ] Identify cross-server redundancies",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Identify Claude Code duplicates",
+        "activeForm": "PHASE-2-002: [ing ] Identify Claude Code duplicates",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-003: [ ] Create consolidation plan",
+        "activeForm": "PHASE-2-003: [ing ] Create consolidation plan",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Execute consolidation",
+        "activeForm": "PHASE-3-001: [ing ] Execute consolidation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Identify unused tools",
+        "activeForm": "PHASE-3-002: [ing ] Identify unused tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-003: [ ] Remove unused tools",
+        "activeForm": "PHASE-3-003: [ing ] Remove unused tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-001: [ ] Create MCP-TOOLS-INVENTORY.md",
+        "activeForm": "PHASE-4-001: [ing ] Create MCP-TOOLS-INVENTORY.md",
+        "status": "pending"
+      }
+    ]
+  }
+]

@@ -1,3 +1,7 @@
+WO-FIX-20251218-001 | docs-mcp | Add /fix command for lightweight changes | 2025-12-18T08:19:17.164219+00:00
+WO-SEQUENTIAL-FOUNDATION-DOCS-001 | docs-mcp | Archived feature: Sequential Foundation Docs | 2025-12-18T07:29:32.071020+00:00
+WO-RENAME-START-FEATURE-001 | docs-mcp | Rename /start-feature to /create-workorder | 2025-12-18T07:06:13.611193+00:00
+WO-SEQUENTIAL-FOUNDATION-DOCS-001 | docs-mcp | Sequential foundation docs with progress feedback | 2025-12-18T06:48:41.828728+00:00
 WO-LLM-WORKFLOW-001 | docs-mcp | Archived feature: Llm Workflow | 2025-12-08T22:41:51.958096+00:00
 WO-CLEAN-TEMPLATES-STRUCTURE-001 | docs-mcp | Archived feature: Clean Templates Structure | 2025-12-05T18:49:13.527561+00:00
 WO-RISK-ASSESSMENT-001 | docs-mcp | Archived feature: Risk Assessment | 2025-12-05T18:47:02.891753+00:00

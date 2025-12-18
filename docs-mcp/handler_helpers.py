@@ -61,17 +61,46 @@ def get_workorder_timestamp() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-# QUA-004: Success Response Helper
-def format_success_response(data: dict, message: str = None) -> list[TextContent]:
+# STUB-036: Timestamp Enforcement Helper
+def add_response_timestamp(data: dict) -> dict:
     """
-    Helper function for formatting consistent success responses (QUA-004).
+    Add ISO 8601 timestamp to response data (STUB-036).
+
+    Adds 'timestamp' field to any response dictionary.
+    Used to ensure all workflow outputs include timestamps.
+
+    Args:
+        data: Response dictionary to add timestamp to
+
+    Returns:
+        Same dictionary with 'timestamp' field added
+
+    Example:
+        >>> result = add_response_timestamp({'success': True, 'files': []})
+        >>> 'timestamp' in result
+        True
+        >>> result['timestamp']
+        '2025-12-17T20:15:00.123456+00:00'
+    """
+    data['timestamp'] = get_workorder_timestamp()
+    return data
+
+
+# QUA-004: Success Response Helper
+def format_success_response(data: dict, message: str = None, include_timestamp: bool = True) -> list[TextContent]:
+    """
+    Helper function for formatting consistent success responses (QUA-004, STUB-036).
 
     Formats handler success responses as JSON-formatted TextContent.
     Provides consistent structure across all tool handlers.
 
+    STUB-036: Automatically adds ISO 8601 timestamp to all responses
+    unless explicitly disabled via include_timestamp=False.
+
     Args:
         data: Dictionary containing response data
         message: Optional success message to prepend
+        include_timestamp: Whether to add timestamp (default: True, STUB-036)
 
     Returns:
         List containing single TextContent with JSON-formatted response
@@ -81,7 +110,12 @@ def format_success_response(data: dict, message: str = None) -> list[TextContent
             data={'files': files_list, 'count': len(files_list)},
             message="✅ Operation completed successfully"
         )
+        # Response will include 'timestamp': '2025-12-17T20:15:00+00:00'
     """
+    # STUB-036: Add timestamp to all responses by default
+    if include_timestamp:
+        data = add_response_timestamp(data)
+
     if message:
         # Prepend message to JSON data
         result = f"{message}\n\n{json.dumps(data, indent=2)}"

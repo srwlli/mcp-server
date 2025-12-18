@@ -62,7 +62,11 @@
       "Bash(tests/unit/generators/test_coderef_foundation_generator.py )",
       "Bash(tests/unit/generators/test_mermaid_formatter.py )",
       "Bash(tests/integration/test_coderef_foundation_docs.py)",
-      "mcp__coderef-mcp__mcp__coderef__scan_realtime"
+      "mcp__coderef-mcp__mcp__coderef__scan_realtime",
+      "Bash(dir \"C:\\\\Users\\\\willh\\\\.mcp-servers\\\\docs-mcp\\\\coderef\" /B)",
+      "mcp__docs-mcp__log_workorder",
+      "mcp__personas-mcp__list_personas",
+      "mcp__docs-mcp__update_deliverables"
     ],
     "deny": [],
     "ask": []

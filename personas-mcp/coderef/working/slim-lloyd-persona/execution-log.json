@@ -1,0 +1,95 @@
+[
+  {
+    "timestamp": "2025-12-13T21:38:55.577201",
+    "workorder_id": "WO-SLIM-LLOYD-PERSONA-001",
+    "feature_name": "slim-lloyd-persona",
+    "task_count": 17,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: [ ] Backup lloyd.json to lloyd.json.backup",
+        "activeForm": "PHASE-1--001: [ing ] Backup lloyd.json to lloyd.json.backup",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: [ ] Count lines in each system_prompt section",
+        "activeForm": "PHASE-1--002: [ing ] Count lines in each system_prompt section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: [ ] Document current total line count",
+        "activeForm": "PHASE-1--003: [ing ] Document current total line count",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: [ ] Create docs/ directory if not exists",
+        "activeForm": "PHASE-2--001: [ing ] Create docs/ directory if not exists",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: [ ] Create MCP-ECOSYSTEM-REFERENCE.md with full ecosystem docs",
+        "activeForm": "PHASE-2--002: [ing ] Create MCP-ECOSYSTEM-REFERENCE.md with full ecosystem docs",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: [ ] Create LLOYD-REFERENCE.md with tool catalogs and workflows",
+        "activeForm": "PHASE-2--003: [ing ] Create LLOYD-REFERENCE.md with tool catalogs and workflows",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: [ ] Remove duplicate Big Picture section",
+        "activeForm": "PHASE-3--001: [ing ] Remove duplicate Big Picture section",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: [ ] Replace tool catalogs with summary tables",
+        "activeForm": "PHASE-3--002: [ing ] Replace tool catalogs with summary tables",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: [ ] Add reference pointers to extracted docs",
+        "activeForm": "PHASE-3--003: [ing ] Add reference pointers to extracted docs",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: [ ] Consolidate redundant workflow sections",
+        "activeForm": "PHASE-3--004: [ing ] Consolidate redundant workflow sections",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--005: [ ] Update version to 1.2.0",
+        "activeForm": "PHASE-3--005: [ing ] Update version to 1.2.0",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--006: [ ] Verify final line count is 800-1000",
+        "activeForm": "PHASE-3--006: [ing ] Verify final line count is 800-1000",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--001: [ ] Test JSON parsing",
+        "activeForm": "PHASE-4--001: [ing ] Test JSON parsing",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--002: [ ] Test persona loading via MCP",
+        "activeForm": "PHASE-4--002: [ing ] Test persona loading via MCP",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--003: [ ] Test /lloyd slash command",
+        "activeForm": "PHASE-4--003: [ing ] Test /lloyd slash command",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--004: [ ] Test multi-agent coordination",
+        "activeForm": "PHASE-4--004: [ing ] Test multi-agent coordination",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--005: [ ] Update CLAUDE.md with new structure",
+        "activeForm": "PHASE-4--005: [ing ] Update CLAUDE.md with new structure",
+        "status": "pending"
+      }
+    ]
+  }
+]

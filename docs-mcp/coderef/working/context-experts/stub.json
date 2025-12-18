@@ -1,8 +1,0 @@
-{
-  "feature_name": "context-experts",
-  "description": "Create directory or file-specific agents that become experts on the file or directory they are assigned to by Lloyd through the docs-mcp workflow. These scope-bound agents maintain deep context about their assigned resources.",
-  "category": "feature",
-  "priority": "high",
-  "created": "2025-12-07T12:00:00Z",
-  "status": "stub"
-}

@@ -160,6 +160,22 @@
     "created_at": "YYYY-MM-DDTHH:MM:SSZ",
     "updated_at": "YYYY-MM-DDTHH:MM:SSZ",
     "version": "1.0.0",
-    "template_version": "1.1.0"
+    "template_version": "1.2.0"
+  },
+  "handoff_prompt_template": {
+    "description": "Standardized prompt template for agent handoffs (STUB-015)",
+    "usage": "Use this template when transferring work to another agent",
+    "template": "You are being handed off the following work:\n\n## Context\n- **Feature**: {{feature_name}}\n- **Workorder**: {{workorder_id}}\n- **Current Progress**: {{progress_percent}}% ({{completed}}/{{total}} tasks)\n\n## Files\n- **Plan**: coderef/working/{{feature_name}}/plan.json\n- **Communication**: coderef/working/{{feature_name}}/communication.json\n- **Context**: coderef/working/{{feature_name}}/context.json\n\n## Current State\n{{current_state_summary}}\n\n## Next Tasks\n{{next_tasks_list}}\n\n## Important Notes\n- Forbidden files: {{forbidden_files}}\n- Success criteria: {{success_criteria}}\n\n## Instructions\n1. Read the plan.json and communication.json\n2. Continue from the next pending task\n3. Update task status in plan.json as you work\n4. Do not modify forbidden files\n5. Run tests before marking complete",
+    "variables": {
+      "feature_name": "From communication.json feature field",
+      "workorder_id": "From communication.json workorder_id field",
+      "progress_percent": "From communication.json progress.percent field",
+      "completed": "From communication.json progress.complete field",
+      "total": "From communication.json progress.total field",
+      "current_state_summary": "Generated from git status and recent commits",
+      "next_tasks_list": "First 3 pending tasks from tasks array",
+      "forbidden_files": "From communication.json details.forbidden_files",
+      "success_criteria": "From communication.json success_criteria"
+    }
   }
 }

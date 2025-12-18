@@ -54,6 +54,8 @@ __all__ = [
     'ResourceType',
     'ExpertDomain',
     'EXPERT_ID_PATTERN',
+    # Orchestrator constants
+    'OrchestratorPaths',
 ]
 
 
@@ -370,3 +372,10 @@ class ExpertDomain(str, Enum):
 
 # Context Expert validation pattern
 EXPERT_ID_PATTERN = r'^CE-[a-zA-Z0-9_-]+-\d{3}$'
+
+
+# Orchestrator System Constants
+class OrchestratorPaths:
+    """Paths for orchestrator (Lloyd's central hub) for cross-project coordination."""
+    ROOT = 'C:\\Users\\willh\\.mcp-servers'  # Root directory for all MCP servers
+    WORKORDER_LOG = 'coderef/workorder-log.txt'  # Relative path within orchestrator

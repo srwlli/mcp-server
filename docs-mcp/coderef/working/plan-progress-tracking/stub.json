@@ -1,0 +1,31 @@
+{
+  "stub_id": "STUB-009",
+  "workorder_id": "WO-PLANTRACK-001",
+  "feature_name": "plan-progress-tracking",
+  "description": "Ensure plan.json includes instructions for agents to update task status as they complete work. Currently agents execute but don't mark tasks complete in the .json file.",
+  "category": "fix",
+  "priority": "high",
+  "created": "2025-12-16T00:00:00.000Z",
+  "status": "stub",
+  "notes": {
+    "problem": "Agents execute tasks but plan.json task statuses remain unchanged",
+    "current_behavior": "Agent completes work, plan.json still shows pending",
+    "desired_behavior": "Agent marks task complete in plan.json after execution",
+    "affected_systems": [
+      "docs-mcp create_plan",
+      "docs-mcp execute_plan",
+      "plan.json schema",
+      "Agent instructions in CLAUDE.md"
+    ],
+    "potential_solutions": [
+      "Add explicit instruction in plan.json template",
+      "Add post-task hook to update status",
+      "Include status update in task definition",
+      "DELIVERABLES.md sync with plan.json"
+    ],
+    "related_to": [
+      "WO-HANDOFF-001",
+      "tool-inventory-workflow"
+    ]
+  }
+}

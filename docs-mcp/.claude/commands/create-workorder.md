@@ -1,11 +1,11 @@
-Start a new feature with the complete planning workflow: gather context, analyze project, create plan, and validate.
+Create a new workorder with the complete planning workflow: gather context, analyze project, create plan, and validate.
 
-This command orchestrates the full planning pipeline in sequence, eliminating the need to run each step manually.
+This command orchestrates the full planning pipeline in sequence, eliminating the need to run each step manually. Workorders are automatically logged to both local and orchestrator workorder-log.txt for central tracking.
 
 ## Workflow Overview
 
 ```
-/start-feature
+/create-workorder
     |
     v
 1. Get Feature Name (AskUserQuestion)
@@ -356,10 +356,11 @@ This creates a **pre-execution checkpoint** that:
 
 ## When to Use
 
-Use /start-feature when:
+Use /create-workorder when:
 - Starting a new feature from scratch
 - You want the full planning workflow
 - You need a high-quality implementation plan
+- You want workorder logged to orchestrator for central tracking
 
 Use individual commands when:
 - You already have partial context

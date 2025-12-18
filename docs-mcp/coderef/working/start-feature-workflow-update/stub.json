@@ -1,0 +1,10 @@
+{
+  "stub_id": "STUB-040",
+  "feature_name": "start-feature-workflow-update",
+  "description": "Update the start-feature workflow to ensure it is start to finish with pre-execution commit and /execute-plan runs before any implementation",
+  "category": "idea",
+  "priority": "medium",
+  "tags": ["mcp", "workflow"],
+  "created": "2025-12-15T12:13:00.000Z",
+  "status": "stub"
+}

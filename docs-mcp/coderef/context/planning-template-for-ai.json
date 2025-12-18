@@ -436,35 +436,60 @@
       "CRITICAL_AGENTIC_WORKFLOW": {
         "purpose": "Enable real-time progress tracking during implementation",
         "instructions": [
-          "IMMEDIATELY after completing each task, update plan.json to mark task as complete",
-          "Change ☐ to ☑ for the completed task in section 9",
-          "If using multi-agent coordination: Update communication.json agent status",
-          "If blocked: Update plan.json with blocker notes in task description"
+          "IMMEDIATELY after completing each task, call update_task_status tool to mark task as complete",
+          "Use status: 'in_progress' when starting a task, 'completed' when done",
+          "If using multi-agent coordination: Tool auto-updates communication.json agent status",
+          "If blocked: Use status: 'blocked' with notes explaining the blocker"
         ],
+        "update_task_status_tool": {
+          "description": "MCP tool for updating task status in plan.json (STUB-009)",
+          "parameters": {
+            "project_path": "Absolute path to project directory",
+            "feature_name": "Feature name (matches coderef/working/{feature}/)",
+            "task_id": "Task ID to update (e.g., SETUP-001)",
+            "status": "pending | in_progress | completed | blocked",
+            "notes": "Optional notes about completion or blockers"
+          },
+          "returns": {
+            "task_id": "Updated task ID",
+            "old_status": "Previous status",
+            "new_status": "New status",
+            "progress": {
+              "total": "Total task count",
+              "completed": "Completed count",
+              "in_progress": "In-progress count",
+              "pending": "Pending count",
+              "blocked": "Blocked count",
+              "percent": "Completion percentage"
+            }
+          }
+        },
         "workflow_integration": {
-          "single_agent": "After completing TASK-ID → Edit plan.json section 9 → Change ☐ to ☑ for TASK-ID → Save → Continue next task",
-          "multi_agent": "After completing TASK-ID → Update communication.json with agent_X_status → Update plan.json section 9 → Save both → Continue next task"
+          "single_agent": "Start task → update_task_status(status='in_progress') → Do work → update_task_status(status='completed') → Continue next task",
+          "multi_agent": "Start task → update_task_status(status='in_progress') → Do work → update_task_status(status='completed') → Tool auto-updates communication.json → Continue next task"
         },
         "status_values": {
-          "not_started": "☐ TASK-ID: Description",
-          "in_progress": "⏳ TASK-ID: Description (IN PROGRESS)",
-          "blocked": "🚫 TASK-ID: Description (BLOCKED: reason)",
-          "completed": "☑ TASK-ID: Description"
+          "pending": "Task not yet started (default)",
+          "in_progress": "Currently working on task",
+          "completed": "Task finished successfully",
+          "blocked": "Task cannot proceed (include notes with reason)"
         },
         "example_update_sequence": [
-          "1. Complete SETUP-001 (install dependencies)",
-          "2. Open plan.json",
-          "3. Find '☐ SETUP-001: Install dependencies...' in section 9",
-          "4. Change to '☑ SETUP-001: Install dependencies...'",
-          "5. Save plan.json",
+          "1. Starting SETUP-001 (install dependencies)",
+          "2. Call: update_task_status(project_path, feature, 'SETUP-001', 'in_progress')",
+          "3. Do the work: pip install dependencies",
+          "4. Call: update_task_status(project_path, feature, 'SETUP-001', 'completed')",
+          "5. Tool returns progress: {completed: 1, total: 20, percent: 5}",
           "6. Move to SETUP-002"
         ],
         "benefits": [
           "Real-time visibility into implementation progress",
           "Enables accurate % completion tracking",
-          "Documents blockers as they occur",
+          "Documents blockers as they occur with notes",
           "Facilitates handoffs between agents",
-          "Provides audit trail of work completed"
+          "Provides audit trail of work completed",
+          "Automatic timestamp tracking on status changes",
+          "Auto-sync with communication.json in multi-agent mode"
         ]
       }
     }

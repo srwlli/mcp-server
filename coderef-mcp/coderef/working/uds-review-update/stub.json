@@ -1,0 +1,25 @@
+{
+  "stub_id": "STUB-034",
+  "feature_name": "uds-review-update",
+  "description": "Review and update UDS (Universal Documentation System) to match current system documents. Ensure UDS specs align with actual usage patterns.",
+  "category": "improvement",
+  "priority": "high",
+  "tags": ["mcp", "workflow"],
+  "created": "2025-12-16T00:00:00Z",
+  "status": "stub",
+  "scope": {
+    "review": [
+      "Current UDS specification",
+      "docs-mcp implementation",
+      "coderef-mcp integration",
+      "Actual usage patterns in projects"
+    ],
+    "update": [
+      "Align UDS with system documents",
+      "Update docs-mcp tools if needed",
+      "Document current patterns",
+      "Remove unused UDS features"
+    ]
+  },
+  "related_stubs": ["STUB-012", "STUB-002"]
+}

@@ -1,0 +1,32 @@
+{
+  "feature_name": "persistent-index-storage",
+  "description": "Make coderef-mcp server use the existing CLI persistence format. The CLI already saves to .coderef/index.json and .coderef/graph.json - the MCP server should read from these files on query and write to them on scan, instead of building an in-memory index that gets lost on restart.",
+  "goal": "Make CodeRef MCP server persistent by leveraging existing CLI file format. No re-scanning needed between sessions.",
+  "requirements": [
+    "Read existing .coderef/index.json on query if available",
+    "Read existing .coderef/graph.json for dependency queries",
+    "Write scan results to .coderef/index.json and graph.json",
+    "Create .coderef/ directory if it doesn't exist",
+    "Check file timestamps for incremental scan detection",
+    "Support force_rescan parameter to ignore existing index"
+  ],
+  "out_of_scope": [
+    "SQLite storage (using JSON instead)",
+    "Changing the CLI's persistence format",
+    "Real-time file watching",
+    "Global index cache"
+  ],
+  "constraints": [
+    "Use existing CLI JSON format (don't invent new schema)",
+    "Backward compatible - API unchanged",
+    "Handle missing .coderef/ gracefully (first scan)",
+    "Windows and Unix path compatibility"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+    "workorder_assigned_at": "2025-12-18T08:21:36.987889+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

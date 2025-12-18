@@ -1,0 +1,243 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "persistent-index-storage",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-18T08:22:00Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": ["README.md", "API.md"],
+      "foundation_docs_missing": ["ARCHITECTURE.md", "COMPONENTS.md", "SCHEMA.md"],
+      "coding_standards_available": [],
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP (mcp library)",
+        "testing": "pytest"
+      },
+      "key_files": {
+        "tool_handlers": "tool_handlers.py",
+        "server": "server.py",
+        "cli_reference": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli/src/config/coderef-config.ts"
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Persistent Index Storage",
+      "goal": "Make CodeRef MCP server persistent by leveraging existing CLI file format. No re-scanning needed between sessions.",
+      "problem": "MCP server index is in-memory only - lost on restart. Users must re-scan projects every session.",
+      "solution": "Use existing CLI persistence format (.coderef/ directory with index.json and graph.json). Read on query, write on scan.",
+      "scope": "4 tasks across 2 phases",
+      "estimated_complexity": "medium"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "risk": "JSON file corruption on write",
+          "severity": "medium",
+          "mitigation": "Write to temp file first, then atomic rename"
+        },
+        {
+          "risk": "Index format mismatch with CLI",
+          "severity": "low",
+          "mitigation": "Reference CLI's coderef-config.ts for exact schema"
+        },
+        {
+          "risk": "Stale index not detected",
+          "severity": "medium",
+          "mitigation": "Compare source file mtimes vs index mtime"
+        }
+      ],
+      "overall_risk": "low"
+    },
+    "3_current_state_analysis": {
+      "files_to_create": [
+        {
+          "path": "coderef/index_storage.py",
+          "purpose": "Module for loading/saving index and graph JSON files"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "tool_handlers.py",
+          "purpose": "Modify scan_realtime to save results, modify query tools to load existing index"
+        }
+      ],
+      "existing_cli_format": {
+        "location": "project/.coderef/",
+        "files": {
+          "index.json": "Array of elements [{type, name, file, line, exported}]",
+          "graph.json": "Dependency graph {nodes: [], edges: []}",
+          "config.json": "Scan settings (optional)"
+        }
+      }
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Index Persistence",
+          "description": "Save scan results to .coderef/index.json"
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Graph Persistence",
+          "description": "Save dependency graph to .coderef/graph.json"
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Auto-Load on Query",
+          "description": "Load existing index on query if .coderef/ exists"
+        },
+        {
+          "id": "FEAT-004",
+          "name": "Freshness Detection",
+          "description": "Detect stale index by comparing file mtimes"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-PERSISTENT-INDEX-STORAGE-001",
+        "name": "Persistent Index Storage",
+        "feature_dir": "coderef/working/persistent-index-storage"
+      },
+      "tasks": [
+        {
+          "id": "PERSIST-001",
+          "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+          "description": "Create index_storage.py module with load/save functions",
+          "file": "coderef/index_storage.py",
+          "details": "Functions: load_index(project_path), save_index(project_path, elements), load_graph(project_path), save_graph(project_path, graph), is_index_stale(project_path)",
+          "estimated_lines": 80,
+          "status": "pending"
+        },
+        {
+          "id": "PERSIST-002",
+          "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+          "description": "Modify scan_realtime to save results to .coderef/",
+          "file": "tool_handlers.py",
+          "details": "After CLI scan completes, call save_index() and save_graph() to persist results",
+          "estimated_lines": 15,
+          "status": "pending"
+        },
+        {
+          "id": "PERSIST-003",
+          "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+          "description": "Modify query tools to load existing index first",
+          "file": "tool_handlers.py",
+          "details": "Before query/analyze, check if .coderef/index.json exists and load it. Skip scan if index is fresh.",
+          "estimated_lines": 20,
+          "status": "pending"
+        },
+        {
+          "id": "PERSIST-004",
+          "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+          "description": "Add index freshness check",
+          "file": "coderef/index_storage.py",
+          "details": "Compare index.json mtime vs source file mtimes. Return stale=true if source files are newer than index.",
+          "estimated_lines": 25,
+          "status": "pending"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Storage Module",
+          "description": "Create the index_storage.py module with all persistence functions",
+          "tasks": ["PERSIST-001", "PERSIST-004"],
+          "deliverables": [
+            "coderef/index_storage.py with load_index, save_index, load_graph, save_graph, is_index_stale"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Integration",
+          "description": "Integrate storage module with existing tool handlers",
+          "tasks": ["PERSIST-002", "PERSIST-003"],
+          "deliverables": [
+            "scan_realtime writes to .coderef/",
+            "query/analyze loads from .coderef/ if available"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test": "test_save_load_index",
+          "description": "Save index, reload, verify contents match"
+        },
+        {
+          "test": "test_save_load_graph",
+          "description": "Save graph, reload, verify nodes and edges match"
+        },
+        {
+          "test": "test_is_index_stale_fresh",
+          "description": "Index newer than source files returns false"
+        },
+        {
+          "test": "test_is_index_stale_outdated",
+          "description": "Source files newer than index returns true"
+        },
+        {
+          "test": "test_missing_coderef_dir",
+          "description": "Gracefully handle missing .coderef/ directory"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test": "test_scan_creates_coderef_dir",
+          "description": "scan_realtime creates .coderef/ and writes index.json"
+        },
+        {
+          "test": "test_query_loads_existing_index",
+          "description": "Query tool uses existing index without re-scanning"
+        },
+        {
+          "test": "test_force_rescan_ignores_index",
+          "description": "force_rescan=true bypasses existing index"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "acceptance_criteria": [
+        "Scan writes to project/.coderef/index.json",
+        "Scan writes to project/.coderef/graph.json",
+        "Query loads from project/.coderef/index.json if exists",
+        "Index survives MCP server restart",
+        "force_rescan=true ignores existing index",
+        "Stale index detected when source files are newer"
+      ],
+      "performance_criteria": [
+        "Index load < 100ms for typical project",
+        "Index save < 200ms for typical project"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Storage Module",
+          "tasks": [
+            {"id": "PERSIST-001", "description": "Create index_storage.py module", "status": "pending"},
+            {"id": "PERSIST-004", "description": "Add is_index_stale() function", "status": "pending"}
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Integration",
+          "tasks": [
+            {"id": "PERSIST-002", "description": "Modify scan_realtime to save results", "status": "pending"},
+            {"id": "PERSIST-003", "description": "Modify query tools to load index", "status": "pending"}
+          ]
+        }
+      ]
+    }
+  }
+}

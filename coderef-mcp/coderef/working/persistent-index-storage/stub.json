@@ -1,0 +1,75 @@
+{
+  "workorder_id": "WO-PERSISTENT-INDEX-STORAGE-001",
+  "feature_name": "persistent-index-storage",
+  "created": "2025-12-18",
+
+  "problem": {
+    "summary": "MCP server index is in-memory only - lost on restart",
+    "details": "The scan_realtime tool builds an index in Python memory. When Claude Desktop restarts, the index is gone. Users must re-scan every session.",
+    "user_impact": "Frustrating - have to re-scan projects every time"
+  },
+
+  "solution": {
+    "summary": "Use existing CLI persistence format (.coderef/ directory)",
+    "details": "The CLI already saves to .coderef/index.json and .coderef/graph.json. MCP server should read/write these files instead of in-memory only.",
+    "approach": "Leverage existing format, don't reinvent"
+  },
+
+  "existing_cli_format": {
+    "location": "project/.coderef/",
+    "files": {
+      "index.json": "Array of elements [{type, name, file, line, exported}]",
+      "graph.json": "Dependency graph {nodes: [], edges: []}",
+      "config.json": "Scan settings"
+    },
+    "example_path": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli/.coderef/"
+  },
+
+  "tasks": [
+    {
+      "id": "PERSIST-001",
+      "description": "Create index_storage.py module with load/save functions",
+      "file": "coderef/index_storage.py",
+      "details": "Functions: load_index(project_path), save_index(project_path, elements), load_graph(project_path), save_graph(project_path, graph)"
+    },
+    {
+      "id": "PERSIST-002",
+      "description": "Modify scan_realtime in tool_handlers.py to save results",
+      "file": "tool_handlers.py",
+      "details": "After CLI scan completes, call save_index() and save_graph() to write to .coderef/"
+    },
+    {
+      "id": "PERSIST-003",
+      "description": "Modify query tools to load existing index first",
+      "file": "tool_handlers.py",
+      "details": "Before query/analyze, check if .coderef/index.json exists and load it. Skip scan if index is fresh."
+    },
+    {
+      "id": "PERSIST-004",
+      "description": "Add index freshness check",
+      "file": "coderef/index_storage.py",
+      "details": "Compare index.json mtime vs source file mtimes. Return stale=true if source files are newer."
+    }
+  ],
+
+  "key_files_to_modify": [
+    "tool_handlers.py - scan_realtime function (~line 1455)",
+    "tool_handlers.py - query functions"
+  ],
+
+  "key_file_to_create": [
+    "coderef/index_storage.py"
+  ],
+
+  "acceptance_criteria": [
+    "Scan writes to project/.coderef/index.json",
+    "Query loads from project/.coderef/index.json if exists",
+    "Index survives MCP server restart",
+    "force_rescan=true ignores existing index"
+  ],
+
+  "cli_reference": {
+    "path": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli/dist/cli.js",
+    "persistence_code": "packages/cli/src/config/coderef-config.ts"
+  }
+}

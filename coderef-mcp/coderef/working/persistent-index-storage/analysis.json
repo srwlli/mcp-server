@@ -1,0 +1,100 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (root)"
+    ],
+    "missing": [
+      "ARCHITECTURE.md",
+      "COMPONENTS.md",
+      "SCHEMA.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "API.md": {
+      "location": "root",
+      "preview": "# CodeRef2 MCP Service - API Documentation\n\n**Version:** 1.0.0\n**Last Updated:** Phase 6 Complete\n\n---\n\n## Table of Contents\n\n1. [Protocol Overview](#protocol-overview)\n2. [Authentication](#authentication)\n3. [Tool Specifications](#tool-specifications)\n4. [Data Models](#data-models)\n5. [Error Handling](#error-handling)\n6. [Rate Limiting](#rate-limiting)\n7. [Examples](#examples)\n\n---\n\n## Protocol Overview\n\n### MCP (Model Context Protocol)\n\nCodeRef2 implements the MCP specification for tool exposu",
+      "headers": [
+        "CodeRef2 MCP Service - API Documentation",
+        "Table of Contents",
+        "Protocol Overview",
+        "MCP (Model Context Protocol)",
+        "Tool Discovery",
+        "Authentication",
+        "Future Considerations",
+        "Tool Specifications",
+        "Tool 1: Query (`mcp__coderef__query`)",
+        "Tool 2: Analyze (`mcp__coderef__analyze`)"
+      ],
+      "size": 15581
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# CodeRef MCP Service\n\n**Version:** 1.0.0\n**Status:** Production Ready\n**Components:** 6 MCP Tools, 281+ Baseline Elements, 150+ Integration Tests\n\n---\n\n## Overview\n\nCodeRef is an advanced **Model Context Protocol (MCP) service** for semantic code reference analysis and validation. It enables intelligent systems to:\n\n- **Query** code elements using semantic references (`@Type/path#element:line{metadata}`)\n- **Analyze** code impact, dependencies, and complexity through graph traversal\n- **Validat",
+      "headers": [
+        "CodeRef MCP Service",
+        "Overview",
+        "Architecture",
+        "Service Design",
+        "Service Independence",
+        "Installation & Setup",
+        "Prerequisites",
+        "Installation",
+        "Clone or download the service",
+        "Install dependencies"
+      ],
+      "size": 13130
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [],
+    "file_counts": {
+      "tests\\integration": 7,
+      ".claude\\commands": 6,
+      "coderef_mcp.egg-info": 5,
+      "coderef\\generators": 4,
+      "tests\\unit": 4,
+      "coderef\\working\\mcp-server-detection-fix": 3,
+      "coderef": 2,
+      "coderef\\clients": 2,
+      "coderef\\utils": 2,
+      "coderef\\working": 2
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: ARCHITECTURE.md, COMPONENTS.md, SCHEMA.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

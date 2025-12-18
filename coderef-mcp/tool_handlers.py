@@ -22,6 +22,15 @@ from coderef.models import (
     RelationshipType,
     ErrorResponse,
 )
+from coderef.index_storage import (
+    load_index,
+    save_index,
+    load_graph,
+    save_graph,
+    is_index_stale,
+    index_exists,
+    get_index_info,
+)
 
 logger = get_logger(__name__)
 
@@ -290,7 +299,8 @@ async def handle_query_elements(args: Dict[str, Any]) -> Dict[str, Any]:
                 "limit": 100,     # optional
                 "include_relationships": true,
                 "include_metadata": true,
-                "include_source": false
+                "include_source": false,
+                "source_dir": "path/to/project"  # optional, for loading persisted index
             }
 
     Returns:
@@ -312,6 +322,27 @@ async def handle_query_elements(args: Dict[str, Any]) -> Dict[str, Any]:
         include_relationships = args.get("include_relationships", True)
         include_metadata = args.get("include_metadata", True)
         include_source = args.get("include_source", False)
+        source_dir = args.get("source_dir")  # P4.7: Optional project path for index loading
+
+        # P4.7: Load persisted index if source_dir provided and index exists
+        index_loaded = False
+        index_info = None
+        if source_dir and index_exists(source_dir):
+            # Check if index is fresh
+            stale = is_index_stale(source_dir)
+            if not stale:
+                # Load persisted index
+                persisted_elements = load_index(source_dir)
+                if persisted_elements:
+                    # Update the query executor with persisted data
+                    executor = get_query_executor()
+                    await update_query_index({"elements": persisted_elements, "metadata": {"source_dir": source_dir}})
+                    index_loaded = True
+                    index_info = get_index_info(source_dir)
+                    logger.info(f"Loaded {len(persisted_elements)} elements from persisted index at {source_dir}")
+            else:
+                logger.info(f"Persisted index at {source_dir} is stale, recommend re-scanning")
+                index_info = {"stale": True, "source_dir": source_dir}
 
         # Parse filter if provided
         filter_dict = args.get("filter", {})
@@ -355,6 +386,8 @@ async def handle_query_elements(args: Dict[str, Any]) -> Dict[str, Any]:
             ],
             "execution_time_ms": response.execution_time_ms,
             "query_status": response.query_status,
+            "index_loaded_from_disk": index_loaded,  # P4.7: Whether persisted index was used
+            "index_info": index_info,  # P4.7: Info about persisted index (freshness, etc.)
             "timestamp": datetime.utcnow().isoformat(),
         }
 
@@ -2074,6 +2107,43 @@ async def handle_scan_realtime(args: Dict[str, Any]) -> Dict[str, Any]:
             update_status = await update_query_index(scan_results)
             logger.info(f"Index update status: {update_status['status']}")
 
+        # P4.7: Persist index to .coderef/ directory for cross-session persistence
+        persistence_status = {"saved": False}
+        try:
+            elements = scan_results.get("elements", [])
+            if elements:
+                # Save index to .coderef/index.json
+                index_saved = save_index(source_dir, elements)
+                persistence_status["index_saved"] = index_saved
+
+                # Build and save graph if we have relationship data
+                # Note: Graph is built from elements with their relationships
+                graph_data = {
+                    "nodes": [
+                        {
+                            "id": f"{e.get('file', '')}:{e.get('line', 0)}:{e.get('name', '')}",
+                            "type": e.get("type", "unknown"),
+                            "name": e.get("name", ""),
+                            "file": e.get("file", ""),
+                            "line": e.get("line", 0),
+                        }
+                        for e in elements
+                    ],
+                    "edges": [],  # Relationships extracted during analysis
+                    "metadata": scan_results.get("metadata", {})
+                }
+                graph_saved = save_graph(source_dir, graph_data)
+                persistence_status["graph_saved"] = graph_saved
+                persistence_status["saved"] = index_saved or graph_saved
+
+                if persistence_status["saved"]:
+                    logger.info(f"Scan results persisted to {source_dir}/.coderef/")
+                else:
+                    logger.warning(f"Failed to persist scan results to {source_dir}/.coderef/")
+        except Exception as persist_error:
+            logger.error(f"Error persisting scan results: {persist_error}")
+            persistence_status["error"] = str(persist_error)
+
         # Generate summary
         summary = format_scan_summary(scan_results)
 
@@ -2090,6 +2160,7 @@ async def handle_scan_realtime(args: Dict[str, Any]) -> Dict[str, Any]:
             "validation": validation,
             "index_updated": update_index,
             "update_status": update_status,
+            "persistence_status": persistence_status,  # P4.7: Persistence to .coderef/
             "cached": False,
             "timestamp": datetime.utcnow().isoformat()
         }

@@ -3,7 +3,7 @@
     "feature_name": "persistent-index-storage",
     "schema_version": "1.0.0",
     "version": "1.0.0",
-    "status": "complete",
+    "status": "implemented",
     "generated_by": "AI Assistant",
     "generated_at": "2025-12-18T08:22:00Z",
     "has_context": true,
@@ -113,7 +113,7 @@
           "file": "coderef/index_storage.py",
           "details": "Functions: load_index(project_path), save_index(project_path, elements), load_graph(project_path), save_graph(project_path, graph), is_index_stale(project_path)",
           "estimated_lines": 80,
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "PERSIST-002",
@@ -122,7 +122,7 @@
           "file": "tool_handlers.py",
           "details": "After CLI scan completes, call save_index() and save_graph() to persist results",
           "estimated_lines": 15,
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "PERSIST-003",
@@ -131,7 +131,7 @@
           "file": "tool_handlers.py",
           "details": "Before query/analyze, check if .coderef/index.json exists and load it. Skip scan if index is fresh.",
           "estimated_lines": 20,
-          "status": "pending"
+          "status": "completed"
         },
         {
           "id": "PERSIST-004",
@@ -140,7 +140,7 @@
           "file": "coderef/index_storage.py",
           "details": "Compare index.json mtime vs source file mtimes. Return stale=true if source files are newer than index.",
           "estimated_lines": 25,
-          "status": "pending"
+          "status": "completed"
         }
       ]
     },

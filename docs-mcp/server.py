@@ -1037,6 +1037,11 @@ Replaces: api_inventory, database_inventory, dependency_inventory, config_invent
                         'type': 'boolean',
                         'description': 'Use coderef-mcp for code pattern detection. Default: true',
                         'default': True
+                    },
+                    'force_regenerate': {
+                        'type': 'boolean',
+                        'description': 'Regenerate existing docs even if they exist. Use after code changes to update documentation. Default: false',
+                        'default': False
                     }
                 },
                 'required': ['project_path']

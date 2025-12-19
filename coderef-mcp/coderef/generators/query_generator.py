@@ -132,92 +132,6 @@ class QueryEngine:
         self._element_cache: Dict[str, CodeRef2Element] = {}
         self._relationship_cache: Dict[str, List[Relationship]] = {}
 
-    def load_elements(self, elements: List[Dict[str, Any]]) -> int:
-        """Load elements from scan results into cache.
-
-        Args:
-            elements: List of element dicts from CLI scan
-
-        Returns:
-            Number of elements loaded
-        """
-        self._element_cache.clear()
-        for elem in elements:
-            ref = self._build_reference(elem)
-            self._element_cache[ref] = self._convert_element(elem)
-        self.logger.info(f"Loaded {len(self._element_cache)} elements into cache")
-        return len(self._element_cache)
-
-    def _convert_element(self, elem: Dict[str, Any]) -> CodeRef2Element:
-        """Convert CLI element dict to CodeRef2Element."""
-        type_str = elem.get("type", "function")
-
-        # Map CLI type strings to TypeDesignator enum
-        type_mapping = {
-            "function": TypeDesignator.FUNCTION,
-            "method": TypeDesignator.METHOD,
-            "class": TypeDesignator.CLASS,
-            "variable": TypeDesignator.VARIABLE,
-            "constant": TypeDesignator.CONSTANT,
-            "interface": TypeDesignator.INTERFACE,
-            "type": TypeDesignator.TYPE_DEFINITION,
-            "enum": TypeDesignator.ENUM,
-            "module": TypeDesignator.MODULE,
-            "file": TypeDesignator.FILE,
-            "decorator": TypeDesignator.DECORATOR,
-            "property": TypeDesignator.PROPERTY,
-        }
-        type_des = type_mapping.get(type_str, TypeDesignator.FUNCTION)
-
-        return CodeRef2Element(
-            reference=self._build_reference(elem),
-            type_designator=type_des,
-            path=elem.get("file", ""),
-            element=elem.get("name", ""),
-            line=elem.get("line", 0),
-            metadata=ElementMetadata(
-                status="active",
-                documentation=elem.get("documentation", ""),
-            ),
-        )
-
-    def _build_reference(self, elem: Dict[str, Any]) -> str:
-        """Build CodeRef2 reference string from element."""
-        type_abbrev = {
-            "function": "fn",
-            "method": "mt",
-            "class": "cl",
-            "variable": "var",
-            "constant": "const",
-            "interface": "if",
-            "type": "ty",
-            "enum": "en",
-            "module": "mod",
-            "file": "file",
-        }
-        t = type_abbrev.get(elem.get("type", "function"), "fn")
-        return f"@{t}/{elem.get('file', '')}#{elem.get('name', '')}:{elem.get('line', 0)}"
-
-    def _matches_pattern(self, elem: CodeRef2Element, pattern: str) -> bool:
-        """Check if element matches search pattern."""
-        pattern_lower = pattern.lower()
-        return (
-            pattern_lower in elem.element.lower() or
-            pattern_lower in elem.path.lower() or
-            pattern_lower in elem.reference.lower()
-        )
-
-    def get_cache_stats(self) -> Dict[str, int]:
-        """Get statistics about the element cache."""
-        type_counts: Dict[str, int] = {}
-        for elem in self._element_cache.values():
-            t = elem.type_designator.value
-            type_counts[t] = type_counts.get(t, 0) + 1
-        return {
-            "total_elements": len(self._element_cache),
-            "by_type": type_counts,
-        }
-
     async def query(
         self,
         query_request: QueryRequest
@@ -318,27 +232,34 @@ class QueryEngine:
         pattern: str,
         filter: Optional[QueryFilter] = None
     ) -> List[CodeRef2Element]:
-        """Query by pattern matching against cached elements.
+        """Query by pattern matching.
 
         Args:
             pattern: Search pattern (supports wildcards)
             filter: Optional filter criteria
 
         Returns:
-            list: Matching elements from cache
+            list: Matching elements
         """
-        self.logger.debug(f"Querying by pattern: {pattern} (cache size: {len(self._element_cache)})")
+        self.logger.debug(f"Querying by pattern: {pattern}")
 
+        # In production: would query full knowledge base
+        # For now: return demonstration results
         elements = []
 
-        # Search the actual cache
-        if self._element_cache:
-            for ref, elem in self._element_cache.items():
-                if self._matches_pattern(elem, pattern):
-                    elements.append(elem)
-            self.logger.debug(f"Found {len(elements)} matches for pattern '{pattern}'")
-        else:
-            self.logger.warning("Element cache is empty - run scan_realtime first")
+        # Generate some sample results based on pattern
+        if "*" in pattern or "?" in pattern:
+            # Glob pattern matching
+            sample_types = [TypeDesignator.FUNCTION, TypeDesignator.CLASS, TypeDesignator.FILE]
+            for type_des in sample_types:
+                element = CodeRef2Element(
+                    reference=f"@{type_des.value}/sample/path#{pattern}",
+                    type_designator=type_des,
+                    path="sample/path",
+                    element=pattern,
+                    metadata=ElementMetadata(status="active"),
+                )
+                elements.append(element)
 
         # Apply filters
         if filter:

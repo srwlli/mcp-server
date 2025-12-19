@@ -1867,22 +1867,9 @@ async def update_query_index(scan_results: Dict[str, Any]) -> Dict[str, Any]:
         # Get QueryExecutor singleton
         executor = get_query_executor()
 
-        # TODO: Implement actual index update logic
-        # This would typically involve:
-        # 1. Convert CLI element format to internal CodeRef2Element format
-        # 2. Update or replace executor's internal element map
-        # 3. Rebuild any internal caches or indexes
-        # 4. Update relationships/dependencies if using AST analyzer
-        #
-        # For now, we log the update and return success
-        # The actual implementation depends on QueryExecutor's API
-
-        # Placeholder: In production, this would call something like:
-        # executor.update_index(elements)
-        # or
-        # executor.replace_index(elements)
-
-        logger.info(f"Index update simulated: {len(elements)} elements processed")
+        # Load elements into QueryEngine cache
+        loaded_count = executor.engine.load_elements(elements)
+        logger.info(f"Index updated: {loaded_count} elements loaded into QueryEngine")
 
         # Invalidate resource cache since index changed
         cache = get_resource_cache()
@@ -1894,13 +1881,12 @@ async def update_query_index(scan_results: Dict[str, Any]) -> Dict[str, Any]:
 
         return {
             "status": "success",
-            "elements_added": len(elements),
+            "elements_added": loaded_count,
             "elements_updated": 0,
-            "total_elements": len(elements),
+            "total_elements": loaded_count,
             "source_dir": metadata.get("source_dir", "unknown"),
             "analyzer": metadata.get("analyzer", "unknown"),
             "updated_at": datetime.utcnow().isoformat(),
-            "note": "Index update simulated - actual implementation depends on QueryExecutor API"
         }
 
     except Exception as e:

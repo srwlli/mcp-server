@@ -1,0 +1,80 @@
+{
+  "workorder": {
+    "id": "WO-AGENT-COMPLETION-WORKFLOW-001",
+    "feature_name": "agent-completion-workflow",
+    "stub_id": "STUB-049",
+    "status": "pending",
+    "created": "2025-12-20",
+    "delegated_by": "Archer (Orchestrator)",
+    "target_project": "docs-mcp"
+  },
+  "handoff": {
+    "type": "workflow_documentation",
+    "priority": "high",
+    "scope": "Document agent completion workflow - agent archives, orchestrator verifies",
+    "status": "pending_plan",
+    "instructions": "Review context.json and create implementation plan for documenting the revised workflow"
+  },
+  "tasks": [
+    {
+      "task": 1,
+      "description": "Update orchestrator CLAUDE.md with clarified workflow phases",
+      "files": [
+        "C:\\Users\\willh\\Desktop\\assistant\\CLAUDE.md"
+      ],
+      "status": "pending",
+      "requirements": [
+        "Phase 3: Add agent completion tasks (update-deliverables, archive-feature)",
+        "Phase 4: Clarify orchestrator only verifies, does not execute",
+        "Add completion checklist for agents"
+      ]
+    },
+    {
+      "task": 2,
+      "description": "Update handoff template to include completion checklist",
+      "files": [
+        "Handoff template used in delegation prompts"
+      ],
+      "status": "pending",
+      "requirements": [
+        "Add completion section with explicit steps",
+        "Include /update-deliverables and /archive-feature commands",
+        "Add validation checklist before marking complete"
+      ]
+    },
+    {
+      "task": 3,
+      "description": "Create workflow documentation showing agent vs orchestrator responsibilities",
+      "files": [
+        "New workflow guide or update existing docs"
+      ],
+      "status": "pending",
+      "requirements": [
+        "Document agent = executor (all tasks including completion)",
+        "Document orchestrator = verifier (tracking only)",
+        "Include diagrams or clear examples"
+      ]
+    }
+  ],
+  "validation": {
+    "criteria": [
+      "CLAUDE.md explicitly states agent archives, orchestrator verifies",
+      "Handoff templates include completion checklist",
+      "Workflow documentation is clear and unambiguous",
+      "Agents know to run /update-deliverables + /archive-feature before marking complete"
+    ]
+  },
+  "communication_log": [
+    {
+      "timestamp": "2025-12-20T10:45:00Z",
+      "from": "Archer (Orchestrator)",
+      "to": "docs-mcp agent",
+      "message": "Delegating WO-AGENT-COMPLETION-WORKFLOW-001. Need to document the workflow where agents complete ALL tasks (including archival) and orchestrator only verifies. See context.json for full requirements and current problem example (WO-PERSONA-MANAGEMENT-001)."
+    }
+  ],
+  "notes": [
+    "This clarifies a workflow ambiguity that caused orchestrator to step out of role",
+    "Example: WO-PERSONA-MANAGEMENT-001 where orchestrator had to archive feature",
+    "Goal: Make it explicit that agent archives, orchestrator only verifies"
+  ]
+}

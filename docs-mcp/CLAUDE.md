@@ -496,13 +496,13 @@ Track agent status across features with real-time dashboard.
 # Agent 3 gets WO-AUTH-SYSTEM-004 (unit + integration tests)
 
 # Step 4: Agents work in parallel (each in separate terminal)
-# Each agent updates communication.json tasks as they work:
-#   - Set task status to "in_progress" when starting
-#   - Set status to "complete" with timestamp when done
-# Lloyd can check progress anytime by reading communication.json
-# Agent 1: Completes setup, updates task status to COMPLETE
-# Agent 2: Completes core logic, updates task status to COMPLETE
-# Agent 3: Completes tests, updates task status to COMPLETE
+# Each agent updates plan.json using the update_task_status tool:
+#   - Call update_task_status(status='in_progress') when starting
+#   - Call update_task_status(status='completed') when done
+# Lloyd can check progress anytime by reading plan.json section 5
+# Agent 1: Completes setup → update_task_status(..., status='completed')
+# Agent 2: Completes core logic → update_task_status(..., status='completed')
+# Agent 3: Completes tests → update_task_status(..., status='completed')
 
 # Step 5: Verify each agent's work
 /verify-agent-completion
@@ -569,11 +569,12 @@ Track agent status across features with real-time dashboard.
 }
 ```
 
-**Task Status Values**: `pending` | `in_progress` | `complete` | `blocked`
+**Task Status Values**: `pending` | `in_progress` | `completed` | `blocked`
 
 **Key Benefits**:
-- **Single Source of Truth**: communication.json is where task status lives
-- **Real-time Progress**: Lloyd checks progress anytime via `progress.percent`
+- **Single Source of Truth**: plan.json tracks all task status via update_task_status tool
+- **Real-time Progress**: Lloyd checks plan.json section 5 anytime for progress tracking
+- **Automatic Validation**: Tool validates status values and prevents corruption
 - **Conflict Prevention**: Forbidden files prevent agents from stepping on each other
 - **Traceability**: Each agent has unique workorder for audit trail
 - **Verification**: Automated checks ensure quality before merge

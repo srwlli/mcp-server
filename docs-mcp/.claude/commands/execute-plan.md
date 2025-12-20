@@ -24,26 +24,35 @@ Workorder: WO-AUTH-001 - Authentication System
 
 For each task:
 1. Mark as `in_progress` in TodoWrite
-2. **Update communication.json** (if multi-agent mode):
-   - Set task status to `"in_progress"`
+2. **Update task status in plan.json**:
+   ```python
+   mcp__docs_mcp__update_task_status(
+       project_path=<current_directory>,
+       feature_name=<feature_name>,
+       task_id="SETUP-001",
+       status="in_progress"
+   )
+   ```
 3. Implement the task following plan guidance
 4. Mark as `completed` in TodoWrite
-5. **Update communication.json** (if multi-agent mode):
-   - Set task status to `"complete"`
-   - Add `completed_at` timestamp (ISO 8601)
+5. **Update task status to completed**:
+   ```python
+   mcp__docs_mcp__update_task_status(
+       project_path=<current_directory>,
+       feature_name=<feature_name>,
+       task_id="SETUP-001",
+       status="completed"
+   )
+   ```
 
-**communication.json is the source of truth for task tracking.** Lloyd and other agents can check progress at any time by reading this file.
+**plan.json is the source of truth for task tracking.** The update_task_status tool automatically:
+- Updates task status in section 5 (tasks array)
+- Updates task checkboxes in section 9 (implementation checklist)
+- Recalculates progress summary (total, completed, in_progress, blocked, percent)
+- Adds timestamps to track when tasks were updated
+- Validates status values and prevents corruption
 
-Example task update:
-```json
-{
-  "id": "STEP-003",
-  "description": "Update pyproject.toml",
-  "status": "complete",
-  "completed_at": "2025-12-07T23:30:00Z",
-  "notes": null
-}
-```
+**Multi-agent mode:** Each agent updates their assigned tasks using the tool. Progress is tracked in plan.json.
 
 ---
 

@@ -7,7 +7,8 @@
     "generated_by": "Lloyd (AI Assistant)",
     "has_context": true,
     "has_analysis": true,
-    "created_at": "2025-12-20T00:00:00Z"
+    "created_at": "2025-12-20T00:00:00Z",
+    "last_updated": "2025-12-20T09:26:15.621704+00:00"
   },
   "UNIVERSAL_PLANNING_STRUCTURE": {
     "0_preparation": {
@@ -40,7 +41,10 @@
       "goal": "Clean up codebase by removing redundant tools whose functionality is now fully covered by coderef_foundation_docs",
       "scope": "Remove tool handlers, schemas, slash commands, and update all documentation",
       "estimated_complexity": "Low",
-      "key_stakeholders": ["docs-mcp users", "planning workflow users"]
+      "key_stakeholders": [
+        "docs-mcp users",
+        "planning workflow users"
+      ]
     },
     "2_risk_assessment": {
       "overall_risk": "Low",
@@ -77,22 +81,61 @@
         "CLAUDE.md still documents old inventory tools"
       ],
       "files_to_modify": [
-        {"path": "tool_handlers.py", "purpose": "Remove 7 handler functions"},
-        {"path": "server.py", "purpose": "Remove 7 tool schemas from list_tools()"},
-        {"path": "TOOL_HANDLERS registry", "purpose": "Remove 7 registry entries"},
-        {"path": "CLAUDE.md", "purpose": "Remove old tool documentation, add migration notes"},
-        {"path": "README.md", "purpose": "Update tool count"},
-        {"path": "user-guide.md", "purpose": "Remove old tool references"}
+        {
+          "path": "tool_handlers.py",
+          "purpose": "Remove 7 handler functions"
+        },
+        {
+          "path": "server.py",
+          "purpose": "Remove 7 tool schemas from list_tools()"
+        },
+        {
+          "path": "TOOL_HANDLERS registry",
+          "purpose": "Remove 7 registry entries"
+        },
+        {
+          "path": "CLAUDE.md",
+          "purpose": "Remove old tool documentation, add migration notes"
+        },
+        {
+          "path": "README.md",
+          "purpose": "Update tool count"
+        },
+        {
+          "path": "user-guide.md",
+          "purpose": "Remove old tool references"
+        }
       ],
       "files_to_create": [],
       "files_to_delete": [
-        {"path": ".claude/commands/api-inventory.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/database-inventory.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/dependency-inventory.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/config-inventory.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/test-inventory.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/inventory-manifest.md", "purpose": "Obsolete slash command"},
-        {"path": ".claude/commands/documentation-inventory.md", "purpose": "Obsolete slash command"}
+        {
+          "path": ".claude/commands/api-inventory.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/database-inventory.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/dependency-inventory.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/config-inventory.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/test-inventory.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/inventory-manifest.md",
+          "purpose": "Obsolete slash command"
+        },
+        {
+          "path": ".claude/commands/documentation-inventory.md",
+          "purpose": "Obsolete slash command"
+        }
       ]
     },
     "4_key_features": {
@@ -132,7 +175,9 @@
           "description": "Remove handle_api_inventory from tool_handlers.py",
           "feature": "F1",
           "estimated_effort": "small",
-          "status": "pending"
+          "status": "completed",
+          "updated_at": "2025-12-20T09:26:15.621694+00:00",
+          "notes": "Handler already removed in prior cleanup"
         },
         {
           "id": "REMOVE-002",
@@ -350,29 +395,71 @@
           "phase": 1,
           "name": "Remove Handler Functions",
           "description": "Remove 7 handler functions and registry entries from tool_handlers.py",
-          "tasks": ["REMOVE-001", "REMOVE-002", "REMOVE-003", "REMOVE-004", "REMOVE-005", "REMOVE-006", "REMOVE-007", "REMOVE-008"],
-          "deliverables": ["tool_handlers.py cleaned up", "TOOL_HANDLERS registry updated"]
+          "tasks": [
+            "REMOVE-001",
+            "REMOVE-002",
+            "REMOVE-003",
+            "REMOVE-004",
+            "REMOVE-005",
+            "REMOVE-006",
+            "REMOVE-007",
+            "REMOVE-008"
+          ],
+          "deliverables": [
+            "tool_handlers.py cleaned up",
+            "TOOL_HANDLERS registry updated"
+          ]
         },
         {
           "phase": 2,
           "name": "Remove Tool Schemas",
           "description": "Remove 7 Tool() definitions from server.py",
-          "tasks": ["REMOVE-009", "REMOVE-010", "REMOVE-011", "REMOVE-012", "REMOVE-013", "REMOVE-014", "REMOVE-015"],
-          "deliverables": ["server.py cleaned up", "Tool count reduced from 32 to 25"]
+          "tasks": [
+            "REMOVE-009",
+            "REMOVE-010",
+            "REMOVE-011",
+            "REMOVE-012",
+            "REMOVE-013",
+            "REMOVE-014",
+            "REMOVE-015"
+          ],
+          "deliverables": [
+            "server.py cleaned up",
+            "Tool count reduced from 32 to 25"
+          ]
         },
         {
           "phase": 3,
           "name": "Remove Slash Commands",
           "description": "Delete 7 slash command files from .claude/commands/",
-          "tasks": ["REMOVE-016", "REMOVE-017", "REMOVE-018", "REMOVE-019", "REMOVE-020", "REMOVE-021", "REMOVE-022"],
-          "deliverables": ["7 slash command files deleted"]
+          "tasks": [
+            "REMOVE-016",
+            "REMOVE-017",
+            "REMOVE-018",
+            "REMOVE-019",
+            "REMOVE-020",
+            "REMOVE-021",
+            "REMOVE-022"
+          ],
+          "deliverables": [
+            "7 slash command files deleted"
+          ]
         },
         {
           "phase": 4,
           "name": "Update Documentation & Test",
           "description": "Update all documentation and verify workflows still work",
-          "tasks": ["DOC-001", "DOC-002", "DOC-003", "TEST-001", "TEST-002"],
-          "deliverables": ["Documentation updated", "Workflows verified working"]
+          "tasks": [
+            "DOC-001",
+            "DOC-002",
+            "DOC-003",
+            "TEST-001",
+            "TEST-002"
+          ],
+          "deliverables": [
+            "Documentation updated",
+            "Workflows verified working"
+          ]
         }
       ]
     },

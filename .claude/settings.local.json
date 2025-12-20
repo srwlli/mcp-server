@@ -69,7 +69,12 @@
       "mcp__docs-mcp__update_deliverables",
       "mcp__coderef-mcp__mcp__coderef__query",
       "mcp__docs-mcp__generate_features_inventory",
-      "mcp__docs-mcp__coderef_foundation_docs"
+      "mcp__docs-mcp__coderef_foundation_docs",
+      "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --all --oneline --grep=\"update.task.status\" -i)",
+      "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --all --oneline --grep=\"STUB-009\" -i)",
+      "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --all --oneline --grep=\"update.task\" -i)",
+      "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\personas-mcp\\coderef\\working\" /B)",
+      "mcp__docs-mcp__update_task_status"
     ],
     "deny": [],
     "ask": []

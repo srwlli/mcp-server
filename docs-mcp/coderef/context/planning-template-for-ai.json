@@ -438,7 +438,7 @@
         "instructions": [
           "IMMEDIATELY after completing each task, call update_task_status tool to mark task as complete",
           "Use status: 'in_progress' when starting a task, 'completed' when done",
-          "If using multi-agent coordination: Tool auto-updates communication.json agent status",
+          "Tool updates plan.json sections 5 and 9 automatically with progress tracking",
           "If blocked: Use status: 'blocked' with notes explaining the blocker"
         ],
         "update_task_status_tool": {
@@ -466,7 +466,7 @@
         },
         "workflow_integration": {
           "single_agent": "Start task → update_task_status(status='in_progress') → Do work → update_task_status(status='completed') → Continue next task",
-          "multi_agent": "Start task → update_task_status(status='in_progress') → Do work → update_task_status(status='completed') → Tool auto-updates communication.json → Continue next task"
+          "multi_agent": "Each agent updates their assigned tasks → update_task_status(status='in_progress') → Do work → update_task_status(status='completed') → All progress tracked in plan.json"
         },
         "status_values": {
           "pending": "Task not yet started (default)",
@@ -489,7 +489,8 @@
           "Facilitates handoffs between agents",
           "Provides audit trail of work completed",
           "Automatic timestamp tracking on status changes",
-          "Auto-sync with communication.json in multi-agent mode"
+          "Updates both section 5 (tasks) and section 9 (checklist) automatically",
+          "Validates status values to prevent corruption"
         ]
       }
     }

@@ -170,18 +170,12 @@ async def list_tools() -> list[Tool]:
                         "description": "One-sentence description of persona's role and expertise (20-200 chars)"
                     },
                     "expertise": {
-                        "type": "array",
-                        "description": "List of expertise areas (3-10 items)",
-                        "items": {"type": "string"},
-                        "minItems": 3,
-                        "maxItems": 10
+                        "type": "string",
+                        "description": "List of expertise areas (3-10 items) as comma-separated string OR JSON array string"
                     },
                     "use_cases": {
-                        "type": "array",
-                        "description": "List of use cases where this persona is helpful (3-10 items)",
-                        "items": {"type": "string"},
-                        "minItems": 3,
-                        "maxItems": 10
+                        "type": "string",
+                        "description": "List of use cases (3-10 items) as comma-separated string OR JSON array string"
                     },
                     "communication_style": {
                         "type": "string",
@@ -196,16 +190,12 @@ async def list_tools() -> list[Tool]:
                         "description": "How persona uses tools (optional, max 200 chars)"
                     },
                     "specializations": {
-                        "type": "array",
-                        "description": "Optional specialized sub-areas (max 5)",
-                        "items": {"type": "string"},
-                        "maxItems": 5
+                        "type": "string",
+                        "description": "Optional specialized sub-areas (max 5) as comma-separated string OR JSON array string"
                     },
                     "key_principles": {
-                        "type": "array",
-                        "description": "Optional guiding principles (max 10)",
-                        "items": {"type": "string"},
-                        "maxItems": 10
+                        "type": "string",
+                        "description": "Optional guiding principles (max 10) as comma-separated string OR JSON array string"
                     },
                     "example_responses": {
                         "type": "object",
@@ -626,8 +616,40 @@ async def handle_create_custom_persona(arguments: dict) -> list[TextContent]:
         Success message with persona details or validation errors
     """
     try:
-        # Create CustomPersonaInput from arguments
-        persona_input = CustomPersonaInput(**arguments)
+        import json
+
+        # Parse string parameters that should be arrays
+        # Supports: JSON arrays, comma-separated strings
+        array_fields = ['expertise', 'use_cases', 'key_principles', 'specializations']
+        parsed_args = {}
+
+        for key, value in arguments.items():
+            if key in array_fields and isinstance(value, str):
+                # Try JSON array first
+                if value.strip().startswith('['):
+                    try:
+                        parsed_args[key] = json.loads(value)
+                        continue
+                    except json.JSONDecodeError:
+                        pass
+
+                # Try comma-separated string
+                if ',' in value:
+                    parsed_args[key] = [item.strip() for item in value.split(',') if item.strip()]
+                else:
+                    # Single item treated as list
+                    parsed_args[key] = [value.strip()] if value.strip() else []
+            elif isinstance(value, str) and value.strip().startswith('{'):
+                # Handle JSON objects (example_responses)
+                try:
+                    parsed_args[key] = json.loads(value)
+                except json.JSONDecodeError:
+                    parsed_args[key] = value
+            else:
+                parsed_args[key] = value
+
+        # Create CustomPersonaInput from parsed arguments
+        persona_input = CustomPersonaInput(**parsed_args)
 
         # Validate persona input (multi-stage validation)
         validator = PersonaValidator()

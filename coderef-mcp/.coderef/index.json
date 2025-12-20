@@ -131341,80 +131341,115 @@
     "exported": false
   },
   {
+    "type": "method",
+    "name": "load_elements",
+    "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
+    "line": 135,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_convert_element",
+    "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
+    "line": 151,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_build_reference",
+    "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
+    "line": 184,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_matches_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
+    "line": 201,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "get_cache_stats",
+    "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
+    "line": 210,
+    "exported": false
+  },
+  {
     "type": "function",
     "name": "query",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 135,
+    "line": 221,
     "exported": false
   },
   {
     "type": "function",
     "name": "_query_by_reference",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 183,
+    "line": 269,
     "exported": false
   },
   {
     "type": "function",
     "name": "_query_by_pattern",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 230,
+    "line": 316,
     "exported": false
   },
   {
     "type": "function",
     "name": "_apply_filters",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 270,
+    "line": 349,
     "exported": false
   },
   {
     "type": "function",
     "name": "analyze_impact",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 326,
+    "line": 405,
     "exported": false
   },
   {
     "type": "function",
     "name": "_find_affected_elements",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 385,
+    "line": 464,
     "exported": false
   },
   {
     "type": "method",
     "name": "_calculate_impact_level",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 423,
+    "line": 502,
     "exported": false
   },
   {
     "type": "method",
     "name": "_count_by_impact_level",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 442,
+    "line": 521,
     "exported": false
   },
   {
     "type": "method",
     "name": "__init__",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 464,
+    "line": 543,
     "exported": false
   },
   {
     "type": "method",
     "name": "execute_query",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 469,
+    "line": 548,
     "exported": false
   },
   {
     "type": "function",
     "name": "execute_analysis",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 487,
+    "line": 566,
     "exported": false
   },
   {
@@ -131442,7 +131477,7 @@
     "type": "class",
     "name": "QueryExecutor",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/coderef/generators/query_generator.py",
-    "line": 461,
+    "line": 540,
     "exported": false
   },
   {
@@ -133570,42 +133605,42 @@
     "type": "function",
     "name": "count_by_type",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 1922,
+    "line": 1908,
     "exported": false
   },
   {
     "type": "function",
     "name": "count_by_language",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 1938,
+    "line": 1924,
     "exported": false
   },
   {
     "type": "function",
     "name": "validate_scan_results",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 1959,
+    "line": 1945,
     "exported": false
   },
   {
     "type": "function",
     "name": "format_scan_summary",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 2008,
+    "line": 1994,
     "exported": false
   },
   {
     "type": "function",
     "name": "handle_scan_realtime",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 2050,
+    "line": 2036,
     "exported": false
   },
   {
     "type": "function",
     "name": "_error_response",
     "file": "C:/Users/willh/.mcp-servers/coderef-mcp/tool_handlers.py",
-    "line": 2186,
+    "line": 2172,
     "exported": false
   }
 ]

@@ -1,9 +1,0 @@
-{
-  "feature_name": "config-mcp-to-chatgpt",
-  "description": "Configure MCP servers to work with ChatGPT, including setup instructions, authentication, and integration steps",
-  "category": "feature",
-  "priority": "medium",
-  "created": "2025-01-27T00:00:00Z",
-  "status": "stub"
-}
-

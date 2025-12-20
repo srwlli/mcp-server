@@ -1,0 +1,26 @@
+{
+  "feature_name": "remove-obsolete-inventory-tools",
+  "description": "Remove 7 obsolete inventory tools (api_inventory, database_inventory, dependency_inventory, config_inventory, test_inventory, inventory_manifest, documentation_inventory) that have been replaced by the unified coderef_foundation_docs tool",
+  "goal": "Clean up codebase by removing redundant tools whose functionality is now fully covered by coderef_foundation_docs",
+  "requirements": [
+    "Remove 7 tool handlers from tool_handlers.py",
+    "Remove 7 tool schemas from server.py",
+    "Remove 7 slash commands from .claude/commands/",
+    "Update TOOL_HANDLERS registry",
+    "Update CLAUDE.md documentation",
+    "Verify no breaking changes for existing workflows"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must not break existing planning workflows",
+    "Must preserve coderef_foundation_docs functionality",
+    "Must update all documentation references"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+    "workorder_assigned_at": "2025-12-20T00:04:22.398237+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

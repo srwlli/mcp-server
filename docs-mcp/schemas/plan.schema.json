@@ -16,6 +16,10 @@
           "pattern": "^[a-zA-Z0-9_-]+$",
           "description": "Feature name (alphanumeric, hyphens, underscores)"
         },
+        "project": {
+          "type": "string",
+          "description": "Project this feature belongs to (e.g., 'scriptboard', 'scrapper', 'gridiron-franchise')"
+        },
         "schema_version": {
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",

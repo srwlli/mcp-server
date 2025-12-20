@@ -1,3 +1,12 @@
+WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001 | docs-mcp | remove-obsolete-inventory-tools implementation ... | 2025-12-20T00:07:15.376341+00:00
+WO-CODEREF-FOUNDATION-003 | docs-mcp | Archived feature: Hybrid Foundation Docs | 2025-12-19T22:59:25.339629+00:00
+WO-COMPONENT-HISTORY-001 | docs-mcp | Archived feature: Component History System | 2025-12-19T22:59:25.144885+00:00
+WO-CODEREF-FOUNDATION-002 | docs-mcp | Archived feature: Coderef Foundation Api Md | 2025-12-19T22:44:46.623364+00:00
+WO-FIX-ELEMENT-CALL-EDGES-001 | coderef-system | Fix element-level call edges in dashboard | 2025-12-19T04:29:50.306112+00:00
+WO-ORCHESTRATOR-LOG-DISPLAY-001 | Scriptboard | Add workorder-log.txt reading to orchestrator d... | 2025-12-19T03:17:37.141241+00:00
+WO-DEPENDENCY-GRAPH-EDGES-001 | coderef-system | Wire AST edges to dashboard visualization | 2025-12-19T03:03:51.255035+00:00
+WO-PROSPECT-DETAIL-MODAL-001 | gridiron-franchise | Prospect Detail Modal & My Board tracking | 2025-12-19T02:57:58.029559+00:00
+WO-SCHEDULER-001 | next-scraper | Automated scraper scheduler - made-with-user | 2025-12-19T01:37:02.436308+00:00
 WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage for cross-session surv... | 2025-12-18T08:36:32.076716+00:00
 WO-PERSISTENT-INDEX-STORAGE-001 | coderef-mcp | Persistent index storage implementation plan | 2025-12-18T08:26:53.453837+00:00
 WO-FIX-20251218-001 | docs-mcp | Add /fix command for lightweight changes | 2025-12-18T08:19:17.164219+00:00

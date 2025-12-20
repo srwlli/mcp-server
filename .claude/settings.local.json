@@ -66,7 +66,10 @@
       "Bash(dir \"C:\\\\Users\\\\willh\\\\.mcp-servers\\\\docs-mcp\\\\coderef\" /B)",
       "mcp__docs-mcp__log_workorder",
       "mcp__personas-mcp__list_personas",
-      "mcp__docs-mcp__update_deliverables"
+      "mcp__docs-mcp__update_deliverables",
+      "mcp__coderef-mcp__mcp__coderef__query",
+      "mcp__docs-mcp__generate_features_inventory",
+      "mcp__docs-mcp__coderef_foundation_docs"
     ],
     "deny": [],
     "ask": []

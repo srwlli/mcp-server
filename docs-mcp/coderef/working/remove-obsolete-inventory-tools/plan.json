@@ -1,0 +1,449 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "remove-obsolete-inventory-tools",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Lloyd (AI Assistant)",
+    "has_context": true,
+    "has_analysis": true,
+    "created_at": "2025-12-20T00:00:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": [
+        "ARCHITECTURE.md",
+        "API.md",
+        "COMPONENTS.md",
+        "SCHEMA.md",
+        "README.md"
+      ],
+      "coding_standards_available": [],
+      "reference_implementations": [
+        "coderef_foundation_generator.py (_detect_api_endpoints, _detect_database_schema, _detect_dependencies)"
+      ],
+      "technology_stack": {
+        "language": "Python",
+        "framework": "Flask",
+        "testing": "pytest",
+        "mcp": "MCP Server"
+      },
+      "constraints": [
+        "Must not break existing planning workflows",
+        "Must preserve coderef_foundation_docs functionality",
+        "Must update all documentation references"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "Remove Obsolete Inventory Tools",
+      "description": "Remove 7 obsolete inventory tools (api_inventory, database_inventory, dependency_inventory, config_inventory, test_inventory, inventory_manifest, documentation_inventory) that have been replaced by the unified coderef_foundation_docs tool",
+      "goal": "Clean up codebase by removing redundant tools whose functionality is now fully covered by coderef_foundation_docs",
+      "scope": "Remove tool handlers, schemas, slash commands, and update all documentation",
+      "estimated_complexity": "Low",
+      "key_stakeholders": ["docs-mcp users", "planning workflow users"]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "Low",
+      "risks": [
+        {
+          "risk": "Breaking existing workflows that reference old tools",
+          "likelihood": "Low",
+          "impact": "Medium",
+          "mitigation": "Search codebase for references before removal, update CLAUDE.md to redirect users to new tool"
+        },
+        {
+          "risk": "Missing functionality in coderef_foundation_docs",
+          "likelihood": "Very Low",
+          "impact": "High",
+          "mitigation": "Already verified all 7 tools' functionality exists in coderef_foundation_docs"
+        },
+        {
+          "risk": "Documentation becomes outdated",
+          "likelihood": "Medium",
+          "impact": "Low",
+          "mitigation": "Comprehensive documentation update as part of this plan"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "existing_functionality": [
+        "7 inventory tool handlers exist in tool_handlers.py",
+        "7 tool schemas exist in server.py",
+        "7 slash commands exist in .claude/commands/",
+        "coderef_foundation_docs provides all inventory functionality"
+      ],
+      "gaps": [
+        "No migration guide for users of old tools",
+        "CLAUDE.md still documents old inventory tools"
+      ],
+      "files_to_modify": [
+        {"path": "tool_handlers.py", "purpose": "Remove 7 handler functions"},
+        {"path": "server.py", "purpose": "Remove 7 tool schemas from list_tools()"},
+        {"path": "TOOL_HANDLERS registry", "purpose": "Remove 7 registry entries"},
+        {"path": "CLAUDE.md", "purpose": "Remove old tool documentation, add migration notes"},
+        {"path": "README.md", "purpose": "Update tool count"},
+        {"path": "user-guide.md", "purpose": "Remove old tool references"}
+      ],
+      "files_to_create": [],
+      "files_to_delete": [
+        {"path": ".claude/commands/api-inventory.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/database-inventory.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/dependency-inventory.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/config-inventory.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/test-inventory.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/inventory-manifest.md", "purpose": "Obsolete slash command"},
+        {"path": ".claude/commands/documentation-inventory.md", "purpose": "Obsolete slash command"}
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "F1",
+          "name": "Remove Tool Handlers",
+          "description": "Remove 7 handler functions from tool_handlers.py"
+        },
+        {
+          "id": "F2",
+          "name": "Remove Tool Schemas",
+          "description": "Remove 7 tool definitions from server.py"
+        },
+        {
+          "id": "F3",
+          "name": "Remove Slash Commands",
+          "description": "Delete 7 slash command files from .claude/commands/"
+        },
+        {
+          "id": "F4",
+          "name": "Update Documentation",
+          "description": "Update CLAUDE.md, README.md, user-guide.md to remove old tool references"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+        "name": "Remove Obsolete Inventory Tools",
+        "feature_dir": "coderef/working/remove-obsolete-inventory-tools"
+      },
+      "tasks": [
+        {
+          "id": "REMOVE-001",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_api_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-002",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_database_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-003",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_dependency_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-004",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_config_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-005",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_test_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-006",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_inventory_manifest from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-007",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove handle_documentation_inventory from tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-008",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove 7 entries from TOOL_HANDLERS registry in tool_handlers.py",
+          "feature": "F1",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-009",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove api_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-010",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove database_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-011",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove dependency_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-012",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove config_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-013",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove test_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-014",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove inventory_manifest Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-015",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Remove documentation_inventory Tool() definition from server.py",
+          "feature": "F2",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-016",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/api-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-017",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/database-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-018",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/dependency-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-019",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/config-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-020",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/test-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-021",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/inventory-manifest.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "REMOVE-022",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Delete .claude/commands/documentation-inventory.md",
+          "feature": "F3",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Update CLAUDE.md to remove old tool documentation and add migration guide",
+          "feature": "F4",
+          "estimated_effort": "medium",
+          "status": "pending"
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Update README.md tool count (32 tools → 25 tools)",
+          "feature": "F4",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "DOC-003",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Update user-guide.md to remove old tool references",
+          "feature": "F4",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Verify coderef_foundation_docs still works after removal",
+          "feature": "F4",
+          "estimated_effort": "small",
+          "status": "pending"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+          "description": "Verify /create-workorder workflow still functions",
+          "feature": "F4",
+          "estimated_effort": "small",
+          "status": "pending"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Remove Handler Functions",
+          "description": "Remove 7 handler functions and registry entries from tool_handlers.py",
+          "tasks": ["REMOVE-001", "REMOVE-002", "REMOVE-003", "REMOVE-004", "REMOVE-005", "REMOVE-006", "REMOVE-007", "REMOVE-008"],
+          "deliverables": ["tool_handlers.py cleaned up", "TOOL_HANDLERS registry updated"]
+        },
+        {
+          "phase": 2,
+          "name": "Remove Tool Schemas",
+          "description": "Remove 7 Tool() definitions from server.py",
+          "tasks": ["REMOVE-009", "REMOVE-010", "REMOVE-011", "REMOVE-012", "REMOVE-013", "REMOVE-014", "REMOVE-015"],
+          "deliverables": ["server.py cleaned up", "Tool count reduced from 32 to 25"]
+        },
+        {
+          "phase": 3,
+          "name": "Remove Slash Commands",
+          "description": "Delete 7 slash command files from .claude/commands/",
+          "tasks": ["REMOVE-016", "REMOVE-017", "REMOVE-018", "REMOVE-019", "REMOVE-020", "REMOVE-021", "REMOVE-022"],
+          "deliverables": ["7 slash command files deleted"]
+        },
+        {
+          "phase": 4,
+          "name": "Update Documentation & Test",
+          "description": "Update all documentation and verify workflows still work",
+          "tasks": ["DOC-001", "DOC-002", "DOC-003", "TEST-001", "TEST-002"],
+          "deliverables": ["Documentation updated", "Workflows verified working"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Verify coderef_foundation_docs tool still accessible",
+        "Verify TOOL_HANDLERS registry has 25 entries (not 32)"
+      ],
+      "integration_tests": [
+        "Run /coderef-foundation-docs and verify output",
+        "Run /create-workorder and verify it completes without errors"
+      ],
+      "manual_tests": [
+        "Search codebase for any remaining references to old tools",
+        "Verify CLAUDE.md migration guide is clear"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All 7 tool handlers removed from tool_handlers.py",
+        "All 7 tool schemas removed from server.py",
+        "All 7 slash commands deleted",
+        "TOOL_HANDLERS registry has exactly 25 entries",
+        "/coderef-foundation-docs works correctly",
+        "/create-workorder workflow completes successfully"
+      ],
+      "quality": [
+        "No broken references to old tools in codebase",
+        "Documentation clearly guides users to coderef_foundation_docs",
+        "Tool count accurate in README.md"
+      ],
+      "performance": [
+        "No performance regression in remaining tools"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Remove handle_api_inventory from tool_handlers.py",
+        "[ ] Remove handle_database_inventory from tool_handlers.py",
+        "[ ] Remove handle_dependency_inventory from tool_handlers.py",
+        "[ ] Remove handle_config_inventory from tool_handlers.py",
+        "[ ] Remove handle_test_inventory from tool_handlers.py",
+        "[ ] Remove handle_inventory_manifest from tool_handlers.py",
+        "[ ] Remove handle_documentation_inventory from tool_handlers.py",
+        "[ ] Remove 7 entries from TOOL_HANDLERS registry"
+      ],
+      "phase_2": [
+        "[ ] Remove api_inventory Tool() from server.py",
+        "[ ] Remove database_inventory Tool() from server.py",
+        "[ ] Remove dependency_inventory Tool() from server.py",
+        "[ ] Remove config_inventory Tool() from server.py",
+        "[ ] Remove test_inventory Tool() from server.py",
+        "[ ] Remove inventory_manifest Tool() from server.py",
+        "[ ] Remove documentation_inventory Tool() from server.py"
+      ],
+      "phase_3": [
+        "[ ] Delete .claude/commands/api-inventory.md",
+        "[ ] Delete .claude/commands/database-inventory.md",
+        "[ ] Delete .claude/commands/dependency-inventory.md",
+        "[ ] Delete .claude/commands/config-inventory.md",
+        "[ ] Delete .claude/commands/test-inventory.md",
+        "[ ] Delete .claude/commands/inventory-manifest.md",
+        "[ ] Delete .claude/commands/documentation-inventory.md"
+      ],
+      "phase_4": [
+        "[ ] Update CLAUDE.md with migration guide",
+        "[ ] Update README.md tool count",
+        "[ ] Update user-guide.md references",
+        "[ ] Test /coderef-foundation-docs",
+        "[ ] Test /create-workorder workflow"
+      ]
+    }
+  }
+}

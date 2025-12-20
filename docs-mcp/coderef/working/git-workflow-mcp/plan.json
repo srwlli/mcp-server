@@ -245,178 +245,277 @@
           "phase": 1,
           "dependencies": [],
           "estimated_effort": "2 hours",
-          "skills_required": ["Python", "TOML parsing", "JSON parsing"]
+          "skills_required": [
+            "Python",
+            "TOML parsing",
+            "JSON parsing"
+          ]
         },
         {
           "id": "SETUP-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Create tests/unit/test_version_manager.py with parser tests",
           "phase": 1,
-          "dependencies": ["SETUP-001"],
+          "dependencies": [
+            "SETUP-001"
+          ],
           "estimated_effort": "1 hour",
-          "skills_required": ["pytest", "Python"]
+          "skills_required": [
+            "pytest",
+            "Python"
+          ]
         },
         {
           "id": "CORE-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Implement version detection and auto-update logic in version_manager.py",
           "phase": 2,
-          "dependencies": ["SETUP-001"],
+          "dependencies": [
+            "SETUP-001"
+          ],
           "estimated_effort": "3 hours",
-          "skills_required": ["Python", "File I/O", "Version parsing"]
+          "skills_required": [
+            "Python",
+            "File I/O",
+            "Version parsing"
+          ]
         },
         {
           "id": "CORE-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Implement git staging logic for comprehensive commit scope",
           "phase": 2,
-          "dependencies": ["CORE-001"],
+          "dependencies": [
+            "CORE-001"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["Git operations", "Python subprocess"]
+          "skills_required": [
+            "Git operations",
+            "Python subprocess"
+          ]
         },
         {
           "id": "CORE-003",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Implement commit message generation with metrics from DELIVERABLES.md",
           "phase": 2,
-          "dependencies": ["CORE-002"],
+          "dependencies": [
+            "CORE-002"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["String formatting", "Markdown parsing"]
+          "skills_required": [
+            "String formatting",
+            "Markdown parsing"
+          ]
         },
         {
           "id": "CORE-004",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Implement git push logic with error handling",
           "phase": 2,
-          "dependencies": ["CORE-003"],
+          "dependencies": [
+            "CORE-003"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["Git operations", "Error handling"]
+          "skills_required": [
+            "Git operations",
+            "Error handling"
+          ]
         },
         {
           "id": "CORE-005",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Implement optional release tag creation with changelog integration",
           "phase": 2,
-          "dependencies": ["CORE-004"],
+          "dependencies": [
+            "CORE-004"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["Git tags", "Changelog parsing"]
+          "skills_required": [
+            "Git tags",
+            "Changelog parsing"
+          ]
         },
         {
           "id": "HANDLER-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Create handle_git_workflow in tool_handlers.py with pre-flight validation",
           "phase": 3,
-          "dependencies": ["CORE-001", "CORE-002", "CORE-003", "CORE-004", "CORE-005"],
+          "dependencies": [
+            "CORE-001",
+            "CORE-002",
+            "CORE-003",
+            "CORE-004",
+            "CORE-005"
+          ],
           "estimated_effort": "3 hours",
-          "skills_required": ["MCP handlers", "Python async"]
+          "skills_required": [
+            "MCP handlers",
+            "Python async"
+          ]
         },
         {
           "id": "HANDLER-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Add git_workflow tool definition to server.py list_tools()",
           "phase": 3,
-          "dependencies": ["HANDLER-001"],
+          "dependencies": [
+            "HANDLER-001"
+          ],
           "estimated_effort": "30 minutes",
-          "skills_required": ["MCP protocol", "JSON schema"]
+          "skills_required": [
+            "MCP protocol",
+            "JSON schema"
+          ]
         },
         {
           "id": "HANDLER-003",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Register handle_git_workflow in TOOL_HANDLERS dict",
           "phase": 3,
-          "dependencies": ["HANDLER-001"],
+          "dependencies": [
+            "HANDLER-001"
+          ],
           "estimated_effort": "5 minutes",
-          "skills_required": ["Python"]
+          "skills_required": [
+            "Python"
+          ]
         },
         {
           "id": "CMD-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Create .claude/commands/git-workflow.md slash command",
           "phase": 3,
-          "dependencies": ["HANDLER-002"],
+          "dependencies": [
+            "HANDLER-002"
+          ],
           "estimated_effort": "1 hour",
-          "skills_required": ["Markdown", "Workflow documentation"]
+          "skills_required": [
+            "Markdown",
+            "Workflow documentation"
+          ]
         },
         {
           "id": "CMD-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Register /git-workflow in .claude/commands.json",
           "phase": 3,
-          "dependencies": ["CMD-001"],
+          "dependencies": [
+            "CMD-001"
+          ],
           "estimated_effort": "5 minutes",
-          "skills_required": ["JSON"]
+          "skills_required": [
+            "JSON"
+          ]
         },
         {
           "id": "TEST-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Create tests/integration/test_git_workflow.py with full workflow tests",
           "phase": 4,
-          "dependencies": ["HANDLER-003"],
+          "dependencies": [
+            "HANDLER-003"
+          ],
           "estimated_effort": "3 hours",
-          "skills_required": ["pytest", "Git mocking", "Integration testing"]
+          "skills_required": [
+            "pytest",
+            "Git mocking",
+            "Integration testing"
+          ]
         },
         {
           "id": "TEST-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Test version detection across Python and Node projects",
           "phase": 4,
-          "dependencies": ["TEST-001"],
+          "dependencies": [
+            "TEST-001"
+          ],
           "estimated_effort": "1 hour",
-          "skills_required": ["pytest", "Test fixtures"]
+          "skills_required": [
+            "pytest",
+            "Test fixtures"
+          ]
         },
         {
           "id": "TEST-003",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Test error handling for git failures (network, auth, branch protection)",
           "phase": 4,
-          "dependencies": ["TEST-001"],
+          "dependencies": [
+            "TEST-001"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["pytest", "Error mocking"]
+          "skills_required": [
+            "pytest",
+            "Error mocking"
+          ]
         },
         {
           "id": "DOC-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Update CLAUDE.md with git_workflow tool documentation",
           "phase": 5,
-          "dependencies": ["TEST-003"],
+          "dependencies": [
+            "TEST-003"
+          ],
           "estimated_effort": "1 hour",
-          "skills_required": ["Technical writing"]
+          "skills_required": [
+            "Technical writing"
+          ]
         },
         {
           "id": "DOC-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Update user-guide.md with /git-workflow workflow examples",
           "phase": 5,
-          "dependencies": ["DOC-001"],
+          "dependencies": [
+            "DOC-001"
+          ],
           "estimated_effort": "1 hour",
-          "skills_required": ["Technical writing"]
+          "skills_required": [
+            "Technical writing"
+          ]
         },
         {
           "id": "DOC-003",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Update README.md feature list to include git workflow automation",
           "phase": 5,
-          "dependencies": ["DOC-001"],
+          "dependencies": [
+            "DOC-001"
+          ],
           "estimated_effort": "30 minutes",
-          "skills_required": ["Markdown"]
+          "skills_required": [
+            "Markdown"
+          ]
         },
         {
           "id": "INTEG-001",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Update /archive-feature documentation to mention /git-workflow as next step",
           "phase": 5,
-          "dependencies": ["DOC-003"],
+          "dependencies": [
+            "DOC-003"
+          ],
           "estimated_effort": "30 minutes",
-          "skills_required": ["Documentation"]
+          "skills_required": [
+            "Documentation"
+          ]
         },
         {
           "id": "INTEG-002",
           "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
           "description": "Test complete lifecycle: /create-workorder → implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow",
           "phase": 5,
-          "dependencies": ["INTEG-001"],
+          "dependencies": [
+            "INTEG-001"
+          ],
           "estimated_effort": "2 hours",
-          "skills_required": ["End-to-end testing", "Workflow validation"]
+          "skills_required": [
+            "End-to-end testing",
+            "Workflow validation"
+          ]
         }
       ]
     },
@@ -426,7 +525,10 @@
           "phase": 1,
           "name": "Setup & Scaffolding",
           "description": "Create version_manager.py module and unit tests for version parsing",
-          "tasks": ["SETUP-001", "SETUP-002"],
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002"
+          ],
           "deliverables": [
             "generators/version_manager.py with parse_pyproject_toml(), parse_package_json(), parse_version_py()",
             "tests/unit/test_version_manager.py with 15+ test cases"
@@ -441,7 +543,13 @@
           "phase": 2,
           "name": "Core Git Workflow Logic",
           "description": "Implement version auto-update, git staging, commit message generation, push, and optional tagging",
-          "tasks": ["CORE-001", "CORE-002", "CORE-003", "CORE-004", "CORE-005"],
+          "tasks": [
+            "CORE-001",
+            "CORE-002",
+            "CORE-003",
+            "CORE-004",
+            "CORE-005"
+          ],
           "deliverables": [
             "update_version_files() function in version_manager.py",
             "stage_all_changes() function with comprehensive scope",
@@ -461,7 +569,13 @@
           "phase": 3,
           "name": "MCP Handler & Slash Command",
           "description": "Create MCP tool handler, register in server.py, and create slash command",
-          "tasks": ["HANDLER-001", "HANDLER-002", "HANDLER-003", "CMD-001", "CMD-002"],
+          "tasks": [
+            "HANDLER-001",
+            "HANDLER-002",
+            "HANDLER-003",
+            "CMD-001",
+            "CMD-002"
+          ],
           "deliverables": [
             "handle_git_workflow() in tool_handlers.py with @decorators",
             "git_workflow tool definition in server.py",
@@ -479,7 +593,11 @@
           "phase": 4,
           "name": "Testing & Validation",
           "description": "Create integration tests and validate error handling",
-          "tasks": ["TEST-001", "TEST-002", "TEST-003"],
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003"
+          ],
           "deliverables": [
             "tests/integration/test_git_workflow.py with end-to-end workflow tests",
             "Version detection tests for Python/Node/mixed projects",
@@ -495,7 +613,13 @@
           "phase": 5,
           "name": "Documentation & Integration",
           "description": "Update all documentation and validate complete workflow lifecycle",
-          "tasks": ["DOC-001", "DOC-002", "DOC-003", "INTEG-001", "INTEG-002"],
+          "tasks": [
+            "DOC-001",
+            "DOC-002",
+            "DOC-003",
+            "INTEG-001",
+            "INTEG-002"
+          ],
           "deliverables": [
             "Updated CLAUDE.md with git_workflow tool catalog entry",
             "Updated user-guide.md with workflow examples",
@@ -615,146 +739,36 @@
       }
     },
     "9_implementation_checklist": {
-      "phase_1_setup_scaffolding": {
-        "tasks": [
-          {
-            "id": "SETUP-001",
-            "description": "Create generators/version_manager.py with version file parsers",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "SETUP-002",
-            "description": "Create tests/unit/test_version_manager.py with parser tests",
-            "status": "pending",
-            "checkbox": "☐"
-          }
-        ]
-      },
-      "phase_2_core_git_workflow_logic": {
-        "tasks": [
-          {
-            "id": "CORE-001",
-            "description": "Implement version detection and auto-update logic in version_manager.py",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CORE-002",
-            "description": "Implement git staging logic for comprehensive commit scope",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CORE-003",
-            "description": "Implement commit message generation with metrics from DELIVERABLES.md",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CORE-004",
-            "description": "Implement git push logic with error handling",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CORE-005",
-            "description": "Implement optional release tag creation with changelog integration",
-            "status": "pending",
-            "checkbox": "☐"
-          }
-        ]
-      },
-      "phase_3_mcp_handler_slash_command": {
-        "tasks": [
-          {
-            "id": "HANDLER-001",
-            "description": "Create handle_git_workflow in tool_handlers.py with pre-flight validation",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "HANDLER-002",
-            "description": "Add git_workflow tool definition to server.py list_tools()",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "HANDLER-003",
-            "description": "Register handle_git_workflow in TOOL_HANDLERS dict",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CMD-001",
-            "description": "Create .claude/commands/git-workflow.md slash command",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "CMD-002",
-            "description": "Register /git-workflow in .claude/commands.json",
-            "status": "pending",
-            "checkbox": "☐"
-          }
-        ]
-      },
-      "phase_4_testing_validation": {
-        "tasks": [
-          {
-            "id": "TEST-001",
-            "description": "Create tests/integration/test_git_workflow.py with full workflow tests",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "TEST-002",
-            "description": "Test version detection across Python and Node projects",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "TEST-003",
-            "description": "Test error handling for git failures (network, auth, branch protection)",
-            "status": "pending",
-            "checkbox": "☐"
-          }
-        ]
-      },
-      "phase_5_documentation_integration": {
-        "tasks": [
-          {
-            "id": "DOC-001",
-            "description": "Update CLAUDE.md with git_workflow tool documentation",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "DOC-002",
-            "description": "Update user-guide.md with /git-workflow workflow examples",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "DOC-003",
-            "description": "Update README.md feature list to include git workflow automation",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "INTEG-001",
-            "description": "Update /archive-feature documentation to mention /git-workflow as next step",
-            "status": "pending",
-            "checkbox": "☐"
-          },
-          {
-            "id": "INTEG-002",
-            "description": "Test complete lifecycle: /create-workorder → implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow",
-            "status": "pending",
-            "checkbox": "☐"
-          }
-        ]
-      }
+      "phase_1_setup_scaffolding": [
+        "☐ SETUP-001: Create generators/version_manager.py with version file parsers",
+        "☐ SETUP-002: Create tests/unit/test_version_manager.py with parser tests"
+      ],
+      "phase_2_core_git_workflow_logic": [
+        "☐ CORE-001: Implement version detection and auto-update logic in version_manager.py",
+        "☐ CORE-002: Implement git staging logic for comprehensive commit scope",
+        "☐ CORE-003: Implement commit message generation with metrics from DELIVERABLES.md",
+        "☐ CORE-004: Implement git push logic with error handling",
+        "☐ CORE-005: Implement optional release tag creation with changelog integration"
+      ],
+      "phase_3_mcp_handler_slash_command": [
+        "☐ HANDLER-001: Create handle_git_workflow in tool_handlers.py with pre-flight validation",
+        "☐ HANDLER-002: Add git_workflow tool definition to server.py list_tools()",
+        "☐ HANDLER-003: Register handle_git_workflow in TOOL_HANDLERS dict",
+        "☐ CMD-001: Create .claude/commands/git-workflow.md slash command",
+        "☐ CMD-002: Register /git-workflow in .claude/commands.json"
+      ],
+      "phase_4_testing_validation": [
+        "☐ TEST-001: Create tests/integration/test_git_workflow.py with full workflow tests",
+        "☐ TEST-002: Test version detection across Python and Node projects",
+        "☐ TEST-003: Test error handling for git failures (network, auth, branch protection)"
+      ],
+      "phase_5_documentation_integration": [
+        "☐ DOC-001: Update CLAUDE.md with git_workflow tool documentation",
+        "☐ DOC-002: Update user-guide.md with /git-workflow workflow examples",
+        "☐ DOC-003: Update README.md feature list to include git workflow automation",
+        "☐ INTEG-001: Update /archive-feature documentation to mention /git-workflow as next step",
+        "☐ INTEG-002: Test complete lifecycle: /create-workorder → implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow"
+      ]
     }
   }
 }

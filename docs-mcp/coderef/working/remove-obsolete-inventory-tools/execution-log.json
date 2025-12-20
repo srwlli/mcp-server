@@ -1,0 +1,145 @@
+[
+  {
+    "timestamp": "2025-12-20T00:06:51.161617",
+    "workorder_id": "WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001",
+    "feature_name": "remove-obsolete-inventory-tools",
+    "task_count": 27,
+    "tasks": [
+      {
+        "content": "PHASE-1-001: [ ] Remove handle_api_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-001: [ing ] Remove handle_api_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-002: [ ] Remove handle_database_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-002: [ing ] Remove handle_database_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-003: [ ] Remove handle_dependency_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-003: [ing ] Remove handle_dependency_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-004: [ ] Remove handle_config_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-004: [ing ] Remove handle_config_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-005: [ ] Remove handle_test_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-005: [ing ] Remove handle_test_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-006: [ ] Remove handle_inventory_manifest from tool_handlers.py",
+        "activeForm": "PHASE-1-006: [ing ] Remove handle_inventory_manifest from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-007: [ ] Remove handle_documentation_inventory from tool_handlers.py",
+        "activeForm": "PHASE-1-007: [ing ] Remove handle_documentation_inventory from tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1-008: [ ] Remove 7 entries from TOOL_HANDLERS registry",
+        "activeForm": "PHASE-1-008: [ing ] Remove 7 entries from TOOL_HANDLERS registry",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-001: [ ] Remove api_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-001: [ing ] Remove api_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-002: [ ] Remove database_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-002: [ing ] Remove database_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-003: [ ] Remove dependency_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-003: [ing ] Remove dependency_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-004: [ ] Remove config_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-004: [ing ] Remove config_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-005: [ ] Remove test_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-005: [ing ] Remove test_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-006: [ ] Remove inventory_manifest Tool() from server.py",
+        "activeForm": "PHASE-2-006: [ing ] Remove inventory_manifest Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2-007: [ ] Remove documentation_inventory Tool() from server.py",
+        "activeForm": "PHASE-2-007: [ing ] Remove documentation_inventory Tool() from server.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-001: [ ] Delete .claude/commands/api-inventory.md",
+        "activeForm": "PHASE-3-001: [ing ] Delete .claude/commands/api-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-002: [ ] Delete .claude/commands/database-inventory.md",
+        "activeForm": "PHASE-3-002: [ing ] Delete .claude/commands/database-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-003: [ ] Delete .claude/commands/dependency-inventory.md",
+        "activeForm": "PHASE-3-003: [ing ] Delete .claude/commands/dependency-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-004: [ ] Delete .claude/commands/config-inventory.md",
+        "activeForm": "PHASE-3-004: [ing ] Delete .claude/commands/config-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-005: [ ] Delete .claude/commands/test-inventory.md",
+        "activeForm": "PHASE-3-005: [ing ] Delete .claude/commands/test-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-006: [ ] Delete .claude/commands/inventory-manifest.md",
+        "activeForm": "PHASE-3-006: [ing ] Delete .claude/commands/inventory-manifest.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3-007: [ ] Delete .claude/commands/documentation-inventory.md",
+        "activeForm": "PHASE-3-007: [ing ] Delete .claude/commands/documentation-inventory.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-001: [ ] Update CLAUDE.md with migration guide",
+        "activeForm": "PHASE-4-001: [ing ] Update CLAUDE.md with migration guide",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-002: [ ] Update README.md tool count",
+        "activeForm": "PHASE-4-002: [ing ] Update README.md tool count",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-003: [ ] Update user-guide.md references",
+        "activeForm": "PHASE-4-003: [ing ] Update user-guide.md references",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-004: [ ] Test /coderef-foundation-docs",
+        "activeForm": "PHASE-4-004: [ing ] Test /coderef-foundation-docs",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4-005: [ ] Test /create-workorder workflow",
+        "activeForm": "PHASE-4-005: [ing ] Test /create-workorder workflow",
+        "status": "pending"
+      }
+    ]
+  }
+]

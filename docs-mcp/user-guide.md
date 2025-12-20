@@ -1778,58 +1778,42 @@ AI: [Displays formatted task list with TASK-ID first]
 
 ---
 
-#### Inventory Commands (8)
+#### Foundation Documentation (1)
 
-##### `/quick-inventory` ⭐ RECOMMENDED
-**Run all 7 inventory tools in one command.** Best entry point for project analysis.
+##### `/coderef-foundation-docs` ⭐ RECOMMENDED
+**Generate comprehensive foundation documentation using coderef-mcp integration.** Replaces the 7 legacy inventory tools with a unified, more powerful approach.
 
 **What it does:**
-- Runs all 7 inventory tools in sequence:
-  1. `inventory_manifest` - File catalog
-  2. `dependency_inventory` - Dependencies + security
-  3. `api_inventory` - API endpoints
-  4. `database_inventory` - Database schemas
-  5. `config_inventory` - Configuration files
-  6. `test_inventory` - Test infrastructure
-  7. `documentation_inventory` - Documentation files
-- Saves all manifests to `coderef/inventory/`
-- Provides combined summary
+- Deep extraction from existing ARCHITECTURE.md, SCHEMA.md (patterns, decisions, constraints)
+- Auto-detection of API endpoints, database schemas, dependencies
+- Git activity analysis (recent commits, active files, contributors)
+- Code pattern detection via coderef-mcp (handlers, decorators, error handling)
+- Similar feature discovery from coderef/archived/
+- Generates: ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md (UI projects), project-context.json
 
 **When to use:**
 - **First time exploring a project**
-- Complete project analysis
-- Before major refactoring
+- Before creating implementation plans
+- After major refactoring to update docs
+- Project onboarding and knowledge transfer
 
 **Example:**
 ```
-You: /quick-inventory
-AI: Running all 7 inventory tools...
-AI: Created: manifest.json, dependencies.json, api.json, database.json, config.json, tests.json, documentation.json
-AI: Summary: 245 files, 32 dependencies (2 outdated), 15 API endpoints, 8 tables
+You: /coderef-foundation-docs
+AI: Scanning project with coderef-mcp...
+AI: Indexed 20,068 elements (10,665 methods, 5,885 functions, 3,518 classes)
+AI: Generated: ARCHITECTURE.md, SCHEMA.md, project-context.json
+AI: Summary: 15 API endpoints, 8 database tables, 10 dependencies
 ```
 
----
-
-##### `/inventory-manifest`
-Generate comprehensive project file inventory.
-
-##### `/dependency-inventory`
-Analyze dependencies with security vulnerability scanning.
-
-##### `/api-inventory`
-Discover API endpoints across multiple frameworks.
-
-##### `/database-inventory`
-Generate database schema inventory from ORM models.
-
-##### `/config-inventory`
-Discover configuration files with security masking.
-
-##### `/test-inventory`
-Discover test files and analyze coverage.
-
-##### `/documentation-inventory`
-Discover documentation files with quality metrics.
+**Migration Note:** This replaces the legacy inventory tools:
+- `api_inventory` → API detection in coderef_foundation_docs
+- `database_inventory` → Schema detection in coderef_foundation_docs
+- `dependency_inventory` → Dependency detection in coderef_foundation_docs
+- `config_inventory` → Config data in project_context.json
+- `test_inventory` → Test data in project_context.json
+- `inventory_manifest` → File catalog via coderef scan
+- `documentation_inventory` → Doc extraction in coderef_foundation_docs
 
 ---
 

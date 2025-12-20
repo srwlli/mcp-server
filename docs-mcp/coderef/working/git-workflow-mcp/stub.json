@@ -1,11 +1,51 @@
 {
   "stub_id": "STUB-038",
   "feature_name": "git-workflow-mcp",
-  "description": "MCP tool for standardized git workflow as final step of plan.json completion: version bump, commit changes, push to remote, optionally package/deploy. Integrates with /update-deliverables and /archive-feature.",
+  "description": "MCP tool for standardized git workflow as FINAL step after feature archival. Commits all implementation work, updated docs, and archived artifacts in one comprehensive 'feature complete' commit. Auto-updates package versions, pushes to remote, optionally creates release tags.",
   "category": "feature",
   "priority": "medium",
-  "tags": ["mcp", "workflow", "orchestrator"],
+  "tags": ["mcp", "workflow", "orchestrator", "git", "automation"],
   "created": "2025-12-17T00:00:00Z",
   "status": "stub",
-  "notes": "Final step in plan lifecycle: implement → update-deliverables → git-workflow → archive-feature"
+  "notes": "Runs AFTER /archive-feature as the final workflow step: implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow (commits everything)",
+  "purpose": {
+    "positioning": "Final step after /archive-feature - wraps up the entire feature lifecycle",
+    "what_it_commits": [
+      "All implementation code (src/, tests/, docs/)",
+      "Updated DELIVERABLES.md (with actual git metrics from /update-deliverables)",
+      "Updated README.md, CLAUDE.md, CHANGELOG.json (from /update-docs)",
+      "coderef/archived/{feature}/ (moved by /archive-feature)",
+      "Updated coderef/archived/index.json",
+      "Version-bumped package files (pyproject.toml, package.json, etc.)"
+    ],
+    "differs_from_pre_execution_commit": {
+      "pre_execution_commit": "Commits planning artifacts (context.json, analysis.json, plan.json, empty DELIVERABLES.md) BEFORE implementation starts",
+      "post_completion_commit": "Commits everything (implementation + docs + archive) AFTER feature is complete",
+      "timing": "Pre-execution is Step 10 of /create-workorder. Post-completion is after /archive-feature."
+    }
+  },
+  "proposed_capabilities": {
+    "version_management": {
+      "auto_update": ["pyproject.toml", "package.json", "__version__.py"],
+      "sync_with_changelog": "Uses version from /update-docs tool",
+      "validation": "Ensures version bump matches change_type (feature=minor, bugfix=patch, breaking=major)"
+    },
+    "commit_workflow": {
+      "stage_scope": "All changes from implementation + docs updates + archive",
+      "message_format": "feat({feature}): Complete {feature}\\n\\nWorkorder: {workorder_id}\\n\\nImplementation: {LOC}\\nDocumentation: {files updated}\\nArchived: coderef/archived/{feature}/",
+      "include_metrics": "Embeds LOC, commit count, time from DELIVERABLES.md"
+    },
+    "push_and_release": {
+      "push_to_remote": true,
+      "optional_release_tag": "If version bump is significant (minor/major), offer to create release tag",
+      "integration_with_git_release": "Can call /git-release automatically for release tagging"
+    }
+  },
+  "workflow_integration": {
+    "complete_lifecycle": "/create-workorder → /execute-plan → [implement] → /update-deliverables → /update-docs → /archive-feature → /git-workflow",
+    "two_commits_per_feature": {
+      "commit_1": "Pre-execution: Planning artifacts only (from /create-workorder Step 10)",
+      "commit_2": "Post-completion: Everything (from /git-workflow after /archive-feature)"
+    }
+  }
 }

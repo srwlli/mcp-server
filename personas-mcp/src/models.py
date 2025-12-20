@@ -7,9 +7,10 @@ Updated in v2.0 Phase 1 to support Lloyd Integration:
 - TodoMetadata: Metadata for todo integration
 """
 
-from typing import Optional, List, Dict, Any, Literal
-from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any, Literal, Union
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+import json
 
 
 class PersonaBehavior(BaseModel):
@@ -110,14 +111,33 @@ class CustomPersonaInput(BaseModel):
     and the system generates a complete PersonaDefinition with system prompt.
 
     Added in custom persona feature (WO-CREATE-CUSTOM-PERSONA-001).
+    Updated to handle MCP array parameter serialization (accepts strings or arrays).
     """
     name: str = Field(..., description="Unique persona name (alphanumeric, hyphens, underscores only)", pattern=r"^[a-z0-9_-]+$", min_length=3, max_length=50)
     description: str = Field(..., description="One-sentence description of persona's role and expertise", min_length=20, max_length=200)
-    expertise: List[str] = Field(..., description="List of expertise areas (3-10 items)", min_length=3, max_length=10)
-    use_cases: List[str] = Field(..., description="List of use cases where this persona is helpful (3-10 items)", min_length=3, max_length=10)
+    expertise: Union[str, List[str]] = Field(..., description="List of expertise areas (3-10 items) as array or comma-separated string")
+    use_cases: Union[str, List[str]] = Field(..., description="List of use cases (3-10 items) as array or comma-separated string")
     communication_style: str = Field(..., description="How this persona communicates (e.g., 'Professional, technical, references specific tools')", min_length=20, max_length=200)
     problem_solving: Optional[str] = Field(None, description="Problem-solving approach (e.g., 'Uses docs-mcp workflows, follows existing patterns')", max_length=200)
     tool_usage: Optional[str] = Field(None, description="How persona uses tools (e.g., 'Leverages docs-mcp tools effectively')", max_length=200)
-    specializations: Optional[List[str]] = Field(None, description="Optional specialized sub-areas", max_length=5)
-    key_principles: Optional[List[str]] = Field(None, description="Optional guiding principles", max_length=10)
+    specializations: Optional[Union[str, List[str]]] = Field(None, description="Optional specialized sub-areas (max 5) as array or comma-separated string")
+    key_principles: Optional[Union[str, List[str]]] = Field(None, description="Optional guiding principles (max 10) as array or comma-separated string")
     example_responses: Optional[Dict[str, str]] = Field(None, description="Optional example question-answer pairs (max 3)")
+
+    @field_validator('expertise', 'use_cases', 'specializations', 'key_principles', mode='before')
+    @classmethod
+    def parse_string_arrays(cls, v):
+        """Convert string arrays to List[str] for MCP parameter compatibility."""
+        if isinstance(v, str):
+            # Try JSON array first
+            if v.strip().startswith('['):
+                try:
+                    return json.loads(v)
+                except json.JSONDecodeError:
+                    pass
+            # Try comma-separated
+            if ',' in v:
+                return [item.strip() for item in v.split(',') if item.strip()]
+            # Single item
+            return [v.strip()] if v.strip() else []
+        return v

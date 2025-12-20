@@ -74,7 +74,9 @@
       "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --all --oneline --grep=\"STUB-009\" -i)",
       "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --all --oneline --grep=\"update.task\" -i)",
       "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\personas-mcp\\coderef\\working\" /B)",
-      "mcp__docs-mcp__update_task_status"
+      "mcp__docs-mcp__update_task_status",
+      "mcp__personas-mcp__create_custom_persona",
+      "Bash(iconv:*)"
     ],
     "deny": [],
     "ask": []

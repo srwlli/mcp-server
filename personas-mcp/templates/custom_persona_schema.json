@@ -25,28 +25,44 @@
       "maxLength": 200
     },
     "expertise": {
-      "type": "array",
-      "description": "List of expertise areas (3-10 items)",
-      "items": {
-        "type": "string",
-        "minLength": 5,
-        "maxLength": 100
-      },
-      "minItems": 3,
-      "maxItems": 10,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of expertise areas (3-10 items)",
+          "items": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 100
+          },
+          "minItems": 3,
+          "maxItems": 10,
+          "uniqueItems": true
+        },
+        {
+          "type": "string",
+          "description": "Comma-separated or JSON array string of expertise areas"
+        }
+      ]
     },
     "use_cases": {
-      "type": "array",
-      "description": "List of use cases where this persona is helpful (3-10 items)",
-      "items": {
-        "type": "string",
-        "minLength": 10,
-        "maxLength": 200
-      },
-      "minItems": 3,
-      "maxItems": 10,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of use cases (3-10 items)",
+          "items": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 200
+          },
+          "minItems": 3,
+          "maxItems": 10,
+          "uniqueItems": true
+        },
+        {
+          "type": "string",
+          "description": "Comma-separated or JSON array string of use cases"
+        }
+      ]
     },
     "communication_style": {
       "type": "string",
@@ -65,39 +81,68 @@
       "maxLength": 200
     },
     "specializations": {
-      "type": "array",
-      "description": "Optional specialized sub-areas",
-      "items": {
-        "type": "string",
-        "minLength": 5,
-        "maxLength": 100
-      },
-      "maxItems": 5,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Optional specialized sub-areas",
+          "items": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 100
+          },
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        {
+          "type": "string",
+          "description": "Comma-separated or JSON array string of specializations"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "key_principles": {
-      "type": "array",
-      "description": "Optional guiding principles",
-      "items": {
-        "type": "string",
-        "minLength": 10,
-        "maxLength": 200
-      },
-      "maxItems": 10,
-      "uniqueItems": true
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Optional guiding principles",
+          "items": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 200
+          },
+          "maxItems": 10,
+          "uniqueItems": true
+        },
+        {
+          "type": "string",
+          "description": "Comma-separated or JSON array string of key principles"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "example_responses": {
-      "type": "object",
-      "description": "Optional example question-answer pairs (max 3)",
-      "patternProperties": {
-        "^.+$": {
-          "type": "string",
-          "minLength": 20,
-          "maxLength": 500
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Optional example question-answer pairs (max 3)",
+          "patternProperties": {
+            "^.+$": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 500
+            }
+          },
+          "maxProperties": 3,
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
         }
-      },
-      "maxProperties": 3,
-      "additionalProperties": false
+      ]
     }
   },
   "additionalProperties": false

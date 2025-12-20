@@ -42,12 +42,16 @@ class PersonaManager:
         if name in self._persona_cache:
             return self._persona_cache[name]
 
-        # All personas are in base/ directory (no hierarchical structure)
+        # Check both base/ and custom/ directories
         persona_file = self.personas_dir / "base" / f"{name}.json"
+
+        # If not in base/, check custom/
+        if not persona_file.exists():
+            persona_file = self.personas_dir / "custom" / f"{name}.json"
 
         if not persona_file.exists():
             raise FileNotFoundError(
-                f"Persona '{name}' not found in base/ directory. "
+                f"Persona '{name}' not found in base/ or custom/ directories. "
                 f"Available personas: {self.list_available_personas()}"
             )
 
@@ -111,17 +115,25 @@ class PersonaManager:
 
     def list_available_personas(self) -> list[str]:
         """
-        List all available persona names from base/ directory.
+        List all available persona names from base/ and custom/ directories.
 
         Returns:
-            List of persona names (e.g., ['coderef-expert', 'docs-expert', 'mcp-expert'])
+            List of persona names (e.g., ['coderef-expert', 'docs-expert', 'mcp-expert', 'research-scout'])
         """
         personas = []
 
-        # All personas are in base/ directory
+        # Check base/ directory
         base_dir = self.personas_dir / "base"
         if base_dir.exists():
             for file in base_dir.glob("*.json"):
+                # Skip backup files
+                if not file.stem.endswith('.old') and not file.stem.endswith('.backup'):
+                    personas.append(file.stem)
+
+        # Check custom/ directory
+        custom_dir = self.personas_dir / "custom"
+        if custom_dir.exists():
+            for file in custom_dir.glob("*.json"):
                 # Skip backup files
                 if not file.stem.endswith('.old') and not file.stem.endswith('.backup'):
                     personas.append(file.stem)

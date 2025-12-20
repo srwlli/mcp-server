@@ -1,0 +1,475 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "persona-management",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-20T09:17:00Z",
+    "has_context": true,
+    "has_analysis": true,
+    "validation_status": "pending"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": [
+        "README.md (root)",
+        "API.md (coderef/foundation-docs)",
+        "ARCHITECTURE.md (coderef/foundation-docs)",
+        "SCHEMA.md (coderef/foundation-docs)"
+      ],
+      "foundation_docs_missing": [
+        "COMPONENTS.md",
+        "USER-GUIDE.md"
+      ],
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "BEHAVIOR-STANDARDS.md",
+          "COMPONENT-PATTERN.md",
+          "UI-STANDARDS.md",
+          "UX-PATTERNS.md",
+          "COMPONENT-INDEX.md"
+        ]
+      },
+      "reference_components": {
+        "primary": null,
+        "secondary": [],
+        "note": "No specific reference components identified for persona management"
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP SDK (Model Context Protocol)",
+        "database": "File-based (JSON)",
+        "testing": "pytest",
+        "build": "Python setuptools"
+      },
+      "key_patterns": [
+        "MCP tool handlers in server.py",
+        "Pydantic models for validation (src/models.py)",
+        "PersonaManager for persona lifecycle",
+        "JSON-based persona storage in personas/base/ and personas/custom/"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_overview": "Update personas-mcp roster by removing the domain-specific nfl-scraper-expert persona and adding a new research-scout persona for general-purpose research and reporting tasks.",
+      "business_value": "Streamlines persona roster by removing unused domain-specific personas and adding a versatile research specialist that can be used across multiple projects for information gathering, analysis, and report compilation without code generation.",
+      "target_users": [
+        "AI assistants requiring research capabilities",
+        "Multi-agent systems needing dedicated research agents",
+        "Projects requiring documentation review and synthesis"
+      ],
+      "success_metrics": [
+        "nfl-scraper-expert removed from personas/base/ directory",
+        "research-scout persona created using create_custom_persona MCP tool",
+        "list_personas shows research-scout and excludes nfl-scraper-expert",
+        "research-scout persona follows no-coding constraint in system prompt"
+      ]
+    },
+    "2_risk_assessment": {
+      "complexity_estimate": "Low",
+      "estimated_effort": "1-2 hours",
+      "key_risks": [
+        {
+          "risk": "Backup files for nfl-scraper-expert not preserved",
+          "impact": "Medium",
+          "mitigation": "Verify backups exist in personas/backups/ before deletion"
+        },
+        {
+          "risk": "create_custom_persona tool validation failures",
+          "impact": "Medium",
+          "mitigation": "Test persona parameters against schema before tool call, handle validation errors gracefully"
+        },
+        {
+          "risk": "Persona schema evolution breaks existing personas",
+          "impact": "Low",
+          "mitigation": "Follow established PersonaDefinition schema from src/models.py"
+        }
+      ],
+      "dependencies": [
+        "MCP personas-mcp server running",
+        "create_custom_persona tool available and functional",
+        "list_personas tool for verification"
+      ],
+      "assumptions": [
+        "nfl-scraper-expert backups already exist in personas/backups/",
+        "create_custom_persona tool follows v1.4.0 implementation",
+        "No other features depend on nfl-scraper-expert persona"
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [],
+      "files_to_create": [
+        {
+          "path": "personas/custom/research-scout.json",
+          "purpose": "Research-scout persona definition created via create_custom_persona MCP tool"
+        }
+      ],
+      "files_to_delete": [
+        "personas/base/nfl-scraper-expert.json",
+        "personas/base/nfl-scraper-context.md"
+      ],
+      "existing_patterns": {
+        "persona_definition_schema": "PersonaDefinition model in src/models.py with name, description, system_prompt, expertise, use_cases, behavior fields",
+        "persona_storage": "JSON files in personas/base/ (pre-defined) and personas/custom/ (user-created)",
+        "persona_tools": "use_persona, list_personas, create_custom_persona, get_active_persona, clear_persona"
+      },
+      "integration_points": [
+        "PersonaManager.load_persona() for runtime activation",
+        "PersonaValidator for schema validation",
+        "PersonaGenerator for system prompt generation"
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "Remove nfl-scraper-expert Persona",
+          "description": "Delete nfl-scraper-expert.json and nfl-scraper-context.md from personas/base/ directory",
+          "priority": "High",
+          "user_story": "As a persona roster maintainer, I want to remove unused domain-specific personas so that the roster remains focused on general-purpose experts"
+        },
+        {
+          "name": "Create research-scout Persona",
+          "description": "Use create_custom_persona MCP tool to generate research-scout persona with 8 expertise areas, 8 use cases, and no-coding constraint",
+          "priority": "High",
+          "user_story": "As an AI coordinator, I want a research specialist persona that can gather information, analyze documentation, and compile structured reports without writing code"
+        },
+        {
+          "name": "Verify Persona Changes",
+          "description": "Use list_personas to confirm research-scout exists and nfl-scraper-expert is removed",
+          "priority": "High",
+          "user_story": "As a quality assurance agent, I want to verify persona changes are correctly applied so that the system state matches expectations"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-PERSONA-MANAGEMENT-001",
+        "name": "Persona Management",
+        "feature_dir": "coderef/working/persona-management"
+      },
+      "prefix_guide": {
+        "CLEANUP": "Persona removal tasks",
+        "CREATE": "Persona creation tasks",
+        "VERIFY": "Validation and verification tasks"
+      },
+      "tasks": [
+        {
+          "id": "CLEANUP-001",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Verify nfl-scraper-expert backups exist in personas/backups/",
+          "type": "validation",
+          "files": [
+            "personas/backups/nfl-scraper-expert.json",
+            "personas/backups/nfl-scraper-context.md"
+          ],
+          "dependencies": [],
+          "estimated_effort": "5 minutes"
+        },
+        {
+          "id": "CLEANUP-002",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Delete nfl-scraper-expert.json from personas/base/",
+          "type": "deletion",
+          "files": [
+            "personas/base/nfl-scraper-expert.json"
+          ],
+          "dependencies": ["CLEANUP-001"],
+          "estimated_effort": "2 minutes"
+        },
+        {
+          "id": "CLEANUP-003",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Delete nfl-scraper-context.md from personas/base/",
+          "type": "deletion",
+          "files": [
+            "personas/base/nfl-scraper-context.md"
+          ],
+          "dependencies": ["CLEANUP-001"],
+          "estimated_effort": "2 minutes"
+        },
+        {
+          "id": "CREATE-001",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Prepare research-scout persona parameters from context.json",
+          "type": "preparation",
+          "files": [
+            "coderef/working/persona-management/context.json"
+          ],
+          "dependencies": [],
+          "estimated_effort": "10 minutes"
+        },
+        {
+          "id": "CREATE-002",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Call create_custom_persona MCP tool with research-scout parameters",
+          "type": "implementation",
+          "files": [
+            "personas/custom/research-scout.json"
+          ],
+          "dependencies": ["CREATE-001"],
+          "estimated_effort": "5 minutes",
+          "tool_call": {
+            "tool": "mcp__personas-mcp__create_custom_persona",
+            "parameters": {
+              "name": "research-scout",
+              "description": "Research specialist who investigates topics, gathers information, and compiles findings into standard report formats. Does NOT write code - focuses on research, analysis, and documentation.",
+              "expertise": [
+                "Web research and information gathering",
+                "Technology evaluation and comparison",
+                "Competitive analysis and benchmarking",
+                "Documentation review and synthesis",
+                "Feasibility assessment",
+                "Requirements clarification through investigation",
+                "Cross-project pattern discovery",
+                "Report writing in standardized formats"
+              ],
+              "use_cases": [
+                "Research MCP server best practices and create comparison report",
+                "Investigate how other projects handle multi-agent coordination",
+                "Compare framework options (FastAPI vs Flask vs Express) with pros/cons table",
+                "Review official documentation for X and summarize key points",
+                "Find 3 examples of similar implementations and document patterns",
+                "Research deployment options for this stack and create decision matrix",
+                "Investigate security best practices for authentication and compile checklist",
+                "Analyze project structure and document architectural patterns"
+              ],
+              "communication_style": "Analytical and thorough. Presents information in structured formats (tables, lists, sections). Cites sources and provides references. Asks clarifying questions before starting research. No code generation - pure research and reporting.",
+              "problem_solving": "1) Clarify research scope and deliverable format, 2) Gather information from multiple sources (docs, web, codebase, examples), 3) Analyze and synthesize findings, 4) Compile structured report with sections/tables/summaries, 5) Provide recommendations with supporting evidence",
+              "key_principles": [
+                "Research first, report second - thorough investigation before writing",
+                "Standard formats - consistent report structure (Executive Summary, Findings, Recommendations, References)",
+                "Evidence-based - all claims backed by sources",
+                "No coding - focuses on information gathering and documentation",
+                "Actionable outputs - reports lead to clear next steps"
+              ],
+              "tool_usage": "WebFetch, WebSearch for external research. Read, Grep for codebase analysis. ListMcpResourcesTool for MCP investigation. NO Edit, Write, or Bash (except read-only). Outputs reports as markdown or structured text."
+            }
+          }
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Run list_personas to verify persona roster changes",
+          "type": "validation",
+          "files": [],
+          "dependencies": ["CLEANUP-002", "CLEANUP-003", "CREATE-002"],
+          "estimated_effort": "2 minutes",
+          "success_criteria": [
+            "research-scout appears in persona list",
+            "nfl-scraper-expert does NOT appear in persona list",
+            "All other personas unchanged (lloyd, ava, marcus, quinn, taylor, devon, mcp-expert, docs-expert, coderef-expert)"
+          ]
+        },
+        {
+          "id": "VERIFY-002",
+          "workorder_id": "WO-PERSONA-MANAGEMENT-001",
+          "description": "Inspect research-scout.json to verify no-coding constraint in system prompt",
+          "type": "validation",
+          "files": [
+            "personas/custom/research-scout.json"
+          ],
+          "dependencies": ["CREATE-002"],
+          "estimated_effort": "5 minutes",
+          "success_criteria": [
+            "System prompt explicitly mentions NO code generation",
+            "Tool usage section excludes Edit, Write, Bash (except read-only)",
+            "All required PersonaDefinition fields populated"
+          ]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Cleanup Phase",
+          "description": "Remove nfl-scraper-expert persona files from active roster",
+          "tasks": ["CLEANUP-001", "CLEANUP-002", "CLEANUP-003"],
+          "deliverables": [
+            "nfl-scraper-expert.json deleted from personas/base/",
+            "nfl-scraper-context.md deleted from personas/base/",
+            "Backups verified in personas/backups/"
+          ],
+          "estimated_duration": "15 minutes"
+        },
+        {
+          "phase": 2,
+          "name": "Creation Phase",
+          "description": "Create research-scout persona using MCP tool",
+          "tasks": ["CREATE-001", "CREATE-002"],
+          "deliverables": [
+            "research-scout.json created in personas/custom/",
+            "Persona schema validated",
+            "System prompt generated with no-coding constraint"
+          ],
+          "estimated_duration": "20 minutes"
+        },
+        {
+          "phase": 3,
+          "name": "Verification Phase",
+          "description": "Validate persona roster changes and research-scout configuration",
+          "tasks": ["VERIFY-001", "VERIFY-002"],
+          "deliverables": [
+            "list_personas output confirms changes",
+            "research-scout persona functional and constraint-compliant"
+          ],
+          "estimated_duration": "10 minutes"
+        }
+      ],
+      "total_phases": 3,
+      "parallel_opportunities": [
+        "CLEANUP-002 and CLEANUP-003 can run in parallel (both file deletions)"
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_name": "test_nfl_scraper_removed",
+          "description": "Verify nfl-scraper-expert.json does not exist in personas/base/",
+          "files": ["tests/test_persona_management.py"],
+          "coverage_target": "File deletion validation"
+        },
+        {
+          "test_name": "test_research_scout_created",
+          "description": "Verify research-scout.json exists in personas/custom/ with valid schema",
+          "files": ["tests/test_persona_management.py"],
+          "coverage_target": "Persona creation validation"
+        },
+        {
+          "test_name": "test_research_scout_no_coding_constraint",
+          "description": "Verify research-scout system prompt includes no-coding language and tool restrictions",
+          "files": ["tests/test_persona_management.py"],
+          "coverage_target": "Constraint enforcement"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_name": "test_list_personas_excludes_nfl_scraper",
+          "description": "Call list_personas MCP tool and verify nfl-scraper-expert not in results",
+          "files": ["tests/integration/test_persona_tools.py"],
+          "coverage_target": "MCP tool integration"
+        },
+        {
+          "test_name": "test_use_research_scout_persona",
+          "description": "Activate research-scout persona and verify system prompt loaded correctly",
+          "files": ["tests/integration/test_persona_tools.py"],
+          "coverage_target": "Persona activation workflow"
+        }
+      ],
+      "e2e_tests": [
+        {
+          "test_name": "test_persona_management_workflow",
+          "description": "End-to-end test: delete nfl-scraper, create research-scout, verify with list_personas",
+          "files": ["tests/e2e/test_workflows.py"],
+          "coverage_target": "Complete persona management workflow"
+        }
+      ],
+      "manual_tests": [
+        {
+          "test_name": "Persona Activation Test",
+          "description": "Manually activate research-scout persona in Claude Code and verify behavior matches no-coding constraint"
+        },
+        {
+          "test_name": "Report Generation Test",
+          "description": "Ask research-scout to research a topic and verify output is structured report (not code)"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        "nfl-scraper-expert.json removed from personas/base/ directory",
+        "nfl-scraper-context.md removed from personas/base/ directory",
+        "research-scout.json created in personas/custom/ directory",
+        "research-scout persona includes all 8 expertise areas from context",
+        "research-scout persona includes all 8 use cases from context",
+        "list_personas returns research-scout in available personas",
+        "list_personas does NOT return nfl-scraper-expert"
+      ],
+      "quality_requirements": [
+        "research-scout system prompt explicitly forbids code generation",
+        "research-scout tool_usage section excludes Edit, Write, Bash (except read-only)",
+        "PersonaDefinition schema validation passes for research-scout.json",
+        "All required fields populated (name, description, expertise, use_cases, communication_style, problem_solving, key_principles, tool_usage)"
+      ],
+      "performance_requirements": [
+        "create_custom_persona tool completes in under 10 seconds",
+        "list_personas returns results in under 2 seconds"
+      ],
+      "acceptance_criteria": [
+        "Can activate research-scout persona using use_persona('research-scout')",
+        "research-scout responds to queries with structured reports (not code)",
+        "Backups for nfl-scraper-expert preserved in personas/backups/",
+        "No other personas affected by changes"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_cleanup": [
+        {
+          "task": "Verify nfl-scraper-expert backups exist",
+          "status": "pending"
+        },
+        {
+          "task": "Delete nfl-scraper-expert.json",
+          "status": "pending"
+        },
+        {
+          "task": "Delete nfl-scraper-context.md",
+          "status": "pending"
+        }
+      ],
+      "phase_2_creation": [
+        {
+          "task": "Extract research-scout parameters from context.json",
+          "status": "pending"
+        },
+        {
+          "task": "Call create_custom_persona MCP tool",
+          "status": "pending"
+        },
+        {
+          "task": "Verify research-scout.json created",
+          "status": "pending"
+        }
+      ],
+      "phase_3_verification": [
+        {
+          "task": "Run list_personas and verify research-scout present",
+          "status": "pending"
+        },
+        {
+          "task": "Verify nfl-scraper-expert absent from list",
+          "status": "pending"
+        },
+        {
+          "task": "Inspect research-scout.json for no-coding constraint",
+          "status": "pending"
+        }
+      ],
+      "documentation_updates": [
+        {
+          "task": "Update CLAUDE.md to reflect persona roster changes",
+          "status": "pending"
+        },
+        {
+          "task": "Update README.md available personas list",
+          "status": "pending"
+        }
+      ],
+      "post_implementation": [
+        {
+          "task": "Update communication.json with task completion status",
+          "status": "pending"
+        },
+        {
+          "task": "Run /update-deliverables to capture metrics",
+          "status": "pending"
+        },
+        {
+          "task": "Commit changes with workorder ID",
+          "status": "pending"
+        }
+      ]
+    }
+  }
+}

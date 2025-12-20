@@ -1,0 +1,57 @@
+{
+  "workorder": {
+    "id": "WO-PERSONA-MANAGEMENT-001",
+    "feature_name": "persona-management",
+    "type": "delegated",
+    "status": "pending",
+    "created": "2025-12-20",
+    "delegated_by": "Archer (Orchestrator)",
+    "assigned_to": "personas-mcp Agent"
+  },
+  "handoff": {
+    "context_location": "coderef/working/persona-management/context.json",
+    "tasks": 2,
+    "status": "pending",
+    "instructions": "Execute persona management tasks using MCP tools. Update this communication.json after each task completion."
+  },
+  "tasks": [
+    {
+      "task": 1,
+      "description": "Remove nfl-scraper-expert persona",
+      "status": "pending",
+      "files": [
+        "personas/base/nfl-scraper-expert.json",
+        "personas/base/nfl-scraper-context.md"
+      ],
+      "method": "Delete files (backups already exist in personas/backups/)"
+    },
+    {
+      "task": 2,
+      "description": "Create research-scout persona",
+      "status": "pending",
+      "method": "Use mcp__personas-mcp__create_custom_persona tool",
+      "parameters_from": "context.json → research_scout_profile section",
+      "validation": "Verify with list_personas - should show research-scout, no nfl-scraper-expert"
+    }
+  ],
+  "communication_log": [
+    {
+      "timestamp": "2025-12-20T02:30:00Z",
+      "author": "Archer",
+      "message": "Workorder created and delegated. Two tasks: 1) Remove nfl-scraper-expert, 2) Create research-scout persona using MCP tool. Context available in context.json."
+    }
+  ],
+  "success_criteria": {
+    "functional": [
+      "nfl-scraper-expert removed from active personas",
+      "research-scout persona created and available",
+      "list_personas shows research-scout",
+      "research-scout follows no-coding constraint"
+    ],
+    "quality": [
+      "Persona schema valid and complete",
+      "All required fields populated",
+      "Backups preserved (nfl-scraper-expert)"
+    ]
+  }
+}

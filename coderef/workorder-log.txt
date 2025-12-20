@@ -1,3 +1,4 @@
+WO-WEBSOCKET-REALTIME-UPDATES-001 | next | websocket-realtime-updates implementation plan | 2025-12-20T22:53:54.104339+00:00
 WO-AGENT-COMPLETION-WORKFLOW-001 | docs-mcp | agent-completion-workflow implementation plan | 2025-12-20T10:54:40.881763+00:00
 WO-AGENT-SPECIALIZATION-001 | personas-mcp | Archived feature: Agent Specialization | 2025-12-20T10:39:20.468747+00:00
 WO-GIT-WORKFLOW-MCP-001 | docs-mcp | git-workflow-mcp implementation plan | 2025-12-20T10:10:16.869368+00:00

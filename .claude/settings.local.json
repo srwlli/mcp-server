@@ -79,7 +79,8 @@
       "Bash(iconv:*)",
       "Bash(git log:*)",
       "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\coderef\\archived\" /B)",
-      "Bash(test_execute.log)"
+      "Bash(test_execute.log)",
+      "Bash(if not exist \"coderef\\user\" mkdir \"coderef\\user\")"
     ],
     "deny": [],
     "ask": []

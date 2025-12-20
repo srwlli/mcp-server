@@ -2,8 +2,31 @@
   "$schema": "./schema.json",
   "project": "docs-mcp",
   "changelog_version": "1.0",
-  "current_version": "3.0.2",
+  "current_version": "3.1.0",
   "entries": [
+    {
+      "version": "3.1.0",
+      "date": "2025-12-20",
+      "summary": "Version 3.1.0 changes",
+      "changes": [
+        {
+          "id": "change-044",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Added workflow separation documentation clarifying agent vs orchestrator responsibilities. Updated CLAUDE.md, created HANDOFF.md template, and WORKFLOW-SEPARATION.md with Mermaid diagrams.",
+          "description": "Workorder WO-AGENT-COMPLETION-WORKFLOW-001: Added workflow separation documentation clarifying agent vs orchestrator responsibilities. Updated CLAUDE.md, created HANDOFF.md template, and WORKFLOW-SEPARATION.md with Mermaid diagrams.",
+          "files": [
+            "C:\\Users\\willh\\Desktop\\assistant\\CLAUDE.md",
+            "C:\\Users\\willh\\Desktop\\assistant\\HANDOFF.md",
+            "WORKFLOW-SEPARATION.md"
+          ],
+          "reason": "Feature completion: agent-completion-workflow",
+          "impact": "Documentation now reflects 3.1.0 changes",
+          "breaking": false
+        }
+      ],
+      "contributors": []
+    },
     {
       "version": "3.0.2",
       "date": "2025-12-08",

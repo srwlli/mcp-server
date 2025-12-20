@@ -1,6 +1,6 @@
 # CLAUDE.md - docs-mcp AI Context Documentation
 
-**Version**: 3.0.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
+**Version**: 3.1.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
 
 ---
 
@@ -3078,6 +3078,7 @@ test:
 **Maintainers**: willh, Claude Code AI
 
 **Change History** (Recent):
+- 3.1.0: Added workflow separation documentation clarifying agent vs orchestrator responsibilities. Updated CLAUDE.md, created HANDOFF.md template, and WORKFLOW-SEPARATION.md with Mermaid diagrams.
 - 1.0.4: Synced commands.json registry with 8 missing slash commands (config-inventory, documentation-inventory, test-inventory, execute-plan, generate-deliverables, update-deliverables, log-workorder, get-workorder-log). Added new deliverables and workorder categories. Updated COMPREHENSIVE-review.md to mark all improvements complete.
 - 1.1.0: Schema-First Design for planning workflow - Added plan.schema.json as single source of truth, schema_validator.py with helper functions for safe data extraction, and updated generate_deliverables_template to use normalized format handling. Implements three-layer defense: Producer (create_plan shows schema), Validator (normalizes formats), Consumer (uses helpers).
 - 1.0.4: Fixed /create-plan to automatically generate DELIVERABLES.md after plan.json creation - aligns code with existing documentation claims

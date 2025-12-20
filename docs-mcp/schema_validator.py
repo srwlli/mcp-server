@@ -375,6 +375,10 @@ def get_checklist(plan: dict, strict: bool = None) -> dict:
     Returns:
         Normalized dict with checklist categories. If section 9 is a list,
         wraps it in {"tasks": [...]} for consistent access.
+
+        Handles both formats:
+        - Direct arrays: {"phase_1": ["task1", "task2"]}
+        - Nested objects: {"phase_1": {"tasks": ["task1", "task2"], "validation": "..."}}
     """
     if strict is None:
         strict = STRICT_MODE
@@ -384,49 +388,38 @@ def get_checklist(plan: dict, strict: bool = None) -> dict:
 
     # Expected format: dict with category keys like "pre_implementation", "implementation", etc.
     if isinstance(section_9, dict):
-        return section_9
+        # DEBUG: Log what we received
+        logger.debug(f"get_checklist: section_9 is dict with keys: {list(section_9.keys())}")
 
-    # Legacy format: list of items (common AI generation pattern)
-    if isinstance(section_9, list):
-        if strict:
-            logger.warning(
-                f"SCHEMA: 9_implementation_checklist is list, expected dict with categories. "
-                f"Wrapping in {{'tasks': [...]}}. "
-                f"Plan: {plan.get('META_DOCUMENTATION', {}).get('feature_name', 'unknown')}"
-            )
-        return {"tasks": section_9}
+        # Normalize nested {tasks: [...], validation: "..."} format to direct arrays
+        normalized = {}
+        for key, value in section_9.items():
+            logger.debug(f"get_checklist: processing key={key}, value type={type(value).__name__}, has 'tasks'={isinstance(value, dict) and 'tasks' in value}")
 
-    # Fallback for unexpected types
-    if strict and section_9 is not None:
-        logger.warning(
-            f"SCHEMA: 9_implementation_checklist has unexpected type {type(section_9).__name__}. "
-            f"Plan: {plan.get('META_DOCUMENTATION', {}).get('feature_name', 'unknown')}"
-        )
-    return {}
+            if isinstance(value, dict) and "tasks" in value:
+                # Extract tasks array from nested object (common AI pattern)
+                if strict:
+                    logger.warning(
+                        f"SCHEMA: 9_implementation_checklist.{key} has nested {{tasks: [...]}}, extracting to direct array. "
+                        f"Plan: {plan.get('META_DOCUMENTATION', {}).get('feature_name', 'unknown')}"
+                    )
+                normalized[key] = value["tasks"]
+                logger.debug(f"get_checklist: extracted {len(value['tasks'])} tasks from {key}")
+            elif isinstance(value, list):
+                # Already in correct format (direct array)
+                normalized[key] = value
+                logger.debug(f"get_checklist: direct list with {len(value)} tasks from {key}")
+            else:
+                # Skip non-conforming entries
+                if strict:
+                    logger.warning(
+                        f"SCHEMA: 9_implementation_checklist.{key} has unexpected type {type(value).__name__}, skipping. "
+                        f"Plan: {plan.get('META_DOCUMENTATION', {}).get('feature_name', 'unknown')}"
+                    )
+                continue
 
-
-
-def get_checklist(plan: dict, strict: bool = None) -> dict:
-    """
-    Safely extract implementation checklist from section 9.
-
-    Args:
-        plan: The plan.json dict
-        strict: Override global STRICT_MODE. If True, logs warnings on normalization.
-
-    Returns:
-        Normalized dict with checklist categories. If section 9 is a list,
-        wraps it in {"tasks": [...]} for consistent access.
-    """
-    if strict is None:
-        strict = STRICT_MODE
-
-    structure = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {})
-    section_9 = structure.get("9_implementation_checklist", {})
-
-    # Expected format: dict with category keys like "pre_implementation", "implementation", etc.
-    if isinstance(section_9, dict):
-        return section_9
+        logger.debug(f"get_checklist: returning normalized dict with {len(normalized)} keys: {list(normalized.keys())}")
+        return normalized
 
     # Legacy format: list of items (common AI generation pattern)
     if isinstance(section_9, list):

@@ -1,3 +1,4 @@
+WO-GIT-WORKFLOW-MCP-001 | docs-mcp | git-workflow-mcp implementation plan | 2025-12-20T10:10:16.869368+00:00
 WO-REMOVE-OBSOLETE-INVENTORY-TOOLS-001 | docs-mcp | remove-obsolete-inventory-tools implementation ... | 2025-12-20T00:07:15.376341+00:00
 WO-CODEREF-FOUNDATION-003 | docs-mcp | Archived feature: Hybrid Foundation Docs | 2025-12-19T22:59:25.339629+00:00
 WO-COMPONENT-HISTORY-001 | docs-mcp | Archived feature: Component History System | 2025-12-19T22:59:25.144885+00:00

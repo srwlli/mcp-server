@@ -1,3 +1,6 @@
+WO-AGENT-COMPLETION-WORKFLOW-001 | docs-mcp | agent-completion-workflow implementation plan | 2025-12-20T10:54:40.881763+00:00
+WO-AGENT-SPECIALIZATION-001 | personas-mcp | Archived feature: Agent Specialization | 2025-12-20T10:39:20.468747+00:00
+WO-GIT-WORKFLOW-MCP-001 | docs-mcp | git-workflow-mcp implementation plan | 2025-12-20T10:10:16.869368+00:00
 WO-PERSONA-MANAGEMENT-001 | personas-mcp | persona-management implementation plan | 2025-12-20T09:19:29.546557+00:00
 WO-RAG-CLI-INTEGRATION-001 | coderef-system | RAG CLI Integration & Documentation - Register ... | 2025-12-20T09:18:23.340011+00:00
 WO-ROOT-CLEANUP-001 | coderef-system | Archived feature: Root Cleanup | 2025-12-20T09:07:26.015056+00:00

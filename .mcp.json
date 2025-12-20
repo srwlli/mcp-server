@@ -19,6 +19,13 @@
         "CODEREF_CLI_PATH": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli"
       }
     },
+    "scriptboard-mcp": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py"
+      ],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp"
+    },
     "docs": {
       "command": "uv",
       "args": [
@@ -34,13 +41,6 @@
         "server.py"
       ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp"
-    },
-    "scriptboard-mcp": {
-      "command": "python",
-      "args": [
-        "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py"
-      ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp"
     }
   },
   "_disabled": {

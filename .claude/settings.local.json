@@ -76,7 +76,10 @@
       "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\personas-mcp\\coderef\\working\" /B)",
       "mcp__docs-mcp__update_task_status",
       "mcp__personas-mcp__create_custom_persona",
-      "Bash(iconv:*)"
+      "Bash(iconv:*)",
+      "Bash(git log:*)",
+      "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\coderef\\archived\" /B)",
+      "Bash(test_execute.log)"
     ],
     "deny": [],
     "ask": []

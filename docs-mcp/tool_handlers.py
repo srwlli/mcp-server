@@ -2919,13 +2919,18 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
 
     # Extract all tasks from all phase lists
     all_tasks = []
+    logger.debug(f"execute_plan: Processing {len(section_9)} phases from section_9")
     for key, value in section_9.items():
+        logger.debug(f"execute_plan: Phase {key}, value type={type(value).__name__}, is list={isinstance(value, list)}")
+
         if key == "CRITICAL_AGENTIC_WORKFLOW":
             continue  # Skip workflow instructions
 
         if isinstance(value, list):
+            logger.debug(f"execute_plan: Phase {key} has {len(value)} tasks")
             # This is a phase list
             for idx, task in enumerate(value):
+                logger.debug(f"execute_plan: Task {idx} type={type(task).__name__}")
                 if isinstance(task, str):
                     # Check for checkbox prefix format (legacy)
                     if any(prefix in task for prefix in ["☐", "☑", "⏳", "🚫"]):

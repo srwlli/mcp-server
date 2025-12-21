@@ -1,0 +1,170 @@
+[
+  {
+    "timestamp": "2025-12-20T18:08:29.096281",
+    "workorder_id": "WO-POST-IMPLEMENTATION-GIT-AUTOMATION-001",
+    "feature_name": "post-implementation-git-automation",
+    "task_count": 32,
+    "tasks": [
+      {
+        "content": "PHASE-1--001: Create git_commit_and_push() in handler_helpers.py",
+        "activeForm": "PHASE-1--001: Creating git_commit_and_push() in handler_helpers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--002: Add subprocess imports",
+        "activeForm": "PHASE-1--002: Adding subprocess imports",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--003: Implement git add logic",
+        "activeForm": "PHASE-1--003: Implementing git add logic",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--004: Implement git commit logic with message parameter",
+        "activeForm": "PHASE-1--004: Implementing git commit logic with message parameter",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--005: Implement git push logic",
+        "activeForm": "PHASE-1--005: Implementing git push logic",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--006: Add try-except error handling",
+        "activeForm": "PHASE-1--006: Adding try-except error handling",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--007: Add logging for all git operations",
+        "activeForm": "PHASE-1--007: Adding logging for all git operations",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--008: Create format_commit_message() helper",
+        "activeForm": "PHASE-1--008: Creating format_commit_message() helper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--009: Create format_deliverables_commit_message() helper",
+        "activeForm": "PHASE-1--009: Creating format_deliverables_commit_message() helper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--010: Create format_docs_commit_message() helper",
+        "activeForm": "PHASE-1--010: Creating format_docs_commit_message() helper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--011: Create format_archive_commit_message() helper",
+        "activeForm": "PHASE-1--011: Creating format_archive_commit_message() helper",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--001: Import git helpers in tool_handlers.py",
+        "activeForm": "PHASE-2--001: Importing git helpers in tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--002: Update handle_update_deliverables",
+        "activeForm": "PHASE-2--002: Updating handle_update_deliverables",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--003: Call git_commit_and_push after DELIVERABLES.md update",
+        "activeForm": "PHASE-2--003: Calling git_commit_and_push after DELIVERABLES.md update",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--004: Pass correct files and commit message",
+        "activeForm": "PHASE-2--004: Passing correct files and commit message",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--005: Update handle_update_all_documentation",
+        "activeForm": "PHASE-2--005: Updating handle_update_all_documentation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--006: Call git_commit_and_push after docs update",
+        "activeForm": "PHASE-2--006: Calling git_commit_and_push after docs update",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--007: Include version info in commit message",
+        "activeForm": "PHASE-2--007: Includeing version info in commit message",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--008: Update handle_archive_feature",
+        "activeForm": "PHASE-2--008: Updating handle_archive_feature",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--009: Call git_commit_and_push after archive operation",
+        "activeForm": "PHASE-2--009: Calling git_commit_and_push after archive operation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--010: Commit both deletions and additions",
+        "activeForm": "PHASE-2--010: Commiting both deletions and additions",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--011: Test each tool individually",
+        "activeForm": "PHASE-2--011: Testing each tool individually",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--001: Create tests/test_git_helpers.py",
+        "activeForm": "PHASE-3--001: Creating tests/test_git_helpers.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--002: Write unit tests for git_commit_and_push",
+        "activeForm": "PHASE-3--002: Writing unit tests for git_commit_and_push",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--003: Test success scenario",
+        "activeForm": "PHASE-3--003: Testing success scenario",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--004: Test auth failure scenario",
+        "activeForm": "PHASE-3--004: Testing auth failure scenario",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--005: Test merge conflict scenario",
+        "activeForm": "PHASE-3--005: Testing merge conflict scenario",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--006: Create tests/test_workflow_git.py",
+        "activeForm": "PHASE-3--006: Creating tests/test_workflow_git.py",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--007: Write integration test for full workflow",
+        "activeForm": "PHASE-3--007: Writing integration test for full workflow",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--008: Run all tests and verify passing",
+        "activeForm": "PHASE-3--008: Running all tests and verify passing",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--009: Manual test with real feature",
+        "activeForm": "PHASE-3--009: Manualing test with real feature",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--010: Verify git log shows proper commits",
+        "activeForm": "PHASE-3--010: Verifying git log shows proper commits",
+        "status": "pending"
+      }
+    ]
+  }
+]

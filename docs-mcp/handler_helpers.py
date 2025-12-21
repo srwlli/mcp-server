@@ -1116,3 +1116,214 @@ def update_claude_md_version(project_path: Path, old_version: str, new_version: 
 
     except (IOError, UnicodeDecodeError):
         return False
+
+
+# Git Automation Helpers (WO-POST-IMPLEMENTATION-GIT-AUTOMATION-001)
+
+def git_commit_and_push(
+    project_path: Path,
+    files: List[str],
+    commit_message: str,
+    workorder_id: Optional[str] = None
+) -> Dict[str, any]:
+    """
+    Commit and push specified files to git with error handling.
+
+    Stages files, creates commit with provided message, and pushes to remote.
+    Non-blocking: returns success/failure status without raising exceptions.
+    Logs all operations and errors for debugging.
+
+    Args:
+        project_path: Absolute path to project directory (must be git repo)
+        files: List of file paths to stage and commit (relative to project_path)
+        commit_message: Commit message
+        workorder_id: Optional workorder ID to include in commit body
+
+    Returns:
+        Dictionary with keys:
+            - success: bool - True if all operations succeeded
+            - commit_hash: Optional[str] - Short commit hash (8 chars)
+            - pushed: bool - True if push succeeded
+            - error: Optional[str] - Error message if failed
+            - operations: List[str] - Log of operations performed
+
+    Example:
+        >>> result = git_commit_and_push(
+        ...     Path('/repo'),
+        ...     ['DELIVERABLES.md', 'plan.json'],
+        ...     'chore(deliverables): Mark auth-system complete',
+        ...     'WO-AUTH-SYSTEM-001'
+        ... )
+        >>> result['success']
+        True
+        >>> result['commit_hash']
+        'abc12345'
+        >>> result['pushed']
+        True
+    """
+    from logger_config import logger
+
+    result = {
+        'success': False,
+        'commit_hash': None,
+        'pushed': False,
+        'error': None,
+        'operations': []
+    }
+
+    # Check git availability
+    if not check_git_available(project_path):
+        result['error'] = 'Not a git repository or git not available'
+        logger.warning(f"Git automation skipped: {result['error']}", extra={'project_path': str(project_path)})
+        return result
+
+    try:
+        # Stage files
+        for file_path in files:
+            cmd_add = ['git', 'add', file_path]
+            add_result = subprocess.run(
+                cmd_add,
+                cwd=str(project_path),
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+
+            if add_result.returncode == 0:
+                result['operations'].append(f'Staged: {file_path}')
+                logger.debug(f"Staged file: {file_path}", extra={'project_path': str(project_path)})
+            else:
+                result['error'] = f"Failed to stage {file_path}: {add_result.stderr}"
+                logger.error(f"Git add failed: {result['error']}", extra={'file': file_path})
+                return result
+
+        # Build commit message with optional workorder ID
+        full_message = commit_message
+        if workorder_id:
+            full_message = f"{commit_message}\n\nWorkorder: {workorder_id}"
+
+        # Create commit
+        cmd_commit = ['git', 'commit', '-m', full_message]
+        commit_result = subprocess.run(
+            cmd_commit,
+            cwd=str(project_path),
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+
+        if commit_result.returncode == 0:
+            # Extract commit hash from output (format: [branch hash] message)
+            import re
+            hash_match = re.search(r'\[[\w-]+ ([a-f0-9]+)\]', commit_result.stdout)
+            if hash_match:
+                result['commit_hash'] = hash_match.group(1)[:8]
+
+            result['operations'].append(f'Committed: {result["commit_hash"] or "unknown"}')
+            logger.info(f"Git commit created: {result['commit_hash']}", extra={
+                'project_path': str(project_path),
+                'files': files
+            })
+        else:
+            # Check if "nothing to commit" - not an error
+            if 'nothing to commit' in commit_result.stdout.lower():
+                result['success'] = True
+                result['operations'].append('No changes to commit')
+                logger.info("No changes to commit", extra={'project_path': str(project_path)})
+                return result
+
+            result['error'] = f"Commit failed: {commit_result.stderr}"
+            logger.error(f"Git commit failed: {result['error']}", extra={'files': files})
+            return result
+
+        # Push to remote
+        cmd_push = ['git', 'push']
+        push_result = subprocess.run(
+            cmd_push,
+            cwd=str(project_path),
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if push_result.returncode == 0:
+            result['pushed'] = True
+            result['operations'].append('Pushed to remote')
+            logger.info("Git push succeeded", extra={'project_path': str(project_path)})
+        else:
+            # Push failure is non-blocking - commit still succeeded locally
+            result['pushed'] = False
+            result['error'] = f"Push failed (commit succeeded locally): {push_result.stderr}"
+            logger.warning(f"Git push failed: {result['error']}", extra={'project_path': str(project_path)})
+
+        # Success if we got this far (commit succeeded, push optional)
+        result['success'] = True
+        return result
+
+    except subprocess.TimeoutExpired as e:
+        result['error'] = f'Git operation timed out: {e}'
+        logger.error(f"Git timeout: {result['error']}", extra={'project_path': str(project_path)})
+        return result
+    except subprocess.SubprocessError as e:
+        result['error'] = f'Git subprocess error: {e}'
+        logger.error(f"Git subprocess error: {result['error']}", extra={'project_path': str(project_path)})
+        return result
+    except Exception as e:
+        result['error'] = f'Unexpected error: {e}'
+        logger.error(f"Git automation error: {result['error']}", extra={'project_path': str(project_path)})
+        return result
+
+
+def format_deliverables_commit_message(feature_name: str, workorder_id: str) -> str:
+    """
+    Format commit message for DELIVERABLES.md updates.
+
+    Args:
+        feature_name: Feature name (e.g., 'auth-system')
+        workorder_id: Workorder ID (e.g., 'WO-AUTH-SYSTEM-001')
+
+    Returns:
+        Formatted commit message
+
+    Example:
+        >>> format_deliverables_commit_message('auth-system', 'WO-AUTH-SYSTEM-001')
+        'chore(deliverables): Mark auth-system complete'
+    """
+    return f"chore(deliverables): Mark {feature_name} complete"
+
+
+def format_docs_commit_message(feature_name: str, version: str, change_description: str) -> str:
+    """
+    Format commit message for documentation updates.
+
+    Args:
+        feature_name: Feature name (e.g., 'auth-system')
+        version: New version (e.g., '1.11.0')
+        change_description: Brief description of change
+
+    Returns:
+        Formatted commit message with body
+
+    Example:
+        >>> format_docs_commit_message('auth-system', '1.11.0', 'Added JWT authentication')
+        'docs(auth-system): Update documentation to v1.11.0\\n\\nAdded JWT authentication'
+    """
+    return f"docs({feature_name}): Update documentation to v{version}\n\n{change_description}"
+
+
+def format_archive_commit_message(feature_name: str, workorder_id: str) -> str:
+    """
+    Format commit message for feature archival.
+
+    Args:
+        feature_name: Feature name (e.g., 'auth-system')
+        workorder_id: Workorder ID (e.g., 'WO-AUTH-SYSTEM-001')
+
+    Returns:
+        Formatted commit message
+
+    Example:
+        >>> format_archive_commit_message('auth-system', 'WO-AUTH-SYSTEM-001')
+        'chore(archive): Archive auth-system'
+    """
+    return f"chore(archive): Archive {feature_name}"

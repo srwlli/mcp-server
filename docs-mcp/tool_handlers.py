@@ -1673,13 +1673,9 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     Handle update_deliverables tool call.
 
     Marks DELIVERABLES.md as complete. Simple status update without git analysis.
-    Automatically commits and pushes changes to git.
+    Changes will be committed later by /archive-feature.
     """
-    from handler_helpers import (
-        format_success_response,
-        git_commit_and_push,
-        format_deliverables_commit_message
-    )
+    from handler_helpers import format_success_response
 
     # Validate inputs
     project_path = validate_project_path_input(arguments.get("project_path", ""))
@@ -1688,20 +1684,10 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     # Define feature directory
     feature_dir = Path(project_path) / 'coderef' / 'working' / feature_name
     deliverables_path = feature_dir / 'DELIVERABLES.md'
-    plan_path = feature_dir / 'plan.json'
 
     # Check if DELIVERABLES.md exists
     if not deliverables_path.exists():
         raise FileNotFoundError(f"DELIVERABLES.md not found for feature '{feature_name}'. Run /create-plan first.")
-
-    # Load workorder ID from plan.json
-    workorder_id = None
-    if plan_path.exists():
-        try:
-            plan_data = json.loads(plan_path.read_text(encoding='utf-8'))
-            workorder_id = plan_data.get('META_DOCUMENTATION', {}).get('workorder_id')
-        except (json.JSONDecodeError, KeyError):
-            pass  # Continue without workorder ID
 
     # Read, update status, write
     content = deliverables_path.read_text(encoding='utf-8')
@@ -1711,37 +1697,15 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
 
     logger.info(f"DELIVERABLES.md marked complete for feature: {feature_name}")
 
-    # Git automation: commit and push
-    relative_path = str(deliverables_path.relative_to(Path(project_path)))
-    commit_msg = format_deliverables_commit_message(feature_name, workorder_id or 'UNKNOWN')
-    git_result = git_commit_and_push(
-        project_path=Path(project_path),
-        files=[relative_path],
-        commit_message=commit_msg,
-        workorder_id=workorder_id
+    return format_success_response(
+        data={
+            'deliverables_path': str(deliverables_path.relative_to(Path(project_path))),
+            'feature_name': feature_name,
+            'status': 'complete',
+            'success': True
+        },
+        message=f"✅ DELIVERABLES.md marked complete for {feature_name}"
     )
-
-    # Build response with git status
-    response_data = {
-        'deliverables_path': relative_path,
-        'feature_name': feature_name,
-        'status': 'complete',
-        'success': True,
-        'git_commit': git_result.get('commit_hash') if git_result.get('success') else None,
-        'git_pushed': git_result.get('pushed', False),
-        'git_error': git_result.get('error')
-    }
-
-    message = f"✅ DELIVERABLES.md marked complete for {feature_name}"
-    if git_result.get('success'):
-        if git_result.get('pushed'):
-            message += f"\n📤 Changes committed ({git_result['commit_hash']}) and pushed to remote"
-        else:
-            message += f"\n💾 Changes committed ({git_result['commit_hash']}) - push failed but local commit succeeded"
-    elif git_result.get('error'):
-        message += f"\n⚠️ Git automation skipped: {git_result['error']}"
-
-    return format_success_response(data=response_data, message=message)
 
 
 # Agent Communication Handlers (Phase 1-5)
@@ -2842,51 +2806,22 @@ async def handle_update_all_documentation(arguments: dict) -> list[TextContent]:
         }
     )
 
-    # Git automation: commit and push documentation updates
-    from handler_helpers import git_commit_and_push, format_docs_commit_message
-
-    git_result = None
-    if updated_files:  # Only commit if files were updated
-        commit_msg = format_docs_commit_message(
-            feature_name or workorder_id,
-            new_version,
-            feature_description
-        )
-        git_result = git_commit_and_push(
-            project_path=Path(project_path),
-            files=updated_files,
-            commit_message=commit_msg,
-            workorder_id=workorder_id
-        )
-
-    # Build response with git status
-    response_data = {
-        'workorder_id': workorder_id,
-        'current_version': current_version,
-        'new_version': new_version,
-        'change_type': change_type,
-        'version_method': version_method,
-        'updated_files': updated_files,
-        'failed_files': failed_files,
-        'manual_update_needed': manual_update_needed,
-        'feature_name': feature_name,
-        'files_changed': files_changed,
-        'success': len(failed_files) == 0,
-        'git_commit': git_result.get('commit_hash') if git_result and git_result.get('success') else None,
-        'git_pushed': git_result.get('pushed', False) if git_result else False,
-        'git_error': git_result.get('error') if git_result else None
-    }
-
-    message = f"✅ Documentation updated [{workorder_id}]: {current_version} → {new_version}"
-    if git_result and git_result.get('success'):
-        if git_result.get('pushed'):
-            message += f"\n📤 Changes committed ({git_result['commit_hash']}) and pushed to remote"
-        else:
-            message += f"\n💾 Changes committed ({git_result['commit_hash']}) - push failed but local commit succeeded"
-    elif git_result and git_result.get('error'):
-        message += f"\n⚠️ Git automation skipped: {git_result['error']}"
-
-    return format_success_response(data=response_data, message=message)
+    return format_success_response(
+        data={
+            'workorder_id': workorder_id,
+            'current_version': current_version,
+            'new_version': new_version,
+            'change_type': change_type,
+            'version_method': version_method,
+            'updated_files': updated_files,
+            'failed_files': failed_files,
+            'manual_update_needed': manual_update_needed,
+            'feature_name': feature_name,
+            'files_changed': files_changed,
+            'success': len(failed_files) == 0
+        },
+        message=f"✅ Documentation updated [{workorder_id}]: {current_version} → {new_version}"
+    )
 
 
 @log_invocation

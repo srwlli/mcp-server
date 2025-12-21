@@ -2,21 +2,21 @@
 
 **Project:** personas-mcp
 **Version:** 1.4.0
-**Status:** ✅ Implemented (10 personas: 4 expert + 1 coordinator + 4 specialists + 1 generalist)
+**Status:** ✅ Implemented (9 personas: 3 expert + 1 coordinator + 4 specialists + 1 generalist)
 **Created:** 2025-10-18
-**Last Updated:** 2025-12-13
+**Last Updated:** 2025-12-20
 
 ---
 
 ## Quick Summary
 
-**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "docs-expert", "coderef-expert", or "nfl-scraper-expert") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
+**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "docs-expert", or "coderef-expert") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
 
 **v1.4.0 Update (Lloyd Optimization):** Lloyd persona slimmed from 1,017 lines to 153 lines (85% reduction). Reference documentation extracted to `docs/MCP-ECOSYSTEM-REFERENCE.md` and `docs/LLOYD-REFERENCE.md`.
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
-**Current Implementation:** 4 independent base personas (v1.0.0-1.2.0) - no hierarchical dependencies, all standalone.
+**Current Implementation:** 3 independent base personas (v1.0.0-1.2.0) - no hierarchical dependencies, all standalone.
 
 ---
 
@@ -37,9 +37,6 @@ use_persona('docs-expert')
 
 # Activate CodeRef analysis expert
 use_persona('coderef-expert')
-
-# Activate NFL data scraping expert
-use_persona('nfl-scraper-expert')
 ```
 
 **Note:** Original plan included hierarchical personas (mcp-expert:docs-mcp) and stacking. Final implementation uses independent personas with comprehensive standalone expertise for agentic use.
@@ -77,14 +74,6 @@ use_persona('coderef-expert')
 # CodeRef analysis and dependency tracking expert
 # 14 expertise areas, ~3,000 line system prompt
 # Helps USE the CodeRef-MCP tools for code analysis, impact assessment, and dependency queries
-```
-
-**4. nfl-scraper-expert**
-```
-use_persona('nfl-scraper-expert')
-# NFL data scraping and next-scraper platform expert
-# 18 expertise areas, ~1,500 line system prompt
-# Helps implement and maintain next-scraper NFL Stats Platform
 ```
 
 **Architecture:** All personas are independent (parent: null) with no hierarchical dependencies. Each has comprehensive standalone expertise designed for agentic use.
@@ -424,7 +413,7 @@ API Expert:
 - ✅ Core concept defined
 - ✅ MCP server implemented (server.py with 4 tools)
 - ✅ PersonaManager implemented and simplified (base/ directory only)
-- ✅ 4 independent base personas created (mcp-expert, docs-expert, coderef-expert, nfl-scraper-expert)
+- ✅ 3 independent base personas created (mcp-expert, docs-expert, coderef-expert)
 - ✅ Lloyd-expert added as coordinator persona
 - ✅ Comprehensive system prompts (1000-6000+ lines for agentic use)
 - ✅ Slash commands created (/use-persona, /docs-expert, /coderef-expert)

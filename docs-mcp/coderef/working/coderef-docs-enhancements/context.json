@@ -1,0 +1,40 @@
+{
+  "feature_name": "coderef-docs-enhancements",
+  "workorder_id": "WO-CODEREF-DOCS-ENHANCEMENTS-001",
+  "description": "Enhance coderef-docs with documentation-specific features that complement its foundation documentation generation purpose. Focus on navigation, discoverability, accuracy, and maintenance of generated documentation artifacts.",
+  "goal": "Make generated foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS) more discoverable, maintainable, and useful to both humans and agents by adding documentation-specific enhancements.",
+  "requirements": [
+    "Feature 1: Incremental regeneration - Only rescan changed files instead of full codebase on subsequent runs",
+    "Feature 2: Better code examples - Improved code chunking that shows related context and integrates with other docs",
+    "Feature 3: Semantic ranking - Order sections/endpoints by importance/frequency instead of alphabetical",
+    "Feature 4: Auto-generated TOC - Automatic table of contents with nested structure and cross-links",
+    "Feature 5: Cross-references - Automatic linking between docs (README→ARCHITECTURE, ARCHITECTURE→API, API→SCHEMA)",
+    "Feature 6: Out-of-date detection - Scan for deprecated APIs, moved functions, changed signatures and flag for updates",
+    "Support relationship diagrams in ARCHITECTURE.md for visualizing module dependencies and data flow",
+    "Add documentation completeness scoring to identify gaps (e.g., missing response codes, usage examples)",
+    "Tools should integrate with coderef-context tools but maintain distinct purposes (docs are reference material, not task-specific context)"
+  ],
+  "out_of_scope": [
+    "Multi-turn conversation features (docs are static, not interactive)",
+    "Complete redesign of existing docs generation (only enhancements)",
+    "Real-time doc watching (batch regeneration is sufficient)",
+    "Custom visualization frameworks (use simple markdown + ASCII diagrams)"
+  ],
+  "constraints": [
+    "Must not duplicate coderef-context functionality - maintain separation of concerns",
+    "Incremental indexing must not degrade accuracy (must still catch all changes)",
+    "Documentation must remain readable as markdown (not require special viewers)",
+    "Out-of-date detection must not produce false positives (high precision)",
+    "Performance: Full regeneration should complete in <30 seconds for typical projects"
+  ],
+  "success_criteria": {
+    "feature_completeness": "All 6 features implemented and tested",
+    "performance": "Second-run incremental regeneration <5 seconds (vs first-run 30 seconds)",
+    "accuracy": "Out-of-date detection >95% precision (minimal false positives)",
+    "usability": "Generated docs have working cross-references between all 5 foundation docs",
+    "quality": "TOC is auto-generated and matches document structure 100%",
+    "integration": "Works alongside coderef-context tools without conflicts"
+  },
+  "estimated_complexity": "High (6 coordinated features, tight performance requirements)",
+  "estimated_duration": "40-50 hours"
+}

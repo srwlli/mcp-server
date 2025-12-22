@@ -1,3 +1,6 @@
+WO-CONTEXT-GENERATION-001 | coderef-system | context-generation implementation plan | 2025-12-21T05:24:11.048891+00:00
+WO-GIT-AUTOMATION-FIX-001 | docs-mcp | Fix git automation to only commit once at /arch... | 2025-12-21T02:22:21.020469+00:00
+WO-POST-IMPLEMENTATION-GIT-AUTOMATION-001 | docs-mcp | post-implementation-git-automation implementati... | 2025-12-20T23:00:50.687846+00:00
 WO-WEBSOCKET-REALTIME-UPDATES-001 | next | websocket-realtime-updates implementation plan | 2025-12-20T22:53:54.104339+00:00
 WO-AGENT-COMPLETION-WORKFLOW-001 | docs-mcp | agent-completion-workflow implementation plan | 2025-12-20T10:54:40.881763+00:00
 WO-AGENT-SPECIALIZATION-001 | personas-mcp | Archived feature: Agent Specialization | 2025-12-20T10:39:20.468747+00:00

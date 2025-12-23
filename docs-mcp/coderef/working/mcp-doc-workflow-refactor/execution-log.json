@@ -476,5 +476,174 @@
     ],
     "next_phase": "Phase 4: Cleanup - Remove workflow tools from docs-mcp",
     "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001"
+  },
+  {
+    "timestamp": "2025-12-23T16:26:43.636066",
+    "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+    "feature_name": "mcp-doc-workflow-refactor",
+    "task_count": 27,
+    "tasks": [
+      {
+        "content": "SETUP-001: Create coderef-workflow directory structure",
+        "activeForm": "SETUP-001: Creating coderef-workflow directory structure",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-002: Create pyproject.toml and Python config files",
+        "activeForm": "SETUP-002: Creating pyproject.toml and Python config files",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-003: pip install (or uv sync) Python dependencies",
+        "activeForm": "SETUP-003: piping install (or uv sync) Python dependencies",
+        "status": "pending"
+      },
+      {
+        "content": "COPY-001: Copy gather_context.py and related tools",
+        "activeForm": "COPY-001: Copying gather_context.py and related tools",
+        "status": "pending"
+      },
+      {
+        "content": "COPY-002: Copy create_plan.py and generators",
+        "activeForm": "COPY-002: Copying create_plan.py and generators",
+        "status": "pending"
+      },
+      {
+        "content": "COPY-003: Copy execute_plan.py and task management",
+        "activeForm": "COPY-003: Copying execute_plan.py and task management",
+        "status": "pending"
+      },
+      {
+        "content": "COPY-004: Copy remaining 17 workflow tools (Python modules)",
+        "activeForm": "COPY-004: Copying remaining 17 workflow tools (Python modules)",
+        "status": "pending"
+      },
+      {
+        "content": "COPY-005: Verify python -m build succeeds",
+        "activeForm": "COPY-005: Verifying python -m build succeeds",
+        "status": "pending"
+      },
+      {
+        "content": "LINK-001: Create symlink for coderef/workflow",
+        "activeForm": "LINK-001: Creating symlink for coderef/workflow",
+        "status": "pending"
+      },
+      {
+        "content": "LINK-002: Test symlink access from both MCPs",
+        "activeForm": "LINK-002: Testing symlink access from both MCPs",
+        "status": "pending"
+      },
+      {
+        "content": "CONFIG-001: Add coderef-workflow to .claude.json",
+        "activeForm": "CONFIG-001: Adding coderef-workflow to .claude.json",
+        "status": "pending"
+      },
+      {
+        "content": "CONFIG-002: Verify both MCPs load in Claude Code",
+        "activeForm": "CONFIG-002: Verifying both MCPs load in Claude Code",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-001: docs-mcp creates plan.json",
+        "activeForm": "TEST-001: docs-mcping creates plan.json",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-002: workorder-mcp reads the plan.json",
+        "activeForm": "TEST-002: workorder-mcping reads the plan.json",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-003: Concurrent read/write operations work",
+        "activeForm": "TEST-003: Concurrenting read/write operations work",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-004: Full workflow test across both MCPs",
+        "activeForm": "TEST-004: Fulling workflow test across both MCPs",
+        "status": "pending"
+      },
+      {
+        "content": "MIGRATE-001: Update /create-workorder command handler",
+        "activeForm": "MIGRATE-001: Updating /create-workorder command handler",
+        "status": "pending"
+      },
+      {
+        "content": "MIGRATE-002: Update /execute-plan command handler",
+        "activeForm": "MIGRATE-002: Updating /execute-plan command handler",
+        "status": "pending"
+      },
+      {
+        "content": "MIGRATE-003: Update /update-task-status and /archive-feature",
+        "activeForm": "MIGRATE-003: Updating /update-task-status and /archive-feature",
+        "status": "pending"
+      },
+      {
+        "content": "MIGRATE-004: Test all migrated commands work correctly",
+        "activeForm": "MIGRATE-004: Testing all migrated commands work correctly",
+        "status": "pending"
+      },
+      {
+        "content": "CLEANUP-001: Delete gather-context and related tools",
+        "activeForm": "CLEANUP-001: Deleteing gather-context and related tools",
+        "status": "pending"
+      },
+      {
+        "content": "CLEANUP-002: Delete create-plan and generators",
+        "activeForm": "CLEANUP-002: Deleteing create-plan and generators",
+        "status": "pending"
+      },
+      {
+        "content": "CLEANUP-003: Delete remaining 17 workflow tools",
+        "activeForm": "CLEANUP-003: Deleteing remaining 17 workflow tools",
+        "status": "pending"
+      },
+      {
+        "content": "CLEANUP-004: Verify docs-mcp builds and functions",
+        "activeForm": "CLEANUP-004: Verifying docs-mcp builds and functions",
+        "status": "pending"
+      },
+      {
+        "content": "VERIFY-001: Full integration test suite passes",
+        "activeForm": "VERIFY-001: Fulling integration test suite passes",
+        "status": "pending"
+      },
+      {
+        "content": "VERIFY-002: Update documentation and architecture",
+        "activeForm": "VERIFY-002: Updating documentation and architecture",
+        "status": "pending"
+      },
+      {
+        "content": "VERIFY-003: Final commit and push to git",
+        "activeForm": "VERIFY-003: Finaling commit and push to git",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-23T16:47:36.349330",
+    "phase": 4,
+    "name": "Cleanup - In Progress",
+    "status": "partial",
+    "summary": "Phase 4: Cleanup - Partial (Decision Point Reached)",
+    "completed_tasks": [
+      "CLEANUP-001: Started - Removed 3 entries from TOOL_HANDLERS (gather_context, analyze_project_for_planning, get_planning_template)"
+    ],
+    "decision_point": {
+      "status": "paused_for_user_input",
+      "question": "How to proceed with cleaning up docs-mcp?",
+      "options": [
+        "Option A: Complete surgical removal (all 21 tools from server.py + tool_handlers.py)",
+        "Option B: Accept migration goal achieved (commands already use coderef-workflow)",
+        "Option C: Create minimal docs-mcp (only docs tools, remove all workflow tools)"
+      ]
+    },
+    "work_completed": {
+      "tool_handlers_changes": "Removed 3 TOOL_HANDLERS entries from tool_handlers.py",
+      "lines_removed": "3 entries in TOOL_HANDLERS dict",
+      "remaining_cleanup": "18 more tools in TOOL_HANDLERS, 85+ lines in server.py Tool definitions"
+    },
+    "next_step": "User selects from Option A, B, or C to determine final cleanup approach",
+    "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001"
   }
 ]

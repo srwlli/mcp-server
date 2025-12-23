@@ -1,0 +1,800 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "mcp-doc-workflow-refactor",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "planned",
+    "generated_by": "create-plan command",
+    "generated_at": "2025-12-23T18:02:25Z",
+    "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+    "has_context": true,
+    "has_analysis": true
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "purpose": "Separate workorder-mcp from docs-mcp into two independent MCP servers with clean separation of concerns. docs-mcp handles documentation generation, workorder-mcp handles feature lifecycle (context → plan → execute). Both access shared coderef/workflow folder.",
+      "foundation_docs_reviewed": [
+        "ARCHITECTURE.md (27 API endpoints, handler patterns identified)",
+        "SCHEMA.md (8 database tables, data models)",
+        "COMPONENTS.md (20,068 code elements indexed, 186 handlers detected)",
+        "API.md (Flask/FastAPI framework patterns)"
+      ],
+      "coding_standards_available": false,
+      "similar_features": [
+        "personas-mcp separation (separate MCP for role management)",
+        "coderef-mcp separation (separate MCP for code analysis)"
+      ],
+      "technical_stack": {
+        "language": "Python",
+        "framework": "Flask, FastAPI",
+        "build_tool": "pip",
+        "testing": "pytest",
+        "version_control": "git"
+      },
+      "design_system": {
+        "mcp_pattern": "Modular MCPs with shared artifact storage",
+        "communication": "Filesystem (shared coderef/workflow folder)",
+        "versioning": "Git-based with workorder IDs",
+        "symlink_strategy": "Source of truth in docs-mcp during Phase 1-2, migrate to workorder-mcp in Phase 4"
+      },
+      "key_risks_identified": [
+        "Two MCPs writing to same files → Risk of conflicts (mitigation: symlinks + testing)",
+        "Slash commands calling wrong MCP → Risk of disruption (mitigation: gradual migration + fallback)",
+        "Tool code duplication → Maintenance burden (mitigation: copy only during Phase 1, don't maintain)",
+        "Version misalignment → Risk of bugs (mitigation: symlinks ensure single source of truth)",
+        "Agent confusion about which MCP to use → Risk of errors (mitigation: clear documentation + progressive migration)"
+      ]
+    },
+
+    "1_executive_summary": {
+      "feature_name": "MCP Doc Workflow Refactoring",
+      "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+      "stub_id": null,
+      "primary_goal": "Extract 20+ workflow tools from docs-mcp into new workorder-mcp server. Achieve clean architectural separation while maintaining zero user-facing disruption. Enable independent evolution of documentation and workflow systems.",
+      "problem_statement": "Currently, docs-mcp contains 40 tools mixed across two domains: pure documentation (10 tools) and feature workflow management (30 tools). This mixing of concerns makes the codebase harder to test, maintain, and extend. Agents cannot use workflow tools without loading documentation generators, and vice versa.",
+      "target_users": [
+        "Agents (claude personas) orchestrating feature implementation",
+        "Developers using /create-workorder, /execute-plan, /archive-feature commands",
+        "System maintainers updating docs-mcp or workorder-mcp independently"
+      ],
+      "success_definition": "Two independent MCPs (docs-mcp and workorder-mcp) operating side-by-side with zero breaking changes. All slash commands continue working. Users can seamlessly switch between MCPs. docs-mcp contains 10 pure documentation tools. workorder-mcp contains 30 workflow tools. Both access shared coderef/workflow folder. Integration tested across both MCPs.",
+      "estimated_complexity": "High (5 coordinated phases, tooling complexity, risk management)",
+      "estimated_duration": "40-50 hours"
+    },
+
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Symlink approach fails on Windows or different filesystems",
+          "severity": "High",
+          "mitigation": "Test symlinks early in Phase 1, have fallback copy strategy if symlinks fail"
+        },
+        {
+          "risk": "Two MCPs accidentally write to same files simultaneously",
+          "severity": "High",
+          "mitigation": "Implement dual-run testing in Phase 2, validate no conflicts occur during concurrent operations"
+        },
+        {
+          "risk": "Tool code diverges between docs-mcp and workorder-mcp copies",
+          "severity": "Medium",
+          "mitigation": "Only duplicate in Phase 1, immediately migrate to workorder-mcp in Phase 3, remove from docs-mcp in Phase 5"
+        },
+        {
+          "risk": "Slash commands call wrong MCP, causing confusion",
+          "severity": "Medium",
+          "mitigation": "Test each command individually during Phase 3, update documentation clearly about which MCP handles which tool"
+        },
+        {
+          "risk": ".claude.json configuration breaks MCP loading",
+          "severity": "Medium",
+          "mitigation": "Backup existing config, test with simple setup first, revert if issues occur"
+        }
+      ],
+      "integration_risks": [
+        {
+          "risk": "workorder-mcp not fully compatible with filesystem operations",
+          "severity": "Medium",
+          "mitigation": "Test all coderef/workflow operations in Phase 2 before migrating in Phase 3"
+        },
+        {
+          "risk": "Git operations fail when docs-mcp and workorder-mcp both try to commit",
+          "severity": "Low",
+          "mitigation": "Sequential testing ensures only one MCP commits at a time; document expected behavior"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "Phase 1 setup takes longer than estimated",
+          "severity": "Low",
+          "mitigation": "Buffer time built into schedule; testing can proceed in parallel with setup"
+        },
+        {
+          "risk": "Validation issues in Phase 2 require rework",
+          "severity": "Medium",
+          "mitigation": "Thorough testing plan in place; issues caught early prevent Phase 3+ delays"
+        }
+      ]
+    },
+
+    "3_current_state_analysis": {
+      "existing_components": [
+        {
+          "name": "docs-mcp",
+          "path": "C:\\Users\\willh\\.mcp-servers\\docs-mcp",
+          "type": "MCP Server",
+          "status": "Production",
+          "tools_count": 40,
+          "breakdown": "10 pure docs tools + 30 workflow tools (to be extracted)"
+        },
+        {
+          "name": "coderef/workflow",
+          "path": "C:\\Users\\willh\\.mcp-servers\\docs-mcp\\coderef\\working",
+          "type": "Document Storage",
+          "status": "Production",
+          "contains": "context.json, plan.json, DELIVERABLES.md, analysis.json"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "docs-mcp/src/index.ts",
+          "purpose": "Remove workflow tool registrations in Phase 5",
+          "changes_needed": "Remove 30 tool handler registrations, keep 10 docs tools"
+        },
+        {
+          "path": "docs-mcp/src/tools/",
+          "purpose": "Remove workflow tool implementations in Phase 5",
+          "changes_needed": "Delete gather-context.ts, create-plan.ts, execute-plan.ts, etc. (keep audit, generate-docs, etc.)"
+        },
+        {
+          "path": "docs-mcp/generators/",
+          "purpose": "Remove workflow generators in Phase 5",
+          "changes_needed": "Delete plan-generator.ts, context-gatherer.ts, task-updater.ts (keep doc generators)"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "workorder-mcp/src/index.ts",
+          "purpose": "Main MCP server file for workorder-mcp",
+          "changes_needed": "Copy from docs-mcp, register only 30 workflow tools, remove docs tools"
+        },
+        {
+          "path": "workorder-mcp/src/tools/gather-context.ts",
+          "purpose": "Context gathering tool",
+          "changes_needed": "Copy from docs-mcp/src/tools/gather-context.ts (identical)"
+        },
+        {
+          "path": "workorder-mcp/src/tools/create-plan.ts",
+          "purpose": "Plan generation tool",
+          "changes_needed": "Copy from docs-mcp/src/tools/create-plan.ts (identical)"
+        },
+        {
+          "path": "workorder-mcp/src/tools/execute-plan.ts",
+          "purpose": "Plan execution tool",
+          "changes_needed": "Copy from docs-mcp/src/tools/execute-plan.ts (identical)"
+        },
+        {
+          "path": "workorder-mcp/src/tools/update-task-status.ts",
+          "purpose": "Task status update tool",
+          "changes_needed": "Copy implementation"
+        },
+        {
+          "path": "workorder-mcp/src/tools/archive-feature.ts",
+          "purpose": "Feature archiving tool",
+          "changes_needed": "Copy implementation"
+        },
+        {
+          "path": "workorder-mcp/generators/",
+          "purpose": "Workflow-specific generators",
+          "changes_needed": "Copy plan-generator.ts, context-gatherer.ts, etc. from docs-mcp"
+        },
+        {
+          "path": "workorder-mcp/coderef/workflow/",
+          "purpose": "Symlink or mirror of docs-mcp/coderef/workflow",
+          "changes_needed": "Create symlink: ln -s ../../docs-mcp/coderef/workflow workflow"
+        },
+        {
+          "path": "workorder-mcp/package.json",
+          "purpose": "Package configuration for workorder-mcp",
+          "changes_needed": "Create with dependencies, entry point, scripts"
+        }
+      ],
+      "dependencies": [
+        "TypeScript (existing in docs-mcp)",
+        "MCP SDK (@modelcontextprotocol) (existing)",
+        "File system access (existing)",
+        "Git operations (existing)"
+      ],
+      "configuration_changes": [
+        "C:\\Users\\willh\\.claude.json: Add workorder-mcp server registration",
+        "workorder-mcp package.json: Configure entry points and scripts",
+        "Symlinks or copy strategy for coderef/workflow folder"
+      ]
+    },
+
+    "4_key_features": [
+      {
+        "feature_id": "REFACTOR-001",
+        "name": "Build workorder-mcp Directory Structure",
+        "description": "Create new workorder-mcp MCP server with proper directory layout matching docs-mcp pattern",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "workorder-mcp/ directory exists with src/, generators/, coderef/ subdirectories",
+          "package.json includes all required dependencies",
+          "tsconfig.json configured properly",
+          "Can run: npm install && npm build without errors"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-002",
+        "name": "Copy Workflow Tools to workorder-mcp",
+        "description": "Copy 20+ workflow tool implementations from docs-mcp to workorder-mcp, preserving functionality",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "All 30 workflow tools copied to workorder-mcp/src/tools/",
+          "All workflow generators copied to workorder-mcp/generators/",
+          "Tool code identical to source (no modifications)",
+          "Build succeeds with no compilation errors"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-003",
+        "name": "Setup Shared Artifact Access (Symlinks/Shared Folder)",
+        "description": "Configure both MCPs to access same coderef/workflow folder as single source of truth",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Symlink or shared folder setup working on Windows",
+          "Both docs-mcp and workorder-mcp can read from coderef/workflow/working/",
+          "Both can write to coderef/workflow/ without conflicts",
+          "Test: docs-mcp creates file, workorder-mcp can read it"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-004",
+        "name": "Register workorder-mcp in .claude.json",
+        "description": "Add workorder-mcp configuration to Claude Code MCP servers list",
+        "priority": "high",
+        "acceptance_criteria": [
+          ".claude.json updated with workorder-mcp server block",
+          "Both docs-mcp and workorder-mcp listed",
+          "Claude Code restarts without errors",
+          "Both MCPs accessible to agents"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-005",
+        "name": "Dual-Run Testing (No Conflicts)",
+        "description": "Test both MCPs running simultaneously with shared coderef/workflow access",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "docs-mcp.create-plan() creates plan.json",
+          "workorder-mcp.execute-plan() reads same plan.json",
+          "workorder-mcp.update-task-status() updates plan.json",
+          "docs-mcp.update-deliverables() reads updated plan.json",
+          "No file corruption or access errors"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-006",
+        "name": "Migrate Slash Commands to workorder-mcp",
+        "description": "Update slash command handlers to call workorder-mcp tools instead of docs-mcp tools",
+        "priority": "high",
+        "acceptance_criteria": [
+          "/create-workorder calls workorder-mcp tools",
+          "/execute-plan calls workorder-mcp.execute-plan()",
+          "/update-task-status calls workorder-mcp.update-task-status()",
+          "All commands work identically to before",
+          "Fallback to docs-mcp available if workorder-mcp unavailable"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-007",
+        "name": "Remove Workflow Tools from docs-mcp",
+        "description": "Delete 30 workflow tool implementations from docs-mcp, keeping only docs tools",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "All workflow tools deleted from docs-mcp/src/tools/",
+          "All workflow generators deleted from docs-mcp/generators/",
+          "docs-mcp still builds successfully",
+          "docs-mcp still contains: generate-foundation-docs, audit-codebase, establish-standards, etc.",
+          "No references to deleted tools remain"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-008",
+        "name": "Clean Up Duplicated Code",
+        "description": "Remove temporary duplication, ensure single source of truth",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "No duplicate implementations across MCPs",
+          "Single source of truth for shared resources",
+          "No stale code references"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-009",
+        "name": "Comprehensive Integration Testing",
+        "description": "Test all 5 phases work correctly in sequence",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Full workflow test: context → plan → execute → archive",
+          "Both MCPs functional throughout",
+          "No data loss or corruption",
+          "Git history clean and traceable"
+        ]
+      },
+      {
+        "feature_id": "REFACTOR-010",
+        "name": "Documentation & Handoff",
+        "description": "Update documentation for new two-MCP architecture",
+        "priority": "high",
+        "acceptance_criteria": [
+          "README updated with two-MCP explanation",
+          "Slash command docs show which MCP each command uses",
+          "Architecture documentation updated",
+          "Agents understand new structure"
+        ]
+      }
+    ],
+
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+        "name": "MCP Doc Workflow Refactor",
+        "feature_name": "mcp-doc-workflow-refactor",
+        "feature_dir": "coderef/working/mcp-doc-workflow-refactor"
+      },
+      "prefix_pattern": "{PHASE}-{NUMBER}",
+      "task_categories": [
+        "SETUP (Infrastructure setup)",
+        "COPY (Copy tools to new MCP)",
+        "LINK (Create symlinks/shared access)",
+        "CONFIG (Configure .claude.json)",
+        "TEST (Dual-run testing)",
+        "MIGRATE (Move slash commands)",
+        "CLEANUP (Remove from docs-mcp)",
+        "VERIFY (Final verification)"
+      ],
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Create workorder-mcp directory structure",
+          "phase": 1,
+          "dependencies": [],
+          "estimated_hours": 1
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Create package.json and tsconfig.json for workorder-mcp",
+          "phase": 1,
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "SETUP-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Install dependencies for workorder-mcp",
+          "phase": 1,
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "COPY-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Copy gather-context.ts and related tools",
+          "phase": 1,
+          "dependencies": ["SETUP-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "COPY-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Copy create-plan.ts and generators",
+          "phase": 1,
+          "dependencies": ["COPY-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "COPY-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Copy execute-plan.ts and task management tools",
+          "phase": 1,
+          "dependencies": ["COPY-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "COPY-004",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Copy remaining 17 workflow tools",
+          "phase": 1,
+          "dependencies": ["COPY-003"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "COPY-005",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Build and test workorder-mcp compiles",
+          "phase": 1,
+          "dependencies": ["COPY-004"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "LINK-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Create symlink for coderef/workflow (or shared folder)",
+          "phase": 1,
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "LINK-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test symlink access from both MCPs",
+          "phase": 1,
+          "dependencies": ["LINK-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "CONFIG-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Add workorder-mcp to .claude.json",
+          "phase": 1,
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "CONFIG-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Restart Claude Code and verify both MCPs loaded",
+          "phase": 1,
+          "dependencies": ["CONFIG-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test docs-mcp can still create plan.json",
+          "phase": 2,
+          "dependencies": ["COPY-005", "CONFIG-002"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test workorder-mcp.execute-plan() reads docs-mcp's plan.json",
+          "phase": 2,
+          "dependencies": ["TEST-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test concurrent access: both MCPs reading/writing",
+          "phase": 2,
+          "dependencies": ["TEST-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test full workflow: context → plan → execute → archive",
+          "phase": 2,
+          "dependencies": ["TEST-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "MIGRATE-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Update /create-workorder to call workorder-mcp",
+          "phase": 3,
+          "dependencies": ["TEST-004"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "MIGRATE-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Update /execute-plan to call workorder-mcp",
+          "phase": 3,
+          "dependencies": ["MIGRATE-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "MIGRATE-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Update /update-task-status and /archive-feature",
+          "phase": 3,
+          "dependencies": ["MIGRATE-002"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "MIGRATE-004",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Test all migrated slash commands work correctly",
+          "phase": 3,
+          "dependencies": ["MIGRATE-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "CLEANUP-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Remove gather-context and related tools from docs-mcp",
+          "phase": 4,
+          "dependencies": ["MIGRATE-004"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "CLEANUP-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Remove create-plan and generators from docs-mcp",
+          "phase": 4,
+          "dependencies": ["CLEANUP-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "CLEANUP-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Remove remaining 17 workflow tools from docs-mcp",
+          "phase": 4,
+          "dependencies": ["CLEANUP-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "CLEANUP-004",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Verify docs-mcp still builds and functions",
+          "phase": 4,
+          "dependencies": ["CLEANUP-003"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Final integration test: all tools working across both MCPs",
+          "phase": 5,
+          "dependencies": ["CLEANUP-004"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "VERIFY-002",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Update documentation and architecture guides",
+          "phase": 5,
+          "dependencies": ["VERIFY-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "VERIFY-003",
+          "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+          "description": "Final commit and push to git",
+          "phase": 5,
+          "dependencies": ["VERIFY-002"],
+          "estimated_hours": 1
+        }
+      ]
+    },
+
+    "6_implementation_phases": [
+      {
+        "phase": 1,
+        "name": "Build Alongside (No Breaking Changes)",
+        "description": "Create workorder-mcp alongside docs-mcp with complete copy of workflow tools. Setup symlinks for shared artifact access. Register both MCPs. Zero user-facing changes.",
+        "task_ids": [
+          "SETUP-001", "SETUP-002", "SETUP-003",
+          "COPY-001", "COPY-002", "COPY-003", "COPY-004", "COPY-005",
+          "LINK-001", "LINK-002",
+          "CONFIG-001", "CONFIG-002"
+        ],
+        "estimated_duration": "18 hours",
+        "dependencies": [],
+        "deliverables": [
+          "workorder-mcp directory structure created",
+          "All 30 workflow tools copied to workorder-mcp",
+          "Symlink to coderef/workflow working",
+          "Both MCPs registered in .claude.json",
+          "Both MCPs build and load successfully"
+        ]
+      },
+      {
+        "phase": 2,
+        "name": "Dual-Run Testing (Both MCPs Active)",
+        "description": "Test both MCPs running simultaneously with shared artifact access. Verify no conflicts, data integrity, concurrent operations.",
+        "task_ids": [
+          "TEST-001", "TEST-002", "TEST-003", "TEST-004"
+        ],
+        "estimated_duration": "6 hours",
+        "dependencies": [1],
+        "deliverables": [
+          "Verified: docs-mcp creates artifacts, workorder-mcp reads them",
+          "Verified: workorder-mcp updates artifacts, docs-mcp reads updates",
+          "Verified: concurrent access without conflicts",
+          "Verified: full workflow (context → plan → execute → archive) works"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "Migration (Gradual Cutover)",
+        "description": "Update slash commands to call workorder-mcp tools. Test each individually. Keep docs-mcp as fallback. Minimal user impact.",
+        "task_ids": [
+          "MIGRATE-001", "MIGRATE-002", "MIGRATE-003", "MIGRATE-004"
+        ],
+        "estimated_duration": "5 hours",
+        "dependencies": [2],
+        "deliverables": [
+          "All slash commands updated to use workorder-mcp",
+          "Each command tested individually",
+          "Fallback to docs-mcp documented",
+          "Zero disruption to users"
+        ]
+      },
+      {
+        "phase": 4,
+        "name": "Cleanup (Remove from docs-mcp)",
+        "description": "Delete 30 workflow tools from docs-mcp. Verify docs-mcp still functions (pure documentation only). Prepare for single-MCP deployment.",
+        "task_ids": [
+          "CLEANUP-001", "CLEANUP-002", "CLEANUP-003", "CLEANUP-004"
+        ],
+        "estimated_duration": "5 hours",
+        "dependencies": [3],
+        "deliverables": [
+          "All workflow tools removed from docs-mcp",
+          "docs-mcp builds successfully",
+          "docs-mcp contains only: generate-foundation-docs, audit-codebase, establish-standards, etc.",
+          "No stale references"
+        ]
+      },
+      {
+        "phase": 5,
+        "name": "Verification & Closure",
+        "description": "Final integration testing, documentation updates, git commit. Verify architecture separation is complete and stable.",
+        "task_ids": [
+          "VERIFY-001", "VERIFY-002", "VERIFY-003"
+        ],
+        "estimated_duration": "5 hours",
+        "dependencies": [4],
+        "deliverables": [
+          "All integration tests passing",
+          "Documentation updated with new architecture",
+          "README explains two-MCP separation",
+          "Git history clean with commits per phase",
+          "Ready for production deployment"
+        ]
+      }
+    ],
+
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test each copied tool individually in workorder-mcp",
+        "Test tool APIs unchanged from docs-mcp",
+        "Test symlink access from both MCPs",
+        "Test .claude.json configuration parsing",
+        "Test MCP registration without conflicts"
+      ],
+      "integration_tests": [
+        "Phase 1 → Phase 2: Both MCPs running together",
+        "docs-mcp creates plan.json → workorder-mcp reads it",
+        "workorder-mcp updates task → docs-mcp reads update",
+        "Concurrent operations on shared coderef/workflow folder",
+        "Full workflow across both MCPs: context → plan → execute → archive"
+      ],
+      "command_tests": [
+        "Test /create-workorder works correctly",
+        "Test /execute-plan generates task list",
+        "Test /update-task-status updates progress",
+        "Test /archive-feature moves to archived/",
+        "Test fallback: if workorder-mcp fails, docs-mcp tools available"
+      ],
+      "performance_tests": [
+        "No slowdown from dual MCP registration",
+        "Symlink access has no latency overhead",
+        "Concurrent file access fast (<1 second)",
+        "Tool execution time unchanged"
+      ],
+      "compatibility_tests": [
+        "Windows symlink support (fallback to copy if needed)",
+        "Tool code identical between MCPs (no drift)",
+        "API signatures identical (no breaking changes)",
+        "Slash commands work identically before/after migration"
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        "workorder-mcp MCP server exists and builds successfully",
+        "workorder-mcp contains all 30 workflow tools (identical to docs-mcp)",
+        "Both MCPs registered in .claude.json and accessible",
+        "Symlink or shared folder allows both MCPs to access coderef/workflow",
+        "All slash commands work identically after migration",
+        "workorder-mcp can be used independently of docs-mcp"
+      ],
+      "separation_requirements": [
+        "docs-mcp contains only 10 pure documentation tools",
+        "workorder-mcp contains only 30 workflow tools",
+        "No tool duplication after Phase 4 cleanup",
+        "No references to workflow tools in docs-mcp codebase"
+      ],
+      "backward_compatibility": [
+        "All existing slash commands continue working",
+        "No user-facing API changes",
+        "Existing artifacts (context.json, plan.json) compatible",
+        "Agents can continue using same commands",
+        "Zero disruption during migration"
+      ],
+      "quality_metrics": [
+        "All integration tests passing",
+        "No file corruption or data loss",
+        "No conflicts during concurrent access",
+        "Tool code identical between MCPs (zero drift)",
+        "Git history clean and traceable"
+      ],
+      "deployment_readiness": [
+        "Both MCPs deployable independently",
+        "Clear documentation of separation",
+        "Agents understand which MCP handles which tools",
+        "Rollback plan documented (revert to single MCP)",
+        "Production ready sign-off"
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "phase_1_build_alongside": {
+        "description": "Create workorder-mcp with full copy of workflow tools",
+        "tasks": [
+          "☐ SETUP-001: Create workorder-mcp directory structure",
+          "☐ SETUP-002: Create package.json and tsconfig.json",
+          "☐ SETUP-003: npm install dependencies",
+          "☐ COPY-001: Copy gather-context.ts and related tools",
+          "☐ COPY-002: Copy create-plan.ts and generators",
+          "☐ COPY-003: Copy execute-plan.ts and task management",
+          "☐ COPY-004: Copy remaining 17 workflow tools",
+          "☐ COPY-005: Verify npm build succeeds",
+          "☐ LINK-001: Create symlink for coderef/workflow",
+          "☐ LINK-002: Test symlink access from both MCPs",
+          "☐ CONFIG-001: Add workorder-mcp to .claude.json",
+          "☐ CONFIG-002: Verify both MCPs load in Claude Code"
+        ],
+        "validation": "Both MCPs build, load, and can access coderef/workflow folder"
+      },
+      "phase_2_dual_run_testing": {
+        "description": "Test both MCPs running simultaneously without conflicts",
+        "tasks": [
+          "☐ TEST-001: docs-mcp creates plan.json",
+          "☐ TEST-002: workorder-mcp reads the plan.json",
+          "☐ TEST-003: Concurrent read/write operations work",
+          "☐ TEST-004: Full workflow test across both MCPs"
+        ],
+        "validation": "All concurrent operations succeed without conflicts or data loss"
+      },
+      "phase_3_migration": {
+        "description": "Update slash commands to use workorder-mcp",
+        "tasks": [
+          "☐ MIGRATE-001: Update /create-workorder command handler",
+          "☐ MIGRATE-002: Update /execute-plan command handler",
+          "☐ MIGRATE-003: Update /update-task-status and /archive-feature",
+          "☐ MIGRATE-004: Test all migrated commands work correctly"
+        ],
+        "validation": "All slash commands work with workorder-mcp, fallback available"
+      },
+      "phase_4_cleanup": {
+        "description": "Remove workflow tools from docs-mcp",
+        "tasks": [
+          "☐ CLEANUP-001: Delete gather-context and related tools",
+          "☐ CLEANUP-002: Delete create-plan and generators",
+          "☐ CLEANUP-003: Delete remaining 17 workflow tools",
+          "☐ CLEANUP-004: Verify docs-mcp builds and functions"
+        ],
+        "validation": "docs-mcp contains only docs tools, builds successfully, no stale references"
+      },
+      "phase_5_verification": {
+        "description": "Final testing and documentation",
+        "tasks": [
+          "☐ VERIFY-001: Full integration test suite passes",
+          "☐ VERIFY-002: Update documentation and architecture",
+          "☐ VERIFY-003: Final commit and push to git"
+        ],
+        "validation": "All tests pass, documentation complete, git history clean"
+      }
+    }
+  }
+}

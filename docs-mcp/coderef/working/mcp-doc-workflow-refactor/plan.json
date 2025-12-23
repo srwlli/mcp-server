@@ -367,7 +367,7 @@
         {
           "id": "SETUP-002",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Create package.json and tsconfig.json for workorder-mcp",
+          "description": "Create pyproject.toml and related Python config files",
           "phase": 1,
           "dependencies": ["SETUP-001"],
           "estimated_hours": 1
@@ -375,7 +375,7 @@
         {
           "id": "SETUP-003",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Install dependencies for workorder-mcp",
+          "description": "Install Python dependencies (pip or uv) for workorder-mcp",
           "phase": 1,
           "dependencies": ["SETUP-002"],
           "estimated_hours": 2
@@ -383,7 +383,7 @@
         {
           "id": "COPY-001",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Copy gather-context.ts and related tools",
+          "description": "Copy gather_context.py and related workflow tools",
           "phase": 1,
           "dependencies": ["SETUP-003"],
           "estimated_hours": 2
@@ -391,7 +391,7 @@
         {
           "id": "COPY-002",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Copy create-plan.ts and generators",
+          "description": "Copy create_plan.py and generators modules",
           "phase": 1,
           "dependencies": ["COPY-001"],
           "estimated_hours": 2
@@ -399,7 +399,7 @@
         {
           "id": "COPY-003",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Copy execute-plan.ts and task management tools",
+          "description": "Copy execute_plan.py and task management tools",
           "phase": 1,
           "dependencies": ["COPY-002"],
           "estimated_hours": 2
@@ -415,7 +415,7 @@
         {
           "id": "COPY-005",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Build and test workorder-mcp compiles",
+          "description": "Build and test workorder-mcp (python -m build, import tests)",
           "phase": 1,
           "dependencies": ["COPY-004"],
           "estimated_hours": 1
@@ -742,19 +742,19 @@
         "description": "Create workorder-mcp with full copy of workflow tools",
         "tasks": [
           "☐ SETUP-001: Create workorder-mcp directory structure",
-          "☐ SETUP-002: Create package.json and tsconfig.json",
-          "☐ SETUP-003: npm install dependencies",
-          "☐ COPY-001: Copy gather-context.ts and related tools",
-          "☐ COPY-002: Copy create-plan.ts and generators",
-          "☐ COPY-003: Copy execute-plan.ts and task management",
-          "☐ COPY-004: Copy remaining 17 workflow tools",
-          "☐ COPY-005: Verify npm build succeeds",
+          "☐ SETUP-002: Create pyproject.toml and Python config files",
+          "☐ SETUP-003: pip install (or uv sync) Python dependencies",
+          "☐ COPY-001: Copy gather_context.py and related tools",
+          "☐ COPY-002: Copy create_plan.py and generators",
+          "☐ COPY-003: Copy execute_plan.py and task management",
+          "☐ COPY-004: Copy remaining 17 workflow tools (Python modules)",
+          "☐ COPY-005: Verify python -m build succeeds",
           "☐ LINK-001: Create symlink for coderef/workflow",
           "☐ LINK-002: Test symlink access from both MCPs",
           "☐ CONFIG-001: Add workorder-mcp to .claude.json",
           "☐ CONFIG-002: Verify both MCPs load in Claude Code"
         ],
-        "validation": "Both MCPs build, load, and can access coderef/workflow folder"
+        "validation": "Both MCPs build successfully, import without errors, and can access coderef/workflow folder"
       },
       "phase_2_dual_run_testing": {
         "description": "Test both MCPs running simultaneously without conflicts",

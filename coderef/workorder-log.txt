@@ -1,3 +1,12 @@
+WO-CODEREF-DASHBOARD-INIT-001 | coderef-dashboard | Brand new coderef-dashboard project - monorepo ... | 2025-12-23T19:44:41.554659+00:00
+WO-MCP-INTEGRATION-LAYER-001 | coderef-ecosystem | Integrate git-mcp and claude-filesystem-mcp wit... | 2025-12-23T19:30:29.744456+00:00
+WO-MODULAR-WIDGET-SYSTEM-PWA-ELECTRON-001 | scriptboard | New widget-based dashboard (PWA + Electron) dis... | 2025-12-23T19:30:25.980205+00:00
+WO-CODEREF-CONTEXT-ENHANCEMENT-001 | coderef-system | Build coderef-context Phases 1-6 (complexity, t... | 2025-12-23T19:30:22.283236+00:00
+WO-MCP-DOC-WORKFLOW-REFACTOR-001 | docs-mcp | Extract 24 workflow tools to coderef-workflow s... | 2025-12-23T19:30:18.393944+00:00
+WO-CODEREF-CONTEXT-ENHANCEMENT-001 | coderef-system | 6-phase context generation enhancement (complex... | 2025-12-23T19:02:33.005685+00:00
+WO-MODULAR-WIDGET-SYSTEM-PWA-ELECTRON-001 | next | Modular widget system with unified PWA and Elec... | 2025-12-23T18:57:51.797269+00:00
+WO-CODEREF-CONTEXT-ENHANCEMENT-001 | coderef-system | Six-phase context enhancement for packages/core... | 2025-12-23T18:53:51.754596+00:00
+WO-CODEREF-DOCS-ENHANCEMENTS-001 | docs-mcp | 6 enhancements for foundation docs (incremental... | 2025-12-22T19:08:56.655171+00:00
 WO-CONTEXT-GENERATION-001 | coderef-system | context-generation implementation plan | 2025-12-21T05:24:11.048891+00:00
 WO-GIT-AUTOMATION-FIX-001 | docs-mcp | Fix git automation to only commit once at /arch... | 2025-12-21T02:22:21.020469+00:00
 WO-POST-IMPLEMENTATION-GIT-AUTOMATION-001 | docs-mcp | post-implementation-git-automation implementati... | 2025-12-20T23:00:50.687846+00:00

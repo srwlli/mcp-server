@@ -1,3 +1,4 @@
+WO-CODEREF-DOCS-ENHANCEMENTS-001 | docs-mcp | 6 enhancements for foundation docs (incremental... | 2025-12-22T19:08:56.655171+00:00
 WO-GIT-AUTOMATION-FIX-001 | docs-mcp | Fix git automation to only commit once at /arch... | 2025-12-21T02:22:21.020469+00:00
 WO-POST-IMPLEMENTATION-GIT-AUTOMATION-001 | docs-mcp | post-implementation-git-automation implementati... | 2025-12-20T23:00:50.687846+00:00
 WO-AGENT-COMPLETION-WORKFLOW-001 | docs-mcp | agent-completion-workflow implementation plan | 2025-12-20T10:54:40.881763+00:00

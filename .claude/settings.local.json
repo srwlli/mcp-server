@@ -80,7 +80,11 @@
       "Bash(git log:*)",
       "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\\coderef\\archived\" /B)",
       "Bash(test_execute.log)",
-      "Bash(if not exist \"coderef\\user\" mkdir \"coderef\\user\")"
+      "Bash(if not exist \"coderef\\user\" mkdir \"coderef\\user\")",
+      "Bash(dir:*)",
+      "Bash(git push:*)",
+      "Bash(uv build:*)",
+      "Bash(ln:*)"
     ],
     "deny": [],
     "ask": []

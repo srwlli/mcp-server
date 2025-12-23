@@ -20,37 +20,34 @@
 
 ### What This Server Does
 
-**docs-mcp** is an MCP server providing:
-- **32 specialized tools** for documentation generation, changelog management, planning, quickref generation, consistency auditing, deliverables tracking, **AI-powered risk assessment**, **multi-agent coordination**, **feature archiving**, **global workorder tracking**, and **unified foundation docs generation**
-- **Workorder Tracking System** - Automatic unique ID assignment (WO-{FEATURE-NAME}-001) for all features in MCP planning workflow (v1.5.0)
-- **Global Workorder Logging** - Simple one-line logging for tracking workorder completion across projects (NEW in v1.11.0)
-- **Deliverables Tracking System** - Automatic DELIVERABLES.md generation with git-based metrics (LOC, commits, time) (v1.6.0)
-- **Feature Archive System** - Automated archiving of completed features from working to archived directory with index tracking (v1.10.0)
-- **39 slash commands** for quick access to common workflows including documentation, planning, standards, agent coordination, archiving, workorder logging, and foundation docs generation
-- **POWER framework templates** for comprehensive technical documentation
-- **Agentic workflows** enabling AI self-documentation via meta-tools
-- **Consistency Trilogy** pattern for living standards and compliance auditing
-- **Enterprise patterns**: modular handlers, structured logging, type safety, security hardening
+**docs-mcp** is a focused MCP server providing:
+- **11 specialized tools** for documentation generation, changelog management, quickref generation, and consistency auditing
+- **POWER framework templates** for comprehensive technical documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA, user-guide, my-guide)
+- **Changelog Management** - Structured changelog (CHANGELOG.json) with full CRUD operations and schema validation
+- **Live Standards & Compliance** - Establish coding standards from codebase patterns, audit compliance, check consistency on staged changes
+- **Quickref Generation** - Interactive workflow for generating universal quick-reference guides for any application type
+- **Enterprise patterns**: modular handlers, structured logging, error handling, security hardening
 
-### System Architecture
+**Note:** Planning, workflow, agent coordination, and deliverables tracking tools have been moved to **coderef-workflow** MCP for cleaner separation of concerns.
+
+### System Architecture (Minimal v2.0.0)
 
 ```
-server.py (299 lines)           # MCP entry point, 9 tool definitions
-http_server.py (~300 lines)     # HTTP wrapper for ChatGPT (multi-server support - WIP)
-tool_handlers.py (~1679 lines)  # 21 handlers + registry pattern
-handler_decorators.py (188 lines) # @mcp_error_handler, @log_invocation (ARCH-004, ARCH-005)
-handler_helpers.py (49 lines)   # format_success_response() (QUA-004)
-error_responses.py              # ErrorResponse factory (ARCH-001)
-type_defs.py (219 lines)        # TypedDict definitions (QUA-001)
-logger_config.py                # Structured logging (ARCH-003)
-constants.py (119 lines)        # Paths, Files, enums (REF-002, QUA-003)
-validation.py (271 lines)       # Input validation layer (REF-003)
+server.py (374 lines)           # MCP entry point, 11 tool definitions
+tool_handlers.py (~835 lines)   # 11 handlers + registry pattern
+handler_decorators.py           # @mcp_error_handler, @log_invocation
+handler_helpers.py              # format_success_response()
+error_responses.py              # ErrorResponse factory
+type_defs.py                    # TypedDict definitions
+logger_config.py                # Structured logging
+constants.py                    # Paths, Files, enums
+validation.py                   # Input validation layer
 generators/
   ├── base_generator.py         # Base template operations
   ├── foundation_generator.py   # Multi-document generation
   ├── changelog_generator.py    # Changelog CRUD + schema validation
-  ├── standards_generator.py    # Standards extraction (~400 lines)
-  └── audit_generator.py        # Compliance auditing (~863 lines)
+  ├── standards_generator.py    # Standards extraction
+  └── audit_generator.py        # Compliance auditing
 templates/power/                # POWER framework templates
   ├── readme.txt
   ├── architecture.txt
@@ -58,24 +55,9 @@ templates/power/                # POWER framework templates
   ├── components.txt
   ├── schema.txt
   └── user-guide.txt
-coderef/
-  ├── working/                  # Feature-specific working directories (NEW in v1.4.4)
-  │   └── {feature_name}/
-  │       ├── context.json      # Feature context (from /gather-context) with workorder ID
-  │       ├── analysis.json     # Project analysis (from /analyze-for-planning) with workorder
-  │       └── plan.json         # Implementation plan (from /create-plan) with workorder in section 5
-  ├── changelog/
-  │   ├── CHANGELOG.json        # Structured changelog data
-  │   └── schema.json           # JSON schema for validation
-  ├── foundation-docs/          # Generated documentation output
-  ├── standards/                # Extracted standards documents
-  │   ├── UI-STANDARDS.md
-  │   ├── BEHAVIOR-STANDARDS.md
-  │   ├── UX-PATTERNS.md
-  │   └── COMPONENT-INDEX.md
-  └── audits/                   # Compliance audit reports
-      └── audit-YYYYMMDD-HHMMSS.md
 ```
+
+**Removed in v2.0.0:** 21 planning/workflow tools moved to coderef-workflow MCP (get_planning_template, analyze_project_for_planning, gather_context, create_plan, validate_implementation_plan, generate_plan_review_report, generate_deliverables_template, generate_handoff_context, execute_plan, update_task_status, generate_agent_communication, assign_agent_task, verify_agent_completion, aggregate_agent_deliverables, track_agent_status, archive_feature, log_workorder, get_workorder_log, update_all_documentation, audit_plans, coderef_foundation_docs, generate_features_inventory)
 
 ### Unified HTTP Server (Multi-Server Gateway) - READY FOR CHATGPT
 

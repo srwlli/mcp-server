@@ -5,6 +5,32 @@
   "current_version": "3.1.0",
   "entries": [
     {
+      "version": "2.0.0",
+      "date": "2025-12-23",
+      "summary": "v2.0.0: Minimal documentation-only MCP (docs-mcp refactor)",
+      "changes": [
+        {
+          "id": "change-045",
+          "type": "breaking_change",
+          "severity": "major",
+          "title": "Minimal docs-mcp refactor: documentation-only tools",
+          "description": "Major refactor to create a focused documentation-only MCP server. Moved 21 planning, workflow, and agent coordination tools to new coderef-workflow MCP. Retained 11 documentation tools: list_templates, get_template, generate_foundation_docs, generate_individual_doc, get_changelog, add_changelog_entry, update_changelog, generate_quickref_interactive, establish_standards, audit_codebase, check_consistency. Reduced server.py from ~1118 lines to 374 lines (66% reduction). Reduced tool_handlers.py from 1679 lines to ~835 lines (50% reduction).",
+          "files": [
+            "server.py",
+            "tool_handlers.py",
+            "CLAUDE.md"
+          ],
+          "reason": "WO-CREATE-MINIMAL-DOCS-MCP-001: Separate concerns between documentation generation (docs-mcp) and planning/workflow orchestration (coderef-workflow). Cleaner API surface, easier maintenance, reduced dependencies.",
+          "impact": "BREAKING: Planning-related tools (create_plan, execute_plan, etc.) and agent coordination tools now only available via coderef-workflow MCP. Existing workflows using those tools via docs-mcp must switch to coderef-workflow. Documentation tools interface unchanged.",
+          "breaking": true,
+          "migration": "Update MCP server calls: Planning/workflow operations should target coderef-workflow MCP instead of docs-mcp. Documentation operations remain unchanged. Both MCPs ship separately."
+        }
+      ],
+      "contributors": [
+        "Claude"
+      ]
+    },
+    {
       "version": "3.1.0",
       "date": "2025-12-20",
       "summary": "Version 3.1.0 changes",

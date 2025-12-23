@@ -1,6 +1,6 @@
 Archive completed features from coderef/working/ to coderef/archived/.
 
-Ask the user for the feature name, then call the `mcp__docs-mcp__archive_feature` tool with:
+Ask the user for the feature name, then call the `mcp__coderef_workflow__archive_feature` tool with:
 - project_path: current working directory
 - feature_name: the user-provided feature name
 - force: false (unless user explicitly requests to skip confirmation)

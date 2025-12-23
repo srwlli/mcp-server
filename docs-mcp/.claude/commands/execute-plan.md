@@ -4,7 +4,7 @@ Execute implementation plan and generate TodoWrite task list with TASK-ID first 
 
 ### Step 1: Generate Task List
 
-Call the `mcp__docs-mcp__execute_plan` tool with the current working directory as project_path and the feature name.
+Call the `mcp__coderef_workflow__execute_plan` tool with the current working directory as project_path and the feature name.
 
 This generates a TodoWrite-formatted task list from plan.json with:
 - Workorder name displayed at top of checklist
@@ -26,7 +26,7 @@ For each task:
 1. Mark as `in_progress` in TodoWrite
 2. **Update task status in plan.json**:
    ```python
-   mcp__docs_mcp__update_task_status(
+   mcp__coderef_workflow__update_task_status(
        project_path=<current_directory>,
        feature_name=<feature_name>,
        task_id="SETUP-001",
@@ -37,7 +37,7 @@ For each task:
 4. Mark as `completed` in TodoWrite
 5. **Update task status to completed**:
    ```python
-   mcp__docs_mcp__update_task_status(
+   mcp__coderef_workflow__update_task_status(
        project_path=<current_directory>,
        feature_name=<feature_name>,
        task_id="SETUP-001",

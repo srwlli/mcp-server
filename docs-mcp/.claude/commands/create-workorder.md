@@ -70,7 +70,7 @@ This involves the interactive Q&A flow:
 After gathering all responses, call:
 
 ```python
-mcp__docs_mcp__gather_context({
+mcp__coderef_workflow__gather_context({
     "project_path": <current_working_directory>,
     "feature_name": <from_step_1>,
     "description": <collected_description>,
@@ -88,7 +88,7 @@ This creates `coderef/working/{feature_name}/context.json`.
 Call the coderef_foundation_docs MCP tool to generate comprehensive project context:
 
 ```python
-mcp__docs_mcp__coderef_foundation_docs({
+mcp__coderef_workflow__coderef_foundation_docs({
     "project_path": <current_working_directory>
 })
 ```
@@ -114,7 +114,7 @@ This step replaces the need for separate inventory commands (api_inventory, data
 Call the analyze_project_for_planning MCP tool:
 
 ```python
-mcp__docs_mcp__analyze_project_for_planning({
+mcp__coderef_workflow__analyze_project_for_planning({
     "project_path": <current_working_directory>,
     "feature_name": <from_step_1>
 })
@@ -133,7 +133,7 @@ This creates `coderef/working/{feature_name}/analysis.json` with:
 Call the create_plan MCP tool:
 
 ```python
-mcp__docs_mcp__create_plan({
+mcp__coderef_workflow__create_plan({
     "project_path": <current_working_directory>,
     "feature_name": <from_step_1>
 })
@@ -178,7 +178,7 @@ Options: [
 6. If `multi_agent = true`, call generate_agent_communication:
 
 ```python
-mcp__docs_mcp__generate_agent_communication({
+mcp__coderef_workflow__generate_agent_communication({
     "project_path": <current_working_directory>,
     "feature_name": <from_step_1>
 })
@@ -206,7 +206,7 @@ Agents update communication.json directly as they work:
 Call the validate_implementation_plan MCP tool:
 
 ```python
-mcp__docs_mcp__validate_implementation_plan({
+mcp__coderef_workflow__validate_implementation_plan({
     "project_path": <current_working_directory>,
     "plan_file_path": f"coderef/working/{feature_name}/plan.json"
 })

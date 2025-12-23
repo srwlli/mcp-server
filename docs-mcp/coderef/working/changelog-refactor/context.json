@@ -1,0 +1,38 @@
+{
+  "feature_name": "changelog-refactor",
+  "description": "Refactor changelog system to reduce complexity and improve UX. Current system has 3 tools (get_changelog, add_changelog_entry, update_changelog) with manual workflow. New system has 2 tools (get_changelog, record_changes) with agentic automation. record_changes auto-detects changed files, infers change_type from commit messages, suggests severity, and guides agent confirmation. Fixes critical bugs in version comparison (string vs semantic) and validates breaking changes have migration guides.",
+  "goal": "Consolidate changelog tools from 3 to 2 with smart agentic flow. Replace manual update_changelog + add_changelog_entry with single record_changes tool that auto-detects git context, suggests types/severities, and guides confirmation. Add critical data quality fixes: semantic version comparison, require migration for breaking changes, duplicate prevention.",
+  "requirements": [
+    "Implement record_changes tool with git auto-detection",
+    "Auto-detect change_type from commit message (feat/fix/breaking/etc)",
+    "Suggest severity based on scope (files changed, code impact)",
+    "Require migration text for breaking changes",
+    "Use semantic version comparison (packaging.version.parse)",
+    "Deprecate update_changelog tool",
+    "Migrate add_changelog_entry to use record_changes patterns",
+    "Add duplicate detection (prevent same change recorded twice)",
+    "Update CHANGELOG.json format to include auto_detected metadata",
+    "Add agent_confirmed field to track agent approval",
+    "Update server.py tool definitions",
+    "Update CLAUDE.md tool catalog"
+  ],
+  "out_of_scope": [
+    "Update/delete operations (separate phase)",
+    "Compound filtering by multiple criteria (separate enhancement)",
+    "Performance optimization for large changelogs (separate optimization)",
+    "Full changelog migration tool (use update_changelog for now)"
+  ],
+  "constraints": [
+    "Must not break existing changelog.json files (backward compatible)",
+    "record_changes must work standalone or integrated into feature workflow",
+    "Git commands must be cross-platform (Windows/Linux/Mac)",
+    "Must support optional context parameter (for cases without git repo)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+    "workorder_assigned_at": "2025-12-23T22:44:14.560078+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -24,13 +24,16 @@
     "Modifying existing MCP server implementations (docs-mcp, other servers)"
   ],
   "constraints": [
-    "Must be Python-based MCP server (consistent with other MCP servers)",
-    "Must call @coderef/core via subprocess/CLI (not direct TypeScript)",
-    "Must maintain backward compatibility with existing MCP tool contracts",
-    "Must handle subprocess errors gracefully",
+    "Must be TypeScript-based MCP server (direct access to @coderef/core)",
+    "Must build and run on Node.js (v16+)",
+    "Must use MCP SDK for TypeScript",
+    "Must import and use @coderef/core modules directly (no subprocess wrapper)",
+    "Must maintain clean MCP tool contracts",
+    "Must handle errors gracefully with proper error types",
     "Must work on Windows and Unix/Linux systems",
-    "Performance: response time <5 seconds for most queries",
-    "Must support caching with configurable TTL"
+    "Performance: response time <2 seconds for most queries (direct imports)",
+    "Must support in-memory caching with configurable TTL",
+    "Must integrate with existing pnpm monorepo workspace"
   ],
   "decisions": {},
   "success_criteria": {},

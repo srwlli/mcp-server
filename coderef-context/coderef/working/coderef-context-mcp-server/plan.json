@@ -11,24 +11,24 @@
   },
   "UNIVERSAL_PLANNING_STRUCTURE": {
     "0_preparation": {
-      "background": "The current coderef-mcp server maintains its own Python implementation of code analysis, duplication logic that should be centralized. The @coderef/core TypeScript system now provides 10 complete modules for code analysis, context generation, and semantic search. The goal is to build a new MCP server from scratch that wraps @coderef/core, providing a unified interface via MCP protocol.",
-      "approach": "Build a new coderef-context MCP server that acts as a thin Python wrapper around @coderef/core TypeScript modules. Use subprocess communication to call @coderef/core CLI commands, parse JSON responses, and format them as MCP tools/resources.",
+      "background": "The current coderef-mcp server maintains its own Python implementation of code analysis, duplication logic that should be centralized. The @coderef/core TypeScript system now provides 10 complete modules for code analysis, context generation, and semantic search. The goal is to build a new MCP server from scratch that directly uses @coderef/core modules, providing a unified interface via MCP protocol with maximum performance and type safety.",
+      "approach": "Build a new coderef-context MCP server as a TypeScript package in the monorepo that directly imports and uses all 10 @coderef/core modules. Expose them as MCP tools with proper error handling, caching, and type safety. Integrate with existing pnpm workspace.",
       "dependencies": [
-        "@coderef/core (must be built and installed)",
-        "Python 3.8+",
-        "mcp SDK (Model Context Protocol)",
-        "pydantic (validation)",
-        "subprocess (for CLI calls)",
-        "json (response parsing)",
-        "pathlib (path handling)",
-        "typing (type hints)"
+        "@coderef/core (direct import, same workspace)",
+        "Node.js 16+",
+        "@modelcontextprotocol/sdk (MCP SDK for TypeScript)",
+        "TypeScript 5.4+",
+        "zod (runtime type validation)",
+        "lru-cache (in-memory caching)",
+        "pnpm (package manager)",
+        "vitest (testing framework)"
       ],
       "known_constraints": [
-        "Must communicate with TypeScript via subprocess (can't use direct imports)",
-        "Windows and Unix/Linux path differences must be handled",
-        "Subprocess calls have inherent latency (~100-500ms per call)",
-        "JSON serialization must handle all @coderef/core types",
-        "Caching critical for performance (5 seconds target response time)"
+        "Must be built and deployed as TypeScript package",
+        "Direct imports mean no subprocess overhead but requires same runtime",
+        "Caching needed mainly for expensive operations (graph analysis)",
+        "MCP SDK protocol must be followed strictly for tool contracts",
+        "Type safety critical since using TypeScript ecosystem"
       ],
       "key_files_to_examine": [
         "C:\\Users\\willh\\.mcp-servers\\coderef-mcp\\server.py (current implementation to replace)",
@@ -46,65 +46,65 @@
         "Provide 6-phase context generation for agentic workflows",
         "Support semantic search and Q&A via RAG integration"
       ],
-      "scope": "Build new coderef-context MCP server that wraps all 10 @coderef/core modules",
-      "timeline": "8-10 weeks (4 implementation phases)",
-      "team_size": "1 agent (Python developer)",
-      "success_definition": "All 10 @coderef/core modules accessible via MPC tools with full test coverage and <5s response times"
+      "scope": "Build new coderef-context MCP server that directly uses all 10 @coderef/core modules",
+      "timeline": "6-8 weeks (4 implementation phases, faster than subprocess wrapper approach)",
+      "team_size": "1 agent (TypeScript developer)",
+      "success_definition": "All 10 @coderef/core modules accessible via MCP tools with full test coverage, <2s response times, and native TypeScript type safety"
     },
     "2_risk_assessment": {
       "risks": [
         {
           "id": "RISK-001",
-          "title": "Subprocess Communication Latency",
+          "title": "Large Memory Usage with Complex Graphs",
           "severity": "medium",
-          "probability": "high",
-          "impact": "MCP response times could exceed 5s target if not cached properly",
-          "mitigation": "Implement aggressive caching with 5-minute TTL and LRU eviction (max 100 entries). Cache keyed on input parameters + source directory hash."
+          "probability": "medium",
+          "impact": "Analyzing large codebases could consume significant memory due to in-memory graph structure",
+          "mitigation": "Implement streaming/pagination for large results. Use memory profiling during testing. Document memory requirements."
         },
         {
           "id": "RISK-002",
-          "title": "JSON Serialization Complexity",
-          "severity": "medium",
+          "title": "@coderef/core API Compatibility",
+          "severity": "high",
           "probability": "medium",
-          "impact": "@coderef/core may return complex nested structures that are difficult to serialize for MCP",
-          "mitigation": "Create type-safe serialization layer. Use Pydantic models to validate structure. Add unit tests for each response type."
+          "impact": "Changes to @coderef/core exports or types could break coderef-context at compile time",
+          "mitigation": "Pin @coderef/core version in monorepo. Implement type tests. Share workspace versions for consistency."
         },
         {
           "id": "RISK-003",
-          "title": "Windows Path Handling",
+          "title": "Build Complexity",
           "severity": "medium",
-          "probability": "high",
-          "impact": "Windows paths (backslashes) may not be handled correctly in subprocess calls to Unix-style CLI",
-          "mitigation": "Normalize all paths to forward slashes before CLI calls. Use pathlib for path operations. Test extensively on Windows."
+          "probability": "medium",
+          "impact": "TypeScript compilation failures could delay integration with existing build system",
+          "mitigation": "Add to monorepo build pipeline. Use workspace dependencies. Test build order with other packages."
         },
         {
           "id": "RISK-004",
-          "title": "@coderef/core Version Compatibility",
-          "severity": "high",
-          "probability": "medium",
-          "impact": "Changes to @coderef/core API could break coderef-context",
-          "mitigation": "Pin @coderef/core version in dependencies. Implement version checking at startup. Add compatibility layer if needed."
+          "title": "MCP SDK Breaking Changes",
+          "severity": "medium",
+          "probability": "low",
+          "impact": "MCP SDK changes could require rewriting tool definitions",
+          "mitigation": "Use stable SDK version. Monitor changelog. Add compatibility layer if needed."
         },
         {
           "id": "RISK-005",
-          "title": "MCP Tool Contract Changes",
+          "title": "Type Safety vs Flexibility",
           "severity": "medium",
           "probability": "low",
-          "impact": "Breaking changes to MCP protocol could require redesign",
-          "mitigation": "Use stable MCP SDK version. Monitor MCP changelog. Plan for versioned tool interfaces."
+          "impact": "Strict TypeScript typing could complicate dynamic tool registration",
+          "mitigation": "Use generics and conditional types. Test type compatibility. Document patterns."
         },
         {
           "id": "RISK-006",
-          "title": "Process Resource Management",
+          "title": "Performance Regression from @coderef/core",
           "severity": "medium",
-          "probability": "medium",
-          "impact": "Spawning many subprocess calls could exhaust system resources",
-          "mitigation": "Implement subprocess pooling/reuse. Add timeout handling (30 seconds max). Monitor process count."
+          "probability": "low",
+          "impact": "Changes to @coderef/core analysis could slow down MCP response times",
+          "mitigation": "Profile baseline performance. Add benchmarks. Monitor between versions."
         }
       ],
       "risk_matrix": {
-        "high_priority": ["RISK-004"],
-        "medium_priority": ["RISK-001", "RISK-002", "RISK-003", "RISK-005", "RISK-006"]
+        "high_priority": ["RISK-002"],
+        "medium_priority": ["RISK-001", "RISK-003", "RISK-004", "RISK-005", "RISK-006"]
       }
     },
     "3_current_state_analysis": {

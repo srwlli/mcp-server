@@ -6,6 +6,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 import jsonschema
 import sys
+from packaging.version import Version
 
 # Add parent directory to path for constants import
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -183,8 +184,20 @@ class ChangelogGenerator:
         if not files:
             raise ValueError("Must specify at least one file")
 
+        # Validate migration guide for breaking changes
+        if breaking and not migration:
+            raise ValueError("Migration guide required for breaking changes")
+
         # Read current changelog
         data = self.read_changelog()
+
+        # Detect duplicate changes (same version + title)
+        for entry in data.get('entries', []):
+            if entry['version'] == version:
+                for existing_change in entry.get('changes', []):
+                    if existing_change['title'] == title:
+                        # Duplicate detected - return existing change_id instead of creating new
+                        return existing_change['id']
 
         # Generate change ID
         change_id = self.get_next_change_id()
@@ -237,8 +250,8 @@ class ChangelogGenerator:
         # Add change to version entry
         version_entry['changes'].append(change)
 
-        # Update current_version if this is newer
-        if version > data['current_version']:
+        # Update current_version if this is newer (using semantic version comparison)
+        if Version(version) > Version(data['current_version']):
             data['current_version'] = version
 
         # Write back to file

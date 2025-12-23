@@ -51,14 +51,14 @@
       "feature_name": "MCP Doc Workflow Refactoring",
       "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
       "stub_id": null,
-      "primary_goal": "Extract 20+ workflow tools from docs-mcp into new workorder-mcp server. Achieve clean architectural separation while maintaining zero user-facing disruption. Enable independent evolution of documentation and workflow systems.",
+      "primary_goal": "Extract 20+ workflow tools from docs-mcp into new coderef-workflow server. Achieve clean architectural separation while maintaining zero user-facing disruption. Enable independent evolution of documentation and workflow systems.",
       "problem_statement": "Currently, docs-mcp contains 40 tools mixed across two domains: pure documentation (10 tools) and feature workflow management (30 tools). This mixing of concerns makes the codebase harder to test, maintain, and extend. Agents cannot use workflow tools without loading documentation generators, and vice versa.",
       "target_users": [
         "Agents (claude personas) orchestrating feature implementation",
         "Developers using /create-workorder, /execute-plan, /archive-feature commands",
-        "System maintainers updating docs-mcp or workorder-mcp independently"
+        "System maintainers updating docs-mcp or coderef-workflow independently"
       ],
-      "success_definition": "Two independent MCPs (docs-mcp and workorder-mcp) operating side-by-side with zero breaking changes. All slash commands continue working. Users can seamlessly switch between MCPs. docs-mcp contains 10 pure documentation tools. workorder-mcp contains 30 workflow tools. Both access shared coderef/workflow folder. Integration tested across both MCPs.",
+      "success_definition": "Two independent MCPs (docs-mcp and coderef-workflow) operating side-by-side with zero breaking changes. All slash commands continue working. Users can seamlessly switch between MCPs. docs-mcp contains 10 pure documentation tools. coderef-workflow contains 30 workflow tools. Both access shared coderef/workflow folder. Integration tested across both MCPs.",
       "estimated_complexity": "High (5 coordinated phases, tooling complexity, risk management)",
       "estimated_duration": "40-50 hours"
     },
@@ -359,7 +359,7 @@
         {
           "id": "SETUP-001",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Create workorder-mcp directory structure",
+          "description": "Create coderef-workflow directory structure",
           "phase": 1,
           "dependencies": [],
           "estimated_hours": 1
@@ -439,7 +439,7 @@
         {
           "id": "CONFIG-001",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Add workorder-mcp to .claude.json",
+          "description": "Add coderef-workflow to .claude.json",
           "phase": 1,
           "dependencies": ["SETUP-002"],
           "estimated_hours": 1
@@ -463,7 +463,7 @@
         {
           "id": "TEST-002",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Test workorder-mcp.execute-plan() reads docs-mcp's plan.json",
+          "description": "Test coderef-workflow.execute-plan() reads docs-mcp's plan.json",
           "phase": 2,
           "dependencies": ["TEST-001"],
           "estimated_hours": 1
@@ -487,7 +487,7 @@
         {
           "id": "MIGRATE-001",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Update /create-workorder to call workorder-mcp",
+          "description": "Update /create-workorder to call coderef-workflow",
           "phase": 3,
           "dependencies": ["TEST-004"],
           "estimated_hours": 1
@@ -495,7 +495,7 @@
         {
           "id": "MIGRATE-002",
           "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
-          "description": "Update /execute-plan to call workorder-mcp",
+          "description": "Update /execute-plan to call coderef-workflow",
           "phase": 3,
           "dependencies": ["MIGRATE-001"],
           "estimated_hours": 1
@@ -701,16 +701,16 @@
 
     "8_success_criteria": {
       "functional_requirements": [
-        "workorder-mcp MCP server exists and builds successfully",
-        "workorder-mcp contains all 30 workflow tools (identical to docs-mcp)",
+        "coderef-workflow MCP server exists and builds successfully",
+        "coderef-workflow contains all 30 workflow tools (identical to docs-mcp)",
         "Both MCPs registered in .claude.json and accessible",
         "Symlink or shared folder allows both MCPs to access coderef/workflow",
         "All slash commands work identically after migration",
-        "workorder-mcp can be used independently of docs-mcp"
+        "coderef-workflow can be used independently of docs-mcp"
       ],
       "separation_requirements": [
         "docs-mcp contains only 10 pure documentation tools",
-        "workorder-mcp contains only 30 workflow tools",
+        "coderef-workflow contains only 30 workflow tools",
         "No tool duplication after Phase 4 cleanup",
         "No references to workflow tools in docs-mcp codebase"
       ],
@@ -739,9 +739,9 @@
 
     "9_implementation_checklist": {
       "phase_1_build_alongside": {
-        "description": "Create workorder-mcp with full copy of workflow tools",
+        "description": "Create coderef-workflow with full copy of workflow tools",
         "tasks": [
-          "☐ SETUP-001: Create workorder-mcp directory structure",
+          "☐ SETUP-001: Create coderef-workflow directory structure",
           "☐ SETUP-002: Create pyproject.toml and Python config files",
           "☐ SETUP-003: pip install (or uv sync) Python dependencies",
           "☐ COPY-001: Copy gather_context.py and related tools",
@@ -751,7 +751,7 @@
           "☐ COPY-005: Verify python -m build succeeds",
           "☐ LINK-001: Create symlink for coderef/workflow",
           "☐ LINK-002: Test symlink access from both MCPs",
-          "☐ CONFIG-001: Add workorder-mcp to .claude.json",
+          "☐ CONFIG-001: Add coderef-workflow to .claude.json",
           "☐ CONFIG-002: Verify both MCPs load in Claude Code"
         ],
         "validation": "Both MCPs build successfully, import without errors, and can access coderef/workflow folder"

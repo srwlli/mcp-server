@@ -1,0 +1,9 @@
+{
+  "disabledMcpjsonServers": [
+    "personas",
+    "coderef",
+    "scriptboard-mcp",
+    "docs",
+    "hello-world"
+  ]
+}

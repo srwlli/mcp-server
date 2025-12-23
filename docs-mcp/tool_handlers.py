@@ -421,6 +421,149 @@ async def handle_update_changelog(arguments: dict) -> list[TextContent]:
 
 @log_invocation
 @mcp_error_handler
+async def handle_record_changes(arguments: dict) -> list[TextContent]:
+    """
+    Handle record_changes tool call - smart agentic changelog recording.
+
+    Auto-detects git context, suggests change_type/severity, shows preview,
+    and creates changelog entry upon agent confirmation.
+
+    Uses @log_invocation and @mcp_error_handler decorators for automatic
+    logging and error handling (ARCH-004, ARCH-005).
+    """
+    import subprocess
+    import re
+
+    # Validate inputs at boundary (REF-003)
+    project_path = validate_project_path_input(arguments.get("project_path"))
+    version = validate_version_format(arguments.get("version"))
+    context = arguments.get("context", {})
+
+    logger.info(f"Recording changes with auto-detection", extra={'project_path': project_path, 'version': version})
+
+    # Step 1: Auto-detect changed files from git
+    changed_files = []
+    git_status = "unknown"
+    try:
+        result = subprocess.run(
+            ["git", "-C", project_path, "diff", "--staged", "--name-only"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            changed_files = [f for f in result.stdout.strip().split('\n') if f]
+            git_status = "detected"
+            logger.debug(f"Detected {len(changed_files)} staged files via git")
+        else:
+            logger.warning(f"Git diff failed: {result.stderr}")
+            git_status = "error"
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+        logger.warning(f"Git detection failed: {str(e)}")
+        git_status = "unavailable"
+
+    # Fallback to context if provided
+    if not changed_files and "files_changed" in context:
+        changed_files = context["files_changed"]
+        git_status = "from_context"
+        logger.debug(f"Using {len(changed_files)} files from context")
+
+    # Step 2: Auto-detect change_type from commit messages
+    suggested_type = "enhancement"
+    type_from = "default"
+    try:
+        result = subprocess.run(
+            ["git", "-C", project_path, "log", "--oneline", "-5"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            commits = result.stdout.strip()
+            # Pattern matching for commit types
+            if "BREAKING CHANGE" in commits or re.search(r"^break", commits, re.MULTILINE):
+                suggested_type = "breaking_change"
+                type_from = "commit: BREAKING CHANGE"
+            elif re.search(r"^feat", commits, re.MULTILINE):
+                suggested_type = "feature"
+                type_from = "commit: feat(...)"
+            elif re.search(r"^fix", commits, re.MULTILINE):
+                suggested_type = "bugfix"
+                type_from = "commit: fix(...)"
+            elif re.search(r"^docs", commits, re.MULTILINE):
+                suggested_type = "enhancement"
+                type_from = "commit: docs(...)"
+            logger.debug(f"Suggested change_type: {suggested_type} from {type_from}")
+    except Exception as e:
+        logger.warning(f"Commit parsing failed: {str(e)}")
+
+    # Step 3: Calculate severity from scope
+    suggested_severity = "patch"
+    severity_from = "default"
+
+    if suggested_type == "breaking_change":
+        suggested_severity = "major"
+        severity_from = "breaking API change"
+    elif len(changed_files) > 5:
+        suggested_severity = "major"
+        severity_from = f"scope: {len(changed_files)} files"
+    elif len(changed_files) > 2:
+        suggested_severity = "minor"
+        severity_from = f"scope: {len(changed_files)} files"
+    else:
+        suggested_severity = "patch"
+        severity_from = f"scope: {len(changed_files)} files"
+
+    logger.debug(f"Suggested severity: {suggested_severity} ({severity_from})")
+
+    # Step 4: Generate preview for agent
+    preview = f"""📝 CHANGELOG ENTRY PREVIEW
+════════════════════════════════════════════════════════
+
+Type: {suggested_type} (from {type_from})
+Severity: {suggested_severity} ({severity_from})
+
+Files detected: {len(changed_files)}
+{chr(10).join('  • ' + f for f in changed_files[:10])}
+{'  ... and ' + str(len(changed_files) - 10) + ' more' if len(changed_files) > 10 else ''}
+
+════════════════════════════════════════════════════════
+
+⚠️  NEXT STEP: Agent must confirm this entry by calling:
+
+record_changes_confirm(
+    project_path="{project_path}",
+    version="{version}",
+    change_type="{suggested_type}",
+    severity="{suggested_severity}",
+    title="...",  # REQUIRED: Agent must provide
+    description="...",  # REQUIRED: what changed
+    files={changed_files if changed_files else ['file1.py', 'file2.py']},
+    reason="...",  # REQUIRED: why this change
+    impact="...",  # REQUIRED: user/system impact
+    breaking={'true' if suggested_type == 'breaking_change' else 'false'},
+    migration="..." if suggested_type == 'breaking_change' else ""  # REQUIRED if breaking
+)
+
+Or use defaults from context and confirm with agent to proceed.
+"""
+
+    logger.info(f"Preview generated for {version}", extra={'git_status': git_status, 'type': suggested_type, 'severity': suggested_severity})
+
+    result = f"✅ Auto-detection complete for v{version}\n\n"
+    result += preview
+    result += f"\n════════════════════════════════════════════════════════\n"
+    result += f"Auto-detect metadata:\n"
+    result += f"  Files detected via: {git_status}\n"
+    result += f"  Type suggested from: {type_from}\n"
+    result += f"  Severity from: {severity_from}\n"
+    result += f"\nAgent must provide: title, description, reason, impact, and migration (if breaking)\n"
+
+    return [TextContent(type="text", text=result)]
+
+
+@log_invocation
+@mcp_error_handler
 async def handle_generate_quickref_interactive(arguments: dict) -> list[TextContent]:
     """
     Handle generate_quickref_interactive tool call (meta-tool).
@@ -845,7 +988,7 @@ TOOL_HANDLERS = {
     'generate_individual_doc': handle_generate_individual_doc,
     'get_changelog': handle_get_changelog,
     'add_changelog_entry': handle_add_changelog_entry,
-    'update_changelog': handle_update_changelog,
+    'record_changes': handle_record_changes,
     'generate_quickref_interactive': handle_generate_quickref_interactive,
     'establish_standards': handle_establish_standards,
     'audit_codebase': handle_audit_codebase,

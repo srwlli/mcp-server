@@ -1,0 +1,175 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║        CODEREF MCP + CONTEXT SYSTEM INTEGRATION - EXECUTIVE SUMMARY            ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+CURRENT STATE:
+==============
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ @coderef/core (TypeScript/Node.js)                                          │
+│ ├─ 10 Modules (Scanner, Analyzer, Query, Parser, Validator, Exporter)      │
+│ ├─ NEW: 6-Phase Context Generation                                          │
+│ │   ├─ ComplexityScorer (Phase 1)                                          │
+│ │   ├─ TaskContextGenerator (Phase 2)                                      │
+│ │   ├─ EdgeCaseDetector (Phase 3)                                          │
+│ │   ├─ TestPatternAnalyzer (Phase 4)                                       │
+│ │   ├─ ExampleExtractor (Phase 5)                                          │
+│ │   └─ AgenticFormatter (Phase 6)                                          │
+│ └─ Test: demo-all-modules.ts (verified all 10 modules working)             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ coderef-mcp (Python MCP Server)                                             │
+│ ├─ 8 MCP Tools (Query, Analyze, Validate, Batch, etc.)                     │
+│ ├─ 4 MCP Resources (graph, stats, index, coverage)                         │
+│ └─ Generators (QueryExecutor, AnalysisEngine, ReferenceValidator)         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+⚠️  CRITICAL GAP: The two systems are disconnected!
+    - coderef-mcp doesn't leverage 6-phase context generation
+    - Agents get raw queries but no agentic context
+    - Duplicate analysis logic in two languages
+    - No unified index/cache
+
+
+PROPOSED SOLUTION:
+==================
+
+Wire @coderef/core Context System into coderef-mcp via Bridge Layer
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                          MCP Client (Claude, Agents)                          │
+└─────────────────────────────────┬─────────────────────────────────────────────┘
+                                  │
+                    ┌─────────────▼──────────────┐
+                    │    coderef-mcp Server      │
+                    │  (Python MCP Service)      │
+                    └─────────────┬──────────────┘
+                                  │
+                  ┌───────────────▼──────────────────┐
+                  │   NEW: 3 Context-Aware Tools    │
+                  ├────────────────────────────────┤
+                  │ 1. generate_agentic_context   │ ← NEW
+                  │ 2. query_with_context         │ ← ENHANCED
+                  │ 3. analyze_with_context       │ ← ENHANCED
+                  └───────────────┬────────────────┘
+                                  │
+                  ┌───────────────▼──────────────────┐
+                  │  NEW: Context Bridge Layer      │
+                  │  (ContextBridge.py)             │
+                  │  ├─ Subprocess executor         │
+                  │  ├─ CLI integration             │
+                  │  ├─ Result aggregation          │
+                  │  └─ Unified caching             │
+                  └───────────────┬────────────────┘
+                                  │ Subprocess IPC
+                  ┌───────────────▼──────────────────┐
+                  │  @coderef/core (TypeScript)     │
+                  │  └─ 6-Phase Context Generation  │
+                  │    ├─ Complexity Scoring        │
+                  │    ├─ Task Filtering            │
+                  │    ├─ Edge Case Detection       │
+                  │    ├─ Test Pattern Analysis     │
+                  │    ├─ Example Extraction        │
+                  │    └─ Agentic Formatting        │
+                  └────────────────────────────────┘
+
+
+INTEGRATION POINTS:
+====================
+
+1. NEW MCP TOOL: mcp__coderef__generate_agentic_context
+   Input:  workorder_id, task_description, source_dir, keywords, max_complexity
+   Output: Complete AgenticContext (8.1 KB) with:
+           ├─ Complexity metrics (Phase 1)
+           ├─ Task context (Phase 2)
+           ├─ Edge cases (Phase 3)
+           ├─ Test patterns (Phase 4)
+           ├─ Code examples (Phase 5)
+           └─ Confidence scoring (Phase 6)
+
+2. ENHANCED MCP TOOL: mcp__coderef__query_with_context
+   Enhancement: Add complexity, risk, confidence to query results
+   rank_by: "complexity" | "risk" | "coverage" | "usage"
+
+3. ENHANCED MCP TOOL: mcp__coderef__analyze_with_context
+   Enhancement: Include 6-phase context data in impact analysis
+
+4. NEW MCP RESOURCE: coderef://context/agentic
+   Access: Get cached agentic context without regenerating
+
+5. NEW MCP RESOURCE: coderef://stats/context
+   Access: Get context generation statistics
+
+
+IMPLEMENTATION PHASES:
+======================
+
+Phase 1: Bridge Layer (1-2 weeks)
+├─ ContextBridge.py (subprocess executor)
+├─ CLI command in @coderef/core
+└─ Error handling & caching
+
+Phase 2: New MCP Tools (2-3 weeks)
+├─ generate_agentic_context handler
+├─ query_with_context handler
+└─ analyze_with_context handler
+
+Phase 3: Resources & Caching (1-2 weeks)
+├─ Context resource implementation
+├─ Stats resource implementation
+└─ Cache manager enhancements
+
+Phase 4: Integration & Testing (1-2 weeks)
+├─ End-to-end integration tests
+├─ Performance benchmarking
+└─ Error scenario handling
+
+Phase 5: Documentation (1 week)
+├─ README updates
+├─ API documentation
+└─ Usage examples
+
+
+EXPECTED OUTCOMES:
+==================
+
+✅ Agents receive complete agentic context
+✅ Query results include complexity & risk metrics
+✅ Impact analysis includes edge cases & confidence scores
+✅ Single source of truth for context data
+✅ 6-phase context available via MCP tools/resources
+✅ No more duplicate analysis logic
+✅ Unified index/cache system
+✅ Better implementation planning decisions
+
+TIMELINE: 4-6 weeks total implementation
+SUCCESS: All new tools + resources deployed and tested
+
+
+KEY FILES TO CREATE/MODIFY:
+===========================
+
+New Files:
+├─ /coderef-mcp/coderef/bridge/context_bridge.py (250 lines)
+├─ /coderef/packages/cli/src/commands/context-generation.ts (150 lines)
+└─ /coderef-mcp/tests/test_context_integration.py (200 lines)
+
+Modified Files:
+├─ /coderef-mcp/server.py (add 3 new tool schemas)
+├─ /coderef-mcp/tool_handlers.py (add 3 handler functions, ~600 lines)
+├─ /coderef-mcp/coderef/models.py (add AgenticContext models)
+├─ /coderef-mcp/coderef/utils/resource_cache.py (enhance cache)
+└─ /coderef/packages/cli/src/cli.ts (add context command)
+
+
+FULL ANALYSIS:
+==============
+See: CODEREF_MCP_CONTEXT_INTEGRATION_ANALYSIS.md
+
+This document contains:
+- Detailed architecture diagrams
+- Code examples for all new components
+- Error handling strategies
+- Configuration guidelines
+- Risk mitigation approaches
+- Success criteria

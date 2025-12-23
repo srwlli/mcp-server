@@ -1,0 +1,862 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "mcp-coderef-core-integration",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code Assistant",
+    "has_context": true,
+    "has_analysis": true,
+    "generated_at": "2025-12-23T22:50:00Z",
+    "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "title": "Preparation & Foundation",
+      "completed": true,
+      "summary": "Foundation analysis complete. coderef-mcp has 8 MCP tools, 4 resources. Current Python implementations: QueryExecutor, AnalysisEngine, ReferenceValidator, BatchProcessor. Need to replace with @coderef/core module calls via subprocess IPC.",
+      "key_decisions": [
+        "Use subprocess IPC to call @coderef/core CLI (pnpm start)",
+        "Maintain MCP tool contract compatibility where possible",
+        "Cache results to avoid repeated subprocess calls",
+        "Phase-based rollout to minimize breaking changes"
+      ],
+      "assumptions": [
+        "@coderef/core is available at /coderef-system/packages/core",
+        "pnpm is available in PATH",
+        "Python can spawn Node.js subprocesses",
+        "MCP tool signatures can be preserved or migrated"
+      ]
+    },
+    "1_executive_summary": {
+      "title": "Executive Summary",
+      "objective": "Replace all Python analysis code in coderef-mcp with @coderef/core module calls. Create a thin MCP wrapper around the 10 @coderef/core modules, eliminating duplicate analysis logic.",
+      "business_value": [
+        "Single source of truth - all analysis in TypeScript @coderef/core",
+        "Expose all 10 modules (currently only partial Python implementation)",
+        "Better performance - use proven @coderef/core implementations",
+        "Access to 6-phase agentic context for agents",
+        "Unified error handling and type system"
+      ],
+      "scope": "Replace Python generators (QueryExecutor, AnalysisEngine, ReferenceValidator, BatchProcessor) with @coderef/core module calls. Add 3 new MCP tools for 6-phase context.",
+      "timeline": "8-10 weeks (4 phases)",
+      "risk_level": "Medium-High (core infrastructure change)",
+      "success_definition": "All MCP tools working with @coderef/core, backward compatibility maintained, all tests passing, performance equivalent or better"
+    },
+    "2_risk_assessment": {
+      "title": "Risk Assessment",
+      "risks": [
+        {
+          "id": "RISK-001",
+          "title": "Subprocess communication failure",
+          "severity": "high",
+          "probability": "medium",
+          "mitigation": "Implement timeout handling (30s), retry logic, fallback caching. Extensive testing of subprocess execution.",
+          "owner": "BRIDGE-001"
+        },
+        {
+          "id": "RISK-002",
+          "title": "Breaking existing MCP tool contracts",
+          "severity": "high",
+          "probability": "low",
+          "mitigation": "Maintain backward compatibility in Phase 1-2, document breaking changes in Phase 3-4, provide migration guide.",
+          "owner": "TOOLS-001"
+        },
+        {
+          "id": "RISK-003",
+          "title": "@coderef/core not available at runtime",
+          "severity": "critical",
+          "probability": "low",
+          "mitigation": "Validate CODEREF_CLI_PATH on server startup, provide clear error messages, fallback to old Python implementations.",
+          "owner": "SETUP-001"
+        },
+        {
+          "id": "RISK-004",
+          "title": "Performance degradation from subprocess overhead",
+          "severity": "medium",
+          "probability": "medium",
+          "mitigation": "Implement aggressive caching (5-min TTL), measure subprocess latency, optimize CLI calls, batch requests.",
+          "owner": "PERF-001"
+        },
+        {
+          "id": "RISK-005",
+          "title": "Error type mismatches between Python and TypeScript",
+          "severity": "medium",
+          "probability": "medium",
+          "mitigation": "Map @coderef/core errors to Python exceptions, preserve error context, test error scenarios extensively.",
+          "owner": "ERROR-001"
+        },
+        {
+          "id": "RISK-006",
+          "title": "Memory leaks in cached contexts",
+          "severity": "medium",
+          "probability": "low",
+          "mitigation": "LRU cache with max 20 entries, TTL-based expiry, memory monitoring, clear stale entries.",
+          "owner": "CACHE-001"
+        }
+      ],
+      "dependencies": [
+        "@coderef/core package must be built and available",
+        "pnpm CLI must be accessible",
+        "Node.js >= 16.0.0 available",
+        "Python subprocess module working"
+      ]
+    },
+    "3_current_state_analysis": {
+      "title": "Current State Analysis",
+      "coderef_mcp_structure": {
+        "total_elements": 19092,
+        "python_files": "8 generators + 1 server",
+        "mcp_tools": 8,
+        "mcp_resources": 4,
+        "key_modules": [
+          "coderef/generators/query_generator.py (QueryExecutor)",
+          "coderef/generators/analysis_generator.py (DeepAnalysisEngine)",
+          "coderef/generators/validation_generator.py (ReferenceValidator)",
+          "server.py (MCP server entry point)",
+          "tool_handlers.py (2225 lines - all tool handlers)"
+        ]
+      },
+      "coderef_core_modules": {
+        "total_modules": 10,
+        "status": "All implemented and tested",
+        "key_modules": [
+          "Module 1: Scanner - Code element discovery",
+          "Module 2: Analyzer - Dependency graph (AnalyzerService)",
+          "Module 3: Query Engine - Element relationships",
+          "Module 4: Parser - CodeRef tag parsing",
+          "Module 5: Validator - Reference validation",
+          "Module 6: Exporter - Graph serialization",
+          "Module 7: 6-Phase Context (NEW) - Agentic enhancement",
+          "Module 8: Integration/RAG - Semantic search",
+          "Module 9: Error Handling - Typed exceptions",
+          "Module 10: Types & Utilities - Type system"
+        ]
+      },
+      "files_to_modify": [
+        {
+          "path": "server.py",
+          "current_size": "794 lines",
+          "purpose": "MCP server initialization",
+          "changes": "Add CODEREF_CLI_PATH validation on startup"
+        },
+        {
+          "path": "tool_handlers.py",
+          "current_size": "2225 lines",
+          "purpose": "All MCP tool handlers",
+          "changes": "Replace Python generators with @coderef/core subprocess calls"
+        },
+        {
+          "path": "coderef/generators/query_generator.py",
+          "current_size": "~500 lines",
+          "purpose": "QueryExecutor implementation",
+          "changes": "Keep as adapter layer, call @coderef/core QueryExecutor"
+        },
+        {
+          "path": "coderef/generators/analysis_generator.py",
+          "current_size": "~500 lines",
+          "purpose": "AnalysisEngine implementation",
+          "changes": "Keep as adapter layer, call @coderef/core AnalyzerService"
+        },
+        {
+          "path": "coderef/generators/validation_generator.py",
+          "current_size": "~500 lines",
+          "purpose": "ReferenceValidator implementation",
+          "changes": "Keep as adapter layer, call @coderef/core CodeRefValidator"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "coderef/bridge/coderef_core_bridge.py",
+          "purpose": "Subprocess IPC layer to call @coderef/core CLI",
+          "size_estimate": "300-400 lines"
+        },
+        {
+          "path": "coderef/bridge/__init__.py",
+          "purpose": "Bridge module exports",
+          "size_estimate": "20 lines"
+        },
+        {
+          "path": "tests/test_coderef_core_bridge.py",
+          "purpose": "Unit tests for subprocess bridge",
+          "size_estimate": "300-400 lines"
+        },
+        {
+          "path": "tests/test_context_tools.py",
+          "purpose": "Integration tests for new context tools",
+          "size_estimate": "200-300 lines"
+        }
+      ]
+    },
+    "4_key_features": {
+      "title": "Key Features & Requirements",
+      "features": [
+        {
+          "id": "FEAT-001",
+          "title": "Subprocess IPC Bridge",
+          "description": "Python layer that executes @coderef/core CLI via subprocess and parses JSON results",
+          "priority": "critical",
+          "acceptance_criteria": [
+            "Successfully execute pnpm start commands",
+            "Parse JSON output correctly",
+            "Handle timeouts (30s default)",
+            "Retry on transient failures",
+            "Cache results (5-min TTL)",
+            "Error handling with clear messages"
+          ]
+        },
+        {
+          "id": "FEAT-002",
+          "title": "Replace QueryExecutor",
+          "description": "Replace Python QueryExecutor with calls to @coderef/core QueryExecutor via bridge",
+          "priority": "high",
+          "acceptance_criteria": [
+            "Query tool still works (backward compatible)",
+            "Results match @coderef/core format",
+            "Performance <= 500ms (with cache)",
+            "All query types supported (what-calls-me, what-depends-on, etc.)"
+          ]
+        },
+        {
+          "id": "FEAT-003",
+          "title": "Replace AnalysisEngine",
+          "description": "Replace Python AnalysisEngine with calls to @coderef/core AnalyzerService",
+          "priority": "high",
+          "acceptance_criteria": [
+            "Analyze tool still works (backward compatible)",
+            "Impact analysis returns same structure",
+            "Complexity analysis available",
+            "Coverage analysis available"
+          ]
+        },
+        {
+          "id": "FEAT-004",
+          "title": "Replace ReferenceValidator",
+          "description": "Replace Python ReferenceValidator with calls to @coderef/core CodeRefValidator",
+          "priority": "high",
+          "acceptance_criteria": [
+            "Validate tool returns same validation results",
+            "Error messages match @coderef/core",
+            "Batch validation works correctly"
+          ]
+        },
+        {
+          "id": "FEAT-005",
+          "title": "New: Agentic Context Tool",
+          "description": "New MCP tool mcp__coderef__generate_agentic_context that returns 6-phase context",
+          "priority": "high",
+          "acceptance_criteria": [
+            "Accepts workorder_id, task_description, source_dir, keywords",
+            "Returns complete AgenticContext JSON (8+ KB)",
+            "Includes all 6 phases (Complexity, Task, EdgeCases, Tests, Examples, Agentic)",
+            "Includes confidence scores",
+            "Execution time < 5s (with cache)"
+          ]
+        },
+        {
+          "id": "FEAT-006",
+          "title": "Enhanced: Context-Aware Query",
+          "description": "Enhance query tool to include context data (complexity, risk, confidence)",
+          "priority": "medium",
+          "acceptance_criteria": [
+            "Query results include complexity_score field",
+            "Include risk_level assessment",
+            "Include confidence metric",
+            "Support rank_by parameter (complexity, risk, coverage)"
+          ]
+        },
+        {
+          "id": "FEAT-007",
+          "title": "Enhanced: Context-Aware Analysis",
+          "description": "Enhance analyze tool to include 6-phase context in results",
+          "priority": "medium",
+          "acceptance_criteria": [
+            "Analysis results include edge_cases field",
+            "Include test_coverage data",
+            "Include confidence score",
+            "Include recommendations"
+          ]
+        },
+        {
+          "id": "FEAT-008",
+          "title": "New: Context Resource",
+          "description": "New MPC resource coderef://context/agentic for accessing cached contexts",
+          "priority": "medium",
+          "acceptance_criteria": [
+            "Resource returns list of cached contexts",
+            "Include cache metadata (generated_at, ttl)",
+            "Support cache expiration"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "title": "Task ID System & Workorder Tracking",
+      "workorder": {
+        "id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+        "name": "MCP CodeRef Core Integration",
+        "feature_dir": "coderef/working/mcp-coderef-core-integration",
+        "description": "Replace Python analysis code with @coderef/core module calls",
+        "created_at": "2025-12-23T22:47:39Z"
+      },
+      "task_prefixes": {
+        "SETUP": "Setup & Configuration (Phase 1)",
+        "BRIDGE": "Subprocess Bridge Implementation (Phase 1)",
+        "QUERY": "Query Tool Replacement (Phase 2)",
+        "ANALYSIS": "Analysis Tool Replacement (Phase 2)",
+        "VALIDATE": "Validation Tool Replacement (Phase 3)",
+        "CONTEXT": "Context Tools & Resources (Phase 4)",
+        "TEST": "Testing & Validation (All Phases)",
+        "PERF": "Performance Optimization (Phase 4)"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 1,
+          "title": "Validate @coderef/core availability on startup",
+          "description": "Add CODEREF_CLI_PATH validation to server.py startup. Check that @coderef/core is available and accessible.",
+          "effort_estimate": "2 hours",
+          "dependencies": [],
+          "acceptance_criteria": [
+            "Server validates CODEREF_CLI_PATH on startup",
+            "Clear error if @coderef/core not found",
+            "Log success message with CLI path"
+          ]
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 1,
+          "title": "Create bridge module directory structure",
+          "description": "Create coderef/bridge/ directory with __init__.py and module structure.",
+          "effort_estimate": "1 hour",
+          "dependencies": ["SETUP-001"],
+          "acceptance_criteria": [
+            "coderef/bridge/ directory exists",
+            "coderef/bridge/__init__.py created",
+            "Module can be imported"
+          ]
+        },
+        {
+          "id": "BRIDGE-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 1,
+          "title": "Implement CodeRefCoreBridge class",
+          "description": "Create coderef/bridge/coderef_core_bridge.py with subprocess execution, timeout handling, result parsing, and caching.",
+          "effort_estimate": "8 hours",
+          "dependencies": ["SETUP-002"],
+          "acceptance_criteria": [
+            "Bridge can execute subprocess commands",
+            "Timeout handling works (30s default)",
+            "JSON output parsing correct",
+            "Results cached with TTL",
+            "Error handling with context"
+          ]
+        },
+        {
+          "id": "BRIDGE-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 1,
+          "title": "Test bridge with sample @coderef/core commands",
+          "description": "Test bridge by calling pnpm start scan, pnpm start analyze, etc. Verify JSON output parsing.",
+          "effort_estimate": "4 hours",
+          "dependencies": ["BRIDGE-001"],
+          "acceptance_criteria": [
+            "Successfully execute scan command",
+            "Successfully execute analyze command",
+            "JSON parsing works correctly",
+            "Timeout handling works"
+          ]
+        },
+        {
+          "id": "QUERY-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 2,
+          "title": "Refactor query_generator.py to use bridge",
+          "description": "Modify QueryExecutor to delegate to @coderef/core via CodeRefCoreBridge instead of Python implementation.",
+          "effort_estimate": "6 hours",
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "QueryExecutor calls bridge",
+            "Results match @coderef/core format",
+            "Backward compatibility maintained",
+            "Tests pass"
+          ]
+        },
+        {
+          "id": "QUERY-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 2,
+          "title": "Update mcp__coderef__query tool handler",
+          "description": "Update handle_query_elements in tool_handlers.py to use new QueryExecutor.",
+          "effort_estimate": "3 hours",
+          "dependencies": ["QUERY-001"],
+          "acceptance_criteria": [
+            "Tool still works end-to-end",
+            "Results format unchanged",
+            "Performance acceptable"
+          ]
+        },
+        {
+          "id": "ANALYSIS-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 2,
+          "title": "Refactor analysis_generator.py to use bridge",
+          "description": "Modify DeepAnalysisEngine to delegate to @coderef/core AnalyzerService via bridge.",
+          "effort_estimate": "8 hours",
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "DeepAnalysisEngine calls bridge",
+            "Impact analysis results correct",
+            "Complexity analysis available",
+            "Tests pass"
+          ]
+        },
+        {
+          "id": "ANALYSIS-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 2,
+          "title": "Update mcp__coderef__analyze tool handler",
+          "description": "Update handle_analyze_impact in tool_handlers.py to use new AnalysisEngine.",
+          "effort_estimate": "3 hours",
+          "dependencies": ["ANALYSIS-001"],
+          "acceptance_criteria": [
+            "Tool still works end-to-end",
+            "Results format unchanged",
+            "All analysis types work (impact, deep, coverage, complexity)"
+          ]
+        },
+        {
+          "id": "VALIDATE-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 3,
+          "title": "Refactor validation_generator.py to use bridge",
+          "description": "Modify ReferenceValidator to delegate to @coderef/core CodeRefValidator via bridge.",
+          "effort_estimate": "6 hours",
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "ReferenceValidator calls bridge",
+            "Validation results match @coderef/core",
+            "Error messages preserved",
+            "Tests pass"
+          ]
+        },
+        {
+          "id": "VALIDATE-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 3,
+          "title": "Update mcp__coderef__validate tool handler",
+          "description": "Update handle_validate_references in tool_handlers.py to use new ReferenceValidator.",
+          "effort_estimate": "2 hours",
+          "dependencies": ["VALIDATE-001"],
+          "acceptance_criteria": [
+            "Tool still works end-to-end",
+            "Batch validation works",
+            "Error handling correct"
+          ]
+        },
+        {
+          "id": "CONTEXT-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 4,
+          "title": "Implement generate_agentic_context handler",
+          "description": "Create new MCP tool mcp__coderef__generate_agentic_context. Add schema to server.py and handler to tool_handlers.py.",
+          "effort_estimate": "6 hours",
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "Tool executes successfully",
+            "Returns complete AgenticContext JSON",
+            "Includes all 6 phases",
+            "Confidence scores present",
+            "Performance < 5s"
+          ]
+        },
+        {
+          "id": "CONTEXT-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 4,
+          "title": "Implement query_with_context enhancement",
+          "description": "Enhance mcp__coderef__query tool to include context data (complexity, risk, confidence) in results.",
+          "effort_estimate": "4 hours",
+          "dependencies": ["QUERY-002", "CONTEXT-001"],
+          "acceptance_criteria": [
+            "Query results include complexity_score",
+            "Include risk_level",
+            "Include confidence metric",
+            "Support rank_by parameter"
+          ]
+        },
+        {
+          "id": "CONTEXT-003",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 4,
+          "title": "Implement analyze_with_context enhancement",
+          "description": "Enhance mcp__coderef__analyze tool to include 6-phase context in results.",
+          "effort_estimate": "4 hours",
+          "dependencies": ["ANALYSIS-002", "CONTEXT-001"],
+          "acceptance_criteria": [
+            "Analysis results include edge_cases",
+            "Include test_coverage",
+            "Include confidence score",
+            "Include recommendations"
+          ]
+        },
+        {
+          "id": "CONTEXT-004",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 4,
+          "title": "Implement context caching resource",
+          "description": "Create new MCP resource coderef://context/agentic for accessing cached contexts.",
+          "effort_estimate": "3 hours",
+          "dependencies": ["CONTEXT-001"],
+          "acceptance_criteria": [
+            "Resource returns cached contexts",
+            "Include cache metadata",
+            "TTL expiration works"
+          ]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": "All",
+          "title": "Create unit tests for bridge",
+          "description": "Write comprehensive unit tests for CodeRefCoreBridge class.",
+          "effort_estimate": "6 hours",
+          "dependencies": ["BRIDGE-001"],
+          "acceptance_criteria": [
+            "Test subprocess execution",
+            "Test timeout handling",
+            "Test JSON parsing",
+            "Test caching",
+            "Test error handling",
+            "Coverage > 90%"
+          ]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": "All",
+          "title": "Create integration tests for all MCP tools",
+          "description": "Write integration tests for query, analyze, validate, context tools. Test end-to-end.",
+          "effort_estimate": "12 hours",
+          "dependencies": ["QUERY-002", "ANALYSIS-002", "VALIDATE-002", "CONTEXT-001"],
+          "acceptance_criteria": [
+            "All tools work end-to-end",
+            "Results match expected format",
+            "Error scenarios handled",
+            "Performance acceptable",
+            "Coverage > 85%"
+          ]
+        },
+        {
+          "id": "PERF-001",
+          "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+          "phase": 4,
+          "title": "Performance optimization & profiling",
+          "description": "Profile subprocess calls, optimize caching, measure latency, compare to old implementations.",
+          "effort_estimate": "4 hours",
+          "dependencies": ["TEST-002"],
+          "acceptance_criteria": [
+            "Query tool: < 500ms (with cache)",
+            "Analyze tool: < 500ms (with cache)",
+            "Context tool: < 5s (with cache)",
+            "Memory usage: < 200MB",
+            "Cache hit rate: > 70%"
+          ]
+        }
+      ],
+      "task_count": 17,
+      "total_effort_hours": 92
+    },
+    "6_implementation_phases": {
+      "title": "Implementation Phases",
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Subprocess Bridge",
+          "duration": "2 weeks",
+          "description": "Create subprocess IPC layer to call @coderef/core. Validate CLI availability. Test with sample commands.",
+          "tasks": ["SETUP-001", "SETUP-002", "BRIDGE-001", "BRIDGE-002"],
+          "deliverables": [
+            "coderef/bridge/coderef_core_bridge.py (300+ lines)",
+            "Subprocess execution working",
+            "JSON parsing working",
+            "Caching implemented",
+            "Tests passing"
+          ],
+          "success_criteria": [
+            "Bridge can execute @coderef/core CLI commands",
+            "Results parsed correctly",
+            "Timeout handling works",
+            "Caching reduces latency to < 100ms"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Replace Query & Analysis Tools",
+          "duration": "2.5 weeks",
+          "description": "Replace Python QueryExecutor and AnalysisEngine with bridge calls. Maintain tool compatibility.",
+          "tasks": ["QUERY-001", "QUERY-002", "ANALYSIS-001", "ANALYSIS-002"],
+          "deliverables": [
+            "QueryExecutor delegates to bridge",
+            "AnalysisEngine delegates to bridge",
+            "Tool handlers updated",
+            "Backward compatibility maintained"
+          ],
+          "success_criteria": [
+            "mcp__coderef__query tool works (with context enhancement ready)",
+            "mcp__coderef__analyze tool works (with context enhancement ready)",
+            "Results format preserved",
+            "Tests passing",
+            "No breaking changes"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Replace Validation Tools",
+          "duration": "1.5 weeks",
+          "description": "Replace Python ReferenceValidator with bridge calls. Complete tool migration.",
+          "tasks": ["VALIDATE-001", "VALIDATE-002"],
+          "deliverables": [
+            "ReferenceValidator delegates to bridge",
+            "Batch processor updated",
+            "Tool handlers updated"
+          ],
+          "success_criteria": [
+            "mcp__coderef__validate tool works",
+            "mcp__coderef__batch_validate works",
+            "Error messages match @coderef/core",
+            "Tests passing"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Add Context Tools & Complete Integration",
+          "duration": "2.5 weeks",
+          "description": "Add 3 new context-aware MCP tools. Implement caching resource. Complete testing and optimization.",
+          "tasks": ["CONTEXT-001", "CONTEXT-002", "CONTEXT-003", "CONTEXT-004", "TEST-001", "TEST-002", "PERF-001"],
+          "deliverables": [
+            "mcp__coderef__generate_agentic_context tool",
+            "Enhanced query tool with context",
+            "Enhanced analyze tool with context",
+            "Context caching resource",
+            "Comprehensive test suite",
+            "Performance optimization complete"
+          ],
+          "success_criteria": [
+            "All new tools working",
+            "6-phase context available",
+            "Confidence scores present",
+            "All tests passing (coverage > 85%)",
+            "Performance >= current implementation",
+            "Memory usage acceptable"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "title": "Testing Strategy",
+      "unit_testing": {
+        "scope": "Bridge layer, individual generators, tool handlers",
+        "framework": "pytest",
+        "coverage_target": "90%",
+        "test_files": [
+          "tests/test_coderef_core_bridge.py",
+          "tests/test_query_generator.py",
+          "tests/test_analysis_generator.py",
+          "tests/test_validation_generator.py"
+        ],
+        "test_cases": [
+          "Subprocess execution success/failure",
+          "Timeout handling",
+          "JSON parsing valid/invalid",
+          "Cache hit/miss",
+          "Error handling",
+          "Query execution",
+          "Analysis execution",
+          "Validation execution"
+        ]
+      },
+      "integration_testing": {
+        "scope": "End-to-end MCP tool execution",
+        "framework": "pytest + mcp test utils",
+        "coverage_target": "85%",
+        "test_files": [
+          "tests/test_mcp_integration.py",
+          "tests/integration/test_all_tools.py"
+        ],
+        "test_scenarios": [
+          "Query tool with various inputs",
+          "Analyze tool with all analysis types",
+          "Validate tool with valid/invalid references",
+          "Context tool with agentic context generation",
+          "All tools with error conditions",
+          "Concurrent requests",
+          "Cache behavior"
+        ]
+      },
+      "performance_testing": {
+        "tools": "pytest-benchmark, memory-profiler",
+        "metrics": [
+          "Query tool latency (target: < 500ms with cache)",
+          "Analyze tool latency (target: < 500ms with cache)",
+          "Context tool latency (target: < 5s with cache)",
+          "Memory usage (target: < 200MB)",
+          "Cache hit rate (target: > 70%)"
+        ],
+        "benchmarks": "Compare to current Python implementations"
+      },
+      "regression_testing": {
+        "scope": "Ensure all existing MCP tool contracts preserved",
+        "approach": "Test existing tool signatures still work",
+        "compatibility": "Backward compatible output format"
+      }
+    },
+    "8_success_criteria": {
+      "title": "Success Criteria & Acceptance",
+      "functional_criteria": [
+        {
+          "criterion": "All 8 MCP tools working with @coderef/core backend",
+          "how_to_test": "Run full integration test suite",
+          "priority": "critical"
+        },
+        {
+          "criterion": "3 new context-aware MCP tools operational",
+          "how_to_test": "Test generate_agentic_context, query_with_context, analyze_with_context",
+          "priority": "critical"
+        },
+        {
+          "criterion": "6-phase agentic context available via new tool",
+          "how_to_test": "Call generate_agentic_context, verify all 6 phases in response",
+          "priority": "critical"
+        },
+        {
+          "criterion": "Backward compatibility maintained for existing tools",
+          "how_to_test": "Run regression tests, compare output format to old implementation",
+          "priority": "high"
+        },
+        {
+          "criterion": "Subprocess bridge reliable with timeout handling",
+          "how_to_test": "Stress test with 100+ concurrent requests, timeout simulation",
+          "priority": "high"
+        }
+      ],
+      "performance_criteria": [
+        {
+          "criterion": "Query tool latency < 500ms (with cache)",
+          "measurement": "pytest-benchmark on cached queries",
+          "baseline": "Current Python implementation"
+        },
+        {
+          "criterion": "Analyze tool latency < 500ms (with cache)",
+          "measurement": "pytest-benchmark on cached analysis",
+          "baseline": "Current Python implementation"
+        },
+        {
+          "criterion": "Context generation < 5s (with cache)",
+          "measurement": "Time for generate_agentic_context call",
+          "baseline": "New feature, no baseline"
+        },
+        {
+          "criterion": "Memory usage < 200MB steady state",
+          "measurement": "memory-profiler during load test",
+          "baseline": "Current Python implementation"
+        },
+        {
+          "criterion": "Cache hit rate > 70%",
+          "measurement": "Track cache hits in 1000 request test",
+          "baseline": "New feature, target only"
+        }
+      ],
+      "quality_criteria": [
+        {
+          "criterion": "Unit test coverage >= 90%",
+          "tool": "pytest-cov"
+        },
+        {
+          "criterion": "Integration test coverage >= 85%",
+          "tool": "pytest-cov"
+        },
+        {
+          "criterion": "All tests passing",
+          "tool": "pytest"
+        },
+        {
+          "criterion": "No linting errors",
+          "tool": "pylint, flake8"
+        },
+        {
+          "criterion": "Type checking passing",
+          "tool": "mypy"
+        }
+      ],
+      "acceptance_sign_off": [
+        "All functional criteria met",
+        "All performance criteria met or exceeded",
+        "All quality criteria met",
+        "Integration tests passing (85%+ coverage)",
+        "Load testing completed successfully",
+        "Documentation updated",
+        "No high-severity issues remaining"
+      ]
+    },
+    "9_implementation_checklist": {
+      "title": "Implementation Checklist",
+      "phase_1_checklist": [
+        "[  ] SETUP-001: Validate @coderef/core on startup",
+        "[  ] SETUP-002: Create bridge module directory",
+        "[  ] BRIDGE-001: Implement CodeRefCoreBridge class",
+        "[  ] BRIDGE-002: Test bridge with sample commands",
+        "[  ] TEST-001: Create unit tests for bridge",
+        "[  ] Code review: Bridge implementation",
+        "[  ] All tests passing",
+        "[  ] Documentation: Bridge usage guide"
+      ],
+      "phase_2_checklist": [
+        "[  ] QUERY-001: Refactor query_generator.py",
+        "[  ] QUERY-002: Update query tool handler",
+        "[  ] ANALYSIS-001: Refactor analysis_generator.py",
+        "[  ] ANALYSIS-002: Update analyze tool handler",
+        "[  ] Code review: Query & Analysis refactoring",
+        "[  ] Regression tests passing",
+        "[  ] Performance benchmarks: Query & Analyze",
+        "[  ] Documentation: Tool behavior changes (if any)"
+      ],
+      "phase_3_checklist": [
+        "[  ] VALIDATE-001: Refactor validation_generator.py",
+        "[  ] VALIDATE-002: Update validate tool handler",
+        "[  ] Code review: Validation refactoring",
+        "[  ] Regression tests passing",
+        "[  ] Batch validation tests passing",
+        "[  ] Documentation: Validator behavior changes (if any)"
+      ],
+      "phase_4_checklist": [
+        "[  ] CONTEXT-001: Implement agentic context tool",
+        "[  ] CONTEXT-002: Enhance query with context",
+        "[  ] CONTEXT-003: Enhance analyze with context",
+        "[  ] CONTEXT-004: Implement context resource",
+        "[  ] TEST-002: Create integration tests",
+        "[  ] PERF-001: Performance optimization",
+        "[  ] Code review: All new code",
+        "[  ] Load testing: 100+ concurrent requests",
+        "[  ] All tests passing (85%+ coverage)",
+        "[  ] Documentation: New tools & features",
+        "[  ] Update CLAUDE.md with new capabilities",
+        "[  ] Update API.md with new tools"
+      ],
+      "final_deliverables": [
+        "[  ] All 8 original MCP tools working",
+        "[  ] 3 new context-aware MCP tools deployed",
+        "[  ] New context resource deployed",
+        "[  ] All unit tests passing (90%+ coverage)",
+        "[  ] All integration tests passing (85%+ coverage)",
+        "[  ] Performance benchmarks completed",
+        "[  ] Load testing completed",
+        "[  ] Documentation complete",
+        "[  ] Code review approved",
+        "[  ] Deployed to production"
+      ]
+    }
+  }
+}

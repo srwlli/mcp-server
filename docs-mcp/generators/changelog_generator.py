@@ -145,10 +145,13 @@ class ChangelogGenerator:
         migration: Optional[str] = None,
         date: Optional[str] = None,
         summary: Optional[str] = None,
-        contributors: Optional[List[str]] = None
+        contributors: Optional[List[str]] = None,
+        auto_detected: Optional[Dict[str, str]] = None,
+        agent_confirmed: bool = False,
+        recorded_at: Optional[str] = None
     ) -> str:
         """
-        Add a new change entry to the changelog.
+        Add a new change entry to the changelog with optional agentic metadata.
 
         Args:
             version: Version number (e.g., "1.0.1")
@@ -164,6 +167,12 @@ class ChangelogGenerator:
             date: Date of change (defaults to today)
             summary: Version summary (for new versions)
             contributors: List of contributors (defaults to empty list)
+            auto_detected: Dict with auto-detected values source info (IMPL-005)
+                - files_from: Source of file list
+                - type_from: Source of change_type detection
+                - severity_from: Source of severity calculation
+            agent_confirmed: Whether agent confirmed the suggestions (IMPL-005)
+            recorded_at: ISO 8601 timestamp when recorded (auto-generated if not provided) (IMPL-005)
 
         Returns:
             Change ID that was assigned
@@ -206,6 +215,10 @@ class ChangelogGenerator:
         if date is None:
             date = datetime.now().strftime("%Y-%m-%d")
 
+        # Use current timestamp if not specified (IMPL-005)
+        if recorded_at is None and (auto_detected or agent_confirmed):
+            recorded_at = datetime.now().isoformat()
+
         # Create change object
         change = {
             "id": change_id,
@@ -221,6 +234,16 @@ class ChangelogGenerator:
 
         if migration:
             change["migration"] = migration
+
+        # Add agentic metadata if provided (IMPL-005)
+        if auto_detected:
+            change["auto_detected"] = auto_detected
+
+        if agent_confirmed:
+            change["agent_confirmed"] = agent_confirmed
+
+        if recorded_at:
+            change["recorded_at"] = recorded_at
 
         # Find or create version entry
         version_entry = None

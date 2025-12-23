@@ -1,0 +1,41 @@
+{
+  "feature_name": "mcp-coderef-core-integration",
+  "description": "Replace all Python analysis code in coderef-mcp with direct calls to @coderef/core modules. Currently coderef-mcp has its own Python implementations of QueryExecutor, AnalysisEngine, ReferenceValidator, and BatchProcessor. These should be replaced with thin MCP wrappers that call the corresponding @coderef/core modules (Scanner, Analyzer, Query Engine, Validator, Exporter, 6-Phase Context, Integration/RAG, Error Handling, and Type utilities).",
+  "goal": "Create a unified MCP server that exposes all 10 @coderef/core modules via MCP protocol. Single source of truth - all analysis logic in TypeScript @coderef/core, MCP server is just a thin wrapper layer.",
+  "requirements": [
+    "Replace Python QueryExecutor with @coderef/core QueryExecutor calls",
+    "Replace Python AnalysisEngine with @coderef/core AnalyzerService calls",
+    "Replace Python ReferenceValidator with @coderef/core CodeRefValidator calls",
+    "Replace Python BatchProcessor with batch logic from @coderef/core",
+    "Expose Module 1-3 (Scanner, Analyzer, Query) via MCP tools",
+    "Expose Module 4-6 (Parser, Validator, Exporter) via MCP tools",
+    "Expose Module 7 (6-Phase Context) via new MCP tools with full agentic context",
+    "Expose Module 8-10 (Integration/RAG, Errors, Types) via MCP tools",
+    "All MCP tools return structured JSON matching @coderef/core output formats",
+    "Maintain backward compatibility with existing MCP tool signatures where possible",
+    "Add new MCP tools for 6-phase context generation",
+    "Implement subprocess IPC layer to call @coderef/core CLI or Node.js API"
+  ],
+  "out_of_scope": [
+    "Migrating other Python MCP servers (personas-mcp, docs-mcp, etc.)",
+    "Rewriting @coderef/core modules",
+    "Changing MCP protocol itself",
+    "Implementing new analysis algorithms (use existing @coderef/core)"
+  ],
+  "constraints": [
+    "@coderef/core is TypeScript/Node.js, coderef-mcp is Python",
+    "Must maintain MCP protocol compliance",
+    "Cannot break existing MCP tool contracts without migration path",
+    "Performance must be equivalent or better than current Python implementations",
+    "Error handling must preserve error types from @coderef/core",
+    "Cache behavior must match current coderef-mcp caching",
+    "Configuration via .mcp.json (CODEREF_CLI_PATH environment variable)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-MCP-CODEREF-CORE-INTEGRATION-001",
+    "workorder_assigned_at": "2025-12-23T22:47:39.007609+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,865 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "coderef-context-mcp-server",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true,
+    "timestamp": "2025-12-23T23:18:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "background": "The current coderef-mcp server maintains its own Python implementation of code analysis, duplication logic that should be centralized. The @coderef/core TypeScript system now provides 10 complete modules for code analysis, context generation, and semantic search. The goal is to build a new MCP server from scratch that wraps @coderef/core, providing a unified interface via MCP protocol.",
+      "approach": "Build a new coderef-context MCP server that acts as a thin Python wrapper around @coderef/core TypeScript modules. Use subprocess communication to call @coderef/core CLI commands, parse JSON responses, and format them as MCP tools/resources.",
+      "dependencies": [
+        "@coderef/core (must be built and installed)",
+        "Python 3.8+",
+        "mcp SDK (Model Context Protocol)",
+        "pydantic (validation)",
+        "subprocess (for CLI calls)",
+        "json (response parsing)",
+        "pathlib (path handling)",
+        "typing (type hints)"
+      ],
+      "known_constraints": [
+        "Must communicate with TypeScript via subprocess (can't use direct imports)",
+        "Windows and Unix/Linux path differences must be handled",
+        "Subprocess calls have inherent latency (~100-500ms per call)",
+        "JSON serialization must handle all @coderef/core types",
+        "Caching critical for performance (5 seconds target response time)"
+      ],
+      "key_files_to_examine": [
+        "C:\\Users\\willh\\.mcp-servers\\coderef-mcp\\server.py (current implementation to replace)",
+        "C:\\Users\\willh\\.mcp-servers\\coderef-mcp\\tool_handlers.py (tools we're replacing)",
+        "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\core\\demo-all-modules.ts (proof of @coderef/core functionality)",
+        "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\CLAUDE.md (complete system documentation)"
+      ]
+    },
+    "1_executive_summary": {
+      "vision": "Create a comprehensive MCP server (coderef-context) that exposes all 10 modules of @coderef/core as MCP tools and resources, providing a single unified interface for code analysis, context generation, and semantic search.",
+      "business_value": [
+        "Eliminate duplicate analysis logic between coderef-mcp and @coderef/core",
+        "Single source of truth for code analysis (centralized in @coderef/core)",
+        "Enable all AI agents to access full @coderef/core capabilities via MCP",
+        "Provide 6-phase context generation for agentic workflows",
+        "Support semantic search and Q&A via RAG integration"
+      ],
+      "scope": "Build new coderef-context MCP server that wraps all 10 @coderef/core modules",
+      "timeline": "8-10 weeks (4 implementation phases)",
+      "team_size": "1 agent (Python developer)",
+      "success_definition": "All 10 @coderef/core modules accessible via MPC tools with full test coverage and <5s response times"
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "id": "RISK-001",
+          "title": "Subprocess Communication Latency",
+          "severity": "medium",
+          "probability": "high",
+          "impact": "MCP response times could exceed 5s target if not cached properly",
+          "mitigation": "Implement aggressive caching with 5-minute TTL and LRU eviction (max 100 entries). Cache keyed on input parameters + source directory hash."
+        },
+        {
+          "id": "RISK-002",
+          "title": "JSON Serialization Complexity",
+          "severity": "medium",
+          "probability": "medium",
+          "impact": "@coderef/core may return complex nested structures that are difficult to serialize for MCP",
+          "mitigation": "Create type-safe serialization layer. Use Pydantic models to validate structure. Add unit tests for each response type."
+        },
+        {
+          "id": "RISK-003",
+          "title": "Windows Path Handling",
+          "severity": "medium",
+          "probability": "high",
+          "impact": "Windows paths (backslashes) may not be handled correctly in subprocess calls to Unix-style CLI",
+          "mitigation": "Normalize all paths to forward slashes before CLI calls. Use pathlib for path operations. Test extensively on Windows."
+        },
+        {
+          "id": "RISK-004",
+          "title": "@coderef/core Version Compatibility",
+          "severity": "high",
+          "probability": "medium",
+          "impact": "Changes to @coderef/core API could break coderef-context",
+          "mitigation": "Pin @coderef/core version in dependencies. Implement version checking at startup. Add compatibility layer if needed."
+        },
+        {
+          "id": "RISK-005",
+          "title": "MCP Tool Contract Changes",
+          "severity": "medium",
+          "probability": "low",
+          "impact": "Breaking changes to MCP protocol could require redesign",
+          "mitigation": "Use stable MCP SDK version. Monitor MCP changelog. Plan for versioned tool interfaces."
+        },
+        {
+          "id": "RISK-006",
+          "title": "Process Resource Management",
+          "severity": "medium",
+          "probability": "medium",
+          "impact": "Spawning many subprocess calls could exhaust system resources",
+          "mitigation": "Implement subprocess pooling/reuse. Add timeout handling (30 seconds max). Monitor process count."
+        }
+      ],
+      "risk_matrix": {
+        "high_priority": ["RISK-004"],
+        "medium_priority": ["RISK-001", "RISK-002", "RISK-003", "RISK-005", "RISK-006"]
+      }
+    },
+    "3_current_state_analysis": {
+      "existing_assets": [
+        {
+          "name": "coderef-mcp server",
+          "location": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+          "status": "to be replaced",
+          "value": "Reference for MCP tool contracts and structure"
+        },
+        {
+          "name": "@coderef/core system",
+          "location": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\core",
+          "status": "complete and tested",
+          "value": "Core implementation with all 10 modules working"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "server.py",
+          "purpose": "MCP server initialization, configuration, tool registration"
+        },
+        {
+          "path": "coderef_bridge.py",
+          "purpose": "Subprocess communication bridge with @coderef/core CLI (caching, error handling, path normalization)"
+        },
+        {
+          "path": "tool_handlers.py",
+          "purpose": "MCP tool handler implementations (10 main tools + resource handlers)"
+        },
+        {
+          "path": "cache_manager.py",
+          "purpose": "Caching layer with TTL, LRU eviction, serialization"
+        },
+        {
+          "path": "type_models.py",
+          "purpose": "Pydantic models for validating @coderef/core responses"
+        },
+        {
+          "path": "error_handler.py",
+          "purpose": "Error handling, subprocess exception mapping"
+        },
+        {
+          "path": "config.py",
+          "purpose": "Configuration loading, validation, defaults"
+        },
+        {
+          "path": "utils.py",
+          "purpose": "Path normalization, environment detection, platform-specific handling"
+        },
+        {
+          "path": "tests/test_bridge.py",
+          "purpose": "Unit tests for subprocess bridge"
+        },
+        {
+          "path": "tests/test_handlers.py",
+          "purpose": "Unit tests for tool handlers"
+        },
+        {
+          "path": "tests/test_integration.py",
+          "purpose": "Integration tests with actual @coderef/core"
+        },
+        {
+          "path": "tests/test_cache.py",
+          "purpose": "Cache layer tests"
+        },
+        {
+          "path": "README.md",
+          "purpose": "Server documentation, configuration, usage examples"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": ".env.example",
+          "purpose": "Add CODEREF_CLI_PATH and caching configuration"
+        },
+        {
+          "path": "pyproject.toml",
+          "purpose": "Update dependencies, add type checking configuration"
+        }
+      ]
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "id": "FEAT-001",
+          "name": "Scanner Tool",
+          "description": "Expose @coderef/core Scanner for element discovery",
+          "mcp_tool": "scan_elements",
+          "inputs": ["source_dir", "languages", "exclude_patterns"],
+          "outputs": ["elements", "statistics", "execution_time"],
+          "complexity": "medium",
+          "core_module": "Scanner (scanCurrentElements)"
+        },
+        {
+          "id": "FEAT-002",
+          "name": "Analyzer Tool",
+          "description": "Build dependency graph with node/edge analysis",
+          "mcp_tool": "analyze_codebase",
+          "inputs": ["source_dir", "languages"],
+          "outputs": ["graph", "statistics", "circular_dependencies"],
+          "complexity": "high",
+          "core_module": "Analyzer (AnalyzerService)"
+        },
+        {
+          "id": "FEAT-003",
+          "name": "Query Tool",
+          "description": "Traverse dependency graph for relationships",
+          "mcp_tool": "query_graph",
+          "inputs": ["target", "query_type", "max_depth"],
+          "outputs": ["results", "count", "execution_time"],
+          "complexity": "medium",
+          "core_module": "Query Engine (QueryExecutor)"
+        },
+        {
+          "id": "FEAT-004",
+          "name": "Parser Tool",
+          "description": "Parse and validate CodeRef tags",
+          "mcp_tool": "parse_tag",
+          "inputs": ["tag_string"],
+          "outputs": ["parsed", "is_valid", "errors"],
+          "complexity": "low",
+          "core_module": "Parser (CodeRefParser)"
+        },
+        {
+          "id": "FEAT-005",
+          "name": "Validator Tool",
+          "description": "Validate CodeRef references against codebase",
+          "mcp_tool": "validate_reference",
+          "inputs": ["reference", "source_dir"],
+          "outputs": ["is_valid", "errors", "warnings"],
+          "complexity": "medium",
+          "core_module": "Validator (CodeRefValidator)"
+        },
+        {
+          "id": "FEAT-006",
+          "name": "Exporter Tool",
+          "description": "Serialize dependency graph to various formats",
+          "mcp_tool": "export_graph",
+          "inputs": ["graph", "format"],
+          "outputs": ["exported", "format", "file_path"],
+          "complexity": "low",
+          "core_module": "Exporter (GraphExporter)"
+        },
+        {
+          "id": "FEAT-007",
+          "name": "Context Generation Tool (6-Phase)",
+          "description": "Generate comprehensive agentic context from codebase",
+          "mcp_tool": "generate_context",
+          "inputs": ["source_dir", "workorder_id", "task_description"],
+          "outputs": ["context", "complexity_metrics", "risk_assessment"],
+          "complexity": "very_high",
+          "core_module": "Context (6-phase complexity scorer, task context, edge cases, test patterns, examples, agentic formatter)"
+        },
+        {
+          "id": "FEAT-008",
+          "name": "RAG Integration Tool",
+          "description": "Index codebase and enable semantic search/Q&A",
+          "mcp_tool": "rag_ask_question",
+          "inputs": ["question", "source_dir"],
+          "outputs": ["answer", "sources", "confidence"],
+          "complexity": "very_high",
+          "core_module": "Integration/RAG (semantic search, graph-aware re-ranking, LLM integration)"
+        },
+        {
+          "id": "FEAT-009",
+          "name": "Caching Layer",
+          "description": "Cache results to improve performance",
+          "mcp_tool": "internal",
+          "inputs": ["query_hash", "ttl"],
+          "outputs": ["cached_result", "hit_rate"],
+          "complexity": "medium",
+          "core_module": "Internal"
+        },
+        {
+          "id": "FEAT-010",
+          "name": "Error Handling",
+          "description": "Graceful error handling and subprocess exception mapping",
+          "mcp_tool": "internal",
+          "inputs": ["subprocess_output"],
+          "outputs": ["error", "error_type", "details"],
+          "complexity": "medium",
+          "core_module": "Internal"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+        "name": "Coderef Context MCP Server",
+        "feature_dir": "coderef/working/coderef-context-mcp-server",
+        "description": "Build new MCP server exposing all 10 @coderef/core modules"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 1,
+          "title": "Project initialization and environment setup",
+          "description": "Create project structure, configure Python environment, install dependencies, validate @coderef/core availability",
+          "effort_hours": 4,
+          "dependencies": [],
+          "acceptance_criteria": [
+            "Python project structure created with standard layout",
+            "@coderef/core accessible via CLI (pnpm start commands)",
+            "All dependencies installed (mcp, pydantic, etc)",
+            "Configuration file created with proper defaults",
+            "Environment variable validation passing"
+          ]
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 1,
+          "title": "MCP server boilerplate and initialization",
+          "description": "Create MCP server.py with protocol handlers, configuration loader, startup validation, error handling setup",
+          "effort_hours": 6,
+          "dependencies": ["SETUP-001"],
+          "acceptance_criteria": [
+            "server.py implements MCP protocol correctly",
+            "Configuration loading works",
+            "Server starts without errors",
+            "Debug logging configured",
+            "Server responds to MCP handshake"
+          ]
+        },
+        {
+          "id": "BRIDGE-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 1,
+          "title": "Implement CodeRefCoreBridge for subprocess communication",
+          "description": "Create bridge class that executes @coderef/core CLI commands, parses JSON output, handles errors, normalizes paths, validates responses",
+          "effort_hours": 8,
+          "dependencies": ["SETUP-002"],
+          "acceptance_criteria": [
+            "Bridge executes pnpm start commands successfully",
+            "JSON response parsing works for all @coderef/core outputs",
+            "Path normalization handles Windows/Unix correctly",
+            "Error handling catches subprocess exceptions",
+            "30-second timeout implemented",
+            "Subprocess output validation working"
+          ]
+        },
+        {
+          "id": "BRIDGE-002",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 1,
+          "title": "Implement caching layer with TTL and LRU eviction",
+          "description": "Create CacheManager with configurable TTL (5 minutes), LRU eviction (max 100 entries), cache key generation from parameters",
+          "effort_hours": 6,
+          "dependencies": ["BRIDGE-001"],
+          "acceptance_criteria": [
+            "Cache stores and retrieves results correctly",
+            "TTL expiration working (5 minute default)",
+            "LRU eviction works when max entries exceeded",
+            "Cache hits recorded for metrics",
+            "Cache can be cleared programmatically",
+            "Cache serialization handles complex objects"
+          ]
+        },
+        {
+          "id": "SCANNER-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 2,
+          "title": "Implement Scanner MCP tool",
+          "description": "Create scan_elements tool that calls bridge, caches results, returns formatted element discovery data",
+          "effort_hours": 6,
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "Tool accepts source_dir, languages, exclude_patterns",
+            "Returns element list with type, name, file, line, exported",
+            "Statistics included (total elements, by type breakdown)",
+            "Caching working for repeated calls",
+            "Error handling for invalid source directories"
+          ]
+        },
+        {
+          "id": "ANALYZER-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 2,
+          "title": "Implement Analyzer MCP tool",
+          "description": "Create analyze_codebase tool that calls bridge to build dependency graph, returns nodes/edges/statistics",
+          "effort_hours": 8,
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "Tool analyzes codebase and returns full graph",
+            "Graph includes nodes (elements) and edges (relationships)",
+            "Statistics calculated (node count, edge count, density, circular deps)",
+            "Caching working (expensive operation, should be cached)",
+            "Large codebases handled without timeout"
+          ]
+        },
+        {
+          "id": "QUERY-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 2,
+          "title": "Implement Query Engine MCP tool",
+          "description": "Create query_graph tool that traverses dependency graph for relationships (what-calls-me, what-depends-on, etc)",
+          "effort_hours": 7,
+          "dependencies": ["ANALYZER-001"],
+          "acceptance_criteria": [
+            "Supports multiple query types (calls-me, depends-on, imports-me)",
+            "Max depth parameter working",
+            "Results include caller/callee information",
+            "Execution time tracked",
+            "Caching working for repeated queries"
+          ]
+        },
+        {
+          "id": "PARSER-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 2,
+          "title": "Implement Parser MCP tool",
+          "description": "Create parse_tag tool that parses CodeRef format tags, returns structured components",
+          "effort_hours": 4,
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "Parses @Type/path#element:line{metadata} format",
+            "Returns type, path, element, line, metadata as separate fields",
+            "Handles invalid formats gracefully",
+            "No caching needed (fast operation)"
+          ]
+        },
+        {
+          "id": "VALIDATOR-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 3,
+          "title": "Implement Validator MCP tool",
+          "description": "Create validate_reference tool that checks CodeRef references against actual codebase",
+          "effort_hours": 6,
+          "dependencies": ["PARSER-001", "SCANNER-001"],
+          "acceptance_criteria": [
+            "Validates parsed references",
+            "Returns is_valid, errors, warnings",
+            "Checks element exists, line number accurate",
+            "Caching working for repeated validations"
+          ]
+        },
+        {
+          "id": "EXPORTER-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 3,
+          "title": "Implement Exporter MCP tool",
+          "description": "Create export_graph tool that serializes dependency graph to JSON/other formats",
+          "effort_hours": 5,
+          "dependencies": ["ANALYZER-001"],
+          "acceptance_criteria": [
+            "Exports graph to JSON format",
+            "Includes version, timestamp, nodes, edges",
+            "Can save to file",
+            "Caching working for large exports"
+          ]
+        },
+        {
+          "id": "CONTEXT-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Implement Context Generation tool (6-phase)",
+          "description": "Create generate_context tool that orchestrates 6-phase context generation (complexity scoring, task context, edge cases, test patterns, examples, agentic formatting)",
+          "effort_hours": 12,
+          "dependencies": ["SCANNER-001", "ANALYZER-001", "QUERY-001"],
+          "acceptance_criteria": [
+            "All 6 phases execute successfully",
+            "Returns AgenticContext with metadata, confidence, processing stats",
+            "Complexity scores calculated for elements",
+            "Task-specific context filtering working",
+            "Edge case detection identifying risks",
+            "Test pattern analysis working",
+            "Code examples extracted",
+            "Final output formatted for agentic use",
+            "Caching working (very expensive operation)"
+          ]
+        },
+        {
+          "id": "RAG-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Implement RAG integration tool",
+          "description": "Create rag_ask_question tool that enables semantic search and Q&A over codebase using RAG system",
+          "effort_hours": 10,
+          "dependencies": ["ANALYZER-001", "CONTEXT-001"],
+          "acceptance_criteria": [
+            "Tool indexes codebase for RAG",
+            "Accepts natural language questions",
+            "Returns answer with source citations",
+            "Confidence scores calculated",
+            "Graph-aware re-ranking working",
+            "Multi-turn conversation support",
+            "Configuration validation (LLM provider, vector store)",
+            "Handles API errors gracefully"
+          ]
+        },
+        {
+          "id": "TYPES-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Create Pydantic type models for response validation",
+          "description": "Define Pydantic models for all @coderef/core response types to ensure type safety and validation",
+          "effort_hours": 6,
+          "dependencies": ["BRIDGE-002"],
+          "acceptance_criteria": [
+            "Models for ElementData, DependencyGraph, AnalysisResult",
+            "Models for QueryResult, ValidationResult, ExportedGraph",
+            "Models for AgenticContext with 6-phase structure",
+            "Models for RAG responses",
+            "All models support JSON serialization",
+            "Validation errors clear and helpful"
+          ]
+        },
+        {
+          "id": "ERROR-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Comprehensive error handling and validation",
+          "description": "Implement error handling for subprocess failures, validation errors, timeout handling, exception mapping to MCP errors",
+          "effort_hours": 5,
+          "dependencies": ["BRIDGE-001", "TYPES-001"],
+          "acceptance_criteria": [
+            "Subprocess timeout handled gracefully (30 seconds)",
+            "JSON parse errors caught and reported",
+            "Invalid input validation with clear messages",
+            "Errors mapped to appropriate MCP error types",
+            "Error responses include context for debugging",
+            "Logging captures all errors for troubleshooting"
+          ]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Unit and integration testing",
+          "description": "Write comprehensive unit tests for all components, integration tests with @coderef/core, performance tests",
+          "effort_hours": 10,
+          "dependencies": ["CONTEXT-001", "RAG-001", "ERROR-001"],
+          "acceptance_criteria": [
+            "Bridge unit tests (90%+ coverage)",
+            "Cache layer unit tests (100% coverage)",
+            "Handler unit tests for each tool",
+            "Integration tests with real @coderef/core",
+            "Performance tests (all tools <5s response time)",
+            "Windows and Unix path handling tested",
+            "All tests passing before release"
+          ]
+        },
+        {
+          "id": "PERF-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Performance optimization and profiling",
+          "description": "Profile bottlenecks, optimize caching strategy, reduce subprocess overhead, benchmark against targets",
+          "effort_hours": 6,
+          "dependencies": ["TEST-001"],
+          "acceptance_criteria": [
+            "All tools meet <5s response time target",
+            "Cache hit rate >70% for typical usage",
+            "Memory usage acceptable (<500MB)",
+            "Subprocess calls pooled/reused efficiently",
+            "Performance benchmarks documented",
+            "Profiling shows no obvious bottlenecks"
+          ]
+        },
+        {
+          "id": "DOCS-001",
+          "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
+          "phase": 4,
+          "title": "Documentation and deployment guide",
+          "description": "Write README, API docs, configuration guide, deployment instructions, troubleshooting guide",
+          "effort_hours": 4,
+          "dependencies": ["PERF-001"],
+          "acceptance_criteria": [
+            "README with overview and quick start",
+            "Configuration guide with all options documented",
+            "API documentation for each MCP tool",
+            "Deployment instructions for Windows/Unix",
+            "Troubleshooting section with common issues",
+            "Examples of using each tool",
+            "Performance characteristics documented"
+          ]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Infrastructure",
+          "description": "Initialize project, create MCP boilerplate, build subprocess bridge and caching layer",
+          "tasks": ["SETUP-001", "SETUP-002", "BRIDGE-001", "BRIDGE-002"],
+          "duration_weeks": 2,
+          "effort_hours": 24,
+          "deliverables": [
+            "Project structure with all required directories",
+            "MCP server startup working",
+            "CodeRefCoreBridge class implemented and tested",
+            "CacheManager with TTL/LRU working",
+            "Configuration system functional"
+          ],
+          "success_metrics": [
+            "Server starts without errors",
+            "Bridge executes sample CLI commands successfully",
+            "Cache stores/retrieves data correctly",
+            "All unit tests passing"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Core Analysis Tools",
+          "description": "Implement Scanner, Analyzer, Query, and Parser tools",
+          "tasks": ["SCANNER-001", "ANALYZER-001", "QUERY-001", "PARSER-001"],
+          "duration_weeks": 2.5,
+          "effort_hours": 25,
+          "deliverables": [
+            "Scanner tool discovering code elements",
+            "Analyzer building complete dependency graphs",
+            "Query engine traversing relationships",
+            "Parser handling CodeRef tag format",
+            "All tools cached and performant"
+          ],
+          "success_metrics": [
+            "Scanner finds all element types correctly",
+            "Analyzer builds graphs with >1000 nodes",
+            "Query returns relationships in <1s (cached)",
+            "Parser handles all CodeRef formats"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Validation & Export",
+          "description": "Implement Validator and Exporter tools",
+          "tasks": ["VALIDATOR-001", "EXPORTER-001"],
+          "duration_weeks": 1.5,
+          "effort_hours": 11,
+          "deliverables": [
+            "Validator checking reference accuracy",
+            "Exporter serializing graphs to multiple formats",
+            "Both tools integrated with caching"
+          ],
+          "success_metrics": [
+            "Validator catches missing/moved elements",
+            "Exporter produces valid JSON output",
+            "Both tools respond in <2s (cached)"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Advanced Features & Polish",
+          "description": "Implement Context, RAG, types, error handling, testing, optimization, documentation",
+          "tasks": ["CONTEXT-001", "RAG-001", "TYPES-001", "ERROR-001", "TEST-001", "PERF-001", "DOCS-001"],
+          "duration_weeks": 2.5,
+          "effort_hours": 53,
+          "deliverables": [
+            "6-phase context generation working end-to-end",
+            "RAG integration with semantic search",
+            "Complete type safety with Pydantic",
+            "Comprehensive error handling",
+            "Full test coverage (90%+ lines)",
+            "Performance optimized (<5s targets met)",
+            "Complete documentation"
+          ],
+          "success_metrics": [
+            "Context generation generates valid AgenticContext",
+            "RAG system returns high-confidence answers",
+            "All tests passing (unit + integration)",
+            "Performance benchmarks met",
+            "Zero documentation TODOs"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "overview": "Comprehensive testing across unit, integration, performance, and regression levels",
+      "unit_testing": {
+        "scope": "Individual components: Bridge, Cache, Handlers, Type models",
+        "tools": ["pytest", "pytest-cov"],
+        "target_coverage": "90%+",
+        "key_test_suites": [
+          "test_bridge.py - Subprocess execution, JSON parsing, error handling, path normalization",
+          "test_cache.py - TTL expiration, LRU eviction, hit rate, serialization",
+          "test_handlers.py - Each tool handler input validation and output format",
+          "test_types.py - Pydantic model validation, serialization"
+        ]
+      },
+      "integration_testing": {
+        "scope": "Full tool flow with real @coderef/core system",
+        "tools": ["pytest", "pytest-integration"],
+        "test_scenarios": [
+          "Scan a real TypeScript project and verify element count",
+          "Analyze same project and verify graph nodes/edges",
+          "Query relationships and verify results are correct",
+          "Validate references against actual code",
+          "Generate context for sample workorder",
+          "Test with different source directory patterns"
+        ],
+        "test_project": "coderef-system itself (good test subject with 1000+ elements)"
+      },
+      "performance_testing": {
+        "scope": "Response times under various loads",
+        "tools": ["pytest-benchmark", "time module"],
+        "targets": [
+          "Scanner: <3s for 100+ files",
+          "Analyzer: <5s for 100+ files",
+          "Query (cached): <1s",
+          "Parser: <100ms",
+          "Validator: <2s",
+          "Context generation: <10s",
+          "RAG queries: <5s"
+        ],
+        "caching_validation": [
+          "First call stores in cache",
+          "Second call hits cache, <100ms",
+          "Cache expiration at 5 minutes verified",
+          "LRU eviction tested with 100+ entries"
+        ]
+      },
+      "regression_testing": {
+        "scope": "Ensure no functionality broken by changes",
+        "approach": [
+          "Test suite runs before each commit",
+          "CI/CD integration for automated testing",
+          "Maintain baseline performance metrics"
+        ]
+      },
+      "windows_compatibility": {
+        "scope": "Verify Windows-specific path handling",
+        "test_cases": [
+          "Backslash path normalization to forward slashes",
+          "UNC path handling (\\\\server\\share)",
+          "Drive letter paths (C:\\path)",
+          "Relative path resolution",
+          "Case sensitivity differences"
+        ]
+      }
+    },
+    "8_success_criteria": {
+      "functional": [
+        "✅ All 10 @coderef/core modules accessible via MCP tools",
+        "✅ Scanner tool discovers code elements with >95% accuracy",
+        "✅ Analyzer builds dependency graphs with circular dependency detection",
+        "✅ Query engine returns relationship results in correct depth",
+        "✅ Parser handles all CodeRef tag formats correctly",
+        "✅ Validator identifies moved/missing/renamed elements",
+        "✅ Exporter produces valid JSON graphs",
+        "✅ 6-phase context generation produces AgenticContext with confidence scores",
+        "✅ RAG integration enables semantic code search with citations",
+        "✅ All error cases handled gracefully without crashes"
+      ],
+      "performance": [
+        "✅ Scanner response time: <3s for 100 files",
+        "✅ Analyzer response time: <5s for 100 files",
+        "✅ Query response time: <1s (cached), <3s (uncached)",
+        "✅ Parser response time: <100ms",
+        "✅ Validator response time: <2s",
+        "✅ Context generation: <10s",
+        "✅ Cache hit rate: >70% for typical usage",
+        "✅ Memory usage: <500MB for large codebases"
+      ],
+      "quality": [
+        "✅ Test coverage: 90%+ of code",
+        "✅ All integration tests passing",
+        "✅ No type errors (strict type checking)",
+        "✅ All linting rules passing",
+        "✅ Code formatted consistently (black/isort)",
+        "✅ Documentation 100% complete",
+        "✅ No known bugs or TODOs"
+      ],
+      "compatibility": [
+        "✅ Windows path handling working correctly",
+        "✅ Unix/Linux path handling working correctly",
+        "✅ Works with @coderef/core v2.0.0+",
+        "✅ Compatible with MCP SDK v0.5.0+",
+        "✅ Python 3.8+ supported"
+      ],
+      "acceptance": [
+        "✅ Can replace existing coderef-mcp server",
+        "✅ All existing tool contracts maintained/improved",
+        "✅ New 6-phase context generation working",
+        "✅ RAG system integrated and functional",
+        "✅ Agent can implement with provided documentation"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_setup_infrastructure": {
+        "name": "Phase 1: Setup & Infrastructure",
+        "status": "pending",
+        "items": [
+          "[ ] SETUP-001: Create project structure and install dependencies",
+          "[ ] SETUP-002: Implement MCP server.py boilerplate",
+          "[ ] BRIDGE-001: Implement CodeRefCoreBridge subprocess communication",
+          "[ ] BRIDGE-002: Implement CacheManager with TTL/LRU",
+          "[ ] All Phase 1 unit tests passing",
+          "[ ] Bridge tested with sample @coderef/core commands",
+          "[ ] Configuration system working",
+          "[ ] Phase 1 deliverables signed off"
+        ]
+      },
+      "phase_2_core_analysis_tools": {
+        "name": "Phase 2: Core Analysis Tools",
+        "status": "pending",
+        "items": [
+          "[ ] SCANNER-001: Scanner MCP tool implemented",
+          "[ ] ANALYZER-001: Analyzer MCP tool implemented",
+          "[ ] QUERY-001: Query Engine MCP tool implemented",
+          "[ ] PARSER-001: Parser MCP tool implemented",
+          "[ ] All Phase 2 unit tests passing",
+          "[ ] Integration tests with real codebase passing",
+          "[ ] Performance targets met (<5s response times)",
+          "[ ] Caching working for all tools",
+          "[ ] Phase 2 deliverables signed off"
+        ]
+      },
+      "phase_3_validation_export": {
+        "name": "Phase 3: Validation & Export",
+        "status": "pending",
+        "items": [
+          "[ ] VALIDATOR-001: Validator MCP tool implemented",
+          "[ ] EXPORTER-001: Exporter MCP tool implemented",
+          "[ ] Phase 3 unit tests passing",
+          "[ ] Integration tests passing",
+          "[ ] Validator catches real errors",
+          "[ ] Exporter produces valid output",
+          "[ ] Phase 3 deliverables signed off"
+        ]
+      },
+      "phase_4_advanced_features": {
+        "name": "Phase 4: Advanced Features & Polish",
+        "status": "pending",
+        "items": [
+          "[ ] CONTEXT-001: 6-phase context generation implemented",
+          "[ ] RAG-001: RAG integration tool implemented",
+          "[ ] TYPES-001: Pydantic type models created",
+          "[ ] ERROR-001: Comprehensive error handling added",
+          "[ ] TEST-001: Full test suite (90%+ coverage)",
+          "[ ] PERF-001: Performance optimization complete",
+          "[ ] DOCS-001: Documentation written",
+          "[ ] All Phase 4 tests passing",
+          "[ ] Performance benchmarks met",
+          "[ ] Windows/Unix compatibility verified",
+          "[ ] Regression testing passing",
+          "[ ] Code review completed",
+          "[ ] Phase 4 deliverables signed off"
+        ]
+      },
+      "final_acceptance": {
+        "name": "Final Acceptance",
+        "status": "pending",
+        "items": [
+          "[ ] All 4 phases completed and signed off",
+          "[ ] All tests passing (100%)",
+          "[ ] Performance benchmarks met",
+          "[ ] Documentation complete",
+          "[ ] Can replace existing coderef-mcp server",
+          "[ ] Ready for production deployment",
+          "[ ] Workorder closed successfully"
+        ]
+      }
+    }
+  }
+}

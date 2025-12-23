@@ -23,10 +23,15 @@
 **docs-mcp** is a focused MCP server providing:
 - **11 specialized tools** for documentation generation, changelog management, quickref generation, and consistency auditing
 - **POWER framework templates** for comprehensive technical documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA, user-guide, my-guide)
-- **Changelog Management** - Structured changelog (CHANGELOG.json) with full CRUD operations and schema validation
+- **Agentic Changelog Management** - Smart `record_changes` tool with git auto-detection, change_type suggestion, severity calculation, and agent confirmation flow
+- **Changelog Operations** - Read/query (`get_changelog`) and add entries (`add_changelog_entry`) with full CRUD operations and schema validation
 - **Live Standards & Compliance** - Establish coding standards from codebase patterns, audit compliance, check consistency on staged changes
 - **Quickref Generation** - Interactive workflow for generating universal quick-reference guides for any application type
 - **Enterprise patterns**: modular handlers, structured logging, error handling, security hardening
+
+**Recent Changes (v2.0.1):**
+- ✨ **Added** `record_changes` - Smart agentic tool replacing manual changelog workflow with git auto-detection
+- 🗑️ **Deprecated** `update_changelog` - Instructional meta-tool, replaced by agentic `record_changes` tool
 
 **Note:** Planning, workflow, agent coordination, and deliverables tracking tools have been moved to **coderef-workflow** MCP for cleaner separation of concerns.
 
@@ -132,7 +137,7 @@ templates/power/                # POWER framework templates
 - `mcp__docs-mcp__generate_individual_doc`
 - `mcp__docs-mcp__get_changelog`
 - `mcp__docs-mcp__add_changelog_entry`
-- `mcp__docs-mcp__update_changelog`
+- `mcp__docs-mcp__record_changes` ⭐ **NEW - Agentic tool for smart changelog recording**
 - `mcp__docs-mcp__generate_quickref_interactive`
 - `mcp__docs-mcp__establish_standards`
 - `mcp__docs-mcp__audit_codebase`
@@ -144,6 +149,9 @@ templates/power/                # POWER framework templates
 - `mcp__docs-mcp__generate_plan_review_report`
 - `mcp__docs-mcp__coderef_foundation_docs`
 - `mcp__docs-mcp__archive_feature`
+
+**Deprecated:**
+- `mcp__docs-mcp__update_changelog` - Use `record_changes` instead (provides agentic workflow with git auto-detection)
 
 ### Slash Commands (Claude Code Shortcuts)
 
@@ -1828,8 +1836,87 @@ get_changelog(project_path="C:/path/to/project", change_type="security")
 
 ---
 
-#### `add_changelog_entry`
-**Purpose**: Add a new entry to the project changelog
+#### `record_changes` ⭐ NEW - Agentic Changelog Tool
+**Purpose**: Smart agentic changelog recording with git auto-detection and agent confirmation workflow
+
+**Input** (all required except `context`):
+- `project_path` (string): Absolute path to project directory
+- `version` (string): Version number (format: X.Y.Z, e.g., "1.0.3")
+- `context` (object, optional): Auto-detected context from git or provided by agent
+  - `files_changed` (array): Files to include (auto-detected from git if not provided)
+  - `commit_messages` (array): Recent commits (auto-detected from git if not provided)
+  - `feature_name` (string): Feature name for context
+  - `description` (string): Manual description of changes
+
+**Output**: JSON with preview, auto-detected values, and confirmation prompt
+
+**Example Workflow:**
+```python
+# Agent calls record_changes with minimal input
+result = record_changes(
+    project_path="C:/path/to/project",
+    version="1.0.3"
+)
+
+# Agent sees preview:
+# ┌──────────────────────────────────────────┐
+# │ 📝 CHANGELOG ENTRY PREVIEW               │
+# ├──────────────────────────────────────────┤
+# │ Type: feature (from: 'feat(...)' pattern)│
+# │ Severity: major (3 files changed)        │
+# │ Files: [tool_handlers.py, ...]           │
+# │                                          │
+# │ Suggested Title: Add record_changes tool │
+# │ Suggested Reason: Replace manual workflow│
+# │ Suggested Impact: 1-call vs 3-call flow  │
+# │                                          │
+# │ ✅ Confirm? [Y/n]                      │
+# │ Need to change title? [blank/text]      │
+# │ Add additional notes? [blank/text]      │
+# └──────────────────────────────────────────┘
+
+# Agent confirms (or makes changes), entry is created
+# Returns: {
+#   "change_id": "change-048",
+#   "recorded": true,
+#   "changelog_entry": {...},
+#   "metadata": {
+#     "auto_detected": {
+#       "files_from": "git diff --staged",
+#       "type_from": "commit msg: 'feat(...)'",
+#       "severity_from": "scope: 3 files = major"
+#     },
+#     "agent_confirmed": true,
+#     "recorded_at": "2025-12-23T18:32:15Z"
+#   }
+# }
+```
+
+**Key Features:**
+- **Git Auto-Detection** - Automatically detects staged files, change type from commits, severity from scope
+- **Agent Confirmation** - Shows preview and allows agent to modify before creation
+- **Fallback Support** - Optional `context` parameter for git-less environments
+- **Agentic Pattern** - Single tool call replaces 3-step manual workflow (update_changelog → add_changelog_entry workflow)
+
+**When to use:**
+- After completing feature implementation
+- When git changes are already staged (git add)
+- To replace the old 3-tool workflow (update_changelog + add_changelog_entry)
+- For autonomous changelog recording with agent confirmation
+
+**Comparison with old workflow:**
+| Aspect | Old Workflow | New record_changes |
+|--------|--------------|-------------------|
+| Steps | 3 (update_changelog → analyze → add_changelog_entry) | 1 (record_changes) |
+| Auto-detection | Manual | Git auto-detection |
+| Agent involvement | High | Confirmation only |
+| Error rate | Higher (manual input) | Lower (auto-suggested) |
+| Time per entry | 2-3 min | < 1 min |
+
+---
+
+#### `add_changelog_entry` (Still Available)
+**Purpose**: Add a new entry to the project changelog (direct method without auto-detection)
 
 **Input** (all required except noted):
 - `project_path` (string): Absolute path to project directory

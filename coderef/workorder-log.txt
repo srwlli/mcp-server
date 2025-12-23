@@ -1,3 +1,6 @@
+WO-CODEREF-CONTEXT-MCP-SERVER-001 | coderef-context | Build new MCP server exposing all 10 @coderef/c... | 2025-12-23T23:22:51.497063+00:00
+WO-CHANGELOG-REFACTOR-001 | docs-mcp | changelog-refactor: consolidate 3 tools to 2 wi... | 2025-12-23T22:52:25.651159+00:00
+WO-CREATE-MINIMAL-DOCS-MCP-001 | docs-mcp | Refactor docs-mcp to 12-tool minimal implementa... | 2025-12-23T22:00:13.286199+00:00
 WO-PHASE-2-TEST-FEATURE-001 | docs-mcp | Phase 2 test feature - dual-MCP artifact access... | 2025-12-23T20:26:44.391521+00:00
 WO-CODEREF-DASHBOARD-INIT-001 | coderef-dashboard | Brand new coderef-dashboard project - monorepo ... | 2025-12-23T19:44:41.554659+00:00
 WO-MCP-INTEGRATION-LAYER-001 | coderef-ecosystem | Integrate git-mcp and claude-filesystem-mcp wit... | 2025-12-23T19:30:29.744456+00:00

@@ -3,7 +3,11 @@
 Documentation Generation MCP Server (Minimal Implementation)
 
 Provides tools for generating project documentation using POWER framework templates.
-This minimal version contains only 12 documentation-focused tools.
+This minimal version contains 11 documentation-focused tools.
+
+Recent changes:
+- Deprecated: update_changelog (purely instructional tool - replaced by record_changes agentic tool)
+- Added: record_changes (smart agentic tool with git auto-detection, change_type suggestion, severity calculation, and agent confirmation)
 
 Removed tools (now in coderef-workflow MCP):
 - Planning tools: get_planning_template, analyze_project_for_planning, gather_context, create_plan, validate_implementation_plan, generate_plan_review_report, generate_deliverables_template, generate_handoff_context
@@ -222,8 +226,8 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
-            name="update_changelog",
-            description="Agentic workflow tool that instructs the agent to analyze their recent changes and update the changelog using context. Agent reviews modified files, determines change details, and calls add_changelog_entry.",
+            name="record_changes",
+            description="Smart agentic changelog recording with git auto-detection. Auto-detects changed files (git diff --staged), suggests change_type from commit messages, calculates severity from scope, and shows preview for agent confirmation before creating entry.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -235,6 +239,11 @@ async def list_tools() -> list[Tool]:
                         "type": "string",
                         "description": "Version number for this change (e.g., '1.0.3')",
                         "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+                    },
+                    "context": {
+                        "type": "object",
+                        "description": "Optional context for git-less environments. Can include files_changed, commit_messages, feature_name, description",
+                        "default": {}
                     }
                 },
                 "required": ["project_path", "version"]

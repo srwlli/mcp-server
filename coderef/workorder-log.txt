@@ -1,3 +1,4 @@
+WO-PHASE-2-TEST-FEATURE-001 | docs-mcp | Phase 2 test feature - dual-MCP artifact access... | 2025-12-23T20:26:44.391521+00:00
 WO-CODEREF-DASHBOARD-INIT-001 | coderef-dashboard | Brand new coderef-dashboard project - monorepo ... | 2025-12-23T19:44:41.554659+00:00
 WO-MCP-INTEGRATION-LAYER-001 | coderef-ecosystem | Integrate git-mcp and claude-filesystem-mcp wit... | 2025-12-23T19:30:29.744456+00:00
 WO-MODULAR-WIDGET-SYSTEM-PWA-ELECTRON-001 | scriptboard | New widget-based dashboard (PWA + Electron) dis... | 2025-12-23T19:30:25.980205+00:00

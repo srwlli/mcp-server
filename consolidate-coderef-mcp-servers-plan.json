@@ -1,0 +1,351 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_name": "Consolidate CodeRef MCP Servers",
+    "workorder_id": "WO-CONSOLIDATE-CODEREF-001",
+    "version": "1.0.0",
+    "status": "draft",
+    "created_date": "2024-12-24",
+    "author": "Claude Code AI",
+    "description": "Consolidate coderef-mcp and coderef-context into ONE unified MCP server exposing ALL 21 @coderef/core CLI commands"
+  },
+  "EXECUTIVE_SUMMARY": {
+    "problem_statement": "Currently have TWO MCP servers (coderef-mcp and coderef-context) with different tool sets. Only 10/21 CLI commands are exposed. User wants ONE MCP server with ALL tools for use in planning workflows.",
+    "current_state": {
+      "coderef_mcp": {
+        "tools": 8,
+        "approach": "Direct @coderef/core library integration",
+        "tools_list": ["query", "analyze", "validate", "batch_validate", "generate_docs", "audit", "nl_query", "scan_realtime"]
+      },
+      "coderef_context": {
+        "tools": 10,
+        "approach": "CLI subprocess wrapper",
+        "tools_list": ["scan", "query", "impact", "complexity", "patterns", "coverage", "context", "validate", "drift", "diagram"]
+      },
+      "cli_available": {
+        "registered": 9,
+        "unregistered_but_implemented": 12,
+        "total": 21
+      }
+    },
+    "missing_commands": [
+      "init",
+      "index",
+      "export",
+      "generate",
+      "dashboard",
+      "watch",
+      "update-ref",
+      "format-ref",
+      "rag-index",
+      "rag-ask",
+      "rag-config"
+    ],
+    "goal": "Create ONE unified MCP server (coderef-context) with ALL 21 CLI commands + orchestration tools = 24 total tools"
+  },
+  "RISK_ASSESSMENT": {
+    "overall_risk": "LOW",
+    "breaking_changes": true,
+    "migration_required": true,
+    "risks": [
+      {
+        "risk": "Users relying on coderef-mcp tools",
+        "severity": "MEDIUM",
+        "mitigation": "Migrate all coderef-mcp tools to consolidated server before deprecation"
+      },
+      {
+        "risk": "CLI commands not registered may have bugs",
+        "severity": "LOW",
+        "mitigation": "Test each command individually before exposing via MCP"
+      },
+      {
+        "risk": "Breaking existing workflows using coderef-mcp namespace",
+        "severity": "MEDIUM",
+        "mitigation": "Update all references in personas, commands, settings before removal"
+      }
+    ]
+  },
+  "IMPLEMENTATION_PHASES": [
+    {
+      "phase_id": "phase_1",
+      "phase_name": "Register Missing CLI Commands",
+      "description": "Wire up 12 commands that have handlers but aren't registered in cli.ts",
+      "estimated_time": "30 minutes",
+      "tasks": [
+        {
+          "task_id": "CLI-REG-001",
+          "description": "Add imports for unregistered command handlers in cli.ts",
+          "files": ["C:/Users/willh/Desktop/projects/coderef-system/packages/cli/src/cli.ts"],
+          "details": "Import: handleInitCommand, handleIndexCommand, registerExportCommand, registerGenerateCommand, handleContextCommand, handleDashboardCommand, registerWatchCommand, registerRagIndexCommand, registerRagAskCommand, registerRagConfigCommand"
+        },
+        {
+          "task_id": "CLI-REG-002",
+          "description": "Register commands in cli.ts program",
+          "files": ["C:/Users/willh/Desktop/projects/coderef-system/packages/cli/src/cli.ts"],
+          "details": "Call registerXxxCommand(program) for export, generate, watch, rag-* commands. Wrap init, index, context, dashboard in .command() blocks"
+        },
+        {
+          "task_id": "CLI-REG-003",
+          "description": "Test all newly registered CLI commands",
+          "files": [],
+          "details": "Run: node cli.js init, node cli.js index, node cli.js export, node cli.js generate --list, etc. Verify each command executes without errors"
+        }
+      ],
+      "success_criteria": [
+        "All 21 CLI commands are registered and executable",
+        "Running 'node cli.js --help' shows all commands",
+        "Each command can be invoked without errors"
+      ]
+    },
+    {
+      "phase_id": "phase_2",
+      "phase_name": "Add MCP Tool Wrappers for Missing Commands",
+      "description": "Extend coderef-context server.py with 11 new tool definitions wrapping newly registered CLI commands",
+      "estimated_time": "2-3 hours",
+      "tasks": [
+        {
+          "task_id": "MCP-WRAP-001",
+          "description": "Add coderef_init tool (initialize project)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js init' command. Parameters: project_path"
+        },
+        {
+          "task_id": "MCP-WRAP-002",
+          "description": "Add coderef_index tool (build persistent index)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js index' command. Parameters: project_path, languages, force_rebuild"
+        },
+        {
+          "task_id": "MCP-WRAP-003",
+          "description": "Add coderef_export tool (export dependency graph)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js export' command. Parameters: project_path, format (mermaid/dot/jsonld/json), output_file"
+        },
+        {
+          "task_id": "MCP-WRAP-004",
+          "description": "Add coderef_generate tool (generate outputs from scan)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js generate' command. Parameters: project_path, generator_type (12 types), output_path"
+        },
+        {
+          "task_id": "MCP-WRAP-005",
+          "description": "Add coderef_dashboard tool (generate HTML dashboard)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js dashboard' command. Parameters: project_path, output_file"
+        },
+        {
+          "task_id": "MCP-WRAP-006",
+          "description": "Add coderef_watch tool (live file watching)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js watch' command. Parameters: project_path, debounce_ms. Note: May need background process support"
+        },
+        {
+          "task_id": "MCP-WRAP-007",
+          "description": "Add coderef_update_ref tool (fix stale references)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js update-ref' command. Parameters: project_path, target_ref, new_ref"
+        },
+        {
+          "task_id": "MCP-WRAP-008",
+          "description": "Add coderef_format_ref tool (normalize references)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js format-ref' command. Parameters: project_path, reference"
+        },
+        {
+          "task_id": "MCP-WRAP-009",
+          "description": "Add coderef_rag_index tool (RAG indexing)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js rag:index' command. Parameters: project_path, provider (pinecone/chroma), api_key"
+        },
+        {
+          "task_id": "MCP-WRAP-010",
+          "description": "Add coderef_rag_ask tool (RAG queries)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js rag:ask' command. Parameters: project_path, question, provider"
+        },
+        {
+          "task_id": "MCP-WRAP-011",
+          "description": "Add coderef_rag_config tool (RAG configuration)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Tool wrapper for 'node cli.js rag:config' command. Parameters: project_path, config_file"
+        }
+      ],
+      "success_criteria": [
+        "All 11 new tools are defined in server.py",
+        "Each tool has proper inputSchema with required parameters",
+        "Subprocess calls execute successfully",
+        "JSON responses are parsed correctly"
+      ]
+    },
+    {
+      "phase_id": "phase_3",
+      "phase_name": "Migrate High-Value Tools from coderef-mcp",
+      "description": "Port orchestration tools from coderef-mcp to unified coderef-context server",
+      "estimated_time": "1 hour",
+      "tasks": [
+        {
+          "task_id": "MCP-MIG-001",
+          "description": "Add coderef_nl_query tool (natural language query)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Port nl_query handler from coderef-mcp. Natural language interface for querying codebase using LLM to translate to CodeRef queries"
+        },
+        {
+          "task_id": "MCP-MIG-002",
+          "description": "Add coderef_batch_validate tool (parallel validation)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Port batch_validate handler from coderef-mcp. Validates multiple references in parallel/sequential with timeout support"
+        },
+        {
+          "task_id": "MCP-MIG-003",
+          "description": "Add coderef_audit tool (comprehensive auditing)",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
+          "details": "Port audit handler from coderef-mcp. Audits elements for validation, coverage, performance with scoring"
+        }
+      ],
+      "success_criteria": [
+        "All 3 orchestration tools are functional in coderef-context",
+        "No dependencies on old coderef-mcp remain",
+        "Tool behavior matches original coderef-mcp implementations"
+      ]
+    },
+    {
+      "phase_id": "phase_4",
+      "phase_name": "Update Configuration and Deprecate Old Server",
+      "description": "Update .mcp.json, settings, and remove coderef-mcp server",
+      "estimated_time": "30 minutes",
+      "tasks": [
+        {
+          "task_id": "CONFIG-001",
+          "description": "Remove coderef-mcp entry from .mcp.json",
+          "files": ["C:/Users/willh/.claude/.mcp.json"],
+          "details": "Delete 'coderef' server entry. Keep only 'coderef-context' which now has all tools"
+        },
+        {
+          "task_id": "CONFIG-002",
+          "description": "Update namespace references in settings.local.json",
+          "files": [
+            "C:/Users/willh/.claude/settings.local.json",
+            "C:/Users/willh/.mcp-servers/.claude/settings.local.json"
+          ],
+          "details": "Change mcp__coderef__* to mcp__coderef-context__* for migrated tools"
+        },
+        {
+          "task_id": "CONFIG-003",
+          "description": "Update persona definitions",
+          "files": [
+            "C:/Users/willh/.mcp-servers/personas-mcp/personas/base/ava.json",
+            "C:/Users/willh/.mcp-servers/personas-mcp/personas/base/lloyd.json",
+            "C:/Users/willh/.mcp-servers/personas-mcp/personas/base/marcus.json"
+          ],
+          "details": "Update preferred_tools arrays to reference unified coderef-context tools"
+        },
+        {
+          "task_id": "CONFIG-004",
+          "description": "Update global slash commands",
+          "files": ["C:/Users/willh/.claude/commands/*.md"],
+          "details": "Search for mcp__coderef__* references and update to mcp__coderef-context__*"
+        },
+        {
+          "task_id": "CONFIG-005",
+          "description": "Archive coderef-mcp directory",
+          "files": [],
+          "details": "Move C:/Users/willh/.mcp-servers/coderef-mcp to C:/Users/willh/.mcp-servers/archived/coderef-mcp-deprecated"
+        }
+      ],
+      "success_criteria": [
+        "Only coderef-context server is registered in .mcp.json",
+        "All namespace references updated to coderef-context",
+        "No broken tool references remain",
+        "Old coderef-mcp directory is archived"
+      ]
+    },
+    {
+      "phase_id": "phase_5",
+      "phase_name": "Documentation and Testing",
+      "description": "Update documentation and verify all tools work correctly",
+      "estimated_time": "1 hour",
+      "tasks": [
+        {
+          "task_id": "DOC-001",
+          "description": "Update coderef-context README.md",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/README.md"],
+          "details": "Document all 24 tools with usage examples, parameters, and return values"
+        },
+        {
+          "task_id": "DOC-002",
+          "description": "Create MIGRATION_GUIDE.md",
+          "files": ["C:/Users/willh/.mcp-servers/coderef-context/MIGRATION_GUIDE.md"],
+          "details": "Document migration from coderef-mcp to unified coderef-context for users"
+        },
+        {
+          "task_id": "TEST-001",
+          "description": "Test all 24 tools",
+          "files": [],
+          "details": "Create test script that invokes each tool with sample parameters. Verify JSON responses are valid"
+        },
+        {
+          "task_id": "TEST-002",
+          "description": "Integration test with planning workflow",
+          "files": [],
+          "details": "Test using coderef tools in actual planning workflow to create plan.json. Verify context generation works"
+        }
+      ],
+      "success_criteria": [
+        "README.md documents all 24 tools",
+        "MIGRATION_GUIDE.md is complete",
+        "All tools tested and verified working",
+        "Planning workflow integration confirmed"
+      ]
+    }
+  ],
+  "FINAL_STATE": {
+    "unified_server": {
+      "name": "coderef-context",
+      "total_tools": 24,
+      "cli_wrappers": 21,
+      "orchestration_tools": 3,
+      "approach": "CLI subprocess wrapper + orchestration layer"
+    },
+    "tool_inventory": {
+      "cli_commands": [
+        "coderef_scan",
+        "coderef_query",
+        "coderef_validate",
+        "coderef_drift",
+        "coderef_impact",
+        "coderef_coverage",
+        "coderef_diagram",
+        "coderef_context",
+        "coderef_complexity",
+        "coderef_patterns",
+        "coderef_init",
+        "coderef_index",
+        "coderef_export",
+        "coderef_generate",
+        "coderef_dashboard",
+        "coderef_watch",
+        "coderef_update_ref",
+        "coderef_format_ref",
+        "coderef_rag_index",
+        "coderef_rag_ask",
+        "coderef_rag_config"
+      ],
+      "orchestration_tools": [
+        "coderef_nl_query",
+        "coderef_batch_validate",
+        "coderef_audit"
+      ]
+    },
+    "deprecated_servers": [
+      "coderef-mcp"
+    ]
+  },
+  "SUCCESS_CRITERIA": {
+    "phase_completion": "All 5 phases completed successfully",
+    "tool_count": "24 tools available in unified server",
+    "configuration": "Only coderef-context registered in .mcp.json",
+    "documentation": "Complete README and MIGRATION_GUIDE",
+    "testing": "All tools tested and working",
+    "workflow_integration": "Successfully used in planning workflow to create plan.json"
+  },
+  "ESTIMATED_TOTAL_TIME": "4-5 hours"
+}

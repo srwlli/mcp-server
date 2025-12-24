@@ -8,13 +8,41 @@
       ],
       "cwd": "C:\\Users\\willh\\.mcp-servers\\personas-mcp"
     },
+    "coderef-context": {
+      "command": "python",
+      "args": [
+        "C:/Users/willh/.mcp-servers/coderef-context/server.py"
+      ],
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-context",
+      "env": {
+        "CODEREF_CLI_PATH": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli"
+      }
+    },
+    "coderef-docs": {
+      "command": "uv",
+      "args": [
+        "run",
+        "server.py"
+      ],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-docs"
+    },
+    "coderef-workflow": {
+      "command": "uv",
+      "args": [
+        "run",
+        "server.py"
+      ],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow"
+    }
+  },
+  "_archived": {
     "coderef": {
       "command": "uv",
       "args": [
         "run",
         "server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\archived\\coderef-mcp",
       "env": {
         "CODEREF_CLI_PATH": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli"
       }
@@ -22,17 +50,9 @@
     "scriptboard-mcp": {
       "command": "python",
       "args": [
-        "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp\\server.py"
+        "C:\\Users\\willh\\.mcp-servers\\archived\\scriptboard-mcp\\server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp"
-    },
-    "docs": {
-      "command": "uv",
-      "args": [
-        "run",
-        "server.py"
-      ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\docs-mcp"
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\archived\\scriptboard-mcp"
     },
     "hello-world": {
       "command": "uv",
@@ -40,10 +60,8 @@
         "run",
         "server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp"
-    }
-  },
-  "_disabled": {
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\archived\\hello-world-mcp"
+    },
     "chrome-devtools": {
       "command": "npx",
       "args": [

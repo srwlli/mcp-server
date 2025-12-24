@@ -912,8 +912,8 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
     # Initialize PlanningAnalyzer
     analyzer = PlanningAnalyzer(project_path_obj)
 
-    # Run analysis
-    result = analyzer.analyze()
+    # Run analysis (async with MCP tool integration)
+    result = await analyzer.analyze()
 
     # Feature-specific file persistence (optional)
     if feature_name:

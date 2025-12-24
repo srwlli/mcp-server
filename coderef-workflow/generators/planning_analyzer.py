@@ -9,10 +9,12 @@ from pathlib import Path
 from typing import List, Dict
 import json
 import re
+import asyncio
 
 from type_defs import PreparationSummaryDict
 from logger_config import logger
 from constants import EXCLUDE_DIRS, ALLOWED_FILE_EXTENSIONS
+from mcp_client import call_coderef_tool
 
 __all__ = ['PlanningAnalyzer']
 
@@ -43,9 +45,11 @@ class PlanningAnalyzer:
         self.project_path = project_path
         logger.debug(f"Initialized PlanningAnalyzer for project: {project_path}")
 
-    def analyze(self) -> PreparationSummaryDict:
+    async def analyze(self) -> PreparationSummaryDict:
         """
         Main analysis method - orchestrates all scanning operations.
+
+        Async version supports MCP tool calls for enhanced analysis.
 
         Returns:
             PreparationSummaryDict with all analysis results
@@ -63,16 +67,16 @@ class PlanningAnalyzer:
         foundation_doc_content = self.read_foundation_doc_content()
 
         logger.info("Reading inventory data...")
-        inventory_data = self.read_inventory_data()
+        inventory_data = await self.read_inventory_data()
 
         logger.info("Scanning coding standards...")
         coding_standards = self.scan_coding_standards()
 
         logger.info("Finding reference components...")
-        reference_components = self.find_reference_components()
+        reference_components = await self.find_reference_components()
 
         logger.info("Analyzing code patterns...")
-        key_patterns_identified = self.identify_patterns()
+        key_patterns_identified = await self.identify_patterns()
 
         logger.info("Detecting technology stack...")
         technology_stack = self.detect_technology_stack()
@@ -81,7 +85,7 @@ class PlanningAnalyzer:
         project_structure = self.analyze_project_structure()
 
         logger.info("Identifying gaps and risks...")
-        gaps_and_risks = self.identify_gaps_and_risks()
+        gaps_and_risks = await self.identify_gaps_and_risks()
 
         # Build result
         result: PreparationSummaryDict = {
@@ -194,23 +198,39 @@ class PlanningAnalyzer:
         headers = re.findall(r'^#{1,3}\s+(.+)$', content, re.MULTILINE)
         return headers[:10]  # Limit to first 10 headers
 
-    def read_inventory_data(self) -> dict:
+    async def read_inventory_data(self) -> dict:
         """
-        Read existing inventory data from coderef/inventory/.
+        Read existing inventory data from coderef/inventory/ or generate live inventory.
 
-        Reads available inventory manifests:
-        - manifest.json (file inventory)
-        - dependencies.json (package dependencies)
-        - api.json (API endpoints)
-        - database.json (database schemas)
-        - config.json (configuration files)
-        - tests.json (test infrastructure)
-        - documentation.json (documentation files)
+        Attempts to call coderef_scan for live AST-based inventory generation.
+        Falls back to reading manifest files if tool unavailable.
 
         Returns:
             Dict with inventory type as key, summary data as value
         """
         logger.debug("Reading inventory data...")
+
+        # Try to use coderef_scan for live inventory
+        try:
+            result = await call_coderef_tool(
+                "coderef_scan",
+                {
+                    "project_path": str(self.project_path),
+                    "languages": ["ts", "tsx", "js", "jsx", "py"]
+                }
+            )
+            if result.get("success"):
+                scan_data = result.get("data", {})
+                logger.info(f"Generated live inventory via coderef_scan: {scan_data.get('summary', {})}")
+                return {
+                    'scan_results': scan_data,
+                    'source': 'coderef_scan',
+                    'total_elements': scan_data.get('summary', {}).get('total_elements', 0)
+                }
+        except Exception as e:
+            logger.debug(f"coderef_scan unavailable: {str(e)}, reading manifest files")
+
+        # Fallback to reading manifest files
         inventory_data = {}
         inventory_dir = self.project_path / 'coderef' / 'inventory'
 
@@ -361,19 +381,56 @@ class PlanningAnalyzer:
         logger.debug(f"Found {len(available)} coding standards, {len(missing)} missing")
         return {'available': available, 'missing': missing}
 
-    def find_reference_components(self) -> dict:
+    async def find_reference_components(self) -> dict:
         """
         Finds similar components based on file names and patterns.
 
+        Uses coderef_query tool for dependency graph analysis.
+
         Returns:
-            Dict with 'primary', 'secondary', and optional 'note' keys
+            Dict with 'primary', 'secondary', and 'total_found' keys
         """
         logger.debug("Finding reference components...")
-        return {'primary': None, 'secondary': [], 'note': 'Reference component matching requires feature name - not yet implemented'}
 
-    def identify_patterns(self) -> List[str]:
+        try:
+            # Try to use coderef_query tool for actual component discovery
+            result = await call_coderef_tool(
+                "coderef_query",
+                {
+                    "project_path": str(self.project_path),
+                    "query_type": "depends-on-me",
+                    "target": "*",
+                    "max_depth": 2
+                }
+            )
+
+            if result.get("success"):
+                # Extract primary and secondary components from dependency graph
+                query_results = result.get("data", {})
+                return {
+                    'primary': None,
+                    'secondary': list(query_results.keys())[:10],  # Top 10 dependencies
+                    'total_found': len(query_results),
+                    'source': 'coderef_query'
+                }
+            else:
+                logger.warning("coderef_query failed, using fallback")
+                return self._find_reference_components_fallback()
+
+        except Exception as e:
+            logger.warning(f"Error calling coderef_query: {str(e)}, using fallback")
+            return self._find_reference_components_fallback()
+
+    def _find_reference_components_fallback(self) -> dict:
+        """Fallback method when coderef tool unavailable."""
+        return {'primary': None, 'secondary': [], 'total_found': 0, 'note': 'Using fallback - coderef tools unavailable'}
+
+    async def identify_patterns(self) -> List[str]:
         """
         Analyzes code files to identify reusable patterns.
+
+        Uses coderef_patterns tool for AST-based pattern detection (99% accuracy).
+        Falls back to regex-based analysis if coderef unavailable.
 
         Looks for: error handling patterns, naming conventions,
         file organization patterns, component structure patterns.
@@ -383,6 +440,28 @@ class PlanningAnalyzer:
         """
         logger.debug("Identifying patterns...")
 
+        try:
+            # Try to use coderef_patterns tool for AST-based detection
+            result = await call_coderef_tool(
+                "coderef_patterns",
+                {
+                    "project_path": str(self.project_path),
+                    "pattern_type": "all",
+                    "limit": 20
+                }
+            )
+
+            if result.get("success"):
+                patterns_data = result.get("data", {})
+                patterns = patterns_data.get("patterns", [])
+                if patterns:
+                    logger.info(f"Found {len(patterns)} patterns via coderef_patterns")
+                    return [str(p) for p in patterns[:15]]
+
+        except Exception as e:
+            logger.debug(f"coderef_patterns unavailable: {str(e)}, using fallback regex analysis")
+
+        # Fallback to regex-based analysis
         source_files = self._scan_source_files()
         if not source_files:
             logger.debug("No source files found for pattern analysis")
@@ -618,12 +697,13 @@ class PlanningAnalyzer:
             'organization_pattern': organization_pattern
         }
 
-    def identify_gaps_and_risks(self) -> List[str]:
+    async def identify_gaps_and_risks(self) -> List[str]:
         """
         Identifies missing documentation, standards, or potential risks.
 
-        Checks for: missing foundation docs, missing standards,
-        no test directory, no CI config.
+        Attempts to call coderef_coverage for test coverage analysis.
+        Falls back to filesystem checks for missing foundation docs, standards,
+        test directory, CI config.
 
         Returns:
             List of gap/risk descriptions
@@ -631,6 +711,24 @@ class PlanningAnalyzer:
         logger.debug("Identifying gaps and risks...")
 
         gaps = []
+
+        # Try to use coderef_coverage for test coverage gaps
+        try:
+            result = await call_coderef_tool(
+                "coderef_coverage",
+                {
+                    "project_path": str(self.project_path),
+                    "format": "summary"
+                }
+            )
+            if result.get("success"):
+                coverage_data = result.get("data", {})
+                coverage_percent = coverage_data.get("coverage_percent", 0)
+                if coverage_percent < 50:
+                    gaps.append(f"Low test coverage: {coverage_percent}% (target: ≥80%)")
+                    logger.info(f"Coverage analysis from coderef_coverage: {coverage_percent}%")
+        except Exception as e:
+            logger.debug(f"coderef_coverage unavailable: {str(e)}, using fallback checks")
 
         # Check for missing foundation docs
         foundation_docs = self.scan_foundation_docs()

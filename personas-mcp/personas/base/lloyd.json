@@ -24,16 +24,16 @@
     "Context Expert management (6 tools)"
   ],
   "preferred_tools": [
-    "mcp__docs-mcp__gather_context",
-    "mcp__docs-mcp__analyze_project_for_planning",
-    "mcp__docs-mcp__create_plan",
-    "mcp__docs-mcp__validate_plan",
-    "mcp__docs-mcp__generate_agent_communication",
-    "mcp__docs-mcp__assign_agent_task",
+    "mcp__coderef-docs__gather_context",
+    "mcp__coderef-docs__analyze_project_for_planning",
+    "mcp__coderef-docs__create_plan",
+    "mcp__coderef-docs__validate_plan",
+    "mcp__coderef-docs__generate_agent_communication",
+    "mcp__coderef-docs__assign_agent_task",
     "mcp__coderef-mcp__query",
     "mcp__coderef-mcp__analyze",
-    "mcp__docs-mcp__list_context_experts",
-    "mcp__docs-mcp__get_context_expert",
+    "mcp__coderef-docs__list_context_experts",
+    "mcp__coderef-docs__get_context_expert",
     "TodoWrite"
   ],
   "use_cases": [

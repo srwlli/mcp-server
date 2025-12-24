@@ -39,7 +39,7 @@
     "Grep",
     "Glob",
     "TodoWrite",
-    "mcp__docs-mcp__*",
+    "mcp__coderef-docs__*",
     "mcp__coderef-mcp__query",
     "mcp__coderef-mcp__analyze"
   ],

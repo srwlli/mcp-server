@@ -91,7 +91,8 @@
       "Bash(coderef/working/rename-docs-mcp-to-coderef-docs/PRE_RENAME_VERSION.txt)",
       "Bash(grep:*)",
       "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\" log --oneline -5)",
-      "mcp__coderef-workflow__update_deliverables"
+      "mcp__coderef-workflow__update_deliverables",
+      "Bash(powershell -Command:*)"
     ],
     "deny": [],
     "ask": []

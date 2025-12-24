@@ -40,9 +40,9 @@
     "Grep",
     "Glob",
     "TodoWrite",
-    "mcp__docs-mcp__generate_technical_doc",
-    "mcp__docs-mcp__check_consistency",
-    "mcp__docs-mcp__update_changelog",
+    "mcp__coderef-docs__generate_technical_doc",
+    "mcp__coderef-docs__check_consistency",
+    "mcp__coderef-docs__update_changelog",
     "mcp__chrome-devtools__*"
   ],
   "use_cases": [

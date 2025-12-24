@@ -724,9 +724,15 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
 # Server Entry Point
 # ============================================================================
 
-if __name__ == "__main__":
+async def main():
+    """Main entry point for MCP server."""
     print("[coderef-context] Starting MCP server...")
-    import asyncio
     from mcp.server.stdio import stdio_server
 
-    asyncio.run(stdio_server(app))
+    async with stdio_server() as (read_stream, write_stream):
+        await app.run(read_stream, write_stream, app.create_initialization_options())
+
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())

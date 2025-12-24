@@ -1,3 +1,3 @@
 @echo off
-cd /d "C:\Users\willh\.mcp-servers\docs-mcp"
+cd /d "C:\Users\willh\.mcp-servers\coderef-docs"
 "C:\Users\willh\.local\bin\uv.exe" run -q server.py

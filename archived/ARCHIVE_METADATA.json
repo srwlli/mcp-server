@@ -1,0 +1,57 @@
+{
+  "archive_metadata": {
+    "created_at": "2025-12-24T18:50:00Z",
+    "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+    "description": "Archive of deprecated MCP servers",
+    "reason": "Consolidation to unified coderef-context MCP server in Phase 2"
+  },
+  "archived_servers": [
+    {
+      "name": "coderef-mcp",
+      "archived_path": "archived/coderef-mcp",
+      "original_path": ".mcp-servers/coderef-mcp",
+      "archived_at": "2025-12-24T18:50:00Z",
+      "tool_handlers": 8,
+      "complexity": "High",
+      "reason": "Will be consolidated into unified coderef-context MCP server",
+      "recovery": "git restore coderef-mcp/ (from git history)"
+    },
+    {
+      "name": "hello-world-mcp",
+      "archived_path": "archived/hello-world-mcp",
+      "original_path": ".mcp-servers/hello-world-mcp",
+      "archived_at": "2025-12-24T18:50:00Z",
+      "tool_handlers": 1,
+      "complexity": "Minimal",
+      "reason": "Test/demo server - development complete",
+      "recovery": "git restore hello-world-mcp/ (from git history)"
+    },
+    {
+      "name": "scriptboard-mcp",
+      "archived_path": "archived/scriptboard-mcp",
+      "original_path": ".mcp-servers/scriptboard-mcp",
+      "archived_at": "2025-12-24T18:50:00Z",
+      "tool_handlers": 4,
+      "complexity": "Medium",
+      "reason": "Specialized clipboard integration - minimal workflow use",
+      "recovery": "git restore scriptboard-mcp/ (from git history)"
+    }
+  ],
+  "removed_from_mcp_json": [
+    "coderef",
+    "hello-world",
+    "scriptboard-mcp",
+    "chrome-devtools"
+  ],
+  "active_servers_remaining": [
+    "personas",
+    "coderef-context",
+    "coderef-docs",
+    "coderef-workflow"
+  ],
+  "next_steps": {
+    "phase_2": "Consolidate coderef-mcp tools into unified coderef-context MCP server",
+    "phase_2_status": "Planned for future execution",
+    "reference": "consolidate-coderef-mcp-servers-plan.json"
+  }
+}

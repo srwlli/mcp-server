@@ -25,6 +25,7 @@ Architecture:
 __version__ = "1.0.0"
 __mcp_version__ = "1.0"
 
+import asyncio
 import os
 import subprocess
 import json
@@ -384,9 +385,16 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
         if process.returncode != 0:
             return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
 
-        # Parse JSON output
+        # Parse JSON output (skip CLI progress messages)
         try:
-            data = json.loads(stdout.decode())
+            stdout_text = stdout.decode()
+            # Skip lines until we find JSON array or object
+            json_start = stdout_text.find('[')
+            if json_start == -1:
+                json_start = stdout_text.find('{')
+            if json_start >= 0:
+                stdout_text = stdout_text[json_start:]
+            data = json.loads(stdout_text)
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "elements_found": len(data) if isinstance(data, list) else 0,
@@ -444,7 +452,14 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
             return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
 
         try:
-            data = json.loads(stdout.decode())
+            stdout_text = stdout.decode()
+            # Skip lines until we find JSON array or object
+            json_start = stdout_text.find('[')
+            if json_start == -1:
+                json_start = stdout_text.find('{')
+            if json_start >= 0:
+                stdout_text = stdout_text[json_start:]
+            data = json.loads(stdout_text)
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "query_type": query_type,

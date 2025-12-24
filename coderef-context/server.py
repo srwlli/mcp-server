@@ -333,10 +333,10 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         elif name == "coderef_diagram":
             return await handle_coderef_diagram(arguments)
         else:
-            return [TextContent(text=f"Unknown tool: {name}")]
+            return [TextContent(type="text", text=f"Unknown tool: {name}")]
 
     except Exception as e:
-        return [TextContent(text=f"Error calling tool {name}: {str(e)}")]
+        return [TextContent(type="text", text=f"Error calling tool {name}: {str(e)}")]
 
 
 # ============================================================================
@@ -363,23 +363,23 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         # Parse JSON output
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "elements_found": len(data) if isinstance(data, list) else 0,
                 "elements": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Scan timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Scan timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_query(args: dict) -> list[TextContent]:
@@ -390,7 +390,7 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
     max_depth = args.get("max_depth", 3)
 
     if not target:
-        return [TextContent(text="Error: target parameter is required")]
+        return [TextContent(type="text", text="Error: target parameter is required")]
 
     # Build CLI command: coderef query <target> --type <type> --depth <depth> --format json
     cmd = [
@@ -405,23 +405,23 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "query_type": query_type,
                 "target": target,
                 "results": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Query timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Query timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_impact(args: dict) -> list[TextContent]:
@@ -432,7 +432,7 @@ async def handle_coderef_impact(args: dict) -> list[TextContent]:
     max_depth = args.get("max_depth", 3)
 
     if not element:
-        return [TextContent(text="Error: element parameter is required")]
+        return [TextContent(type="text", text="Error: element parameter is required")]
 
     # Build CLI command: coderef impact <target> --depth <depth> --format json
     cmd = [
@@ -446,23 +446,23 @@ async def handle_coderef_impact(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "element": element,
                 "operation": operation,
                 "impact": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Impact analysis timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Impact analysis timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_complexity(args: dict) -> list[TextContent]:
@@ -471,7 +471,7 @@ async def handle_coderef_complexity(args: dict) -> list[TextContent]:
     element = args.get("element")
 
     if not element:
-        return [TextContent(text="Error: element parameter is required")]
+        return [TextContent(type="text", text="Error: element parameter is required")]
 
     # Complexity metrics come from context command with element filtering
     # For now, return a note that this should use context command
@@ -486,24 +486,24 @@ async def handle_coderef_complexity(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
             # Extract complexity info for target element if available
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "element": element,
                 "note": "Complexity metrics derived from context generation",
                 "context": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Context generation timeout (60s exceeded)")]
+        return [TextContent(type="text", text="Error: Context generation timeout (60s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_patterns(args: dict) -> list[TextContent]:
@@ -524,23 +524,23 @@ async def handle_coderef_patterns(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "pattern_type": pattern_type,
                 "limit": limit,
                 "patterns": data.get("testPatterns", {}) if isinstance(data, dict) else {}
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Pattern discovery timeout (60s exceeded)")]
+        return [TextContent(type="text", text="Error: Pattern discovery timeout (60s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_coverage(args: dict) -> list[TextContent]:
@@ -558,21 +558,21 @@ async def handle_coderef_coverage(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "coverage": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Coverage analysis timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Coverage analysis timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_context(args: dict) -> list[TextContent]:
@@ -592,22 +592,22 @@ async def handle_coderef_context(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "format": output_format,
                 "context": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Context generation timeout (120s exceeded)")]
+        return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_validate(args: dict) -> list[TextContent]:
@@ -627,22 +627,22 @@ async def handle_coderef_validate(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "pattern": pattern,
                 "validation": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Validation timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Validation timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_drift(args: dict) -> list[TextContent]:
@@ -662,21 +662,21 @@ async def handle_coderef_drift(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "drift_report": data
             }, indent=2))]
         except json.JSONDecodeError as e:
-            return [TextContent(text=f"JSON parse error: {str(e)}")]
+            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Drift detection timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Drift detection timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_diagram(args: dict) -> list[TextContent]:
@@ -697,27 +697,27 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
 
         if result.returncode != 0:
-            return [TextContent(text=f"Error: {result.stderr}")]
+            return [TextContent(type="text", text=f"Error: {result.stderr}")]
 
         # For non-JSON formats (mermaid, dot), return text directly
         if format_type in ["mermaid", "dot"]:
-            return [TextContent(text=result.stdout)]
+            return [TextContent(type="text", text=result.stdout)]
 
         # For JSON format, parse and wrap
         try:
             data = json.loads(result.stdout)
-            return [TextContent(text=json.dumps({
+            return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "diagram": data
             }, indent=2))]
         except json.JSONDecodeError:
             # If not JSON, return as-is
-            return [TextContent(text=result.stdout)]
+            return [TextContent(type="text", text=result.stdout)]
 
     except subprocess.TimeoutExpired:
-        return [TextContent(text="Error: Diagram generation timeout (30s exceeded)")]
+        return [TextContent(type="text", text="Error: Diagram generation timeout (30s exceeded)")]
     except Exception as e:
-        return [TextContent(text=f"Error: {str(e)}")]
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 # ============================================================================

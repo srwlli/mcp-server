@@ -1,14 +1,17 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__gather_context",
+      "Bash(timeout 3 python:*)",
+      "Bash(timeout 2 python:*)",
+      "Bash(git push:*)"
+    ]
+  },
   "disabledMcpjsonServers": [
     "personas",
     "coderef",
     "scriptboard-mcp",
     "docs",
     "hello-world"
-  ],
-  "permissions": {
-    "allow": [
-      "mcp__coderef-workflow__gather_context"
-    ]
-  }
+  ]
 }

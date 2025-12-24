@@ -1,0 +1,223 @@
+Perfect — let’s focus sharply on actionable, high-leverage feedback for your BaseGenerator class, with a clear “what” → “why” explanation for each recommendation.
+This list assumes you want the class to be maintainable, secure, and future-proof for MCP and general use.
+
+⸻
+
+🧩 Actionable Feedback for BaseGenerator (with Explanations)
+
+⸻
+
+🔒 1. Normalize Template Names
+
+What to do
+
+template_name = template_name.strip().lower()
+
+Add this before regex validation in _sanitize_template_name().
+
+Why
+Ensures all template lookups are case-insensitive and free of trailing spaces.
+Without normalization, ReadMe and readme could both exist on case-sensitive file systems (e.g., Linux), causing silent mismatches or duplicate writes.
+
+⸻
+
+🧱 2. Use Atomic Writes for save_document()
+
+What to do
+Replace direct writes with a temp file pattern:
+
+import tempfile, os
+
+def save_document(self, content, output_dir, filename):
+    file_path = output_dir / filename
+    with tempfile.NamedTemporaryFile('w', delete=False, dir=output_dir, encoding='utf-8') as tmp:
+        tmp.write(content)
+        tmp.flush()
+    os.replace(tmp.name, file_path)
+    return str(file_path)
+
+Why
+If a crash or exception occurs mid-write, you avoid corrupting the target file.
+Atomic replace guarantees that the file is either fully written or not written at all, which matters for automation and MCP concurrency.
+
+⸻
+
+🧩 3. Introduce Custom Exceptions
+
+What to do
+
+class DocsMCPError(Exception): pass
+class ValidationError(DocsMCPError): pass
+class TemplateError(DocsMCPError): pass
+class WriteError(DocsMCPError): pass
+
+Then replace generic ValueError / IOError / FileNotFoundError with these.
+
+Why
+You can catch and handle specific failure types higher up (for example, your MCP server can return structured JSON responses by error type).
+This also makes logs and test expectations more precise.
+
+⸻
+
+🪵 4. Add Context-Rich Logging
+
+What to do
+
+logger.info("Validated project path", extra={"path": str(path), "sec": "SEC-001"})
+
+and
+
+logger.warning("Skipped malformed metadata line", extra={"line": line})
+
+Why
+The logs become machine-parsable and traceable for audits.
+Right now, you log the event name but not the context (specific file, path, or SEC code).
+Adding structured fields makes debugging automated or multi-agent workflows far easier.
+
+⸻
+
+📘 5. Harden get_template_info() Metadata Parsing
+
+What to do
+Add explicit continue for invalid lines and trim duplicate keys:
+
+for line in content.splitlines():
+    if ':' not in line:
+        continue
+    key, value = map(str.strip, line.split(':', 1))
+    if key.lower() in ('framework', 'purpose', 'save_as', 'store_as'):
+        metadata[key.lower()] = value
+
+Why
+It avoids accidental mis-splitting (colon in sentence text), enforces lowercase keys for consistency, and ignores malformed lines safely instead of silently producing partial dicts.
+
+⸻
+
+🧾 6. Validate Project Path within Allowed Scope
+
+What to do
+Inside validate_project_path():
+
+workspace_root = Path.home() / "projects"
+if workspace_root not in path.parents and path != workspace_root:
+    raise ValidationError("Project path must be within workspace root")
+
+Why
+Prevents writing outside of expected directories (defense against misconfigured agents or path injection).
+Even though you already block traversal, this adds a safety boundary layer.
+
+⸻
+
+🧠 7. Return Structured Results (Optional)
+
+What to do
+Change prepare_generation() to:
+
+return {
+    "status": "success",
+    "project_path": str(validated_path),
+    "output_dir": str(output_dir)
+}
+
+Why
+This makes the result immediately serializable to JSON — simplifying integration with MCP tools or REST endpoints that expect string values, not Path objects.
+
+⸻
+
+🧩 8. Add debug_summary() Helper
+
+What to do
+
+def debug_summary(self):
+    files = [p.name for p in self.templates_dir.glob("*.txt")]
+    return f"Templates dir: {self.templates_dir}\nFound templates: {files}"
+
+Why
+Useful for diagnostics — quickly confirms template directory and file visibility when troubleshooting missing template errors.
+
+⸻
+
+🧪 9. Add a Simple Self-Test Block
+
+What to do
+
+if __name__ == "__main__":
+    gen = BaseGenerator(Path("templates"))
+    result = gen.prepare_generation(".")
+    print("Test run:", result)
+
+Why
+Gives you an immediate smoke test entry point — no need to wire MCP just to verify setup or directory creation logic.
+
+⸻
+
+🧩 10. Centralize SEC Codes
+
+What to do
+At the top of file:
+
+SEC_CODES = {
+    "PATH_VALIDATION": "SEC-001",
+    "README_ROUTING": "SEC-003",
+    "PATH_TRAVERSAL": "SEC-005",
+}
+
+Why
+It improves consistency and ensures that if SEC codes ever change, you update them in one place instead of searching through comments.
+
+⸻
+
+🧪 11. Add Unit Tests (Minimal, High Coverage)
+
+What to do
+Create tests/test_base_generator.py:
+
+def test_sanitize_template_name_valid(tmp_path):
+    gen = BaseGenerator(tmp_path)
+    assert gen._sanitize_template_name("readme") == "readme"
+
+def test_sanitize_template_name_invalid(tmp_path):
+    gen = BaseGenerator(tmp_path)
+    with pytest.raises(ValueError):
+        gen._sanitize_template_name("../evil")
+
+def test_prepare_generation_creates_folder(tmp_path):
+    gen = BaseGenerator(tmp_path)
+    result = gen.prepare_generation(str(tmp_path))
+    assert (tmp_path / "coderef/foundation-docs").exists()
+
+Why
+Prevents regressions when adjusting path logic or template sanitization.
+These three short tests catch 90% of realistic breakages.
+
+⸻
+
+🧩 12. Optional — Add Caching for Repeated Template Reads
+
+What to do
+
+from functools import lru_cache
+
+@lru_cache(maxsize=16)
+def read_template(self, template_name: str) -> str:
+    ...
+
+Why
+If you’re generating multiple docs from the same template folder repeatedly, caching avoids redundant disk reads and improves speed in interactive tools.
+
+⸻
+
+✅ Summary of Impact
+
+Category	Key Benefit
+Security	Protects against path misuse and partial writes
+Stability	Atomic writes + scoped validation prevent data loss
+Debuggability	Structured logs and self-test mode make issues easy to trace
+Extensibility	Custom exceptions and normalization make inheritance safer
+Automation Readiness	Structured returns and consistent key casing support MCP/JSON workflows
+
+
+⸻
+
+If you’d like, I can now create a patch file implementing just the top 5 critical changes (security, atomic write, structured logs, exceptions, metadata parser) — so you can apply and test them immediately in your repo.
+Would you like me to generate that next?

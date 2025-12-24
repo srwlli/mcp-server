@@ -1,0 +1,20 @@
+framework: POWER
+purpose: Generate USER-GUIDE.md as a comprehensive onboarding and reference document for MCP protocol users.
+# NOTE: Placeholders like {{readme_summary}} are for AI guidance only.
+# They indicate which previous documents to reference but are not
+# automatically substituted. The AI assistant will use them as
+# context instructions.
+output: Must follow required header format with [Project Name], [Date], [Author]. Include table of contents, prerequisites with verification, installation with expected outputs, architecture explanation, explicit commands with real examples, use cases, best practices, troubleshooting, quick reference, and AI integration notes.
+work: Analyze MCP server implementation, tool schemas, typical workflows, common errors, and integration patterns. Extract exact commands, error messages, and expected outputs from code and testing. Do not modify code.
+examples:
+- Prerequisites section with verification commands (e.g., "python --version → Expected: Python 3.10+")
+- Installation steps with actual command outputs showing success states
+- "How It Works" section with ASCII architecture diagram showing MCP protocol flow
+- Explicit command formats with real project paths and expected results
+- Use case workflows showing step-by-step tool invocations
+- Troubleshooting with Symptom→Cause→Solution format
+- Best practices with Do/Don't/Tips using emoji markers (✅, 🚫, 💡)
+- Quick reference tables for commands, tools, and common operations
+requirements: Must use HTML-optimized markdown (tables, blockquotes, code blocks, emoji). All commands must be exact and executable. Include MCP tool schemas and JSON-RPC details. Add "Behind the Scenes" explanations of what happens internally. Use clear section hierarchy with anchor links. Include time estimates for operations.
+save_as: USER-GUIDE.md
+store_as: user_guide_summary

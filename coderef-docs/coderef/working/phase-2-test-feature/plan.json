@@ -1,0 +1,259 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "phase-2-test-feature",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "in_progress",
+    "generated_by": "Claude Code",
+    "generated_at": "2025-12-23T20:22:50Z",
+    "has_context": true,
+    "has_analysis": false,
+    "description": "Test feature for Phase 2 dual-run testing to verify docs-mcp and coderef-workflow can share artifacts via symlink"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "project_structure": "docs-mcp with coderef-workflow symlink",
+      "technology_stack": "Python 3.10+, MCP 1.0.0+, pytest",
+      "dependencies": "Both MCPs configured, symlink operational, .claude.json registered",
+      "foundation_docs": "ARCHITECTURE.md, SCHEMA.md, README.md available"
+    },
+    "1_executive_summary": {
+      "primary_goal": "Verify bidirectional artifact access between docs-mcp (creator) and coderef-workflow (reader) via symlink without conflicts",
+      "scope": "Phase 2 testing: dual-MCP concurrent operations, shared artifact validation",
+      "success_definition": "Both MCPs successfully read/write to shared coderef/working directory with zero conflicts. All tests pass.",
+      "estimated_effort": "6 hours",
+      "key_deliverables": [
+        "Test suite for dual-MCP operations",
+        "Verification that symlink allows bidirectional access",
+        "Concurrent read/write operation validation",
+        "Integration test results"
+      ]
+    },
+    "2_risk_assessment": {
+      "risks": [
+        {
+          "id": "R1",
+          "description": "Symlink broken or path resolution fails on Windows",
+          "likelihood": "low",
+          "impact": "high",
+          "mitigation": "Verify symlink target before each test, use absolute paths"
+        },
+        {
+          "id": "R2",
+          "description": "File locking issues during concurrent access",
+          "likelihood": "medium",
+          "impact": "high",
+          "mitigation": "Test with sequential and parallel operations, implement retry logic"
+        },
+        {
+          "id": "R3",
+          "description": "Plan.json format differences between MCPs",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Validate schema conformance after each read/write"
+        }
+      ],
+      "overall_risk": "medium"
+    },
+    "3_current_state_analysis": {
+      "existing_artifacts": [
+        "docs-mcp: fully functional MCP with all workflow tools",
+        "coderef-workflow: complete copy of workflow tools, registered in .claude.json",
+        "Symlink: coderef-workflow/coderef/working → docs-mcp/coderef/working"
+      ],
+      "files_to_create": [
+        {
+          "path": "coderef/working/phase-2-test-feature/test_dual_mcp.py",
+          "purpose": "Python test suite for dual-MCP artifact access verification"
+        },
+        {
+          "path": "coderef/working/phase-2-test-feature/test_concurrent_access.py",
+          "purpose": "Concurrent read/write operation tests"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "coderef/working/phase-2-test-feature/plan.json",
+          "purpose": "Update execution log after each phase"
+        }
+      ]
+    },
+    "4_key_features": [
+      {
+        "id": "F1",
+        "name": "Plan Creation Verification",
+        "description": "Test docs-mcp creates plan.json successfully and writes to shared directory",
+        "acceptance_criteria": "plan.json exists and is valid JSON in docs-mcp/coderef/working/phase-2-test-feature/"
+      },
+      {
+        "id": "F2",
+        "name": "Plan Reading via Symlink",
+        "description": "Test coderef-workflow reads the same plan.json through symlink",
+        "acceptance_criteria": "coderef-workflow can read identical plan.json content via symlink path"
+      },
+      {
+        "id": "F3",
+        "name": "Concurrent Write Operations",
+        "description": "Test both MCPs writing to different files in same directory without conflicts",
+        "acceptance_criteria": "Both writes succeed, files are consistent, no data corruption"
+      },
+      {
+        "id": "F4",
+        "name": "Bidirectional Access",
+        "description": "Test docs-mcp writes and coderef-workflow reads, then coderef-workflow writes and docs-mcp reads",
+        "acceptance_criteria": "All reads return correct data, metadata preserved, timestamps accurate"
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-PHASE-2-TEST-FEATURE-001",
+        "name": "Phase 2 Dual-Run Testing",
+        "feature_dir": "coderef/working/phase-2-test-feature",
+        "status": "in_progress"
+      },
+      "tasks": [
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-PHASE-2-TEST-FEATURE-001",
+          "phase": 1,
+          "description": "Test docs-mcp creates plan.json successfully",
+          "details": "Verify docs-mcp can create and write plan.json to shared coderef/working directory",
+          "acceptance_criteria": "plan.json exists, is valid JSON, contains correct metadata",
+          "estimated_hours": 1,
+          "dependencies": []
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-PHASE-2-TEST-FEATURE-001",
+          "phase": 1,
+          "description": "Test coderef-workflow reads plan.json via symlink",
+          "details": "Verify coderef-workflow can read the same plan.json through its symlink path",
+          "acceptance_criteria": "Content matches docs-mcp version, symlink resolves correctly",
+          "estimated_hours": 1,
+          "dependencies": ["TEST-001"]
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-PHASE-2-TEST-FEATURE-001",
+          "phase": 2,
+          "description": "Test concurrent read/write operations",
+          "details": "Verify both MCPs can read/write simultaneously without file locking issues",
+          "acceptance_criteria": "No file corruption, consistent reads, sequential writes succeed",
+          "estimated_hours": 2,
+          "dependencies": ["TEST-002"]
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-PHASE-2-TEST-FEATURE-001",
+          "phase": 2,
+          "description": "Run full workflow test across both MCPs end-to-end",
+          "details": "Execute complete workflow: context creation, plan generation, execution log updates in both MCPs",
+          "acceptance_criteria": "Full workflow completes without errors, artifacts synchronized",
+          "estimated_hours": 2,
+          "dependencies": ["TEST-003"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Basic Artifact Access",
+          "description": "Test fundamental read/write operations between MCPs",
+          "duration": "2 hours",
+          "tasks": ["TEST-001", "TEST-002"],
+          "deliverables": [
+            "Confirmed plan.json creation by docs-mcp",
+            "Confirmed plan.json reading by coderef-workflow via symlink"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Concurrent Operations & Integration",
+          "description": "Test concurrent access patterns and full workflow end-to-end",
+          "duration": "4 hours",
+          "tasks": ["TEST-003", "TEST-004"],
+          "deliverables": [
+            "Concurrent access test results",
+            "Full workflow integration test results",
+            "Phase 2 completion report"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "name": "test_docs_mcp_writes_plan",
+          "description": "Verify docs-mcp can write plan.json to shared directory",
+          "file": "test_dual_mcp.py"
+        },
+        {
+          "name": "test_coderef_workflow_reads_plan",
+          "description": "Verify coderef-workflow can read plan.json via symlink",
+          "file": "test_dual_mcp.py"
+        }
+      ],
+      "integration_tests": [
+        {
+          "name": "test_concurrent_read_write",
+          "description": "Test simultaneous read/write operations",
+          "file": "test_concurrent_access.py"
+        },
+        {
+          "name": "test_full_workflow_end_to_end",
+          "description": "Test complete workflow across both MCPs",
+          "file": "test_concurrent_access.py"
+        }
+      ],
+      "manual_verification": [
+        "Symlink validation before tests",
+        "File permission verification",
+        "Path resolution on Windows"
+      ]
+    },
+    "8_success_criteria": [
+      {
+        "criterion": "Artifact Accessibility",
+        "description": "Both MCPs can read/write to coderef/working via their respective paths",
+        "measurement": "100% of read/write operations succeed"
+      },
+      {
+        "criterion": "Data Consistency",
+        "description": "Artifacts read by both MCPs contain identical content",
+        "measurement": "Content hash matches across both paths"
+      },
+      {
+        "criterion": "No Conflicts",
+        "description": "Concurrent operations don't corrupt files or cause locks",
+        "measurement": "Zero file corruption events, zero lock timeouts"
+      },
+      {
+        "criterion": "Full Workflow",
+        "description": "Complete workflow (context→plan→execution log) works via both MCPs",
+        "measurement": "All workflow tools callable from both MCPs"
+      }
+    ],
+    "9_implementation_checklist": {
+      "phase_1": {
+        "name": "Basic Artifact Access (2 hours)",
+        "tasks": [
+          "[ ] TEST-001: docs-mcp creates plan.json",
+          "[ ] TEST-002: coderef-workflow reads plan.json via symlink",
+          "[ ] Verify file content matches between MCPs",
+          "[ ] Document symlink validation results"
+        ]
+      },
+      "phase_2": {
+        "name": "Concurrent Operations & Integration (4 hours)",
+        "tasks": [
+          "[ ] TEST-003: Concurrent read/write operations",
+          "[ ] TEST-004: Full workflow end-to-end test",
+          "[ ] Generate concurrent access test report",
+          "[ ] Generate Phase 2 completion summary",
+          "[ ] Update execution-log.json with Phase 2 results"
+        ]
+      }
+    }
+  }
+}

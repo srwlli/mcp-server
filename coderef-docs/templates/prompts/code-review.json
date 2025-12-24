@@ -1,0 +1,58 @@
+{
+  "task": "code-review",
+  "instruction": "Analyze the provided code for issues, improvements, and best practices",
+  "context": {
+    "input": "{USER_CODE}",
+    "focus_areas": ["security", "performance", "quality", "maintainability"]
+  },
+  "output_schema": {
+    "findings": [
+      {
+        "category": "SECURITY|PERFORMANCE|QUALITY|MAINTAINABILITY",
+        "description": "Clear description of the issue",
+        "location": "file:line or function name",
+        "severity": "critical|high|medium|low"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "REC-001",
+        "description": "Actionable recommendation",
+        "priority": "high|medium|low",
+        "effort": "small|medium|large"
+      }
+    ],
+    "risks": [
+      {
+        "description": "Potential risk if not addressed",
+        "severity": "high|medium|low",
+        "likelihood": "high|medium|low"
+      }
+    ],
+    "metrics": {
+      "confidence": "0-100",
+      "coverage": "comprehensive|partial|surface",
+      "top_priorities": ["ranked list of most critical items"],
+      "summary_stats": {
+        "critical_count": 0,
+        "high_count": 0,
+        "medium_count": 0,
+        "low_count": 0
+      }
+    },
+    "ranked_actions": [
+      {
+        "rank": 1,
+        "action": "What to do first",
+        "reason": "Why this is priority #1",
+        "impact": "high|medium|low"
+      }
+    ]
+  },
+  "success_criteria": [
+    "All security vulnerabilities identified",
+    "Performance bottlenecks flagged",
+    "Code quality issues documented",
+    "Actionable recommendations provided with priority"
+  ]
+}

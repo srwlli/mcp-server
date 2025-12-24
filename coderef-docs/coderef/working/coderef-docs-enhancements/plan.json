@@ -1,0 +1,646 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "coderef-docs-enhancements",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "planned",
+    "generated_by": "Manual workorder creation",
+    "generated_at": "2025-12-22T00:00:00Z",
+    "workorder_id": "WO-CODEREF-DOCS-ENHANCEMENTS-001",
+    "has_context": true,
+    "has_analysis": false
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "purpose": "Enhance coderef-docs with 6 documentation-specific features: incremental regeneration, better code examples, semantic ranking, auto-TOC, cross-references, out-of-date detection, and relationship diagrams.",
+      "foundation_docs_reviewed": [
+        "docs-mcp/README.md (current capabilities)",
+        "coderef-system/ARCHITECTURE.md (patterns)"
+      ],
+      "coding_standards_available": true,
+      "similar_features": [
+        "coderef-context (contrast: agent-focused vs doc-focused)",
+        "existing foundation-docs generation (extend, don't replace)"
+      ],
+      "technical_stack": {
+        "language": "TypeScript/Node.js",
+        "indexing": "File modification tracking (mtime-based)",
+        "ranking": "Frequency/importance scoring",
+        "visualization": "Mermaid diagrams or ASCII art",
+        "linking": "Markdown cross-references",
+        "detection": "AST-based signature tracking"
+      },
+      "design_system": {
+        "doc_format": "Markdown",
+        "toc_style": "Nested bullet lists with anchors",
+        "cross_ref_style": "[Text](filename.md#section)",
+        "diagram_style": "Mermaid or ASCII"
+      },
+      "key_risks_identified": [
+        "Incremental indexing missing subtle changes (mitigation: validate against full scan occasionally)",
+        "Out-of-date detection false positives (mitigation: manual review lists)",
+        "Performance degradation with large codebases (mitigation: parallel processing)",
+        "Cross-references breaking when sections rename (mitigation: auto-update on regen)",
+        "Semantic ranking subjectivity (mitigation: frequency-based, not heuristic)"
+      ]
+    },
+
+    "1_executive_summary": {
+      "feature_name": "CodeRef Docs Enhancements",
+      "workorder_id": "WO-CODEREF-DOCS-ENHANCEMENTS-001",
+      "stub_id": null,
+      "primary_goal": "Make coderef-docs-generated foundation documentation more navigable, maintainable, and valuable by adding intelligent enhancement features unique to documentation (not code context)",
+      "problem_statement": "Current coderef-docs generates static documentation that can be outdated, lacks cross-references, has no TOC, and doesn't visually show relationships. Agents and humans need better guidance through generated docs.",
+      "target_users": [
+        "Developers reading generated documentation",
+        "Agents (Claude Code) using docs for context",
+        "Documentation maintainers verifying accuracy",
+        "Teams understanding system architecture"
+      ],
+      "success_definition": "Generated foundation docs are automatically augmented with TOC, cross-references, semantic ordering, completeness scoring, and out-of-date warnings. Incremental regeneration reduces build time 6x. Diagrams show architecture relationships.",
+      "estimated_complexity": "High (6 coordinated features, some require AST analysis)",
+      "estimated_duration": "40-50 hours"
+    },
+
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Incremental indexing misses file changes",
+          "severity": "High",
+          "mitigation": "Implement hybrid approach: track mtime + hash-based verification, fallback to full scan if discrepancy detected"
+        },
+        {
+          "risk": "Out-of-date detection produces false positives",
+          "severity": "High",
+          "mitigation": "Start conservative (only flag obvious breaks), review manually, build confidence over time"
+        },
+        {
+          "risk": "Cross-references break when docs are restructured",
+          "severity": "Medium",
+          "mitigation": "Use heading-based anchors (stable), auto-generate on each run, validate links"
+        },
+        {
+          "risk": "Performance on large codebases (10k+ files)",
+          "severity": "Medium",
+          "mitigation": "Implement parallel processing, cache intermediate results, benchmark with test projects"
+        },
+        {
+          "risk": "Semantic ranking (importance) is subjective",
+          "severity": "Low",
+          "mitigation": "Use frequency-based metrics (commit count, usage), not heuristics"
+        }
+      ],
+      "integration_risks": [
+        {
+          "risk": "Conflicts with coderef-context when both run on same codebase",
+          "severity": "Medium",
+          "mitigation": "Maintain clear separation: context = agent-focused retrieval, docs = human/reference material"
+        },
+        {
+          "risk": "Relationship diagrams require visualization tool",
+          "severity": "Low",
+          "mitigation": "Use Mermaid (markdown-friendly) or ASCII art (fallback)"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "AST-based out-of-date detection complex to implement",
+          "severity": "Medium",
+          "mitigation": "Start with regex-based detection, upgrade to AST later"
+        }
+      ]
+    },
+
+    "3_current_state_analysis": {
+      "existing_components": [
+        "coderef_foundation_docs (generates ARCHITECTURE, SCHEMA, COMPONENTS, API, README)",
+        "coderef-context (agent-focused code retrieval - different purpose)"
+      ],
+      "files_to_modify": [
+        {
+          "path": "docs-mcp/generators/foundation_docs_generator.ts",
+          "purpose": "Add incremental regeneration logic",
+          "changes_needed": "Track file modifications, skip unchanged files"
+        },
+        {
+          "path": "docs-mcp/generators/code_chunking.ts",
+          "purpose": "Improve code examples with context",
+          "changes_needed": "Include related functions, show imports, link to definitions"
+        },
+        {
+          "path": "docs-mcp/generators/doc_ordering.ts",
+          "purpose": "Semantic ranking (new file)",
+          "changes_needed": "Frequency analysis, importance scoring"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "docs-mcp/generators/toc_generator.ts",
+          "purpose": "Auto-generate table of contents",
+          "changes_needed": "Parse markdown headings, build nested structure, generate anchors"
+        },
+        {
+          "path": "docs-mcp/generators/cross_reference_generator.ts",
+          "purpose": "Generate cross-references between docs",
+          "changes_needed": "Map references between docs, create markdown links"
+        },
+        {
+          "path": "docs-mcp/generators/outdated_detector.ts",
+          "purpose": "Detect out-of-date documentation",
+          "changes_needed": "Track signatures, find moved functions, flag deprecated code"
+        },
+        {
+          "path": "docs-mcp/generators/completeness_scorer.ts",
+          "purpose": "Score documentation completeness",
+          "changes_needed": "Analyze sections, detect missing content, report gaps"
+        },
+        {
+          "path": "docs-mcp/generators/diagram_generator.ts",
+          "purpose": "Generate relationship diagrams",
+          "changes_needed": "Extract dependencies, create Mermaid diagrams"
+        },
+        {
+          "path": "docs-mcp/cache/incremental_index.ts",
+          "purpose": "Incremental indexing cache",
+          "changes_needed": "Store file hashes, track modification times, implement invalidation"
+        }
+      ],
+      "dependencies": [
+        "typescript (existing)",
+        "ts-morph (AST parsing - new)",
+        "mermaid-js (diagram generation - new)",
+        "fast-glob (file enumeration - existing)"
+      ],
+      "configuration_changes": [
+        "Add incremental indexing config (enabled by default, can disable)",
+        "Add semantic ranking config (order by importance/frequency)",
+        "Add diagram generation config (enable/disable per doc type)"
+      ]
+    },
+
+    "4_key_features": [
+      {
+        "feature_id": "DOCENHANCE-001",
+        "name": "Incremental Regeneration",
+        "description": "Only rescan changed files instead of full codebase on subsequent runs",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "First run: Full scan of codebase, generates all docs",
+          "Subsequent runs: Only rescan modified files (mtime-based)",
+          "Cache stores file hashes + modification times",
+          "Falls back to full scan if cache corrupted",
+          "Performance: Second run <5 seconds (vs first run 30 seconds)"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-002",
+        "name": "Better Code Examples",
+        "description": "Show code snippets with surrounding context instead of isolated functions",
+        "priority": "high",
+        "acceptance_criteria": [
+          "API examples show function + imports + error handling",
+          "ARCHITECTURE examples show related functions together",
+          "Links to SCHEMA.md for data model references",
+          "Timestamps show which version of code is shown"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-003",
+        "name": "Semantic Ranking",
+        "description": "Order sections/endpoints by importance/frequency instead of alphabetical",
+        "priority": "high",
+        "acceptance_criteria": [
+          "API.md endpoints ordered by usage frequency",
+          "ARCHITECTURE.md sections ordered by criticality",
+          "Frequency calculated from git history (commit count)",
+          "Recently-added sections marked clearly"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-004",
+        "name": "Auto-Generated TOC",
+        "description": "Automatic table of contents with nested structure and working anchors",
+        "priority": "high",
+        "acceptance_criteria": [
+          "TOC generated from markdown headings",
+          "Nested structure matches heading hierarchy",
+          "All links in TOC are valid markdown anchors",
+          "TOC updated automatically on each regeneration"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-005",
+        "name": "Cross-References",
+        "description": "Automatic linking between related sections in different docs",
+        "priority": "high",
+        "acceptance_criteria": [
+          "README links to ARCHITECTURE",
+          "ARCHITECTURE links to API for relevant endpoints",
+          "API links to SCHEMA for data structures",
+          "All cross-references are auto-generated",
+          "Links stay valid through regenerations"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-006",
+        "name": "Out-of-Date Detection",
+        "description": "Identify deprecated APIs, moved functions, and changed signatures",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "Detects function signature changes",
+          "Flags deprecated functions in docs",
+          "Identifies moved functions (different file)",
+          "Reports changed endpoint parameters",
+          "Produces actionable fix suggestions"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-007",
+        "name": "Relationship Diagrams",
+        "description": "Visualize module dependencies and data flow in ARCHITECTURE.md",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "Module dependency diagram (Mermaid or ASCII)",
+          "Data flow diagram showing main flows",
+          "Service interaction diagram",
+          "Diagrams update as architecture changes"
+        ]
+      },
+      {
+        "feature_id": "DOCENHANCE-008",
+        "name": "Completeness Scoring",
+        "description": "Score documentation completeness and identify gaps",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "README: Track usage examples, getting started",
+          "ARCHITECTURE: Track decision rationale, key patterns",
+          "API: Track response codes, error handling",
+          "SCHEMA: Track relationships, constraints",
+          "Report shows gaps (e.g., '78% complete - missing response codes')"
+        ]
+      }
+    ],
+
+    "5_task_id_system": {
+      "workorder_id": "WO-CODEREF-DOCS-ENHANCEMENTS-001",
+      "prefix_pattern": "{PHASE}-{NUMBER}",
+      "task_categories": [
+        "INFRA (Infrastructure: incremental indexing)",
+        "QUALITY (Quality: code examples, semantic ranking)",
+        "NAV (Navigation: TOC, cross-references)",
+        "ACCURACY (Accuracy: out-of-date detection, completeness)",
+        "VIZ (Visualization: relationship diagrams)",
+        "TEST (Testing & integration)"
+      ],
+      "tasks": [
+        {
+          "id": "INFRA-001",
+          "description": "Implement incremental indexing cache infrastructure",
+          "phase": "phase_1_infrastructure",
+          "dependencies": [],
+          "estimated_hours": 4
+        },
+        {
+          "id": "INFRA-002",
+          "description": "Add file hash tracking (mtime + hash validation)",
+          "phase": "phase_1_infrastructure",
+          "dependencies": ["INFRA-001"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "INFRA-003",
+          "description": "Implement cache invalidation logic (full scan fallback)",
+          "phase": "phase_1_infrastructure",
+          "dependencies": ["INFRA-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "QUALITY-001",
+          "description": "Improve code chunking for better examples",
+          "phase": "phase_2_quality",
+          "dependencies": ["INFRA-001"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "QUALITY-002",
+          "description": "Implement semantic ranking (frequency-based ordering)",
+          "phase": "phase_2_quality",
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "QUALITY-003",
+          "description": "Add code snippet versioning (timestamp tracking)",
+          "phase": "phase_2_quality",
+          "dependencies": ["QUALITY-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "NAV-001",
+          "description": "Implement auto-generated TOC generator",
+          "phase": "phase_3_navigation",
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "NAV-002",
+          "description": "Build markdown anchor validator",
+          "phase": "phase_3_navigation",
+          "dependencies": ["NAV-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "NAV-003",
+          "description": "Implement cross-reference generator",
+          "phase": "phase_3_navigation",
+          "dependencies": ["NAV-001"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "NAV-004",
+          "description": "Add cross-reference validation",
+          "phase": "phase_3_navigation",
+          "dependencies": ["NAV-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "ACCURACY-001",
+          "description": "Implement out-of-date detection (function signatures)",
+          "phase": "phase_4_accuracy",
+          "dependencies": [],
+          "estimated_hours": 4
+        },
+        {
+          "id": "ACCURACY-002",
+          "description": "Add deprecation flag detection",
+          "phase": "phase_4_accuracy",
+          "dependencies": ["ACCURACY-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "ACCURACY-003",
+          "description": "Implement completeness scorer",
+          "phase": "phase_4_accuracy",
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "ACCURACY-004",
+          "description": "Add gap detection and fix suggestions",
+          "phase": "phase_4_accuracy",
+          "dependencies": ["ACCURACY-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "VIZ-001",
+          "description": "Implement dependency diagram generator (Mermaid)",
+          "phase": "phase_5_visualization",
+          "dependencies": [],
+          "estimated_hours": 3
+        },
+        {
+          "id": "VIZ-002",
+          "description": "Add data flow diagram generation",
+          "phase": "phase_5_visualization",
+          "dependencies": ["VIZ-001"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "VIZ-003",
+          "description": "Implement service interaction diagram",
+          "phase": "phase_5_visualization",
+          "dependencies": ["VIZ-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-001",
+          "description": "Test incremental indexing with large codebase",
+          "phase": "phase_6_testing",
+          "dependencies": ["INFRA-003"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "TEST-002",
+          "description": "Integration test all features together",
+          "phase": "phase_6_testing",
+          "dependencies": ["NAV-004", "ACCURACY-004", "VIZ-003"],
+          "estimated_hours": 4
+        },
+        {
+          "id": "TEST-003",
+          "description": "Performance benchmarking and optimization",
+          "phase": "phase_6_testing",
+          "dependencies": ["TEST-002"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "TEST-004",
+          "description": "Validate separation from coderef-context",
+          "phase": "phase_6_testing",
+          "dependencies": ["TEST-002"],
+          "estimated_hours": 2
+        }
+      ]
+    },
+
+    "6_implementation_phases": [
+      {
+        "phase_id": 1,
+        "name": "Infrastructure & Caching",
+        "description": "Build incremental indexing foundation for 6x performance improvement",
+        "tasks": ["INFRA-001", "INFRA-002", "INFRA-003"],
+        "estimated_duration": "9 hours",
+        "dependencies": [],
+        "deliverables": [
+          "Incremental indexing cache system",
+          "File hash tracking (mtime + SHA256)",
+          "Cache invalidation logic with fallback"
+        ]
+      },
+      {
+        "phase_id": 2,
+        "name": "Quality & Ranking",
+        "description": "Improve code examples and implement semantic ordering",
+        "tasks": ["QUALITY-001", "QUALITY-002", "QUALITY-003"],
+        "estimated_duration": "9 hours",
+        "dependencies": [1],
+        "deliverables": [
+          "Enhanced code chunking with context",
+          "Semantic ranking by frequency/importance",
+          "Code snippet versioning system"
+        ]
+      },
+      {
+        "phase_id": 3,
+        "name": "Navigation & Discoverability",
+        "description": "Generate TOC and cross-references for better navigation",
+        "tasks": ["NAV-001", "NAV-002", "NAV-003", "NAV-004"],
+        "estimated_duration": "11 hours",
+        "dependencies": [1, 2],
+        "deliverables": [
+          "Auto-generated table of contents",
+          "Working markdown anchors",
+          "Cross-references (README↔ARCHITECTURE↔API↔SCHEMA)",
+          "Link validation system"
+        ]
+      },
+      {
+        "phase_id": 4,
+        "name": "Accuracy & Maintenance",
+        "description": "Detect outdated docs and score completeness",
+        "tasks": ["ACCURACY-001", "ACCURACY-002", "ACCURACY-003", "ACCURACY-004"],
+        "estimated_duration": "11 hours",
+        "dependencies": [1, 2],
+        "deliverables": [
+          "Out-of-date detection (signatures, deprecations, moves)",
+          "Completeness scoring for each doc type",
+          "Gap detection and fix suggestions",
+          "Actionable deprecation warnings"
+        ]
+      },
+      {
+        "phase_id": 5,
+        "name": "Visualization",
+        "description": "Generate relationship diagrams for architecture understanding",
+        "tasks": ["VIZ-001", "VIZ-002", "VIZ-003"],
+        "estimated_duration": "8 hours",
+        "dependencies": [2, 4],
+        "deliverables": [
+          "Module dependency diagrams (Mermaid/ASCII)",
+          "Data flow visualization",
+          "Service interaction diagrams"
+        ]
+      },
+      {
+        "phase_id": 6,
+        "name": "Testing & Integration",
+        "description": "Comprehensive testing and integration validation",
+        "tasks": ["TEST-001", "TEST-002", "TEST-003", "TEST-004"],
+        "estimated_duration": "12 hours",
+        "dependencies": [1, 2, 3, 4, 5],
+        "deliverables": [
+          "Incremental indexing validated on 10k+ file codebase",
+          "All features integrated and working together",
+          "Performance benchmarks (second run <5 seconds)",
+          "Separation from coderef-context validated",
+          "Complete test suite"
+        ]
+      }
+    ],
+
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Incremental indexing (file hash matching, cache invalidation)",
+        "Semantic ranking (frequency calculation, ordering logic)",
+        "TOC generation (heading extraction, anchor creation)",
+        "Cross-reference generation (link creation, validation)",
+        "Out-of-date detection (signature comparison, deprecation detection)",
+        "Completeness scoring (gap detection, scoring algorithm)"
+      ],
+      "integration_tests": [
+        "Full regeneration cycle with incremental indexing",
+        "All 5 foundation docs with TOC + cross-references",
+        "Completeness scoring across all doc types",
+        "Out-of-date detection with mixed old/new code",
+        "Relationship diagrams with complex dependencies"
+      ],
+      "performance_tests": [
+        "Incremental regeneration: <5 seconds (second run)",
+        "Full regeneration: <30 seconds (10k file codebase)",
+        "Cache performance: Hash calculation <1 second",
+        "TOC generation: <100ms per document"
+      ],
+      "quality_tests": [
+        "All markdown cross-references are valid",
+        "No broken anchors in TOC",
+        "Semantic ranking produces sensible ordering",
+        "Out-of-date detection zero false positives (manual review)",
+        "Relationship diagrams render correctly"
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        "Incremental indexing caches modifications between runs",
+        "Second regeneration completes in <5 seconds",
+        "TOC auto-generated with working anchors",
+        "Cross-references link between all 5 foundation docs",
+        "Out-of-date detection flags deprecated/moved functions",
+        "Completeness scoring shows gaps in each doc",
+        "Relationship diagrams visualize architecture"
+      ],
+      "performance_metrics": [
+        "Second run: <5 seconds (6x faster than first run)",
+        "Full regeneration: <30 seconds on typical project",
+        "Hash calculation: <1 second per run",
+        "Cache memory: <10MB for typical project"
+      ],
+      "quality_metrics": [
+        "All cross-references valid (100%)",
+        "Out-of-date detection precision >95%",
+        "Completeness scoring accuracy >90%",
+        "Relationship diagrams correct topology"
+      ],
+      "integration_metrics": [
+        "Works with existing coderef-docs without breaking",
+        "Maintains separation from coderef-context",
+        "All config options documented and tested"
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "phase_1_infrastructure": {
+        "tasks": [
+          "☐ INFRA-001: Implement incremental indexing cache",
+          "☐ INFRA-002: Add file hash tracking (mtime + SHA256)",
+          "☐ INFRA-003: Implement cache invalidation and fallback"
+        ],
+        "validation": "Cache stores file metadata, second run detects no changes and skips scanning, fallback triggers on hash mismatch"
+      },
+      "phase_2_quality": {
+        "tasks": [
+          "☐ QUALITY-001: Improve code chunking with context",
+          "☐ QUALITY-002: Implement semantic ranking by frequency",
+          "☐ QUALITY-003: Add code snippet version tracking"
+        ],
+        "validation": "Examples include related functions, endpoints ordered by usage, versions timestamped"
+      },
+      "phase_3_navigation": {
+        "tasks": [
+          "☐ NAV-001: Auto-generate table of contents",
+          "☐ NAV-002: Build markdown anchor validator",
+          "☐ NAV-003: Implement cross-reference generator",
+          "☐ NAV-004: Add cross-reference validation"
+        ],
+        "validation": "TOC generated from headings with working links, all cross-refs point to valid anchors"
+      },
+      "phase_4_accuracy": {
+        "tasks": [
+          "☐ ACCURACY-001: Implement out-of-date detection",
+          "☐ ACCURACY-002: Add deprecation flag detection",
+          "☐ ACCURACY-003: Implement completeness scoring",
+          "☐ ACCURACY-004: Add gap detection and suggestions"
+        ],
+        "validation": "Detects signature changes, flags deprecated code, scores each doc (e.g., 78% complete)"
+      },
+      "phase_5_visualization": {
+        "tasks": [
+          "☐ VIZ-001: Generate dependency diagrams",
+          "☐ VIZ-002: Add data flow diagrams",
+          "☐ VIZ-003: Implement service interaction diagrams"
+        ],
+        "validation": "Diagrams render correctly, show accurate relationships, update on regeneration"
+      },
+      "phase_6_testing": {
+        "tasks": [
+          "☐ TEST-001: Test incremental indexing on large codebase",
+          "☐ TEST-002: Integration test all features",
+          "☐ TEST-003: Performance benchmarking",
+          "☐ TEST-004: Validate separation from coderef-context"
+        ],
+        "validation": "All tests pass, performance targets met, no conflicts with coderef-context"
+      }
+    }
+  }
+}

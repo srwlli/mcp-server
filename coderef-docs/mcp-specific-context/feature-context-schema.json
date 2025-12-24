@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Feature Context Schema",
+  "description": "Schema for feature context files that capture requirements before planning",
+  "type": "object",
+  "required": [
+    "feature_name",
+    "description",
+    "goal",
+    "requirements"
+  ],
+  "properties": {
+    "feature_name": {
+      "type": "string",
+      "description": "Short kebab-case name for the feature (e.g., 'user-authentication')",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "string",
+      "description": "What the user wants in plain language",
+      "minLength": 20,
+      "maxLength": 500
+    },
+    "goal": {
+      "type": "string",
+      "description": "Why they want this feature (business value, user benefit)",
+      "minLength": 20,
+      "maxLength": 300
+    },
+    "requirements": {
+      "type": "array",
+      "description": "List of must-have requirements from Q&A",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 10
+      }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "description": "Things explicitly NOT included in this feature",
+      "items": {
+        "type": "string",
+        "minLength": 5
+      },
+      "default": []
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Technical, business, or other constraints",
+      "items": {
+        "type": "string",
+        "minLength": 10
+      },
+      "default": []
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "Optional: People who need to approve or be consulted",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "references": {
+      "type": "array",
+      "description": "Optional: Links to related docs, tickets, designs",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "default": []
+    },
+    "created_date": {
+      "type": "string",
+      "description": "ISO 8601 date when context was created",
+      "format": "date"
+    },
+    "updated_date": {
+      "type": "string",
+      "description": "ISO 8601 date when context was last updated",
+      "format": "date"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "feature_name": "user-authentication",
+      "description": "Add user authentication system to allow users to log in with email and password",
+      "goal": "Enable user accounts so we can personalize content and track user preferences",
+      "requirements": [
+        "Must support email/password login",
+        "Must have password reset flow via email",
+        "Must integrate with existing user database",
+        "Must maintain sessions across page refreshes"
+      ],
+      "out_of_scope": [
+        "OAuth social login (planned for v2)",
+        "Two-factor authentication (future enhancement)"
+      ],
+      "constraints": [
+        "Must work with existing PostgreSQL database schema",
+        "Must not break current anonymous browsing functionality",
+        "Must comply with GDPR requirements"
+      ],
+      "stakeholders": ["product-team", "security-team"],
+      "references": [
+        "https://github.com/org/repo/issues/123",
+        "https://www.figma.com/design/xyz"
+      ],
+      "created_date": "2025-10-11",
+      "updated_date": "2025-10-11"
+    }
+  ]
+}

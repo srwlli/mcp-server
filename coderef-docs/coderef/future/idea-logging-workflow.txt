@@ -1,0 +1,206 @@
+================================================================================
+IDEA LOGGING WORKFLOW FOR MCP INTEGRATION
+================================================================================
+
+PURPOSE:
+Log and capture initial ideas, observations, and contextual notes for MCP
+integration work. Create LIGHTWEIGHT reference documentation for quick
+context retrieval during implementation planning.
+
+**IMPORTANT**: Idea logs are intentionally MINIMAL - just enough to capture
+the core concept. They are designed to feed into the /gather-context workflow,
+which handles comprehensive requirements gathering through interactive questions.
+
+================================================================================
+WORKFLOW OVERVIEW
+================================================================================
+
+1. IDEA CAPTURE
+   When a new idea, observation, or requirement emerges:
+   - Record the idea immediately
+   - Capture the context/reason it emerged
+   - Note any related existing work
+   - Link to relevant files or conversations
+
+2. LOGGING LOCATION:
+   File: @docs-mcp\coderef\future\{idea-name}.txt
+   Format: Plain text, timestamped entries
+   Naming: kebab-case (lowercase, hyphens)
+
+3. MINIMAL STRUCTURE:
+   Each idea log should contain:
+   - Title/Headline
+   - Date/Timestamp captured
+   - Brief description (1-3 sentences)
+   - Context/Why this matters
+   - Related references or links
+   - Current status/next steps
+
+================================================================================
+IDEA LOG TEMPLATE
+================================================================================
+
+IDEA: [Short descriptive title in CAPS]
+DATE: [YYYY-MM-DD HH:MM]
+STATUS: [Proposed/In Discussion/Ready for Planning/In Progress]
+
+DESCRIPTION:
+[1-3 sentence overview of the idea]
+
+CONTEXT:
+[Why this idea emerged, what problem it solves, or what opportunity it presents]
+
+RELATIONSHIP TO MCP:
+[How this integrates with MCP ecosystem or MCP integration goals]
+
+RELATED WORK:
+- [Link or reference to existing plans/documents]
+- [Link or reference to code sections]
+- [Link or reference to conversations]
+
+PRELIMINARY THOUGHTS:
+- [Key consideration 1]
+- [Key consideration 2]
+- [Potential blocker or question]
+
+NEXT STEPS:
+- [ ] Use /gather-context to capture detailed requirements
+- [ ] Move to planning phase when ready
+- [ ] Archive to /archived/ once executed
+
+================================================================================
+EXAMPLE IDEA LOGS
+================================================================================
+
+IDEA: HTTP-SERVER-MCP-BRIDGE
+DATE: 2025-10-15 14:30
+STATUS: In Discussion
+
+DESCRIPTION:
+Create an MCP server that bridges HTTP requests to standard MCP protocols,
+allowing CLI tools to communicate with HTTP-based APIs through MCP.
+
+CONTEXT:
+Many existing tools use HTTP endpoints. By creating a bridge MCP server,
+we could standardize communication and reduce integration complexity.
+
+RELATIONSHIP TO MCP:
+Core MCP tool, extends MCP usability for HTTP-based ecosystems.
+
+RELATED WORK:
+- mcp-http-server (folder in future)
+- MCP-DEV-LOG-PROPOSAL.md
+
+PRELIMINARY THOUGHTS:
+- Could use Express.js for HTTP layer
+- Need to map HTTP routes to MCP protocol handlers
+- Consider rate limiting and error handling
+
+NEXT STEPS:
+- [ ] Define HTTP to MCP mapping strategy
+- [ ] Create detailed implementation plan
+- [ ] Archive when implementation complete
+
+================================================================================
+INTEGRATION WITH MCP WORKFLOW
+================================================================================
+
+1. IDEA ENTRY POINT:
+   Ideas can originate from:
+   - Development observations
+   - User feedback or feature requests
+   - Architectural discussions
+   - Code review findings
+   - Integration pain points
+
+2. FROM IDEA TO PLAN:
+   Idea Log → /gather-context → /analyze-for-planning → /create-plan → Archive
+
+   When ready to execute:
+   - Use idea log as starting point
+   - Run /gather-context to capture detailed requirements (CRITICAL STEP)
+     * Agent asks interactive questions based on idea log
+     * Captures goals, user stories, acceptance criteria, constraints
+     * Creates context.json in coderef/working/{feature-name}/
+   - Run /analyze-for-planning to gather project data
+   - Run /create-plan to generate implementation plan
+   - Execute plan per archive-workflow.txt
+
+3. IDEA LOG LIFECYCLE:
+   Proposed → In Discussion → Ready for Planning → Archived
+
+   - Proposed: Initial capture, gathering feedback
+   - In Discussion: Refining details with team
+   - Ready for Planning: Sufficient context to begin implementation
+   - Archived: Plan executed and feature complete
+
+4. NAMING CONSISTENCY:
+   Idea logs use same naming as feature folders:
+   - idea-logging-workflow.txt (general workflow document)
+   - mcp-http-server.txt (specific idea)
+   - agent-persona.txt (if documenting persona approach)
+
+================================================================================
+QUICK REFERENCE CHECKLIST
+================================================================================
+
+When capturing a new idea:
+- [ ] Filename in kebab-case.txt
+- [ ] Placed in coderef/future/ folder
+- [ ] Date/timestamp included
+- [ ] Status field set
+- [ ] 1-3 sentence description written
+- [ ] Context section explains "why"
+- [ ] Related work referenced
+- [ ] Next steps outlined
+- [ ] Ready for quick team review
+
+When promoting idea to plan:
+- [ ] Run /gather-context with idea log as reference
+- [ ] Update idea log status to "In Progress"
+- [ ] Run /analyze-for-planning (optional but recommended)
+- [ ] Run /create-plan to generate implementation plan
+- [ ] Link back from plan to idea log for reference
+- [ ] Archive both when complete
+
+================================================================================
+KEY DESIGN PRINCIPLE
+================================================================================
+
+Idea logs are LIGHTWEIGHT by design. They are NOT comprehensive specifications.
+
+WHAT IDEA LOGS ARE:
+- Quick capture (5-10 minutes to write)
+- Core concept and context
+- Starting point for /gather-context workflow
+- 10-20 lines of structured notes
+
+WHAT IDEA LOGS ARE NOT:
+- Comprehensive requirements (that's /gather-context's job)
+- Implementation plans (that's /create-plan's job)
+- Technical specifications (that's /analyze-for-planning's job)
+
+THE WORKFLOW:
+1. Idea Log - Lightweight capture (5-10 min)
+2. /gather-context - Detailed requirements via interactive questions (15-30 min)
+3. /analyze-for-planning - Technical analysis (automated, ~1 min)
+4. /create-plan - Full implementation plan (automated, ~2 min)
+
+This separation ensures:
+- Fast idea capture without friction
+- Comprehensive requirements gathering when needed
+- Agent asks relevant questions based on idea context
+
+================================================================================
+BENEFITS OF IDEA LOGGING
+================================================================================
+
+- Low-barrier capture: Quick notes don't require full planning
+- Context preservation: Future reference without re-investigating
+- Team alignment: Shared understanding of what we're building
+- Integration history: Track how MCP-related ideas evolved
+- Reference material: Examples for similar future ideas
+- Status tracking: Quick view of what's proposed vs. planned
+- Workflow integration: Feeds directly into /gather-context
+
+================================================================================

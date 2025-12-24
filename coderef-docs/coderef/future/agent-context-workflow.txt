@@ -1,0 +1,277 @@
+================================================================================
+AGENT CONTEXT WORKFLOW - MID-PROJECT CONTINUITY
+================================================================================
+
+PURPOSE:
+Provide rapid context for new agents joining mid-project. Enable seamless
+handoff and continuity by documenting current state, decisions, blockers,
+and next immediate actions.
+
+================================================================================
+FILE PLACEMENT STRATEGY
+================================================================================
+
+1. PROJECT ROOT LEVEL:
+   Location: /{working|archived}/{feature-name}/claude.md
+   Scope: High-level project overview and architecture
+   Updates: At project start and major milestones
+
+2. PHASE-LEVEL FILES:
+   Location: /{working|archived}/{feature-name}/phase-{N}/claude.md
+   Scope: Current phase status, blockers, immediate next steps
+   Updates: Before phase transition or when agent changes
+
+3. FOLDER STRUCTURE:
+   /working/{feature-name}/
+     ├── claude.md (PROJECT OVERVIEW)
+     ├── plan.json
+     ├── analysis.json
+     ├── phase-1/
+     │   ├── claude.md (PHASE 1 CONTEXT)
+     │   └── [implementation files]
+     ├── phase-2/
+     │   ├── claude.md (PHASE 2 CONTEXT)
+     │   └── [implementation files]
+     └── phase-3/
+         ├── claude.md (PHASE 3 CONTEXT)
+         └── [implementation files]
+
+================================================================================
+PROJECT-LEVEL CLAUDE.MD TEMPLATE
+================================================================================
+
+# Project: {Feature Name}
+**Status:** [Planning/In Progress/Testing/Ready for Merge/Completed]
+**Last Updated:** YYYY-MM-DD HH:MM
+**Current Agent:** [Name/ID if applicable]
+
+## Quick Summary
+[1-2 sentence overview of what this feature does]
+
+## Project Goals
+- [Goal 1]
+- [Goal 2]
+- [Goal 3]
+
+## Architecture Overview
+[Paragraph describing overall system design, key components, tech stack]
+
+## Key Decisions Made
+- **Decision 1:** [What] → [Why] → [Impact]
+- **Decision 2:** [What] → [Why] → [Impact]
+- **Decision 3:** [What] → [Why] → [Impact]
+
+## Current Phase
+**Phase:** [N of total] - [Phase Name]
+**Progress:** [% complete or status description]
+**Started:** YYYY-MM-DD
+**Est. Completion:** YYYY-MM-DD
+
+## Known Blockers
+- [ ] Blocker 1: [Description] - Assigned to [person/status]
+- [ ] Blocker 2: [Description] - Assigned to [person/status]
+
+## Dependencies
+- [External service/library]: [version/status]
+- [Database/config]: [current state]
+- [Related features]: [link to other projects]
+
+## File Structure
+- `/src/` - Main implementation
+- `/tests/` - Test files
+- `/docs/` - Additional documentation
+- `/phase-N/` - Phase-specific work
+
+## How to Get Started (New Agent)
+1. Read plan.json for full implementation details
+2. Review this file and current phase context
+3. Check latest phase/claude.md for immediate next steps
+4. Review related decision logs in phase directories
+5. [Any setup instructions: npm install, build, etc.]
+
+## References
+- Plan: plan.json
+- Analysis: analysis.json
+- Related: [link to idea log or related projects]
+
+================================================================================
+PHASE-LEVEL CLAUDE.MD TEMPLATE
+================================================================================
+
+# Phase {N}: {Phase Name}
+**Status:** [Not Started/In Progress/Blocked/Complete]
+**Assigned To:** [Agent/Person]
+**Started:** YYYY-MM-DD
+**Completed:** [YYYY-MM-DD or N/A]
+
+## Phase Objective
+[Clear, specific goal for this phase]
+
+## What's Been Completed ✓
+- [x] Task 1: [Description]
+- [x] Task 2: [Description]
+- [x] Task 3: [Description]
+
+## What's Currently In Progress 🔄
+- [ ] Task A: [Description] - [% complete]
+- [ ] Task B: [Description] - [% complete]
+
+## What's Next (Priority Order)
+1. [ ] Next Task 1: [Description] - [Est. time]
+2. [ ] Next Task 2: [Description] - [Est. time]
+3. [ ] Next Task 3: [Description] - [Est. time]
+
+## Critical Context for Continuity
+### Recent Decisions
+- **Decision A:** [What changed and why]
+- **Decision B:** [What changed and why]
+
+### Active Blockers
+- **Blocker:** [Issue] - [Attempted solutions] - [Owner/Status]
+- **Blocker:** [Issue] - [Attempted solutions] - [Owner/Status]
+
+### Code Hot Spots
+- File: `src/component.ts:45` - [Why this is important]
+- File: `src/service.ts:120` - [Why this is important]
+
+### Test Status
+- Unit tests: [Passing/[X] failing - details]
+- Integration tests: [Passing/[X] failing - details]
+- E2E tests: [Status or N/A]
+
+## Environment Setup
+```
+[Any commands or setup specific to this phase]
+npm install
+npm run build
+npm run dev
+```
+
+## How to Continue From Here
+1. [First immediate action]
+2. [Second immediate action]
+3. [Third immediate action]
+4. Refer to Phase {N+1} plan when ready to transition
+
+## Notes from Last Agent
+[Any lessons learned, gotchas, or tips for the next agent]
+
+## Quick Links
+- Previous phase: ../phase-{N-1}/claude.md
+- Next phase plan: ../phase-{N+1}/claude.md (if exists)
+- Project overview: ../claude.md
+
+================================================================================
+MINIMAL CONTEXT FILE (For Quick Capture)
+================================================================================
+
+When time is short, a minimal version can be used:
+
+---
+# {Feature} - Phase {N}
+**Status:** [Status]
+**Last Update:** YYYY-MM-DD
+
+## Where We Are
+[2-3 sentences about current state]
+
+## What's Blocked
+- [Blocker 1]
+- [Blocker 2]
+
+## Do Next
+1. [Next action 1]
+2. [Next action 2]
+
+## Hot Files
+- path/to/file1.ts
+- path/to/file2.ts
+---
+
+================================================================================
+WORKFLOW: CREATING AND UPDATING CONTEXT FILES
+================================================================================
+
+1. PROJECT INITIATION:
+   - Create project-level claude.md at /working/{feature-name}/claude.md
+   - Fill with plan.json high-level summary
+   - Set initial status to "Planning"
+
+2. PHASE START:
+   - Create phase-level claude.md at /working/{feature-name}/phase-{N}/
+   - Copy objectives from plan.json phase section
+   - Set status to "In Progress"
+
+3. DURING PHASE:
+   - Update phase claude.md daily/weekly with progress
+   - Mark completed tasks with ✓
+   - Document blockers as they arise
+   - Note any decision changes
+
+4. PHASE TRANSITION:
+   - Update phase claude.md with "Complete" status
+   - Create next phase claude.md with initial content
+   - Update project-level claude.md with current phase
+
+5. PROJECT COMPLETION:
+   - Mark all files with "Complete" status
+   - Archive project to /archived/{feature-name}/
+   - Preserve all claude.md files for historical reference
+
+6. AGENT HANDOFF:
+   - Before passing to new agent:
+     * Update current phase claude.md with latest status
+     * Document any new blockers or decisions
+     * Add "Notes from Last Agent" section
+     * Include specific file/line references if applicable
+
+================================================================================
+QUICK REFERENCE: WHAT GOES WHERE
+================================================================================
+
+PROJECT-LEVEL (claude.md):
+✓ Feature overview and goals
+✓ Architecture and tech stack
+✓ Major decisions made
+✓ Current phase and overall progress
+✓ Project-level blockers and dependencies
+✗ Day-to-day task status (→ Phase level)
+✗ Specific line numbers or file edits (→ Phase level)
+
+PHASE-LEVEL (claude.md):
+✓ Phase-specific objective
+✓ Completed tasks with details
+✓ Current in-progress work
+✓ Next immediate actions
+✓ Phase-level blockers
+✓ Code hot spots and gotchas
+✓ Test status
+✓ Environment setup commands
+✗ Project-wide decisions (→ Project level)
+✗ Long-term roadmap (→ Project level)
+
+================================================================================
+BENEFITS
+================================================================================
+
+For New Agents:
+- Rapid context acquisition (5-10 min vs. 1+ hour)
+- Clear next steps without searching
+- Understanding of past decisions and why they were made
+- Awareness of current blockers and gotchas
+- Specific code locations to focus on
+
+For Projects:
+- Continuity preserved across agent changes
+- Reduced ramp-up time
+- Clear progress tracking
+- Historical record of decision-making
+- Faster debugging (code hot spots documented)
+
+For Teams:
+- Better handoff between developers/agents
+- Clearer communication of project state
+- Easier code review with context
+- Reduced duplicate work and mistakes
+
+================================================================================

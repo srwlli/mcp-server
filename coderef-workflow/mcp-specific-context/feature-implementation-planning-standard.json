@@ -1,0 +1,347 @@
+{
+  "META_DOCUMENTATION": {
+    "title": "Feature Implementation Planning Standard - Universal Meta-Template",
+    "purpose": "Universal planning framework for ANY feature implementation or refactoring project in ANY codebase",
+    "version": "1.1.0",
+    "created": "2025-10-10",
+    "last_updated": "2025-10-10",
+    "audience": "AI assistants and developers planning features, refactors, or architectural changes",
+    "applicability": "Any programming language, any framework, any project size, any domain",
+    "summary": "Comprehensive standard defining 10-section planning template with quality checklists, common mistakes to avoid, and detailed guidance for each section. Emphasizes upfront planning to enable autonomous AI implementation.",
+
+    "what_is_this": {
+      "description": "A meta-template that defines a standardized planning methodology for software implementation",
+      "not_code": "This is NOT code - it's documentation about HOW to create implementation plans",
+      "universal": "Applies to web apps, mobile apps, backend services, libraries, CLI tools, APIs, databases, infrastructure - anything",
+      "structure": "Explains what each section means, why it exists, and how to fill it out properly",
+      "v1_1_0_enhancement": "Added section 0 (Preparation) - guides AI to leverage existing foundation docs and coding standards BEFORE writing plan, reducing implementation time by 60-70% through copy-paste patterns",
+      "context_gathering": "Optional: Use /gather-context to create <feature-name>-context.json BEFORE planning to clarify requirements and scope"
+    },
+
+    "core_principles": {
+      "principle_1": {
+        "name": "No Time Factors - All Agentic",
+        "description": "Plans must be executable by AI autonomously without human intervention during implementation",
+        "rationale": "AI doesn't work on deadlines; it works on completeness and complexity understanding",
+        "implications": [
+          "Every decision must be made upfront in the plan",
+          "No 'TBD' or 'we'll figure this out later'",
+          "Complexity and effort levels guide planning, not time estimates",
+          "AI executes at its own pace without time pressure",
+          "Quality over speed - no shortcuts due to complexity constraints"
+        ],
+        "example": "Instead of 'We'll decide on the database schema during implementation', plan says 'User table: id (UUID), email (string, unique), created_at (timestamp)'"
+      },
+      "principle_2": {
+        "name": "No Business Considerations",
+        "description": "Plans focus purely on technical implementation, not business value or market concerns",
+        "rationale": "Separates technical planning from product/business decisions",
+        "implications": [
+          "No cost-benefit analysis",
+          "No market research or user surveys",
+          "No prioritization based on business impact or ROI",
+          "Pure technical focus: what needs to be built and how",
+          "Assume business requirements are already defined and approved"
+        ],
+        "example": "Don't include 'This feature will increase revenue by 20%' - instead focus on 'Implements OAuth2 authentication flow with refresh tokens'"
+      },
+      "principle_3": {
+        "name": "Complete Autonomous Execution",
+        "description": "AI must be able to implement the plan start-to-finish without asking clarifying questions",
+        "rationale": "Eliminates back-and-forth; AI has everything it needs upfront",
+        "implications": [
+          "Complete specifications - zero ambiguity",
+          "All edge cases identified and resolution defined",
+          "Clear success criteria - AI knows when it's done",
+          "Built-in review gates - AI knows when to pause for approval",
+          "All dependencies explicitly stated",
+          "All architectural decisions documented with rationale"
+        ],
+        "example": "Instead of 'Handle errors appropriately', specify 'Catch PermissionError, log to stderr with error level, return HTTP 403 with JSON body {error: message}'"
+      },
+      "principle_4": {
+        "name": "Architecture Compliance",
+        "description": "All implementations must follow existing project patterns and standards",
+        "rationale": "Maintains consistency and prevents architectural drift",
+        "implications": [
+          "Document existing patterns that must be followed",
+          "Reference architectural decision records (ADRs)",
+          "Specify coding standards and style guides",
+          "Identify design patterns in use (factory, singleton, repository, etc.)",
+          "List required testing patterns (unit, integration, E2E)",
+          "Define error handling conventions"
+        ],
+        "example": "For a React project: 'Use functional components with hooks (not class components), PropTypes for type checking, React Query for data fetching, CSS Modules for styling'"
+      }
+    }
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "purpose": "Gather project documentation and coding standards BEFORE writing implementation plan sections 1-9",
+      "why_critical": "Leveraging existing patterns, standards, and documentation accelerates planning, ensures consistency, and reduces implementation time by 60-70%",
+      "when_to_do_this": "FIRST step after reading META_DOCUMENTATION, before writing executive summary",
+      "output": "Reference inventory to use throughout plan writing",
+
+      "overview": {
+        "what_youre_looking_for": [
+          "Foundation docs - Project-level documentation (architecture, APIs, components, schemas)",
+          "Coding standards - Language/framework-specific patterns and conventions",
+          "Similar components - Existing implementations to reference or extend",
+          "Test patterns - How tests are structured and organized"
+        ],
+        "where_to_look": {
+          "common_locations": [
+            "docs/, documentation/, coderef/, .docs/",
+            "coderef/foundation-docs/",
+            "coderef/standards/",
+            "README.md, ARCHITECTURE.md, API.md, COMPONENTS.md",
+            "CONTRIBUTING.md, STYLE_GUIDE.md"
+          ],
+          "note": "Location varies by project - use find/grep to locate if not in standard places"
+        },
+        "effort_investment": "Moderate preparation effort - significantly reduces implementation complexity and effort"
+      },
+
+      "step_1_inventory_foundation_docs": {
+        "purpose": "Identify what project-level documentation exists",
+        "what_to_find": {
+          "API_documentation": {
+            "common_names": ["API.md", "api-reference.md", "endpoints.md"],
+            "contains": ["API endpoint definitions", "Request/response schemas", "Error codes", "Authentication requirements"],
+            "use_in_planning": ["Section 3 (Current State) - Understanding existing API contracts", "Section 4 (Key Features) - Ensuring new APIs match existing patterns", "Task breakdown - Knowing exact parameter types"]
+          }
+        },
+        "quality_checklist": [
+          "☐ Inventoried all foundation docs (or documented they don't exist)",
+          "☐ Inventoried all coding standards (or documented need to create them)",
+          "☐ Found 1-3 similar components to reference (or documented none exist)",
+          "☐ Created preparation summary with key patterns identified",
+          "☐ Documented gaps (missing docs/standards) in risk assessment",
+          "☐ Complexity and effort assessments account for any documentation gaps"
+        ]
+      }
+    },
+
+    "1_executive_summary": {
+      "purpose": "High-level overview for stakeholders who won't read the full plan",
+      "when_to_write": "First section to write - forces clarity on what you're building",
+      "target_length": "5-7 sentences total across all fields",
+      "quality_checklist": [
+        "☐ Can a non-developer understand what's being built?",
+        "☐ Each field is 1-2 sentences max (concise)",
+        "☐ No placeholder text like '[TBD]', '[to be determined]', '[figure out later]'",
+        "☐ Real-world analogy doesn't use technical terms",
+        "☐ Output lists concrete deliverables (not vague goals)"
+      ]
+    },
+
+    "2_risk_assessment": {
+      "purpose": "Identify potential problems before they occur",
+      "when_to_write": "Early in planning - informs architecture decisions",
+      "output": "Honest evaluation of risks with mitigation strategies",
+      "quality_checklist": [
+        "☐ Honest assessment (don't downplay risks to look good)",
+        "☐ Each high risk has a mitigation strategy",
+        "☐ Dependencies are specific (library names and versions)",
+        "☐ Security risks identified if handling user data",
+        "☐ Breaking changes clearly documented"
+      ]
+    },
+
+    "3_current_state_analysis": {
+      "purpose": "Document existing codebase state before making changes",
+      "why_important": "Prevents surprises during implementation; ensures you understand what you're modifying",
+      "quality_checklist": [
+        "☐ Every file to be modified is listed",
+        "☐ Line numbers provided for specific changes (when known)",
+        "☐ All dependencies categorized (existing/new, internal/external)",
+        "☐ New external dependencies include version numbers",
+        "☐ Architecture context explains how this fits into existing system"
+      ]
+    },
+
+    "4_key_features": {
+      "purpose": "List what this implementation does at feature level (not implementation details)",
+      "format": "Flat list of feature descriptions from user perspective",
+      "quality_checklist": [
+        "☐ 6-10 features total (right level of granularity)",
+        "☐ Each feature is user-facing (not implementation details)",
+        "☐ Features are concrete and testable",
+        "☐ Edge cases explicitly mentioned",
+        "☐ No duplicate or overlapping features"
+      ]
+    },
+
+    "5_task_id_system": {
+      "purpose": "Task IDs provide traceability, progress tracking, and clear references for implementation work",
+      "format": "PREFIX-NNN (e.g., SETUP-001, API-002, TEST-003)",
+      "quality_checklist": [
+        "☐ Workorder object present in section 5 with id, name, feature_dir fields",
+        "☐ Workorder ID follows WO-{FEATURE-NAME}-001 format",
+        "☐ All tasks include workorder_id field matching plan's workorder.id",
+        "☐ Task IDs follow PREFIX-NNN format",
+        "☐ Prefixes match the type of work (SETUP, API, TEST, etc.)",
+        "☐ Each task has imperative verb (Create, Add, Implement)",
+        "☐ Tasks are specific enough to implement without clarification",
+        "☐ Tasks are appropriately scoped (single-focus, not overly broad)",
+        "☐ All tasks are unique (no duplicate IDs)"
+      ]
+    },
+
+    "6_implementation_phases": {
+      "purpose": "Break work into logical phases that can be executed sequentially",
+      "why_phases": "Allows progress tracking, natural review points, dependency management",
+      "quality_checklist": [
+        "☐ Phases can be executed sequentially (no circular dependencies)",
+        "☐ Each phase has clear completion criteria",
+        "☐ Phase complexity and effort levels are realistic and justified",
+        "☐ All task IDs are assigned to a phase",
+        "☐ No task appears in multiple phases",
+        "☐ Dependencies between phases are explicit"
+      ]
+    },
+
+    "7_testing_strategy": {
+      "purpose": "Define how to validate implementation correctness across all scenarios",
+      "quality_checklist": [
+        "☐ Unit tests cover all public functions/methods",
+        "☐ Integration tests cover major workflows",
+        "☐ At least 5 edge case scenarios documented",
+        "☐ Each edge case has expected behavior defined",
+        "☐ Test coverage targets specified (e.g., 80% for unit tests)",
+        "☐ Manual testing steps documented where automation isn't feasible"
+      ]
+    },
+
+    "8_success_criteria": {
+      "purpose": "Define quantifiable metrics to validate implementation is complete and correct",
+      "why_quantifiable": "AI needs objective pass/fail criteria, not subjective judgment",
+      "quality_checklist": [
+        "☐ Every criterion has a measurable target (number, percentage, yes/no)",
+        "☐ Validation method is specific (test name, command to run, tool to use)",
+        "☐ Functional requirements cover all key features from section 4",
+        "☐ Quality requirements include test coverage target",
+        "☐ Performance requirements included if processing significant data",
+        "☐ Security requirements included if handling sensitive data"
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "purpose": "Master checklist with all task IDs for tracking progress during implementation",
+      "format": "Organized by phase with checkboxes",
+      "quality_checklist": [
+        "☐ Every task ID from phases appears in checklist",
+        "☐ Tasks listed in logical execution order",
+        "☐ Finalization steps included (tests, review, deploy)",
+        "☐ Pre-implementation checks included",
+        "☐ Checklist is flat (no nested checkboxes - hard to track)"
+      ]
+    }
+  },
+
+  "QUALITY_CHECKLIST_FOR_PLANS": {
+    "purpose": "Use this to validate your implementation plan before starting work",
+    "completeness": [
+      "☐ Executive summary: All 5 fields filled with substantial content (not placeholders)",
+      "☐ Risk assessment: Honest evaluation with all risk factors addressed",
+      "☐ Current state: Every affected file listed with description of changes",
+      "☐ Key features: 6-10 features covering primary, secondary, edge cases",
+      "☐ Task IDs: All tasks have unique IDs following PREFIX-NNN format",
+      "☐ Phases: 4-6 phases with clear completion criteria",
+      "☐ Testing: Unit, integration, and 5+ edge case scenarios defined",
+      "☐ Success criteria: Quantifiable metrics in all 4 categories",
+      "☐ Implementation checklist: Every task ID appears with checkbox"
+    ],
+    "quality": [
+      "☐ No placeholder text like '[TBD]', '[to be determined]', '[figure out later]'",
+      "☐ All task descriptions start with imperative verb (Create, Add, Implement)",
+      "☐ Success criteria are measurable (numbers, not subjective judgments)",
+      "☐ Edge cases cover: empty input, invalid input, boundaries, errors",
+      "☐ Complexity and effort assessments are realistic (compare to similar past work)",
+      "☐ Dependencies clearly specified (internal and external)",
+      "☐ Security considerations addressed if handling sensitive data",
+      "☐ Performance targets specified if processing significant data"
+    ],
+    "autonomy": [
+      "☐ Zero ambiguity - every decision has been made",
+      "☐ AI could implement this without asking clarifying questions",
+      "☐ Edge cases have defined expected behavior (not just 'handle somehow')",
+      "☐ Success criteria are clear enough to know when 'done'",
+      "☐ Review gates specified (when to pause for human approval)",
+      "☐ All architectural decisions documented with rationale"
+    ]
+  },
+
+  "COMMON_MISTAKES_TO_AVOID": [
+    {
+      "mistake": "Vague task descriptions",
+      "bad": "SETUP-001: Set up authentication",
+      "good": "SETUP-001: Install pyjwt==2.8.0 and bcrypt==4.0.1 in requirements.txt for authentication",
+      "why_bad": "Too broad; unclear what 'set up' means"
+    },
+    {
+      "mistake": "Missing edge cases",
+      "bad": "Only testing happy path",
+      "good": "Testing: happy path + 7 edge cases including empty input, invalid tokens, concurrent access",
+      "why_bad": "Real-world usage will hit edge cases you didn't consider"
+    },
+    {
+      "mistake": "Subjective success criteria",
+      "bad": "System is fast and secure",
+      "good": "Login endpoint < 200ms P95 latency, passwords hashed with bcrypt cost>=10",
+      "why_bad": "Can't objectively verify 'fast' or 'secure'"
+    },
+    {
+      "mistake": "Forgetting dependencies",
+      "bad": "Using library without listing it in dependencies",
+      "good": "NEW EXTERNAL: pyjwt==2.8.0 (add to requirements.txt)",
+      "why_bad": "Code will fail at runtime with import errors"
+    },
+    {
+      "mistake": "No error handling plan",
+      "bad": "Implement feature (no mention of errors)",
+      "good": "Edge case: invalid JWT → return 401 with {error: 'Invalid token'} → log to stderr",
+      "why_bad": "Errors will crash the system or leak sensitive info"
+    },
+    {
+      "mistake": "Phases with circular dependencies",
+      "bad": "Phase 1 depends on Phase 3 which depends on Phase 1",
+      "good": "Phase 1 (DB) → Phase 2 (API) → Phase 3 (UI) → Phase 4 (Tests)",
+      "why_bad": "Can't execute phases sequentially"
+    },
+    {
+      "mistake": "Underestimating complexity and effort",
+      "bad": "Authentication system marked as 'low complexity, effort level 1'",
+      "good": "Authentication system: high complexity (multiple components), effort level 4 (significant implementation scope across security, API, database layers)",
+      "why_bad": "Underestimating complexity leads to inadequate planning and missed edge cases"
+    },
+    {
+      "mistake": "Missing security considerations",
+      "bad": "Store passwords as plain text",
+      "good": "Hash passwords with bcrypt cost factor 10, store hash + salt in database",
+      "why_bad": "Massive security vulnerability"
+    }
+  ],
+
+  "USAGE_INSTRUCTIONS": {
+    "when_to_create_plan": {
+      "always_create_for": [
+        "New features (any significant new capability)",
+        "Major refactoring (touching 5+ files)",
+        "Architecture changes (new patterns, libraries, or paradigms)",
+        "Performance optimizations (if they require code changes)",
+        "Security enhancements (new authentication, authorization, encryption)",
+        "Database schema changes (migrations, new tables)"
+      ],
+      "optional_for": [
+        "Bug fixes (unless complex - touching 3+ files)",
+        "Minor refactoring (renaming, moving files)",
+        "Documentation updates (unless restructuring entire docs)",
+        "Configuration changes (unless they affect architecture)"
+      ]
+    },
+    "overall_planning_effort": "Comprehensive planning requires moderate to high effort for complex features",
+    "note": "Thorough upfront planning prevents rework and ensures successful autonomous implementation"
+  }
+}

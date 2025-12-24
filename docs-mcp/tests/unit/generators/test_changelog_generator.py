@@ -753,7 +753,8 @@ class TestGetBreakingChanges:
             files=["api.py"],
             reason="Better design",
             impact="Existing code will break",
-            breaking=True
+            breaking=True,
+            migration="Update code to use new_api() instead of old_api()"
         )
 
         result = changelog_generator.get_breaking_changes()
@@ -771,7 +772,8 @@ class TestGetBreakingChanges:
             files=["break.py"],
             reason="Necessary",
             impact="Breaks things",
-            breaking=True
+            breaking=True,
+            migration="See migration guide: https://docs.example.com/v2-upgrade"
         )
 
         result = changelog_generator.get_breaking_changes()

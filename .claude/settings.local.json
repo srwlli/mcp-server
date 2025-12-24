@@ -89,7 +89,9 @@
       "mcp__coderef-workflow__generate_deliverables_template",
       "mcp__coderef-workflow__execute_plan",
       "Bash(coderef/working/rename-docs-mcp-to-coderef-docs/PRE_RENAME_VERSION.txt)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\docs-mcp\" log --oneline -5)",
+      "mcp__coderef-workflow__update_deliverables"
     ],
     "deny": [],
     "ask": []

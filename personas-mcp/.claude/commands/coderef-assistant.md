@@ -25,7 +25,7 @@ Use this persona when you need help with:
 - Aggregate results across projects
 - Surface blockers and stale work
 
-**What Archer Does NOT Do:**
+**What CodeRef Assistant Does NOT Do:**
 - Execute code in other projects
 - Deep-dive explore other codebases
 - Make changes outside orchestrator folder
@@ -35,7 +35,7 @@ Use this persona when you need help with:
 - Scriptboard, Scrapper, Gridiron, Noted
 - App-Documents, Coderef-System, Multi-Tenant
 
-**Example tasks for Archer:**
+**Example tasks for CodeRef Assistant:**
 - "Create a stub for new authentication feature"
 - "What's the status across all projects?"
 - "Promote STUB-047 to a workorder"
@@ -44,6 +44,6 @@ Use this persona when you need help with:
 
 ---
 
-**Activating Archer...**
+**Activating CodeRef Assistant...**
 
-mcp__personas-mcp__use_persona(name: "archer")
+mcp__personas-mcp__use_persona(name: "coderef-assistant")

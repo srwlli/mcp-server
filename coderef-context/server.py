@@ -339,55 +339,385 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [TextContent(text=f"Error calling tool {name}: {str(e)}")]
 
 
-# Placeholder handlers - will be fully implemented after CLI_SPEC.md
+# ============================================================================
+# Tool Handler Implementations (Based on CLI_SPEC.md)
+# ============================================================================
+
 async def handle_coderef_scan(args: dict) -> list[TextContent]:
-    """Handle /scan tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /scan tool - Discover code elements."""
+    project_path = args.get("project_path", ".")
+    languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
+    use_ast = args.get("use_ast", False)
+
+    # Build CLI command: coderef scan <sourceDir> --lang ts,tsx --json [--ast]
+    cmd = [
+        "node", CLI_BIN, "scan",
+        project_path,
+        "--lang", ",".join(languages),
+        "--json"
+    ]
+    if use_ast:
+        cmd.append("--ast")
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        # Parse JSON output
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "elements_found": len(data) if isinstance(data, list) else 0,
+                "elements": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Scan timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_query(args: dict) -> list[TextContent]:
-    """Handle /query tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /query tool - Query code relationships."""
+    project_path = args.get("project_path", ".")
+    query_type = args.get("query_type", "depends-on-me")
+    target = args.get("target")
+    max_depth = args.get("max_depth", 3)
+
+    if not target:
+        return [TextContent(text="Error: target parameter is required")]
+
+    # Build CLI command: coderef query <target> --type <type> --depth <depth> --format json
+    cmd = [
+        "node", CLI_BIN, "query",
+        target,
+        "--type", query_type,
+        "--depth", str(max_depth),
+        "--format", "json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "query_type": query_type,
+                "target": target,
+                "results": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Query timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_impact(args: dict) -> list[TextContent]:
-    """Handle /impact tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /impact tool - Analyze change impact."""
+    project_path = args.get("project_path", ".")
+    element = args.get("element")
+    operation = args.get("operation", "modify")
+    max_depth = args.get("max_depth", 3)
+
+    if not element:
+        return [TextContent(text="Error: element parameter is required")]
+
+    # Build CLI command: coderef impact <target> --depth <depth> --format json
+    cmd = [
+        "node", CLI_BIN, "impact",
+        element,
+        "--depth", str(max_depth),
+        "--format", "json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "element": element,
+                "operation": operation,
+                "impact": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Impact analysis timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_complexity(args: dict) -> list[TextContent]:
-    """Handle /complexity tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /complexity tool - Get complexity metrics."""
+    project_path = args.get("project_path", ".")
+    element = args.get("element")
+
+    if not element:
+        return [TextContent(text="Error: element parameter is required")]
+
+    # Complexity metrics come from context command with element filtering
+    # For now, return a note that this should use context command
+    cmd = [
+        "node", CLI_BIN, "context",
+        project_path,
+        "--lang", "ts,tsx,js,jsx",
+        "--json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            # Extract complexity info for target element if available
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "element": element,
+                "note": "Complexity metrics derived from context generation",
+                "context": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Context generation timeout (60s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_patterns(args: dict) -> list[TextContent]:
-    """Handle /patterns tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /patterns tool - Discover patterns."""
+    project_path = args.get("project_path", ".")
+    pattern_type = args.get("pattern_type", "all")
+    limit = args.get("limit", 10)
+
+    # Pattern discovery comes from context command's test pattern analysis
+    cmd = [
+        "node", CLI_BIN, "context",
+        project_path,
+        "--lang", "ts,tsx,js,jsx",
+        "--json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "pattern_type": pattern_type,
+                "limit": limit,
+                "patterns": data.get("testPatterns", {}) if isinstance(data, dict) else {}
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Pattern discovery timeout (60s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_coverage(args: dict) -> list[TextContent]:
-    """Handle /coverage tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /coverage tool - Test coverage analysis."""
+    project_path = args.get("project_path", ".")
+    format_type = args.get("format", "summary")
+
+    # Build CLI command: coderef coverage --format json
+    cmd = [
+        "node", CLI_BIN, "coverage",
+        "--format", "json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "coverage": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Coverage analysis timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_context(args: dict) -> list[TextContent]:
-    """Handle /context tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /context tool - Generate comprehensive context."""
+    project_path = args.get("project_path", ".")
+    languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
+    output_format = args.get("output_format", "json")
+
+    # Build CLI command: coderef context <sourceDir> --lang <langs> --json
+    cmd = [
+        "node", CLI_BIN, "context",
+        project_path,
+        "--lang", ",".join(languages)
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "format": output_format,
+                "context": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Context generation timeout (120s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_validate(args: dict) -> list[TextContent]:
-    """Handle /validate tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /validate tool - Validate CodeRef references."""
+    project_path = args.get("project_path", ".")
+    pattern = args.get("pattern", "**/*.ts")
+
+    # Build CLI command: coderef validate <sourceDir> --pattern <pattern> --format json
+    cmd = [
+        "node", CLI_BIN, "validate",
+        project_path,
+        "--pattern", pattern,
+        "--format", "json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "pattern": pattern,
+                "validation": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Validation timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_drift(args: dict) -> list[TextContent]:
-    """Handle /drift tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /drift tool - Detect reference drift."""
+    project_path = args.get("project_path", ".")
+    index_path = args.get("index_path", ".coderef-index.json")
+
+    # Build CLI command: coderef drift <sourceDir> --index <indexPath> --format json
+    cmd = [
+        "node", CLI_BIN, "drift",
+        project_path,
+        "--index", index_path,
+        "--format", "json"
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "drift_report": data
+            }, indent=2))]
+        except json.JSONDecodeError as e:
+            return [TextContent(text=f"JSON parse error: {str(e)}")]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Drift detection timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_diagram(args: dict) -> list[TextContent]:
-    """Handle /diagram tool."""
-    return [TextContent(text="TODO: Implement after CLI_SPEC.md")]
+    """Handle /diagram tool - Generate dependency diagrams."""
+    project_path = args.get("project_path", ".")
+    diagram_type = args.get("diagram_type", "dependencies")
+    format_type = args.get("format", "mermaid")
+    depth = args.get("depth", 2)
+
+    # Build CLI command: coderef diagram --format <format> --depth <depth> --output stdout
+    cmd = [
+        "node", CLI_BIN, "diagram",
+        "--format", format_type,
+        "--depth", str(depth)
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+
+        if result.returncode != 0:
+            return [TextContent(text=f"Error: {result.stderr}")]
+
+        # For non-JSON formats (mermaid, dot), return text directly
+        if format_type in ["mermaid", "dot"]:
+            return [TextContent(text=result.stdout)]
+
+        # For JSON format, parse and wrap
+        try:
+            data = json.loads(result.stdout)
+            return [TextContent(text=json.dumps({
+                "success": True,
+                "diagram": data
+            }, indent=2))]
+        except json.JSONDecodeError:
+            # If not JSON, return as-is
+            return [TextContent(text=result.stdout)]
+
+    except subprocess.TimeoutExpired:
+        return [TextContent(text="Error: Diagram generation timeout (30s exceeded)")]
+    except Exception as e:
+        return [TextContent(text=f"Error: {str(e)}")]
 
 
 # ============================================================================
@@ -396,4 +726,7 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
 
 if __name__ == "__main__":
     print("[coderef-context] Starting MCP server...")
-    stdio_server(app).run()
+    import asyncio
+    from mcp.server.stdio import stdio_server
+
+    asyncio.run(stdio_server(app))

@@ -1,0 +1,51 @@
+{
+  "feature_name": "rename-docs-mcp-to-coderef-docs",
+  "description": "Rename the MCP server from 'docs-mcp' to 'coderef-docs' throughout the entire codebase, including Python files, documentation, package configuration, tests, and MCP-specific resources. This involves updating all references, imports, package names, and tool identifiers while maintaining backward compatibility where possible.",
+  "goal": "Successfully rebrand the MCP server from 'docs-mcp' to 'coderef-docs' to better reflect its integration with coderef functionality, ensuring all tools remain discoverable and functional under the new naming scheme without breaking existing functionality.",
+  "requirements": [
+    "Update all Python module and package names from docs_mcp to coderef_docs",
+    "Update server.py with new server name and tool prefixes",
+    "Update tool_handlers.py with new naming conventions",
+    "Update pyproject.toml with new package name, URLs, and metadata",
+    "Update README.md with new server name, installation instructions, and examples",
+    "Update CLAUDE.md with new server name and version history",
+    "Update all test files and test references to use new naming",
+    "Update slash commands (.claude/commands/*.md) to reference new server name",
+    "Update global resources to use new mcp__coderef-docs__ prefix",
+    "Update MCP configuration examples (settings.json, claude_desktop_config.json)",
+    "Verify all tools are discoverable with new mcp__coderef-docs__ prefix",
+    "Update any hardcoded string references to 'docs-mcp' or 'docs_mcp'",
+    "Update git repository references if applicable (origin, remotes)",
+    "Ensure all file paths and imports use new naming scheme",
+    "Run all tests to verify nothing broke during rename",
+    "Verify server starts successfully with new name",
+    "Update any workflow or CI/CD configurations if present"
+  ],
+  "out_of_scope": [
+    "Updating external projects or repositories that reference docs-mcp",
+    "Creating detailed migration guides for end users",
+    "Breaking changes to tool APIs or function signatures",
+    "Modifying core functionality beyond naming changes",
+    "Updating historical git commit messages or tags",
+    "Renaming the actual git repository (only internal references)"
+  ],
+  "constraints": [
+    "Must preserve all git history during the rename",
+    "All existing tests must pass after the rename",
+    "Server must start successfully and discover all tools with new prefix",
+    "Cross-platform compatibility must be maintained (Windows, Linux, macOS)",
+    "Tool functionality must remain identical (only naming changes)",
+    "MCP protocol compliance must be maintained",
+    "Python package structure must remain valid",
+    "Installation process should work seamlessly with new name",
+    "No data loss or corruption of existing coderef working directories",
+    "Changes must be atomic where possible to avoid partial state"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+    "workorder_assigned_at": "2025-12-24T00:35:20.208813+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

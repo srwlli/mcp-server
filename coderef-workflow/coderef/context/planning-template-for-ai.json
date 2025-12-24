@@ -1,0 +1,437 @@
+{
+  "_AI_INSTRUCTIONS": {
+    "purpose": "Generate implementation plans following this structure",
+    "core_principles": {
+      "no_time_factors": "Plans are agentic - focus on complexity and completeness, not deadlines",
+      "no_business_considerations": "Pure technical focus - what needs to be built and how",
+      "complete_autonomous_execution": "AI must implement without asking clarifying questions - zero ambiguity",
+      "architecture_compliance": "Follow existing project patterns and standards"
+    },
+    "workflow": "Read context.json + analysis data → Fill all 10 sections → Validate completeness"
+  },
+
+  "REQUIRED_SECTIONS": {
+    "0_preparation": {
+      "purpose": "Gather project documentation and coding standards BEFORE writing sections 1-9",
+      "required_fields": {
+        "foundation_docs": {
+          "available": ["List discovered docs: API.md, ARCHITECTURE.md, etc."],
+          "missing": ["List missing docs"]
+        },
+        "coding_standards": {
+          "available": ["List discovered standards: BEHAVIOR-STANDARDS.md, etc."],
+          "missing": ["List missing standards"]
+        },
+        "reference_components": {
+          "primary": "Most similar component to reference",
+          "secondary": ["Other relevant components"]
+        },
+        "key_patterns_identified": ["Pattern 1", "Pattern 2"],
+        "technology_stack": {
+          "languages": ["Python", "TypeScript", "etc."],
+          "frameworks": ["React", "FastAPI", "etc."],
+          "key_libraries": ["library@version"]
+        },
+        "gaps_and_risks": ["Gap/risk 1", "Gap/risk 2"]
+      },
+      "example": {
+        "foundation_docs": {"available": ["API.md", "ARCHITECTURE.md"], "missing": ["User guide"]},
+        "coding_standards": {"available": ["BEHAVIOR-STANDARDS.md"], "missing": []},
+        "reference_components": {"primary": "handle_audit_codebase - Similar handler pattern", "secondary": ["StandardsGenerator"]},
+        "key_patterns_identified": ["All handlers: log → validate → work → return → catch errors", "All types named [Feature]ResultDict"],
+        "technology_stack": {"languages": ["Python 3.11+"], "frameworks": ["MCP SDK"], "key_libraries": ["mcp@1.0.0"]},
+        "gaps_and_risks": ["No testing standards doc (will infer from existing tests)"]
+      }
+    },
+
+    "1_executive_summary": {
+      "required_fields": {
+        "purpose": "What problem does this solve? Template: Enable [users/system] to [capability] by [approach]",
+        "value_proposition": "Why important? List 2-3 concrete benefits",
+        "real_world_analogy": "Explain to non-technical person using everyday analogy",
+        "use_case": "When/how used? Format: [Trigger] → [Steps] → [Outcome]",
+        "output": "Tangible artifacts: files, endpoints, tables, UI screens"
+      },
+      "example": {
+        "purpose": "Enable developers to rename MCP server from docs-mcp to coderef-docs by systematically updating all references",
+        "value_proposition": "Reduces rename manual effort from hours to minutes, ensures no references are missed, provides checklist for verification",
+        "real_world_analogy": "Like updating a person's name across all their documents and accounts - systematic approach prevents confusion",
+        "use_case": "User requests server rename → Plan identifies all 30+ files → Execution updates systematically → Verification confirms all references changed",
+        "output": "Renamed server files, updated tool names in MCP registry, updated documentation"
+      },
+      "bad_example": {"purpose": "Rename the server", "value_proposition": "Makes things better"}
+    },
+
+    "2_risk_assessment": {
+      "required_fields": {
+        "overall_risk": "low | medium | high",
+        "complexity": "low | medium | high | very_high (with file count estimate)",
+        "scope": "[Small/Medium/Large] - [X] files, [Y] components affected",
+        "file_system_risk": "low | medium | high (if reads/writes files)",
+        "dependencies": ["Library@version or 'None'"],
+        "performance_concerns": ["Concern 1", "None"],
+        "security_considerations": ["Security item 1", "None"],
+        "breaking_changes": "none | minor | major | migration_needed"
+      },
+      "guidelines": {
+        "low_complexity": "< 5 files, < 200 lines, follows existing patterns exactly",
+        "medium_complexity": "5-15 files, 200-1000 lines, adapts existing patterns",
+        "high_complexity": "15-50 files, 1000-3000 lines, new patterns, multiple subsystems",
+        "very_high_complexity": "> 50 files, > 3000 lines, major architectural changes"
+      },
+      "example": {
+        "overall_risk": "medium",
+        "complexity": "high (30+ files affected, 300+ string replacements, systematic but straightforward)",
+        "scope": "Large - 30 files, all components must be updated (breaking change for external users)",
+        "file_system_risk": "medium (reads/writes many files, directory rename at end)",
+        "dependencies": ["No new external dependencies"],
+        "performance_concerns": ["None"],
+        "security_considerations": ["Ensure all tool names updated to prevent 404 errors"],
+        "breaking_changes": "major (tool names change from mcp__docs-mcp__* to mcp__coderef-docs__*)"
+      }
+    },
+
+    "3_current_state_analysis": {
+      "required_fields": {
+        "affected_files": [
+          "NEW: path/to/file.ext - Purpose",
+          "MODIFIED: path/to/file.ext - What changes",
+          "MODIFIED: path/to/file.ext:42-58 - Specific section"
+        ],
+        "dependencies": {
+          "existing_internal": ["Module - How used"],
+          "existing_external": ["library@version - How used"],
+          "new_external": ["library@version - Why needed"],
+          "new_internal": ["Module - Purpose"]
+        },
+        "architecture_context": "Layer (presentation/logic/data), patterns to follow, integration points"
+      },
+      "example": {
+        "affected_files": [
+          "MODIFIED: server.py - Change Server('docs-mcp') to Server('coderef-docs')",
+          "MODIFIED: tool_handlers.py - Update tool prefix references",
+          "MODIFIED: constants.py - Update server name constant",
+          "MODIFIED: logger_config.py - Update logger name references",
+          "MODIFIED: validation.py - Update validation references if any",
+          "MODIFIED: error_responses.py - Update error messages referencing server name",
+          "MODIFIED: pyproject.toml - Update project name, scripts, metadata",
+          "MODIFIED: .claude/commands.json - Update tool name registry",
+          "MODIFIED: README.md - Update all documentation references",
+          "MODIFIED: CLAUDE.md - Update version history and tool references",
+          "MODIFIED: user-guide.md - Update usage examples",
+          "MODIFIED: .claude/commands/*.md - Update all command references (~10 files)",
+          "MODIFIED: tests/conftest.py - Update server name in fixtures",
+          "MODIFIED: tests/test_server.py - Update server name assertions",
+          "RENAMED: directory ~/.mcp-servers/docs-mcp → ~/.mcp-servers/coderef-docs"
+        ],
+        "dependencies": {
+          "existing_internal": [
+            "MCP SDK - Server initialization",
+            "Tool handlers - All 11 tools must have updated names",
+            "Generator classes - Internal use only, no external changes"
+          ],
+          "existing_external": ["mcp@1.0.0, pydantic, python 3.11+"],
+          "new_external": ["None"],
+          "new_internal": ["None"]
+        },
+        "architecture_context": "System-wide rename at protocol level. All tools are stateless MCP handlers - renaming affects only discovery names, not implementation. Backward compatibility: old tool names will no longer work (breaking change)."
+      }
+    },
+
+    "4_key_features": {
+      "required_fields": {
+        "primary_features": ["3-5 core user-facing capabilities"],
+        "secondary_features": ["2-3 supporting capabilities"],
+        "edge_case_handling": ["2-3 special scenarios"],
+        "configuration_options": ["1-2 configurable aspects or 'None'"]
+      },
+      "guidelines": {
+        "write_from_user_perspective": "What users experience, not how implemented",
+        "be_concrete": "Specific testable features, not vague goals",
+        "typical_count": "6-10 features total"
+      },
+      "example": {
+        "primary_features": [
+          "Systematically rename server from docs-mcp to coderef-docs across all files",
+          "Update all ~200 MCP tool name references (mcp__docs-mcp__* → mcp__coderef-docs__*)",
+          "Update documentation to reflect new server name",
+          "Rename directory in ~/.mcp-servers/ from docs-mcp to coderef-docs",
+          "Verify all references changed via build and tool discovery"
+        ],
+        "secondary_features": [
+          "Update CHANGELOG.json with breaking change entry",
+          "Update workorder logging if applicable",
+          "Provide migration guide for users updating their configurations"
+        ],
+        "edge_case_handling": [
+          "Handle slash command name conflicts with other MCP servers",
+          "Ensure tool references in other MCP servers (if any) are not affected",
+          "Preserve git history during directory rename (use git mv)"
+        ],
+        "configuration_options": ["None"]
+      },
+      "bad_example": ["Rename the server", "Update documentation"]
+    },
+
+    "5_task_id_system": {
+      "prefixes": {
+        "SETUP": "Initial setup, dependencies, configuration (typical: 3-6 tasks)",
+        "DB": "Database schema, migrations, queries (typical: 2-5 tasks)",
+        "API": "HTTP endpoints, request/response (typical: 3-8 tasks)",
+        "LOGIC": "Business logic, algorithms, validation (typical: 4-10 tasks)",
+        "UI": "User interface components, forms, styling (typical: 5-15 tasks)",
+        "TEST": "Unit, integration, E2E tests (typical: 5-10 tasks)",
+        "SEC": "Security, input validation, access control (typical: 2-5 tasks)",
+        "DOC": "Documentation, API specs, guides (typical: 3-5 tasks)",
+        "DEPLOY": "Deployment scripts, CI/CD, env config (typical: 2-4 tasks)",
+        "REFACTOR": "Code cleanup, restructuring (varies)"
+      },
+      "format": "PREFIX-NNN (e.g., SETUP-001, API-002)",
+      "task_description_rules": {
+        "start_with_imperative_verb": "Create, Add, Implement, Update, Fix, Write",
+        "be_specific": "Include file name or component",
+        "be_testable": "Clear completion criteria",
+        "minimum_length": "20 words for quality"
+      },
+      "example_good": "SETUP-001: Update Server initialization in server.py line 62 from Server('docs-mcp') to Server('coderef-docs')",
+      "example_bad": "SETUP-001: Rename docs-mcp"
+    },
+
+    "6_implementation_phases": {
+      "standard_structure": {
+        "phase_1_foundation": {
+          "purpose": "Setup before writing logic",
+          "typical_tasks": ["SETUP tasks", "DB tasks", "Scaffolding"],
+          "completion_criteria": "All files exist, dependencies installed, code compiles",
+          "complexity": "low",
+          "effort_percentage": "15-25%"
+        },
+        "phase_2_core_implementation": {
+          "purpose": "Implement primary features and business logic",
+          "typical_tasks": ["LOGIC tasks", "API tasks", "UI tasks"],
+          "completion_criteria": "Happy path works end-to-end",
+          "complexity": "high",
+          "effort_percentage": "40-50%"
+        },
+        "phase_3_edge_cases_security": {
+          "purpose": "Handle errors, validation, security",
+          "typical_tasks": ["Error handling", "SEC tasks", "Performance optimizations"],
+          "completion_criteria": "All edge cases handled, security requirements met",
+          "complexity": "medium",
+          "effort_percentage": "20-25%"
+        },
+        "phase_4_testing": {
+          "purpose": "Comprehensive testing at all levels",
+          "typical_tasks": ["TEST tasks", "Manual testing"],
+          "completion_criteria": "All tests pass, coverage meets requirements",
+          "complexity": "medium",
+          "effort_percentage": "15-20%"
+        },
+        "phase_5_documentation_deployment": {
+          "purpose": "Finalize docs and prepare for release",
+          "typical_tasks": ["DOC tasks", "DEPLOY tasks"],
+          "completion_criteria": "All documentation complete, ready to deploy",
+          "complexity": "low",
+          "effort_percentage": "5-10%"
+        }
+      },
+      "required_fields_per_phase": {
+        "title": "Descriptive phase name",
+        "purpose": "Why this phase exists",
+        "complexity": "low | medium | high | very_high",
+        "effort_level": "1-5 scale (1=trivial, 5=major)",
+        "tasks": ["TASK-ID: Description"],
+        "completion_criteria": "How to know phase is done"
+      },
+      "guidelines": {
+        "phase_count": "4-6 phases typical; >8 suggests feature should be split",
+        "sequential_execution": "No circular dependencies",
+        "all_tasks_assigned": "Every task ID appears in exactly one phase"
+      }
+    },
+
+    "7_testing_strategy": {
+      "required_fields": {
+        "unit_tests": {
+          "scope": "Individual functions/methods in isolation",
+          "coverage_target": "80-90% for business logic",
+          "tests": ["test_function_name() - What it verifies"]
+        },
+        "integration_tests": {
+          "scope": "Multiple components working together",
+          "focus": "Database transactions, API contracts, inter-service communication",
+          "tests": ["test_workflow_name() - What workflow it verifies"]
+        },
+        "end_to_end_tests": {
+          "scope": "Complete user workflows through UI (if applicable)",
+          "when_needed": "For features with UI or complex user workflows",
+          "tests": ["User journey description"]
+        },
+        "edge_case_scenarios": {
+          "minimum_count": "5-10 scenarios",
+          "categories": [
+            "Empty/Null Input",
+            "Invalid Input",
+            "Boundary Conditions",
+            "Concurrent Access",
+            "Resource Exhaustion",
+            "External Dependency Failure",
+            "Security",
+            "State"
+          ],
+          "format": {
+            "scenario": "Description",
+            "setup": "How to create scenario",
+            "expected_behavior": "What should happen",
+            "verification": "How to verify",
+            "error_handling": "Expected error type or 'No error'"
+          }
+        }
+      },
+      "example": {
+        "unit_tests": [
+          "test_server_initialization_with_new_name() - Verify Server('coderef-docs') initializes correctly",
+          "test_tool_name_updates() - Verify all tool handlers have updated mcp__coderef-docs__* names"
+        ],
+        "integration_tests": [
+          "test_full_rename_workflow() - Run all phases and verify no references to 'docs-mcp' remain",
+          "test_tool_discovery_after_rename() - Verify MCP can discover all tools after rename",
+          "test_build_passes_after_rename() - Verify project builds without errors"
+        ],
+        "end_to_end_tests": ["Not applicable - backend service only"],
+        "edge_case_scenarios": [
+          {
+            "scenario": "Leftover docs-mcp references after rename",
+            "setup": "Search codebase for 'docs-mcp' after completing Phase 9",
+            "expected_behavior": "Zero matches (or only in archived/historical files)",
+            "verification": "grep -r 'docs-mcp' returns only archived files if any",
+            "error_handling": "Build fails if any non-archived references remain"
+          },
+          {
+            "scenario": "Old tool names stop working (breaking change)",
+            "setup": "Try calling mcp__docs-mcp__list_templates after rename",
+            "expected_behavior": "MCP returns 'tool not found' error",
+            "verification": "New name mcp__coderef-docs__list_templates works, old name fails",
+            "error_handling": "Expected - breaking change by design"
+          }
+        ]
+      }
+    },
+
+    "8_success_criteria": {
+      "categories": {
+        "functional_requirements": {
+          "format": {
+            "requirement": "Name",
+            "metric": "What to measure",
+            "target": "Measurable target",
+            "validation": "How to validate"
+          },
+          "must_be_measurable": "Numbers, percentages, time units - not 'fast' or 'good'"
+        },
+        "quality_requirements": {
+          "universal_criteria": [
+            "Code style compliance (linter passes)",
+            "Test coverage (>80% for new code)",
+            "Type safety (type checker passes)",
+            "Documentation completeness (all public APIs documented)"
+          ]
+        },
+        "performance_requirements": {
+          "when_needed": "For features processing significant data or handling concurrent users",
+          "examples": ["API response time <200ms P95", "Database query <50ms", "Memory usage <500MB"]
+        },
+        "security_requirements": {
+          "when_needed": "For features handling sensitive data, authentication, or user input",
+          "examples": ["Password hashing with bcrypt cost>=10", "Parameterized queries (no SQL injection)", "Input validation prevents XSS"]
+        }
+      },
+      "example": {
+        "functional_requirements": [
+          {
+            "requirement": "All references renamed",
+            "metric": "Occurrences of 'docs-mcp' in non-archived files",
+            "target": "Zero occurrences",
+            "validation": "grep -r 'docs-mcp' --exclude-dir=archived returns empty"
+          },
+          {
+            "requirement": "Tool discovery works with new name",
+            "metric": "MCP tool discovery success",
+            "target": "11 tools discoverable via mcp__coderef-docs__*",
+            "validation": "Tool list shows all 11 tools with coderef-docs prefix"
+          },
+          {
+            "requirement": "Build passes",
+            "metric": "Build exit code",
+            "target": "0 (success)",
+            "validation": "Run build script, verify no errors"
+          }
+        ],
+        "quality_requirements": [
+          {
+            "requirement": "All tests pass",
+            "metric": "Test suite result",
+            "target": "All 318 unit tests passing",
+            "validation": "pytest reports 318/318 passing"
+          }
+        ],
+        "performance_requirements": ["None for this rename operation"],
+        "security_requirements": ["None new for this rename operation"]
+      }
+    },
+
+    "9_implementation_checklist": {
+      "structure": {
+        "pre_implementation": [
+          "☐ Review complete plan for gaps or ambiguities",
+          "☐ Get stakeholder approval (if required)",
+          "☐ Set up development environment"
+        ],
+        "phase_sections": "One section per phase, containing all task IDs with checkboxes",
+        "finalization": [
+          "☐ All tests passing",
+          "☐ Code review completed and approved",
+          "☐ Documentation updated",
+          "☐ Changelog entry created",
+          "☐ Deploy to staging (if applicable)",
+          "☐ Smoke tests on staging"
+        ]
+      },
+      "checkbox_format": {
+        "unchecked": "☐ TASK-ID: Description",
+        "completed": "☑ TASK-ID: Description"
+      },
+      "requirements": [
+        "Every task ID from section 6 must appear in checklist",
+        "Tasks listed in logical execution order",
+        "Checklist is flat (no nested checkboxes)"
+      ]
+    }
+  },
+
+  "QUALITY_CHECKLIST": {
+    "completeness": [
+      "☐ All 10 sections (0-9) present with required fields",
+      "☐ No placeholder text like '[TBD]', '[TODO]', '[figure out later]'",
+      "☐ All task IDs follow PREFIX-NNN format",
+      "☐ All tasks have imperative verb + specific description ≥20 words",
+      "☐ Success criteria are measurable (numbers, not subjective)",
+      "☐ Edge cases cover: empty input, invalid input, boundaries, errors",
+      "☐ Every task ID appears exactly once in implementation checklist"
+    ],
+    "quality": [
+      "☐ Task descriptions ≥20 words (specific enough to implement)",
+      "☐ 5-10 edge case scenarios documented",
+      "☐ Complexity and effort assessments realistic",
+      "☐ Dependencies clearly specified",
+      "☐ Security considerations if handling sensitive data",
+      "☐ Performance targets if processing significant data"
+    ],
+    "autonomy": [
+      "☐ Zero ambiguity - every decision made upfront",
+      "☐ AI could implement without asking clarifying questions",
+      "☐ Edge cases have defined expected behavior",
+      "☐ Success criteria clear enough to know when 'done'"
+    ]
+  }
+}

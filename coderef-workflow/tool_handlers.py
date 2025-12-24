@@ -2937,9 +2937,12 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
                 "Expected format: {\"phase_1\": [\"task1\", \"task2\"], ...}"
             )
         else:
+            # This happens when raw_section_9 exists but get_checklist normalized it to empty dict
+            # (all phase values were invalid or empty)
             return ErrorResponse.invalid_input(
-                f"Section 9 exists but schema validation failed. Keys found: {list(raw_section_9.keys())}",
-                "Check that each phase contains a list of task strings"
+                f"Section 9 exists but contains no valid task lists. Phases found: {list(raw_section_9.keys())}",
+                "Each phase must contain either 'tasks' array or 'items' array with string tasks. "
+                "Expected format: {\"phase_1\": {\"items\": [\"task1\", \"task2\"]}} or {\"phase_1\": [\"task1\", \"task2\"]}"
             )
 
     # Extract all tasks from all phase lists

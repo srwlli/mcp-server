@@ -92,7 +92,11 @@
       "Bash(grep:*)",
       "Bash(git -C \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\" log --oneline -5)",
       "mcp__coderef-workflow__update_deliverables",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "mcp__coderef-context__coderef_scan",
+      "mcp__coderef-context__coderef_impact",
+      "mcp__coderef-workflow__create_plan",
+      "mcp__coderef-workflow__log_workorder"
     ],
     "deny": [],
     "ask": []

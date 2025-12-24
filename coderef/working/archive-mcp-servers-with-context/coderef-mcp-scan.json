@@ -1,0 +1,40 @@
+{
+  "scan_metadata": {
+    "source": "CLI coderef-mcp scan",
+    "directory": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+    "language": "py",
+    "generated_via": "node dist/cli.js scan --json",
+    "note": "Includes node_modules (.venv) dependencies - needs filtering for actual server code"
+  },
+  "summary": {
+    "total_elements_found": "2000+",
+    "includes_dependencies": true,
+    "primary_files": [
+      "coderef-mcp/server.py",
+      "coderef-mcp/tool_handlers.py",
+      "coderef-mcp/constants.py",
+      "coderef-mcp/logger_config.py",
+      "coderef-mcp/validation.py",
+      "coderef-mcp/handler_helpers.py",
+      "coderef-mcp/handler_decorators.py"
+    ],
+    "tool_handlers": [
+      "handle_query_elements",
+      "handle_analyze_impact",
+      "handle_validate_references",
+      "handle_batch_validate",
+      "handle_generate_docs",
+      "handle_audit",
+      "handle_nl_query",
+      "handle_scan_realtime"
+    ],
+    "dependencies_detected": [
+      "adodbapi (in .venv)",
+      "mcp library",
+      "pathlib",
+      "asyncio"
+    ]
+  },
+  "key_finding": "coderef-mcp is a mature MCP server with 8 tool handlers and comprehensive validation/error handling. It's a complex system that would require careful analysis before archiving.",
+  "recommendation": "Should scan actual source files only (exclude .venv) to get accurate impact assessment"
+}

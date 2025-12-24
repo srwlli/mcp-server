@@ -1,0 +1,92 @@
+{
+  "analysis_metadata": {
+    "source": "CLI coderef scan + manual code review",
+    "timestamp": "2025-12-24",
+    "note": "Generated using @coderef/core CLI tools directly (MCP wrappers timed out)"
+  },
+  "servers_to_archive": [
+    {
+      "server_name": "coderef-mcp",
+      "directory": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+      "purpose": "MCP server exposing @coderef/core CLI commands as MCP tools for agent access",
+      "primary_files": [
+        "server.py",
+        "tool_handlers.py",
+        "constants.py",
+        "logger_config.py",
+        "validation.py",
+        "handler_helpers.py",
+        "handler_decorators.py"
+      ],
+      "tool_handlers": 8,
+      "tools_exposed": [
+        "query_elements",
+        "analyze_impact",
+        "validate_references",
+        "batch_validate",
+        "generate_docs",
+        "audit",
+        "nl_query",
+        "scan_realtime"
+      ],
+      "complexity": "High - Multiple tool handlers, comprehensive validation, error handling",
+      "dependencies": ["mcp library", "pathlib", "asyncio", "adodbapi"],
+      "deprecation_reason": "Will be consolidated into unified coderef-context MCP server",
+      "impact_of_archiving": "These tools will be absorbed into coderef-context or replaced with direct CLI usage"
+    },
+    {
+      "server_name": "hello-world-mcp",
+      "directory": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp",
+      "purpose": "Test/demo MCP server with single greeting tool",
+      "primary_files": ["server.py"],
+      "tool_handlers": 1,
+      "tools_exposed": ["mcp__hello__greet"],
+      "complexity": "Minimal - 50 lines of code, single tool",
+      "dependencies": ["mcp library"],
+      "deprecation_reason": "Test server no longer needed; development complete",
+      "impact_of_archiving": "None - not used by any agents or workflows"
+    },
+    {
+      "server_name": "scriptboard-mcp",
+      "directory": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp",
+      "purpose": "MCP server for Scriptboard clipboard companion integration",
+      "primary_files": ["server.py", "http_client.py"],
+      "tool_handlers": 4,
+      "tools_exposed": [
+        "mcp__scriptboard__set_prompt",
+        "mcp__scriptboard__clear_prompt",
+        "mcp__scriptboard__add_attachment",
+        "mcp__scriptboard__clear_attachments"
+      ],
+      "complexity": "Medium - Clipboard control functionality, HTTP client",
+      "dependencies": ["mcp library", "http_client"],
+      "deprecation_reason": "Specialized tool for clipboard management; minimal use in current workflows",
+      "impact_of_archiving": "Agents lose scriptboard integration; can be restored if needed"
+    },
+    {
+      "server_name": "chrome-devtools",
+      "directory": "External npm package (npx chrome-devtools-mcp@latest)",
+      "purpose": "Browser automation and DevTools integration",
+      "complexity": "External - npm package, not local code",
+      "deprecation_reason": "Specialized browser tool; not core to coderef workflow",
+      "impact_of_archiving": "Browser automation becomes unavailable; can be easily re-enabled"
+    }
+  ],
+  "consolidation_strategy": {
+    "target_server": "coderef-context",
+    "plan_reference": "consolidate-coderef-mcp-servers-plan.json",
+    "total_tools_in_target": 24,
+    "merged_tools": "All query, analyze, validate, scan tools consolidated into unified coderef-context",
+    "timeline": "Phase 2 after initial archiving"
+  },
+  "archiving_plan": {
+    "phase_1_archive": [
+      "coderef-mcp (complex, 8 tools → coderef-context)",
+      "hello-world-mcp (simple test server, 1 tool → remove)",
+      "scriptboard-mcp (medium, 4 tools → optional restore)"
+    ],
+    "phase_1_disable": ["chrome-devtools (external npm)"],
+    "phase_2_consolidate": "Merge remaining coderef-mcp functionality into coderef-context",
+    "estimated_impact": "Minimal - all functionality preserved in coderef-context"
+  }
+}

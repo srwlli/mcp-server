@@ -42,7 +42,7 @@ class MCPToolClient:
         self.server_script_path = server_script_path
         self.process: Optional[subprocess.Popen] = None
         self.message_id = 0
-        self.timeout_seconds = 30
+        self.timeout_seconds = 120  # Increased from 30s to 120s (5x safety margin for large AST scans)
         self.max_retries = 3
 
         logger.debug(f"Initialized MCPToolClient with server: {server_script_path}")

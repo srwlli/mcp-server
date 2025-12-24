@@ -1,0 +1,23 @@
+{
+  "feature_name": "archive-mcp-servers-with-context",
+  "description": "Archive 4 MCP servers (coderef, hello-world, scriptboard, chrome-devtools) using coderef-context MCP tools to analyze the servers before archiving. This plan includes intelligent code context analysis.",
+  "goal": "Remove deprecated MCP servers from auto-loading configuration and archive their directories, with full code analysis via coderef-context to understand dependencies and impact",
+  "requirements": [
+    "Use coderef-context tools to scan all 4 servers",
+    "Analyze dependencies and relationships between servers",
+    "Identify any cross-references that need cleanup",
+    "Remove servers from .mcp.json",
+    "Archive all server directories",
+    "Update namespace references",
+    "Commit changes with detailed impact analysis"
+  ],
+  "out_of_scope": [],
+  "constraints": [],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+    "workorder_assigned_at": "2025-12-24T17:13:41.950783+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

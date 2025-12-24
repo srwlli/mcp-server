@@ -1,0 +1,576 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "archive-mcp-servers-with-context",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude AI Assistant",
+    "has_context": true,
+    "has_analysis": true,
+    "analysis_method": "CLI coderef scan + manual code review (MCP wrappers timed out)",
+    "generated_at": "2025-12-24"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "analysis_summary": "Successfully gathered code intelligence via CLI tools for all 4 servers to be archived",
+      "foundation_docs_available": [
+        "README.md (root)",
+        "API.md (coderef/foundation-docs)",
+        "ARCHITECTURE.md (coderef/foundation-docs)",
+        "SCHEMA.md (coderef/foundation-docs)"
+      ],
+      "servers_analyzed": {
+        "coderef_mcp": {
+          "complexity": "High",
+          "files": 19,
+          "tool_handlers": 8,
+          "note": "Primary archive target - will consolidate into coderef-context"
+        },
+        "hello_world_mcp": {
+          "complexity": "Minimal",
+          "files": "minimal",
+          "tool_handlers": 1,
+          "note": "Test/demo server - safe to remove"
+        },
+        "scriptboard_mcp": {
+          "complexity": "Medium",
+          "files": "medium",
+          "tool_handlers": 4,
+          "note": "Specialized tool - limited workflow use"
+        },
+        "chrome_devtools": {
+          "complexity": "External",
+          "files": "npm package",
+          "note": "External dependency - remove from .mcp.json only"
+        }
+      },
+      "dependencies": "No inter-server dependencies detected. Each server operates independently.",
+      "risk_level": "Low - Clean archiving with no cross-references"
+    },
+    "1_executive_summary": {
+      "objective": "Archive 4 deprecated MCP servers (coderef, hello-world, scriptboard, chrome-devtools) from the .mcp-servers repository to reduce maintenance burden and prepare for consolidation into unified coderef-context MCP server.",
+      "business_value": "Streamlines MCP ecosystem by removing redundant servers, reduces startup time, and eliminates maintenance of deprecated tools. Sets foundation for Phase 2 consolidation strategy.",
+      "scope": [
+        "Remove servers from .mcp.json auto-loading configuration",
+        "Archive server directories to archived/ folder with metadata",
+        "Update any internal namespace references",
+        "Document archiving rationale and recovery procedures",
+        "Create clean commit with impact analysis"
+      ],
+      "key_benefits": [
+        "Reduced MCP server count from 8 to 4 core servers",
+        "Cleaner auto-loading configuration (faster Claude startup)",
+        "Preserved functionality via coderef-context consolidation",
+        "Minimal impact on existing workflows (no cross-dependencies)"
+      ],
+      "constraints": [
+        "All server code must be preserved in archive for potential restoration",
+        "Consolidation of coderef-mcp tools into coderef-context deferred to Phase 2",
+        "Must maintain git history for audit trail"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk_level": "LOW",
+      "risk_factors": [
+        {
+          "category": "Breaking Changes",
+          "severity": "Low",
+          "description": "Archiving removes 4 tools from MCP ecosystem, but no agents currently use archived servers",
+          "mitigation": "All functionality preserved in coderef-context (future consolidation)"
+        },
+        {
+          "category": "Data Loss",
+          "severity": "None",
+          "description": "No data at risk - only code archives",
+          "mitigation": "All code preserved in archived/ folder with original structure"
+        },
+        {
+          "category": "Integration Impact",
+          "severity": "Low",
+          "description": "Some workflows may reference archived servers if coderef-context not fully active",
+          "mitigation": "Analysis shows no cross-dependencies; migration path documented"
+        },
+        {
+          "category": "Complexity",
+          "severity": "Low",
+          "description": "Task is straightforward file operations and configuration changes",
+          "mitigation": "Step-by-step execution with validation at each phase"
+        }
+      ],
+      "assumptions": [
+        "coderef-context MCP server is stable and accessible",
+        "No agents are currently using archived servers in production",
+        ".mcp.json is the only configuration file referencing these servers",
+        "archived/ directory structure is established and ready"
+      ],
+      "success_probability": "95% - Low complexity, well-understood requirements"
+    },
+    "3_current_state_analysis": {
+      "current_mcp_servers": [
+        {
+          "name": "personas",
+          "status": "ACTIVE",
+          "action": "KEEP"
+        },
+        {
+          "name": "coderef",
+          "status": "ACTIVE",
+          "action": "ARCHIVE"
+        },
+        {
+          "name": "coderef-context",
+          "status": "ACTIVE",
+          "action": "KEEP"
+        },
+        {
+          "name": "coderef-docs",
+          "status": "ACTIVE",
+          "action": "KEEP"
+        },
+        {
+          "name": "coderef-workflow",
+          "status": "ACTIVE",
+          "action": "KEEP"
+        },
+        {
+          "name": "hello-world",
+          "status": "ACTIVE",
+          "action": "ARCHIVE"
+        },
+        {
+          "name": "scriptboard-mcp",
+          "status": "ACTIVE",
+          "action": "ARCHIVE"
+        },
+        {
+          "name": "chrome-devtools",
+          "status": "ACTIVE",
+          "action": "ARCHIVE"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "C:\\Users\\willh\\.claude\\.mcp.json",
+          "current_state": "Contains 8 servers including 4 to be archived",
+          "target_state": "Contains 4 active servers (personas, coderef-context, coderef-docs, coderef-workflow)",
+          "changes": "Remove: coderef, hello-world, scriptboard-mcp, chrome-devtools"
+        }
+      ],
+      "directories_to_archive": [
+        {
+          "source": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+          "destination": "C:\\Users\\willh\\.mcp-servers\\archived\\coderef-mcp",
+          "size": "~19 files",
+          "contents": "server.py, tool_handlers.py, constants.py, and 16 other files"
+        },
+        {
+          "source": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp",
+          "destination": "C:\\Users\\willh\\.mcp-servers\\archived\\hello-world-mcp",
+          "size": "minimal",
+          "contents": "server.py and supporting files"
+        },
+        {
+          "source": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp",
+          "destination": "C:\\Users\\willh\\.mcp-servers\\archived\\scriptboard-mcp",
+          "size": "medium",
+          "contents": "server.py, http_client.py, and supporting files"
+        }
+      ],
+      "external_references": [
+        {
+          "file": "C:\\Users\\willh\\.claude\\.mcp.json",
+          "references": ["coderef", "hello-world", "scriptboard-mcp", "chrome-devtools"],
+          "action": "Remove entries"
+        }
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Update MCP Configuration",
+        "description": "Remove archived servers from .mcp.json auto-loading configuration",
+        "requirements": [
+          "Read current .mcp.json",
+          "Remove coderef, hello-world, scriptboard-mcp, chrome-devtools entries",
+          "Validate remaining 4 servers are properly configured",
+          "Save updated .mcp.json"
+        ]
+      },
+      "feature_2": {
+        "name": "Archive Server Directories",
+        "description": "Move server directories to archived/ folder with metadata",
+        "requirements": [
+          "Create archived/ folder if it doesn't exist",
+          "Move coderef-mcp, hello-world-mcp, scriptboard-mcp to archived/",
+          "Create archive-metadata.json with server info and archival date",
+          "Verify directory structure integrity"
+        ]
+      },
+      "feature_3": {
+        "name": "Clean Git History",
+        "description": "Remove archived servers from git tracking and create audit commit",
+        "requirements": [
+          "Git remove archived server directories from tracking",
+          "Stage .mcp.json changes",
+          "Create detailed commit message with impact analysis",
+          "Push changes to main branch"
+        ]
+      },
+      "feature_4": {
+        "name": "Document Migration Path",
+        "description": "Create recovery and migration documentation for consolidated functionality",
+        "requirements": [
+          "Document how to restore archived servers if needed",
+          "Create ARCHIVAL_LOG.md with rationale and timeline",
+          "Document migration path to coderef-context consolidation",
+          "Update README.md with current server inventory"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+        "name": "Archive MCP Servers With Context",
+        "feature_dir": "coderef/working/archive-mcp-servers-with-context",
+        "description": "Archive 4 deprecated MCP servers (coderef, hello-world, scriptboard, chrome-devtools) with code analysis via coderef-context tools"
+      },
+      "tasks": [
+        {
+          "id": "PREP-001",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Verify all 4 servers have been analyzed and documented",
+          "phase": 1,
+          "feature": "feature_1",
+          "estimated_effort": "0.25 hours",
+          "dependencies": []
+        },
+        {
+          "id": "CONFIG-001",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Read current .mcp.json and identify entries for removal",
+          "phase": 1,
+          "feature": "feature_1",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["PREP-001"]
+        },
+        {
+          "id": "CONFIG-002",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Remove coderef, hello-world, scriptboard-mcp, chrome-devtools from .mcp.json",
+          "phase": 1,
+          "feature": "feature_1",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["CONFIG-001"]
+        },
+        {
+          "id": "CONFIG-003",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Validate .mcp.json syntax and remaining servers are correct",
+          "phase": 1,
+          "feature": "feature_1",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["CONFIG-002"]
+        },
+        {
+          "id": "ARCHIVE-001",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Create archived/ directory structure if it doesn't exist",
+          "phase": 2,
+          "feature": "feature_2",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["CONFIG-003"]
+        },
+        {
+          "id": "ARCHIVE-002",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Move coderef-mcp directory to archived/ folder",
+          "phase": 2,
+          "feature": "feature_2",
+          "estimated_effort": "0.5 hours",
+          "dependencies": ["ARCHIVE-001"]
+        },
+        {
+          "id": "ARCHIVE-003",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Move hello-world-mcp directory to archived/ folder",
+          "phase": 2,
+          "feature": "feature_2",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["ARCHIVE-001"]
+        },
+        {
+          "id": "ARCHIVE-004",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Move scriptboard-mcp directory to archived/ folder",
+          "phase": 2,
+          "feature": "feature_2",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["ARCHIVE-001"]
+        },
+        {
+          "id": "ARCHIVE-005",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Create archive-metadata.json with server info and archival timestamps",
+          "phase": 2,
+          "feature": "feature_2",
+          "estimated_effort": "0.5 hours",
+          "dependencies": ["ARCHIVE-002", "ARCHIVE-003", "ARCHIVE-004"]
+        },
+        {
+          "id": "GIT-001",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Remove archived server directories from git tracking",
+          "phase": 3,
+          "feature": "feature_3",
+          "estimated_effort": "0.5 hours",
+          "dependencies": ["ARCHIVE-005"]
+        },
+        {
+          "id": "GIT-002",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Stage .mcp.json changes for commit",
+          "phase": 3,
+          "feature": "feature_3",
+          "estimated_effort": "0.25 hours",
+          "dependencies": ["GIT-001"]
+        },
+        {
+          "id": "GIT-003",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Create detailed commit with impact analysis and archival rationale",
+          "phase": 3,
+          "feature": "feature_3",
+          "estimated_effort": "0.5 hours",
+          "dependencies": ["GIT-002"]
+        },
+        {
+          "id": "DOCS-001",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Create ARCHIVAL_LOG.md documenting rationale and recovery procedures",
+          "phase": 4,
+          "feature": "feature_4",
+          "estimated_effort": "1 hour",
+          "dependencies": ["GIT-003"]
+        },
+        {
+          "id": "DOCS-002",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Document migration path to coderef-context consolidation (Phase 2)",
+          "phase": 4,
+          "feature": "feature_4",
+          "estimated_effort": "1 hour",
+          "dependencies": ["DOCS-001"]
+        },
+        {
+          "id": "DOCS-003",
+          "workorder_id": "WO-ARCHIVE-MCP-SERVERS-WITH-CONTEXT-001",
+          "description": "Update README.md with current server inventory and archival summary",
+          "phase": 4,
+          "feature": "feature_4",
+          "estimated_effort": "0.5 hours",
+          "dependencies": ["DOCS-002"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Configuration Update",
+          "description": "Remove archived servers from .mcp.json auto-loading configuration",
+          "tasks": ["PREP-001", "CONFIG-001", "CONFIG-002", "CONFIG-003"],
+          "deliverables": [
+            "Updated .mcp.json with 4 active servers only",
+            "Validation report confirming syntax correctness"
+          ],
+          "estimated_duration": "1 hour",
+          "dependencies": []
+        },
+        {
+          "phase": 2,
+          "name": "Directory Archival",
+          "description": "Move server directories to archived/ folder with metadata preservation",
+          "tasks": ["ARCHIVE-001", "ARCHIVE-002", "ARCHIVE-003", "ARCHIVE-004", "ARCHIVE-005"],
+          "deliverables": [
+            "archived/coderef-mcp directory with all files",
+            "archived/hello-world-mcp directory with all files",
+            "archived/scriptboard-mcp directory with all files",
+            "archive-metadata.json with server inventory"
+          ],
+          "estimated_duration": "1.5 hours",
+          "dependencies": ["Phase 1"]
+        },
+        {
+          "phase": 3,
+          "name": "Git Commit & Cleanup",
+          "description": "Update git repository to reflect archival and create audit trail",
+          "tasks": ["GIT-001", "GIT-002", "GIT-003"],
+          "deliverables": [
+            "Clean git commit with impact analysis",
+            "Archived servers removed from git tracking"
+          ],
+          "estimated_duration": "1.25 hours",
+          "dependencies": ["Phase 2"]
+        },
+        {
+          "phase": 4,
+          "name": "Documentation & Recovery",
+          "description": "Document archival rationale, recovery procedures, and migration path",
+          "tasks": ["DOCS-001", "DOCS-002", "DOCS-003"],
+          "deliverables": [
+            "ARCHIVAL_LOG.md with complete documentation",
+            "Migration guide to coderef-context consolidation",
+            "Updated README.md with server inventory"
+          ],
+          "estimated_duration": "2.5 hours",
+          "dependencies": ["Phase 3"]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test_id": "UT-001",
+          "description": "Validate .mcp.json JSON syntax after removal of servers",
+          "procedure": "Parse .mcp.json and verify it's valid JSON",
+          "expected_result": "JSON parsing succeeds, no syntax errors"
+        },
+        {
+          "test_id": "UT-002",
+          "description": "Verify remaining 4 servers have correct configuration in .mcp.json",
+          "procedure": "Check personas, coderef-context, coderef-docs, coderef-workflow entries",
+          "expected_result": "All 4 servers have valid command and cwd fields"
+        },
+        {
+          "test_id": "UT-003",
+          "description": "Verify archived servers are no longer in .mcp.json",
+          "procedure": "Search .mcp.json for coderef, hello-world, scriptboard-mcp, chrome-devtools",
+          "expected_result": "No matches found"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test_id": "IT-001",
+          "description": "Verify Claude Code can start with updated .mcp.json",
+          "procedure": "Load Claude Code with updated configuration",
+          "expected_result": "No errors during startup, all 4 active servers accessible"
+        },
+        {
+          "test_id": "IT-002",
+          "description": "Verify archived/ folder structure is correct",
+          "procedure": "Check that all server directories moved to archived/ with integrity",
+          "expected_result": "All original files present, directory structure preserved"
+        },
+        {
+          "test_id": "IT-003",
+          "description": "Verify git history preserved archived server code",
+          "procedure": "Run git log to verify archived servers still in version history",
+          "expected_result": "Archived servers visible in git history, recoverable via git restore"
+        }
+      ],
+      "smoke_tests": [
+        {
+          "test_id": "ST-001",
+          "description": "Verify coderef-context MCP server is still functional",
+          "procedure": "Call a coderef-context tool via MCP",
+          "expected_result": "Tool responds correctly, consolidation path ready"
+        },
+        {
+          "test_id": "ST-002",
+          "description": "Verify no runtime errors from missing archived servers",
+          "procedure": "Monitor Claude Code logs for 'server not found' errors",
+          "expected_result": "No errors related to archived servers"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_criteria": [
+        {
+          "criterion": "All 4 servers successfully removed from .mcp.json",
+          "verification": "grep -c 'coderef\\|hello-world\\|scriptboard\\|chrome-devtools' .mcp.json returns 0"
+        },
+        {
+          "criterion": "Remaining 4 servers properly configured in .mcp.json",
+          "verification": "JSON validation passes, all server entries have command and cwd"
+        },
+        {
+          "criterion": "Server directories successfully moved to archived/",
+          "verification": "du -sh archived/*/  shows all 3 server directories present"
+        },
+        {
+          "criterion": "Git cleanup completed without errors",
+          "verification": "git status shows clean working tree, archive commit created"
+        }
+      ],
+      "quality_criteria": [
+        {
+          "criterion": "No data loss during archival",
+          "verification": "File count and checksums match before/after"
+        },
+        {
+          "criterion": "Complete documentation of archival process",
+          "verification": "ARCHIVAL_LOG.md exists with recovery procedures"
+        },
+        {
+          "criterion": "Migration path clearly documented",
+          "verification": "Migration guide exists with coderef-context consolidation steps"
+        }
+      ],
+      "business_criteria": [
+        {
+          "criterion": "Reduces MCP startup overhead",
+          "verification": "Fewer servers loaded on Claude Code startup"
+        },
+        {
+          "criterion": "Maintains all archived functionality via coderef-context",
+          "verification": "No loss of code analysis capabilities"
+        },
+        {
+          "criterion": "Low risk of breaking changes",
+          "verification": "No agents using archived servers in production workflows"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_checklist": [
+        "[ ] Read current .mcp.json and verify 8 servers present",
+        "[ ] Identify entries for: coderef, hello-world, scriptboard-mcp, chrome-devtools",
+        "[ ] Create backup of original .mcp.json",
+        "[ ] Remove coderef entry from .mcp.json",
+        "[ ] Remove hello-world entry from .mcp.json",
+        "[ ] Remove scriptboard-mcp entry from .mcp.json",
+        "[ ] Remove chrome-devtools entry from .mcp.json",
+        "[ ] Validate .mcp.json JSON syntax",
+        "[ ] Verify remaining 4 servers are correct (personas, coderef-context, coderef-docs, coderef-workflow)",
+        "[ ] Phase 1 complete: .mcp.json updated with 4 active servers"
+      ],
+      "phase_2_checklist": [
+        "[ ] Create archived/ directory if it doesn't exist",
+        "[ ] Move C:\\Users\\willh\\.mcp-servers\\coderef-mcp to archived/",
+        "[ ] Move C:\\Users\\willh\\.mcp-servers\\hello-world-mcp to archived/",
+        "[ ] Move C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp to archived/",
+        "[ ] Verify all files in archived/ directories",
+        "[ ] Create archive-metadata.json with server info and timestamps",
+        "[ ] Verify directory structure integrity (no files lost)",
+        "[ ] Phase 2 complete: All servers archived with metadata"
+      ],
+      "phase_3_checklist": [
+        "[ ] Git remove archived server directories from tracking",
+        "[ ] Git add .mcp.json changes",
+        "[ ] Verify git status shows only expected changes",
+        "[ ] Create detailed commit message with impact analysis",
+        "[ ] Commit changes with 'arch: archive deprecated mcp servers' message",
+        "[ ] Verify commit created successfully",
+        "[ ] Phase 3 complete: Git history updated with audit trail"
+      ],
+      "phase_4_checklist": [
+        "[ ] Create ARCHIVAL_LOG.md with rationale and timestamps",
+        "[ ] Document recovery procedures for each archived server",
+        "[ ] Create migration guide to coderef-context consolidation",
+        "[ ] Document Phase 2 consolidation plan reference",
+        "[ ] Update README.md with current server inventory",
+        "[ ] Update README.md with archival summary",
+        "[ ] Phase 4 complete: All documentation created and updated"
+      ]
+    }
+  }
+}

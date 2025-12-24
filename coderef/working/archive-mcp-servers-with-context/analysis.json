@@ -1,0 +1,189 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "COMPONENTS.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Documentation\n\n## Overview\n\n# Architecture Documentation\n\n## Module Dependency Graph\n\n*Run `coderef index` to generate module dependency diagrams and metrics.*\n\n## Code Patterns\n\n### Handler Functions\n\n- `handle_query_elements` in `coderef-mcp\\tool_handlers.py`\n- `handle_analyze_impact` in `coderef-mcp\\tool_handlers.py`\n- `handle_validate_references` in `coderef-mcp\\tool_handlers.py`\n- `handle_batch_validate` in `coderef-mcp\\tool_handlers.py`\n- `handle_generate_docs` in `coderef-m",
+      "headers": [
+        "Architecture Documentation",
+        "Overview",
+        "Architecture Documentation",
+        "Module Dependency Graph",
+        "Code Patterns",
+        "Handler Functions",
+        "Common Decorators",
+        "Module Dependency Graph",
+        "Code Patterns",
+        "Handler Functions"
+      ],
+      "size": 2473
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Documentation\n\n## Overview\n\n- **Framework:** Flask, FastAPI\n- **Authentication:** Unknown\n- **Error Format:** RFC 7807\n- **Total Endpoints:** 27\n\n## Endpoints\n\n### Flask\n\n| Method | Path | File |\n|--------|------|------|\n| `'GET'` | `/` | `docs-mcp\\http_server.py` |\n| `'GET'` | `/health` | `docs-mcp\\http_server.py` |\n| `'GET'` | `/debug` | `docs-mcp\\http_server.py` |\n| `'GET'` | `/tools` | `docs-mcp\\http_server.py` |\n| `'GET'` | `/openapi.json` | `docs-mcp\\http_server.py` |\n| `'GET'` | `/s",
+      "headers": [
+        "API Documentation",
+        "Overview",
+        "Endpoints",
+        "Flask",
+        "FastAPI",
+        "Endpoint Details",
+        "Authentication",
+        "Error Handling"
+      ],
+      "size": 5743
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Documentation\n\n## Database Tables\n\n### PersonaBehavior\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### PersonaDefinition\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### PersonaState\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### TaskExecutionStatus\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### TaskProgress\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### TodoMetadata\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### CustomPersonaInput\n\n*File: `personas-mcp\\src\\models.py`*\n\n\n### FoundationGenerator\n\n*File: `doc",
+      "headers": [
+        "Schema Documentation",
+        "Database Tables",
+        "PersonaBehavior",
+        "PersonaDefinition",
+        "PersonaState",
+        "TaskExecutionStatus",
+        "TaskProgress",
+        "TodoMetadata",
+        "CustomPersonaInput",
+        "FoundationGenerator"
+      ],
+      "size": 3295
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# .mcp-servers\n\n## Overview\n\n<!-- AGENT: Describe what this project does -->\n\n## Quick Stats\n\n| Metric | Value |\n|--------|-------|\n| API Endpoints | 27 |\n| Database Tables | 39 |\n| Dependencies | 10 |\n\n## Quick Start\n\n<!-- AGENT: Installation and usage instructions -->\n\n## Documentation\n\n- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n-",
+      "headers": [
+        ".mcp-servers",
+        "Overview",
+        "Quick Stats",
+        "Quick Start",
+        "Documentation"
+      ],
+      "size": 543
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": [
+      "coderef-mcp (8 tool handlers)",
+      "coderef-context (code analysis integration)",
+      "coderef-workflow (planning orchestration)"
+    ],
+    "secondary": [
+      "hello-world-mcp (test/demo)",
+      "scriptboard-mcp (clipboard integration)",
+      "chrome-devtools (browser automation)"
+    ],
+    "total_found": 6,
+    "note": "Generated via CLI scan + manual code review"
+  },
+  "servers_being_archived": {
+    "coderef_mcp": {
+      "source": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp",
+      "status": "scheduled for archiving",
+      "primary_files": ["server.py", "tool_handlers.py", "constants.py", "logger_config.py"],
+      "tool_handlers": 8,
+      "complexity": "High - Multiple async handlers, validation, error handling",
+      "reason_for_archiving": "Will be consolidated into unified coderef-context MCP server",
+      "impact": "All 8 tools will be absorbed into coderef-context"
+    },
+    "hello_world_mcp": {
+      "source": "C:\\Users\\willh\\.mcp-servers\\hello-world-mcp",
+      "status": "scheduled for archiving",
+      "primary_files": ["server.py"],
+      "tool_handlers": 1,
+      "complexity": "Minimal - Test/demo server only",
+      "reason_for_archiving": "Development complete, no longer needed",
+      "impact": "None - not used in any workflows"
+    },
+    "scriptboard_mcp": {
+      "source": "C:\\Users\\willh\\.mcp-servers\\scriptboard-mcp",
+      "status": "scheduled for archiving",
+      "primary_files": ["server.py", "http_client.py"],
+      "tool_handlers": 4,
+      "complexity": "Medium - Clipboard control, HTTP client",
+      "reason_for_archiving": "Specialized tool with minimal workflow use",
+      "impact": "Agents lose scriptboard integration (restorable if needed)"
+    },
+    "chrome_devtools": {
+      "source": "External npm package",
+      "status": "scheduled for removal from .mcp.json",
+      "complexity": "External - not managed locally",
+      "reason_for_archiving": "Browser automation not core to coderef workflow",
+      "impact": "Browser automation becomes unavailable"
+    }
+  },
+  "key_patterns_identified": [
+    "All archived servers use standard MCP protocol (mcp.server.Server base class)",
+    "Tool handler pattern: async def handle_*() with tool name prefix mcp__*__*",
+    "Error handling: Try/catch with structured response format",
+    "Configuration: Environment variables for external service URLs"
+  ],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "Flask",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "coderef-docs",
+      "coderef-mcp",
+      "coderef-workflow",
+      "personas-mcp",
+      "coderef-docs\\generators",
+      "coderef-workflow\\generators",
+      "mcp-workflows\\custom-gpt",
+      "personas-mcp\\.claude\\commands",
+      "personas-mcp\\personas\\base",
+      "personas-mcp\\coderef\\working\\docs-expert-v2"
+    ],
+    "file_counts": {
+      "coderef-docs\\.claude\\commands": 41,
+      "coderef-docs": 40,
+      "personas-mcp": 23,
+      "coderef-workflow": 22,
+      "coderef-mcp": 19,
+      "coderef-docs\\generators": 17,
+      "coderef-workflow\\generators": 17,
+      "coderef-docs\\coderef\\inventory": 14,
+      "personas-mcp\\.claude\\commands": 13,
+      "personas-mcp\\personas\\base": 12
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: COMPONENTS.md, USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

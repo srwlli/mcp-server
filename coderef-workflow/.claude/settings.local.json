@@ -1,14 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "mcp__coderef-workflow__gather_context",
-      "Bash(timeout 3 python:*)",
-      "Bash(timeout 2 python:*)",
-      "Bash(git push:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)"
-    ]
+      "mcp__coderef-workflow__execute_plan",
+      "mcp__coderef-workflow__update_task_status",
+      "Bash(python -m pytest:*)"
+    ],
+    "deny": [],
+    "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "coderef-context"
   ],
@@ -18,6 +18,5 @@
     "scriptboard-mcp",
     "docs",
     "hello-world"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

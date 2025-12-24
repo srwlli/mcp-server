@@ -344,7 +344,11 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 # ============================================================================
 
 async def handle_coderef_scan(args: dict) -> list[TextContent]:
-    """Handle /scan tool - Discover code elements."""
+    """Handle /scan tool - Discover code elements.
+
+    Uses async subprocess to prevent blocking the event loop.
+    Timeout: 120s (allows ~20-25s for large AST scans + buffer).
+    """
     project_path = args.get("project_path", ".")
     languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
     use_ast = args.get("use_ast", False)
@@ -360,14 +364,29 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
         cmd.append("--ast")
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
 
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Scan timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
 
         # Parse JSON output
         try:
-            data = json.loads(result.stdout)
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "elements_found": len(data) if isinstance(data, list) else 0,
@@ -376,14 +395,15 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Scan timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_query(args: dict) -> list[TextContent]:
-    """Handle /query tool - Query code relationships."""
+    """Handle /query tool - Query code relationships.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     query_type = args.get("query_type", "depends-on-me")
     target = args.get("target")
@@ -402,13 +422,29 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Query timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "query_type": query_type,
@@ -418,14 +454,15 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Query timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_impact(args: dict) -> list[TextContent]:
-    """Handle /impact tool - Analyze change impact."""
+    """Handle /impact tool - Analyze change impact.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     element = args.get("element")
     operation = args.get("operation", "modify")
@@ -443,13 +480,29 @@ async def handle_coderef_impact(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Impact analysis timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "element": element,
@@ -459,14 +512,15 @@ async def handle_coderef_impact(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Impact analysis timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_complexity(args: dict) -> list[TextContent]:
-    """Handle /complexity tool - Get complexity metrics."""
+    """Handle /complexity tool - Get complexity metrics.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     element = args.get("element")
 
@@ -483,13 +537,29 @@ async def handle_coderef_complexity(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             # Extract complexity info for target element if available
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
@@ -500,14 +570,15 @@ async def handle_coderef_complexity(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Context generation timeout (60s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_patterns(args: dict) -> list[TextContent]:
-    """Handle /patterns tool - Discover patterns."""
+    """Handle /patterns tool - Discover patterns.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     pattern_type = args.get("pattern_type", "all")
     limit = args.get("limit", 10)
@@ -521,13 +592,29 @@ async def handle_coderef_patterns(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Pattern discovery timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "pattern_type": pattern_type,
@@ -537,14 +624,15 @@ async def handle_coderef_patterns(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Pattern discovery timeout (60s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_coverage(args: dict) -> list[TextContent]:
-    """Handle /coverage tool - Test coverage analysis."""
+    """Handle /coverage tool - Test coverage analysis.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     format_type = args.get("format", "summary")
 
@@ -555,13 +643,29 @@ async def handle_coderef_coverage(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Coverage analysis timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "coverage": data
@@ -569,14 +673,15 @@ async def handle_coderef_coverage(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Coverage analysis timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_context(args: dict) -> list[TextContent]:
-    """Handle /context tool - Generate comprehensive context."""
+    """Handle /context tool - Generate comprehensive context.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
     output_format = args.get("output_format", "json")
@@ -589,13 +694,29 @@ async def handle_coderef_context(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "format": output_format,
@@ -604,14 +725,15 @@ async def handle_coderef_context(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_validate(args: dict) -> list[TextContent]:
-    """Handle /validate tool - Validate CodeRef references."""
+    """Handle /validate tool - Validate CodeRef references.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     pattern = args.get("pattern", "**/*.ts")
 
@@ -624,13 +746,29 @@ async def handle_coderef_validate(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Validation timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "pattern": pattern,
@@ -639,14 +777,15 @@ async def handle_coderef_validate(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Validation timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_drift(args: dict) -> list[TextContent]:
-    """Handle /drift tool - Detect reference drift."""
+    """Handle /drift tool - Detect reference drift.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     index_path = args.get("index_path", ".coderef-index.json")
 
@@ -659,13 +798,29 @@ async def handle_coderef_drift(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
-
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
         try:
-            data = json.loads(result.stdout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Drift detection timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        try:
+            data = json.loads(stdout.decode())
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "drift_report": data
@@ -673,14 +828,15 @@ async def handle_coderef_drift(args: dict) -> list[TextContent]:
         except json.JSONDecodeError as e:
             return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Drift detection timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
 async def handle_coderef_diagram(args: dict) -> list[TextContent]:
-    """Handle /diagram tool - Generate dependency diagrams."""
+    """Handle /diagram tool - Generate dependency diagrams.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
     project_path = args.get("project_path", ".")
     diagram_type = args.get("diagram_type", "dependencies")
     format_type = args.get("format", "mermaid")
@@ -694,28 +850,44 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=project_path)
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=project_path
+        )
 
-        if result.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {result.stderr}")]
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Diagram generation timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        stdout_text = stdout.decode()
 
         # For non-JSON formats (mermaid, dot), return text directly
         if format_type in ["mermaid", "dot"]:
-            return [TextContent(type="text", text=result.stdout)]
+            return [TextContent(type="text", text=stdout_text)]
 
         # For JSON format, parse and wrap
         try:
-            data = json.loads(result.stdout)
+            data = json.loads(stdout_text)
             return [TextContent(type="text", text=json.dumps({
                 "success": True,
                 "diagram": data
             }, indent=2))]
         except json.JSONDecodeError:
             # If not JSON, return as-is
-            return [TextContent(type="text", text=result.stdout)]
+            return [TextContent(type="text", text=stdout_text)]
 
-    except subprocess.TimeoutExpired:
-        return [TextContent(type="text", text="Error: Diagram generation timeout (30s exceeded)")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 

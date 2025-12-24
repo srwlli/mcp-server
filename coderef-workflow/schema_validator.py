@@ -394,17 +394,19 @@ def get_checklist(plan: dict, strict: bool = None) -> dict:
         # Normalize nested {tasks: [...], validation: "..."} format to direct arrays
         normalized = {}
         for key, value in section_9.items():
-            logger.debug(f"get_checklist: processing key={key}, value type={type(value).__name__}, has 'tasks'={isinstance(value, dict) and 'tasks' in value}")
+            logger.debug(f"get_checklist: processing key={key}, value type={type(value).__name__}, has 'tasks'={isinstance(value, dict) and 'tasks' in value}, has 'items'={isinstance(value, dict) and 'items' in value}")
 
-            if isinstance(value, dict) and "tasks" in value:
-                # Extract tasks array from nested object (common AI pattern)
+            if isinstance(value, dict) and ("tasks" in value or "items" in value):
+                # Extract tasks/items array from nested object (common AI pattern)
+                task_list = value.get("tasks") or value.get("items")
                 if strict:
+                    key_name = "tasks" if "tasks" in value else "items"
                     logger.warning(
-                        f"SCHEMA: 9_implementation_checklist.{key} has nested {{tasks: [...]}}, extracting to direct array. "
+                        f"SCHEMA: 9_implementation_checklist.{key} has nested {{{key_name}: [...]}}, extracting to direct array. "
                         f"Plan: {plan.get('META_DOCUMENTATION', {}).get('feature_name', 'unknown')}"
                     )
-                normalized[key] = value["tasks"]
-                logger.debug(f"get_checklist: extracted {len(value['tasks'])} tasks from {key}")
+                normalized[key] = task_list
+                logger.debug(f"get_checklist: extracted {len(task_list)} tasks from {key}")
             elif isinstance(value, list):
                 # Already in correct format (direct array)
                 normalized[key] = value

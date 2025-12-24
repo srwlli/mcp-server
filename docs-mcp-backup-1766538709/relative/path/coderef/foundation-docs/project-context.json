@@ -1,0 +1,87 @@
+{
+  "api_context": {
+    "endpoints": [],
+    "count": 0,
+    "frameworks_detected": [],
+    "auth_method": "Unknown",
+    "error_format": "Unknown"
+  },
+  "dependencies": {
+    "count": 0,
+    "production": [],
+    "development": [],
+    "outdated": [],
+    "vulns": []
+  },
+  "database": {
+    "tables": [],
+    "relationships": [],
+    "migrations": [],
+    "table_count": 0,
+    "has_migrations": false
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_files": [],
+    "contributors": [],
+    "has_git": false
+  },
+  "patterns": {
+    "handlers": [],
+    "decorators": [],
+    "error_handling": []
+  },
+  "similar_features": [],
+  "existing_docs": {
+    "architecture": {
+      "sections": {
+        "architecture_documentation": "",
+        "overview": "",
+        "module_dependency_graph": "*Run `coderef index` to generate module dependency diagrams and metrics.*",
+        "code_patterns": "*Generated: 2025-12-15T05:01:29.264029*"
+      },
+      "full_content": "# Architecture Documentation\n\n## Overview\n\n\n\n## Module Dependency Graph\n\n*Run `coderef index` to generate module dependency diagrams and metrics.*\n\n## Code Patterns\n\n\n*Generated: 2025-12-15T05:01:29.264029*",
+      "word_count": 24
+    },
+    "schema": {
+      "sections": {
+        "schema_documentation": "*No database models detected.*\n\n\n*Generated: 2025-12-15T05:01:29.264579*"
+      },
+      "full_content": "# Schema Documentation\n\n*No database models detected.*\n\n\n*Generated: 2025-12-15T05:01:29.264579*",
+      "word_count": 9
+    },
+    "api": {
+      "sections": {
+        "api_documentation": "",
+        "overview": "- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** Unknown\n- **Total Endpoints:** 0",
+        "endpoints": "*No API endpoints detected.*",
+        "authentication": "*Authentication method not detected.*",
+        "error_handling": "*Error format not detected.*\n\n*Generated: 2025-12-15T05:01:29.265064*"
+      },
+      "full_content": "# API Documentation\n\n## Overview\n\n- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** Unknown\n- **Total Endpoints:** 0\n\n## Endpoints\n\n*No API endpoints detected.*\n\n## Authentication\n\n*Authentication method not detected.*\n\n## Error Handling\n\n*Error format not detected.*\n\n*Generated: 2025-12-15T05:01:29.265064*",
+      "word_count": 40
+    },
+    "components": null,
+    "readme": {
+      "sections": {
+        "path": "",
+        "overview": "<!-- AGENT: Describe what this project does -->",
+        "quick_stats": "| Metric | Value |\n|--------|-------|",
+        "quick_start": "<!-- AGENT: Installation and usage instructions -->",
+        "documentation": "- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-15T05:01:29.263544*"
+      },
+      "full_content": "# path\n\n## Overview\n\n<!-- AGENT: Describe what this project does -->\n\n## Quick Stats\n\n| Metric | Value |\n|--------|-------|\n\n## Quick Start\n\n<!-- AGENT: Installation and usage instructions -->\n\n## Documentation\n\n- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-15T05:01:29.263544*",
+      "word_count": 45
+    }
+  },
+  "coderef": {
+    "available": false,
+    "element_count": 0,
+    "has_graph": false
+  },
+  "_metadata": {
+    "generated_at": "2025-12-15T05:03:18.820606",
+    "generator": "coderef_foundation_generator",
+    "version": "2.0.0"
+  }
+}

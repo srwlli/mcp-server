@@ -1,5 +1,5 @@
 """
-Logging configuration for docs-mcp server (ARCH-003).
+Logging configuration for coderef-docs server (ARCH-003).
 
 Provides structured logging with configurable levels for debugging,
 security audit trails, and usage analytics.
@@ -24,7 +24,7 @@ __all__ = [
 
 
 def setup_logger(
-    name: str = 'docs-mcp',
+    name: str = 'coderef-docs',
     level: int = logging.INFO,
     log_file: Optional[Path] = None
 ) -> logging.Logger:

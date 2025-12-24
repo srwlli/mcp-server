@@ -1,6 +1,6 @@
 Update DELIVERABLES.md with actual metrics from git commit history.
 
-Ask the user for the feature name, then call the `mcp__docs-mcp__update_deliverables` tool with:
+Ask the user for the feature name, then call the `mcp__coderef-docs__update_deliverables` tool with:
 - project_path: current working directory
 - feature_name: the user-provided feature name
 

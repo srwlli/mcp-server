@@ -1,6 +1,6 @@
 Get the feature implementation planning template for AI reference during plan creation.
 
-Call the `mcp__docs-mcp__get_planning_template` tool with optional section parameter:
+Call the `mcp__coderef-docs__get_planning_template` tool with optional section parameter:
 - section: "all" (default) or specific section name
 
 Available sections:

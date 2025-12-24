@@ -1,6 +1,6 @@
 Generate USER-GUIDE documentation for the current project.
 
-Call the `mcp__docs-mcp__generate_individual_doc` tool with:
+Call the `mcp__coderef-docs__generate_individual_doc` tool with:
 - project_path: current working directory
 - template_name: "user-guide"
 

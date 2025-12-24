@@ -1,0 +1,211 @@
+# Phase {N}: {Phase Name}
+**Status:** In Progress
+**Assigned To:** [Agent/Person Name]
+**Started:** YYYY-MM-DD
+**Completed:** [YYYY-MM-DD or N/A]
+
+## Phase Objective
+[Clear, specific goal for this phase - what needs to be accomplished]
+
+Example:
+> Implement core authentication system including user registration, login, password reset, and JWT token management.
+
+---
+
+## What's Been Completed ✓
+
+- [x] Task 1: [Description]
+- [x] Task 2: [Description]
+- [x] Task 3: [Description]
+
+Example:
+- [x] Set up database schema for users table
+- [x] Create registration endpoint with email validation
+- [x] Implement password hashing with bcrypt
+
+---
+
+## What's Currently In Progress 🔄
+
+- [ ] Task A: [Description] - [% complete or status]
+- [ ] Task B: [Description] - [% complete or status]
+
+Example:
+- [ ] Login endpoint with JWT generation - 60% complete
+- [ ] Email verification system - blocked on email service setup
+- [ ] Refresh token rotation logic - not started
+
+---
+
+## What's Next (Priority Order)
+
+1. [ ] Next Task 1: [Description] - [Est. time]
+2. [ ] Next Task 2: [Description] - [Est. time]
+3. [ ] Next Task 3: [Description] - [Est. time]
+
+Example:
+1. [ ] Complete login endpoint - 2 hours
+2. [ ] Write authentication tests - 3 hours
+3. [ ] Integrate with session management - 1.5 hours
+
+---
+
+## Critical Context for Continuity
+
+### Recent Decisions Made
+- **Decision A:** [What decision] → [Why chosen] → [Trade-offs]
+- **Decision B:** [What decision] → [Why chosen] → [Trade-offs]
+
+Example:
+- **JWT over Sessions:** Stateless auth → Easier horizontal scaling → Slightly larger cookie size
+- **Bcrypt over Argon2:** Industry standard → Better library support → Slightly slower (acceptable for security)
+
+### Active Blockers 🚨
+
+- **Blocker:** [Issue description]
+  - Attempted: [What was tried]
+  - Status: [Blocked/In Review/Waiting on]
+  - Owner: [Person/Team]
+
+Example:
+- **Email Service Integration:** Need to select and configure email provider
+  - Attempted: Evaluated SendGrid, AWS SES, Mailgun
+  - Status: Waiting on business decision
+  - Owner: @product-team
+
+### Code Hot Spots 🔥
+
+Files that are critical to understand or frequently modified:
+
+- **File:** `src/auth/jwt-handler.ts:45-120`
+  - Why: Core JWT creation and validation logic - ANY changes here affect all auth flow
+
+- **File:** `src/models/user.ts:12-85`
+  - Why: User schema drives database and API contract - must be stable
+
+Example:
+- **File:** `src/services/authentication.service.ts:1-200`
+  - Why: Central auth service - all endpoints use this
+
+- **File:** `tests/auth.integration.ts:50-150`
+  - Why: Integration tests are fragile - check for failures if changing schema
+
+### Test Status 🧪
+
+- **Unit Tests:** [Passing ✓ / X failing / Not implemented]
+  - Details: [Any failures or test coverage notes]
+
+- **Integration Tests:** [Passing ✓ / X failing / Not implemented]
+  - Details: [Any failures or dependencies]
+
+- **E2E Tests:** [Status or N/A]
+  - Details: [Any failures or blockers]
+
+Example:
+- **Unit Tests:** 24 passing ✓
+  - All auth service functions tested
+
+- **Integration Tests:** 18 passing, 2 failing ⚠️
+  - Failing: JWT refresh endpoint, Email verification flow
+  - Root cause: Email mock service timing out
+
+- **E2E Tests:** Not yet implemented
+  - Blocked: Waiting for UI components in next phase
+
+---
+
+## Environment Setup & Prerequisites
+
+Commands to set up this phase's environment:
+
+```bash
+# Install dependencies if needed
+npm install
+
+# Database setup
+npm run db:migrate
+
+# Run development server
+npm run dev
+
+# Run tests for this phase
+npm test -- --testPathPattern=auth
+
+# Build if needed
+npm run build
+```
+
+### Dependencies for This Phase
+- [Dependency 1]: [version/status] - [What it's used for]
+- [Dependency 2]: [version/status] - [What it's used for]
+
+Example:
+- express: ^4.18.0 ✓ installed - API server
+- jsonwebtoken: ^9.0.0 ✓ installed - JWT creation/verification
+- bcrypt: ^5.1.0 ✓ installed - Password hashing
+
+---
+
+## How to Continue From Here
+
+**For the Next Agent:**
+
+1. **First:** Read project-level claude.md (../claude.md) for big picture
+2. **Second:** Review blockers section above and contact owners if needed
+3. **Third:** Pick first incomplete task from "What's Next" and begin
+4. **Then:** Update this file as you make progress
+5. **Finally:** When phase is complete, create phase-{N+1}/claude.md
+
+**Immediate Next Steps:**
+```
+1. [First action with file references]
+2. [Second action with specific goals]
+3. [Third action]
+```
+
+Example:
+```
+1. Complete login endpoint: Start at src/auth/routes.ts:45
+2. Add missing error handling for invalid credentials
+3. Write tests in tests/auth.test.ts
+```
+
+---
+
+## Notes from Last Agent
+
+[Any lessons learned, gotchas, debugging tips, or surprises for the next person]
+
+Example:
+> The email verification flow has a 5-second timeout - if your tests are slow, they'll fail. Mock the email service aggressively. Also, the JWT library we're using has a quirk with millisecond vs second precision - timestamps must be integers, not floats.
+
+---
+
+## Quick Links & References
+
+- **Project Overview:** ../claude.md
+- **Previous Phase:** ../phase-{N-1}/claude.md (if applicable)
+- **Next Phase Plan:** ../phase-{N+1}/claude.md (if exists)
+- **Full Implementation Plan:** ../plan.json
+- **Project Analysis:** ../analysis.json
+
+---
+
+## Troubleshooting Common Issues
+
+**If [problem occurs]:**
+1. Check [file/logs]
+2. Try [solution]
+3. If still broken, [escalation path]
+
+Example:
+**If tests fail with "Cannot find module 'crypto'":**
+1. Verify node_modules is installed: `ls node_modules | grep crypto`
+2. Try clean install: `rm -rf node_modules && npm install`
+3. If still failing, check Node version: `node --version` (need 14+)
+
+---
+
+**Last Updated By:** [Agent/Person Name]
+**Last Updated:** YYYY-MM-DD HH:MM
+**Phase Status:** [Percentage complete or status description]

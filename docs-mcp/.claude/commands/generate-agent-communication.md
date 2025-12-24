@@ -1,6 +1,6 @@
 Generate multi-agent communication.json from plan.json
 
-Call the `mcp__docs-mcp__generate_agent_communication` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__generate_agent_communication` tool with the current working directory as the project_path.
 
 Ask the user for the feature name if not already provided.
 

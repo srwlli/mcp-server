@@ -1,5 +1,5 @@
 """
-Constants for docs-mcp server.
+Constants for coderef-docs server.
 
 Centralizes all hardcoded paths, file names, and magic strings for easier configuration
 and maintenance (REF-002, REF-003, QUA-003).

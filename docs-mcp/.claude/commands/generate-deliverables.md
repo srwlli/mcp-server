@@ -1,6 +1,6 @@
 Generate DELIVERABLES.md template for a feature from its plan.json file.
 
-Ask the user for the feature name (alphanumeric, hyphens, underscores only), then call the `mcp__docs-mcp__generate_deliverables_template` tool with:
+Ask the user for the feature name (alphanumeric, hyphens, underscores only), then call the `mcp__coderef-docs__generate_deliverables_template` tool with:
 - project_path: current working directory
 - feature_name: the user-provided feature name
 

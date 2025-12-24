@@ -1,6 +1,6 @@
 Verify agent completion with automated checks
 
-Call the `mcp__docs-mcp__verify_agent_completion` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__verify_agent_completion` tool with the current working directory as the project_path.
 
 Ask the user for:
 1. Feature name

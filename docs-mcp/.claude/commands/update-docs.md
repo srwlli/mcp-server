@@ -24,7 +24,7 @@ Feature Implementation → /update-deliverables → /update-docs → /archive-fe
 ```python
 # After completing update_all_documentation tool implementation
 await mcp__docs_mcp__update_all_documentation({
-    'project_path': 'C:/Users/willh/.mcp-servers/docs-mcp',
+    'project_path': 'C:/Users/willh/.mcp-servers/coderef-docs',
     'change_type': 'feature',
     'feature_description': 'Added update_all_documentation tool for automated doc updates',
     'workorder_id': 'WO-UPDATE-DOCS-001',

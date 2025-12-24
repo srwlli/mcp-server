@@ -1,6 +1,6 @@
 Validate implementation plan quality for the current project.
 
-Ask the user for the plan file path (e.g., "feature-auth-plan.json"), then call the `mcp__docs-mcp__validate_implementation_plan` tool with:
+Ask the user for the plan file path (e.g., "feature-auth-plan.json"), then call the `mcp__coderef-docs__validate_implementation_plan` tool with:
 - project_path: current working directory
 - plan_file_path: the user-provided plan filename
 

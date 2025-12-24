@@ -1,4 +1,4 @@
-# docs-mcp User Guide
+# coderef-docs User Guide
 
 > **Automatically generate professional documentation for your code projects**
 > Uses the POWER framework to create comprehensive, AI-optimized documentation
@@ -7,7 +7,7 @@
 
 ## Table of Contents
 
-- [What is docs-mcp?](#what-is-docs-mcp)
+- [What is coderef-docs?](#what-is-coderef-docs)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [How It Works](#how-it-works)
@@ -26,9 +26,9 @@
 
 ---
 
-## What is docs-mcp?
+## What is coderef-docs?
 
-**docs-mcp** is a Model Context Protocol (MCP) server that integrates with Claude Code to automatically generate foundation documentation for software projects.
+**coderef-docs** is a Model Context Protocol (MCP) server that integrates with Claude Code to automatically generate foundation documentation for software projects.
 
 ### Key Features
 
@@ -59,7 +59,7 @@
 
 ### Changelog System (NEW in v1.0.2)
 
-docs-mcp includes a structured changelog system for tracking project changes:
+coderef-docs includes a structured changelog system for tracking project changes:
 
 - **`get_changelog`** - Query changelog history by version, type, or breaking changes
 - **`add_changelog_entry`** - Programmatically add new changelog entries
@@ -74,7 +74,7 @@ docs-mcp includes a structured changelog system for tracking project changes:
 
 ### Standards System (NEW in v1.2.0)
 
-docs-mcp now includes a consistency management system for discovering and documenting codebase standards:
+coderef-docs now includes a consistency management system for discovering and documenting codebase standards:
 
 - **`establish_standards`** - Scan codebase to discover UI/UX/behavior patterns and generate standards documentation
 - **Pattern Discovery** - Automated regex-based pattern analysis
@@ -100,7 +100,7 @@ docs-mcp now includes a consistency management system for discovering and docume
 
 ### Schema-First Planning (NEW in v1.1.0)
 
-docs-mcp enforces **schema-first design** for implementation plans:
+coderef-docs enforces **schema-first design** for implementation plans:
 
 **Three-Layer Defense:**
 
@@ -123,7 +123,7 @@ docs-mcp enforces **schema-first design** for implementation plans:
 
 ### Planning Workflow System (NEW in v1.4.0)
 
-docs-mcp now includes a comprehensive planning workflow system for AI-assisted implementation planning:
+coderef-docs now includes a comprehensive planning workflow system for AI-assisted implementation planning:
 
 - **`gather_context`** - Interactive requirements gathering (saves to feature folder)
 - **`get_planning_template`** - Get planning template sections for AI reference
@@ -160,7 +160,7 @@ docs-mcp now includes a comprehensive planning workflow system for AI-assisted i
 
 ### Workorder Tracking System (NEW in v1.5.0)
 
-docs-mcp now includes automatic workorder tracking for all features using the planning workflow:
+coderef-docs now includes automatic workorder tracking for all features using the planning workflow:
 
 - **Automatic Assignment** - Every feature gets a unique workorder ID (WO-{FEATURE-NAME}-001)
 - **Workflow Integration** - Workorder assigned when any planning tool is invoked
@@ -196,7 +196,7 @@ coderef/working/{feature-name}/
 
 ### Deliverables Tracking System (NEW in v1.6.0)
 
-docs-mcp now includes automatic deliverables tracking with git-based metrics:
+coderef-docs now includes automatic deliverables tracking with git-based metrics:
 
 - **Automatic Template Generation** - `/create-plan` generates DELIVERABLES.md with phase structure
 - **Git Metrics Integration** - Parse commit history to calculate LOC, commits, time spent
@@ -264,7 +264,7 @@ docs-mcp now includes automatic deliverables tracking with git-based metrics:
 
 ### Workorder Logging Integration (NEW in v1.1.0)
 
-docs-mcp now includes **automatic workorder logging** when archiving features:
+coderef-docs now includes **automatic workorder logging** when archiving features:
 
 - **Seamless Integration** - `/archive-feature` automatically logs workorders to `workorder-log.txt`
 - **Complete Lifecycle** - Closes the loop: create → execute → complete → **auto-log** → archive
@@ -286,7 +286,7 @@ WO-ID | Project | Description | Timestamp
 
 **Example Entry:**
 ```
-WO-AUTH-SYSTEM-001 | docs-mcp | Archived feature: Auth System | 2025-10-23T05:30:00+00:00
+WO-AUTH-SYSTEM-001 | coderef-docs | Archived feature: Auth System | 2025-10-23T05:30:00+00:00
 ```
 
 **Benefits:**
@@ -304,7 +304,7 @@ WO-AUTH-SYSTEM-001 | docs-mcp | Archived feature: Auth System | 2025-10-23T05:30
 
 ## Prerequisites
 
-Before using docs-mcp, ensure you have:
+Before using coderef-docs, ensure you have:
 
 ### Required
 
@@ -327,7 +327,7 @@ claude mcp list
 ```
 
 > 💡 **What is MCP?**
-> Model Context Protocol allows AI assistants (like Claude) to access external tools and data sources. docs-mcp is an MCP server that provides documentation generation tools.
+> Model Context Protocol allows AI assistants (like Claude) to access external tools and data sources. coderef-docs is an MCP server that provides documentation generation tools.
 
 ---
 
@@ -337,7 +337,7 @@ claude mcp list
 
 ```bash
 # Navigate to your MCP servers directory
-cd C:\Users\willh\.mcp-servers\docs-mcp
+cd C:\Users\willh\.mcp-servers\coderef-docs
 
 # Install Python dependencies (if not already installed)
 pip install mcp>=1.0.0
@@ -346,13 +346,13 @@ pip install mcp>=1.0.0
 ### Step 2: Register with Claude Code
 
 ```bash
-# Add docs-mcp as a user-scoped MCP server
-claude mcp add docs-mcp --scope user --command python --args "C:\Users\willh\.mcp-servers\docs-mcp\server.py"
+# Add coderef-docs as a user-scoped MCP server
+claude mcp add coderef-docs --scope user --command python --args "C:\Users\willh\.mcp-servers\coderef-docs\server.py"
 ```
 
 **Expected Output:**
 ```
-✓ docs-mcp added successfully
+✓ coderef-docs added successfully
 ```
 
 ### Step 3: Verify Installation
@@ -365,10 +365,10 @@ claude mcp list
 **Expected Output:**
 ```
 MCP Servers:
-✓ docs-mcp - Connected
+✓ coderef-docs - Connected
 ```
 
-> ⚠️ **Important**: If docs-mcp shows as "Not Connected", restart Claude Code and try again.
+> ⚠️ **Important**: If coderef-docs shows as "Not Connected", restart Claude Code and try again.
 
 ---
 
@@ -386,7 +386,7 @@ MCP Servers:
          │
          ▼
 ┌──────────────────┐
-│  docs-mcp Server │
+│  coderef-docs Server │
 │  (MCP Protocol)  │
 └────────┬─────────┘
          │
@@ -405,7 +405,7 @@ MCP Servers:
 
 1. **You invoke** a natural language command in Claude Code
 2. **Claude Code calls** the appropriate MCP tool (`generate_foundation_docs` or `generate_individual_doc`)
-3. **docs-mcp analyzes** your project structure, code files, and configuration
+3. **coderef-docs analyzes** your project structure, code files, and configuration
 4. **Templates guide** the generation using the POWER framework
 5. **Claude creates** the documentation based on template structure and code analysis
 6. **Files are saved** to `your-project/coderef/foundation-docs/`
@@ -740,7 +740,7 @@ your-project/
 
 ## Planning Workflow Guide (Step-by-Step)
 
-> **Complete beginner's guide to creating implementation plans with docs-mcp**
+> **Complete beginner's guide to creating implementation plans with coderef-docs**
 
 ### Overview
 
@@ -1282,7 +1282,7 @@ Generate foundation documentation for my project at C:\path\to\project
 
 ### What are Slash Commands?
 
-Slash commands are shortcuts that make docs-mcp tools easier to use. Instead of typing long MCP tool names, you can type short commands like `/generate-docs` or `/validate-plan`.
+Slash commands are shortcuts that make coderef-docs tools easier to use. Instead of typing long MCP tool names, you can type short commands like `/generate-docs` or `/validate-plan`.
 
 **When to use slash commands:**
 - Faster than full MCP tool invocations
@@ -1425,9 +1425,9 @@ You: /generate-quickref
 AI: Let's create a quickref guide for your application.
 
 AI: Step 1/9: What's your application name and brief description?
-You: "docs-mcp - An MCP server for generating project documentation"
+You: "coderef-docs - An MCP server for generating project documentation"
 
-AI: Step 2/9: What are the 4-5 core capabilities of docs-mcp?
+AI: Step 2/9: What are the 4-5 core capabilities of coderef-docs?
 You: "Generate foundation docs, manage changelogs, extract standards, audit compliance, create implementation plans"
 
 ... (AI continues through 9 steps)
@@ -1823,7 +1823,7 @@ AI: Summary: 15 API endpoints, 8 database tables, 10 dependencies
 Display all 54 MCP tools across all 3 servers in formatted CLI output.
 
 **What it does:**
-- Lists tools from docs-mcp (38 tools)
+- Lists tools from coderef-docs (38 tools)
 - Lists tools from personas-mcp (8 tools)
 - Lists tools from coderef-mcp (8 tools)
 - Displays in Unicode box art format
@@ -2214,7 +2214,7 @@ contributors=["willh", "jane-smith", "Claude Code AI"]
 4. **Add changelog entry:**
    ```python
    add_changelog_entry(
-       project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+       project_path="C:/Users/willh/.mcp-servers/coderef-docs",
        version="1.0.2",
        change_type="feature",
        severity="major",
@@ -2238,7 +2238,7 @@ contributors=["willh", "jane-smith", "Claude Code AI"]
 **View specific version:**
 ```
 get_changelog(
-    project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+    project_path="C:/Users/willh/.mcp-servers/coderef-docs",
     version="1.0.2"
 )
 ```
@@ -2246,7 +2246,7 @@ get_changelog(
 **Find all breaking changes:**
 ```
 get_changelog(
-    project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+    project_path="C:/Users/willh/.mcp-servers/coderef-docs",
     breaking_only=true
 )
 ```
@@ -2254,7 +2254,7 @@ get_changelog(
 **Filter by type:**
 ```
 get_changelog(
-    project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+    project_path="C:/Users/willh/.mcp-servers/coderef-docs",
     change_type="feature"
 )
 ```
@@ -2265,23 +2265,23 @@ get_changelog(
 
 ### Problem: "Tool not found" or "No such tool available"
 
-**Symptom**: Claude Code says it can't find the docs-mcp tools
+**Symptom**: Claude Code says it can't find the coderef-docs tools
 
 **Cause**: MCP server not connected or not registered
 
 **Solution**:
 ```bash
-# 1. Check if docs-mcp is registered
+# 1. Check if coderef-docs is registered
 claude mcp list
 
 # 2. If not listed, register it
-claude mcp add docs-mcp --scope user --command python --args "C:\Users\willh\.mcp-servers\docs-mcp\server.py"
+claude mcp add coderef-docs --scope user --command python --args "C:\Users\willh\.mcp-servers\coderef-docs\server.py"
 
 # 3. Restart Claude Code
 
 # 4. Verify connection
 claude mcp list
-# Should show: ✓ docs-mcp - Connected
+# Should show: ✓ coderef-docs - Connected
 ```
 
 ---
@@ -2384,12 +2384,12 @@ python --version
 
 # 2. If < 3.10, upgrade Python
 
-# 3. Verify docs-mcp uses correct Python
+# 3. Verify coderef-docs uses correct Python
 claude mcp list  # Check command path
 
 # 4. Update MCP server with correct Python path if needed
-claude mcp remove docs-mcp
-claude mcp add docs-mcp --scope user --command python --args "C:\Users\willh\.mcp-servers\docs-mcp\server.py"
+claude mcp remove coderef-docs
+claude mcp add coderef-docs --scope user --command python --args "C:\Users\willh\.mcp-servers\coderef-docs\server.py"
 ```
 
 ---
@@ -2454,14 +2454,14 @@ claude mcp add docs-mcp --scope user --command python --args "C:\Users\willh\.mc
 
 ### Related Files
 
-- **`README.md`** - docs-mcp project overview
-- **`ARCHITECTURE.md`** - docs-mcp system design
+- **`README.md`** - coderef-docs project overview
+- **`ARCHITECTURE.md`** - coderef-docs system design
 - **`templates/power/`** - POWER framework templates
 - **`generators/`** - Generator implementation
 
 ### External Links
 
-- [POWER Framework Documentation](https://github.com/srwlli/docs-mcp)
+- [POWER Framework Documentation](https://github.com/srwlli/coderef-docs)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
 - [Claude Code Documentation](https://docs.anthropic.com/claude-code)
 

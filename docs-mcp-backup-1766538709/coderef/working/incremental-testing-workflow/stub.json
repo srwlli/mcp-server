@@ -1,0 +1,29 @@
+{
+  "stub_id": "STUB-010",
+  "workorder_id": "WO-TESTFLOW-001",
+  "feature_name": "incremental-testing-workflow",
+  "description": "Include testing as an optional step within each task during implementation. Build and test incrementally rather than all testing at the end.",
+  "category": "improvement",
+  "priority": "medium",
+  "created": "2025-12-16T00:00:00.000Z",
+  "status": "stub",
+  "notes": {
+    "problem": "Testing often deferred to end, leading to compound bugs",
+    "desired_behavior": "Each task optionally includes test step",
+    "implementation_options": [
+      "Add test_step field to task schema in plan.json",
+      "Include 'verify' sub-task for each main task",
+      "Flag in plan template: include_incremental_tests: true/false"
+    ],
+    "benefits": [
+      "Catch bugs early",
+      "Smaller debugging scope",
+      "More confident progress",
+      "Agent can verify own work"
+    ],
+    "related_to": [
+      "WO-PLANTRACK-001",
+      "docs-mcp create_plan"
+    ]
+  }
+}

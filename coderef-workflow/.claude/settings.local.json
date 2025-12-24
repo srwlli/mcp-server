@@ -5,5 +5,10 @@
     "scriptboard-mcp",
     "docs",
     "hello-world"
-  ]
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__gather_context"
+    ]
+  }
 }

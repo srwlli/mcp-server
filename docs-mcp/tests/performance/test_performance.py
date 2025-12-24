@@ -29,7 +29,7 @@ import tool_handlers
 
 
 # Module-level constants
-DOCS_MCP_PATH = Path(__file__).parent  # docs-mcp itself (~150 files)
+DOCS_MCP_PATH = Path(__file__).parent  # coderef-docs itself (~150 files)
 
 # Performance thresholds (seconds)
 SMALL_PROJECT_ANALYZE_THRESHOLD = 60  # Should complete in < 60s
@@ -103,7 +103,7 @@ PERFORMANCE_TEST_PLAN = {
                     },
                     {
                         "id": "PERF-002",
-                        "description": "Benchmark analyze_project_for_planning on small project (docs-mcp itself with approximately 150 files)",
+                        "description": "Benchmark analyze_project_for_planning on small project (coderef-docs itself with approximately 150 files)",
                         "effort": "15 minutes",
                         "depends_on": ["PERF-001"]
                     },
@@ -135,7 +135,7 @@ PERFORMANCE_TEST_PLAN = {
         "8_success_criteria": {
             "criteria": [
                 "All performance tests pass on standard hardware",
-                "analyze_project_for_planning completes in < 60 seconds for docs-mcp",
+                "analyze_project_for_planning completes in < 60 seconds for coderef-docs",
                 "validate_implementation_plan completes in < 2 seconds",
                 "Performance results logged for future regression detection",
                 "Tests provide actionable feedback if performance degrades"
@@ -160,7 +160,7 @@ def test_analyze_performance_small_project():
     """
     Test analyze_project_for_planning performance on small project (TEST-022).
 
-    Benchmarks analyze_project_for_planning on docs-mcp itself (~150 files).
+    Benchmarks analyze_project_for_planning on coderef-docs itself (~150 files).
     Target: < 60 seconds for projects < 500 files.
 
     This validates that project analysis completes in reasonable time and
@@ -173,7 +173,7 @@ def test_analyze_performance_small_project():
     project_path = DOCS_MCP_PATH
 
     print(f"\n[Setup] Test project: {project_path}")
-    print(f"  Note: This is docs-mcp itself (~150 files)")
+    print(f"  Note: This is coderef-docs itself (~150 files)")
 
     # Count files in project (approximate)
     file_count = len(list(project_path.rglob('*.py'))) + \
@@ -221,7 +221,7 @@ def test_analyze_performance_small_project():
 
     # Log performance data for regression tracking
     print(f"\n[Performance Data]")
-    print(f"  project: docs-mcp")
+    print(f"  project: coderef-docs")
     print(f"  files: ~{file_count}")
     print(f"  duration: {duration:.2f}s")
     print(f"  threshold: {SMALL_PROJECT_ANALYZE_THRESHOLD}s")

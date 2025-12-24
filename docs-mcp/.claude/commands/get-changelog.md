@@ -1,6 +1,6 @@
 Get changelog entries for the current project with optional filters.
 
-Call the `mcp__docs-mcp__get_changelog` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__get_changelog` tool with the current working directory as the project_path.
 
 Optional filters (you can prompt user for these):
 - version: Get specific version (e.g., "1.0.2")

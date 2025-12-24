@@ -1,5 +1,5 @@
 """
-Schema validation utilities for docs-mcp planning tools.
+Schema validation utilities for coderef-docs planning tools.
 
 This module provides schema validation for plan.json files using the
 plan.schema.json as the single source of truth.

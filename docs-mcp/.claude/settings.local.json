@@ -3,7 +3,7 @@
     "allow": [
       "Bash(python -m pytest:*)",
       "Bash(pip install:*)",
-      "mcp__docs-mcp__create_context_expert"
+      "mcp__coderef-docs__create_context_expert"
     ]
   },
   "enabledMcpjsonServers": [

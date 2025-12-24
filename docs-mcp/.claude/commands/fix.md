@@ -52,7 +52,7 @@ Make the changes directly. No planning artifacts needed.
 Call log_workorder to track completion:
 
 ```python
-mcp__docs-mcp__log_workorder({
+mcp__coderef-docs__log_workorder({
     "project_path": <current_working_directory>,
     "workorder_id": <generated_id>,
     "project_name": <project_name>,

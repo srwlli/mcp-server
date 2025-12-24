@@ -1,0 +1,16 @@
+framework: POWER
+purpose: Generate my-guide.md as a concise quick reference document listing MCP tools and slash commands by category.
+# NOTE: This template produces lightweight 60-80 line reference docs for quick tool lookups,
+# distinct from USER-GUIDE.md which provides comprehensive tutorials and onboarding.
+output: Bullet-list format organized by category. One-line descriptions per tool/command. No prerequisites, installation, or tutorials. Target length: 60-80 lines total.
+work: Scan project for MCP tools (in server.py or tool_handlers.py), scan .claude/commands/ for slash commands. Organize by functional category (Documentation, Changelog, Standards, Planning, etc.). Extract tool names and brief descriptions. Do not modify code.
+examples:
+- Documentation Generation section with bullet list: "- tool_name - Brief description"
+- Slash Commands section with bullet list: "- /command-name - Brief description"
+- Category headers with clear separation
+- Simple format: no code blocks, no examples, no workflows
+- Tools listed with hyphen prefix, one per line
+- Commands listed with slash prefix, one per line
+requirements: Plain text format with markdown bullet lists. No tables, no code blocks, no emoji (unless user style uses them). Group by category (Documentation, Changelog, Standards, Planning). Keep descriptions to single line each. Target 60-80 total lines. Match style of existing my-guide.md if present in project.
+save_as: my-guide.md
+store_as: my_guide_summary

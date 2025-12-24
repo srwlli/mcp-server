@@ -103,27 +103,27 @@
 
 ### Templates
 ```python
-mcp__docs-mcp__list_templates()
-mcp__docs-mcp__get_template(template_name="readme")
+mcp__coderef-docs__list_templates()
+mcp__coderef-docs__get_template(template_name="readme")
 ```
 
 ### Changelog
 ```python
-mcp__docs-mcp__get_changelog(project_path="/path")
-mcp__docs-mcp__add_changelog_entry(project_path="/path", ...)
+mcp__coderef-docs__get_changelog(project_path="/path")
+mcp__coderef-docs__add_changelog_entry(project_path="/path", ...)
 ```
 
 ### Standards
 ```python
-mcp__docs-mcp__establish_standards(project_path="/path")
-mcp__docs-mcp__audit_codebase(project_path="/path")
-mcp__docs-mcp__check_consistency(project_path="/path")
+mcp__coderef-docs__establish_standards(project_path="/path")
+mcp__coderef-docs__audit_codebase(project_path="/path")
+mcp__coderef-docs__check_consistency(project_path="/path")
 ```
 
 ### Inventory
 ```python
-mcp__docs-mcp__inventory_manifest(project_path="/path")
-mcp__docs-mcp__dependency_inventory(project_path="/path")
+mcp__coderef-docs__inventory_manifest(project_path="/path")
+mcp__coderef-docs__dependency_inventory(project_path="/path")
 ```
 
 ---

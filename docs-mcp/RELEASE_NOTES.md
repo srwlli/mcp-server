@@ -1,4 +1,4 @@
-# docs-mcp Release Notes
+# coderef-docs Release Notes
 
 **Current Version**: 2.7.0
 **Last Updated**: December 4, 2025
@@ -32,7 +32,7 @@
 **Total Stats:**
 - 38 MCP Tools
 - 40 Slash Commands
-- 3 Server Ecosystem (docs-mcp, personas-mcp, coderef-mcp)
+- 3 Server Ecosystem (coderef-docs, personas-mcp, coderef-mcp)
 
 ---
 
@@ -73,7 +73,7 @@
 
 ---
 
-# docs-mcp v2.0.0 Release Notes (Archive)
+# coderef-docs v2.0.0 Release Notes (Archive)
 
 **Release Date**: October 15, 2025
 **Status**: Production Ready ✅
@@ -82,7 +82,7 @@
 
 ## Overview
 
-**docs-mcp v2.0.0** represents a major release milestone: **complete implementation of all 23 production-ready tools** with comprehensive documentation coverage.
+**coderef-docs v2.0.0** represents a major release milestone: **complete implementation of all 23 production-ready tools** with comprehensive documentation coverage.
 
 This release concludes Phase 5D (Documentation Inventory Tool) and Phase 6 (Documentation & Finalization), delivering a fully-documented, enterprise-grade MCP server ready for deployment.
 
@@ -217,7 +217,7 @@ None. This is a purely additive release.
 No migration needed. v2.0.0 is fully backward compatible with v1.x installations.
 
 ### For Existing Users
-1. Update docs-mcp to v2.0.0 (if using version-pinned installations)
+1. Update coderef-docs to v2.0.0 (if using version-pinned installations)
 2. Optionally deploy 7 new inventory slash commands globally (recommended)
 3. Review new tools in Tool Catalog for applicable use cases
 
@@ -317,10 +317,10 @@ Potential enhancements for future versions:
 ## Support & Feedback
 
 For issues, questions, or feedback:
-- GitHub Issues: [docs-mcp repository](https://github.com/anthropics/mcp-servers)
+- GitHub Issues: [coderef-docs repository](https://github.com/anthropics/mcp-servers)
 - MCP Specification: [modelcontextprotocol.io](https://spec.modelcontextprotocol.io/)
 
 ---
 
-**🎉 docs-mcp v2.0.0 - Complete Documentation & Inventory System Ready for Production**
+**🎉 coderef-docs v2.0.0 - Complete Documentation & Inventory System Ready for Production**
 

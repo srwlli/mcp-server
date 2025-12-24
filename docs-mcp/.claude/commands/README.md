@@ -1,6 +1,6 @@
-# Slash Commands for docs-mcp
+# Slash Commands for coderef-docs
 
-This directory contains **22 slash commands** for quick access to docs-mcp MCP tools.
+This directory contains **22 slash commands** for quick access to coderef-docs MCP tools.
 
 ## How Slash Commands Work
 
@@ -77,13 +77,13 @@ If a command doesn't appear in autocomplete, you can still use it by asking natu
 Each `.md` file contains:
 1. **First line**: Short description (used in autocomplete)
 2. **Body**: Detailed instructions for AI on how to execute the command
-3. **Tool calls**: References to MCP tools (e.g., `mcp__docs-mcp__get_changelog`)
+3. **Tool calls**: References to MCP tools (e.g., `mcp__coderef-docs__get_changelog`)
 
 Example:
 ```markdown
 Get changelog entries for the current project with optional filters.
 
-Call the `mcp__docs-mcp__get_changelog` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__get_changelog` tool with the current working directory as the project_path.
 
 Optional filters:
 - version: Get specific version
@@ -104,7 +104,7 @@ Optional filters:
 
 ### Command doesn't appear in autocomplete
 1. Reload Claude Code window: `Ctrl+Shift+P` → "Developer: Reload Window"
-2. Ensure you're in the docs-mcp project directory
+2. Ensure you're in the coderef-docs project directory
 3. Check file permissions: `ls -la .claude/commands/`
 4. Try typing the full command manually
 

@@ -1,5 +1,5 @@
 [project]
-name = "docs-mcp"
+name = "coderef-docs"
 version = "1.2.0"
 description = "Enterprise-Grade MCP Server for Documentation Generation and Changelog Management"
 readme = "README.md"
@@ -54,7 +54,7 @@ Repository = "https://github.com/anthropics/mcp-servers"
 Issues = "https://github.com/anthropics/mcp-servers/issues"
 
 [project.scripts]
-docs-mcp = "server:main"
+coderef-docs = "server:main"
 
 [build-system]
 requires = ["hatchling"]

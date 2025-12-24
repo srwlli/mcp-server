@@ -1,0 +1,75 @@
+[
+  {
+    "timestamp": "2025-12-23T20:11:13.698302",
+    "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+    "feature_name": "rename-docs-mcp-to-coderef-docs",
+    "task_count": 13,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Review complete plan for gaps or ambiguities",
+        "activeForm": "PRE-IMPL-001: Reviewing complete plan for gaps or ambiguities",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-002: Verify git repo is clean (no uncommitted changes)",
+        "activeForm": "PRE-IMPL-002: Verifying git repo is clean (no uncommitted changes)",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-003: Create backup of docs-mcp directory",
+        "activeForm": "PRE-IMPL-003: Creating backup of docs-mcp directory",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-004: Document current version for rollback if needed",
+        "activeForm": "PRE-IMPL-004: Documenting current version for rollback if needed",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (318/318)",
+        "activeForm": "FINALIZA-001: Alling tests passing (318/318)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Zero 'docs-mcp' references in non-archived files",
+        "activeForm": "FINALIZA-002: Zeroing 'docs-mcp' references in non-archived files",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: Tools discoverable with new prefix",
+        "activeForm": "FINALIZA-003: Toolsing discoverable with new prefix",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: Server starts successfully",
+        "activeForm": "FINALIZA-004: Servering starts successfully",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: Git history preserved",
+        "activeForm": "FINALIZA-005: Giting history preserved",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-006: Code review completed",
+        "activeForm": "FINALIZA-006: Codeing review completed",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-007: Documentation updated",
+        "activeForm": "FINALIZA-007: Documentationing updated",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-008: Changelog entry created",
+        "activeForm": "FINALIZA-008: Changeloging entry created",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-009: Workorder archived",
+        "activeForm": "FINALIZA-009: Workordering archived",
+        "status": "pending"
+      }
+    ]
+  }
+]

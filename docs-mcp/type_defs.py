@@ -1,5 +1,5 @@
 """
-Type definitions for docs-mcp server (QUA-001).
+Type definitions for coderef-docs server (QUA-001).
 
 Provides TypedDicts and type aliases for better type safety and IDE support.
 """

@@ -2,22 +2,23 @@
 
 **Workorder ID:** WO-CODEREF-CONTEXT-MCP-SERVER-001
 **Feature:** coderef-context-mcp-server
+**Technology:** TypeScript (MCP Server)
 **Status:** 🚧 Not Started
 **Start Date:** TBD
 **Completion Date:** TBD
 
 ---
 
-## Phase 1: Setup & Infrastructure (2 weeks)
+## Phase 1: Setup & Infrastructure (1.5 weeks)
 
-Build project foundation, MCP boilerplate, subprocess bridge, and caching layer.
+Build TypeScript project foundation in monorepo, MCP boilerplate, direct module imports, and caching layer.
 
 ### Tasks
 
-- [ ] SETUP-001: Project initialization and environment setup (4 hours)
-- [ ] SETUP-002: MCP server boilerplate and initialization (6 hours)
-- [ ] BRIDGE-001: Implement CodeRefCoreBridge for subprocess communication (8 hours)
-- [ ] BRIDGE-002: Implement caching layer with TTL and LRU eviction (6 hours)
+- [ ] SETUP-001: Project initialization and TypeScript setup (4 hours)
+- [ ] SETUP-002: MCP server boilerplate and initialization (5 hours)
+- [ ] BRIDGE-001: Direct imports and module bridging (6 hours)
+- [ ] BRIDGE-002: Implement caching layer with TTL and LRU eviction (5 hours)
 
 ### Deliverables
 
@@ -134,15 +135,15 @@ Implement Context, RAG, types, error handling, testing, optimization, documentat
 
 | Metric | Target | Actual |
 |--------|--------|--------|
-| Total Duration | 8-10 weeks | TBD |
-| Total Effort | 92 hours | TBD |
+| Total Duration | 6-8 weeks | TBD |
+| Total Effort | 85 hours | TBD |
 | Total Lines of Code | TBD | TBD |
 | Test Coverage | 90%+ | TBD |
-| Performance (avg response) | <5 seconds | TBD |
-| Phase 1 Effort | 24 hours | TBD |
+| Performance (avg response) | <2 seconds | TBD |
+| Phase 1 Effort | 20 hours | TBD |
 | Phase 2 Effort | 25 hours | TBD |
 | Phase 3 Effort | 11 hours | TBD |
-| Phase 4 Effort | 53 hours | TBD |
+| Phase 4 Effort | 53 hours (includes testing, docs, optimization) | TBD |
 
 ---
 

@@ -1,5 +1,5 @@
 """
-Shared pytest fixtures for docs-mcp test suite.
+Shared pytest fixtures for coderef-docs test suite.
 
 Provides common fixtures for:
 - Temporary project structures
@@ -33,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 @pytest.fixture
 def project_root() -> Path:
-    """Return the docs-mcp project root directory."""
+    """Return the coderef-docs project root directory."""
     return Path(__file__).parent.parent
 
 
@@ -223,7 +223,7 @@ async def test_async_run():
 
     (docs_dir / "README.md").write_text('''# Mock Project
 
-A test project for docs-mcp test suite.
+A test project for coderef-docs test suite.
 
 ## Features
 

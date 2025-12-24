@@ -1,4 +1,4 @@
-# docs-mcp
+# coderef-docs
 
 ## Overview
 

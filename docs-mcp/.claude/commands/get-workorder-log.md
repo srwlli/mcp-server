@@ -5,7 +5,7 @@ Optionally prompt the user for filtering criteria:
 - workorder_pattern: Filter by workorder ID pattern (e.g., "WO-AUTH" matches WO-AUTH-001, WO-AUTH-002)
 - limit: Maximum number of entries to return
 
-Then call the `mcp__docs-mcp__get_workorder_log` tool with:
+Then call the `mcp__coderef-docs__get_workorder_log` tool with:
 - project_path: Current working directory
 - Optional filters from above
 
@@ -29,10 +29,10 @@ Example queries:
    (no filters - returns all entries)
    ```
 
-2. **Find all docs-mcp workorders:**
+2. **Find all coderef-docs workorders:**
    ```
    /get-workorder-log
-   project_name: docs-mcp
+   project_name: coderef-docs
    ```
 
 3. **Find all AUTH-related workorders:**
@@ -53,7 +53,7 @@ Response format:
   "entries": [
     {
       "workorder_id": "WO-AUTH-001",
-      "project": "docs-mcp",
+      "project": "coderef-docs",
       "description": "Implement authentication system",
       "timestamp": "2025-10-21T02:08:51+00:00"
     }

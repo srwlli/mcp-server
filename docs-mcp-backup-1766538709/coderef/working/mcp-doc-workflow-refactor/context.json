@@ -1,0 +1,38 @@
+{
+  "feature_name": "mcp-doc-workflow-refactor",
+  "description": "Separate workorder-mcp from docs-mcp. Currently workorder-related tools (gather-context, create-plan, execute-plan, update-task-status, archive-feature, etc.) are embedded within docs-mcp alongside pure documentation tools. This refactoring extracts workflow tools into a separate MCP server while maintaining backward compatibility and zero disruption to existing workflows.",
+  "goal": "Achieve clean separation of concerns: docs-mcp becomes pure documentation (generate docs, audit, standards), workorder-mcp becomes pure workflow (context, plan, execute). Both MCPs access shared filesystem and git infrastructure. Enables independent evolution and testing of each system.",
+  "requirements": [
+    "Phase 1: Build workorder-mcp alongside docs-mcp (no breaking changes)",
+    "Phase 2: Dual-run testing with both MCPs active (verify no conflicts)",
+    "Phase 3: Gradual migration of slash commands to workorder-mcp (test individually)",
+    "Phase 4: Keep docs-mcp as backup until confident workorder-mcp is stable",
+    "Phase 5: Clean removal of workflow tools from docs-mcp (once stable)",
+    "Maintain backward compatibility during entire refactor",
+    "Enable single source of truth via symlinks/shared folders",
+    "Automate testing to catch integration issues early",
+    "Minimize risk with incremental migration approach"
+  ],
+  "out_of_scope": [
+    "Redesigning the workflow architecture (only extracting existing tools)",
+    "Building new features during refactoring (focus on separation)",
+    "Changing tool APIs or behavior (tools work identically)",
+    "Removing docs-mcp tools prematurely (keep as fallback)",
+    "Rushing to single-MCP deployment before Phase 4"
+  ],
+  "constraints": [
+    "Zero user-facing disruption during refactoring",
+    "Existing slash commands must continue working",
+    "Must maintain shared coderef/workflow folder (single source of truth)",
+    "Performance: No slowdown from additional MCP registration",
+    "Safety: Always have fallback to docs-mcp tools if workorder-mcp fails",
+    "Testing: Each phase must pass validation before proceeding to next"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-MCP-DOC-WORKFLOW-REFACTOR-001",
+    "workorder_assigned_at": "2025-12-23T18:02:02.057331+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

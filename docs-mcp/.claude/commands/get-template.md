@@ -1,6 +1,6 @@
 Get the content of a specific POWER framework documentation template.
 
-You will be prompted for the template name. Then call the `mcp__docs-mcp__get_template` tool with the template_name parameter.
+You will be prompted for the template name. Then call the `mcp__coderef-docs__get_template` tool with the template_name parameter.
 
 Available templates:
 - readme

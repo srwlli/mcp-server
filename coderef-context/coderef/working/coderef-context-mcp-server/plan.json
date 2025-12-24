@@ -303,16 +303,17 @@
           "id": "SETUP-001",
           "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
           "phase": 1,
-          "title": "Project initialization and environment setup",
-          "description": "Create project structure, configure Python environment, install dependencies, validate @coderef/core availability",
+          "title": "Project initialization and TypeScript setup",
+          "description": "Create TypeScript project structure in monorepo, configure TypeScript, install dependencies, verify @coderef/core imports work",
           "effort_hours": 4,
           "dependencies": [],
           "acceptance_criteria": [
-            "Python project structure created with standard layout",
-            "@coderef/core accessible via CLI (pnpm start commands)",
-            "All dependencies installed (mcp, pydantic, etc)",
-            "Configuration file created with proper defaults",
-            "Environment variable validation passing"
+            "TypeScript project structure created (src/, __tests__/, etc)",
+            "@coderef/core modules importable (no import errors)",
+            "All dependencies installed (MCP SDK, lru-cache, zod, vitest, etc)",
+            "tsconfig.json configured properly",
+            "Build command working (tsc or pnpm build)",
+            "Monorepo workspace integration verified"
           ]
         },
         {
@@ -320,32 +321,33 @@
           "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
           "phase": 1,
           "title": "MCP server boilerplate and initialization",
-          "description": "Create MCP server.py with protocol handlers, configuration loader, startup validation, error handling setup",
-          "effort_hours": 6,
+          "description": "Create MCP server.ts with protocol handlers, tool registration, startup validation, error handling setup",
+          "effort_hours": 5,
           "dependencies": ["SETUP-001"],
           "acceptance_criteria": [
-            "server.py implements MCP protocol correctly",
-            "Configuration loading works",
+            "server.ts implements MCP protocol correctly",
             "Server starts without errors",
             "Debug logging configured",
-            "Server responds to MCP handshake"
+            "Server responds to MCP handshake",
+            "Tool registration system working",
+            "Error handler integrated"
           ]
         },
         {
           "id": "BRIDGE-001",
           "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
           "phase": 1,
-          "title": "Implement CodeRefCoreBridge for subprocess communication",
-          "description": "Create bridge class that executes @coderef/core CLI commands, parses JSON output, handles errors, normalizes paths, validates responses",
-          "effort_hours": 8,
+          "title": "Direct imports and module bridging",
+          "description": "Set up direct imports from @coderef/core, verify all 10 module exports work, create utility functions for tool wrapping",
+          "effort_hours": 6,
           "dependencies": ["SETUP-002"],
           "acceptance_criteria": [
-            "Bridge executes pnpm start commands successfully",
-            "JSON response parsing works for all @coderef/core outputs",
-            "Path normalization handles Windows/Unix correctly",
-            "Error handling catches subprocess exceptions",
-            "30-second timeout implemented",
-            "Subprocess output validation working"
+            "All 10 @coderef/core modules import without errors",
+            "Type definitions from @coderef/core accessible",
+            "Scanner, Analyzer, QueryExecutor all usable",
+            "Context generation modules (6-phase) importable",
+            "RAG modules importable",
+            "Error types properly imported"
           ]
         },
         {
@@ -353,8 +355,8 @@
           "workorder_id": "WO-CODEREF-CONTEXT-MCP-SERVER-001",
           "phase": 1,
           "title": "Implement caching layer with TTL and LRU eviction",
-          "description": "Create CacheManager with configurable TTL (5 minutes), LRU eviction (max 100 entries), cache key generation from parameters",
-          "effort_hours": 6,
+          "description": "Create CacheManager with configurable TTL (5 minutes), LRU eviction (max 100 entries), cache key generation",
+          "effort_hours": 5,
           "dependencies": ["BRIDGE-001"],
           "acceptance_criteria": [
             "Cache stores and retrieves results correctly",
@@ -362,7 +364,7 @@
             "LRU eviction works when max entries exceeded",
             "Cache hits recorded for metrics",
             "Cache can be cleared programmatically",
-            "Cache serialization handles complex objects"
+            "Type-safe cache with generics"
           ]
         },
         {
@@ -591,20 +593,20 @@
         {
           "phase": 1,
           "name": "Setup & Infrastructure",
-          "description": "Initialize project, create MCP boilerplate, build subprocess bridge and caching layer",
+          "description": "Initialize TypeScript project in monorepo, create MCP boilerplate, set up direct module imports and caching layer",
           "tasks": ["SETUP-001", "SETUP-002", "BRIDGE-001", "BRIDGE-002"],
-          "duration_weeks": 2,
-          "effort_hours": 24,
+          "duration_weeks": 1.5,
+          "effort_hours": 20,
           "deliverables": [
-            "Project structure with all required directories",
+            "TypeScript project structure in monorepo",
             "MCP server startup working",
-            "CodeRefCoreBridge class implemented and tested",
+            "Direct imports from @coderef/core verified",
             "CacheManager with TTL/LRU working",
-            "Configuration system functional"
+            "Error handling system in place"
           ],
           "success_metrics": [
             "Server starts without errors",
-            "Bridge executes sample CLI commands successfully",
+            "All @coderef/core modules import successfully",
             "Cache stores/retrieves data correctly",
             "All unit tests passing"
           ]
@@ -752,14 +754,14 @@
         "✅ All error cases handled gracefully without crashes"
       ],
       "performance": [
-        "✅ Scanner response time: <3s for 100 files",
-        "✅ Analyzer response time: <5s for 100 files",
-        "✅ Query response time: <1s (cached), <3s (uncached)",
-        "✅ Parser response time: <100ms",
-        "✅ Validator response time: <2s",
-        "✅ Context generation: <10s",
+        "✅ Scanner response time: <2s for 100 files (direct TypeScript imports)",
+        "✅ Analyzer response time: <2s for 100 files (direct TypeScript imports)",
+        "✅ Query response time: <500ms (cached), <1.5s (uncached)",
+        "✅ Parser response time: <50ms",
+        "✅ Validator response time: <1s",
+        "✅ Context generation: <5s (6-phase)",
         "✅ Cache hit rate: >70% for typical usage",
-        "✅ Memory usage: <500MB for large codebases"
+        "✅ Memory usage: <300MB for large codebases"
       ],
       "quality": [
         "✅ Test coverage: 90%+ of code",

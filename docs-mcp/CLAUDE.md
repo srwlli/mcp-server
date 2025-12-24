@@ -1,4 +1,4 @@
-# CLAUDE.md - docs-mcp AI Context Documentation
+# CLAUDE.md - coderef-docs AI Context Documentation
 
 **Version**: 3.1.0 | **Python**: 3.11+ | **Audience**: AI Assistants (Development & Usage)
 
@@ -20,7 +20,7 @@
 
 ### What This Server Does
 
-**docs-mcp** is a focused MCP server providing:
+**coderef-docs** is a focused MCP server providing:
 - **11 specialized tools** for documentation generation, changelog management, quickref generation, and consistency auditing
 - **POWER framework templates** for comprehensive technical documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA, user-guide, my-guide)
 - **Agentic Changelog Management** - Smart `record_changes` tool with git auto-detection, change_type suggestion, severity calculation, and agent confirmation flow
@@ -83,30 +83,30 @@ templates/power/                # POWER framework templates
 **Local Deployment (✅ Working):**
 - ✅ Multi-server loading infrastructure complete
 - ✅ All endpoints updated (/, /health, /tools, /mcp)
-- ✅ 44 tools discovered from 3 servers (docs-mcp, hello-world-mcp, personas-mcp)
-- ✅ docs-mcp (36 tools) - FULLY FUNCTIONAL
+- ✅ 44 tools discovered from 3 servers (coderef-docs, hello-world-mcp, personas-mcp)
+- ✅ coderef-docs (36 tools) - FULLY FUNCTIONAL
 - ✅ Unified routing tested and working
 
 **Railway Deployment (⏳ Pending Manual Step):**
 - ⏳ Requires `STANDALONE_MODE=true` environment variable to be set in Railway dashboard
-- 📍 Once set, will deploy with 36 docs-mcp tools for ChatGPT
-- 🔗 URL: https://docs-mcp-production.up.railway.app/mcp
+- 📍 Once set, will deploy with 36 coderef-docs tools for ChatGPT
+- 🔗 URL: https://coderef-docs-production.up.railway.app/mcp
 
 **Architecture Pattern:** Gateway pattern with dual-mode support:
 - **Multi-Server Mode** (local): Loads all available MCP servers from sibling directories
-- **Standalone Mode** (Railway): Runs docs-mcp independently with 36 tools
+- **Standalone Mode** (Railway): Runs coderef-docs independently with 36 tools
 
 **Server Patterns Supported:**
-1. **TOOL_HANDLERS pattern** (docs-mcp): Direct handler dictionary - ✅ WORKING
+1. **TOOL_HANDLERS pattern** (coderef-docs): Direct handler dictionary - ✅ WORKING
 2. **MCP Server pattern** (hello-world-mcp, personas-mcp): @app decorators - Discovered (8 tools), execution pending
 
 **Known Issues (Non-Blocking):**
-1. **MCP Server pattern execution** - Deferred for investigation (doesn't affect docs-mcp)
+1. **MCP Server pattern execution** - Deferred for investigation (doesn't affect coderef-docs)
 2. **coderef-mcp dependency conflicts** - Graceful degradation working (3/4 servers load)
 
 **Next Steps:**
 1. Set `STANDALONE_MODE=true` in Railway dashboard → Variables
-2. Verify Railway deployment: `curl https://docs-mcp-production.up.railway.app/`
+2. Verify Railway deployment: `curl https://coderef-docs-production.up.railway.app/`
 3. Configure ChatGPT Actions with Railway URL
 4. Test MCP tools in ChatGPT
 
@@ -119,7 +119,7 @@ templates/power/                # POWER framework templates
 
 ## For AI Assistants Using This Server
 
-### When to Use docs-mcp Tools
+### When to Use coderef-docs Tools
 
 **Use these tools when:**
 - User asks to "generate documentation" or "create a README"
@@ -131,31 +131,31 @@ templates/power/                # POWER framework templates
 - You need to ensure code consistency across a project
 
 **Available in your tool palette as:**
-- `mcp__docs-mcp__list_templates`
-- `mcp__docs-mcp__get_template`
-- `mcp__docs-mcp__generate_foundation_docs`
-- `mcp__docs-mcp__generate_individual_doc`
-- `mcp__docs-mcp__get_changelog`
-- `mcp__docs-mcp__add_changelog_entry`
-- `mcp__docs-mcp__record_changes` ⭐ **NEW - Agentic tool for smart changelog recording**
-- `mcp__docs-mcp__generate_quickref_interactive`
-- `mcp__docs-mcp__establish_standards`
-- `mcp__docs-mcp__audit_codebase`
-- `mcp__docs-mcp__check_consistency`
-- `mcp__docs-mcp__get_planning_template`
-- `mcp__docs-mcp__analyze_project_for_planning`
-- `mcp__docs-mcp__create_plan`
-- `mcp__docs-mcp__validate_implementation_plan`
-- `mcp__docs-mcp__generate_plan_review_report`
-- `mcp__docs-mcp__coderef_foundation_docs`
-- `mcp__docs-mcp__archive_feature`
+- `mcp__coderef-docs__list_templates`
+- `mcp__coderef-docs__get_template`
+- `mcp__coderef-docs__generate_foundation_docs`
+- `mcp__coderef-docs__generate_individual_doc`
+- `mcp__coderef-docs__get_changelog`
+- `mcp__coderef-docs__add_changelog_entry`
+- `mcp__coderef-docs__record_changes` ⭐ **NEW - Agentic tool for smart changelog recording**
+- `mcp__coderef-docs__generate_quickref_interactive`
+- `mcp__coderef-docs__establish_standards`
+- `mcp__coderef-docs__audit_codebase`
+- `mcp__coderef-docs__check_consistency`
+- `mcp__coderef-docs__get_planning_template`
+- `mcp__coderef-docs__analyze_project_for_planning`
+- `mcp__coderef-docs__create_plan`
+- `mcp__coderef-docs__validate_implementation_plan`
+- `mcp__coderef-docs__generate_plan_review_report`
+- `mcp__coderef-docs__coderef_foundation_docs`
+- `mcp__coderef-docs__archive_feature`
 
 **Deprecated:**
-- `mcp__docs-mcp__update_changelog` - Use `record_changes` instead (provides agentic workflow with git auto-detection)
+- `mcp__coderef-docs__update_changelog` - Use `record_changes` instead (provides agentic workflow with git auto-detection)
 
 ### Slash Commands (Claude Code Shortcuts)
 
-**docs-mcp** includes 26 slash commands for quick access to common workflows:
+**coderef-docs** includes 26 slash commands for quick access to common workflows:
 
 #### `/generate-docs`
 Generates foundation documentation for current project.
@@ -742,7 +742,7 @@ View and query the global workorder activity log.
 
 # Filter by project
 /get-workorder-log
-# project_name: docs-mcp
+# project_name: coderef-docs
 
 # Filter by pattern
 /get-workorder-log
@@ -759,7 +759,7 @@ View and query the global workorder activity log.
   "entries": [
     {
       "workorder_id": "WO-AUTH-001",
-      "project": "docs-mcp",
+      "project": "coderef-docs",
       "description": "Implement authentication system",
       "timestamp": "2025-10-21T02:08:51+00:00"
     }
@@ -943,7 +943,7 @@ Slash commands can exist in two locations:
 2. **Global** (`~/.claude/commands/` in user home directory)
    - Available in ALL projects
    - Persists across Claude Code sessions
-   - **Recommended location for docs-mcp commands**
+   - **Recommended location for coderef-docs commands**
 
 #### Current Deployment Status
 
@@ -992,8 +992,8 @@ Slash commands can exist in two locations:
 **Deploy all 28 commands globally:**
 
 ```bash
-# Navigate to docs-mcp project
-cd ~/.mcp-servers/docs-mcp
+# Navigate to coderef-docs project
+cd ~/.mcp-servers/coderef-docs
 
 # Copy ALL commands to global directory
 cp .claude/commands/*.md ~/.claude/commands/
@@ -1009,10 +1009,10 @@ ls -l ~/.claude/commands/*.md | wc -l  # Should show 33 files
 
 ```bash
 # Example: Deploy changelog commands
-cp ~/.mcp-servers/docs-mcp/.claude/commands/add-changelog.md ~/.claude/commands/
-cp ~/.mcp-servers/docs-mcp/.claude/commands/get-changelog.md ~/.claude/commands/
-cp ~/.mcp-servers/docs-mcp/.claude/commands/update-changelog.md ~/.claude/commands/
-cp ~/.mcp-servers/docs-mcp/.claude/commands/update-docs.md ~/.claude/commands/
+cp ~/.mcp-servers/coderef-docs/.claude/commands/add-changelog.md ~/.claude/commands/
+cp ~/.mcp-servers/coderef-docs/.claude/commands/get-changelog.md ~/.claude/commands/
+cp ~/.mcp-servers/coderef-docs/.claude/commands/update-changelog.md ~/.claude/commands/
+cp ~/.mcp-servers/coderef-docs/.claude/commands/update-docs.md ~/.claude/commands/
 ```
 
 #### Verification
@@ -1039,7 +1039,7 @@ Then reload Claude Code:
 
 **When adding a new slash command:**
 
-1. Create command file in `docs-mcp/.claude/commands/`
+1. Create command file in `coderef-docs/.claude/commands/`
    ```bash
    # Example: new-command.md
    echo "Description of new command" > .claude/commands/new-command.md
@@ -1090,7 +1090,7 @@ Then reload Claude Code:
 3. Ensure MCP server is running
 4. Check tool is registered in `server.py`
 
-**Commands work in docs-mcp but not other projects:**
+**Commands work in coderef-docs but not other projects:**
 - Commands are in `.claude/commands/` (project-local)
 - Need to copy to `~/.claude/commands/` (global)
 - Run deployment commands above
@@ -1999,7 +1999,7 @@ update_changelog(
 **Example**:
 ```python
 update_all_documentation(
-    project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+    project_path="C:/Users/willh/.mcp-servers/coderef-docs",
     change_type="feature",
     feature_description="Added update_all_documentation tool for automated doc updates",
     workorder_id="WO-UPDATE-DOCS-001",
@@ -2493,13 +2493,13 @@ assess_risk(
 log_workorder(
     project_path="C:/path/to/project",
     workorder_id="WO-WORKORDER-LOG-001",
-    project_name="docs-mcp",
+    project_name="coderef-docs",
     description="Implement workorder logging system"
 )
 # Returns:
 # {
 #   "workorder_id": "WO-WORKORDER-LOG-001",
-#   "project_name": "docs-mcp",
+#   "project_name": "coderef-docs",
 #   "description": "Implement workorder logging system (2 tools, pr...",
 #   "timestamp": "2025-10-21T02:08:51.983188+00:00",
 #   "log_file": "coderef/workorder-log.txt",
@@ -2514,7 +2514,7 @@ WO-ID | Project | Description | Timestamp
 
 **Example log entries**:
 ```
-WO-WORKORDER-LOG-001 | docs-mcp | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51+00:00
+WO-WORKORDER-LOG-001 | coderef-docs | Implement workorder logging system (2 tools, pr... | 2025-10-21T02:08:51+00:00
 WO-AUTH-001 | personas-mcp | Auth system workorder | 2025-10-21T01:45:20+00:00
 ```
 
@@ -2580,7 +2580,7 @@ get_workorder_log(
   "entries": [
     {
       "workorder_id": "WO-WORKORDER-LOG-001",
-      "project": "docs-mcp",
+      "project": "coderef-docs",
       "description": "Implement workorder logging system (2 tools, pr...",
       "timestamp": "2025-10-21T02:08:51.983188+00:00"
     }
@@ -2676,7 +2676,7 @@ get_workorder_log(
    cat > .claude/commands/my-new-tool.md <<'EOF'
    Execute my_new_tool for the current project.
 
-   Call the `mcp__docs-mcp__my_new_tool` tool with the current working directory as the project_path.
+   Call the `mcp__coderef-docs__my_new_tool` tool with the current working directory as the project_path.
    EOF
 
    # Update commands.json registry
@@ -2699,7 +2699,7 @@ get_workorder_log(
    ```python
    # Use MCP tool (not direct Python!)
    mcp__docs_mcp__add_changelog_entry(
-       project_path="C:/Users/willh/.mcp-servers/docs-mcp",
+       project_path="C:/Users/willh/.mcp-servers/coderef-docs",
        version="1.0.10",
        change_type="feature",
        severity="minor",
@@ -2975,7 +2975,7 @@ Consider this server **production-ready at v1.0.9**. The 83% represents completi
 
 ### Test Suite Overview
 
-docs-mcp includes a comprehensive test suite with **200+ tests** covering:
+coderef-docs includes a comprehensive test suite with **200+ tests** covering:
 
 - **Unit tests** for all 6 generators
 - **Integration tests** for MCP workflows and planning pipeline
@@ -3235,7 +3235,7 @@ See [CHANGELOG.json](coderef/changelog/CHANGELOG.json) for complete history.
 - **Future-proof**: As more vendors adopt MCP, your tools work everywhere
 
 **Current best practice:**
-- Use docs-mcp with **Claude Code** for full MCP experience
+- Use coderef-docs with **Claude Code** for full MCP experience
 - For other agents, consider creating REST API wrapper
 - Monitor vendor announcements for MCP adoption
 

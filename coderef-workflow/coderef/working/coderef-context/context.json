@@ -1,0 +1,49 @@
+{
+  "feature_name": "coderef-context",
+  "description": "Build MCP server that exposes @coderef/core CLI tools as standardized MCP tools for agent access. Agents will be able to scan projects, query code relationships, analyze impact of changes, check function complexity, and discover patterns - enabling real-time code intelligence during implementation.",
+  "goal": "Enable Claude agents to perform real-time code analysis and make informed decisions during feature implementation and refactoring.",
+  "requirements": [
+    "Create new MCP server at C:\\Users\\willh\\.mcp-servers\\coderef-context",
+    "Wrap @coderef/core CLI commands as Python MCP tools",
+    "Implement /scan tool - discover all code elements in project",
+    "Implement /query tool - what-calls, what-imports, shortest-path queries",
+    "Implement /impact tool - analyze impact of modifying/deleting elements",
+    "Implement /complexity tool - return function/class complexity metrics",
+    "Implement /patterns tool - discover code patterns and test gaps",
+    "Add caching layer to avoid redundant scans",
+    "Implement comprehensive error handling and logging",
+    "Register coderef-context in global .mcp.json configuration",
+    "Create TOOLS_REFERENCE.md with tool specifications",
+    "Create usage examples and integration tests",
+    "Write documentation on how agents use the tools"
+  ],
+  "out_of_scope": [
+    "Building a Python bridge to @coderef/core (save for v2.0)",
+    "Extending @coderef/core CLI itself (use existing commands)",
+    "Direct import/import of TypeScript library"
+  ],
+  "constraints": [
+    "Must wrap existing @coderef/core CLI (no reimplementation)",
+    "Should not break existing coderef-workflow MCP",
+    "Subprocess-based (no Python bridge needed)",
+    "Compatible with Claude MCP protocol"
+  ],
+  "decisions": {
+    "approach": "Subprocess wrapping (not direct import bridge)",
+    "architecture": "Separate MCP server (not integrated into coderef-workflow)",
+    "timing": "Week 1 MVP with 5 core tools",
+    "priority": "High - enables agent intelligence"
+  },
+  "success_criteria": {
+    "functional": "All 5 tools are accessible and functional via MCP",
+    "integration": "Agents can call coderef-context tools during task execution",
+    "quality": "Tools return proper error messages and handle edge cases",
+    "documentation": "Clear specs and examples for all tools",
+    "registration": "Server is registered in global .mcp.json and accessible to Claude"
+  },
+  "_metadata": {
+    "workorder_id": "WO-CODEREF-CONTEXT-001",
+    "workorder_assigned_at": "2025-12-24T00:31:46.832324+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

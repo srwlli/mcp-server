@@ -2,13 +2,13 @@ Log a new workorder entry to the global workorder log.
 
 Prompt the user for the following required information:
 - workorder_id: Workorder ID (format: WO-FEATURE-NAME-001, e.g., "WO-AUTH-001")
-- project_name: Project name (short identifier, e.g., "docs-mcp", "personas-mcp")
+- project_name: Project name (short identifier, e.g., "coderef-docs", "personas-mcp")
 - description: Brief description of the workorder (max 50 chars recommended, auto-truncated if longer)
 
 Optional information:
 - timestamp: ISO 8601 timestamp (auto-generated if not provided)
 
-Then call the `mcp__docs-mcp__log_workorder` tool with:
+Then call the `mcp__coderef-docs__log_workorder` tool with:
 - project_path: Current working directory
 - All the information collected above
 
@@ -25,7 +25,7 @@ WO-ID | Project | Description | Timestamp
 
 Example entries:
 ```
-WO-AUTH-001 | docs-mcp | Implement authentication system | 2025-10-21T02:08:51+00:00
+WO-AUTH-001 | coderef-docs | Implement authentication system | 2025-10-21T02:08:51+00:00
 WO-FEATURE-002 | personas-mcp | Add new persona | 2025-10-21T01:30:00+00:00
 ```
 

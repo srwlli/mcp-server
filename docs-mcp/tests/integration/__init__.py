@@ -1,5 +1,5 @@
 """
-Integration tests for docs-mcp MCP workflows.
+Integration tests for coderef-docs MCP workflows.
 
 Part of WO-COMPREHENSIVE-TESTING-SUITE-002.
 """

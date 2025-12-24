@@ -253,7 +253,7 @@
         },
         "tool_version": {
           "type": "string",
-          "description": "docs-mcp tool version used for assessment"
+          "description": "coderef-docs tool version used for assessment"
         },
         "duration_ms": {
           "type": "number",

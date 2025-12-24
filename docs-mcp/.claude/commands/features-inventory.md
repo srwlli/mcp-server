@@ -4,7 +4,7 @@ This command scans coderef/working/ and coderef/archived/ to create a comprehens
 
 ## Workflow
 
-1. Call `mcp__docs-mcp__generate_features_inventory` with:
+1. Call `mcp__coderef-docs__generate_features_inventory` with:
    - `project_path`: Current working directory
    - `format`: "json" (default) or "markdown" based on user preference
    - `include_archived`: true (default)

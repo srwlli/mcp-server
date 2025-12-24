@@ -1,6 +1,6 @@
 Analyze the current project to discover foundation docs, coding standards, reference components, and patterns for implementation planning.
 
-Call the `mcp__docs-mcp__analyze_project_for_planning` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__analyze_project_for_planning` tool with the current working directory as the project_path.
 
 This tool automates section 0 (Preparation) of the feature implementation planning template by:
 1. Scanning for foundation documentation (API.md, ARCHITECTURE.md, README.md, etc.)

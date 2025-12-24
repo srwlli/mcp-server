@@ -1,6 +1,6 @@
 Generate automated agent handoff context for current feature.
 
-Call the `mcp__docs-mcp__generate_handoff_context` tool with:
+Call the `mcp__coderef-docs__generate_handoff_context` tool with:
 - Current working directory as project_path
 - Feature name (ask user if not obvious from context)
 - Mode: "full" for comprehensive context or "minimal" for quick summary (default: full)

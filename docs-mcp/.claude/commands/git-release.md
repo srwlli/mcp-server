@@ -30,7 +30,7 @@ User types their version in the "Other" field, or selects a bump type and you ca
 
 ### Step 2: Extract Release Notes
 
-Call `mcp__docs-mcp__get_changelog` to get changes for this version:
+Call `mcp__coderef-docs__get_changelog` to get changes for this version:
 
 ```python
 mcp__docs_mcp__get_changelog({

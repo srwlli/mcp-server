@@ -1,6 +1,6 @@
 Track agent status across features with real-time dashboard
 
-Call the `mcp__docs-mcp__track_agent_status` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__track_agent_status` tool with the current working directory as the project_path.
 
 Optionally ask the user for a specific feature name. If omitted, tracks all features.
 

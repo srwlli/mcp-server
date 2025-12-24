@@ -1,0 +1,17 @@
+{
+  "project_name": "docs-mcp",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\docs-mcp",
+  "generated_at": "2025-10-15T05:35:24.876493",
+  "frameworks": [],
+  "endpoints": [],
+  "metrics": {
+    "total_endpoints": 0,
+    "documented_endpoints": 0,
+    "documentation_coverage": 0,
+    "frameworks_detected": [],
+    "framework_breakdown": {},
+    "method_breakdown": {},
+    "rest_endpoints": 0,
+    "graphql_endpoints": 0
+  }
+}

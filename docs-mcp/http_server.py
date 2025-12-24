@@ -1,5 +1,5 @@
 """
-HTTP wrapper for docs-mcp MCP server enabling ChatGPT integration via MCP protocol.
+HTTP wrapper for coderef-docs MCP server enabling ChatGPT integration via MCP protocol.
 
 Simplified version that works without importing server.py (MCP server).
 Provides /health and /mcp endpoints. /tools endpoint disabled until we solve the server.py import issue.
@@ -26,7 +26,7 @@ print("Standard library imports complete")
 # ============================================================================
 
 # List of MCP server directories to load (sibling directories)
-# In standalone mode (Railway or STANDALONE_MODE=true), only load docs-mcp
+# In standalone mode (Railway or STANDALONE_MODE=true), only load coderef-docs
 # In multi-server mode (local), load all servers
 # Auto-detect Railway environment or explicit STANDALONE_MODE flag
 IS_RAILWAY = os.environ.get('RAILWAY_ENVIRONMENT') is not None
@@ -35,11 +35,11 @@ STANDALONE_MODE_ENV = os.environ.get('STANDALONE_MODE', '').lower()
 if STANDALONE_MODE_ENV == 'false':
     STANDALONE_MODE = False  # Explicitly disabled - load all servers
 elif STANDALONE_MODE_ENV == 'true':
-    STANDALONE_MODE = True   # Explicitly enabled - load only docs-mcp
+    STANDALONE_MODE = True   # Explicitly enabled - load only coderef-docs
 else:
     STANDALONE_MODE = IS_RAILWAY  # Not set - default to standalone on Railway
 
-SERVER_DIRS = ['docs-mcp'] if STANDALONE_MODE else ['docs-mcp', 'coderef-mcp', 'personas-mcp']
+SERVER_DIRS = ['coderef-docs'] if STANDALONE_MODE else ['coderef-docs', 'coderef-mcp', 'personas-mcp']
 
 # ============================================================================
 # SECURITY CONFIGURATION
@@ -116,14 +116,14 @@ def _load_mcp_servers() -> Dict[str, Any]:
     """
     loaded = {}
 
-    # In standalone mode on Railway, we're already in docs-mcp directory
+    # In standalone mode on Railway, we're already in coderef-docs directory
     # Import the server module directly instead of loading from sibling directory
-    if STANDALONE_MODE and SERVER_DIRS == ['docs-mcp']:
+    if STANDALONE_MODE and SERVER_DIRS == ['coderef-docs']:
         logger.info("Standalone mode: Importing server module directly")
         try:
             import server as docs_server
-            loaded['docs-mcp'] = docs_server
-            logger.info("✓ Loaded docs-mcp server module directly")
+            loaded['coderef-docs'] = docs_server
+            logger.info("✓ Loaded coderef-docs server module directly")
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
@@ -200,7 +200,7 @@ def _build_unified_tool_registry() -> Tuple[Dict[str, str], Dict[str, Any]]:
 
     for server_name, server_module in LOADED_SERVERS.items():
         try:
-            # Handle servers with TOOL_HANDLERS pattern (docs-mcp, coderef-mcp)
+            # Handle servers with TOOL_HANDLERS pattern (coderef-docs, coderef-mcp)
             if hasattr(server_module, 'TOOL_HANDLERS'):
                 handlers = server_module.TOOL_HANDLERS
                 logger.info(f"  {server_name}: {len(handlers)} tools (TOOL_HANDLERS pattern)")
@@ -367,11 +367,11 @@ try:
 
     LOADED_SERVERS = _load_mcp_servers()
 
-    # Add already-imported docs-mcp components if not loaded via _load_mcp_servers
-    if 'docs-mcp' in LOADED_SERVERS and TOOL_HANDLERS:
-        # Inject the already-imported TOOL_HANDLERS into the docs-mcp server module
-        LOADED_SERVERS['docs-mcp'].TOOL_HANDLERS = TOOL_HANDLERS
-        logger.info("✓ Injected existing TOOL_HANDLERS into docs-mcp")
+    # Add already-imported coderef-docs components if not loaded via _load_mcp_servers
+    if 'coderef-docs' in LOADED_SERVERS and TOOL_HANDLERS:
+        # Inject the already-imported TOOL_HANDLERS into the coderef-docs server module
+        LOADED_SERVERS['coderef-docs'].TOOL_HANDLERS = TOOL_HANDLERS
+        logger.info("✓ Injected existing TOOL_HANDLERS into coderef-docs")
 
     TOOL_REGISTRY, ALL_TOOL_HANDLERS = _build_unified_tool_registry()
 
@@ -382,7 +382,7 @@ except Exception as e:
     logger.error(f"Failed to load MCP servers: {e}")
     import traceback
     traceback.print_exc()
-    # Fallback to just docs-mcp
+    # Fallback to just coderef-docs
     LOADED_SERVERS = {}
     TOOL_REGISTRY = {}
     ALL_TOOL_HANDLERS = TOOL_HANDLERS if TOOL_HANDLERS else {}
@@ -564,7 +564,7 @@ def _build_openrpc_spec(tools: list) -> Dict[str, Any]:
     spec = {
         'openrpc': '1.3.2',
         'info': {
-            'title': 'docs-mcp Tools API',
+            'title': 'coderef-docs Tools API',
             'version': '2.0.0',
             'description': 'MCP server providing 33 tools for documentation generation, changelog management, planning workflows, and project inventory'
         },
@@ -714,7 +714,7 @@ def create_app() -> Flask:
         OpenRPC tool discovery endpoint for ChatGPT integration.
 
         Returns OpenRPC 1.3.2 specification with all available MCP tools
-        from all loaded servers (docs-mcp, hello-world-mcp, personas-mcp, etc.).
+        from all loaded servers (coderef-docs, hello-world-mcp, personas-mcp, etc.).
         """
         try:
             all_tools = []
@@ -739,8 +739,8 @@ def create_app() -> Flask:
                             all_tools.extend(tools)
                             logger.info(f"Retrieved {len(tools)} tools from {server_name}")
 
-                    # For docs-mcp with server.list_tools() (legacy)
-                    elif server_name == 'docs-mcp' and hasattr(server_module, 'list_tools'):
+                    # For coderef-docs with server.list_tools() (legacy)
+                    elif server_name == 'coderef-docs' and hasattr(server_module, 'list_tools'):
                         tools_list = asyncio.run(server_module.list_tools())
                         all_tools.extend(tools_list)
                         logger.info(f"Retrieved {len(tools_list)} tools from {server_name} (legacy)")
@@ -797,7 +797,7 @@ def create_app() -> Flask:
                             result = asyncio.run(handler(request_obj))
                             tools = result.root.tools if hasattr(result.root, 'tools') else []
                             all_tools.extend(tools)
-                    elif server_name == 'docs-mcp' and hasattr(server_module, 'list_tools'):
+                    elif server_name == 'coderef-docs' and hasattr(server_module, 'list_tools'):
                         tools_list = asyncio.run(server_module.list_tools())
                         all_tools.extend(tools_list)
                 except Exception as e:
@@ -880,13 +880,13 @@ def create_app() -> Flask:
             openapi_spec = {
                 "openapi": "3.0.0",
                 "info": {
-                    "title": "docs-mcp Tools API",
+                    "title": "coderef-docs Tools API",
                     "version": "2.0.0",
                     "description": "MCP server providing 36 tools for documentation generation, changelog management, planning workflows, and project inventory"
                 },
                 "servers": [
                     {
-                        "url": "https://docs-mcp-production.up.railway.app",
+                        "url": "https://coderef-docs-production.up.railway.app",
                         "description": "Production server"
                     }
                 ],
@@ -933,7 +933,7 @@ def create_app() -> Flask:
     def hello_world():
         """Simple hello world test endpoint for ChatGPT."""
         return jsonify({
-            'message': 'Hello from docs-mcp!',
+            'message': 'Hello from coderef-docs!',
             'status': 'working',
             'timestamp': datetime.utcnow().isoformat() + 'Z',
             'tools_available': len(ALL_TOOL_HANDLERS)
@@ -1038,10 +1038,10 @@ def create_app() -> Flask:
                             'resources': {}
                         },
                         'serverInfo': {
-                            'name': 'docs-mcp',
+                            'name': 'coderef-docs',
                             'version': '2.0.0'
                         },
-                        'instructions': 'docs-mcp provides 23 tools for documentation generation, changelog management, standards auditing, implementation planning, and project inventory analysis.'
+                        'instructions': 'coderef-docs provides 23 tools for documentation generation, changelog management, standards auditing, implementation planning, and project inventory analysis.'
                     }
                 }), 200
 

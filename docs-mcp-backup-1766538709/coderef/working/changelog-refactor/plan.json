@@ -1,0 +1,592 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "changelog-refactor",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "has_context": true,
+    "has_analysis": true,
+    "generated_at": "2025-12-23T22:47:00Z"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "phase": "Preparation",
+      "context_gathered": true,
+      "project_analyzed": true,
+      "dependencies_identified": true,
+      "assumptions": [
+        "packaging library available for semantic version comparison",
+        "Git available in working environment",
+        "ChangelogGenerator class remains in generators/changelog_generator.py",
+        "Existing CHANGELOG.json files are backward compatible"
+      ],
+      "constraints": [
+        "Must not break existing changelog.json files (backward compatible)",
+        "record_changes must work standalone or integrated into feature workflow",
+        "Git commands must be cross-platform (Windows/Linux/Mac)",
+        "Must support optional context parameter (for cases without git repo)"
+      ]
+    },
+    "1_executive_summary": {
+      "feature_name": "changelog-refactor",
+      "goal": "Consolidate changelog tools from 3 to 2 with smart agentic flow. Replace manual update_changelog + add_changelog_entry with single record_changes tool that auto-detects git context, suggests types/severities, and guides confirmation. Add critical data quality fixes: semantic version comparison, require migration for breaking changes, duplicate prevention.",
+      "value_proposition": "Reduce agent friction from 3-step manual process to 1 smart call with auto-filled context. Improve data quality by fixing version comparison bug and enforcing migration guides. Cleaner API surface (2 tools vs 3).",
+      "scope": [
+        "New record_changes tool with git auto-detection",
+        "Critical bug fixes: semantic version comparison, breaking change validation",
+        "Deprecation of update_changelog tool",
+        "CHANGELOG.json format enhancement with auto_detected metadata",
+        "Server.py and CLAUDE.md updates"
+      ],
+      "out_of_scope": [
+        "Update/delete operations (separate phase)",
+        "Compound filtering by multiple criteria (separate enhancement)",
+        "Performance optimization for large changelogs (separate optimization)",
+        "Full changelog migration tool (use update_changelog for now)"
+      ]
+    },
+    "2_risk_assessment": {
+      "critical_risks": [
+        {
+          "risk": "Breaking changes to add_changelog_entry interface",
+          "probability": "medium",
+          "impact": "high",
+          "mitigation": "Add new record_changes tool first, deprecate old tool with documentation. Support both temporarily."
+        },
+        {
+          "risk": "Git commands fail in non-git environments",
+          "probability": "low",
+          "impact": "medium",
+          "mitigation": "Wrap git calls in try/except, support optional context parameter. Provide helpful error messages."
+        },
+        {
+          "risk": "Semantic version comparison bug fix causes data inconsistency",
+          "probability": "low",
+          "impact": "medium",
+          "mitigation": "Test thoroughly with edge cases (v2.0.0 vs v10.0.0). Add migration guide to CHANGELOG.md."
+        }
+      ],
+      "implementation_risks": [
+        {
+          "risk": "Difficulty detecting change_type from commit messages",
+          "probability": "medium",
+          "impact": "low",
+          "mitigation": "Start with simple patterns (feat:/fix:/etc), allow agent override, log misdetections"
+        },
+        {
+          "risk": "Complexity of semantic version comparison implementation",
+          "probability": "low",
+          "impact": "low",
+          "mitigation": "Use established packaging.version library, comprehensive tests"
+        }
+      ],
+      "complexity_score": "medium"
+    },
+    "3_current_state_analysis": {
+      "current_tools": [
+        {
+          "name": "get_changelog",
+          "location": "tool_handlers.py:206-262",
+          "status": "keep_as_is",
+          "reason": "Working correctly, no changes needed"
+        },
+        {
+          "name": "add_changelog_entry",
+          "location": "tool_handlers.py:265-348",
+          "status": "replace",
+          "reason": "Will be replaced by record_changes with better UX"
+        },
+        {
+          "name": "update_changelog",
+          "location": "tool_handlers.py:351-419",
+          "status": "remove",
+          "reason": "Purely instructional, replaced by agentic record_changes"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "tool_handlers.py",
+          "purpose": "Add new handle_record_changes function, fix semantic version comparison in ChangelogGenerator, remove handle_update_changelog, keep handle_get_changelog"
+        },
+        {
+          "path": "generators/changelog_generator.py",
+          "purpose": "Fix semantic version comparison (line 241), add migration validation, add duplicate detection, enhance add_change() method"
+        },
+        {
+          "path": "server.py",
+          "purpose": "Remove update_changelog tool definition, add record_changes tool definition, update tool count in docstring"
+        },
+        {
+          "path": "validation.py",
+          "purpose": "Add validation for migration field (required when breaking=true)"
+        },
+        {
+          "path": "CLAUDE.md",
+          "purpose": "Update tool count (from 11 to 10), update tool descriptions, document record_changes agentic pattern"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "tests/unit/handlers/test_record_changes_handler.py",
+          "purpose": "Unit tests for record_changes tool handler (git detection, auto-suggestions)"
+        },
+        {
+          "path": "tests/unit/generators/test_changelog_generator_fixes.py",
+          "purpose": "Unit tests for semantic version comparison, migration validation, duplicate detection"
+        }
+      ]
+    },
+    "4_key_features": [
+      {
+        "feature_id": "FEAT-001",
+        "name": "record_changes tool with git auto-detection",
+        "description": "New agentic tool that accepts project_path, version, and optional context. Auto-detects: (1) changed files via git diff --staged, (2) change_type from commit messages, (3) severity from scope. Presents summary to agent for confirmation before creating entry.",
+        "acceptance_criteria": [
+          "Tool callable with minimal parameters (project_path, version)",
+          "Auto-detects changed files from git staging area",
+          "Suggests change_type from commit message patterns",
+          "Calculates severity based on file count and code impact",
+          "Returns preview for agent confirmation",
+          "Creates changelog entry upon approval",
+          "Returns change_id to calling agent"
+        ]
+      },
+      {
+        "feature_id": "FEAT-002",
+        "name": "Semantic version comparison fix",
+        "description": "Replace string comparison with proper semantic version comparison using packaging.version.parse(). Fixes bug where current_version tracking fails for versions > 9.x (e.g., '2.0.0' < '10.0.0' returns False with strings).",
+        "acceptance_criteria": [
+          "Use packaging.version.Version for comparison",
+          "current_version correctly set to '10.0.0' when added after '2.0.0'",
+          "All existing changelogs still work (backward compatible)",
+          "Tests cover edge cases: 1.0.0 vs 10.0.0, 2.1.0 vs 2.10.0, etc"
+        ]
+      },
+      {
+        "feature_id": "FEAT-003",
+        "name": "Breaking change migration validation",
+        "description": "Add validation: breaking changes MUST include migration guide. Cannot create breaking change entry without migration text. Validates at add_change() level.",
+        "acceptance_criteria": [
+          "Breaking changes without migration text are rejected with clear error",
+          "Error message tells user: 'Migration guide required for breaking changes'",
+          "Migration field is optional for non-breaking changes",
+          "Validation happens before writing to CHANGELOG.json"
+        ]
+      },
+      {
+        "feature_id": "FEAT-004",
+        "name": "Duplicate detection and prevention",
+        "description": "Detect and prevent adding the same change twice. Use (version, title) tuple as uniqueness key. Log warning if duplicate detected, return existing change_id instead of creating duplicate.",
+        "acceptance_criteria": [
+          "Detects duplicate based on (version, title, description) similarity",
+          "Returns existing change_id if exact duplicate detected",
+          "Prevents change_id collision (sequential IDs remain unique)",
+          "Agent is warned: 'Similar change already recorded as change-045'"
+        ]
+      },
+      {
+        "feature_id": "FEAT-005",
+        "name": "Enhanced CHANGELOG.json format",
+        "description": "Add auto_detected and agent_confirmed metadata to changelog entries. Track what was auto-detected (files, type, severity) and what agent approved. Maintains backward compatibility with existing entries.",
+        "acceptance_criteria": [
+          "New entries include auto_detected object with source info",
+          "New entries include agent_confirmed boolean flag",
+          "Existing entries without these fields still parse correctly",
+          "Get_changelog returns full metadata when querying"
+        ]
+      },
+      {
+        "feature_id": "FEAT-006",
+        "name": "Tool consolidation and deprecation",
+        "description": "Remove update_changelog tool, consolidate 3 tools to 2 (get_changelog + record_changes). Update server.py, tool_handlers.py, and CLAUDE.md to reflect new tool set.",
+        "acceptance_criteria": [
+          "update_changelog tool removed from server.py",
+          "handle_update_changelog removed from tool_handlers.py",
+          "server.py tool count updated to 10 (from 11)",
+          "CLAUDE.md documents record_changes pattern",
+          "Deprecation notice added for agents using old workflow"
+        ]
+      }
+    ],
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-CHANGELOG-REFACTOR-001",
+        "name": "Changelog Refactor - Tool Consolidation + Data Quality Fixes",
+        "feature_dir": "coderef/working/changelog-refactor"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Review and understand existing changelog system (3 tools, 2 generators, validation layer)",
+          "dependencies": [],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Examine current CHANGELOG.json format and existing entries",
+          "dependencies": ["SETUP-001"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "IMPL-001",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Fix semantic version comparison in changelog_generator.py (line 241). Replace string comparison with packaging.version.parse()",
+          "dependencies": ["SETUP-001"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "IMPL-002",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Add migration validation: breaking changes must have migration text. Update validate_changelog_inputs() and add_change() in generators/changelog_generator.py",
+          "dependencies": ["SETUP-001"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "IMPL-003",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Implement duplicate detection in add_change(). Detect (version, title) collisions and warn agent, return existing change_id",
+          "dependencies": ["SETUP-001"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "IMPL-004",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Create handle_record_changes() in tool_handlers.py. Implement git detection (git diff --staged), change_type suggestion from commits, severity calculation from scope",
+          "dependencies": ["SETUP-001", "IMPL-001"],
+          "estimated_complexity": "high"
+        },
+        {
+          "id": "IMPL-005",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Enhance CHANGELOG.json format: add auto_detected object and agent_confirmed field. Update add_change() to accept and store metadata",
+          "dependencies": ["IMPL-004"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "IMPL-006",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Update server.py: add record_changes tool definition, remove update_changelog tool, update docstring and tool count",
+          "dependencies": ["IMPL-004"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "IMPL-007",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Update tool_handlers.py: register handle_record_changes in TOOL_HANDLERS dict, remove handle_update_changelog",
+          "dependencies": ["IMPL-004", "IMPL-006"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "IMPL-008",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Update CLAUDE.md: update tool count from 11 to 10, update tool descriptions, document record_changes agentic pattern",
+          "dependencies": ["IMPL-006"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Write unit tests for semantic version comparison fix. Test cases: 1.0.0 vs 10.0.0, 2.1.0 vs 2.10.0, leading zeros, etc",
+          "dependencies": ["IMPL-001"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Write unit tests for migration validation. Test breaking=true without migration (should fail), breaking=false with migration (should succeed)",
+          "dependencies": ["IMPL-002"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Write unit tests for duplicate detection. Test: same change twice (detected), similar changes (not detected), different versions (not duplicate)",
+          "dependencies": ["IMPL-003"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Write integration tests for record_changes tool. Test git detection on real repo, change_type suggestion from commits, severity calculation, agent confirmation flow",
+          "dependencies": ["IMPL-004", "IMPL-005"],
+          "estimated_complexity": "high"
+        },
+        {
+          "id": "TEST-005",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Backward compatibility tests: verify existing CHANGELOG.json files work with new code, get_changelog returns entries correctly",
+          "dependencies": ["IMPL-005"],
+          "estimated_complexity": "medium"
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Run all changelog tests: pytest tests/unit/handlers/test_record_changes_handler.py tests/unit/generators/test_changelog_generator_fixes.py",
+          "dependencies": ["TEST-001", "TEST-002", "TEST-003", "TEST-004", "TEST-005"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "VERIFY-002",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Integration test: build docs-mcp (uv build), verify server starts, verify record_changes is discoverable",
+          "dependencies": ["IMPL-006", "IMPL-007"],
+          "estimated_complexity": "low"
+        },
+        {
+          "id": "VERIFY-003",
+          "workorder_id": "WO-CHANGELOG-REFACTOR-001",
+          "description": "Manual testing: use record_changes tool against docs-mcp repo, verify git detection works, verify preview shown to agent, verify entry created",
+          "dependencies": ["VERIFY-002"],
+          "estimated_complexity": "medium"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Analysis",
+          "description": "Understand current system, identify all files that need changes, document assumptions and risks",
+          "duration_estimate": "1-2 hours",
+          "tasks": ["SETUP-001", "SETUP-002"],
+          "deliverables": [
+            "Understanding of 3 tools and their interactions",
+            "List of all files to modify/create",
+            "Documented assumptions and constraints"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Critical Bug Fixes",
+          "description": "Fix semantic version comparison, add migration validation, implement duplicate detection. These are standalone changes that don't require record_changes tool.",
+          "duration_estimate": "2-3 hours",
+          "tasks": ["IMPL-001", "IMPL-002", "IMPL-003"],
+          "deliverables": [
+            "Semantic version comparison working correctly",
+            "Migration validation enforced for breaking changes",
+            "Duplicate detection preventing redundant entries"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "New Tool Implementation",
+          "description": "Build record_changes tool with git auto-detection, auto-suggestions, and agentic confirmation. Enhance CHANGELOG.json format with metadata.",
+          "duration_estimate": "4-5 hours",
+          "tasks": ["IMPL-004", "IMPL-005", "IMPL-006", "IMPL-007"],
+          "deliverables": [
+            "record_changes tool fully functional",
+            "Git auto-detection working (files, type, severity)",
+            "CHANGELOG.json enhanced with auto_detected and agent_confirmed fields",
+            "server.py and tool_handlers.py updated with new tool"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Testing & Validation",
+          "description": "Write comprehensive unit/integration tests, verify backward compatibility, perform manual testing on real repository",
+          "duration_estimate": "3-4 hours",
+          "tasks": ["IMPL-008", "TEST-001", "TEST-002", "TEST-003", "TEST-004", "TEST-005", "VERIFY-001", "VERIFY-002", "VERIFY-003"],
+          "deliverables": [
+            "All unit tests passing (semantic version, migration, duplicates)",
+            "Integration tests for record_changes tool passing",
+            "Backward compatibility verified",
+            "Build succeeds (uv build)",
+            "Manual testing confirms UX improvement",
+            "CLAUDE.md updated with new tool documentation"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "name": "Semantic Version Comparison",
+          "file": "tests/unit/generators/test_changelog_generator_fixes.py",
+          "test_cases": [
+            "test_version_comparison_2_vs_10",
+            "test_version_comparison_2_1_vs_2_10",
+            "test_version_comparison_same_version",
+            "test_current_version_auto_update",
+            "test_version_comparison_with_patch_versions"
+          ]
+        },
+        {
+          "name": "Migration Validation",
+          "file": "tests/unit/generators/test_changelog_generator_fixes.py",
+          "test_cases": [
+            "test_breaking_change_without_migration_fails",
+            "test_breaking_change_with_migration_succeeds",
+            "test_non_breaking_change_without_migration_succeeds"
+          ]
+        },
+        {
+          "name": "Duplicate Detection",
+          "file": "tests/unit/generators/test_changelog_generator_fixes.py",
+          "test_cases": [
+            "test_exact_duplicate_detected",
+            "test_similar_title_not_duplicate",
+            "test_different_version_not_duplicate",
+            "test_duplicate_returns_existing_change_id"
+          ]
+        },
+        {
+          "name": "record_changes Tool Handler",
+          "file": "tests/unit/handlers/test_record_changes_handler.py",
+          "test_cases": [
+            "test_basic_call_minimal_params",
+            "test_git_diff_detection",
+            "test_change_type_suggestion_from_commit",
+            "test_severity_calculation_from_scope",
+            "test_preview_generation",
+            "test_entry_creation_on_confirmation",
+            "test_change_id_returned"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "name": "End-to-End record_changes",
+          "description": "Test complete flow: git changes → auto-detection → suggestion → confirmation → entry created → verifiable via get_changelog",
+          "test_file": "tests/integration/test_record_changes.py"
+        },
+        {
+          "name": "Backward Compatibility",
+          "description": "Verify existing CHANGELOG.json files work with new code, get_changelog still works, no format breaking changes",
+          "test_file": "tests/integration/test_backward_compatibility.py"
+        },
+        {
+          "name": "Build & Discovery",
+          "description": "Verify uv build succeeds, record_changes tool is discoverable in tool list, server starts without errors",
+          "test_file": "tests/integration/test_server_discovery.py"
+        }
+      ],
+      "manual_tests": [
+        "Use record_changes against docs-mcp repo with real git changes",
+        "Verify auto-detection works on Windows and Linux (if available)",
+        "Test agent confirmation flow with preview",
+        "Verify changelog entry created correctly",
+        "Test both with and without git context"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "record_changes tool creates changelog entries with one call (not two)",
+        "Git auto-detection works for changed files, change_type, severity",
+        "Agent can confirm or modify suggestions before entry creation",
+        "Semantic version comparison works correctly (2.0.0 < 10.0.0)",
+        "Breaking changes require migration guides",
+        "Duplicate changes are detected and prevented"
+      ],
+      "non_functional": [
+        "Tool consolidation reduces from 3 to 2 tools",
+        "CHANGELOG_TOOLS_REVIEW.md identified issues are fixed",
+        "No breaking changes to get_changelog interface",
+        "Backward compatible with existing CHANGELOG.json files",
+        "Cross-platform git commands work on Windows/Linux/Mac"
+      ],
+      "quality": [
+        "All unit tests passing (100% coverage for new code)",
+        "All integration tests passing",
+        "No regressions in existing changelog functionality",
+        "Code follows existing patterns in tool_handlers.py",
+        "Documentation updated (CLAUDE.md, server.py docstring)"
+      ],
+      "measurable": [
+        "CHANGELOG_TOOLS_REVIEW issues resolved: 3 critical → 0",
+        "Tool count in docs-mcp: 11 → 10",
+        "Lines of code for changelog tools: reduced (consolidation)",
+        "Agent workflow: 3 steps → 1 smart call"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": {
+        "name": "Setup & Analysis",
+        "items": [
+          "[ ] Read tool_handlers.py lines 206-419 (all 3 tools)",
+          "[ ] Review generators/changelog_generator.py structure",
+          "[ ] Review CHANGELOG.json format and schema",
+          "[ ] Identify all touch points: server.py, validation.py, CLAUDE.md",
+          "[ ] Document assumptions about git availability"
+        ]
+      },
+      "phase_2": {
+        "name": "Critical Bug Fixes",
+        "items": [
+          "[ ] Import packaging.version in changelog_generator.py",
+          "[ ] Replace line 241 with semantic version comparison",
+          "[ ] Write test_changelog_generator_fixes.py with semver tests",
+          "[ ] Add migration validation to add_change() method",
+          "[ ] Write migration validation tests",
+          "[ ] Implement duplicate detection in add_change()",
+          "[ ] Write duplicate detection tests",
+          "[ ] Run all 3 test files - all passing"
+        ]
+      },
+      "phase_3": {
+        "name": "New Tool Implementation",
+        "items": [
+          "[ ] Create handle_record_changes() in tool_handlers.py",
+          "[ ] Implement git diff --staged detection",
+          "[ ] Implement commit message parsing for change_type",
+          "[ ] Implement severity calculation from scope",
+          "[ ] Implement preview generation",
+          "[ ] Integrate with add_change() for entry creation",
+          "[ ] Update add_change() to include auto_detected metadata",
+          "[ ] Add agent_confirmed field to changelog entries",
+          "[ ] Add record_changes tool definition to server.py",
+          "[ ] Remove update_changelog tool definition from server.py",
+          "[ ] Update docstring: tool count 11 → 10",
+          "[ ] Register handle_record_changes in TOOL_HANDLERS dict",
+          "[ ] Remove handle_update_changelog from TOOL_HANDLERS",
+          "[ ] Update CLAUDE.md: tool count, descriptions, agentic pattern",
+          "[ ] Run test_record_changes_handler.py - all passing"
+        ]
+      },
+      "phase_4": {
+        "name": "Testing & Validation",
+        "items": [
+          "[ ] Run all unit tests: test_changelog_generator_fixes.py + test_record_changes_handler.py",
+          "[ ] Run integration tests: backward compatibility + build discovery",
+          "[ ] Manual test #1: record_changes on real git repo with actual changes",
+          "[ ] Manual test #2: git not available - falls back gracefully",
+          "[ ] Manual test #3: agent confirmation flow with preview",
+          "[ ] Manual test #4: changelog entry created and queryable via get_changelog",
+          "[ ] Verify uv build succeeds: uv build",
+          "[ ] Verify server starts: python server.py",
+          "[ ] Verify record_changes in tool list",
+          "[ ] Verify update_changelog no longer in tool list",
+          "[ ] Backward compat test: old CHANGELOG.json files still work",
+          "[ ] All tests passing, no warnings"
+        ]
+      }
+    },
+    "10_notes_and_appendix": {
+      "related_features": [
+        "Update/delete operations (separate phase 2 feature)",
+        "Compound filtering by multiple criteria (enhancement)",
+        "Performance optimization for large changelogs (optimization)"
+      ],
+      "cross_tool_dependencies": [
+        "get_changelog: No changes needed, used by record_changes for verification",
+        "ChangelogGenerator: Enhanced with new methods, bug fixes applied",
+        "validation.py: Add migration requirement validation"
+      ],
+      "estimated_total_effort": "10-14 hours",
+      "key_decisions": [
+        "Use packaging.version for semantic version comparison (lightweight, well-maintained)",
+        "Implement duplicate detection at add_change() level (centralized)",
+        "Auto-detect from git diff --staged (respects git staging area intention)",
+        "Make migration required for breaking changes (data quality enforcement)",
+        "Keep get_changelog as-is, build new functionality on top"
+      ],
+      "rollback_plan": [
+        "record_changes is new tool, can be removed without affecting others",
+        "Bug fixes (semver, migration, duplicates) are improvements, no rollback needed",
+        "update_changelog deprecation can be reversed if needed"
+      ]
+    }
+  }
+}

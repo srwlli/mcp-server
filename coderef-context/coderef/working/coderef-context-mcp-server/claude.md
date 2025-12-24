@@ -3,17 +3,18 @@
 **Workorder ID:** WO-CODEREF-CONTEXT-MCP-SERVER-001
 **Feature:** coderef-context-mcp-server
 **Generated:** 2025-12-23
+**Technology:** TypeScript (not Python)
 
 ---
 
 ## Quick Overview
 
-You are building a **new MCP server** called `coderef-context` that wraps the entire `@coderef/core` TypeScript system (all 10 modules) and exposes them as MCP tools.
+You are building a **new TypeScript MCP server** called `coderef-context` that directly uses the entire `@coderef/core` system (all 10 modules) and exposes them as MCP tools.
 
 **What this means:**
 - **Old approach:** coderef-mcp had its own Python code duplicating analysis logic
-- **New approach:** coderef-context is a thin Python MCP wrapper that calls @coderef/core via subprocess
-- **Result:** Single source of truth, all analysis logic centralized in @coderef/core
+- **New approach:** coderef-context is a TypeScript MCP server that directly imports and uses @coderef/core modules
+- **Result:** Single source of truth, maximum performance, native type safety
 
 ---
 
@@ -55,29 +56,29 @@ You are building a **new MCP server** called `coderef-context` that wraps the en
 ```
 User Question via Claude
         ↓
-MCP Protocol Handler (server.py)
+MCP Protocol Handler (server.ts)
         ↓
-Tool Handler (tool_handlers.py)
+Tool Handler (tools/*.ts)
         ↓
-CodeRefCoreBridge (coderef_bridge.py)
+Direct Import: @coderef/core Modules
         ↓
-Subprocess: pnpm start [command]
+Scanner, Analyzer, Query, Parser, Validator, Exporter
+Context Generator (6-phase), RAG, Error Handler, Types
         ↓
-@coderef/core TypeScript
+Returns Native TypeScript Objects
         ↓
-Returns JSON Response
+CacheManager (cache-manager.ts) ← Store & Retrieve
         ↓
-CacheManager (cache_manager.py) ← Store & Retrieve
-        ↓
-Format as MPC Response
+Format as MCP Response
         ↓
 Return to Claude
 ```
 
 **Key points:**
-- All communication with @coderef/core goes through subprocess (no direct imports)
-- Responses cached (5-minute TTL, LRU eviction)
-- Python handles JSON parsing, validation, formatting
+- All communication with @coderef/core is direct TypeScript imports (zero subprocess overhead)
+- Responses cached in-memory (5-minute TTL, LRU eviction with max 100 entries)
+- TypeScript provides native type safety (no JSON parsing needed)
+- Runs in same Node.js process as @coderef/core for maximum performance
 - Each tool is idempotent and can be called repeatedly
 
 ---
@@ -136,90 +137,122 @@ Start here. You need:
 
 ## Critical Implementation Details
 
-### Subprocess Communication Pattern
+### Direct Module Import Pattern
 
-```python
-# Example from CodeRefCoreBridge
-result = subprocess.run(
-    [
-        "pnpm",
-        "start",
-        "scan",
-        "./src",
-        "--lang", "ts,tsx",
-        "--json"
-    ],
-    capture_output=True,
-    text=True,
-    timeout=30,  # Critical: prevent hanging
-    cwd=CODEREF_CLI_PATH  # Path to @coderef/core CLI
-)
+```typescript
+// Direct imports from @coderef/core (same workspace)
+import {
+  scanCurrentElements,
+  AnalyzerService,
+  QueryExecutor,
+  CodeRefParser,
+  CodeRefValidator,
+  GraphExporter,
+  ComplexityScorer,
+  TaskContextGenerator,
+  EdgeCaseDetector,
+  TestPatternAnalyzer,
+  ExampleExtractor,
+  AgenticFormatter,
+  type ElementData,
+  type DependencyGraph,
+  type AnalysisResult,
+} from '@coderef/core';
 
-if result.returncode != 0:
-    raise SubprocessError(f"Scan failed: {result.stderr}")
+// Usage - direct function calls, no subprocess overhead
+const elements = await scanCurrentElements('./src', ['ts', 'tsx']);
+const analyzer = new AnalyzerService('./src');
+const analysis = await analyzer.analyzeCodebase('./src', ['ts', 'tsx']);
 
-response = json.loads(result.stdout)
-return response
+// Full type safety - TypeScript compiler catches errors
 ```
 
 **Critical points:**
-- Always use `--json` flag for machine-readable output
-- Always set 30-second timeout
-- Always check return code
-- Always validate JSON parsing
-- Path normalization: convert Windows `\` to `/`
+- All imports are direct (no subprocess calls needed)
+- Full TypeScript type safety (no runtime type checking needed)
+- Same workspace monorepo means they evolve together
+- Zero serialization overhead - native objects passed between modules
+- Errors are typed and caught at compile time
 
 ### Caching Strategy
 
-```python
-# Cache key structure
-cache_key = f"{tool_name}:{json.dumps(inputs, sort_keys=True)}:{source_dir_hash}"
+```typescript
+import LRU from 'lru-cache';
 
-# TTL: 5 minutes by default
-# Max entries: 100 (LRU eviction)
-# Hit rate goal: >70%
+// Create typed cache with TTL
+const cache = new LRU<string, any>({
+  max: 100,              // Max 100 entries
+  ttl: 1000 * 60 * 5,   // 5 minutes TTL
+});
+
+// Cache key from inputs
+const cacheKey = `${toolName}:${JSON.stringify(inputs)}:${sourceDir}`;
+
+// Check cache before expensive operations
+const cached = cache.get(cacheKey);
+if (cached) {
+  return cached;  // Hit - fast path
+}
+
+// Cache miss - run operation
+const result = await expensiveOperation();
+cache.set(cacheKey, result);
+return result;
 ```
 
-### Type Safety with Pydantic
+### Type Safety with Zod Validation
 
-```python
-from pydantic import BaseModel
-from typing import List, Optional
+```typescript
+import { z } from 'zod';
 
-class ElementData(BaseModel):
-    type: str  # 'function', 'class', 'method', etc
-    name: str
-    file: str
-    line: int
-    exported: bool = False
+// Runtime validation schema (matches @coderef/core types)
+const ElementDataSchema = z.object({
+  type: z.enum(['function', 'class', 'method', 'interface', 'type', 'hook']),
+  name: z.string(),
+  file: z.string(),
+  line: z.number().positive(),
+  exported: z.boolean().optional(),
+});
 
-class ScanResponse(BaseModel):
-    elements: List[ElementData]
-    statistics: dict
-    execution_time: float
+const ScanResponseSchema = z.object({
+  elements: z.array(ElementDataSchema),
+  statistics: z.object({}).passthrough(),
+  execution_time: z.number(),
+});
+
+// Use for runtime validation
+const result = ScanResponseSchema.parse(data);
 ```
 
 ---
 
 ## Common Pitfalls to Avoid
 
-1. **Path Handling**
-   - ❌ Don't: `cmd = f"scan {path}"`  (fails on Windows)
-   - ✅ Do: Normalize to forward slashes, use pathlib
+1. **Circular Dependencies**
+   - ❌ Don't: Import from MCP SDK in type definitions
+   - ✅ Do: Use type-only imports when needed
 
-2. **JSON Parsing**
-   - ❌ Don't: `json.loads(output)` without try/except
-   - ✅ Do: Wrap in try/except, validate schema
+2. **Async/Await**
+   - ❌ Don't: Forget `await` on async @coderef/core functions
+   - ✅ Do: Always await, handle Promise rejections
 
-3. **Performance**
-   - ❌ Don't: Call subprocess for every request (will be slow)
-   - ✅ Do: Aggressive caching (5-minute TTL)
+3. **Type Safety**
+   - ❌ Don't: Use `any` type without good reason
+   - ✅ Do: Leverage TypeScript compiler, use proper types
 
-4. **Error Handling**
-   - ❌ Don't: Let subprocess errors crash the server
-   - ✅ Do: Catch, map to MCP error types, return clean response
+4. **Cache Keys**
+   - ❌ Don't: Include mutable objects in cache keys
+   - ✅ Do: Use stable JSON strings with sorted keys
 
-5. **Testing**
+5. **Error Handling**
+   - ❌ Don't: Let TypeScript errors crash the server
+   - ✅ Do: Catch errors, validate inputs, return MCP error responses
+
+6. **Memory Management**
+   - ❌ Don't: Cache huge graphs indefinitely
+   - ✅ Do: Use LRU eviction, set TTL, monitor memory usage
+
+7. **Testing**
    - ❌ Don't: Test against non-existent directories
    - ✅ Do: Use coderef-system itself as test subject (1000+ elements)
 
@@ -229,93 +262,109 @@ class ScanResponse(BaseModel):
 
 ### 1. Start with Phase 1 Boilerplate
 ```bash
-cd C:\Users\willh\.mcp-servers\coderef-context
+cd C:\Users\willh\Desktop\projects\coderef-system
 
-# Create Python project structure
-python -m venv venv
-source venv/Scripts/activate  # Windows: venv\Scripts\activate
+# Add new @coderef-context package to monorepo
+mkdir packages/context
+cd packages/context
 
-# Install dependencies
-pip install -r requirements.txt  # mcp, pydantic, pytest, etc
+# Create TypeScript project structure
+mkdir -p src/{tools,cache,types,error,__tests__}
 
-# Start server (will fail until bridge ready, that's OK)
-python server.py
+# Install dependencies (done at monorepo level)
+pnpm install
+pnpm add -D vitest @vitest/ui
+
+# Start server (will fail until tools ready, that's OK)
+pnpm dev
 ```
 
-### 2. Build CodeRefCoreBridge
-- Test subprocess communication: `pnpm start scan ./src --json`
-- Test response parsing
-- Test error handling
-- Test path normalization (especially Windows)
+### 2. Set Up Direct Imports
+- Import and test all 10 @coderef/core modules
+- Verify type definitions work
+- Test basic Scanner/Analyzer calls
+- Validate error types
 
 ### 3. Test with Real Codebase
 Use this for testing:
 ```
-C:\Users\willh\Desktop\projects\coderef-system
+C:\Users\willh\Desktop\projects\coderef-system\src
 ```
 
 This has:
 - 1,000+ TypeScript elements
 - Real dependency graph
-- Multiple file types (ts, tsx, js, json)
+- Multiple file types (ts, tsx)
 - Good test subject for all tools
 
 ### 4. Add Tests First
 Write tests before implementation (TDD approach):
-```python
-# tests/test_bridge.py
-def test_scan_elements_returns_list():
-    elements = bridge.scan_elements('./src', ['ts'])
-    assert isinstance(elements, list)
-    assert len(elements) > 0
-    assert all(hasattr(e, 'type') for e in elements)
+```typescript
+// src/__tests__/tools.test.ts
+import { describe, it, expect } from 'vitest';
+import { scanCurrentElements } from '@coderef/core';
+
+describe('Scanner Tool', () => {
+  it('should return array of elements', async () => {
+    const elements = await scanCurrentElements('./src', ['ts']);
+    expect(Array.isArray(elements)).toBe(true);
+    expect(elements.length).toBeGreaterThan(0);
+    expect(elements[0]).toHaveProperty('type');
+    expect(elements[0]).toHaveProperty('name');
+  });
+});
 ```
 
 ### 5. Performance Tuning
 Once functional, optimize:
-- Profile with pytest-benchmark
+- Profile with vitest
 - Ensure cache hit rate >70%
-- Verify all response times <5s
+- Verify all response times <2s (direct imports are fast!)
 
 ---
 
 ## Key Environment Variables
 
 ```
-# Where @coderef/core CLI is located
-CODEREF_CLI_PATH=C:\Users\willh\Desktop\projects\coderef-system\packages\cli
+# Cache TTL (milliseconds)
+CODEREF_CACHE_TTL=300000  # 5 minutes
 
-# Subprocess timeout (seconds)
-CODEREF_SUBPROCESS_TIMEOUT=30
-
-# Cache TTL (seconds)
-CODEREF_CACHE_TTL=300
-
-# Max cache entries
+# Max cache entries (LRU eviction)
 CODEREF_CACHE_MAX_ENTRIES=100
 
 # Debug mode
-CODEREF_DEBUG=False
+CODEREF_DEBUG=false
+
+# MCP Server port (if running standalone)
+MCP_SERVER_PORT=5000
+
+# Log level
+LOG_LEVEL=info  # debug|info|warn|error
 ```
+
+**Note:** No need for CODEREF_CLI_PATH since we're using direct imports in the same monorepo!
 
 ---
 
 ## Questions to Answer During Implementation
 
-1. **Path Normalization:** How will you handle Windows backslashes vs Unix forward slashes?
-   → See `utils.py` - implement `normalize_path()` function
+1. **Async/Await:** How will you handle async operations in MCP tools?
+   → Use async tool handlers. MCP SDK supports async/await natively.
 
 2. **Cache Invalidation:** When should cache be cleared?
    → TTL-based only (5 minutes). No explicit invalidation needed.
 
-3. **Subprocess Pooling:** Will you reuse subprocess instances?
-   → Not needed. Simple subprocess.run() is sufficient (fast startup).
+3. **Monorepo Integration:** How will you ensure @coderef/core is available?
+   → TypeScript workspace dependencies. Add to package.json: `"@coderef/core": "workspace:*"`
 
-4. **Error Context:** What info to include in error responses?
-   → Stderr from subprocess + input parameters + error type
+4. **Error Types:** How should you handle @coderef/core errors?
+   → Import error types from @coderef/core. Wrap in MCP-compatible error responses.
 
-5. **Type Validation:** How strict should Pydantic validation be?
-   → Strict. Use coerce mode only for strings. Fail fast on schema mismatch.
+5. **Type Validation:** How strict should Zod validation be?
+   → Strict. Validate all MCP tool inputs. Use strict mode for schemas. Fail fast on schema mismatch.
+
+6. **Resource Management:** How to prevent memory leaks with caching?
+   → LRU eviction handles it. Monitor memory with Node.js profiling tools. Test with large codebases.
 
 ---
 

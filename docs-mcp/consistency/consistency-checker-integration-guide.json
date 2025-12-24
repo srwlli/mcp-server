@@ -2,7 +2,7 @@
   "title": "Consistency Checker Integration Guide",
   "version": "1.0.0",
   "date": "2025-10-09",
-  "purpose": "Comprehensive guide for integrating consistency checking into docs-mcp as MCP tool #8",
+  "purpose": "Comprehensive guide for integrating consistency checking into coderef-docs as MCP tool #8",
   "
 ": {
     "current_state": {
@@ -10,7 +10,7 @@
         "consistency-checker.js - Node.js script (standalone)",
         "consistency-review-template.json - 100+ check definitions across 15 categories",
         "consistency-checker-README.md - Usage documentation",
-        "docs-mcp server with 7 MCP tools"
+        "coderef-docs server with 7 MCP tools"
       ],
       "what_we_need": [
         "MCP tool wrapper for consistency checking",
@@ -117,8 +117,8 @@
         },
         "error_handling": {
           "missing_node": "Return error: Node.js not found. Install Node.js to use consistency checking.",
-          "missing_script": "Auto-copy consistency-checker.js from docs-mcp/tools/ to project",
-          "missing_template": "Auto-copy consistency-review-template.json from docs-mcp/tools/ to project",
+          "missing_script": "Auto-copy consistency-checker.js from coderef-docs/tools/ to project",
+          "missing_template": "Auto-copy consistency-review-template.json from coderef-docs/tools/ to project",
           "invalid_json": "Return error with JSON parse details",
           "script_failure": "Return error with stderr output"
         }
@@ -216,9 +216,9 @@
 
   "technical_specifications": {
     "file_locations": {
-      "docs_mcp_tools": "C:/Users/willh/.mcp-servers/docs-mcp/tools/",
-      "consistency_checker_script": "docs-mcp/tools/consistency-checker.js",
-      "consistency_template": "docs-mcp/tools/consistency-review-template.json",
+      "docs_mcp_tools": "C:/Users/willh/.mcp-servers/coderef-docs/tools/",
+      "consistency_checker_script": "coderef-docs/tools/consistency-checker.js",
+      "consistency_template": "coderef-docs/tools/consistency-review-template.json",
       "project_feature_plans": "project_path/coderef/feature-plans/",
       "project_reports": "project_path/coderef/feature-plans/consistency-report.md"
     },
@@ -266,8 +266,8 @@
             "embed-action-mvp.json",
             "publish-action-mvp.json",
             "consistency-report.md (generated)",
-            "consistency-checker.js (copied from docs-mcp)",
-            "consistency-review-template.json (copied from docs-mcp)"
+            "consistency-checker.js (copied from coderef-docs)",
+            "consistency-review-template.json (copied from coderef-docs)"
           ]
         },
         "changelog/": {
@@ -284,9 +284,9 @@
 
   "implementation_steps": {
     "step_1_prepare_assets": {
-      "action": "Create tools/ directory in docs-mcp",
+      "action": "Create tools/ directory in coderef-docs",
       "commands": [
-        "mkdir C:/Users/willh/.mcp-servers/docs-mcp/tools",
+        "mkdir C:/Users/willh/.mcp-servers/coderef-docs/tools",
         "Copy consistency-checker.js to tools/",
         "Copy consistency-review-template.json to tools/",
         "Copy consistency-checker-README.md to tools/"
@@ -379,7 +379,7 @@
     },
     "step_5_update_changelog": {
       "action": "Document addition of check_consistency tool",
-      "command": "add_changelog_entry(project_path='docs-mcp', version='1.0.4', ...)"
+      "command": "add_changelog_entry(project_path='coderef-docs', version='1.0.4', ...)"
     }
   },
 
@@ -503,13 +503,13 @@
         "error": "Missing consistency-checker.js",
         "detection": "Script file doesn't exist in feature_plans_dir",
         "response": "Copying consistency-checker.js to project...",
-        "recovery": "Auto-copy from docs-mcp/tools/"
+        "recovery": "Auto-copy from coderef-docs/tools/"
       },
       {
         "error": "Missing template",
         "detection": "Template file doesn't exist in feature_plans_dir",
         "response": "Copying consistency-review-template.json to project...",
-        "recovery": "Auto-copy from docs-mcp/tools/"
+        "recovery": "Auto-copy from coderef-docs/tools/"
       }
     ]
   },
@@ -667,7 +667,7 @@
         "question": "Where should consistency-checker.js live long-term?",
         "options": [
           "A) Copied to each project (current approach)",
-          "B) Run from docs-mcp installation only",
+          "B) Run from coderef-docs installation only",
           "C) Published as npm package"
         ],
         "recommendation": "A for now, C for future scalability"
@@ -687,7 +687,7 @@
   "next_actions": {
     "immediate": [
       "Review this guide and refine plan",
-      "Create tools/ directory in docs-mcp",
+      "Create tools/ directory in coderef-docs",
       "Copy consistency assets to tools/",
       "Implement check_consistency tool (Phase 1)",
       "Test with sidebar-app feature plans",

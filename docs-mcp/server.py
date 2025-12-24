@@ -63,7 +63,7 @@ tool_handlers.set_templates_dir(TEMPLATES_DIR)
 tool_handlers.set_tool_templates_dir(TOOL_TEMPLATES_DIR)
 
 # Create MCP server
-app = Server("docs-mcp")
+app = Server("coderef-docs")
 
 # Log server initialization
 logger.info(f"MCP server starting", extra={'version': __version__, 'mcp_version': __mcp_version__})

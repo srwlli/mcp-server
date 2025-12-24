@@ -1,5 +1,5 @@
 """
-Plan format enforcement for docs-mcp (STUB-032).
+Plan format enforcement for coderef-docs (STUB-032).
 
 This module enforces the standard plan.json format:
 - Standard location: coderef/working/{feature}/plan.json

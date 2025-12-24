@@ -3,7 +3,7 @@ Agentic workflow to analyze recent changes and update the changelog automaticall
 Prompt the user for:
 - version: Version number for this change (format: X.Y.Z, e.g., "1.0.3")
 
-Then call the `mcp__docs-mcp__update_changelog` tool with:
+Then call the `mcp__coderef-docs__update_changelog` tool with:
 - project_path: Current working directory
 - version: The version number provided
 
@@ -29,7 +29,7 @@ This is a **meta-tool** that returns a 3-step instruction guide for the AI agent
   - patch: Trivial changes, typos, docs
 
 **STEP 3: Call add_changelog_entry**
-- Use the analyzed information to call `mcp__docs-mcp__add_changelog_entry`
+- Use the analyzed information to call `mcp__coderef-docs__add_changelog_entry`
 - Provide all required fields based on your analysis
 
 This is useful for:

@@ -1,0 +1,219 @@
+{
+  "project": "docs-mcp",
+  "version": "2.0.1",
+  "status": "BUGGY - Railway Deployment In Progress",
+  "last_updated": "2025-10-16T14:01:00Z",
+  "session_summary": {
+    "objective": "Deploy MCP HTTP Server to Railway.app for ChatGPT integration",
+    "current_phase": "Phase 5: Railway Deployment & ChatGPT Integration",
+    "phase_progress": "70% - Deployed but encountering app import issue",
+    "critical_issue": "YES - gunicorn cannot find 'app' attribute in http_server.py"
+  },
+
+  "project_structure": {
+    "core_files": {
+      "server.py": "MCP server entry point (299 lines) - WORKING",
+      "tool_handlers.py": "21 handler functions + TOOL_HANDLERS registry (1679 lines) - WORKING",
+      "handler_decorators.py": "Extracted decorators @mcp_error_handler, @log_invocation (188 lines) - WORKING",
+      "handler_helpers.py": "Helper function format_success_response() (49 lines) - WORKING",
+      "error_responses.py": "ErrorResponse factory - WORKING",
+      "logger_config.py": "Structured logging configuration - WORKING",
+      "type_defs.py": "TypedDict definitions (219 lines) - WORKING",
+      "constants.py": "Constants and enums (119 lines) - WORKING",
+      "validation.py": "Input validation layer (271 lines) - WORKING"
+    },
+    "http_server_files": {
+      "http_server.py": "Flask HTTP wrapper for Railway (480+ lines) - BUGGY - app import failing",
+      "Procfile": "Railway config: web: gunicorn http_server:app - CORRECT",
+      "runtime.txt": "Python version specification: python-3.11.8 - ADDED",
+      "requirements.txt": "Dependencies including flask, gunicorn, mcp, pydantic - CORRECT"
+    },
+    "generators": {
+      "base_generator.py": "Base template operations",
+      "foundation_generator.py": "Multi-document generation",
+      "changelog_generator.py": "Changelog CRUD + schema",
+      "standards_generator.py": "Standards extraction",
+      "audit_generator.py": "Compliance auditing"
+    }
+  },
+
+  "current_problem": {
+    "symptom": "Railway deployment failing repeatedly with: 'Failed to find attribute app in http_server'",
+    "root_cause": "Unknown - likely import failure in Railway's Python environment",
+    "evidence": [
+      "Gunicorn starts successfully on port 8080",
+      "Gunicorn tries to import http_server:app",
+      "Fails with 'Failed to find attribute app'",
+      "Restarts in infinite loop every 1-2 seconds",
+      "Same code works perfectly locally (tested and verified)"
+    ],
+    "locals_status": {
+      "python_import_test": "PASS - All imports work",
+      "http_server.py_import": "PASS - from http_server import app works",
+      "mcp_server": "PASS - 23 tools accessible",
+      "flask_app": "PASS - app = create_app() works",
+      "localhost_5000": "PASS - All 3 endpoints working",
+      "curl_tests": "PASS - 13/13 tests passed"
+    },
+    "railway_status": {
+      "deployment": "ACTIVE (but failing)",
+      "gunicorn": "Starting but cannot import app",
+      "logs_pattern": "Repeated 'Failed to find attribute app' errors"
+    }
+  },
+
+  "what_ive_tried": [
+    "1. Verified Procfile is correct: web: gunicorn http_server:app",
+    "2. Added runtime.txt specifying Python 3.11.8",
+    "3. Added error handling with try/except around app creation",
+    "4. Added graceful import fallbacks for TOOL_HANDLERS, ErrorResponse, logger",
+    "5. Verified all code locally - everything works perfectly",
+    "6. Confirmed app is exported at module level (line 461)",
+    "7. All imports tested and working in Python REPL"
+  ],
+
+  "fixes_applied": [
+    {
+      "commit": "f58a80f",
+      "message": "Add runtime.txt to specify Python version for Railway deployment",
+      "what_it_does": "Ensures Railway uses Python 3.11.8 (not random version)",
+      "status": "DEPLOYED"
+    },
+    {
+      "commit": "4e58e36",
+      "message": "Add error handling to app initialization for Railway debugging",
+      "what_it_does": "Wrapped app creation in try/except for error visibility",
+      "status": "DEPLOYED"
+    },
+    {
+      "commit": "5151a62",
+      "message": "Add graceful import fallbacks for Railway deployment",
+      "what_it_does": "Allows server to start even if some imports fail, provides fallback logger",
+      "status": "DEPLOYED - MOST RECENT"
+    }
+  ],
+
+  "http_server_details": {
+    "endpoints": {
+      "GET /health": {
+        "status": "WORKS locally",
+        "response": "{ status: operational, timestamp: ISO8601, version: 1.0.0 }",
+        "tested": true
+      },
+      "GET /tools": {
+        "status": "WORKS locally",
+        "response": "{ count: 23, tools: [...], timestamp: ISO8601 }",
+        "tested": true,
+        "returns_all_23_tools": true
+      },
+      "POST /mcp": {
+        "status": "WORKS locally",
+        "protocol": "JSON-RPC 2.0",
+        "accepts": "{ jsonrpc: 2.0, id: <any>, method: <tool_name>, params: {...} }",
+        "returns": "{ jsonrpc: 2.0, id: <same>, result: <response> } or error object",
+        "tested": true,
+        "test_methods": ["list_templates", "get_template", "analyze_project_for_planning"]
+      }
+    },
+    "error_handling": {
+      "unknown_tool": "Returns -32601 (Method not found)",
+      "invalid_params": "Returns -32602 (Invalid params)",
+      "malformed_json": "Returns -32700 (Parse error)",
+      "missing_id": "Returns -32600 (Invalid Request)",
+      "missing_method": "Returns -32600 (Invalid Request)",
+      "all_tests_pass_locally": true
+    }
+  },
+
+  "imports_structure": {
+    "main_imports": [
+      "from tool_handlers import TOOL_HANDLERS",
+      "from error_responses import ErrorResponse",
+      "from logger_config import logger"
+    ],
+    "fallback_handling": "Added try/except for all 3 main imports with graceful degradation",
+    "reason_for_fallbacks": "Railway environment might have different module paths or missing dependencies"
+  },
+
+  "claude_code_status": {
+    "status": "UNAFFECTED - WORKING PERFECTLY",
+    "why": "Claude Code uses server.py (MCP protocol), not http_server.py (HTTP wrapper)",
+    "tools_available": "All 23 tools via Claude Code",
+    "documentation": "CLAUDE.md has full context and tool catalog",
+    "no_changes_needed": true
+  },
+
+  "next_agent_tasks": {
+    "immediate": [
+      "1. Check current Railway deployment logs",
+      "2. Verify if latest code (commit 5151a62) has been deployed",
+      "3. If still failing, check exact error in Railway logs",
+      "4. Consider: Does Railway have all required Python packages installed?"
+    ],
+    "investigation": [
+      "Check if gunicorn can import Flask",
+      "Check if gunicorn can import mcp library",
+      "Check if there's a Python path issue in Railway environment",
+      "Check if pyproject.toml is causing issues (it has packages = ['.'])",
+      "Consider if Railway is trying to install the package itself"
+    ],
+    "potential_solutions": [
+      "Option A: Remove pyproject.toml or modify packages setting",
+      "Option B: Create __init__.py files to make it a proper package",
+      "Option C: Add PYTHONPATH env var in Railway settings",
+      "Option D: Simplify http_server.py to remove all local imports initially",
+      "Option E: Use wsgi.py instead of http_server.py (different naming convention)"
+    ],
+    "testing": [
+      "When it works: Test /health endpoint",
+      "When it works: Test /tools endpoint",
+      "When it works: Test /mcp with list_templates",
+      "When it works: Get Railway URL and test with curl",
+      "Final: Connect to ChatGPT Developer Mode"
+    ]
+  },
+
+  "key_metrics": {
+    "local_tests": "13/13 passed (100%)",
+    "endpoints_tested_locally": "3/3 working",
+    "error_cases_tested": "5/5 correct error codes",
+    "lines_of_code_http_server": "480+",
+    "tools_available": "23",
+    "handler_refactoring_status": "100% complete (from previous session)",
+    "code_reduction_from_refactor": "489 lines (-22.5%)"
+  },
+
+  "files_to_check": {
+    "http_server.py": "Line 460-461 should have: app = create_app() with no conditional",
+    "Procfile": "Should be exactly: web: gunicorn http_server:app",
+    "runtime.txt": "Should have: python-3.11.8",
+    "requirements.txt": "Should include: flask, gunicorn, mcp, pydantic"
+  },
+
+  "debugging_checklist": [
+    "[ ] Check Railway deployment logs for latest error",
+    "[ ] Verify gunicorn is actually importing http_server.py",
+    "[ ] Check if Flask is installed in Railway environment",
+    "[ ] Check if MCP library can be imported",
+    "[ ] Check sys.path in Railway vs local",
+    "[ ] Try renaming http_server.py to application.py with app = Flask(__name__)",
+    "[ ] Check if pyproject.toml is being used to install package (causing path issues)"
+  ],
+
+  "git_commits_recent": [
+    "5151a62 - Add graceful import fallbacks for Railway deployment",
+    "4e58e36 - Add error handling to app initialization for Railway debugging",
+    "f58a80f - Add runtime.txt to specify Python version for Railway deployment",
+    "985dae7 - Update documentation for v2.0.1 decorator refactor"
+  ],
+
+  "important_notes": {
+    "note_1": "The code works perfectly locally - this is a Railway environment issue",
+    "note_2": "Claude Code integration is NOT affected and works perfectly",
+    "note_3": "All 23 tools are production-ready and accessible",
+    "note_4": "Handler refactoring (from previous session) is complete and working",
+    "note_5": "The HTTP server is just adding an HTTP layer on top - optional for ChatGPT"
+  },
+
+  "context_for_next_agent": "The project is 99% complete. The only blocker is getting gunicorn to import the Flask app on Railway. Everything works locally. The issue is isolated to Railway's Python environment. Focus on: 1) Checking Railway logs for exact error, 2) Verifying dependencies are installed, 3) Considering if pyproject.toml or package installation is causing path issues. Once this is resolved, the system will be fully production-ready with ChatGPT integration."
+}

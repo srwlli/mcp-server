@@ -16,7 +16,7 @@ Optional information:
 - summary: Version summary for new versions
 - contributors: List of contributors
 
-Then call the `mcp__docs-mcp__add_changelog_entry` tool with:
+Then call the `mcp__coderef-docs__add_changelog_entry` tool with:
 - project_path: Current working directory
 - All the information collected above
 

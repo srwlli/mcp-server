@@ -1,4 +1,4 @@
-  docs-mcp - Documentation & Planning Tools
+  coderef-docs - Documentation & Planning Tools
 
   Documentation Generation:
   - list_templates - List available documentation templates
@@ -149,7 +149,7 @@
   - /get-workorder-log - Query global workorder log with filters
 
   Reference:
-  - /list-tools - Show all 54 MCP tools across 3 servers (docs-mcp, personas-mcp, coderef-mcp)
+  - /list-tools - Show all 54 MCP tools across 3 servers (coderef-docs, personas-mcp, coderef-mcp)
   - /list-commands - Show all slash commands by category
 
-  Total: 38 MCP tools and 40 slash commands from docs-mcp server!
+  Total: 38 MCP tools and 40 slash commands from coderef-docs server!

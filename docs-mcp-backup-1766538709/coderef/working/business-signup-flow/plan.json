@@ -1,0 +1,850 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "business-signup-flow",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "planned",
+    "generated_by": "Manual conversion from signup spec",
+    "generated_at": "2025-12-21T07:00:00Z",
+    "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+    "has_context": true,
+    "has_analysis": false
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "purpose": "Build a multi-step signup flow triggered from the Business Dash landing page, guiding users through account creation, business information, and onboarding",
+      "foundation_docs_reviewed": [],
+      "coding_standards_available": false,
+      "similar_features": ["business-dash-landing"],
+      "technical_stack": {
+        "framework": "React + Next.js",
+        "styling": "Tailwind CSS",
+        "forms": "React Hook Form or Formik",
+        "validation": "Zod or Yup",
+        "routing": "Next.js App Router",
+        "state": "React Context or Zustand",
+        "database": "TBD (Auth backend integration)"
+      },
+      "design_system": {
+        "colors": {
+          "primary_bg": "#ffffff",
+          "text_dark": "#1a1a1a",
+          "secondary_bg": "#f8f8f8",
+          "accent": "#0d9488",
+          "borders": "#e5e7eb",
+          "error": "#dc2626"
+        },
+        "typography": {
+          "h1": "32-40px bold",
+          "h2": "24-28px semibold",
+          "body": "16px regular",
+          "label": "14px semibold"
+        },
+        "spacing": {
+          "card_padding": "32-40px",
+          "border_radius": "8-12px",
+          "input_padding": "10-12px",
+          "step_spacing": "24px"
+        }
+      },
+      "key_risks_identified": [
+        "Form validation complexity across multiple steps",
+        "State management between steps (data persistence)",
+        "Error handling and recovery flows",
+        "Backend API integration (auth, user creation)",
+        "Password security requirements",
+        "Session management after signup",
+        "Mobile form usability",
+        "Email verification flow (if required)"
+      ]
+    },
+
+    "1_executive_summary": {
+      "feature_name": "Business Sign Up Flow",
+      "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+      "stub_id": null,
+      "primary_goal": "Create a seamless multi-step signup flow that converts landing page visitors into registered users by collecting account info and business details",
+      "problem_statement": "Landing page visitors need a clear, intuitive way to create accounts and provide business information. Multi-step form should reduce cognitive load, ensure data validation, and clearly guide users through onboarding",
+      "target_users": [
+        "Agency owners",
+        "MSP business owners",
+        "Salon owners",
+        "Restaurant managers",
+        "Construction business leaders",
+        "Individual entrepreneurs"
+      ],
+      "success_definition": "A fully functional multi-step signup form that validates inputs, manages state across steps, integrates with backend auth, handles errors gracefully, and successfully creates user accounts with business information",
+      "estimated_complexity": "Medium (form management, validation, state, backend integration)",
+      "estimated_duration": "30-40 hours"
+    },
+
+    "2_risk_assessment": {
+      "technical_risks": [
+        {
+          "risk": "Form state loss between steps",
+          "severity": "High",
+          "mitigation": "Use React Context or Zustand for persistent form state, save to localStorage as backup"
+        },
+        {
+          "risk": "Backend API integration delays",
+          "severity": "High",
+          "mitigation": "Build UI first with mock API, swap to real API later, use API client (axios/fetch)"
+        },
+        {
+          "risk": "Password validation and security",
+          "severity": "High",
+          "mitigation": "Implement strong validation (12+ chars, mixed case, numbers, symbols), use bcrypt on backend, HTTPS required"
+        },
+        {
+          "risk": "Email validation and uniqueness checks",
+          "severity": "Medium",
+          "mitigation": "Real-time email validation, backend uniqueness check, debounce API calls"
+        },
+        {
+          "risk": "Form submission race conditions",
+          "severity": "Medium",
+          "mitigation": "Disable submit button during request, add loading state, use AbortController for cancellation"
+        },
+        {
+          "risk": "Mobile form usability",
+          "severity": "Medium",
+          "mitigation": "Mobile-first design, appropriate input types (email type, password type), clear tap targets"
+        }
+      ],
+      "integration_risks": [
+        {
+          "risk": "Mismatch between frontend validation and backend",
+          "severity": "High",
+          "mitigation": "Define validation schema once, share between frontend and backend, document requirements"
+        },
+        {
+          "risk": "Session management after signup",
+          "severity": "Medium",
+          "mitigation": "Receive JWT/session token from backend, store securely (httpOnly cookie), redirect to dashboard"
+        }
+      ],
+      "timeline_risks": [
+        {
+          "risk": "Backend API not ready",
+          "severity": "Medium",
+          "mitigation": "Start with mock API endpoints, parallelize frontend/backend development, use API contract first"
+        }
+      ]
+    },
+
+    "3_current_state_analysis": {
+      "existing_components": [
+        "business-dash-landing (provides \"View Demo\" button entry point)"
+      ],
+      "files_to_modify": [
+        {
+          "path": "app/page.tsx (landing page)",
+          "purpose": "Add/update \"View Demo\" button to navigate to /signup",
+          "changes_needed": "Add next/link navigation to /signup on CTA button"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "app/signup/page.tsx",
+          "purpose": "Main signup page wrapper",
+          "changes_needed": "Create multi-step form container"
+        },
+        {
+          "path": "components/signup/SignupForm.tsx",
+          "purpose": "Main signup form component",
+          "changes_needed": "Multi-step form manager"
+        },
+        {
+          "path": "components/signup/Step1CreateAccount.tsx",
+          "purpose": "Step 1: Email, password, confirm password",
+          "changes_needed": "Form inputs with validation"
+        },
+        {
+          "path": "components/signup/Step2ChooseBusiness.tsx",
+          "purpose": "Step 2: Business name, category",
+          "changes_needed": "Form inputs with category dropdown"
+        },
+        {
+          "path": "components/signup/Step3ReviewInfo.tsx",
+          "purpose": "Step 3: Review and confirm all info",
+          "changes_needed": "Display summary, edit links"
+        },
+        {
+          "path": "components/signup/ProgressIndicator.tsx",
+          "purpose": "Visual step indicator",
+          "changes_needed": "Show current step and progress"
+        },
+        {
+          "path": "components/signup/FormContext.tsx",
+          "purpose": "Form state management",
+          "changes_needed": "Create React Context for form data"
+        },
+        {
+          "path": "lib/validation.ts",
+          "purpose": "Form validation schemas",
+          "changes_needed": "Zod or Yup schemas for each step"
+        },
+        {
+          "path": "lib/api.ts",
+          "purpose": "API client for auth endpoints",
+          "changes_needed": "signup, login, email validation endpoints"
+        },
+        {
+          "path": "hooks/useSignupForm.ts",
+          "purpose": "Custom hook for form management",
+          "changes_needed": "Handle state, validation, API calls"
+        },
+        {
+          "path": "types/signup.ts",
+          "purpose": "TypeScript types for signup data",
+          "changes_needed": "Define form data structure"
+        }
+      ],
+      "dependencies": [
+        "react-hook-form (form handling)",
+        "zod (validation)",
+        "axios or fetch (API calls)",
+        "zustand or react-context (state management)"
+      ],
+      "configuration_changes": [
+        "Next.js environment variables for API endpoints"
+      ]
+    },
+
+    "4_key_features": [
+      {
+        "feature_id": "SIGNUP-001",
+        "name": "Step 1: Create Account",
+        "description": "Email and password input with validation and confirmation",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Email input with type validation",
+          "Password input (hidden, show/hide toggle)",
+          "Confirm password input",
+          "Real-time validation feedback",
+          "Password strength indicator",
+          "Error messages for invalid input",
+          "Submit button (disabled if invalid)",
+          "Link to login page"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-002",
+        "name": "Step 2: Choose Business",
+        "description": "Business name and category selection",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Business name text input",
+          "Category dropdown (Salon/Restaurant/Construction)",
+          "Back button to return to Step 1",
+          "Continue button to proceed to Step 3",
+          "Form validation on both fields"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-003",
+        "name": "Step 3: Review Info",
+        "description": "Summary of all entered information with edit capability",
+        "priority": "high",
+        "acceptance_criteria": [
+          "Display email (masked except last 3 chars)",
+          "Display business name",
+          "Display category",
+          "Edit links to return to previous steps",
+          "Final confirmation button",
+          "Back button option"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-004",
+        "name": "Form State Management",
+        "description": "Persistent form state across steps",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Data persists when navigating between steps",
+          "Data persists on page refresh",
+          "Data cleared on logout or session expiry",
+          "Form cleared after successful signup"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-005",
+        "name": "Form Validation",
+        "description": "Client-side and server-side validation",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Email format validation",
+          "Email uniqueness check (async)",
+          "Password requirements (12+ chars, mixed case, number, symbol)",
+          "Password confirmation match",
+          "Business name not empty",
+          "Category selection required",
+          "Real-time validation feedback",
+          "Clear error messages"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-006",
+        "name": "Progress Indicator",
+        "description": "Visual indication of current step",
+        "priority": "medium",
+        "acceptance_criteria": [
+          "Shows 3 steps with numbers",
+          "Highlights current step",
+          "Shows completed steps",
+          "Responsive on mobile",
+          "Optional: Show estimated time"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-007",
+        "name": "Error Handling",
+        "description": "Graceful error handling and recovery",
+        "priority": "high",
+        "acceptance_criteria": [
+          "Field-level error messages",
+          "Form-level error messages",
+          "Network error handling",
+          "Duplicate email handling",
+          "Server validation error display",
+          "Retry mechanisms"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-008",
+        "name": "Backend Integration",
+        "description": "Connect signup flow to authentication API",
+        "priority": "critical",
+        "acceptance_criteria": [
+          "Email validation endpoint",
+          "User creation endpoint",
+          "Password hashing on backend",
+          "Session/JWT token generation",
+          "Redirect to dashboard on success",
+          "Error responses handled properly"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-009",
+        "name": "Mobile Responsiveness",
+        "description": "Fully responsive signup on all devices",
+        "priority": "high",
+        "acceptance_criteria": [
+          "Works on 320px (mobile)",
+          "Works on 768px (tablet)",
+          "Works on 1024px+ (desktop)",
+          "Touch-friendly input sizes",
+          "Appropriate keyboard types (email, text, password)",
+          "No horizontal scrolling"
+        ]
+      },
+      {
+        "feature_id": "SIGNUP-010",
+        "name": "Accessibility",
+        "description": "WCAG AA accessibility compliance",
+        "priority": "high",
+        "acceptance_criteria": [
+          "Keyboard navigation (Tab, Enter)",
+          "Form labels associated with inputs",
+          "Error messages linked to fields",
+          "Sufficient color contrast",
+          "Screen reader compatible",
+          "Focus indicators visible"
+        ]
+      }
+    ],
+
+    "5_task_id_system": {
+      "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+      "prefix_pattern": "{SECTION}-{NUMBER}",
+      "task_categories": [
+        "SETUP (project setup, types)",
+        "FORM (form components)",
+        "STEP1 (account creation step)",
+        "STEP2 (business info step)",
+        "STEP3 (review step)",
+        "STATE (state management)",
+        "VALIDATION (form validation)",
+        "API (backend integration)",
+        "UI (UI components)",
+        "TEST (testing)",
+        "DEPLOY (deployment)"
+      ],
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create TypeScript types for signup data",
+          "phase": "phase_1_setup",
+          "dependencies": [],
+          "estimated_hours": 1
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create FormContext for state management",
+          "phase": "phase_1_setup",
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "VALIDATION-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create validation schemas (Zod/Yup)",
+          "phase": "phase_1_setup",
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "API-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create API client with auth endpoints",
+          "phase": "phase_1_setup",
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "UI-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create ProgressIndicator component",
+          "phase": "phase_1_setup",
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "FORM-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create main SignupForm component wrapper",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["SETUP-002", "UI-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "STEP1-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Build Step 1 component (email, password, confirm)",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["FORM-001", "VALIDATION-001"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "STEP1-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add password strength indicator",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["STEP1-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "STEP1-003",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add show/hide password toggle",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["STEP1-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "STEP2-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Build Step 2 component (business name, category)",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["FORM-001", "VALIDATION-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "STEP2-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create category dropdown/select component",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["STEP2-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "STEP3-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Build Step 3 component (review information)",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["FORM-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "STEP3-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add edit links to return to previous steps",
+          "phase": "phase_2_form_structure",
+          "dependencies": ["STEP3-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "STATE-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Implement form data persistence (localStorage)",
+          "phase": "phase_3_state",
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "STATE-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Handle step navigation and validation",
+          "phase": "phase_3_state",
+          "dependencies": ["STATE-001", "VALIDATION-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "API-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Implement email validation API call",
+          "phase": "phase_3_state",
+          "dependencies": ["API-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "API-003",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Implement user creation API call",
+          "phase": "phase_3_state",
+          "dependencies": ["API-001", "STATE-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "API-004",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Handle session/JWT token after signup",
+          "phase": "phase_3_state",
+          "dependencies": ["API-003"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "UI-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add loading states and spinners",
+          "phase": "phase_3_state",
+          "dependencies": ["FORM-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "UI-003",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add error message components and styling",
+          "phase": "phase_3_state",
+          "dependencies": ["FORM-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "UI-004",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Style all signup components with Tailwind",
+          "phase": "phase_4_styling",
+          "dependencies": ["STEP1-001", "STEP2-001", "STEP3-001"],
+          "estimated_hours": 3
+        },
+        {
+          "id": "UI-005",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Implement responsive design (mobile, tablet, desktop)",
+          "phase": "phase_4_styling",
+          "dependencies": ["UI-004"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "UI-006",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Add form animations (transitions, focus states)",
+          "phase": "phase_4_styling",
+          "dependencies": ["UI-004"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "FORM-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Create app/signup/page.tsx wrapper",
+          "phase": "phase_4_styling",
+          "dependencies": ["FORM-001"],
+          "estimated_hours": 1
+        },
+        {
+          "id": "FORM-003",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Link landing page \"View Demo\" button to signup",
+          "phase": "phase_4_styling",
+          "dependencies": ["FORM-002"],
+          "estimated_hours": 0.5
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Test form validation on all fields",
+          "phase": "phase_5_testing",
+          "dependencies": ["VALIDATION-001"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Test step navigation and data persistence",
+          "phase": "phase_5_testing",
+          "dependencies": ["STATE-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Test API integration and error handling",
+          "phase": "phase_5_testing",
+          "dependencies": ["API-003", "API-004"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Test responsive design on mobile, tablet, desktop",
+          "phase": "phase_5_testing",
+          "dependencies": ["UI-005"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "TEST-005",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Accessibility testing (keyboard nav, screen reader)",
+          "phase": "phase_5_testing",
+          "dependencies": ["FORM-002"],
+          "estimated_hours": 2
+        },
+        {
+          "id": "DEPLOY-001",
+          "workorder_id": "WO-BUSINESS-SIGNUP-FLOW-001",
+          "description": "Deploy signup flow to staging",
+          "phase": "phase_5_testing",
+          "dependencies": ["TEST-004", "TEST-005"],
+          "estimated_hours": 1
+        }
+      ]
+    },
+
+    "6_implementation_phases": [
+      {
+        "phase_id": 1,
+        "name": "Setup & Infrastructure",
+        "description": "Create types, state management, validation schemas, and API client",
+        "tasks": ["SETUP-001", "SETUP-002", "VALIDATION-001", "API-001", "UI-001"],
+        "estimated_duration": "8-10 hours",
+        "dependencies": [],
+        "deliverables": [
+          "TypeScript types for signup data",
+          "FormContext for state management",
+          "Validation schemas (Zod/Yup)",
+          "API client with auth endpoints",
+          "Progress indicator component"
+        ]
+      },
+      {
+        "phase_id": 2,
+        "name": "Form Structure & Components",
+        "description": "Build all three signup steps with form inputs and validation",
+        "tasks": ["FORM-001", "STEP1-001", "STEP1-002", "STEP1-003", "STEP2-001", "STEP2-002", "STEP3-001", "STEP3-002"],
+        "estimated_duration": "13-16 hours",
+        "dependencies": [1],
+        "deliverables": [
+          "Step 1: Create Account (email, password, confirm)",
+          "Step 2: Choose Business (name, category)",
+          "Step 3: Review Information",
+          "All components with validation feedback"
+        ]
+      },
+      {
+        "phase_id": 3,
+        "name": "State & API Integration",
+        "description": "Implement state management, form persistence, and backend integration",
+        "tasks": ["STATE-001", "STATE-002", "API-002", "API-003", "API-004", "UI-002", "UI-003"],
+        "estimated_duration": "11-14 hours",
+        "dependencies": [1, 2],
+        "deliverables": [
+          "Form data persists across steps and page refresh",
+          "Email validation API integration",
+          "User creation API integration",
+          "Session/JWT token handling",
+          "Error messages and loading states"
+        ]
+      },
+      {
+        "phase_id": 4,
+        "name": "Styling & Integration",
+        "description": "Style all components, implement responsive design, integrate with landing page",
+        "tasks": ["UI-004", "UI-005", "UI-006", "FORM-002", "FORM-003"],
+        "estimated_duration": "7-9 hours",
+        "dependencies": [2, 3],
+        "deliverables": [
+          "Fully styled signup flow with Tailwind",
+          "Responsive design (320px to 1920px)",
+          "Form animations and transitions",
+          "Landing page integration (View Demo button)"
+        ]
+      },
+      {
+        "phase_id": 5,
+        "name": "Testing & Deployment",
+        "description": "Comprehensive testing and deployment to staging",
+        "tasks": ["TEST-001", "TEST-002", "TEST-003", "TEST-004", "TEST-005", "DEPLOY-001"],
+        "estimated_duration": "11-13 hours",
+        "dependencies": [3, 4],
+        "deliverables": [
+          "All form validation tested",
+          "Step navigation and data persistence verified",
+          "API integration tested",
+          "Responsive design verified",
+          "Accessibility audit passed",
+          "Deployed to staging"
+        ]
+      }
+    ],
+
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Validation schemas (email, password, business name)",
+        "Form state management (add, update, clear)",
+        "Password strength calculation",
+        "API client methods (mock endpoints)"
+      ],
+      "integration_tests": [
+        "Multi-step form navigation",
+        "Data persistence across steps",
+        "API calls on form submission",
+        "Email validation API integration",
+        "Session token handling after signup",
+        "Error recovery flows"
+      ],
+      "e2e_tests": [
+        "Complete signup flow (Step 1 → 2 → 3 → Submit)",
+        "Form validation at each step",
+        "Back button navigation",
+        "Edit links to return to previous steps",
+        "Error handling and retry"
+      ],
+      "performance_tests": [
+        "Form input debouncing",
+        "API call debouncing for email validation",
+        "Component render optimization",
+        "Form submission loading time"
+      ],
+      "accessibility_tests": [
+        "Keyboard navigation (Tab, Enter, Shift+Tab)",
+        "Form labels and inputs association",
+        "Error messages screen reader compatible",
+        "Focus indicators visible",
+        "Color contrast ratios",
+        "ARIA labels where needed"
+      ],
+      "browser_compatibility": [
+        "Chrome (latest)",
+        "Firefox (latest)",
+        "Safari (latest)",
+        "Edge (latest)"
+      ],
+      "device_testing": [
+        "iPhone (375px)",
+        "Android (360px)",
+        "iPad (768px)",
+        "Desktop (1440px)"
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        "All 3 form steps render correctly",
+        "Form data persists across steps",
+        "Email validation (format and uniqueness)",
+        "Password validation (strength requirements)",
+        "Business category selection",
+        "Successful user account creation",
+        "Session/JWT token generation",
+        "Redirect to dashboard after signup"
+      ],
+      "performance_metrics": [
+        "Form submission < 2 seconds",
+        "Email validation response < 500ms",
+        "Page load < 2 seconds",
+        "No layout shift on validation errors"
+      ],
+      "accessibility_metrics": [
+        "WCAG AA compliance (all criteria pass)",
+        "Lighthouse accessibility score >= 95",
+        "Keyboard navigation works completely",
+        "Color contrast >= 4.5:1"
+      ],
+      "design_metrics": [
+        "Matches design system exactly",
+        "Consistent spacing and typography",
+        "Teal accent color (#0d9488) used correctly",
+        "Error states clearly visible"
+      ],
+      "user_experience": [
+        "Form is intuitive and easy to complete",
+        "Error messages are clear and helpful",
+        "Progress indicator shows current step",
+        "Mobile experience is seamless",
+        "Form completion time < 3 minutes"
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "phase_1_setup": {
+        "tasks": [
+          "☐ SETUP-001: Create types/signup.ts with TypeScript types",
+          "☐ SETUP-002: Create FormContext for state management",
+          "☐ VALIDATION-001: Create validation schemas (Zod/Yup)",
+          "☐ API-001: Create API client with auth endpoints",
+          "☐ UI-001: Create ProgressIndicator component"
+        ],
+        "validation": "Types defined, context works, validation schemas validate inputs, API client has methods, progress indicator renders"
+      },
+      "phase_2_form": {
+        "tasks": [
+          "☐ FORM-001: Create main SignupForm component wrapper",
+          "☐ STEP1-001: Build Step 1 (email, password, confirm password)",
+          "☐ STEP1-002: Add password strength indicator",
+          "☐ STEP1-003: Add show/hide password toggle",
+          "☐ STEP2-001: Build Step 2 (business name, category)",
+          "☐ STEP2-002: Create category dropdown component",
+          "☐ STEP3-001: Build Step 3 (review information)",
+          "☐ STEP3-002: Add edit links to return to previous steps"
+        ],
+        "validation": "All 3 steps render, inputs work, validation feedback displays, navigation between steps works"
+      },
+      "phase_3_state": {
+        "tasks": [
+          "☐ STATE-001: Implement localStorage persistence",
+          "☐ STATE-002: Handle step navigation and validation",
+          "☐ API-002: Implement email validation API call (debounced)",
+          "☐ API-003: Implement user creation API call",
+          "☐ API-004: Handle session/JWT token storage",
+          "☐ UI-002: Add loading states and spinners",
+          "☐ UI-003: Add error message components"
+        ],
+        "validation": "Form data persists, API calls work, tokens stored correctly, errors display, loading states show"
+      },
+      "phase_4_styling": {
+        "tasks": [
+          "☐ UI-004: Style all components with Tailwind CSS",
+          "☐ UI-005: Implement responsive design (mobile, tablet, desktop)",
+          "☐ UI-006: Add form animations and transitions",
+          "☐ FORM-002: Create app/signup/page.tsx wrapper",
+          "☐ FORM-003: Link landing page \"View Demo\" to signup"
+        ],
+        "validation": "All styled with design system colors, responsive on all devices, animations smooth, landing page link works"
+      },
+      "phase_5_testing": {
+        "tasks": [
+          "☐ TEST-001: Test all form validation (email, password, business name)",
+          "☐ TEST-002: Test step navigation and data persistence",
+          "☐ TEST-003: Test API integration and error handling",
+          "☐ TEST-004: Test responsive design on all breakpoints",
+          "☐ TEST-005: Test accessibility (keyboard nav, screen reader)",
+          "☐ DEPLOY-001: Deploy to staging environment"
+        ],
+        "validation": "All tests pass, form is accessible, responsive works, deployed and accessible"
+      }
+    }
+  }
+}

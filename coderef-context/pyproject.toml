@@ -1,0 +1,33 @@
+[project]
+name = "coderef-context"
+version = "1.0.0"
+description = "MCP Server exposing @coderef/core CLI tools to Claude agents"
+readme = "README.md"
+authors = [
+    {name = "willh"},
+    {name = "Claude Code AI"}
+]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = [
+    "mcp",
+    "coderef",
+    "code-analysis",
+    "agent-tools",
+    "semantic-search"
+]
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

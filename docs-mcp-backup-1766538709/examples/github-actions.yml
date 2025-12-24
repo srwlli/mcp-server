@@ -1,0 +1,245 @@
+# GitHub Actions workflow for docs-mcp consistency checking
+#
+# Usage:
+#   1. Copy this file to .github/workflows/consistency-check.yml
+#   2. Adjust configuration variables as needed
+#   3. Ensure docs-mcp server is accessible in CI environment
+#
+# This workflow will:
+#   - Trigger on pull requests and pushes to main
+#   - Auto-detect changed files via git diff
+#   - Run consistency checks against established standards
+#   - Fail the build if violations found (configurable severity)
+#   - Post check results as PR comment
+
+name: Consistency Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+  push:
+    branches: [main]
+
+env:
+  SEVERITY_THRESHOLD: major  # critical|major|minor
+  CHECK_SCOPE: all           # ui_patterns|behavior_patterns|ux_patterns|all
+  FAIL_ON_VIOLATIONS: true
+
+jobs:
+  consistency-check:
+    name: Check Code Consistency
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for git diff
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python (for MCP server)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install docs-mcp server
+        run: |
+          pip install mcp
+          # Clone or install your docs-mcp server
+          # Adjust based on your deployment method
+          git clone https://github.com/your-org/docs-mcp.git /tmp/docs-mcp
+          cd /tmp/docs-mcp
+          pip install -r requirements.txt
+
+      - name: Check if standards exist
+        id: check-standards
+        run: |
+          if [ -d "coderef/standards" ]; then
+            echo "standards_exist=true" >> $GITHUB_OUTPUT
+          else
+            echo "standards_exist=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Establish standards (if needed)
+        if: steps.check-standards.outputs.standards_exist != 'true'
+        run: |
+          echo "📚 No standards found. Establishing standards from codebase..."
+          # Call establish_standards via MCP
+          # This is a placeholder - adjust based on your MCP client setup
+          python3 -m mcp_client call docs-mcp establish_standards \
+            --project_path "${{ github.workspace }}"
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          # Get changed files for PR or push
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="${{ github.event.pull_request.base.sha }}"
+            HEAD_REF="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE_REF="${{ github.event.before }}"
+            HEAD_REF="${{ github.sha }}"
+          fi
+
+          # Get changed .ts, .tsx, .js, .jsx files
+          CHANGED_FILES=$(git diff --name-only "$BASE_REF" "$HEAD_REF" | \
+            grep -E '\.(ts|tsx|js|jsx)$' | \
+            jq -R -s -c 'split("\n") | map(select(length > 0))' || echo '[]')
+
+          echo "files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "Changed files: $CHANGED_FILES"
+
+      - name: Run consistency check
+        id: consistency-check
+        run: |
+          echo "🔍 Running consistency check..."
+
+          # Call check_consistency via MCP
+          # This is a placeholder - adjust based on your MCP client setup
+          RESULT=$(python3 -m mcp_client call docs-mcp check_consistency \
+            --project_path "${{ github.workspace }}" \
+            --files '${{ steps.changed-files.outputs.files }}' \
+            --severity_threshold "${{ env.SEVERITY_THRESHOLD }}" \
+            --scope "${{ env.CHECK_SCOPE }}" \
+            --fail_on_violations "${{ env.FAIL_ON_VIOLATIONS }}")
+
+          # Parse and store results
+          echo "$RESULT" > check-results.json
+
+          STATUS=$(echo "$RESULT" | jq -r '.status // "fail"')
+          VIOLATIONS=$(echo "$RESULT" | jq -r '.violations_found // 0')
+          EXIT_CODE=$(echo "$RESULT" | jq -r '.exit_code // 1')
+
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "violations=$VIOLATIONS" >> $GITHUB_OUTPUT
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+
+          # Display summary
+          echo "### 🔍 Consistency Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: $STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Violations**: $VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Threshold**: ${{ env.SEVERITY_THRESHOLD }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Scope**: ${{ env.CHECK_SCOPE }}" >> $GITHUB_STEP_SUMMARY
+
+          # Exit with appropriate code
+          exit $EXIT_CODE
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: consistency-check-results
+          path: check-results.json
+
+      - name: Comment PR (if violations found)
+        if: github.event_name == 'pull_request' && steps.consistency-check.outputs.violations > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('check-results.json', 'utf8'));
+
+            const violations = results.violations || [];
+            const violationsByFile = {};
+
+            // Group violations by file
+            violations.forEach(v => {
+              if (!violationsByFile[v.file_path]) {
+                violationsByFile[v.file_path] = [];
+              }
+              violationsByFile[v.file_path].push(v);
+            });
+
+            // Build comment
+            let comment = `## ❌ Consistency Check Failed\n\n`;
+            comment += `**${results.violations_found}** violations found (threshold: **${results.severity_threshold}**)\n\n`;
+
+            // Add violations by file
+            for (const [file, fileViolations] of Object.entries(violationsByFile)) {
+              comment += `### 📄 ${file}\n\n`;
+              fileViolations.forEach(v => {
+                comment += `- **Line ${v.line_number}** [${v.severity}]: ${v.message}\n`;
+                if (v.fix_suggestion) {
+                  comment += `  - 💡 Fix: ${v.fix_suggestion}\n`;
+                }
+              });
+              comment += `\n`;
+            }
+
+            comment += `\n---\n`;
+            comment += `💡 **Tip**: Adjust severity threshold with \`SEVERITY_THRESHOLD\` env var (critical|major|minor)`;
+
+            // Post comment
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail workflow if violations found
+        if: steps.consistency-check.outputs.exit_code != '0'
+        run: |
+          echo "::error::Consistency check failed with ${{ steps.consistency-check.outputs.violations }} violations"
+          exit 1
+
+# Optional: Add a job to establish/update standards periodically
+# (Useful for keeping standards in sync with evolving codebase)
+
+  update-standards:
+    name: Update Standards (Weekly)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    # Uncomment and adjust schedule as needed
+    # on:
+    #   schedule:
+    #     - cron: '0 0 * * 0'  # Weekly on Sunday at midnight
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install docs-mcp
+        run: |
+          # Install docs-mcp server
+          pip install mcp
+          # ... (install steps)
+
+      - name: Regenerate standards
+        run: |
+          python3 -m mcp_client call docs-mcp establish_standards \
+            --project_path "${{ github.workspace }}"
+
+      - name: Create PR with updated standards
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: Update coding standards"
+          title: "chore: Update coding standards from codebase analysis"
+          body: |
+            This PR updates the coding standards based on the latest codebase analysis.
+
+            **Changes:**
+            - Regenerated UI patterns
+            - Updated behavior patterns
+            - Refreshed UX standards
+            - Updated component inventory
+
+            Please review the changes to ensure they reflect current best practices.
+          branch: automated/update-standards
+          delete-branch: true

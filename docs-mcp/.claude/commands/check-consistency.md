@@ -1,6 +1,6 @@
 Quick consistency check on modified files in the current project (pre-commit gate).
 
-Call the `mcp__docs-mcp__check_consistency` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__check_consistency` tool with the current working directory as the project_path.
 
 This is a lightweight, fast consistency check that:
 1. Auto-detects git changes (staged files by default)

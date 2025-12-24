@@ -1,0 +1,62 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)",
+      "USER-GUIDE.md (root)"
+    ],
+    "missing": []
+  },
+  "coding_standards": {
+    "available": [
+      "BEHAVIOR-STANDARDS.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ],
+    "missing": [
+      "COMPONENT-PATTERN.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "note": "Reference component matching requires feature name - not yet implemented"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "generators",
+      ".claude\\commands",
+      "coderef\\future",
+      "coderef\\inventory"
+    ],
+    "file_counts": {
+      ".claude\\commands": 26,
+      "generators": 19,
+      "coderef\\inventory": 14,
+      "coderef\\future": 11,
+      "coderef\\archived\\planning-workflow": 8,
+      "templates\\power": 7,
+      "coderef\\archived": 6,
+      "coderef": 5,
+      "coderef\\changelog": 5,
+      "mcp-specific-context": 4
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing coding standards: COMPONENT-PATTERN.md",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

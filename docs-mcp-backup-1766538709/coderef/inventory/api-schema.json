@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "API Inventory Manifest Schema",
+  "description": "Schema for API endpoint discovery and documentation coverage analysis",
+  "type": "object",
+  "required": ["project_name", "project_path", "generated_at", "frameworks", "endpoints", "metrics"],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "description": "Name of the project",
+      "minLength": 1
+    },
+    "project_path": {
+      "type": "string",
+      "description": "Absolute path to project directory",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp when manifest was generated",
+      "format": "date-time"
+    },
+    "frameworks": {
+      "type": "array",
+      "description": "List of detected API frameworks",
+      "items": {
+        "type": "string",
+        "enum": ["fastapi", "flask", "express", "graphql"]
+      }
+    },
+    "endpoints": {
+      "type": "array",
+      "description": "Array of API endpoint objects",
+      "items": {
+        "type": "object",
+        "required": ["path", "method", "framework", "file", "line"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "API endpoint path (e.g., /api/users/{id})",
+            "minLength": 1
+          },
+          "method": {
+            "type": "string",
+            "description": "HTTP method",
+            "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"]
+          },
+          "framework": {
+            "type": "string",
+            "description": "Framework that defines this endpoint",
+            "enum": ["fastapi", "flask", "express", "graphql"]
+          },
+          "file": {
+            "type": "string",
+            "description": "Relative path to source file from project root",
+            "minLength": 1
+          },
+          "line": {
+            "type": "integer",
+            "description": "Line number where endpoint is defined",
+            "minimum": 0
+          },
+          "function": {
+            "type": "string",
+            "description": "Name of handler function"
+          },
+          "parameters": {
+            "type": "array",
+            "description": "List of function parameters",
+            "items": {
+              "type": "string"
+            }
+          },
+          "documented": {
+            "type": "boolean",
+            "description": "Whether endpoint has documentation (docstring or OpenAPI spec)"
+          },
+          "doc_coverage": {
+            "type": "integer",
+            "description": "Documentation coverage score (0-100)",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "Endpoint description from documentation"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Short summary from OpenAPI spec"
+          },
+          "tags": {
+            "type": "array",
+            "description": "OpenAPI tags for grouping endpoints",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deprecated": {
+            "type": "boolean",
+            "description": "Whether endpoint is deprecated"
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "API-level metrics and coverage statistics",
+      "required": ["total_endpoints", "documented_endpoints", "documentation_coverage"],
+      "properties": {
+        "total_endpoints": {
+          "type": "integer",
+          "description": "Total number of API endpoints discovered",
+          "minimum": 0
+        },
+        "documented_endpoints": {
+          "type": "integer",
+          "description": "Number of endpoints with documentation",
+          "minimum": 0
+        },
+        "documentation_coverage": {
+          "type": "integer",
+          "description": "Percentage of endpoints with documentation (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "frameworks_detected": {
+          "type": "array",
+          "description": "List of frameworks found in project",
+          "items": {
+            "type": "string"
+          }
+        },
+        "framework_breakdown": {
+          "type": "object",
+          "description": "Count of endpoints by framework",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "method_breakdown": {
+          "type": "object",
+          "description": "Count of endpoints by HTTP method",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "rest_endpoints": {
+          "type": "integer",
+          "description": "Number of REST endpoints",
+          "minimum": 0
+        },
+        "graphql_endpoints": {
+          "type": "integer",
+          "description": "Number of GraphQL endpoints",
+          "minimum": 0
+        },
+        "deprecated_endpoints": {
+          "type": "integer",
+          "description": "Number of deprecated endpoints",
+          "minimum": 0
+        }
+      }
+    },
+    "openapi_files": {
+      "type": "array",
+      "description": "List of OpenAPI/Swagger files found",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

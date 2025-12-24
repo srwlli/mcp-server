@@ -1,6 +1,6 @@
 Create implementation plan by synthesizing context, analysis, and template into a complete plan.json file.
 
-Ask the user for the feature name (alphanumeric, hyphens, underscores only), then call the `mcp__docs-mcp__create_plan` tool with:
+Ask the user for the feature name (alphanumeric, hyphens, underscores only), then call the `mcp__coderef-docs__create_plan` tool with:
 - project_path: current working directory
 - feature_name: the user-provided feature name
 
@@ -40,7 +40,7 @@ Returns:
 Call the create_plan MCP tool:
 
 ```python
-mcp__docs-mcp__create_plan({
+mcp__coderef-docs__create_plan({
     "project_path": <current_working_directory>,
     "feature_name": <user_provided_feature_name>
 })
@@ -56,7 +56,7 @@ This creates `coderef/working/{feature_name}/plan.json` with:
 Call the validate_implementation_plan MCP tool:
 
 ```python
-mcp__docs-mcp__validate_implementation_plan({
+mcp__coderef-docs__validate_implementation_plan({
     "project_path": <current_working_directory>,
     "plan_file_path": f"coderef/working/{feature_name}/plan.json"
 })
@@ -88,7 +88,7 @@ If validation score < 90:
 After validation passes, log the workorder to both local and orchestrator:
 
 ```python
-mcp__docs-mcp__log_workorder({
+mcp__coderef-docs__log_workorder({
     "project_path": <current_working_directory>,
     "workorder_id": <workorder_id_from_plan>,
     "project_name": <project_folder_name>,
@@ -158,7 +158,7 @@ Next Steps:
 After implementation is complete and deliverables/docs are updated, archive the feature:
 
 ```python
-mcp__docs-mcp__archive_feature({
+mcp__coderef-docs__archive_feature({
     "project_path": <current_working_directory>,
     "feature_name": <feature_name>
 })

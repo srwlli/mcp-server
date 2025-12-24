@@ -1,6 +1,6 @@
 Audit all implementation plans in the project's coderef/working/ directory.
 
-Call the `mcp__docs-mcp__audit_plans` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__audit_plans` tool with the current working directory as the project_path.
 
 This will:
 1. Scan all features in coderef/working/

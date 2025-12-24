@@ -1,6 +1,6 @@
 Assign specific task to agent with workorder scoping
 
-Call the `mcp__docs-mcp__assign_agent_task` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__assign_agent_task` tool with the current working directory as the project_path.
 
 Ask the user for:
 1. Feature name

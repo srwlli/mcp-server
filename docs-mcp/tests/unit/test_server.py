@@ -79,9 +79,9 @@ class TestServerInitialization:
         assert isinstance(server.app, Server)
 
     def test_app_has_name(self):
-        """Server should be named 'docs-mcp'."""
+        """Server should be named 'coderef-docs'."""
         import server
-        assert server.app.name == "docs-mcp"
+        assert server.app.name == "coderef-docs"
 
 
 # ============================================================================

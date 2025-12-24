@@ -1,6 +1,6 @@
 List all available POWER framework documentation templates.
 
-Call the `mcp__docs-mcp__list_templates` tool with no arguments.
+Call the `mcp__coderef-docs__list_templates` tool with no arguments.
 
 Returns a list of all available templates:
 - readme

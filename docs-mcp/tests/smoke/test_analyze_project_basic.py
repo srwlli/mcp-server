@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Basic smoke test for analyze_project_for_planning tool (Tool #2).
-Tests on docs-mcp project itself to verify implementation works.
+Tests on coderef-docs project itself to verify implementation works.
 """
 
 import asyncio
@@ -16,10 +16,10 @@ import tool_handlers
 
 
 async def test_analyze_docs_mcp():
-    """Test analyze_project_for_planning on docs-mcp project itself."""
+    """Test analyze_project_for_planning on coderef-docs project itself."""
     print("Testing analyze_project_for_planning tool...\n")
 
-    # Test on docs-mcp project itself (two levels up from tests/smoke/)
+    # Test on coderef-docs project itself (two levels up from tests/smoke/)
     project_path = str(Path(__file__).parent.parent.parent)
     print(f"Analyzing project: {project_path}\n")
 

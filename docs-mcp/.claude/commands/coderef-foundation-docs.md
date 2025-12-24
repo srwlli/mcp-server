@@ -1,6 +1,6 @@
 Generate comprehensive foundation documentation powered by coderef analysis.
 
-Call the `mcp__docs-mcp__coderef_foundation_docs` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__coderef_foundation_docs` tool with the current working directory as the project_path.
 
 ## What Gets Generated
 

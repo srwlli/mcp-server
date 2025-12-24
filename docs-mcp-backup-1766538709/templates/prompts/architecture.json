@@ -1,0 +1,58 @@
+{
+  "task": "architecture",
+  "instruction": "Evaluate the design and suggest architectural patterns and improvements",
+  "context": {
+    "input": "{USER_DESCRIPTION_OR_CODE}",
+    "focus_areas": ["scalability", "maintainability", "coupling", "separation of concerns"]
+  },
+  "output_schema": {
+    "findings": [
+      {
+        "category": "SCALABILITY|MAINTAINABILITY|COUPLING|DESIGN",
+        "description": "Architectural observation",
+        "location": "component or layer",
+        "severity": "critical|high|medium|low"
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "REC-001",
+        "description": "Architectural improvement",
+        "priority": "high|medium|low",
+        "effort": "small|medium|large"
+      }
+    ],
+    "risks": [
+      {
+        "description": "Architectural risk",
+        "severity": "high|medium|low",
+        "likelihood": "high|medium|low"
+      }
+    ],
+    "metrics": {
+      "confidence": "0-100",
+      "coverage": "comprehensive|partial|surface",
+      "top_priorities": ["ranked architectural concerns"],
+      "summary_stats": {
+        "critical_count": 0,
+        "high_count": 0,
+        "medium_count": 0,
+        "low_count": 0
+      }
+    },
+    "ranked_actions": [
+      {
+        "rank": 1,
+        "action": "Architectural change to make",
+        "reason": "Why this improves the design",
+        "impact": "high|medium|low"
+      }
+    ]
+  },
+  "success_criteria": [
+    "Design patterns identified or suggested",
+    "Scalability concerns addressed",
+    "Coupling issues highlighted",
+    "Clear architectural roadmap provided"
+  ]
+}

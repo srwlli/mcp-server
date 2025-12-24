@@ -1,0 +1,710 @@
+{
+  "title": "Consistency Checker Integration Guide",
+  "version": "1.0.0",
+  "date": "2025-10-09",
+  "purpose": "Comprehensive guide for integrating consistency checking into docs-mcp as MCP tool #8",
+  "
+": {
+    "current_state": {
+      "what_we_have": [
+        "consistency-checker.js - Node.js script (standalone)",
+        "consistency-review-template.json - 100+ check definitions across 15 categories",
+        "consistency-checker-README.md - Usage documentation",
+        "docs-mcp server with 7 MCP tools"
+      ],
+      "what_we_need": [
+        "MCP tool wrapper for consistency checking",
+        "Integration with agentic workflows",
+        "Dual-gate pattern (before/after implementation)",
+        "Project-agnostic implementation"
+      ]
+    },
+    "integration_vision": {
+      "goal": "Validate changes align with established UI/UX/behavior patterns",
+      "use_cases": [
+        "BEFORE: Validate feature plans before implementation",
+        "AFTER: Validate code implementation matches patterns",
+        "Quality gate before changelog updates",
+        "Self-validation for agentic workflows"
+      ],
+      "value_proposition": "Prevents inconsistencies from being introduced, maintains UI/UX quality across features"
+    }
+  },
+
+  "implementation_phases": {
+    "phase_1_planning_gate": {
+      "title": "Planning Gate - Feature Plan Validation",
+      "priority": "HIGH",
+      "complexity": "LOW",
+      "timeline": "1-2 hours",
+      "description": "Wrap existing consistency-checker.js to validate feature plan JSONs",
+      "deliverables": [
+        "MCP tool: check_consistency (planning mode only)",
+        "Subprocess wrapper for Node.js script",
+        "Result parser (markdown → structured output)",
+        "Error handling for script failures"
+      ],
+      "implementation_details": {
+        "tool_name": "check_consistency",
+        "tool_number": 8,
+        "input_schema": {
+          "project_path": {
+            "type": "string",
+            "description": "Absolute path to project directory",
+            "required": true
+          },
+          "reference_plan": {
+            "type": "string",
+            "description": "Filename of reference feature plan JSON (in project_path/coderef/feature-plans/)",
+            "required": true,
+            "example": "upload-action-mvp.json"
+          },
+          "check_plans": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Filenames of feature plans to validate",
+            "required": true,
+            "example": ["export-action-mvp.json", "embed-action-mvp.json"]
+          },
+          "output_report": {
+            "type": "string",
+            "description": "Optional: Custom output filename (default: consistency-report.md)",
+            "required": false,
+            "default": "consistency-report.md"
+          }
+        },
+        "handler_logic": {
+          "step_1": "Validate project_path exists",
+          "step_2": "Construct paths: project_path/coderef/feature-plans/",
+          "step_3": "Verify reference_plan exists",
+          "step_4": "Verify all check_plans exist",
+          "step_5": "Copy consistency-checker.js to project if missing",
+          "step_6": "Copy consistency-review-template.json to project if missing",
+          "step_7": "Run: node consistency-checker.js -r reference -p plans -o output",
+          "step_8": "Capture exit code (0=pass, 1=fixes_needed, 2=error)",
+          "step_9": "Parse markdown report",
+          "step_10": "Return structured results with summary"
+        },
+        "output_format": {
+          "status": "pass | fixes_needed | error",
+          "exit_code": 0,
+          "summary": {
+            "total_items": 100,
+            "consistent": 92,
+            "contextual": 5,
+            "fix_needed": 3,
+            "missing": 0
+          },
+          "features": [
+            {
+              "file": "export-action-mvp.json",
+              "consistent": 92,
+              "contextual": 5,
+              "fix_needed": 3,
+              "missing": 0
+            }
+          ],
+          "report_path": "project_path/coderef/feature-plans/consistency-report.md",
+          "action_items": [
+            {
+              "feature": "export-action-mvp.json",
+              "category": "Modal Styling Requirements",
+              "property": "bottomSheet.borderTopLeftRadius",
+              "issue": "Expected: 20, Got: 16"
+            }
+          ],
+          "message": "3 fixes required before implementation"
+        },
+        "error_handling": {
+          "missing_node": "Return error: Node.js not found. Install Node.js to use consistency checking.",
+          "missing_script": "Auto-copy consistency-checker.js from docs-mcp/tools/ to project",
+          "missing_template": "Auto-copy consistency-review-template.json from docs-mcp/tools/ to project",
+          "invalid_json": "Return error with JSON parse details",
+          "script_failure": "Return error with stderr output"
+        }
+      }
+    },
+
+    "phase_2_implementation_gate": {
+      "title": "Implementation Gate - Code Validation",
+      "priority": "MEDIUM",
+      "complexity": "HIGH",
+      "timeline": "4-8 hours",
+      "description": "Validate actual code implementation against patterns",
+      "status": "FUTURE",
+      "implementation_approaches": {
+        "option_a_agent_self_review": {
+          "description": "Agent reads template and reviews own code",
+          "pros": [
+            "Leverages agent intelligence",
+            "No complex code parsing needed",
+            "Flexible and adaptable"
+          ],
+          "cons": [
+            "Relies on agent capability",
+            "Less deterministic than automated checks"
+          ],
+          "implementation": "Tool returns instructions for agent to review code against template"
+        },
+        "option_b_automated_analysis": {
+          "description": "Parse TypeScript/JSX and validate patterns",
+          "pros": [
+            "Deterministic and reproducible",
+            "Fast execution",
+            "No agent dependency"
+          ],
+          "cons": [
+            "Complex to build",
+            "Requires AST parsing",
+            "Language-specific"
+          ],
+          "implementation": "Build code parser using TypeScript compiler API or similar"
+        },
+        "option_c_hybrid": {
+          "description": "Automated checks + agent review for complex patterns",
+          "pros": [
+            "Best of both worlds",
+            "Catches mechanical issues automatically",
+            "Agent handles nuanced patterns"
+          ],
+          "cons": [
+            "More complex to build",
+            "Two validation passes"
+          ],
+          "implementation": "Run automated linting, then agent reviews report + code"
+        }
+      },
+      "recommended_approach": "option_a_agent_self_review",
+      "rationale": "Start simple, leverage agent intelligence, iterate based on results"
+    },
+
+    "phase_3_workflow_integration": {
+      "title": "Agentic Workflow Integration",
+      "priority": "HIGH",
+      "complexity": "LOW",
+      "timeline": "30 minutes",
+      "description": "Integrate consistency checking into agent workflows",
+      "deliverables": [
+        "Workflow guide for agents",
+        "Integration with update_changelog",
+        "Quality gate enforcement (optional)"
+      ],
+      "agentic_workflow_pattern": {
+        "step_1_design": {
+          "action": "Agent designs new feature or refactor",
+          "output": "Feature plan JSON in coderef/feature-plans/"
+        },
+        "step_2_planning_gate": {
+          "action": "check_consistency(stage='planning')",
+          "decision": "If ❌ fixes_needed: Fix plan and recheck. If ✅ pass: Proceed."
+        },
+        "step_3_implement": {
+          "action": "Agent writes code based on approved plan",
+          "output": "Component files, services, etc."
+        },
+        "step_4_implementation_gate": {
+          "action": "check_consistency(stage='implementation') [FUTURE]",
+          "decision": "If ❌ fixes_needed: Fix code and recheck. If ✅ pass: Proceed."
+        },
+        "step_5_document": {
+          "action": "update_changelog(project_path, version)",
+          "output": "Changelog entry documenting changes"
+        }
+      }
+    }
+  },
+
+  "technical_specifications": {
+    "file_locations": {
+      "docs_mcp_tools": "C:/Users/willh/.mcp-servers/docs-mcp/tools/",
+      "consistency_checker_script": "docs-mcp/tools/consistency-checker.js",
+      "consistency_template": "docs-mcp/tools/consistency-review-template.json",
+      "project_feature_plans": "project_path/coderef/feature-plans/",
+      "project_reports": "project_path/coderef/feature-plans/consistency-report.md"
+    },
+    "dependencies": {
+      "node_js": {
+        "required": true,
+        "min_version": "14.0.0",
+        "check_command": "node --version",
+        "install_instructions": "https://nodejs.org/"
+      },
+      "python_subprocess": {
+        "required": true,
+        "module": "subprocess",
+        "usage": "Run Node.js script from Python"
+      }
+    },
+    "subprocess_command": {
+      "format": "node {script_path} -r {reference} -p {plans} -o {output}",
+      "example": "node consistency-checker.js -r upload.json -p export.json embed.json -o report.md",
+      "working_directory": "project_path/coderef/feature-plans/",
+      "capture_output": true,
+      "capture_stderr": true,
+      "timeout": 60
+    }
+  },
+
+  "directory_structure": {
+    "docs_mcp_additions": {
+      "tools/": {
+        "description": "New directory for consistency checker assets",
+        "files": [
+          "consistency-checker.js",
+          "consistency-review-template.json",
+          "consistency-checker-README.md"
+        ]
+      }
+    },
+    "target_project_structure": {
+      "coderef/": {
+        "feature-plans/": {
+          "description": "Feature plan JSONs and consistency reports",
+          "files": [
+            "upload-action-mvp.json (reference)",
+            "export-action-mvp.json",
+            "embed-action-mvp.json",
+            "publish-action-mvp.json",
+            "consistency-report.md (generated)",
+            "consistency-checker.js (copied from docs-mcp)",
+            "consistency-review-template.json (copied from docs-mcp)"
+          ]
+        },
+        "changelog/": {
+          "description": "Existing changelog system",
+          "files": ["CHANGELOG.json", "schema.json", "__init__.py"]
+        },
+        "foundation-docs/": {
+          "description": "Existing documentation",
+          "files": ["README.md", "ARCHITECTURE.md", "API.md", "COMPONENTS.md", "SCHEMA.md", "USER-GUIDE.md"]
+        }
+      }
+    }
+  },
+
+  "implementation_steps": {
+    "step_1_prepare_assets": {
+      "action": "Create tools/ directory in docs-mcp",
+      "commands": [
+        "mkdir C:/Users/willh/.mcp-servers/docs-mcp/tools",
+        "Copy consistency-checker.js to tools/",
+        "Copy consistency-review-template.json to tools/",
+        "Copy consistency-checker-README.md to tools/"
+      ],
+      "verification": "Verify all 3 files exist in tools/ directory"
+    },
+    "step_2_add_tool_schema": {
+      "action": "Add check_consistency to list_tools()",
+      "location": "server.py, inside @app.list_tools()",
+      "code": {
+        "tool_definition": {
+          "name": "check_consistency",
+          "description": "Validate feature plans align with established UI/UX patterns. Run BEFORE implementation to catch design inconsistencies. Compares feature plan JSONs against reference implementation using 100+ checks across 15 categories.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "project_path": {
+                "type": "string",
+                "description": "Absolute path to project directory"
+              },
+              "reference_plan": {
+                "type": "string",
+                "description": "Filename of reference feature plan JSON (must exist in project_path/coderef/feature-plans/)"
+              },
+              "check_plans": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Filenames of feature plans to validate (must exist in project_path/coderef/feature-plans/)"
+              },
+              "output_report": {
+                "type": "string",
+                "description": "Optional: Custom output filename (default: consistency-report.md)"
+              }
+            },
+            "required": ["project_path", "reference_plan", "check_plans"]
+          }
+        }
+      }
+    },
+    "step_3_add_tool_handler": {
+      "action": "Add check_consistency handler to call_tool()",
+      "location": "server.py, inside @app.call_tool()",
+      "pseudocode": [
+        "Extract arguments: project_path, reference_plan, check_plans, output_report",
+        "Validate project_path exists and is directory",
+        "Construct feature_plans_dir = project_path / 'coderef' / 'feature-plans'",
+        "Create feature_plans_dir if it doesn't exist",
+        "Verify reference_plan exists in feature_plans_dir",
+        "Verify all check_plans exist in feature_plans_dir",
+        "Copy consistency-checker.js to feature_plans_dir if missing",
+        "Copy consistency-review-template.json to feature_plans_dir if missing",
+        "Build subprocess command",
+        "Run subprocess with timeout",
+        "Capture stdout, stderr, exit_code",
+        "Parse markdown report",
+        "Extract summary statistics",
+        "Build structured response",
+        "Return TextContent with results"
+      ]
+    },
+    "step_4_test_implementation": {
+      "action": "Test check_consistency tool",
+      "test_cases": [
+        {
+          "name": "Valid feature plans - all pass",
+          "setup": "Create reference.json and consistent-plan.json",
+          "expected": "exit_code=0, status='pass', no action items"
+        },
+        {
+          "name": "Invalid feature plan - fixes needed",
+          "setup": "Create plan with inconsistent values",
+          "expected": "exit_code=1, status='fixes_needed', action items listed"
+        },
+        {
+          "name": "Missing Node.js",
+          "setup": "Simulate Node.js not installed",
+          "expected": "Error message with install instructions"
+        },
+        {
+          "name": "Missing reference file",
+          "setup": "Reference file doesn't exist",
+          "expected": "Error: reference file not found"
+        },
+        {
+          "name": "Invalid JSON syntax",
+          "setup": "Plan file has JSON parse error",
+          "expected": "Error with JSON parse details"
+        }
+      ]
+    },
+    "step_5_update_changelog": {
+      "action": "Document addition of check_consistency tool",
+      "command": "add_changelog_entry(project_path='docs-mcp', version='1.0.4', ...)"
+    }
+  },
+
+  "usage_examples": {
+    "example_1_validate_single_plan": {
+      "scenario": "Validate new export feature plan against upload reference",
+      "command": {
+        "tool": "check_consistency",
+        "arguments": {
+          "project_path": "C:/Users/willh/Desktop/projects/sidebar-app",
+          "reference_plan": "upload-action-mvp.json",
+          "check_plans": ["export-action-mvp.json"]
+        }
+      },
+      "expected_output": {
+        "status": "pass",
+        "summary": {
+          "total_items": 100,
+          "consistent": 95,
+          "contextual": 5,
+          "fix_needed": 0,
+          "missing": 0
+        },
+        "message": "✅ All checks passed! Feature plan is consistent with reference."
+      }
+    },
+    "example_2_validate_multiple_plans": {
+      "scenario": "Validate three new feature plans",
+      "command": {
+        "tool": "check_consistency",
+        "arguments": {
+          "project_path": "C:/Users/willh/Desktop/projects/sidebar-app",
+          "reference_plan": "upload-action-mvp.json",
+          "check_plans": [
+            "export-action-mvp.json",
+            "embed-action-mvp.json",
+            "publish-action-mvp.json"
+          ]
+        }
+      },
+      "expected_output": {
+        "status": "fixes_needed",
+        "summary": {
+          "total_items": 100,
+          "consistent": 92,
+          "contextual": 5,
+          "fix_needed": 3,
+          "missing": 0
+        },
+        "action_items": [
+          {
+            "feature": "export-action-mvp.json",
+            "category": "Modal Styling Requirements",
+            "property": "bottomSheet.borderTopLeftRadius",
+            "issue": "Expected: 20, Got: 16"
+          }
+        ],
+        "message": "❌ 3 fixes required. See action items above."
+      }
+    },
+    "example_3_agentic_workflow": {
+      "scenario": "Agent validates own feature plan before implementation",
+      "workflow": [
+        "1. Agent designs feature: creates export-action-mvp.json",
+        "2. Agent calls: check_consistency(...)",
+        "3. Tool returns: ❌ 3 fixes needed",
+        "4. Agent reviews action items",
+        "5. Agent fixes: Updates export-action-mvp.json",
+        "6. Agent rechecks: check_consistency(...)",
+        "7. Tool returns: ✅ All checks passed",
+        "8. Agent proceeds: Begins implementation"
+      ]
+    }
+  },
+
+  "error_handling": {
+    "error_scenarios": [
+      {
+        "error": "Node.js not installed",
+        "detection": "subprocess.CalledProcessError or 'node' command not found",
+        "response": "Error: Node.js not found. Please install Node.js (https://nodejs.org/) to use consistency checking.",
+        "recovery": "User installs Node.js and retries"
+      },
+      {
+        "error": "Project path doesn't exist",
+        "detection": "Path.exists() returns False",
+        "response": "Error: Project path does not exist: {path}",
+        "recovery": "User provides correct path"
+      },
+      {
+        "error": "Feature plans directory missing",
+        "detection": "feature_plans_dir doesn't exist",
+        "response": "Creating feature plans directory: {path}",
+        "recovery": "Auto-create directory"
+      },
+      {
+        "error": "Reference plan not found",
+        "detection": "reference_plan file doesn't exist",
+        "response": "Error: Reference plan '{filename}' not found in {directory}. Available: {list_files}",
+        "recovery": "User provides correct filename or creates reference plan"
+      },
+      {
+        "error": "Check plan not found",
+        "detection": "One or more check_plans files don't exist",
+        "response": "Error: Feature plan '{filename}' not found in {directory}. Available: {list_files}",
+        "recovery": "User provides correct filenames"
+      },
+      {
+        "error": "JSON parse error",
+        "detection": "consistency-checker.js returns exit code 2 with parse error",
+        "response": "Error: Invalid JSON in {filename}. Details: {parse_error}",
+        "recovery": "User fixes JSON syntax"
+      },
+      {
+        "error": "Script timeout",
+        "detection": "subprocess timeout exceeded (60s)",
+        "response": "Error: Consistency check timed out. Large feature plans may take longer.",
+        "recovery": "Increase timeout or split into smaller checks"
+      },
+      {
+        "error": "Missing consistency-checker.js",
+        "detection": "Script file doesn't exist in feature_plans_dir",
+        "response": "Copying consistency-checker.js to project...",
+        "recovery": "Auto-copy from docs-mcp/tools/"
+      },
+      {
+        "error": "Missing template",
+        "detection": "Template file doesn't exist in feature_plans_dir",
+        "response": "Copying consistency-review-template.json to project...",
+        "recovery": "Auto-copy from docs-mcp/tools/"
+      }
+    ]
+  },
+
+  "testing_strategy": {
+    "unit_tests": [
+      {
+        "test": "test_validate_project_path",
+        "checks": ["Path validation", "Directory existence", "Error handling"]
+      },
+      {
+        "test": "test_construct_subprocess_command",
+        "checks": ["Correct command format", "Argument escaping", "Path handling"]
+      },
+      {
+        "test": "test_parse_markdown_report",
+        "checks": ["Extract summary stats", "Parse action items", "Handle empty reports"]
+      },
+      {
+        "test": "test_auto_copy_assets",
+        "checks": ["Copy script if missing", "Copy template if missing", "Preserve existing files"]
+      }
+    ],
+    "integration_tests": [
+      {
+        "test": "test_end_to_end_pass",
+        "scenario": "All checks pass",
+        "expected": "exit_code=0, status='pass'"
+      },
+      {
+        "test": "test_end_to_end_fixes_needed",
+        "scenario": "Some checks fail",
+        "expected": "exit_code=1, status='fixes_needed', action_items present"
+      },
+      {
+        "test": "test_missing_node",
+        "scenario": "Node.js not installed",
+        "expected": "Error with install instructions"
+      }
+    ],
+    "manual_tests": [
+      {
+        "test": "Real project validation",
+        "steps": [
+          "Create feature plans in sidebar-app",
+          "Run check_consistency",
+          "Verify report accuracy",
+          "Fix issues",
+          "Re-run and verify pass"
+        ]
+      }
+    ]
+  },
+
+  "documentation_updates": {
+    "readme_additions": {
+      "section": "MCP Tools",
+      "content": "8. **check_consistency** - Validate feature plans against reference (planning gate)"
+    },
+    "user_guide_additions": {
+      "section": "Using Consistency Checking",
+      "subsections": [
+        "What Gets Checked (15 categories, 100+ items)",
+        "Before Implementation: Validate Plans",
+        "Reading Reports: ✅ ⚠️ ❌ symbols",
+        "Fixing Inconsistencies",
+        "Customizing Templates"
+      ]
+    },
+    "architecture_updates": {
+      "section": "System Topology",
+      "additions": [
+        "check_consistency tool",
+        "Subprocess integration with Node.js",
+        "Quality gates in agentic workflow"
+      ]
+    },
+    "api_documentation": {
+      "endpoint": "check_consistency",
+      "sections": [
+        "Tool Schema",
+        "Input Parameters",
+        "Output Format",
+        "Error Responses",
+        "Usage Examples"
+      ]
+    }
+  },
+
+  "future_enhancements": {
+    "phase_2_enhancements": [
+      {
+        "feature": "Implementation gate (code validation)",
+        "priority": "MEDIUM",
+        "description": "Validate actual code against patterns"
+      },
+      {
+        "feature": "Custom templates per project",
+        "priority": "LOW",
+        "description": "Allow projects to define their own consistency rules"
+      },
+      {
+        "feature": "Progressive enhancement",
+        "priority": "LOW",
+        "description": "Add new checks without breaking existing validations"
+      },
+      {
+        "feature": "CI/CD integration examples",
+        "priority": "LOW",
+        "description": "GitHub Actions, GitLab CI templates"
+      }
+    ],
+    "potential_improvements": [
+      "Visual report format (HTML)",
+      "Trend analysis (consistency over time)",
+      "Auto-fix suggestions",
+      "IDE integration",
+      "Real-time validation during planning"
+    ]
+  },
+
+  "success_criteria": {
+    "phase_1_complete": [
+      "✅ check_consistency tool registered (tool #8)",
+      "✅ Validates feature plan JSONs",
+      "✅ Returns structured results",
+      "✅ Generates markdown report",
+      "✅ Handles errors gracefully",
+      "✅ Auto-copies required assets",
+      "✅ Works on any project",
+      "✅ Tested with real feature plans",
+      "✅ Documentation updated",
+      "✅ Changelog entry added"
+    ],
+    "adoption_metrics": [
+      "Agents use check_consistency before implementation",
+      "Consistency issues caught early",
+      "Reduced UI/UX deviations",
+      "Faster code reviews (patterns pre-validated)"
+    ]
+  },
+
+  "open_questions": {
+    "questions": [
+      {
+        "question": "Should consistency checking be mandatory before changelog updates?",
+        "options": [
+          "A) Enforce: update_changelog requires passing check first",
+          "B) Recommend: Suggest but don't block",
+          "C) Optional: Available but not promoted"
+        ],
+        "recommendation": "B - Recommend but don't enforce initially"
+      },
+      {
+        "question": "Where should consistency-checker.js live long-term?",
+        "options": [
+          "A) Copied to each project (current approach)",
+          "B) Run from docs-mcp installation only",
+          "C) Published as npm package"
+        ],
+        "recommendation": "A for now, C for future scalability"
+      },
+      {
+        "question": "Should template customization be supported?",
+        "options": [
+          "A) Yes, allow per-project templates",
+          "B) No, enforce standard template",
+          "C) Hybrid: Standard template with optional overrides"
+        ],
+        "recommendation": "C - Standard with overrides for edge cases"
+      }
+    ]
+  },
+
+  "next_actions": {
+    "immediate": [
+      "Review this guide and refine plan",
+      "Create tools/ directory in docs-mcp",
+      "Copy consistency assets to tools/",
+      "Implement check_consistency tool (Phase 1)",
+      "Test with sidebar-app feature plans",
+      "Document in USER-GUIDE.md",
+      "Add changelog entry"
+    ],
+    "short_term": [
+      "Gather usage feedback",
+      "Refine error messages",
+      "Add more examples to documentation",
+      "Consider Phase 2 implementation gate"
+    ],
+    "long_term": [
+      "Evaluate npm package approach",
+      "Build visual report format",
+      "Integrate with CI/CD systems",
+      "Add trend analysis features"
+    ]
+  }
+}

@@ -27,7 +27,7 @@ from type_defs import ValidationResultDict
 
 
 # Module-level constants
-DOCS_MCP_PATH = Path(__file__).parent  # Use docs-mcp itself as test project
+DOCS_MCP_PATH = Path(__file__).parent  # Use coderef-docs itself as test project
 
 
 # Test Fixtures: Validation Result Structures (TEST-014)

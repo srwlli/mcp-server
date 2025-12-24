@@ -1,0 +1,585 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "rename-docs-mcp-to-coderef-docs",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-24T00:45:00Z",
+    "has_context": true,
+    "has_analysis": false,
+    "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001"
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [
+          "README.md - Installation and usage instructions",
+          "CLAUDE.md - AI context documentation",
+          "user-guide.md - User guide"
+        ],
+        "missing": [
+          "ARCHITECTURE.md - Could document system architecture"
+        ]
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "No explicit coding standards file, but patterns exist in codebase"
+        ]
+      },
+      "reference_components": {
+        "primary": "server.py - Shows current Server('docs-mcp') initialization pattern",
+        "secondary": [
+          "tool_handlers.py - Contains tool name references",
+          "constants.py - Contains server name constants"
+        ]
+      },
+      "key_patterns_identified": [
+        "Server name appears in ~300+ locations across codebase",
+        "Tool names follow mcp__docs-mcp__* pattern (~200+ occurrences)",
+        "Consistent use of constants.py for configuration values",
+        "MCP standard naming convention for tool discovery",
+        "Modular handler pattern for tool implementation"
+      ],
+      "technology_stack": {
+        "languages": [
+          "Python 3.11+"
+        ],
+        "frameworks": [
+          "MCP SDK 1.0.0",
+          "FastAPI (indirectly through MCP)"
+        ],
+        "key_libraries": [
+          "mcp@1.0.0 - Model Context Protocol",
+          "pydantic - Validation",
+          "pytest - Testing"
+        ]
+      },
+      "gaps_and_risks": [
+        "No automated find-replace tool (requires careful manual updates)",
+        "Directory rename requires git mv to preserve history",
+        "Cross-references in multiple MCP servers need verification",
+        "Tool names are breaking change (old names stop working)"
+      ]
+    },
+
+    "1_executive_summary": {
+      "purpose": "Enable users to use the rebranded coderef-docs server by systematically renaming all references from docs-mcp throughout the codebase, ensuring all tools remain discoverable and functional under the new naming scheme",
+      "value_proposition": [
+        "Aligns server naming with coderef ecosystem integration",
+        "Improves discoverability by using more descriptive name",
+        "Consolidates documentation generation focus with coderef functionality"
+      ],
+      "real_world_analogy": "Like updating a person's professional name across all official documents - business cards, email, LinkedIn, contracts, etc. Must be systematic to avoid confusion.",
+      "use_case": "User installs renamed server → discovers it as mcp__coderef-docs__* tools → uses new documentation generation capabilities → references are consistent throughout ecosystem",
+      "output": "Renamed Python package, updated all tool names in MCP registry, updated documentation and examples, renamed directory, verified all tools discoverable with new prefix"
+    },
+
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "complexity": "high (30+ files affected, 300+ string replacements, systematic but straightforward find-replace operations)",
+      "scope": "Large - 30+ files across multiple categories (Python, config, docs, tests, commands), entire server name changes (breaking change)",
+      "file_system_risk": "medium (reads/writes many files, directory rename at end, git history preservation required)",
+      "dependencies": [
+        "No new external dependencies"
+      ],
+      "performance_concerns": [
+        "None - renaming operation is one-time task"
+      ],
+      "security_considerations": [
+        "Ensure all tool name references updated to prevent unexpected 404 errors on old tool names",
+        "Verify configuration files updated correctly"
+      ],
+      "breaking_changes": "major - old tool names (mcp__docs-mcp__*) will no longer work, users must update configurations to reference mcp__coderef-docs__*"
+    },
+
+    "3_current_state_analysis": {
+      "affected_files": [
+        "MODIFIED: server.py:62 - Server('docs-mcp') → Server('coderef-docs')",
+        "MODIFIED: tool_handlers.py - Update internal references if any",
+        "MODIFIED: constants.py - SERVER_NAME constant",
+        "MODIFIED: logger_config.py - Logger name initialization",
+        "MODIFIED: validation.py - Any validation references",
+        "MODIFIED: error_responses.py - Error message references",
+        "MODIFIED: pyproject.toml - Package name, URLs, metadata",
+        "MODIFIED: .claude/commands.json - Tool name registry (200+ occurrences)",
+        "MODIFIED: README.md - Title, installation examples, tool names",
+        "MODIFIED: CLAUDE.md - Version history, tool references",
+        "MODIFIED: user-guide.md - Usage examples",
+        "MODIFIED: .claude/commands/*.md (~10+ files) - Command references",
+        "MODIFIED: tests/conftest.py - Server name fixtures",
+        "MODIFIED: tests/test_server.py - Assertions checking server name",
+        "MODIFIED: tests/unit/test_*.py - Tool name mocking",
+        "MODIFIED: coderef/changelog/CHANGELOG.json - Update entry",
+        "MODIFIED: coderef/workorder-log.txt - Add workorder entry",
+        "RENAMED: ~/.mcp-servers/docs-mcp → ~/.mcp-servers/coderef-docs"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "MCP SDK - Server initialization requires correct name",
+          "Tool handlers - All 11 tools use discovery name",
+          "Constants module - SERVER_NAME constant used throughout"
+        ],
+        "existing_external": [
+          "mcp@1.0.0 - MCP protocol compliance",
+          "pydantic - Configuration validation",
+          "pytest - Testing framework"
+        ],
+        "new_external": [],
+        "new_internal": []
+      },
+      "architecture_context": "System-wide rename at MCP protocol level. All tools are stateless MCP handlers - renaming affects only discovery/invocation names, not implementation. Pattern: 'Server name' → 'Tool prefix mcp__*' → 'Tool availability'. Breaking change: old tool names stop working, requiring users to update configurations."
+    },
+
+    "4_key_features": {
+      "primary_features": [
+        "Rename server from docs-mcp to coderef-docs in server.py initialization",
+        "Update all ~200 MCP tool name references (mcp__docs-mcp__* → mcp__coderef-docs__*) across codebase",
+        "Update Python package and import statements to use new naming convention",
+        "Update all documentation (README, CLAUDE, user-guide) to reflect new server name",
+        "Rename directory from ~/.mcp-servers/docs-mcp to ~/.mcp-servers/coderef-docs using git mv to preserve history"
+      ],
+      "secondary_features": [
+        "Update configuration files (pyproject.toml, commands.json) with new metadata",
+        "Update test fixtures and assertions to use new server name",
+        "Update changelog with breaking change entry"
+      ],
+      "edge_case_handling": [
+        "Verify no slash command name conflicts with coderef-docs prefix in other MCP servers",
+        "Ensure cross-references in other MCP servers (hello-world-mcp, personas-mcp) are not affected",
+        "Handle any hardcoded string references in error messages or logs"
+      ],
+      "configuration_options": [
+        "None"
+      ]
+    },
+
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+        "name": "Rename Docs MCP To Coderef Docs",
+        "feature_dir": "coderef/working/rename-docs-mcp-to-coderef-docs",
+        "created_at": "2025-12-24T00:45:00Z"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update server.py line 62 from Server('docs-mcp') to Server('coderef-docs') to initialize MCP server with new name",
+          "category": "setup"
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update constants.py to rename SERVER_NAME constant from 'docs-mcp' to 'coderef-docs' if it exists",
+          "category": "setup"
+        },
+        {
+          "id": "SETUP-003",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update logger_config.py to use 'coderef-docs' instead of 'docs-mcp' in logger initialization",
+          "category": "setup"
+        },
+        {
+          "id": "SETUP-004",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update pyproject.toml [project] name from docs-mcp to coderef-docs, update repository URLs and package metadata",
+          "category": "setup"
+        },
+        {
+          "id": "CONFIG-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update .claude/commands.json to rename all tool references from mcp__docs-mcp__ to mcp__coderef-docs__ (~200+ occurrences)",
+          "category": "configuration"
+        },
+        {
+          "id": "CONFIG-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Find and replace 'docs-mcp' with 'coderef-docs' in tool_handlers.py, validation.py, error_responses.py and other utility modules",
+          "category": "configuration"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update README.md title, installation instructions, usage examples, and tool references to use coderef-docs name throughout",
+          "category": "documentation"
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update CLAUDE.md version history, tool catalog, slash commands section, and all tool name references to use mcp__coderef-docs__ prefix",
+          "category": "documentation"
+        },
+        {
+          "id": "DOC-003",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update user-guide.md usage examples, tool references, and any docs-mcp specific instructions to use coderef-docs",
+          "category": "documentation"
+        },
+        {
+          "id": "DOC-004",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update all .claude/commands/*.md files (~10+) to reference mcp__coderef-docs__ prefix instead of mcp__docs-mcp__",
+          "category": "documentation"
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update tests/conftest.py fixtures to initialize Server('coderef-docs') instead of Server('docs-mcp')",
+          "category": "testing"
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update tests/test_server.py assertions checking for 'docs-mcp' to check for 'coderef-docs' instead",
+          "category": "testing"
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Update test mocking and tool name references in tests/unit/*.py to use mcp__coderef-docs__ prefix",
+          "category": "testing"
+        },
+        {
+          "id": "TEST-004",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Run full test suite (pytest) to verify all 318 unit tests pass with renamed server",
+          "category": "testing"
+        },
+        {
+          "id": "VER-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Search entire codebase for remaining 'docs-mcp' references (excluding archived files) and verify zero matches",
+          "category": "verification"
+        },
+        {
+          "id": "VER-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Verify all 11 tools are discoverable via tool discovery with mcp__coderef-docs__* prefix",
+          "category": "verification"
+        },
+        {
+          "id": "VER-003",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Run build script and verify project builds successfully without errors",
+          "category": "verification"
+        },
+        {
+          "id": "VER-004",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Start server and verify it initializes with name 'coderef-docs' and all tools are accessible",
+          "category": "verification"
+        },
+        {
+          "id": "GIT-001",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Use git mv command to rename ~/.mcp-servers/docs-mcp directory to ~/.mcp-servers/coderef-docs to preserve git history",
+          "category": "git"
+        },
+        {
+          "id": "GIT-002",
+          "workorder_id": "WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001",
+          "description": "Create git commit with message 'refactor(server): rename docs-mcp to coderef-docs (breaking change)' and verify git history preserved",
+          "category": "git"
+        }
+      ]
+    },
+
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Python Core Files Update",
+          "description": "Update primary Python files with new server name and verify imports",
+          "complexity": "low",
+          "effort_level": 2,
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002",
+            "SETUP-003"
+          ],
+          "completion_criteria": "All Python core files updated, no import errors, constants use new name",
+          "deliverables": [
+            "server.py updated with Server('coderef-docs')",
+            "constants.py updated with new SERVER_NAME",
+            "logger_config.py updated with new logger name"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Configuration and Metadata Update",
+          "description": "Update configuration files, package metadata, and tool registry",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "SETUP-004",
+            "CONFIG-001",
+            "CONFIG-002"
+          ],
+          "completion_criteria": "pyproject.toml updated, all tool names in registry changed, no hardcoded 'docs-mcp' references remain in config files",
+          "deliverables": [
+            "pyproject.toml with updated package name",
+            ".claude/commands.json with all tool references updated",
+            "Utility modules updated with new naming"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Documentation Update",
+          "description": "Update all user-facing and developer documentation",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "DOC-001",
+            "DOC-002",
+            "DOC-003",
+            "DOC-004"
+          ],
+          "completion_criteria": "All documentation files updated, examples use coderef-docs, tool names reference mcp__coderef-docs__ prefix",
+          "deliverables": [
+            "README.md with new server branding",
+            "CLAUDE.md updated with version history",
+            "user-guide.md with new examples",
+            "All command files updated with new prefix"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Testing and Verification",
+          "description": "Update tests, run full test suite, verify all references updated",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003",
+            "TEST-004",
+            "VER-001",
+            "VER-002",
+            "VER-003",
+            "VER-004"
+          ],
+          "completion_criteria": "All 318 tests passing, zero 'docs-mcp' references found, tools discoverable, server starts successfully",
+          "deliverables": [
+            "Updated test fixtures and assertions",
+            "Full test suite passing (pytest report)",
+            "Verification checklist completed",
+            "Server startup verification log"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Git Finalization",
+          "description": "Preserve git history during directory rename and commit changes",
+          "complexity": "low",
+          "effort_level": 2,
+          "tasks": [
+            "GIT-001",
+            "GIT-002"
+          ],
+          "completion_criteria": "Directory renamed using git mv, all changes committed, git history preserved",
+          "deliverables": [
+            "Directory rename via git mv (preserves history)",
+            "Git commit with breaking change annotation",
+            "Verified git log shows complete history"
+          ]
+        }
+      ]
+    },
+
+    "7_testing_strategy": {
+      "unit_tests": {
+        "scope": "Individual functions and configuration loading",
+        "coverage_target": "80-90% for affected modules",
+        "tests": [
+          "test_server_initialization_with_coderef_docs_name - Verify Server('coderef-docs') initializes correctly",
+          "test_constants_updated - Verify SERVER_NAME constant equals 'coderef-docs'",
+          "test_logger_uses_new_name - Verify logger initialized with 'coderef-docs'",
+          "test_all_tool_names_use_prefix - Verify all tools use mcp__coderef-docs__ prefix"
+        ]
+      },
+      "integration_tests": {
+        "scope": "Tool discovery, server startup, end-to-end workflows",
+        "focus": "Tool discovery with new names, server initialization, existing changelog operations still work",
+        "tests": [
+          "test_tool_discovery_coderef_docs - Run MCP tool discovery, verify all 11 tools discoverable with mcp__coderef-docs__ prefix",
+          "test_server_startup - Start server and verify it initializes without errors",
+          "test_full_rename_consistency - Verify no 'docs-mcp' references in non-archived files after rename",
+          "test_changelog_operations_work - Verify changelog tools still work after rename",
+          "test_build_succeeds - Run full build and verify no errors"
+        ]
+      },
+      "end_to_end_tests": {
+        "scope": "Complete rename workflow",
+        "when_needed": "For critical operations like tool discovery and server startup",
+        "tests": [
+          "Run /execute-plan with rename plan and verify all phases complete successfully"
+        ]
+      },
+      "edge_case_scenarios": [
+        {
+          "scenario": "Old tool names no longer work (breaking change)",
+          "setup": "After rename, attempt to call mcp__docs-mcp__list_templates",
+          "expected_behavior": "MCP returns 'unknown tool' error",
+          "verification": "Error message indicates tool not found, new name mcp__coderef-docs__list_templates works",
+          "error_handling": "Expected - breaking change by design, users must update configurations"
+        },
+        {
+          "scenario": "Leftover docs-mcp references remain after rename",
+          "setup": "Search codebase for 'docs-mcp' after Phase 5 completion",
+          "expected_behavior": "Zero matches (or only in coderef/archived/ if any)",
+          "verification": "grep -r 'docs-mcp' returns empty or only archived references",
+          "error_handling": "Verification fails, requires manual cleanup"
+        },
+        {
+          "scenario": "Git history lost during directory rename",
+          "setup": "Check git log for commits before rename",
+          "expected_behavior": "All commits visible with full history",
+          "verification": "git log shows commits from original docs-mcp period with proper authorship",
+          "error_handling": "Use git mv (not rm + add) to preserve history"
+        },
+        {
+          "scenario": "Test failures due to hardcoded server names",
+          "setup": "Run pytest after Phase 1",
+          "expected_behavior": "All tests pass with updated assertions",
+          "verification": "pytest returns 318 passing tests",
+          "error_handling": "Update test fixtures and assertions to use new name"
+        }
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "All references renamed successfully",
+          "metric": "Occurrences of 'docs-mcp' in non-archived source files",
+          "target": "0 occurrences",
+          "validation": "grep -r 'docs-mcp' --exclude-dir=archived --exclude-dir=.git returns empty"
+        },
+        {
+          "requirement": "Tool discovery works with new name",
+          "metric": "MCP tool discovery successful",
+          "target": "All 11 tools discoverable with mcp__coderef-docs__* prefix",
+          "validation": "Tool list shows: list_templates, get_template, generate_foundation_docs, ... with coderef-docs prefix"
+        },
+        {
+          "requirement": "Server initialization successful",
+          "metric": "Server startup exit code",
+          "target": "0 (success)",
+          "validation": "python server.py starts without errors, log shows 'Server initialized as coderef-docs'"
+        },
+        {
+          "requirement": "Directory rename preserves git history",
+          "metric": "Git commit history accessible",
+          "target": "All commits from docs-mcp period visible in git log",
+          "validation": "git log shows continuous history, no commits lost"
+        },
+        {
+          "requirement": "All tests pass with new naming",
+          "metric": "Test suite result",
+          "target": "318/318 unit tests passing",
+          "validation": "pytest returns 0 exit code, all tests green"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Documentation accuracy",
+          "metric": "Examples use correct tool names",
+          "target": "100% of examples use mcp__coderef-docs__ prefix",
+          "validation": "Manual review of README, CLAUDE, user-guide for correct prefix"
+        },
+        {
+          "requirement": "Code style consistency",
+          "metric": "No style violations introduced",
+          "target": "Pylint returns no new violations",
+          "validation": "pylint server.py tool_handlers.py returns exit 0"
+        }
+      ],
+      "performance_requirements": [
+        "None - rename is one-time operation, no performance targets apply"
+      ],
+      "security_requirements": [
+        {
+          "requirement": "No security regressions",
+          "metric": "Security checks pass",
+          "target": "All input validation still works with new names",
+          "validation": "Security tests pass without modification (except name updates)"
+        }
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review complete plan for gaps or ambiguities",
+        "☐ Verify git repo is clean (no uncommitted changes)",
+        "☐ Create backup of docs-mcp directory",
+        "☐ Document current version for rollback if needed"
+      ],
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Python Core Files",
+          "tasks": [
+            "☐ SETUP-001: Update server.py line 62",
+            "☐ SETUP-002: Update constants.py SERVER_NAME",
+            "☐ SETUP-003: Update logger_config.py"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Configuration and Metadata",
+          "tasks": [
+            "☐ SETUP-004: Update pyproject.toml",
+            "☐ CONFIG-001: Update .claude/commands.json (~200+ occurrences)",
+            "☐ CONFIG-002: Update utility modules"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Documentation Update",
+          "tasks": [
+            "☐ DOC-001: Update README.md",
+            "☐ DOC-002: Update CLAUDE.md",
+            "☐ DOC-003: Update user-guide.md",
+            "☐ DOC-004: Update .claude/commands/*.md files"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Testing and Verification",
+          "tasks": [
+            "☐ TEST-001: Update conftest.py fixtures",
+            "☐ TEST-002: Update test_server.py assertions",
+            "☐ TEST-003: Update unit test references",
+            "☐ TEST-004: Run full test suite (pytest)",
+            "☐ VER-001: Search for remaining 'docs-mcp' references",
+            "☐ VER-002: Verify tool discovery",
+            "☐ VER-003: Verify build succeeds",
+            "☐ VER-004: Verify server startup"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Git Finalization",
+          "tasks": [
+            "☐ GIT-001: Use git mv to rename directory",
+            "☐ GIT-002: Create git commit with breaking change annotation"
+          ]
+        }
+      ],
+      "finalization": [
+        "☐ All tests passing (318/318)",
+        "☐ Zero 'docs-mcp' references in non-archived files",
+        "☐ Tools discoverable with new prefix",
+        "☐ Server starts successfully",
+        "☐ Git history preserved",
+        "☐ Code review completed",
+        "☐ Documentation updated",
+        "☐ Changelog entry created",
+        "☐ Workorder archived"
+      ]
+    }
+  }
+}

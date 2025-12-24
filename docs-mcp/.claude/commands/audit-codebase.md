@@ -1,6 +1,6 @@
 Audit the current project for standards violations and generate a compliance report.
 
-Call the `mcp__docs-mcp__audit_codebase` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__audit_codebase` tool with the current working directory as the project_path.
 
 This will:
 1. Load established standards from coderef/standards/

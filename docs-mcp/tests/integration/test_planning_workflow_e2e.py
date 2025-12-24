@@ -22,7 +22,7 @@ from type_defs import ValidationResultDict, PreparationSummaryDict
 
 
 # Module-level constants
-DOCS_MCP_PATH = Path(__file__).parent  # Use docs-mcp itself as test project
+DOCS_MCP_PATH = Path(__file__).parent  # Use coderef-docs itself as test project
 MIN_APPROVAL_SCORE = 90  # Minimum score for plan approval
 MAX_ITERATIONS = 5  # Maximum review loop iterations
 
@@ -30,9 +30,9 @@ MAX_ITERATIONS = 5  # Maximum review loop iterations
 # Test Fixture: Sample Project (TEST-002)
 def get_sample_project_path() -> Path:
     """
-    Returns path to docs-mcp project itself for testing.
+    Returns path to coderef-docs project itself for testing.
 
-    Using docs-mcp as the test project is ideal because:
+    Using coderef-docs as the test project is ideal because:
     - Has foundation docs (README, ARCHITECTURE, CLAUDE.md)
     - Has standards directory (coderef/standards/)
     - Has changelog (coderef/changelog/CHANGELOG.json)

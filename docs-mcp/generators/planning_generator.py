@@ -34,7 +34,7 @@ class PlanningGenerator:
         self.project_path = project_path
 
         # Use MCP server's installation directory for templates (not user's project)
-        server_root = Path(__file__).parent.parent  # Up to docs-mcp/ directory
+        server_root = Path(__file__).parent.parent  # Up to coderef-docs/ directory
         self.context_dir = server_root / "coderef" / "context"
         self.template_file = self.context_dir / "planning-template-for-ai.json"
 

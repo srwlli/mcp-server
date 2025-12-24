@@ -1,0 +1,774 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "git-workflow-mcp",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant",
+    "generated_at": "2025-12-20T05:45:00.000Z",
+    "has_context": false,
+    "has_analysis": false,
+    "workorder_id": "WO-GIT-WORKFLOW-MCP-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "existing_patterns": {
+        "git_operations": [
+          "Manual commit workflow in /create-workorder Step 10 (pre-execution)",
+          "/git-release command for creating annotated tags from changelog",
+          "/update-deliverables parses git history for metrics"
+        ],
+        "version_management": [
+          "/update-docs auto-increments version in README.md and CLAUDE.md",
+          "No automated version bumping in package files (pyproject.toml, package.json)"
+        ],
+        "commit_patterns": [
+          "Pre-execution commit: Planning artifacts before implementation",
+          "No automated post-completion commit currently exists"
+        ]
+      },
+      "key_decisions": [
+        "Position git-workflow-mcp as FINAL step after /archive-feature",
+        "Create comprehensive 'feature complete' commit including implementation, docs, and archive",
+        "Auto-update version in package files (pyproject.toml, package.json, __version__.py)",
+        "Sync version with /update-docs tool output",
+        "Optional release tag creation for significant versions",
+        "Reuse existing ErrorResponse factory and handler patterns"
+      ],
+      "reference_implementations": [
+        "tool_handlers.py - handle_archive_feature for feature completion patterns",
+        "tool_handlers.py - handle_update_all_documentation for version management",
+        "handler_decorators.py - @mcp_error_handler, @log_invocation patterns",
+        ".claude/commands/git-release.md - Git tag and push workflow",
+        ".claude/commands/create-workorder.md - Pre-execution commit (Step 10)"
+      ]
+    },
+    "1_executive_summary": {
+      "overview": "Implement MCP tool for standardized git workflow as the FINAL step after feature archival. Automates version bumping in package files, creates comprehensive 'feature complete' commit with implementation code, updated documentation, and archived artifacts, then pushes to remote. Optionally creates release tags for significant versions.",
+      "problem_statement": "Current workflow requires manual git operations after feature completion. No automated version bumping in package files exists. The gap between /archive-feature and final git commit is manual and error-prone. Each feature results in only one commit (pre-execution planning), missing a post-completion commit that captures the full implementation.",
+      "proposed_solution": "Create git_workflow MCP tool that runs after /archive-feature to: (1) Auto-update version in pyproject.toml/package.json/__version__.py, (2) Stage all changes from implementation + docs + archive, (3) Create comprehensive commit with metrics from DELIVERABLES.md, (4) Push to remote, (5) Optionally create release tag.",
+      "expected_benefits": [
+        "Automates final step in feature lifecycle",
+        "Ensures every feature has two commits: pre-execution (planning) and post-completion (implementation)",
+        "Eliminates manual version bumping errors",
+        "Creates audit trail with comprehensive commit messages",
+        "Optional release tag creation for versioned features",
+        "Reduces workflow steps from 7 to 6 (merge /archive-feature and git operations)"
+      ],
+      "scope_boundaries": {
+        "in_scope": [
+          "MCP tool: git_workflow (handle_git_workflow)",
+          "Version bumping in pyproject.toml, package.json, __version__.py",
+          "Comprehensive commit message with metrics",
+          "Git push to remote",
+          "Optional release tag creation",
+          "Slash command: /git-workflow"
+        ],
+        "out_of_scope": [
+          "CI/CD integration (future enhancement)",
+          "Package publishing (PyPI, npm) - mentioned in stub but deferred",
+          "Docker build/push - mentioned in stub but deferred",
+          "Multi-remote push (only origin supported initially)",
+          "Merge conflict resolution (assumes clean working directory)"
+        ]
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_estimate": "Medium - Integration with existing git operations, version file parsing, and comprehensive staging logic",
+      "technical_risks": [
+        {
+          "risk": "Version file format variations (pyproject.toml vs package.json vs __version__.py)",
+          "severity": "medium",
+          "likelihood": "high",
+          "mitigation": "Implement separate parsers for each format with fallback to manual version input if auto-detection fails"
+        },
+        {
+          "risk": "Git push failures (network issues, authentication, branch protection)",
+          "severity": "medium",
+          "likelihood": "medium",
+          "mitigation": "Comprehensive error handling with specific error messages for common failure modes (network, auth, branch protection)"
+        },
+        {
+          "risk": "Uncommitted changes in non-feature files causing merge conflicts",
+          "severity": "low",
+          "likelihood": "medium",
+          "mitigation": "Pre-flight check with git status, warn if uncommitted changes outside feature scope, offer to stage all or abort"
+        },
+        {
+          "risk": "DELIVERABLES.md missing or incomplete metrics",
+          "severity": "low",
+          "likelihood": "low",
+          "mitigation": "Graceful fallback if metrics unavailable, commit message includes what's available"
+        }
+      ],
+      "dependencies": [
+        "Requires /archive-feature to have completed successfully",
+        "Requires /update-deliverables to have updated metrics",
+        "Requires /update-docs to have updated changelog and version",
+        "Git repository must have remote configured",
+        "Clean working directory or explicit user confirmation"
+      ],
+      "rollback_plan": "If push fails after commit, user can manually reset with 'git reset HEAD~1' to undo commit. If version files were updated, tool provides rollback command to restore original versions."
+    },
+    "3_current_state_analysis": {
+      "files_to_modify": [
+        {
+          "path": "server.py",
+          "purpose": "Add git_workflow tool definition to list_tools()",
+          "current_state": "Contains 32 tool definitions",
+          "changes_needed": "Add Tool definition for git_workflow with inputSchema for project_path, feature_name, push_to_remote, create_release_tag"
+        },
+        {
+          "path": "tool_handlers.py",
+          "purpose": "Add handle_git_workflow function and register in TOOL_HANDLERS",
+          "current_state": "Contains 21+ handler functions with @mcp_error_handler and @log_invocation decorators",
+          "changes_needed": "Add async def handle_git_workflow(arguments: dict) -> list[TextContent] with full workflow logic"
+        },
+        {
+          "path": ".claude/commands.json",
+          "purpose": "Register /git-workflow slash command",
+          "current_state": "Contains 39 slash command definitions",
+          "changes_needed": "Add entry for git-workflow in workflow category"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": ".claude/commands/git-workflow.md",
+          "purpose": "Slash command definition for /git-workflow"
+        },
+        {
+          "path": "generators/version_manager.py",
+          "purpose": "Version file parsing and updating logic (pyproject.toml, package.json, __version__.py)"
+        },
+        {
+          "path": "tests/unit/test_version_manager.py",
+          "purpose": "Unit tests for version parsing and updating"
+        },
+        {
+          "path": "tests/integration/test_git_workflow.py",
+          "purpose": "Integration tests for git_workflow tool"
+        }
+      ],
+      "integration_points": [
+        "handle_archive_feature - git_workflow runs after archive completes",
+        "handle_update_all_documentation - sync version from CHANGELOG.json",
+        "ErrorResponse factory - reuse for git operation errors",
+        "handler_decorators - apply @mcp_error_handler and @log_invocation"
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Version File Auto-Update",
+        "description": "Automatically detect and update version in pyproject.toml, package.json, and __version__.py based on version from /update-docs",
+        "acceptance_criteria": [
+          "Detects project type (Python, Node, or both)",
+          "Parses current version from appropriate file(s)",
+          "Updates version to match CHANGELOG.json latest entry",
+          "Handles missing version files gracefully (warns but continues)",
+          "Validates version format (X.Y.Z) before updating"
+        ],
+        "user_story": "As a developer, I want package versions automatically updated so I don't manually edit pyproject.toml/package.json after every feature"
+      },
+      "feature_2": {
+        "name": "Comprehensive Feature Commit",
+        "description": "Stage all changes from implementation, docs updates, and archival, then create commit with detailed message including metrics",
+        "acceptance_criteria": [
+          "Stages all implementation code (src/, tests/, docs/)",
+          "Stages updated documentation (README.md, CLAUDE.md, CHANGELOG.json)",
+          "Stages archived feature directory (coderef/archived/{feature}/)",
+          "Stages updated archive index (coderef/archived/index.json)",
+          "Stages version-bumped package files",
+          "Commit message includes workorder ID, LOC metrics, file counts",
+          "Commit follows conventional commits format: feat({feature}): Complete {feature}"
+        ],
+        "user_story": "As a developer, I want one comprehensive commit capturing the entire feature so git history clearly shows feature boundaries"
+      },
+      "feature_3": {
+        "name": "Git Push with Progress",
+        "description": "Push commit to remote with progress feedback and error handling",
+        "acceptance_criteria": [
+          "Pushes to origin remote by default",
+          "Provides progress feedback during push",
+          "Handles common errors (network, auth, branch protection) with specific messages",
+          "Optional --dry-run mode to preview without pushing",
+          "Returns push status (success/failure) with details"
+        ],
+        "user_story": "As a developer, I want automated push to remote so I don't forget to push completed features"
+      },
+      "feature_4": {
+        "name": "Optional Release Tag Creation",
+        "description": "For significant versions (minor/major bumps), optionally create annotated release tag",
+        "acceptance_criteria": [
+          "Detects version bump type (major, minor, patch)",
+          "For minor/major bumps, asks user if they want release tag",
+          "Creates annotated tag with version (v{version})",
+          "Tag message includes changelog excerpt for version",
+          "Pushes tag to remote if created",
+          "Can be skipped via parameter (create_release_tag=false)"
+        ],
+        "user_story": "As a developer, I want optional release tags for significant versions so releases are clearly marked in git history"
+      },
+      "feature_5": {
+        "name": "Pre-flight Validation",
+        "description": "Validate git state before proceeding with commit and push",
+        "acceptance_criteria": [
+          "Checks git repository exists and has remote configured",
+          "Checks /archive-feature has completed (feature exists in archived/)",
+          "Checks DELIVERABLES.md exists and has metrics (warns if TBD)",
+          "Checks for uncommitted changes outside feature scope (warns user)",
+          "Provides clear error messages for validation failures",
+          "Offers abort or continue options when warnings occur"
+        ],
+        "user_story": "As a developer, I want validation before git operations so I catch issues early and avoid failed pushes"
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-GIT-WORKFLOW-MCP-001",
+        "name": "Git Workflow Mcp",
+        "feature_dir": "coderef/working/git-workflow-mcp"
+      },
+      "task_prefix_conventions": {
+        "SETUP": "Setup and scaffolding tasks",
+        "CORE": "Core implementation tasks",
+        "HANDLER": "MCP handler implementation",
+        "CMD": "Slash command implementation",
+        "TEST": "Testing tasks",
+        "DOC": "Documentation tasks",
+        "INTEG": "Integration tasks"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Create generators/version_manager.py with version file parsers",
+          "phase": 1,
+          "dependencies": [],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "Python",
+            "TOML parsing",
+            "JSON parsing"
+          ]
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Create tests/unit/test_version_manager.py with parser tests",
+          "phase": 1,
+          "dependencies": [
+            "SETUP-001"
+          ],
+          "estimated_effort": "1 hour",
+          "skills_required": [
+            "pytest",
+            "Python"
+          ]
+        },
+        {
+          "id": "CORE-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Implement version detection and auto-update logic in version_manager.py",
+          "phase": 2,
+          "dependencies": [
+            "SETUP-001"
+          ],
+          "estimated_effort": "3 hours",
+          "skills_required": [
+            "Python",
+            "File I/O",
+            "Version parsing"
+          ]
+        },
+        {
+          "id": "CORE-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Implement git staging logic for comprehensive commit scope",
+          "phase": 2,
+          "dependencies": [
+            "CORE-001"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "Git operations",
+            "Python subprocess"
+          ]
+        },
+        {
+          "id": "CORE-003",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Implement commit message generation with metrics from DELIVERABLES.md",
+          "phase": 2,
+          "dependencies": [
+            "CORE-002"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "String formatting",
+            "Markdown parsing"
+          ]
+        },
+        {
+          "id": "CORE-004",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Implement git push logic with error handling",
+          "phase": 2,
+          "dependencies": [
+            "CORE-003"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "Git operations",
+            "Error handling"
+          ]
+        },
+        {
+          "id": "CORE-005",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Implement optional release tag creation with changelog integration",
+          "phase": 2,
+          "dependencies": [
+            "CORE-004"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "Git tags",
+            "Changelog parsing"
+          ]
+        },
+        {
+          "id": "HANDLER-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Create handle_git_workflow in tool_handlers.py with pre-flight validation",
+          "phase": 3,
+          "dependencies": [
+            "CORE-001",
+            "CORE-002",
+            "CORE-003",
+            "CORE-004",
+            "CORE-005"
+          ],
+          "estimated_effort": "3 hours",
+          "skills_required": [
+            "MCP handlers",
+            "Python async"
+          ]
+        },
+        {
+          "id": "HANDLER-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Add git_workflow tool definition to server.py list_tools()",
+          "phase": 3,
+          "dependencies": [
+            "HANDLER-001"
+          ],
+          "estimated_effort": "30 minutes",
+          "skills_required": [
+            "MCP protocol",
+            "JSON schema"
+          ]
+        },
+        {
+          "id": "HANDLER-003",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Register handle_git_workflow in TOOL_HANDLERS dict",
+          "phase": 3,
+          "dependencies": [
+            "HANDLER-001"
+          ],
+          "estimated_effort": "5 minutes",
+          "skills_required": [
+            "Python"
+          ]
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Create .claude/commands/git-workflow.md slash command",
+          "phase": 3,
+          "dependencies": [
+            "HANDLER-002"
+          ],
+          "estimated_effort": "1 hour",
+          "skills_required": [
+            "Markdown",
+            "Workflow documentation"
+          ]
+        },
+        {
+          "id": "CMD-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Register /git-workflow in .claude/commands.json",
+          "phase": 3,
+          "dependencies": [
+            "CMD-001"
+          ],
+          "estimated_effort": "5 minutes",
+          "skills_required": [
+            "JSON"
+          ]
+        },
+        {
+          "id": "TEST-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Create tests/integration/test_git_workflow.py with full workflow tests",
+          "phase": 4,
+          "dependencies": [
+            "HANDLER-003"
+          ],
+          "estimated_effort": "3 hours",
+          "skills_required": [
+            "pytest",
+            "Git mocking",
+            "Integration testing"
+          ]
+        },
+        {
+          "id": "TEST-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Test version detection across Python and Node projects",
+          "phase": 4,
+          "dependencies": [
+            "TEST-001"
+          ],
+          "estimated_effort": "1 hour",
+          "skills_required": [
+            "pytest",
+            "Test fixtures"
+          ]
+        },
+        {
+          "id": "TEST-003",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Test error handling for git failures (network, auth, branch protection)",
+          "phase": 4,
+          "dependencies": [
+            "TEST-001"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "pytest",
+            "Error mocking"
+          ]
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Update CLAUDE.md with git_workflow tool documentation",
+          "phase": 5,
+          "dependencies": [
+            "TEST-003"
+          ],
+          "estimated_effort": "1 hour",
+          "skills_required": [
+            "Technical writing"
+          ]
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Update user-guide.md with /git-workflow workflow examples",
+          "phase": 5,
+          "dependencies": [
+            "DOC-001"
+          ],
+          "estimated_effort": "1 hour",
+          "skills_required": [
+            "Technical writing"
+          ]
+        },
+        {
+          "id": "DOC-003",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Update README.md feature list to include git workflow automation",
+          "phase": 5,
+          "dependencies": [
+            "DOC-001"
+          ],
+          "estimated_effort": "30 minutes",
+          "skills_required": [
+            "Markdown"
+          ]
+        },
+        {
+          "id": "INTEG-001",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Update /archive-feature documentation to mention /git-workflow as next step",
+          "phase": 5,
+          "dependencies": [
+            "DOC-003"
+          ],
+          "estimated_effort": "30 minutes",
+          "skills_required": [
+            "Documentation"
+          ]
+        },
+        {
+          "id": "INTEG-002",
+          "workorder_id": "WO-GIT-WORKFLOW-MCP-001",
+          "description": "Test complete lifecycle: /create-workorder → implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow",
+          "phase": 5,
+          "dependencies": [
+            "INTEG-001"
+          ],
+          "estimated_effort": "2 hours",
+          "skills_required": [
+            "End-to-end testing",
+            "Workflow validation"
+          ]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Scaffolding",
+          "description": "Create version_manager.py module and unit tests for version parsing",
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002"
+          ],
+          "deliverables": [
+            "generators/version_manager.py with parse_pyproject_toml(), parse_package_json(), parse_version_py()",
+            "tests/unit/test_version_manager.py with 15+ test cases"
+          ],
+          "success_criteria": [
+            "All version parsers pass unit tests",
+            "Handles missing files gracefully",
+            "Validates version format (X.Y.Z)"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Core Git Workflow Logic",
+          "description": "Implement version auto-update, git staging, commit message generation, push, and optional tagging",
+          "tasks": [
+            "CORE-001",
+            "CORE-002",
+            "CORE-003",
+            "CORE-004",
+            "CORE-005"
+          ],
+          "deliverables": [
+            "update_version_files() function in version_manager.py",
+            "stage_all_changes() function with comprehensive scope",
+            "generate_commit_message() with metrics from DELIVERABLES.md",
+            "push_to_remote() with error handling",
+            "create_release_tag() with changelog integration"
+          ],
+          "success_criteria": [
+            "Version files updated correctly across Python and Node projects",
+            "All relevant files staged (implementation, docs, archive)",
+            "Commit message includes workorder ID and metrics",
+            "Push succeeds with progress feedback",
+            "Release tags created correctly for minor/major versions"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "MCP Handler & Slash Command",
+          "description": "Create MCP tool handler, register in server.py, and create slash command",
+          "tasks": [
+            "HANDLER-001",
+            "HANDLER-002",
+            "HANDLER-003",
+            "CMD-001",
+            "CMD-002"
+          ],
+          "deliverables": [
+            "handle_git_workflow() in tool_handlers.py with @decorators",
+            "git_workflow tool definition in server.py",
+            ".claude/commands/git-workflow.md",
+            "Updated .claude/commands.json"
+          ],
+          "success_criteria": [
+            "MCP tool callable via mcp__docs_mcp__git_workflow",
+            "Pre-flight validation catches missing prerequisites",
+            "/git-workflow slash command works in Claude Code",
+            "Error handling covers all failure modes"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Testing & Validation",
+          "description": "Create integration tests and validate error handling",
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003"
+          ],
+          "deliverables": [
+            "tests/integration/test_git_workflow.py with end-to-end workflow tests",
+            "Version detection tests for Python/Node/mixed projects",
+            "Error handling tests for git failures"
+          ],
+          "success_criteria": [
+            "All tests pass (unit + integration)",
+            "Coverage >= 80% for version_manager.py and handle_git_workflow",
+            "Error scenarios handled gracefully with clear messages"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Documentation & Integration",
+          "description": "Update all documentation and validate complete workflow lifecycle",
+          "tasks": [
+            "DOC-001",
+            "DOC-002",
+            "DOC-003",
+            "INTEG-001",
+            "INTEG-002"
+          ],
+          "deliverables": [
+            "Updated CLAUDE.md with git_workflow tool catalog entry",
+            "Updated user-guide.md with workflow examples",
+            "Updated README.md feature list",
+            "Updated /archive-feature docs to reference /git-workflow",
+            "Validated complete lifecycle from /create-workorder to /git-workflow"
+          ],
+          "success_criteria": [
+            "Documentation complete and accurate",
+            "Workflow examples tested and verified",
+            "Complete lifecycle works end-to-end",
+            "No manual steps required between /archive-feature and git commit/push"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "component": "version_manager.py",
+          "test_file": "tests/unit/test_version_manager.py",
+          "coverage_target": "90%",
+          "key_scenarios": [
+            "Parse version from pyproject.toml (poetry, setuptools, hatch formats)",
+            "Parse version from package.json",
+            "Parse version from __version__.py",
+            "Update version in each file format",
+            "Handle missing version files",
+            "Validate version format (X.Y.Z)",
+            "Graceful degradation when files malformed"
+          ]
+        }
+      ],
+      "integration_tests": [
+        {
+          "workflow": "Complete git workflow",
+          "test_file": "tests/integration/test_git_workflow.py",
+          "coverage_target": "80%",
+          "key_scenarios": [
+            "Full workflow: version update → stage → commit → push",
+            "Python project (pyproject.toml)",
+            "Node project (package.json)",
+            "Mixed project (both files)",
+            "Project with no version files (warns, continues)",
+            "Git push failure (network error)",
+            "Git push failure (branch protection)",
+            "Release tag creation for minor version",
+            "Skip release tag for patch version",
+            "Uncommitted changes warning and abort"
+          ],
+          "edge_cases": [
+            "DELIVERABLES.md missing entirely (gracefully handles, uses placeholder metrics)",
+            "DELIVERABLES.md has incomplete metrics (some values still show placeholder values)",
+            "Multiple version files with conflicting versions (pyproject.toml=1.0.0, package.json=1.0.1) - uses latest from CHANGELOG.json",
+            "Git repository has no remote configured (fails pre-flight validation with clear error)",
+            "Feature not in coderef/archived/ (fails pre-flight: archive not completed)",
+            "Detached HEAD state (warns user, continues with commit)",
+            "Large feature with 500+ files changed (handles staging without timeout)",
+            "Binary files in commit (handles properly, no encoding errors)",
+            "Commit message exceeds git limit (truncates gracefully with ellipsis)",
+            "Push rejected by server (provides rollback instructions)",
+            "Tag already exists for version (skips tag creation, warns user)",
+            "Version file has non-standard format (falls back to manual version input prompt)"
+          ]
+        }
+      ],
+      "manual_testing": [
+        {
+          "scenario": "Real feature completion workflow",
+          "steps": [
+            "Create test feature with /create-workorder",
+            "Implement minimal changes",
+            "Run /update-deliverables",
+            "Run /update-docs",
+            "Run /archive-feature",
+            "Run /git-workflow",
+            "Verify commit in git log",
+            "Verify push to remote",
+            "Verify version updated in package files"
+          ]
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        "Tool successfully detects and updates version in 100% of cases for pyproject.toml, package.json, __version__.py",
+        "Tool stages all implementation code, updated docs, and archived artifacts (minimum 5 file types: .py, .md, .json, archived/, index)",
+        "Tool creates commit with comprehensive message including workorder ID and >= 3 metrics (LOC, commits, time)",
+        "Tool pushes commit to remote successfully with 0 push failures in normal conditions",
+        "Tool optionally creates release tag for 100% of minor/major versions when requested",
+        "Pre-flight validation catches >= 95% of missing prerequisites (no archive, no git repo, no remote)",
+        "Error handling provides clear, actionable messages for >= 10 common failure modes (network, auth, branch protection, etc.)"
+      ],
+      "non_functional_requirements": [
+        "Tool completes workflow in < 10 seconds for features with <= 50 files changed",
+        "Tool completes workflow in < 30 seconds for features with <= 200 files changed",
+        "Zero data loss if push fails (commit is local and recoverable)",
+        "Logging captures 100% of git operations for audit trail (commits, pushes, tags)",
+        "Code follows existing patterns (100% of handlers use @decorators, ErrorResponse factory)",
+        "Documentation is comprehensive with >= 5 examples and >= 3 edge case scenarios documented",
+        "Test coverage >= 80% for version_manager.py and >= 75% for handle_git_workflow"
+      ],
+      "user_acceptance_criteria": [
+        "Developer can run /git-workflow after /archive-feature with zero manual steps in >= 95% of cases",
+        "Developer sees clear progress feedback during git operations (>= 4 progress messages: version update, staging, commit, push)",
+        "Developer receives actionable error messages within 2 seconds if workflow fails",
+        "Developer can opt-out of release tag creation (default: opt-in for minor/major)",
+        "Developer can use --dry-run to preview commit message and staged files without committing",
+        "Workflow completes without errors in >= 90% of typical use cases"
+      ],
+      "performance_benchmarks": {
+        "version_detection": "< 100ms for project with <= 3 version files",
+        "staging_operation": "< 2 seconds for <= 50 files, < 5 seconds for <= 200 files",
+        "commit_creation": "< 500ms",
+        "push_to_remote": "< 5 seconds (network dependent)",
+        "total_workflow": "< 10 seconds for typical feature (50 files, single remote)"
+      }
+    },
+    "9_implementation_checklist": {
+      "phase_1_setup_scaffolding": [
+        "☐ SETUP-001: Create generators/version_manager.py with version file parsers",
+        "☐ SETUP-002: Create tests/unit/test_version_manager.py with parser tests"
+      ],
+      "phase_2_core_git_workflow_logic": [
+        "☐ CORE-001: Implement version detection and auto-update logic in version_manager.py",
+        "☐ CORE-002: Implement git staging logic for comprehensive commit scope",
+        "☐ CORE-003: Implement commit message generation with metrics from DELIVERABLES.md",
+        "☐ CORE-004: Implement git push logic with error handling",
+        "☐ CORE-005: Implement optional release tag creation with changelog integration"
+      ],
+      "phase_3_mcp_handler_slash_command": [
+        "☐ HANDLER-001: Create handle_git_workflow in tool_handlers.py with pre-flight validation",
+        "☐ HANDLER-002: Add git_workflow tool definition to server.py list_tools()",
+        "☐ HANDLER-003: Register handle_git_workflow in TOOL_HANDLERS dict",
+        "☐ CMD-001: Create .claude/commands/git-workflow.md slash command",
+        "☐ CMD-002: Register /git-workflow in .claude/commands.json"
+      ],
+      "phase_4_testing_validation": [
+        "☐ TEST-001: Create tests/integration/test_git_workflow.py with full workflow tests",
+        "☐ TEST-002: Test version detection across Python and Node projects",
+        "☐ TEST-003: Test error handling for git failures (network, auth, branch protection)"
+      ],
+      "phase_5_documentation_integration": [
+        "☐ DOC-001: Update CLAUDE.md with git_workflow tool documentation",
+        "☐ DOC-002: Update user-guide.md with /git-workflow workflow examples",
+        "☐ DOC-003: Update README.md feature list to include git workflow automation",
+        "☐ INTEG-001: Update /archive-feature documentation to mention /git-workflow as next step",
+        "☐ INTEG-002: Test complete lifecycle: /create-workorder → implement → /update-deliverables → /update-docs → /archive-feature → /git-workflow"
+      ]
+    }
+  }
+}

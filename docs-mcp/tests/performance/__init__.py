@@ -1,5 +1,5 @@
 """
-Performance tests for docs-mcp.
+Performance tests for coderef-docs.
 
 This package contains performance and scalability tests:
 - test_large_projects.py: Tests with 100+ file projects

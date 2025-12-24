@@ -59,7 +59,7 @@ def test_path_traversal_blocked():
     # Test 2: Parent directory traversal should be resolved
     try:
         current_dir = Path(__file__).parent
-        test_path = str(current_dir / ".." / ".." / ".mcp-servers" / "docs-mcp")
+        test_path = str(current_dir / ".." / ".." / ".mcp-servers" / "coderef-docs")
         result = gen.validate_project_path(test_path)
         # Should resolve to absolute path without ..
         has_parent_refs = ".." in str(result)
@@ -153,7 +153,7 @@ def test_jsonschema_dependency():
 
             # Test with minimal valid data
             test_data = {
-                "project": "docs-mcp",
+                "project": "coderef-docs",
                 "changelog_version": "1.0",
                 "current_version": "1.0.0",
                 "entries": []
@@ -265,7 +265,7 @@ def test_mcp_server_still_works():
 def main():
     """Run all security tests."""
     print(f"\n{BOLD}{'='*60}{RESET}")
-    print(f"{BOLD}Security Fixes Test Suite - docs-mcp v1.0.4{RESET}")
+    print(f"{BOLD}Security Fixes Test Suite - coderef-docs v1.0.4{RESET}")
     print(f"{BOLD}{'='*60}{RESET}")
 
     try:

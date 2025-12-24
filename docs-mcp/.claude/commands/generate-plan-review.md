@@ -1,6 +1,6 @@
 Generate a JSON review report from implementation plan validation results.
 
-Ask the user for the plan file path (e.g., "coderef/working/outdoor-gear-category/plan.json"), then call the `mcp__docs-mcp__generate_plan_review_report` tool with:
+Ask the user for the plan file path (e.g., "coderef/working/outdoor-gear-category/plan.json"), then call the `mcp__coderef-docs__generate_plan_review_report` tool with:
 - project_path: current working directory
 - plan_file_path: the user-provided plan path
 - output_path: same directory as plan file, named "review.json"

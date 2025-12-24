@@ -1,6 +1,6 @@
 Extract coding standards from the current project by scanning for UI/UX/behavior patterns.
 
-Call the `mcp__docs-mcp__establish_standards` tool with the current working directory as the project_path.
+Call the `mcp__coderef-docs__establish_standards` tool with the current working directory as the project_path.
 
 This will:
 1. Scan the codebase for React/frontend components

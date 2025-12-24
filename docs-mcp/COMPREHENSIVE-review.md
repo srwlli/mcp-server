@@ -1,4 +1,4 @@
-# docs-mcp Comprehensive Review
+# coderef-docs Comprehensive Review
 
 **Version:** 3.0 (Agentic Perspective)
 **Review Date:** 2025-12-04
@@ -265,7 +265,7 @@ The agentic perspective recognizes that tools rated low for human use are essent
 
 ## Design Philosophy: Agentic-First
 
-**Key insight**: docs-mcp is designed for **AI agents as users**, not humans directly.
+**Key insight**: coderef-docs is designed for **AI agents as users**, not humans directly.
 
 | Aspect | Implication |
 |--------|-------------|
@@ -284,7 +284,7 @@ The agentic perspective recognizes that tools rated low for human use are essent
 
 ## Conclusion
 
-docs-mcp is a comprehensive **agentic toolkit** designed for AI agents to autonomously manage documentation, planning, and project analysis.
+coderef-docs is a comprehensive **agentic toolkit** designed for AI agents to autonomously manage documentation, planning, and project analysis.
 
 ### Standout Features
 - **Planning Pipeline**: `/create-workorder` → `/execute-plan` → implement → `/archive-feature`

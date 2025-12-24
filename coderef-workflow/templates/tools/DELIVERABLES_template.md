@@ -1,105 +1,68 @@
-# DELIVERABLES - {FEATURE_NAME}
+# DELIVERABLES: {{FEATURE_NAME}}
 
-**Workorder**: {WORKORDER_ID}
-**Feature**: {FEATURE_NAME}
-**Status**: {STATUS}
-**Date Completed**: {DATE_COMPLETED}
-**Version**: {VERSION_FROM} → {VERSION_TO}
-
----
-
-## Execution Summary
-
-### Metrics
-
-| Metric | Value |
-|--------|-------|
-| **Total Commits** | {COMMITS_COUNT} |
-| **Files Changed** | {FILES_CHANGED} |
-| **Lines Added** | {LINES_ADDED} |
-| **Lines Removed** | {LINES_REMOVED} |
-| **Net Change** | {NET_CHANGE} lines |
-| **Contributors** | {CONTRIBUTORS} |
-| **Duration** | {DURATION} |
-| **Test Results** | {TEST_RESULTS} |
-
-### Phase Completion
-
-#### Phase 1: {PHASE_1_TITLE}
-{PHASE_1_TASKS}
-
-#### Phase 2: {PHASE_2_TITLE}
-{PHASE_2_TASKS}
-
-#### Phase 3: {PHASE_3_TITLE}
-{PHASE_3_TASKS}
-
-#### Phase 4: {PHASE_4_TITLE}
-{PHASE_4_TASKS}
+**Project**: {{PROJECT_NAME}}
+**Feature**: {{FEATURE_NAME}}
+**Workorder**: {{WORKORDER_ID}}
+**Status**: 🚧 Not Started
+**Generated**: {{GENERATED_DATE}}
 
 ---
 
-## Commit Details
+## Executive Summary
 
-**Commit Hash**: {COMMIT_HASH}
-**Commit Message**:
-```
-{COMMIT_MESSAGE}
-```
+**Goal**: {{GOAL}}
+
+**Description**: {{DESCRIPTION}}
 
 ---
 
-## Verification Results
+## Implementation Phases
 
-### Pre-Execution Checks
-- [ ] Plan reviewed for gaps/ambiguities
-- [ ] Git repo clean (no uncommitted changes)
-- [ ] Backup created (if needed)
-- [ ] Version documented for rollback
-
-### Post-Execution Checks
-- [ ] All code changes verified
-- [ ] Build system functional
-- [ ] Tests passing
-- [ ] Remote push successful
-
-### Test Coverage
-- Unit tests: {UNIT_TESTS_PASSING}
-- Integration tests: {INTEGRATION_TESTS_PASSING}
-- Overall coverage: {OVERALL_COVERAGE}%
+{{PHASES}}
 
 ---
 
-## Files Affected Summary
+## Metrics
 
-### Core Files (Updated)
-{CORE_FILES_LIST}
+### Code Changes
+- **Lines of Code Added**: TBD
+- **Lines of Code Deleted**: TBD
+- **Net LOC**: TBD
+- **Files Modified**: TBD
 
-### Configuration Files (Updated)
-{CONFIG_FILES_LIST}
+### Commit Activity
+- **Total Commits**: TBD
+- **First Commit**: TBD
+- **Last Commit**: TBD
+- **Contributors**: TBD
 
-### Documentation Files (Updated)
-{DOC_FILES_LIST}
-
-### Test Files (Updated)
-{TEST_FILES_LIST}
-
----
-
-## Known Issues
-
-{KNOWN_ISSUES_LIST}
+### Time Investment
+- **Days Elapsed**: TBD
+- **Hours Spent (Wall Clock)**: TBD
 
 ---
 
-## Next Steps
+## Task Completion Checklist
 
-{NEXT_STEPS_LIST}
+{{TASKS}}
 
 ---
 
-## Sign-Off
+## Files Created/Modified
 
-**Completed by**: {COMPLETED_BY}
-**Date**: {COMPLETION_DATE}
-**Status**: {FINAL_STATUS}
+{{FILES}}
+
+---
+
+## Success Criteria
+
+{{SUCCESS_CRITERIA}}
+
+---
+
+## Notes
+
+*This deliverables report was automatically generated from plan.json.*
+*Use `/update-deliverables` to populate metrics from git history after implementation.*
+
+**Last Updated**: {{GENERATED_DATE}}

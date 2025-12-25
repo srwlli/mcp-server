@@ -6,7 +6,7 @@
         "run",
         "server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\personas-mcp"
+      "cwd": "C:/Users/willh/.mcp-servers/personas-mcp"
     },
     "coderef-context": {
       "command": "python",
@@ -24,7 +24,7 @@
         "run",
         "server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-docs"
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-docs"
     },
     "coderef-workflow": {
       "command": "uv",
@@ -32,7 +32,7 @@
         "run",
         "server.py"
       ],
-      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow"
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-workflow"
     }
   },
   "_archived": {

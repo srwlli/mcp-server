@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "personas": {
+    "coderef-personas": {
       "command": "uv",
       "args": [
         "run",

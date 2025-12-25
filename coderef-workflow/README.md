@@ -46,7 +46,7 @@ python server.py
 - **server.py** - MCP entry point and tool registration
 - **src/** - Tool implementations
 - **generators/** - Planning and analysis generators
-- **coderef/working/** - Feature working directories
+- **coderef/workorder/** - Feature workorder directories
 
 ## MCP-to-MCP Integration
 

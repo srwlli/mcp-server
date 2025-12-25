@@ -65,7 +65,7 @@ coderef-workflow Tool (orchestration)
     │  └─ Calls coderef-context tools when code intelligence needed
     ├─ Generate Plan (JSON structure)
     ├─ Generate Deliverables Template
-    └─ Store in coderef/working/{feature}/
+    └─ Store in coderef/workorder/{feature}/
     ↓
 coderef-docs Tools (documentation)
     ├─ Generate foundation docs (README, ARCHITECTURE, etc.)
@@ -111,7 +111,7 @@ coderef-workflow/
 │  ├── plan_generator.py           # Creates plan.json from context
 │  └── analysis_generator.py       # Generates project analysis
 │
-├── coderef/working/               # Active feature workspaces
+├── coderef/workorder/               # Active feature workspaces
 │  └── {feature-name}/
 │     ├── context.json             # Requirements & constraints
 │     ├── analysis.json            # Project analysis results
@@ -177,7 +177,7 @@ coderef-workflow/
 |------|---------|----------------------|
 | `archive_feature` | Move completed feature to archive | No |
 | `generate_features_inventory` | List all active & archived features | No |
-| `audit_plans` | Health check on all plans in coderef/working | No |
+| `audit_plans` | Health check on all plans in coderef/workorder | No |
 
 ### Workorder Tracking
 
@@ -307,7 +307,7 @@ Tracked globally in `coderef/workorder-log.txt` for audit trail.
 ```
 Project Context (coderef/foundation-docs/)
     ↓
-Feature Context (coderef/working/{feature}/context.json)
+Feature Context (coderef/workorder/{feature}/context.json)
     ↓
 Workorder Context (WO-ID tracking)
     ↓
@@ -470,7 +470,7 @@ except Exception as e:
 ## Do Not
 
 - ❌ Edit coderef/archived/ manually (use `/archive-feature` instead)
-- ❌ Modify coderef/working/{feature}/plan.json directly during execution
+- ❌ Modify coderef/workorder/{feature}/plan.json directly during execution
 - ❌ Create workorders without using `/create-workorder` (breaks tracking)
 - ❌ Update deliverables metrics manually (use `/update-deliverables` to auto-extract from git)
 - ❌ Forget to call coderef-context when creating plans (defeats purpose of code intelligence)
@@ -519,7 +519,7 @@ Slash commands are defined in `coderef-docs/.claude/commands/` and orchestrate c
 - **CODEREF_TYPE_REFERENCE.md** - Schemas for context.json, plan.json, etc.
 - **SETUP_GUIDE.md** - Installation and configuration
 - **README.md** - User-facing overview
-- **coderef/working/README.md** - How features are structured
+- **coderef/workorder/README.md** - How features are structured
 
 ---
 

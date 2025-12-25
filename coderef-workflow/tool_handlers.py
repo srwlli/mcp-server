@@ -1605,7 +1605,13 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
         phases_md.append(f"**Estimated Duration**: {phase.get('estimated_duration', 'TBD')}\n")
         phases_md.append("**Deliverables**:")
         for deliverable in phase.get('deliverables', []):
-            phases_md.append(f"- {deliverable}")
+            if isinstance(deliverable, dict):
+                # Handle dict format: extract item or description
+                item = deliverable.get('item', deliverable.get('description', str(deliverable)))
+                phases_md.append(f"- {item}")
+            else:
+                # Handle string format
+                phases_md.append(f"- {deliverable}")
         phases_md.append("")
 
     # Format tasks checklist

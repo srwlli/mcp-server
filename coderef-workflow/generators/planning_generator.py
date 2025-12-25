@@ -257,7 +257,7 @@ class PlanningGenerator:
             "META_DOCUMENTATION": {
                 "feature_name": feature_name,
                 "version": template.get("_AI_INSTRUCTIONS", {}).get("version", "1.0.0"),
-                "status": "complete",
+                "status": "planning",
                 "generated_by": "PlanningGenerator",
                 "has_context": context is not None,
                 "has_analysis": analysis is not None,

@@ -97,7 +97,9 @@
       "mcp__coderef-context__coderef_impact",
       "mcp__coderef-workflow__create_plan",
       "mcp__coderef-workflow__log_workorder",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(timeout 5 uv run:*)",
+      "Bash(echo:*)"
     ],
     "deny": [],
     "ask": []

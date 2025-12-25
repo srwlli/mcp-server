@@ -1,12 +1,11 @@
 {
   "mcpServers": {
     "coderef-personas": {
-      "command": "uv",
+      "command": "python",
       "args": [
-        "run",
-        "server.py"
+        "C:/Users/willh/.mcp-servers/coderef-personas/server.py"
       ],
-      "cwd": "C:/Users/willh/.mcp-servers/personas-mcp"
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-personas"
     },
     "coderef-context": {
       "command": "python",

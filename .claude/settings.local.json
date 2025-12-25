@@ -108,5 +108,15 @@
     "coderef-context",
     "coderef-docs",
     "coderef-workflow"
+  ],
+  "disabledMcpjsonServers": [
+    "personas-mcp",
+    "docs-mcp",
+    "coderef-mcp",
+    "coderef",
+    "docs",
+    "hello-world",
+    "scriptboard-mcp",
+    "chrome-devtools"
   ]
 }

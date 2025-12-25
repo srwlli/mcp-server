@@ -18,18 +18,16 @@
       }
     },
     "coderef-docs": {
-      "command": "uv",
+      "command": "python",
       "args": [
-        "run",
-        "server.py"
+        "C:/Users/willh/.mcp-servers/coderef-docs/server.py"
       ],
       "cwd": "C:/Users/willh/.mcp-servers/coderef-docs"
     },
     "coderef-workflow": {
-      "command": "uv",
+      "command": "python",
       "args": [
-        "run",
-        "server.py"
+        "C:/Users/willh/.mcp-servers/coderef-workflow/server.py"
       ],
       "cwd": "C:/Users/willh/.mcp-servers/coderef-workflow"
     }

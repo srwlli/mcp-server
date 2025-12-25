@@ -1,0 +1,429 @@
+{
+  "metadata": {
+    "template_name": "Universal CLAUDE.md Format",
+    "version": "1.0.0",
+    "created": "2025-12-25",
+    "purpose": "Standardized AI context documentation for all MCP servers",
+    "target_line_count": "530-600 lines",
+    "key_principles": [
+      "No repetition - each section appears once",
+      "Compact tool documentation - always use tables",
+      "Examples over prose - 1-2 examples per concept",
+      "Trim history - only last 2 versions",
+      "Design rationale - show WHY decisions were made",
+      "Integration first - lead with connections",
+      "Use cases - 1-2 representative scenarios",
+      "Optional sections - include only if needed",
+      "Link, don't duplicate - point to README/CHANGELOG",
+      "Lean commands - essentials only"
+    ]
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "name": "Header",
+      "required": true,
+      "line_budget": 10,
+      "fields": {
+        "title": {
+          "format": "# {PROJECT-NAME} - AI Context Documentation",
+          "description": "Project name with clear purpose"
+        },
+        "project_name": {
+          "format": "**Project:** {project-name} (MCP Server)",
+          "required": true
+        },
+        "version": {
+          "format": "**Version:** {X.Y.Z}",
+          "required": true
+        },
+        "status": {
+          "format": "**Status:** {✅ Production / 🚧 Development / 🔄 Beta}",
+          "required": true
+        },
+        "created_date": {
+          "format": "**Created:** {YYYY-MM-DD}",
+          "required": true
+        },
+        "last_updated": {
+          "format": "**Last Updated:** {YYYY-MM-DD}",
+          "required": true
+        }
+      }
+    },
+    {
+      "section_id": 2,
+      "name": "Quick Summary",
+      "required": true,
+      "line_budget": 15,
+      "description": "Executive summary - what is this project and why does it exist",
+      "fields": {
+        "one_liner": {
+          "format": "**{project-name}** is a {focused/enterprise-grade} MCP server that {one-sentence purpose}.",
+          "required": true,
+          "note": "Most important - users should understand project in one sentence"
+        },
+        "core_innovation": {
+          "format": "**Core Innovation:** {what makes it unique - reference integrations if any}.",
+          "required": true
+        },
+        "latest_update": {
+          "format": "**Latest Update (v{X.Y.Z}):**\n- {bullet with emoji}\n- {bullet}",
+          "required": true,
+          "min_bullets": 2,
+          "max_bullets": 4
+        },
+        "key_relationships": {
+          "format": "**Key Relationships:**\n- {Project A} = {role}\n- {Project B} = {role}",
+          "required": false,
+          "note": "Only include if project depends on or works with others"
+        },
+        "integration_summary": {
+          "format": "Together they {how they work together in 2-3 sentences}.",
+          "required": false,
+          "note": "Only if key_relationships included"
+        }
+      }
+    },
+    {
+      "section_id": 3,
+      "name": "Problem & Vision",
+      "required": false,
+      "line_budget": 20,
+      "description": "Optional - only for projects where understanding the problem is critical",
+      "fields": {
+        "the_problem": {
+          "format": "### The Problem\n{What problem does this solve - 2-4 sentences}",
+          "required": false
+        },
+        "the_solution": {
+          "format": "### The Solution\n{How does it solve it - 2-4 sentences}",
+          "required": false
+        },
+        "how_it_works": {
+          "format": "### How It Works\n{3-5 step workflow}",
+          "required": false
+        }
+      }
+    },
+    {
+      "section_id": 4,
+      "name": "Architecture",
+      "required": true,
+      "line_budget": 60,
+      "description": "System design and core concepts",
+      "fields": {
+        "core_concepts": {
+          "format": "### Core Concepts\n{2-3 key concepts explained clearly, 15 lines each}",
+          "required": true
+        },
+        "data_flow": {
+          "format": "### Data Flow\n```\n[Simple ASCII diagram showing data flow]\n```",
+          "required": true,
+          "max_lines": 10
+        },
+        "integration_points": {
+          "format": "### Key Integration Points\n- **Depends on:** {what it depends on}\n- **Used by:** {who uses it}\n- **Orchestrated via:** {how it's accessed}",
+          "required": true
+        }
+      }
+    },
+    {
+      "section_id": 5,
+      "name": "Tools/Personas/Features Catalog",
+      "required": true,
+      "line_budget": 40,
+      "description": "Compact table of what this server provides (domain-specific naming)",
+      "fields": {
+        "tools_table": {
+          "format": "| Name | Purpose | Type/Dependencies |\n|------|---------|---|\n| `item_one` | Brief description | category |\n| `item_two` | Brief description | category |",
+          "required": true,
+          "note": "Always use table format, 1 line per item",
+          "max_items": 15
+        },
+        "summary": {
+          "format": "**Total:** {N} items across {N} categories",
+          "required": true
+        }
+      }
+    },
+    {
+      "section_id": 6,
+      "name": "Core Concepts/Workflows",
+      "required": true,
+      "line_budget": 50,
+      "description": "Domain-specific deep-dive sections (rename as appropriate for project)",
+      "fields": {
+        "concept_1": {
+          "format": "### {Concept Title}\n{Explanation with 1 example or code block - 15-20 lines}",
+          "required": true
+        },
+        "concept_2": {
+          "format": "### {Concept Title}\n{Explanation with 1 example - 15-20 lines}",
+          "required": true
+        },
+        "concept_3": {
+          "format": "### {Concept Title}\n{Explanation - 10-15 lines}",
+          "required": false
+        }
+      }
+    },
+    {
+      "section_id": 7,
+      "name": "File Structure",
+      "required": true,
+      "line_budget": 20,
+      "description": "ASCII diagram of project layout",
+      "fields": {
+        "directory_tree": {
+          "format": "```\n{project-name}/\n├── server.py                      # MCP entry point\n├── README.md                      # User documentation\n├── CLAUDE.md                      # This file\n└── {other key files}\n```",
+          "required": true,
+          "max_lines": 15
+        }
+      }
+    },
+    {
+      "section_id": 8,
+      "name": "Design Decisions",
+      "required": true,
+      "line_budget": 40,
+      "description": "Why key architectural choices were made",
+      "fields": {
+        "decision_1": {
+          "format": "**1. {Decision Title}**\n- ✅ Chosen approach: {what was chosen}\n- ❌ Rejected alternative: {why not this}\n- Reason: {brief justification}",
+          "required": true
+        },
+        "decision_2": {
+          "format": "**2. {Decision Title}**\n- ✅ Chosen: {approach}\n- ❌ Rejected: {alternative}\n- Reason: {why}",
+          "required": true
+        },
+        "decision_3": {
+          "format": "**3. {Decision Title}**\n...",
+          "required": false
+        },
+        "decision_4": {
+          "format": "**4. {Decision Title}**\n...",
+          "required": false
+        }
+      }
+    },
+    {
+      "section_id": 9,
+      "name": "Integration Guide",
+      "required": true,
+      "line_budget": 30,
+      "description": "How this server connects with other systems",
+      "fields": {
+        "integration_1": {
+          "format": "### With {Other System 1}\n{Brief explanation of how it connects - 5-10 lines}",
+          "required": true
+        },
+        "integration_2": {
+          "format": "### With {Other System 2}\n{Brief explanation - 5-10 lines}",
+          "required": false
+        }
+      }
+    },
+    {
+      "section_id": 10,
+      "name": "Essential Commands",
+      "required": true,
+      "line_budget": 25,
+      "description": "Key development and usage commands",
+      "fields": {
+        "development": {
+          "format": "### Development\n```bash\n# Install & run\n{command 1}\n{command 2}\n```",
+          "required": true
+        },
+        "testing": {
+          "format": "### Testing\n```bash\n# Run tests\n{command}\n```",
+          "required": true
+        },
+        "usage": {
+          "format": "### Usage / Slash Commands\n```bash\n/{command1}            # Description\n/{command2}            # Description\n```",
+          "required": false
+        }
+      }
+    },
+    {
+      "section_id": 11,
+      "name": "Use Cases",
+      "required": true,
+      "line_budget": 60,
+      "description": "Concrete scenarios showing real-world usage",
+      "fields": {
+        "use_case_1": {
+          "format": "### UC-1: {Use Case Title}\n```\n{Brief 1-2 sentence scenario}\n{Step 1: ...}\n{Step 2: ...}\n{Step 3: ...}\n```",
+          "required": true
+        },
+        "use_case_2": {
+          "format": "### UC-2: {Use Case Title}\n```\n{Brief scenario}\n{Step 1-3}\n```",
+          "required": true
+        }
+      }
+    },
+    {
+      "section_id": 12,
+      "name": "Recent Changes",
+      "required": true,
+      "line_budget": 30,
+      "description": "Version history - ONLY last 2 versions",
+      "fields": {
+        "current_version": {
+          "format": "### v{X.Y.Z} - {Title}\n- ✅ {Feature/fix description}\n- ✅ {Feature/fix description}\n- 🗑️ {Deprecated item}",
+          "required": true,
+          "note": "Current version only - 3-5 bullets"
+        },
+        "previous_version": {
+          "format": "### v{X.Y-1.Z} - {Title}\n- ✅ {Feature description}",
+          "required": true,
+          "note": "Previous version only - 2-3 bullets"
+        }
+      }
+    },
+    {
+      "section_id": 13,
+      "name": "Next Steps / Roadmap",
+      "required": true,
+      "line_budget": 15,
+      "description": "Future work and planned improvements",
+      "fields": {
+        "roadmap": {
+          "format": "- ⏳ {Future item 1}\n- ⏳ {Future item 2}\n- ⏳ {Future item 3}",
+          "required": true,
+          "min_items": 2,
+          "max_items": 5
+        }
+      }
+    },
+    {
+      "section_id": 14,
+      "name": "Resources",
+      "required": true,
+      "line_budget": 10,
+      "description": "Links to related documentation",
+      "fields": {
+        "links": {
+          "format": "- **[README.md](README.md)** - User-facing guide\n- **[MCP Spec](https://spec.modelcontextprotocol.io/)** - Protocol docs",
+          "required": true
+        }
+      }
+    },
+    {
+      "section_id": 15,
+      "name": "Footer",
+      "required": true,
+      "line_budget": 5,
+      "description": "Metadata about document maintenance",
+      "fields": {
+        "maintained_by": {
+          "format": "**Maintained by:** {maintainers}",
+          "required": true
+        }
+      }
+    }
+  ],
+  "line_budget_summary": {
+    "header": 10,
+    "quick_summary": 15,
+    "problem_vision": 20,
+    "architecture": 60,
+    "tools_catalog": 40,
+    "core_concepts": 50,
+    "file_structure": 20,
+    "design_decisions": 40,
+    "integration_guide": 30,
+    "essential_commands": 25,
+    "use_cases": 60,
+    "recent_changes": 30,
+    "next_steps": 15,
+    "resources": 10,
+    "footer": 5,
+    "total_minimum": 530,
+    "total_maximum": 600
+  },
+  "formatting_rules": {
+    "headings": {
+      "main_title": "# {Project} - AI Context Documentation",
+      "section_headings": "## {Section Name}",
+      "subsections": "### {Subsection Name}"
+    },
+    "emphasis": {
+      "project_name": "**{name}**",
+      "important_terms": "**{term}**",
+      "code": "`{code}`"
+    },
+    "lists": {
+      "bullets": "- {item}",
+      "numbered": "{N}. {item}",
+      "status_emoji": "✅ done | ❌ not done | ⏳ pending | 🗑️ deprecated | 🔄 in progress"
+    },
+    "code_blocks": {
+      "bash": "```bash\n{code}\n```",
+      "json": "```json\n{code}\n```",
+      "markdown": "```\n{code}\n```",
+      "diagram": "```\n{ASCII art}\n```"
+    },
+    "tables": {
+      "format": "| Header | Header |\n|--------|--------|\n| cell | cell |",
+      "note": "Always prefer tables for tool/feature listings"
+    }
+  },
+  "examples": {
+    "status_badges": [
+      "✅ Production",
+      "🚧 Development",
+      "🔄 Beta",
+      "⏳ Planning"
+    ],
+    "change_emojis": [
+      "✅ Added/Fixed",
+      "🗑️ Deprecated",
+      "🔄 Changed",
+      "⚠️ Breaking Change"
+    ],
+    "status_tracking": [
+      "✅ Complete",
+      "🚧 In Progress",
+      "⏳ Pending",
+      "❌ Blocked"
+    ]
+  },
+  "quality_checklist": {
+    "structure": [
+      "All 15 sections follow this order",
+      "No content outside this template",
+      "Each section has clear purpose"
+    ],
+    "content": [
+      "Quick Summary explains project in one sentence",
+      "No repetition between sections",
+      "Examples are concrete, not generic",
+      "Design decisions have clear rationale",
+      "Recent changes show last 2 versions only"
+    ],
+    "formatting": [
+      "Tables used for all tool/feature listings",
+      "Code blocks for all code/commands",
+      "ASCII diagrams where helpful",
+      "Consistent emoji usage"
+    ],
+    "length": [
+      "Total line count 530-600",
+      "No section exceeds budget by >20%",
+      "Optional sections (Problem & Vision) only if needed",
+      "History trimmed to 2 versions"
+    ]
+  },
+  "how_to_use": {
+    "step_1": "Copy this template",
+    "step_2": "Fill in metadata for your project",
+    "step_3": "Complete each section with project-specific content",
+    "step_4": "Keep sections in this order",
+    "step_5": "Run through quality checklist before finalizing",
+    "step_6": "Save as CLAUDE.md in project root"
+  },
+  "version_history": {
+    "1.0.0": "Initial template combining best practices from coderef-workflow and coderef-personas"
+  }
+}

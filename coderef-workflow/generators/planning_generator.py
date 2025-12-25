@@ -171,7 +171,8 @@ class PlanningGenerator:
         self,
         feature_name: str,
         context: Optional[Dict[str, Any]] = None,
-        analysis: Optional[Dict[str, Any]] = None
+        analysis: Optional[Dict[str, Any]] = None,
+        workorder_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generate complete implementation plan.
@@ -183,6 +184,7 @@ class PlanningGenerator:
             feature_name: Name of feature to plan
             context: Context data from gather-context (optional)
             analysis: Analysis data from analyze-for-planning (optional)
+            workorder_id: Optional workorder ID for tracking
 
         Returns:
             Complete plan dict with all 10 sections
@@ -210,13 +212,13 @@ class PlanningGenerator:
 
         # Generate plan (with single retry on failure)
         try:
-            plan = self._generate_plan_internal(feature_name, context, analysis, template)
+            plan = self._generate_plan_internal(feature_name, context, analysis, template, workorder_id)
             logger.info(f"Plan generated successfully for: {feature_name}")
             return plan
         except Exception as e:
             logger.warning(f"First attempt failed: {str(e)}. Retrying once...")
             try:
-                plan = self._generate_plan_internal(feature_name, context, analysis, template)
+                plan = self._generate_plan_internal(feature_name, context, analysis, template, workorder_id)
                 logger.info(f"Plan generated successfully on retry for: {feature_name}")
                 return plan
             except Exception as retry_error:
@@ -231,7 +233,8 @@ class PlanningGenerator:
         feature_name: str,
         context: Optional[Dict[str, Any]],
         analysis: Optional[Dict[str, Any]],
-        template: Dict[str, Any]
+        template: Dict[str, Any],
+        workorder_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Internal plan generation logic.
@@ -245,6 +248,7 @@ class PlanningGenerator:
             context: Context data
             analysis: Analysis data
             template: Template data
+            workorder_id: Optional workorder ID for tracking
 
         Returns:
             Plan dict with all 10 sections
@@ -256,6 +260,7 @@ class PlanningGenerator:
         plan = {
             "META_DOCUMENTATION": {
                 "feature_name": feature_name,
+                "workorder_id": workorder_id,
                 "version": template.get("_AI_INSTRUCTIONS", {}).get("version", "1.0.0"),
                 "status": "planning",
                 "generated_by": "PlanningGenerator",

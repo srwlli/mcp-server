@@ -503,6 +503,11 @@ async def list_tools() -> list[Tool]:
                         'description': 'Feature name (alphanumeric, hyphens, underscores only). Max 100 characters.',
                         'pattern': '^[a-zA-Z0-9_-]+$'
                     },
+                    'workorder_id': {
+                        'type': 'string',
+                        'description': 'Optional workorder ID for tracking (e.g., WO-AUTH-SYSTEM-001). If omitted, auto-generated.',
+                        'pattern': '^WO-[A-Z0-9-]+-\\d{3}$'
+                    },
                     'multi_agent': {
                         'type': 'boolean',
                         'description': 'Enable multi-agent coordination mode. When true, automatically generates communication.json after plan creation for parallel agent execution.',

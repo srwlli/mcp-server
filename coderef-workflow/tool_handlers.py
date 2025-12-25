@@ -1155,6 +1155,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     # Validate inputs
     project_path_str = arguments.get('project_path', '')
     feature_name = arguments.get('feature_name', '')
+    provided_workorder_id = arguments.get('workorder_id')  # NEW: Accept from tool parameter
     multi_agent = arguments.get('multi_agent', False)  # NEW: Multi-agent mode flag
 
     project_path = Path(validate_project_path_input(project_path_str)).resolve()
@@ -1170,12 +1171,13 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     analysis = generator.load_analysis(feature_name)  # Load from analysis.json if exists
     template = generator.load_template()
 
-    # Try to read workorder from context or analysis
-    workorder_id = None
-    if context and '_metadata' in context:
-        workorder_id = context['_metadata'].get('workorder_id')
-    elif analysis and '_metadata' in analysis:
-        workorder_id = analysis['_metadata'].get('workorder_id')
+    # Determine workorder ID (priority: provided parameter > context > analysis > generated)
+    workorder_id = provided_workorder_id
+    if not workorder_id:
+        if context and '_metadata' in context:
+            workorder_id = context['_metadata'].get('workorder_id')
+        elif analysis and '_metadata' in analysis:
+            workorder_id = analysis['_metadata'].get('workorder_id')
 
     # If no workorder found, generate new one
     if not workorder_id:
@@ -1185,8 +1187,9 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
             extra={'workorder_id': workorder_id, 'feature_name': feature_name}
         )
     else:
+        source = "provided parameter" if provided_workorder_id else "context/analysis"
         logger.info(
-            f"Using existing workorder: {workorder_id}",
+            f"Using existing workorder from {source}: {workorder_id}",
             extra={'workorder_id': workorder_id, 'feature_name': feature_name}
         )
 

@@ -19,15 +19,11 @@
 
 ### Persona Shortcuts
 - **/use-persona <name>** - Activate a persona
-- **/coderef-expert** - Quick activation of CodeRef-MCP server building expert
-- **/docs-expert** - Quick activation of Documentation & Planning expert
-- **/nfl-scraper-expert** - Quick activation of NFL data scraping expert
 - **/lloyd** - Quick activation of Lloyd project coordinator
 - **/ava** - Quick activation of Ava, the Frontend Specialist
 - **/marcus** - Quick activation of Marcus, the Backend Specialist
 - **/quinn** - Quick activation of Quinn, the Testing Specialist
 - **/taylor** - Quick activation of Taylor, the General Purpose Agent
-- **/devon** - Quick activation of Devon, the Project Setup Specialist
 
 ---
 
@@ -39,27 +35,6 @@
   - Server implementation patterns (Python SDK, async handlers)
   - Tool design best practices and composability
   - JSON-RPC 2.0 communication and error handling
-
-- **docs-expert** (v1.0.0)
-  - POWER framework documentation (6 document types)
-  - 36 docs-mcp tools across 6 categories
-  - Planning workflow (gather → analyze → create → validate)
-  - Standards enforcement (Consistency Trilogy)
-  - Multi-agent coordination and project inventory
-
-- **coderef-expert** (v1.0.0)
-  - Building CodeRef-MCP server for connected MCP network
-  - AST-based scanning with TypeScript Compiler API (99% precision)
-  - Drift detection, validation, query, coverage, impact tools
-  - Multi-index storage for O(1) lookups on 100K+ files
-  - Integration patterns with docs-mcp, test-mcp, ai-agent-mcp
-
-- **nfl-scraper-expert** (v1.2.0)
-  - NFL data scraping for next-scraper platform (Node.js, Supabase, ESPN API)
-  - All 5 production scrapers (game-stats, live-games, injuries, roster-updates, standings)
-  - ESPN API integration (rate limiting, error handling, schema changes)
-  - NFL data model (33 teams, 2,637+ players, 272 games, 41 tables)
-  - Docker deployment, testing strategies, production monitoring
 
 - **lloyd-expert** (v1.1.0)
   - Project coordinator and technical leader (Scrum Master + Tech Lead)
@@ -130,24 +105,6 @@
   - Works with Lloyd via communication.json protocol for any type of workorder
   - Can handle code, tests, docs, or other work as assigned
 
-- **devon** (v1.0.0) - Project Setup & Bootstrap Specialist (Agent 5)
-  - Frontend framework initialization (React, Next.js, Vue, Svelte, Vite)
-  - Backend framework setup (Express, NestJS, FastAPI, Django)
-  - Infrastructure as Code (Docker, docker-compose, GitHub Actions)
-  - Monorepo architecture (Turborepo, Nx, pnpm workspaces)
-  - Package manager expertise (npm, yarn, pnpm, poetry, cargo)
-  - Database setup and ORMs (Prisma, Mongoose, TypeORM, Supabase, SQLAlchemy)
-  - Testing infrastructure (Vitest, Jest, pytest, Playwright, Cypress)
-  - Linting and formatting (ESLint, Prettier, Ruff, Black, pre-commit hooks)
-  - TypeScript configuration (strict mode, path aliases, project references)
-  - Environment management (.env files, validation, secrets)
-  - Git workflows (branching strategies, conventional commits, hooks)
-  - CI/CD pipelines (GitHub Actions, GitLab CI, CircleCI)
-  - Architectural decision documentation (ADRs, trade-off analysis)
-  - Comprehensive handoff documentation for domain specialists
-  - Works with Lloyd via communication.json protocol for setup workorders
-  - Hands off to Ava (frontend), Marcus (backend), Quinn (testing) after setup
-
 ---
 
 ## Quick Workflows
@@ -155,11 +112,11 @@
 ### Activate Expert Persona
 ```
 /use-persona mcp-expert
-/use-persona docs-expert
-/use-persona coderef-expert
-# or use shortcuts:
-/docs-expert
-/coderef-expert
+/lloyd
+/ava
+/marcus
+/quinn
+/taylor
 ```
 
 ### Check Active Persona
@@ -179,7 +136,8 @@ Deactivates current persona
 ## Architecture
 
 **Persona Structure:**
-- `personas/base/` - Independent base personas (mcp-expert, docs-expert, coderef-expert)
+- `personas/base/` - Independent base persona (mcp-expert)
+- `personas/custom/` - Specialist personas (lloyd, ava, marcus, quinn, taylor, research-scout)
 - All personas are standalone - no hierarchical dependencies
 
 **Server Components:**
@@ -198,4 +156,4 @@ Deactivates current persona
 
 ---
 
-**Last Updated:** 2025-10-23
+**Last Updated:** 2025-12-25

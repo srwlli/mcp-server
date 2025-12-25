@@ -118,6 +118,16 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     """
     Handle generate_foundation_docs tool call.
 
+    ⚠️ DEPRECATED: Use the /generate-docs slash command instead.
+
+    The /generate-docs command now uses sequential generation (calling
+    generate_individual_doc 5 times) which eliminates timeout errors
+    by reducing response size from ~1,470 lines to ~250-350 lines per call.
+
+    This handler is kept for backward compatibility but new users should
+    use /generate-docs which provides a better experience with visible
+    progress markers and no timeout errors.
+
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
     """

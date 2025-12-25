@@ -1,0 +1,354 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "remove-utility-personas",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code",
+    "has_context": false,
+    "has_analysis": false,
+    "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "project_overview": "Remove four utility/support personas (devon, widget-architect, coderef-expert, docs-expert) from coderef-personas system to streamline ecosystem to core 7 specialist personas",
+      "dependencies": [
+        "coderef-personas GitHub repository",
+        "personas/base/ and personas/custom/ directories",
+        "Git configured for commits"
+      ],
+      "constraints": [
+        "Must not affect other persona files",
+        "Must maintain referential integrity",
+        "Changes must be tracked in git commits"
+      ]
+    },
+    "1_executive_summary": {
+      "objective": "Remove four utility personas that overlap with lloyd's coordination role and reduce ecosystem complexity",
+      "scope": "Delete 4 persona files and verify remaining 7 personas function correctly",
+      "success_criteria": "All 4 personas removed, 7 core personas verified intact, git commit created",
+      "estimated_complexity": "low",
+      "key_deliverables": [
+        "4 utility persona files deleted",
+        "7 core personas verified functional",
+        "Documentation updated",
+        "Git commit created with clear message"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "risks": [
+        {
+          "risk": "Cross-references to deleted personas in code/docs",
+          "likelihood": "medium",
+          "impact": "medium",
+          "mitigation": "Search codebase for references before deletion, update all files"
+        },
+        {
+          "risk": "Data loss without backups",
+          "likelihood": "low",
+          "impact": "high",
+          "mitigation": "Verify backups exist before deletion"
+        },
+        {
+          "risk": "Git commit fails",
+          "likelihood": "low",
+          "impact": "medium",
+          "mitigation": "Use standard git workflow, verify status after commit"
+        }
+      ]
+    },
+    "3_current_state_analysis": {
+      "files_to_delete": [
+        "personas/base/devon.json",
+        "personas/base/coderef-expert.json",
+        "personas/base/docs-expert.json",
+        "personas/custom/widget-architect.json"
+      ],
+      "files_to_update": [
+        "CLAUDE.md (remove persona descriptions and references)",
+        "my-guide.md (update personas list and slash commands)",
+        ".claude/commands/ (delete related command files)",
+        "README.md (update persona counts if mentioned)"
+      ],
+      "personas_keeping": [
+        "lloyd.json (Multi-Agent Coordinator)",
+        "ava.json (Frontend Specialist)",
+        "marcus.json (Backend Specialist)",
+        "quinn.json (Testing Specialist)",
+        "taylor.json (General Purpose Agent)",
+        "research-scout.json (Research Specialist)",
+        "1 undocumented base persona"
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Delete utility persona files",
+        "description": "Remove 4 persona JSON files that are utility/support roles"
+      },
+      "feature_2": {
+        "name": "Update documentation",
+        "description": "Remove all references to deleted personas from CLAUDE.md, my-guide.md, and other docs"
+      },
+      "feature_3": {
+        "name": "Verify remaining personas",
+        "description": "Confirm 7 core personas remain functional with no broken references"
+      },
+      "feature_4": {
+        "name": "Create git commit",
+        "description": "Document all deletions in a clear git commit with explanatory message"
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-REMOVE-UTILITY-PERSONAS-001",
+        "name": "Remove Utility Personas",
+        "feature_name": "remove-utility-personas",
+        "feature_dir": "coderef/workorder/remove-utility-personas"
+      },
+      "tasks": [
+        {
+          "id": "PREP-001",
+          "phase": 1,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Verify persona files exist",
+          "description": "List all persona files in personas/base/ and personas/custom/ to confirm existence",
+          "estimated_effort": "5 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "PREP-002",
+          "phase": 1,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Search for references to deleted personas",
+          "description": "Search codebase for any references to devon, coderef-expert, docs-expert, widget-architect",
+          "estimated_effort": "10 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "IMPL-001",
+          "phase": 2,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Delete devon.json",
+          "description": "Remove devon.json from personas/base/ directory",
+          "estimated_effort": "2 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "IMPL-002",
+          "phase": 2,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Delete coderef-expert.json",
+          "description": "Remove coderef-expert.json from personas/base/ directory",
+          "estimated_effort": "2 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "IMPL-003",
+          "phase": 2,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Delete docs-expert.json",
+          "description": "Remove docs-expert.json from personas/base/ directory",
+          "estimated_effort": "2 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "IMPL-004",
+          "phase": 2,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Delete widget-architect.json",
+          "description": "Remove widget-architect.json from personas/custom/ directory",
+          "estimated_effort": "2 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "DOCS-001",
+          "phase": 3,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Update CLAUDE.md",
+          "description": "Remove all references to deleted personas from CLAUDE.md",
+          "estimated_effort": "15 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "DOCS-002",
+          "phase": 3,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Update my-guide.md",
+          "description": "Remove deleted personas from my-guide.md personas list and slash commands",
+          "estimated_effort": "10 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "TEST-001",
+          "phase": 4,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Verify remaining personas load",
+          "description": "Confirm all 7 remaining personas load without errors and list_personas shows correct count",
+          "estimated_effort": "10 minutes",
+          "status": "pending"
+        },
+        {
+          "id": "GIT-001",
+          "phase": 4,
+          "workorder_id": "WO-REMOVE-UTILITY-PERSONAS-001",
+          "title": "Create git commit",
+          "description": "Commit all changes with clear message listing deleted files and reason",
+          "estimated_effort": "5 minutes",
+          "status": "pending"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Preparation",
+          "description": "Verify current state and identify all dependencies before deletion",
+          "tasks": ["PREP-001", "PREP-002"],
+          "deliverables": [
+            "Confirmed 4 personas exist",
+            "Identified all references in codebase",
+            "Verified backups exist"
+          ],
+          "estimated_duration": "15 minutes"
+        },
+        {
+          "phase": 2,
+          "name": "Deletion",
+          "description": "Delete the 4 utility personas and associated files",
+          "tasks": ["IMPL-001", "IMPL-002", "IMPL-003", "IMPL-004"],
+          "deliverables": [
+            "4 persona files deleted",
+            "File system verified clean",
+            "No broken references"
+          ],
+          "estimated_duration": "10 minutes"
+        },
+        {
+          "phase": 3,
+          "name": "Documentation Update",
+          "description": "Update all documentation to reflect removed personas",
+          "tasks": ["DOCS-001", "DOCS-002"],
+          "deliverables": [
+            "CLAUDE.md updated",
+            "my-guide.md updated",
+            "All references consistent"
+          ],
+          "estimated_duration": "25 minutes"
+        },
+        {
+          "phase": 4,
+          "name": "Verification & Commit",
+          "description": "Test remaining personas and create final git commit",
+          "tasks": ["TEST-001", "GIT-001"],
+          "deliverables": [
+            "All 7 personas verified functional",
+            "Git commit created",
+            "Repository clean"
+          ],
+          "estimated_duration": "15 minutes"
+        }
+      ],
+      "total_estimated_duration": "65 minutes"
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "test": "Verify deleted files no longer exist",
+          "method": "File system check for all 4 deleted persona JSON files",
+          "expected_result": "Files not found errors"
+        },
+        {
+          "test": "Verify remaining personas load",
+          "method": "Load each of 7 remaining personas with PersonaManager",
+          "expected_result": "All load without JSON errors"
+        },
+        {
+          "test": "Verify list_personas count",
+          "method": "Call list_personas and count results",
+          "expected_result": "Exactly 7 personas returned"
+        }
+      ],
+      "integration_tests": [
+        {
+          "test": "No broken references in codebase",
+          "method": "Grep search for deleted persona names in all files",
+          "expected_result": "Zero matches (excluding plan and backups)"
+        },
+        {
+          "test": "Documentation consistency",
+          "method": "Manual review of CLAUDE.md, my-guide.md, README.md",
+          "expected_result": "All consistently show 7 core personas"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "id": "FR-001",
+          "title": "All 4 personas deleted",
+          "measurable": "File system check shows 0 deleted persona files exist"
+        },
+        {
+          "id": "FR-002",
+          "title": "7 core personas functional",
+          "measurable": "list_personas returns exactly 7 personas, all load without errors"
+        },
+        {
+          "id": "FR-003",
+          "title": "No broken references",
+          "measurable": "Grep search returns 0 matches for deleted persona names"
+        },
+        {
+          "id": "FR-004",
+          "title": "Documentation updated",
+          "measurable": "Manual review confirms all docs reflect removed personas"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "id": "QR-001",
+          "title": "Clean git history",
+          "measurable": "Single commit with clear message listing all changes"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_preparation": {
+        "items": [
+          {"task_id": "PREP-001", "title": "Verify persona files exist", "status": "☐"},
+          {"task_id": "PREP-002", "title": "Search for references", "status": "☐"}
+        ]
+      },
+      "phase_2_deletion": {
+        "items": [
+          {"task_id": "IMPL-001", "title": "Delete devon.json", "status": "☐"},
+          {"task_id": "IMPL-002", "title": "Delete coderef-expert.json", "status": "☐"},
+          {"task_id": "IMPL-003", "title": "Delete docs-expert.json", "status": "☐"},
+          {"task_id": "IMPL-004", "title": "Delete widget-architect.json", "status": "☐"}
+        ]
+      },
+      "phase_3_documentation": {
+        "items": [
+          {"task_id": "DOCS-001", "title": "Update CLAUDE.md", "status": "☐"},
+          {"task_id": "DOCS-002", "title": "Update my-guide.md", "status": "☐"}
+        ]
+      },
+      "phase_4_verification": {
+        "items": [
+          {"task_id": "TEST-001", "title": "Verify remaining personas", "status": "☐"},
+          {"task_id": "GIT-001", "title": "Create git commit", "status": "☐"}
+        ]
+      },
+      "summary": {
+        "total_tasks": 10,
+        "completed": 0,
+        "in_progress": 0,
+        "blocked": 0,
+        "pending": 10,
+        "completion_percent": 0
+      }
+    }
+  }
+}

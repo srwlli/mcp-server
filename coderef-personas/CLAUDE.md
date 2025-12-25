@@ -2,21 +2,21 @@
 
 **Project:** personas-mcp
 **Version:** 1.4.0
-**Status:** ✅ Implemented (9 personas: 3 expert + 1 coordinator + 4 specialists + 1 generalist)
+**Status:** ✅ Implemented (5 personas: 1 expert + 1 coordinator + 3 specialists)
 **Created:** 2025-10-18
-**Last Updated:** 2025-12-20
+**Last Updated:** 2025-12-25
 
 ---
 
 ## Quick Summary
 
-**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "docs-expert", or "coderef-expert") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
+**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "lloyd", "ava", "marcus", or "quinn") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
 
 **v1.4.0 Update (Lloyd Optimization):** Lloyd persona slimmed from 1,017 lines to 153 lines (85% reduction). Reference documentation extracted to `docs/MCP-ECOSYSTEM-REFERENCE.md` and `docs/LLOYD-REFERENCE.md`.
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
-**Current Implementation:** 3 independent base personas (v1.0.0-1.2.0) - no hierarchical dependencies, all standalone.
+**Current Implementation:** 1 expert base persona (mcp-expert) + specialized agent personas (lloyd, ava, marcus, quinn) - no hierarchical dependencies, all standalone.
 
 ---
 
@@ -32,11 +32,11 @@ Create an MCP server that provides expert personas that can be activated:
 # Activate MCP expert
 use_persona('mcp-expert')
 
-# Activate docs-mcp expert
-use_persona('docs-expert')
+# Activate multi-agent coordinator
+use_persona('lloyd')
 
-# Activate CodeRef analysis expert
-use_persona('coderef-expert')
+# Activate frontend specialist
+use_persona('ava')
 ```
 
 **Note:** Original plan included hierarchical personas (mcp-expert:docs-mcp) and stacking. Final implementation uses independent personas with comprehensive standalone expertise for agentic use.
@@ -50,30 +50,15 @@ use_persona('coderef-expert')
 
 ---
 
-## Current Implementation (v1.0.0)
+## Current Implementation
 
-### Four Independent Personas
+### Core Expert Persona
 
-**1. mcp-expert**
+**mcp-expert**
 ```
 use_persona('mcp-expert')
 # MCP protocol and server implementation expert
 # 14 expertise areas, ~2,500 line system prompt
-```
-
-**2. docs-expert**
-```
-use_persona('docs-expert')
-# Documentation and planning expert (30 docs-mcp tools)
-# 20 expertise areas, ~6,000 line system prompt
-```
-
-**3. coderef-expert**
-```
-use_persona('coderef-expert')
-# CodeRef analysis and dependency tracking expert
-# 14 expertise areas, ~3,000 line system prompt
-# Helps USE the CodeRef-MCP tools for code analysis, impact assessment, and dependency queries
 ```
 
 **Architecture:** All personas are independent (parent: null) with no hierarchical dependencies. Each has comprehensive standalone expertise designed for agentic use.
@@ -122,7 +107,7 @@ Planning Expert:
 
 ### Implemented Personas
 
-**Expert Personas (4):**
+**Core Personas (5):**
 
 1. ✅ **lloyd-expert** (v1.2.0)
    - Role: Multi-Agent Coordinator
@@ -135,53 +120,40 @@ Planning Expert:
    - Use cases: Planning MCP features, debugging MCP tools, architecture decisions, protocol compliance
    - System prompt: ~2,500 lines (14 expertise areas)
 
-3. ✅ **docs-expert** (v1.0.0)
-   - Expertise: POWER framework, 31 docs-mcp tools, planning workflows, standards enforcement, multi-agent coordination
-   - Use cases: Documentation generation, implementation planning, standards auditing, project inventory
-   - System prompt: ~6,000 lines (20 expertise areas)
+**Specialist Personas (3) - NEW in v1.2-1.3:**
 
-4. ✅ **coderef-expert** (v2.1.0)
-   - Expertise: Using CodeRef-MCP tools (8 tools, 4 resources, 4 prompts), natural language queries, impact analysis, dependency tracking
-   - Use cases: Code exploration, refactoring risk assessment, finding dead code, understanding dependencies, test coverage analysis
-   - System prompt: ~3,000 lines (14 expertise areas)
-
-**Specialist Personas (5) - NEW in v1.2-1.3:**
-
-5. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
+3. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
    - Domains: UI, React, CSS/Tailwind, accessibility (WCAG 2.1), responsive design, component architecture
    - Expertise: 15+ frontend areas including React hooks, state management, forms, animations, performance optimization
    - Domain Boundaries: Refuses backend/testing tasks, redirects to Marcus/Quinn
    - System prompt: ~1,500 lines with domain boundary detection
    - Slash command: /ava
 
-6. ✅ **marcus** (v1.2.0) - Backend Specialist (Agent 3)
+4. ✅ **marcus** (v1.2.0) - Backend Specialist (Agent 3)
    - Domains: REST/GraphQL APIs, SQL/NoSQL databases, JWT/OAuth auth, RBAC, server architecture, security (OWASP)
    - Expertise: 15+ backend areas including API design, database modeling, caching, background jobs, query optimization
    - Domain Boundaries: Refuses frontend/testing tasks, redirects to Ava/Quinn
    - System prompt: ~1,500 lines with domain boundary detection
    - Slash command: /marcus
 
-7. ✅ **quinn** (v1.2.0) - Testing Specialist (Agent 4)
+5. ✅ **quinn** (v1.2.0) - Testing Specialist (Agent 4)
    - Domains: Unit/integration/E2E testing, TDD, coverage analysis, QA workflows, debugging, test automation
    - Expertise: 15+ testing areas including Jest/pytest, mocking, Playwright/Cypress, performance testing, CI/CD
    - Domain Boundaries: Refuses frontend/backend tasks, redirects to Ava/Marcus
    - System prompt: ~1,500 lines with domain boundary detection
    - Slash command: /quinn
 
-8. ✅ **taylor** (v1.2.0) - General Purpose Agent
+6. ✅ **taylor** (v1.2.0) - General Purpose Agent
    - Domains: Generalist execution (code, tests, docs) - no domain boundaries
    - Expertise: 12+ areas including multi-agent coordination, code implementation, testing, documentation, git workflow
    - Capabilities: Balanced code/test/docs skills, can handle any workorder from Lloyd
    - System prompt: ~3,000 lines with communication.json protocol
    - Slash command: /taylor
 
-9. ✅ **devon** (v1.0.0) - Project Setup & Bootstrap Specialist (Agent 5)
-   - Domains: Project initialization, framework configuration, infrastructure setup, monorepo architecture, toolchain setup
-   - Expertise: 20+ areas including frontend/backend frameworks, Docker/CI/CD, package managers, database setup, testing infrastructure, linting/formatting
-   - Handoff Capabilities: Creates comprehensive setup documentation AND uses communication.json to assign specialists
-   - Key Skills: Next.js/React/Vue setup, Express/FastAPI setup, Turborepo/Nx monorepos, Prisma/Supabase, Vitest/Playwright, Docker/GitHub Actions
-   - System prompt: ~2,500 lines with architectural decision documentation
-   - Slash command: /devon
+7. ✅ **research-scout** (v1.0.0) - Research & Discovery Specialist
+   - Domains: Research synthesis, information gathering, trend analysis, competitive intelligence
+   - Expertise: 10+ areas including web search, documentation analysis, code pattern discovery
+   - Slash command: /research-scout
 
 **Future Personas:** See `coderef/future/claude-20-personas.md` for expansion roadmap
 
@@ -189,16 +161,21 @@ Planning Expert:
 
 ## Architecture
 
-### Persona Storage (v1.0.0)
+### Persona Storage
 ```
 personas/
-└── base/
-    ├── mcp-expert.json (v1.0.0, parent: null)
-    ├── docs-expert.json (v1.0.0, parent: null)
-    └── coderef-expert.json (v2.1.0, parent: null)
+├── base/
+│   └── mcp-expert.json (v1.0.0, parent: null)
+└── custom/
+    ├── lloyd.json
+    ├── ava.json
+    ├── marcus.json
+    ├── quinn.json
+    ├── taylor.json
+    └── research-scout.json
 ```
 
-All personas are independent (no hierarchical structure). Future expansion will add more base personas or potentially reintroduce specialized personas if stacking is implemented.
+All personas are independent (no hierarchical structure). Future expansion will add more specialized personas.
 
 ### Persona Definition Format
 ```json
@@ -413,10 +390,10 @@ API Expert:
 - ✅ Core concept defined
 - ✅ MCP server implemented (server.py with 4 tools)
 - ✅ PersonaManager implemented and simplified (base/ directory only)
-- ✅ 3 independent base personas created (mcp-expert, docs-expert, coderef-expert)
+- ✅ 1 independent base persona created (mcp-expert)
 - ✅ Lloyd-expert added as coordinator persona
 - ✅ Comprehensive system prompts (1000-6000+ lines for agentic use)
-- ✅ Slash commands created (/use-persona, /docs-expert, /coderef-expert)
+- ✅ Slash commands created (/use-persona)
 - ✅ All personas tested and validated locally
 - ✅ Documentation complete (PERSONAS-CREATED.md, my-guide.md, CLAUDE.md)
 
@@ -440,9 +417,7 @@ personas-mcp/
 ├── my-guide.md                        ← Quick reference guide
 ├── .claude/
 │   └── commands/
-│       ├── use-persona.md             ← /use-persona <name>
-│       ├── docs-expert.md             ← /docs-expert shortcut
-│       └── coderef-expert.md          ← /coderef-expert shortcut
+│       └── use-persona.md             ← /use-persona <name>
 ├── coderef/
 │   ├── future/
 │   │   ├── composable-personas-concept.md  ← Core concept
@@ -451,10 +426,15 @@ personas-mcp/
 │       └── agent-persona-mcp/
 │           └── context.json           ← Feature requirements
 ├── personas/
-│   └── base/
-│       ├── mcp-expert.json            ← ✅ v1.0.0 (14 expertise areas)
-│       ├── docs-expert.json           ← ✅ v1.0.0 (20 expertise areas)
-│       └── coderef-expert.json        ← ✅ v2.1.0 (14 expertise areas)
+│   ├── base/
+│   │   └── mcp-expert.json            ← ✅ v1.0.0 (14 expertise areas)
+│   └── custom/
+│       ├── lloyd.json
+│       ├── ava.json
+│       ├── marcus.json
+│       ├── quinn.json
+│       ├── taylor.json
+│       └── research-scout.json
 ├── src/
 │   ├── models.py                      ← PersonaDefinition Pydantic schema
 │   └── persona_manager.py             ← PersonaManager (simplified)

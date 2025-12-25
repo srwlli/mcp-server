@@ -93,6 +93,6 @@ Logged to workorder-log.txt
 - ❌ No context.json
 - ❌ No stub.json
 - ❌ No validation loop
-- ❌ No coderef/working/ folder
+- ❌ No coderef/workorder/ folder
 
 Just: describe → implement → log → commit

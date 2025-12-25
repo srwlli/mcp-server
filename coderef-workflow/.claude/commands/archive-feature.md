@@ -1,4 +1,4 @@
-Archive completed features from coderef/working/ to coderef/archived/.
+Archive completed features from coderef/workorder/ to coderef/archived/.
 
 Ask the user for the feature name, then call the `mcp__coderef_workflow__archive_feature` tool with:
 - project_path: current working directory
@@ -8,7 +8,7 @@ Ask the user for the feature name, then call the `mcp__coderef_workflow__archive
 This tool:
 1. **Checks completion status** by reading DELIVERABLES.md status line
 2. **Prompts for confirmation** if status != Complete (unless force=True)
-3. **Moves entire folder** from coderef/working/{feature-name}/ to coderef/archived/{feature-name}/
+3. **Moves entire folder** from coderef/workorder/{feature-name}/ to coderef/archived/{feature-name}/
 4. **Updates archive index** at coderef/archived/index.json with metadata
 
 **Status Handling**:

@@ -4,7 +4,7 @@ Ask the user for the feature name (alphanumeric, hyphens, underscores only), the
 - project_path: current working directory
 - feature_name: the user-provided feature name
 
-This generates DELIVERABLES.md in coderef/working/{feature-name}/ with:
+This generates DELIVERABLES.md in coderef/workorder/{feature-name}/ with:
 - Phase structure from plan.json
 - Task checklists with [ ] checkboxes
 - Metric placeholders (TBD) for LOC, commits, time spent
@@ -12,7 +12,7 @@ This generates DELIVERABLES.md in coderef/working/{feature-name}/ with:
 - Status: 🚧 Not Started
 
 **Prerequisites**:
-- plan.json must exist in coderef/working/{feature-name}/
+- plan.json must exist in coderef/workorder/{feature-name}/
 - Run `/create-plan` first if plan doesn't exist
 
 **Note**: This command is automatically called by `/create-plan`, so you usually don't need to run it manually. Use this if you need to regenerate DELIVERABLES.md or if automatic generation failed.

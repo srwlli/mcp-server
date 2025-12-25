@@ -145,7 +145,7 @@ After MCP tool creates context.json, present summary:
 - Out of scope: {count} items
 - Constraints: {count} items
 
-📁 Saved to: coderef/working/{feature_name}/context.json
+📁 Saved to: coderef/workorder/{feature_name}/context.json
 
 🔜 Next steps:
 1. Run /analyze-for-planning to discover project details

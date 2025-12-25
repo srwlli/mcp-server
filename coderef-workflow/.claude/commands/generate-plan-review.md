@@ -1,11 +1,11 @@
 Generate a JSON review report from implementation plan validation results.
 
-Ask the user for the plan file path (e.g., "coderef/working/outdoor-gear-category/plan.json"), then call the `mcp__coderef-docs__generate_plan_review_report` tool with:
+Ask the user for the plan file path (e.g., "coderef/workorder/outdoor-gear-category/plan.json"), then call the `mcp__coderef-docs__generate_plan_review_report` tool with:
 - project_path: current working directory
 - plan_file_path: the user-provided plan path
 - output_path: same directory as plan file, named "review.json"
 
-For example, if plan is at `coderef/working/outdoor-gear-category/plan.json`, save review to `coderef/working/outdoor-gear-category/review.json`.
+For example, if plan is at `coderef/workorder/outdoor-gear-category/plan.json`, save review to `coderef/workorder/outdoor-gear-category/review.json`.
 
 This tool transforms validation results into a comprehensive JSON report with:
 1. Executive Summary (score, grade, result type, approval status)

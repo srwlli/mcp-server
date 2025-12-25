@@ -7,7 +7,7 @@ Ask the user for:
 4. **Priority** (low/medium/high) - default: medium
 
 Then:
-1. Create folder: `coderef/working/{feature-name}/`
+1. Create folder: `coderef/workorder/{feature-name}/`
 2. Create `stub.json` with:
 ```json
 {
@@ -20,6 +20,6 @@ Then:
 }
 ```
 
-Confirm with: "Stubbed: coderef/working/{feature-name}/stub.json"
+Confirm with: "Stubbed: coderef/workorder/{feature-name}/stub.json"
 
 Note: When /create-workorder runs, it will detect stub.json and use it as initial context.

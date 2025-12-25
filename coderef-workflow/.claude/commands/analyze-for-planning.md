@@ -19,11 +19,11 @@ Returns a comprehensive preparation summary that includes:
 - Gaps and risks to address
 
 **After running the analysis:**
-1. Determine the feature name from context (look for `coderef/working/<feature-name>/context.json`) or ask the user
-2. Save the JSON results to: `<project_root>/coderef/working/<feature-name>/analysis.json`
+1. Determine the feature name from context (look for `coderef/workorder/<feature-name>/context.json`) or ask the user
+2. Save the JSON results to: `<project_root>/coderef/workorder/<feature-name>/analysis.json`
 3. Create the directory if it doesn't exist
 4. Pretty-print the JSON with 2-space indentation
-5. Report to the user: "✅ Analysis saved to coderef/working/<feature-name>/analysis.json"
+5. Report to the user: "✅ Analysis saved to coderef/workorder/<feature-name>/analysis.json"
 
 **This allows `/create-plan` to generate complete plans without placeholder TODOs.**
 

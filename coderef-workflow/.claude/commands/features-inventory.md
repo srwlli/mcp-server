@@ -1,6 +1,6 @@
 Generate features inventory for the current project.
 
-This command scans coderef/working/ and coderef/archived/ to create a comprehensive inventory of all features with their status, progress, and workorder tracking.
+This command scans coderef/workorder/ and coderef/archived/ to create a comprehensive inventory of all features with their status, progress, and workorder tracking.
 
 ## Workflow
 

@@ -1,9 +1,9 @@
-Audit all implementation plans in the project's coderef/working/ directory.
+Audit all implementation plans in the project's coderef/workorder/ directory.
 
 Call the `mcp__coderef-docs__audit_plans` tool with the current working directory as the project_path.
 
 This will:
-1. Scan all features in coderef/working/
+1. Scan all features in coderef/workorder/
 2. Validate plan.json format for each feature (must be valid JSON)
 3. Check for stale plans (not updated in 7+ days)
 4. Extract progress status from each plan

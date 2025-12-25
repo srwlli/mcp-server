@@ -5,7 +5,7 @@ Call the `mcp__coderef-docs__generate_handoff_context` tool with:
 - Feature name (ask user if not obvious from context)
 - Mode: "full" for comprehensive context or "minimal" for quick summary (default: full)
 
-This generates `claude.md` in `coderef/working/{feature}/` with:
+This generates `claude.md` in `coderef/workorder/{feature}/` with:
 - Auto-populated project overview from plan.json
 - Current progress and task status
 - Recent git commits and uncommitted changes
@@ -19,7 +19,7 @@ Reduces handoff time from 20-30 minutes to under 5 minutes by auto-populating 80
 /generate-handoff-context
 # Claude asks: Which feature? (e.g., "auth-system")
 # Claude asks: Mode? (full/minimal, default: full)
-# Generates coderef/working/{feature}/claude.md
+# Generates coderef/workorder/{feature}/claude.md
 ```
 
 **When to use:**

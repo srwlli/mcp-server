@@ -81,7 +81,7 @@ mcp__coderef_workflow__gather_context({
 })
 ```
 
-This creates `coderef/working/{feature_name}/context.json`.
+This creates `coderef/workorder/{feature_name}/context.json`.
 
 ### Step 3: Generate Foundation Docs [NEW]
 
@@ -120,7 +120,7 @@ mcp__coderef_workflow__analyze_project_for_planning({
 })
 ```
 
-This creates `coderef/working/{feature_name}/analysis.json` with:
+This creates `coderef/workorder/{feature_name}/analysis.json` with:
 - Foundation docs available/missing
 - Coding standards
 - Technology stack
@@ -139,7 +139,7 @@ mcp__coderef_workflow__create_plan({
 })
 ```
 
-This creates `coderef/working/{feature_name}/plan.json` with:
+This creates `coderef/workorder/{feature_name}/plan.json` with:
 - Complete 10-section implementation plan
 - Workorder ID embedded in section 5
 - DELIVERABLES.md template
@@ -184,7 +184,7 @@ mcp__coderef_workflow__generate_agent_communication({
 })
 ```
 
-This creates `coderef/working/{feature_name}/communication.json` with:
+This creates `coderef/workorder/{feature_name}/communication.json` with:
 - **`tasks` array** - Single source of truth for task tracking (status: pending/in_progress/complete/blocked)
 - **`progress` summary** - Auto-calculated totals (complete/pending/percent)
 - Forbidden files per agent (prevents conflicts)
@@ -208,7 +208,7 @@ Call the validate_implementation_plan MCP tool:
 ```python
 mcp__coderef_workflow__validate_implementation_plan({
     "project_path": <current_working_directory>,
-    "plan_file_path": f"coderef/working/{feature_name}/plan.json"
+    "plan_file_path": f"coderef/workorder/{feature_name}/plan.json"
 })
 ```
 
@@ -243,7 +243,7 @@ After validation passes (or max iterations reached), present summary:
 Feature Planning Complete: {feature_name}
 
 Workorder: {workorder_id}
-Location: coderef/working/{feature_name}/
+Location: coderef/workorder/{feature_name}/
 
 Files Created:
 - context.json (requirements)
@@ -255,7 +255,7 @@ Validation Score: {score}/100
 Status: {PASS|PASS_WITH_WARNINGS|NEEDS_REVISION}
 
 Next Steps:
-1. Review the plan at coderef/working/{feature_name}/plan.json
+1. Review the plan at coderef/workorder/{feature_name}/plan.json
 2. Run /execute-plan to generate task list
 3. Implement the feature following the plan phases
 4. Run /update-deliverables to capture git metrics (LOC, commits, time)
@@ -269,7 +269,7 @@ Next Steps:
 Feature Planning Complete: {feature_name}
 
 Workorder: {workorder_id}
-Location: coderef/working/{feature_name}/
+Location: coderef/workorder/{feature_name}/
 Mode: Multi-Agent ({agent_count} agents)
 
 Files Created:
@@ -318,7 +318,7 @@ After validation passes, commit and push all planning artifacts:
 
 ```bash
 # Stage planning artifacts
-git add coderef/working/{feature_name}/
+git add coderef/workorder/{feature_name}/
 
 # Commit with descriptive message
 git commit -m "plan({feature_name}): Add implementation plan

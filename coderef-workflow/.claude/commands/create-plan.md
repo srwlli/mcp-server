@@ -10,7 +10,7 @@ This is a **meta-tool** that guides AI through plan generation by:
 3. Loading AI-optimized template from **MCP server's directory** (not user's project)
 4. Returning all inputs to AI with synthesis instructions
 5. AI generates complete 10-section plan
-6. AI saves to coderef/working/{feature_name}/plan.json
+6. AI saves to coderef/workorder/{feature_name}/plan.json
 
 Generation process:
 - **AI synthesizes**: Tool provides inputs, AI creates the actual plan content
@@ -46,7 +46,7 @@ mcp__coderef-docs__create_plan({
 })
 ```
 
-This creates `coderef/working/{feature_name}/plan.json` with:
+This creates `coderef/workorder/{feature_name}/plan.json` with:
 - Complete 10-section implementation plan
 - Workorder ID embedded in section 5
 - DELIVERABLES.md template (auto-generated)
@@ -58,7 +58,7 @@ Call the validate_implementation_plan MCP tool:
 ```python
 mcp__coderef-docs__validate_implementation_plan({
     "project_path": <current_working_directory>,
-    "plan_file_path": f"coderef/working/{feature_name}/plan.json"
+    "plan_file_path": f"coderef/workorder/{feature_name}/plan.json"
 })
 ```
 
@@ -106,7 +106,7 @@ After validation passes, commit and push planning artifacts:
 
 ```bash
 # Stage planning artifacts
-git add coderef/working/{feature_name}/
+git add coderef/workorder/{feature_name}/
 
 # Commit with descriptive message
 git commit -m "plan({feature_name}): Add implementation plan
@@ -134,7 +134,7 @@ Present summary to user:
 Plan Created: {feature_name}
 
 Workorder: {workorder_id}
-Location: coderef/working/{feature_name}/
+Location: coderef/workorder/{feature_name}/
 
 Files Created:
 - plan.json (implementation plan)
@@ -165,7 +165,7 @@ mcp__coderef-docs__archive_feature({
 ```
 
 This:
-- Moves `coderef/working/{feature_name}/` to `coderef/archived/{feature_name}/`
+- Moves `coderef/workorder/{feature_name}/` to `coderef/archived/{feature_name}/`
 - Updates `coderef/archived/index.json` with metadata
 - Logs completion to orchestrator workorder-log.txt
 

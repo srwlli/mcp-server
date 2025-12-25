@@ -13,7 +13,7 @@ Replaces TBD placeholders in DELIVERABLES.md with actual values.
 Updates status from 🚧 Not Started to ✅ Complete if commits found.
 
 **Prerequisites**:
-- DELIVERABLES.md must exist in coderef/working/{feature-name}/
+- DELIVERABLES.md must exist in coderef/workorder/{feature-name}/
 - Project must be a git repository
 - Feature-related commits must include feature name in commit messages
 

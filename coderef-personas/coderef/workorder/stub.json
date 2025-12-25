@@ -1,0 +1,18 @@
+{
+  "feature_name": "remove-utility-personas",
+  "description": "Remove devon, widget-architect, coderef-expert, and docs-expert personas from coderef-personas system entirely. These are support/utility personas that should not be maintained as independent entities.",
+  "category": "refactor",
+  "priority": "medium",
+  "created": "2025-12-25T00:00:00Z",
+  "status": "stub",
+  "context": {
+    "personas_to_remove": [
+      "devon.json (Setup & Bootstrap specialist)",
+      "widget-architect.json (Widget architecture specialist)",
+      "coderef-expert.json (Code analysis expert)",
+      "docs-expert.json (Documentation expert)"
+    ],
+    "reason": "These are utility/support personas that overlap with lloyd's coordination role. Streamline to core 7 personas (lloyd, ava, marcus, quinn, taylor, research-scout, and 1 undocumented base).",
+    "impact": "Cleaner persona ecosystem, reduces maintenance burden, simplifies persona selection"
+  }
+}

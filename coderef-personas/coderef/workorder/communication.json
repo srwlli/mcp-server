@@ -1,0 +1,88 @@
+{
+  "feature": "remove-utility-personas",
+  "workorder_id": "WO-CODEREF-PERSONAS-001",
+  "from": "Lloyd (Orchestrator)",
+  "to": "Agent (TBD)",
+  "task": "Remove devon, widget-architect, coderef-expert, and docs-expert personas from coderef-personas system",
+
+  "precise_steps": [
+    "Step 1: List all persona files in coderef-personas/personas/base/ and personas/custom/",
+    "Step 2: Identify and delete devon.json from base personas",
+    "Step 3: Identify and delete widget-architect.json from custom personas",
+    "Step 4: Identify and delete coderef-expert.json from base personas",
+    "Step 5: Identify and delete docs-expert.json from base personas",
+    "Step 6: Verify remaining personas (lloyd, ava, marcus, quinn, taylor, research-scout, +1 undocumented)",
+    "Step 7: Create git commit with list of removed persona files"
+  ],
+
+  "details": {
+    "forbidden_files": [
+      "coderef-personas/personas/base/*.json (except: devon.json, coderef-expert.json, docs-expert.json)",
+      "coderef-personas/personas/custom/*.json (except: widget-architect.json)"
+    ],
+    "allowed_files": [
+      "coderef-personas/personas/base/devon.json - DELETE",
+      "coderef-personas/personas/base/coderef-expert.json - DELETE",
+      "coderef-personas/personas/base/docs-expert.json - DELETE",
+      "coderef-personas/personas/custom/widget-architect.json - DELETE"
+    ],
+    "context": {
+      "feature_name": "remove-utility-personas",
+      "goal": "Streamline persona ecosystem to core 7 specialists",
+      "category": "refactor",
+      "personas_removing": [
+        "devon (Setup & Bootstrap - utility, overlaps with lloyd)",
+        "widget-architect (Widget architecture - specialized support)",
+        "coderef-expert (Code analysis - specialized support)",
+        "docs-expert (Documentation - specialized support)"
+      ],
+      "personas_keeping": [
+        "lloyd (Coordinator)",
+        "ava (Frontend Specialist)",
+        "marcus (Backend Specialist)",
+        "quinn (Testing Specialist)",
+        "taylor (Generalist)",
+        "research-scout (Research)",
+        "+1 undocumented base persona"
+      ]
+    }
+  },
+
+  "testing_checklist": [
+    "✅ All 4 utility persona files deleted",
+    "✅ Remaining 7 core personas intact and functional",
+    "✅ No breaking changes to other persona files",
+    "✅ Git commit created with deleted file list",
+    "✅ Verify slash commands still work for remaining personas"
+  ],
+
+  "agent_status": {
+    "assigned": false,
+    "workorder_id": "WO-CODEREF-PERSONAS-001",
+    "agent_number": null,
+    "started_at": null,
+    "status": "pending"
+  },
+
+  "agent_completion": {
+    "status": null,
+    "changes_made": [],
+    "commit_hash": null,
+    "notes": ""
+  },
+
+  "orchestrator_verification": {
+    "verified_by": null,
+    "verified_at": null,
+    "final_approval": null,
+    "issues_found": []
+  },
+
+  "communication_log": [
+    {
+      "timestamp": "2025-12-25T00:00:00Z",
+      "from": "Lloyd",
+      "message": "Workorder created from stub: remove-utility-personas. Delete 4 support personas to streamline ecosystem."
+    }
+  ]
+}

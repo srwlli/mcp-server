@@ -1,25 +1,27 @@
-Log a quick idea as a stub for future feature work.
+Log a quick idea as a stub for future feature work (centralized global backlog).
 
 Ask the user for:
 1. **Feature name** (slug format: lowercase, hyphens, e.g., "dark-mode-toggle")
 2. **Description** (brief, 1-2 sentences)
-3. **Category** (feature/fix/improvement/idea/refactor) - default: idea
-4. **Priority** (low/medium/high) - default: medium
+
+Auto-detect:
+- **Project** - From working directory context (agent knows this)
+- **Created timestamp** - ISO format
+- **Status** - Always "stub"
 
 Then:
-1. Create folder: `coderef/workorder/{feature-name}/`
+1. Create folder: `C:\Users\willh\Desktop\assistant\coderef\working\{feature-name}/`
 2. Create `stub.json` with:
 ```json
 {
   "feature_name": "{feature-name}",
   "description": "{description}",
-  "category": "{category}",
-  "priority": "{priority}",
+  "project": "{project}",
   "created": "{ISO timestamp}",
   "status": "stub"
 }
 ```
 
-Confirm with: "Stubbed: coderef/workorder/{feature-name}/stub.json"
+Confirm with: "Stubbed: C:\Users\willh\Desktop\assistant\coderef\working\{feature-name}\stub.json (from project: {project})"
 
-Note: When /create-workorder runs, it will detect stub.json and use it as initial context.
+Note: All stubs saved to centralized backlog location. When /create-workorder runs, it will detect stub.json and use it as initial context.

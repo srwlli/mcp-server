@@ -13,7 +13,7 @@ from logger_config import logger, log_error
 
 
 class FeaturesInventoryGenerator:
-    """Generator for creating feature inventory from coderef/working and coderef/archived."""
+    """Generator for creating feature inventory from coderef/workorder and coderef/archived."""
 
     def __init__(self, project_path: Path):
         """
@@ -28,7 +28,7 @@ class FeaturesInventoryGenerator:
 
     def scan_working_features(self) -> List[Dict[str, Any]]:
         """
-        Scan coderef/working/ for active features.
+        Scan coderef/workorder/ for active features.
 
         Returns:
             List of feature dictionaries with status 'active'

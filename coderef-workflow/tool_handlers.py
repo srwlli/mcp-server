@@ -1198,7 +1198,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f"=" * 60 + "\n\n"
     result += f"Feature: {feature_name}\n"
     result += f"Project: {project_path.name}\n"
-    result += f"Output: coderef/working/{feature_name}/plan.json\n\n"
+    result += f"Output: coderef/workorder/{feature_name}/plan.json\n\n"
     result += f"=" * 60 + "\n\n"
     result += f"INSTRUCTIONS FOR AI:\n\n"
     result += f"You have context, analysis, and template data below.\n"
@@ -1330,14 +1330,14 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f"📋 WORKORDER INFORMATION:\n"
     result += f"-" * 60 + "\n"
     result += f"Workorder ID: {workorder_id}\n"
-    result += f"Feature Directory: coderef/working/{feature_name}\n\n"
+    result += f"Feature Directory: coderef/workorder/{feature_name}\n\n"
     result += f"IMPORTANT: Include workorder in section 5 (5_task_id_system):\n"
     result += f'{{\n'
     result += f'  "5_task_id_system": {{\n'
     result += f'    "workorder": {{\n'
     result += f'      "id": "{workorder_id}",\n'
     result += f'      "name": "{feature_name.replace("-", " ").title()}",\n'
-    result += f'      "feature_dir": "coderef/working/{feature_name}"\n'
+    result += f'      "feature_dir": "coderef/workorder/{feature_name}"\n'
     result += f'    }},\n'
     result += f'    "tasks": [\n'
     result += f'      {{\n'
@@ -1370,7 +1370,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     result += f'  }}\n'
     result += f'}}\n\n'
     result += f"Save the plan to:\n"
-    result += f"  {project_path}/coderef/working/{feature_name}/plan.json\n\n"
+    result += f"  {project_path}/coderef/workorder/{feature_name}/plan.json\n\n"
 
     # NEW in v3.1.0: Log workorder to orchestrator
     result += f"=" * 60 + "\n\n"
@@ -1434,7 +1434,7 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
     Handle gather_context tool call.
     
     Gathers feature requirements and creates context.json file in
-    coderef/working/{feature_name}/ directory.
+    coderef/workorder/{feature_name}/ directory.
     
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
@@ -1877,7 +1877,7 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
                 "tool_handlers.py - DO NOT MODIFY (existing handlers)"
             ],
             "allowed_files": allowed_files if allowed_files else [
-                f"coderef/working/{feature_name}/ - Feature implementation files"
+                f"coderef/workorder/{feature_name}/ - Feature implementation files"
             ],
             "context": {
                 "feature_name": feature_name,
@@ -2438,7 +2438,7 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
     """
     Handle archive_feature tool call.
 
-    Archives completed features from coderef/working/ to coderef/archived/.
+    Archives completed features from coderef/workorder/ to coderef/archived/.
     Checks DELIVERABLES.md status and prompts user if status != Complete.
     Moves entire feature folder using shutil and updates archive index.
 
@@ -2465,7 +2465,7 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
     # Check if feature exists in working directory
     if not working_dir.exists():
         raise FileNotFoundError(
-            f"Feature '{feature_name}' not found in coderef/working/. "
+            f"Feature '{feature_name}' not found in coderef/workorder/. "
             f"Expected: {working_dir}"
         )
 
@@ -2630,7 +2630,7 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
     response_data = {
         'archived': True,
         'feature_name': feature_name,
-        'source_path': 'coderef/working/' + feature_name,  # Already moved
+        'source_path': 'coderef/workorder/' + feature_name,  # Already moved
         'archived_path': str(archived_dir.relative_to(Path(project_path))),
         'file_count': file_count,
         'previous_status': status,
@@ -2839,7 +2839,7 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     """
     Handle execute_plan tool call.
 
-    Reads plan.json from coderef/working/{feature}/ and generates TodoWrite
+    Reads plan.json from coderef/workorder/{feature}/ and generates TodoWrite
     task list with format: WO-ID | TASK-ID: Description
 
     Args:
@@ -3727,7 +3727,7 @@ async def handle_update_task_status(arguments: dict) -> list[TextContent]:
 
     Args (in arguments):
         project_path: Absolute path to project directory
-        feature_name: Feature name (folder in coderef/working/)
+        feature_name: Feature name (folder in coderef/workorder/)
         task_id: Task ID to update (e.g., "SETUP-001", "IMPL-002")
         status: New status ("pending", "in_progress", "completed", "blocked")
         notes: Optional notes about the status change
@@ -3864,7 +3864,7 @@ async def handle_audit_plans(arguments: dict) -> list[TextContent]:
     """
     Handle audit_plans tool call (STUB-011).
 
-    Audits all plans in coderef/working/ directory to provide:
+    Audits all plans in coderef/workorder/ directory to provide:
     - Plan format validation (must be JSON)
     - Progress status extraction
     - Stale plan detection (>7 days since last update)
@@ -4122,7 +4122,7 @@ async def handle_generate_features_inventory(arguments: dict) -> list[TextConten
     """
     Handle generate_features_inventory tool call.
 
-    Scans coderef/working/ and coderef/archived/ to generate a comprehensive
+    Scans coderef/workorder/ and coderef/archived/ to generate a comprehensive
     inventory of all features with their status, progress, and workorder tracking.
 
     Args (in arguments):

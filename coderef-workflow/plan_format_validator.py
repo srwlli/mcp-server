@@ -2,7 +2,7 @@
 Plan format enforcement for docs-mcp (STUB-032).
 
 This module enforces the standard plan.json format:
-- Standard location: coderef/working/{feature}/plan.json
+- Standard location: coderef/workorder/{feature}/plan.json
 - Standard format: JSON (not .md, not .txt)
 - Created via /create-plan workflow
 
@@ -57,7 +57,7 @@ def validate_plan_format(plan_path: Path) -> Tuple[bool, Optional[str]]:
         Tuple of (is_valid, error_message)
 
     Example:
-        >>> valid, error = validate_plan_format(Path('coderef/working/auth/plan.json'))
+        >>> valid, error = validate_plan_format(Path('coderef/workorder/auth/plan.json'))
         >>> valid
         True
         >>> valid, error = validate_plan_format(Path('plan.md'))
@@ -114,7 +114,7 @@ def validate_plan_location(plan_path: Path, project_path: Path) -> Tuple[bool, O
     """
     Validate that plan is in standard location.
 
-    Standard location: {project}/coderef/working/{feature}/plan.json
+    Standard location: {project}/coderef/workorder/{feature}/plan.json
 
     Args:
         plan_path: Path to plan file
@@ -125,7 +125,7 @@ def validate_plan_location(plan_path: Path, project_path: Path) -> Tuple[bool, O
 
     Example:
         >>> is_std, warn, feature = validate_plan_location(
-        ...     Path('coderef/working/auth/plan.json'),
+        ...     Path('coderef/workorder/auth/plan.json'),
         ...     Path('.')
         ... )
         >>> is_std
@@ -146,7 +146,7 @@ def validate_plan_location(plan_path: Path, project_path: Path) -> Tuple[bool, O
             f"Plan file not under project directory.\n"
             f"Plan: {plan_path}\n"
             f"Project: {project_path}\n\n"
-            "Standard location: coderef/working/{feature}/plan.json"
+            "Standard location: coderef/workorder/{feature}/plan.json"
         ), ""
 
     # Check against standard pattern
@@ -165,7 +165,7 @@ def validate_plan_location(plan_path: Path, project_path: Path) -> Tuple[bool, O
     return False, (
         f"Plan file not in standard location.\n"
         f"Current: {relative_str}\n"
-        f"Expected: coderef/working/{{feature}}/plan.json\n\n"
+        f"Expected: coderef/workorder/{{feature}}/plan.json\n\n"
         f"Use /create-plan to create plans in the standard location."
     ), feature_name
 
@@ -190,7 +190,7 @@ def enforce_plan_format(
 
     Example:
         >>> valid, errors, feature = enforce_plan_format(
-        ...     Path('coderef/working/auth/plan.json'),
+        ...     Path('coderef/workorder/auth/plan.json'),
         ...     Path('.'),
         ...     strict=True
         ... )
@@ -249,13 +249,13 @@ def check_for_invalid_plans(working_dir: Path) -> List[dict]:
     Finds plan.md, PLAN.md, and other non-standard formats.
 
     Args:
-        working_dir: Path to coderef/working directory
+        working_dir: Path to coderef/workorder directory
 
     Returns:
         List of dicts with 'path', 'issue', and 'suggestion' keys
 
     Example:
-        >>> invalid = check_for_invalid_plans(Path('coderef/working'))
+        >>> invalid = check_for_invalid_plans(Path('coderef/workorder'))
         >>> for item in invalid:
         ...     print(f"{item['path']}: {item['issue']}")
     """
@@ -306,7 +306,7 @@ def get_enforcement_message() -> str:
 
 All implementation plans MUST use the following standard:
 
-**Location**: `coderef/working/{feature}/plan.json`
+**Location**: `coderef/workorder/{feature}/plan.json`
 **Format**: JSON (not markdown, not plaintext)
 **Creation**: Use `/create-plan` workflow
 
@@ -320,7 +320,7 @@ All implementation plans MUST use the following standard:
 - plan.md, PLAN.md
 - implementation-plan.md
 - *.txt plans
-- Plans outside coderef/working/
+- Plans outside coderef/workorder/
 
 ### Enforcement
 - Tools validate plan format before execution

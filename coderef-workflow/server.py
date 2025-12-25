@@ -391,7 +391,7 @@ async def list_tools() -> list[Tool]:
                     },
                     'feature_name': {
                         'type': 'string',
-                        'description': 'Optional: Feature name for saving analysis to coderef/working/{feature_name}/analysis.json. If omitted, analysis is returned without saving.',
+                        'description': 'Optional: Feature name for saving analysis to coderef/workorder/{feature_name}/analysis.json. If omitted, analysis is returned without saving.',
                         'pattern': '^[a-zA-Z0-9_-]+$'
                     }
                 },
@@ -400,7 +400,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name='gather_context',
-            description='Gather feature requirements and save to context.json. Accepts structured feature data (name, description, goal, requirements, constraints) and creates a properly formatted context file in coderef/working/{feature_name}/ for use with planning workflows.',
+            description='Gather feature requirements and save to context.json. Accepts structured feature data (name, description, goal, requirements, constraints) and creates a properly formatted context file in coderef/workorder/{feature_name}/ for use with planning workflows.',
             inputSchema={
                 'type': 'object',
                 'properties': {
@@ -519,7 +519,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name='generate_deliverables_template',
-            description='Generate DELIVERABLES.md template from plan.json structure with phase/task checklists and metric placeholders. Automatically called by /create-plan workflow. Saves to coderef/working/{feature-name}/DELIVERABLES.md.',
+            description='Generate DELIVERABLES.md template from plan.json structure with phase/task checklists and metric placeholders. Automatically called by /create-plan workflow. Saves to coderef/workorder/{feature-name}/DELIVERABLES.md.',
             inputSchema={
                 'type': 'object',
                 'properties': {
@@ -666,7 +666,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name='archive_feature',
-            description='Archive completed features from coderef/working/ to coderef/archived/. Checks DELIVERABLES.md status and prompts user for confirmation if status != Complete. Moves entire feature folder and updates archive index.json with metadata.',
+            description='Archive completed features from coderef/workorder/ to coderef/archived/. Checks DELIVERABLES.md status and prompts user for confirmation if status != Complete. Moves entire feature folder and updates archive index.json with metadata.',
             inputSchema={
                 'type': 'object',
                 'properties': {
@@ -676,7 +676,7 @@ async def list_tools() -> list[Tool]:
                     },
                     'feature_name': {
                         'type': 'string',
-                        'description': 'Feature name (folder name in coderef/working/). Alphanumeric, hyphens, underscores only.',
+                        'description': 'Feature name (folder name in coderef/workorder/). Alphanumeric, hyphens, underscores only.',
                         'pattern': '^[a-zA-Z0-9_-]+$'
                     },
                     'force': {
@@ -776,7 +776,7 @@ Run after /update-deliverables and before /archive-feature.''',
         ),
         Tool(
             name='execute_plan',
-            description='Generate TodoWrite task list from plan.json with WO-ID | TASK-ID: Description format for Lloyd\'s CLI checklist display. Reads plan from coderef/working/{feature}/, extracts workorder ID and tasks, generates properly formatted todos with activeForm for progress tracking.',
+            description='Generate TodoWrite task list from plan.json with WO-ID | TASK-ID: Description format for Lloyd\'s CLI checklist display. Reads plan from coderef/workorder/{feature}/, extracts workorder ID and tasks, generates properly formatted todos with activeForm for progress tracking.',
             inputSchema={
                 'type': 'object',
                 'properties': {
@@ -805,7 +805,7 @@ Run after /update-deliverables and before /archive-feature.''',
                     },
                     'feature_name': {
                         'type': 'string',
-                        'description': 'Feature name (folder in coderef/working/)',
+                        'description': 'Feature name (folder in coderef/workorder/)',
                         'pattern': '^[a-zA-Z0-9_-]+$'
                     },
                     'task_id': {
@@ -827,7 +827,7 @@ Run after /update-deliverables and before /archive-feature.''',
         ),
         Tool(
             name='audit_plans',
-            description='Audit all plans in coderef/working/ directory (STUB-011). Provides plan format validation, progress status extraction, stale plan detection, issue identification and recommendations. Returns health score (0-100).',
+            description='Audit all plans in coderef/workorder/ directory (STUB-011). Provides plan format validation, progress status extraction, stale plan detection, issue identification and recommendations. Returns health score (0-100).',
             inputSchema={
                 'type': 'object',
                 'properties': {
@@ -921,7 +921,7 @@ Run after /update-deliverables and before /archive-feature.''',
                     },
                     'feature_name': {
                         'type': 'string',
-                        'description': 'Feature name (alphanumeric, hyphens, underscores only). Must match feature directory in coderef/working/',
+                        'description': 'Feature name (alphanumeric, hyphens, underscores only). Must match feature directory in coderef/workorder/',
                         'pattern': '^[a-zA-Z0-9_-]+$'
                     },
                     'mode': {
@@ -1054,7 +1054,7 @@ Replaces: api_inventory, database_inventory, dependency_inventory, config_invent
         ),
         Tool(
             name='generate_features_inventory',
-            description='Generate inventory of all features in coderef/working/ and coderef/archived/. Returns structured list of features with status, progress, workorder tracking, and workflow coverage. Supports JSON and markdown output formats.',
+            description='Generate inventory of all features in coderef/workorder/ and coderef/archived/. Returns structured list of features with status, progress, workorder tracking, and workflow coverage. Supports JSON and markdown output formats.',
             inputSchema={
                 'type': 'object',
                 'properties': {

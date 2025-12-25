@@ -20,7 +20,7 @@ class PlanningGenerator:
     2. Load analysis data (if exists) - project structure/standards
     3. Load AI-optimized template - planning structure
     4. Generate complete plan (10 sections) in batch mode
-    5. Save to coderef/working/<feature-name>/plan.json
+    5. Save to coderef/workorder/<feature-name>/plan.json
     6. On failure: save partial plan with TODOs marking incomplete sections
     """
 
@@ -110,15 +110,15 @@ class PlanningGenerator:
             Analysis data dict or None if not available
 
         Note:
-            If feature_name provided, looks in coderef/working/{feature_name}/analysis.json
+            If feature_name provided, looks in coderef/workorder/{feature_name}/analysis.json
             Otherwise returns None (analysis must be run first).
         """
         if not feature_name:
             logger.debug("No feature_name provided for analysis loading")
             return None
 
-        # Look for analysis.json in feature working directory
-        analysis_file = self.project_path / 'coderef' / 'working' / feature_name / 'analysis.json'
+        # Look for analysis.json in feature workorder directory
+        analysis_file = self.project_path / 'coderef' / 'workorder' / feature_name / 'analysis.json'
 
         if not analysis_file.exists():
             logger.debug(f"Analysis file not found: {analysis_file}")
@@ -511,7 +511,7 @@ class PlanningGenerator:
 
     def save_plan(self, feature_name: str, plan: Dict[str, Any]) -> str:
         """
-        Save plan to coderef/working/<feature-name>/plan.json.
+        Save plan to coderef/workorder/<feature-name>/plan.json.
 
         Args:
             feature_name: Feature name

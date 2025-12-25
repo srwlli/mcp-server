@@ -592,7 +592,7 @@ def parse_agent_status(communication_json_path: Path) -> Dict[str, any]:
             - overall_status: str - Overall workflow status
 
     Example:
-        >>> status = parse_agent_status(Path('coderef/working/auth/communication.json'))
+        >>> status = parse_agent_status(Path('coderef/workorder/auth/communication.json'))
         >>> status['overall_status']
         'IN_PROGRESS'
         >>> len(status['agents'])
@@ -763,11 +763,11 @@ def parse_deliverables_status(deliverables_path: Path) -> str:
         Status string: "Complete", "In Progress", "Not Started", or "UNKNOWN"
 
     Example:
-        >>> status = parse_deliverables_status(Path('coderef/working/auth/DELIVERABLES.md'))
+        >>> status = parse_deliverables_status(Path('coderef/workorder/auth/DELIVERABLES.md'))
         >>> status
         'Complete'
 
-        >>> status = parse_deliverables_status(Path('coderef/working/auth/DELIVERABLES.md'))
+        >>> status = parse_deliverables_status(Path('coderef/workorder/auth/DELIVERABLES.md'))
         >>> status
         'In Progress'
 

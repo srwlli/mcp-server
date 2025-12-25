@@ -1,0 +1,291 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "fix-workflow-bugs-and-rename",
+    "workorder_id": "WO-WORKFLOW-REFACTOR-001",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "Claude Code Assistant",
+    "generated_at": "2025-12-25T06:30:00Z",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "0_PREPARATION": {
+    "discovery": {
+      "bugs_identified": [
+        "Bug 1: tool_handlers.py:1607 - generate_deliverables_template crashes with 'list' object has no attribute 'get'",
+        "Bug 2: planning_generator.py:260 - plan.json status incorrectly set to 'complete' on creation"
+      ],
+      "enhancements_requested": [
+        "Add workorder_id to META_DOCUMENTATION in plan.json",
+        "Rename coderef/working/ → coderef/workorder/ (breaking change, no backward compatibility)"
+      ],
+      "codebase_analysis": {
+        "files_affected": [
+          "tool_handlers.py",
+          "planning_generator.py",
+          "All .py files with 'working' references",
+          "All .md slash commands with 'coderef/working' paths"
+        ]
+      }
+    }
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Fix critical workflow bugs and refactor directory structure from working/ to workorder/",
+    "why": "Current workflow has crashes and incorrect status tracking. Workorder-centric naming better reflects the architecture.",
+    "impact": "Breaking change - all references to coderef/working must be updated. No backward compatibility."
+  },
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": [
+      {
+        "change": "Rename coderef/working → coderef/workorder",
+        "impact": "All existing features in coderef/working will need manual migration",
+        "mitigation": "Document migration steps, update all code paths before release"
+      }
+    ],
+    "security_risks": [],
+    "performance_risks": [],
+    "dependencies": {
+      "external": [],
+      "internal": ["All coderef-workflow tools", "All slash commands"]
+    }
+  },
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_code": {
+      "tool_handlers.py": "Line 1607 assumes deliverables are strings, crashes when they're dicts",
+      "planning_generator.py": "Line 260 hardcodes status='complete' on plan creation",
+      "directory_structure": "Uses coderef/working/ for active features"
+    },
+    "patterns": {
+      "status_lifecycle": "Not properly implemented - no tracking of planning → in_progress → complete",
+      "deliverables_format": "Inconsistent - generator creates simple lists, consumers expect objects"
+    }
+  },
+  "4_KEY_FEATURES": [
+    {
+      "feature": "Fix deliverables crash",
+      "requirement": "Handle both string and dict deliverable formats without crashing",
+      "priority": "CRITICAL"
+    },
+    {
+      "feature": "Fix status lifecycle",
+      "requirement": "Set initial status to 'planning', not 'complete'",
+      "priority": "CRITICAL"
+    },
+    {
+      "feature": "Add workorder_id to META",
+      "requirement": "Store workorder ID in plan.json META_DOCUMENTATION",
+      "priority": "HIGH"
+    },
+    {
+      "feature": "Rename working → workorder",
+      "requirement": "Update all references from coderef/working to coderef/workorder",
+      "priority": "HIGH"
+    }
+  ],
+  "5_TASK_ID_SYSTEM": {
+    "convention": "WO-WORKFLOW-REFACTOR-001",
+    "categories": {
+      "BUGFIX": "Bug fixes (001-050)",
+      "ENHANCE": "Enhancements (051-100)",
+      "REFACTOR": "Refactoring (101-150)",
+      "DOC": "Documentation (151-200)"
+    }
+  },
+  "6_IMPLEMENTATION_PHASES": {
+    "phases": [
+      {
+        "phase_id": "phase_1",
+        "name": "Critical Bug Fixes",
+        "description": "Fix crashes and incorrect status",
+        "tasks": [
+          {
+            "task_id": "BUGFIX-001",
+            "description": "Fix generate_deliverables_template crash in tool_handlers.py:1607",
+            "file": "tool_handlers.py",
+            "changes": "Add type checking for deliverables (handle both str and dict)",
+            "status": "pending"
+          },
+          {
+            "task_id": "BUGFIX-002",
+            "description": "Fix initial plan status in planning_generator.py:260",
+            "file": "planning_generator.py",
+            "changes": "Change status from 'complete' to 'planning'",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "phase_id": "phase_2",
+        "name": "Add Workorder ID to META",
+        "description": "Store workorder_id in plan.json",
+        "tasks": [
+          {
+            "task_id": "ENHANCE-051",
+            "description": "Add workorder_id parameter to planning_generator.py",
+            "file": "planning_generator.py",
+            "changes": "Update _generate_plan_internal to accept and store workorder_id",
+            "status": "pending"
+          },
+          {
+            "task_id": "ENHANCE-052",
+            "description": "Update tool_handlers.py to pass workorder_id",
+            "file": "tool_handlers.py",
+            "changes": "Pass workorder_id when calling create_plan",
+            "status": "pending"
+          },
+          {
+            "task_id": "ENHANCE-053",
+            "description": "Update create_plan tool schema",
+            "file": "server.py",
+            "changes": "Add workorder_id to tool input schema",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "phase_id": "phase_3",
+        "name": "Comprehensive Search for 'working' References",
+        "description": "Identify all code locations using coderef/working",
+        "tasks": [
+          {
+            "task_id": "REFACTOR-101",
+            "description": "Search all .py files for 'working' string",
+            "changes": "Grep/search to find all references",
+            "status": "pending"
+          },
+          {
+            "task_id": "REFACTOR-102",
+            "description": "Search all .md files for 'coderef/working' paths",
+            "changes": "Find all slash commands with old paths",
+            "status": "pending"
+          },
+          {
+            "task_id": "REFACTOR-103",
+            "description": "Create comprehensive list of files to change",
+            "changes": "Document all affected files",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "phase_id": "phase_4",
+        "name": "Batch Rename: working → workorder",
+        "description": "Update all references (breaking change)",
+        "tasks": [
+          {
+            "task_id": "REFACTOR-104",
+            "description": "Update all .py files with new paths",
+            "changes": "Replace 'coderef/working' → 'coderef/workorder'",
+            "status": "pending"
+          },
+          {
+            "task_id": "REFACTOR-105",
+            "description": "Update all .md slash commands",
+            "changes": "Replace paths in all command files",
+            "status": "pending"
+          },
+          {
+            "task_id": "REFACTOR-106",
+            "description": "Update README.md and CLAUDE.md",
+            "changes": "Reflect new workorder-centric naming",
+            "status": "pending"
+          },
+          {
+            "task_id": "REFACTOR-107",
+            "description": "Physically rename directory coderef/working → coderef/workorder",
+            "changes": "Git mv command to rename directory",
+            "status": "pending"
+          }
+        ]
+      },
+      {
+        "phase_id": "phase_5",
+        "name": "Documentation & Testing",
+        "description": "Update docs and verify fixes",
+        "tasks": [
+          {
+            "task_id": "DOC-151",
+            "description": "Update COMPLETE_COMMAND_AUDIT.md with workorder paths",
+            "file": "COMPLETE_COMMAND_AUDIT.md",
+            "status": "pending"
+          },
+          {
+            "task_id": "DOC-152",
+            "description": "Create migration guide for existing features",
+            "file": "MIGRATION_WORKING_TO_WORKORDER.md",
+            "status": "pending"
+          },
+          {
+            "task_id": "BUGFIX-003",
+            "description": "Test generate_deliverables_template with real plan.json",
+            "changes": "Verify no crashes with dict deliverables",
+            "status": "pending"
+          },
+          {
+            "task_id": "BUGFIX-004",
+            "description": "Test plan creation with new status lifecycle",
+            "changes": "Verify status starts as 'planning'",
+            "status": "pending"
+          }
+        ]
+      }
+    ]
+  },
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      "Test deliverables type handling (str vs dict)",
+      "Test plan status initialization",
+      "Test workorder_id storage in META"
+    ],
+    "integration_tests": [
+      "Test full workflow: create-workorder → execute-plan → update-deliverables",
+      "Test all slash commands with new workorder paths"
+    ],
+    "manual_testing": [
+      "Create new workorder and verify directory structure",
+      "Verify existing features still work after migration"
+    ]
+  },
+  "8_SUCCESS_CRITERIA": {
+    "technical": [
+      "✓ No crashes in generate_deliverables_template",
+      "✓ Plan status starts as 'planning'",
+      "✓ workorder_id stored in META_DOCUMENTATION",
+      "✓ All references use coderef/workorder",
+      "✓ Directory physically renamed"
+    ],
+    "functional": [
+      "✓ Can create new workorder successfully",
+      "✓ Can execute plan in new workorder directory",
+      "✓ All slash commands work with new paths"
+    ]
+  },
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "pre_implementation": [
+      "✓ Bugs identified and root cause understood",
+      "✓ Search strategy for 'working' references planned",
+      "✓ Breaking change impact assessed"
+    ],
+    "during_implementation": [
+      "Fix Bug 1 (deliverables crash)",
+      "Fix Bug 2 (status lifecycle)",
+      "Add workorder_id to META",
+      "Search and document all 'working' references",
+      "Batch rename all references",
+      "Rename physical directory"
+    ],
+    "post_implementation": [
+      "Test all fixes",
+      "Update all documentation",
+      "Create migration guide",
+      "Commit and push changes"
+    ]
+  },
+  "QUALITY_CHECKLIST_FOR_PLANS": {
+    "completeness": "All bugs and requirements captured",
+    "clarity": "Clear task descriptions with file paths and line numbers",
+    "autonomy": "Agent can execute without additional questions",
+    "testability": "Success criteria clearly defined"
+  }
+}

@@ -3,7 +3,8 @@
     "allow": [
       "mcp__coderef-workflow__execute_plan",
       "mcp__coderef-workflow__update_task_status",
-      "Bash(python -m pytest:*)"
+      "Bash(python -m pytest:*)",
+      "Bash(cmd /c move \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\STANDALONE_PLAN_GENERATOR_LITE.json\" \"C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\")"
     ],
     "deny": [],
     "ask": []

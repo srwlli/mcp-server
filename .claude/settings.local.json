@@ -99,7 +99,19 @@
       "mcp__coderef-workflow__log_workorder",
       "Bash(git rm:*)",
       "Bash(timeout 5 uv run:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(timeout:*)",
+      "Bash(__NEW_LINE__ echo \"=== coderef-workflow commands (should be 23) ===\" ls -1 \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.claude\\commands\")",
+      "Bash(wc -l echo \"\" echo \"=== coderef-docs commands (should be 17) ===\" ls -1 \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\")",
+      "Bash(__NEW_LINE__ echo \"=== coderef-workflow commands ===\" ls \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.claude\\commands\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"C:\\Users\\willh\\move-commands.ps1\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"C:\\Users\\willh\\check-commands.ps1\")",
+      "Bash(powershell -ExecutionPolicy Bypass -File:*)",
+      "Bash(git reset:*)",
+      "Bash(\"/c/Users/willh/.mcp-servers/coderef-workflow/.claude/commands/gather-context.md\")",
+      "Bash(__NEW_LINE__ for file in aggregate-agent-deliverables create-workorder features-inventory generate-agent-communication generate-deliverables get-planning-template log-workorder update-task-status validate-plan verify-agent-completion)",
+      "Bash(do)",
+      "Bash(\"/c/Users/willh/.mcp-servers/coderef-workflow/.claude/commands/$file.md\")"
     ],
     "deny": [],
     "ask": []

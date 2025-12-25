@@ -1,18 +1,24 @@
 # coderef-workflow - AI Context Documentation
 
 **Project:** coderef-workflow (MCP Server)
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Status:** ✅ Production - Feature lifecycle management orchestration
 **Created:** 2024-12-24
-**Last Updated:** 2024-12-24
+**Last Updated:** 2025-12-25 (WO-WORKFLOW-REFACTOR-001 complete)
 
 ---
 
 ## Quick Summary
 
-**coderef-workflow** is an enterprise-grade MCP server that orchestrates the complete feature development lifecycle. It handles context gathering, planning, execution tracking, deliverables management, and feature archiving.
+**coderef-workflow** is an enterprise-grade MCP server that orchestrates the complete feature development lifecycle. It handles context gathering, planning, execution tracking, deliverables management, and feature archiving using a **workorder-centric architecture**.
 
-**Core Innovation:** Works in tandem with **coderef-context** (code intelligence) and **coderef-docs** (documentation generation) to provide AI agents with the tools to manage complex, multi-phase feature implementations.
+**Core Innovation:** Works in tandem with **coderef-context** (code intelligence) and **coderef-docs** (documentation generation) to provide AI agents with the tools to manage complex, multi-phase feature implementations. **NEW:** Workorder ID tracking for complete audit trail and feature lifecycle management.
+
+**Latest Update (v1.1.0):**
+- ✅ Fixed critical bugs in plan generation (status lifecycle, deliverables handling)
+- ✅ Implemented workorder_id tracking throughout system
+- ✅ Completed coderef/working → coderef/workorder refactoring
+- ✅ All 16 tasks in WO-WORKFLOW-REFACTOR-001 complete and tested
 
 **Key Relationship:**
 - **coderef-workflow** = Orchestration & planning
@@ -72,6 +78,67 @@ coderef-docs Tools (documentation)
     ├─ Generate/update CHANGELOG
     └─ Generate standards documentation
 ```
+
+---
+
+## Workorder System Architecture (v1.1.0+)
+
+**NEW:** All plans now use a workorder-centric system for complete audit trail and feature tracking.
+
+### Workorder ID Format
+```
+WO-{FEATURE}-{CATEGORY}-{SEQUENCE}
+Example: WO-AUTH-SYSTEM-001, WO-API-DESIGN-002
+```
+
+### Directory Structure
+```
+coderef/workorder/                    # All new features use workorder IDs
+├── WO-AUTH-SYSTEM-001/               # Feature workorder
+│  ├── context.json                   # Requirements & constraints
+│  ├── analysis.json                  # Project analysis
+│  ├── plan.json                      # Implementation plan + workorder_id
+│  └── DELIVERABLES.md               # Progress & metrics
+
+coderef/working/                      # Legacy features (unchanged)
+├── old-feature-name/
+└── another-old-feature/
+```
+
+### Workorder ID Tracking
+Each plan.json now includes workorder tracking in META_DOCUMENTATION:
+```json
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "new-feature",
+    "workorder_id": "WO-FEATURE-001",  // NEW in v1.1.0
+    "status": "planning",               // NEW: starts as "planning"
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  }
+}
+```
+
+### Key Changes in v1.1.0
+1. **Bug Fixes:**
+   - Fixed deliverables crash in tool_handlers.py (type checking)
+   - Fixed plan status lifecycle (now starts as "planning" not "complete")
+
+2. **Enhancements:**
+   - workorder_id parameter added to plan generation pipeline
+   - workorder_id stored in plan.json for audit trail
+   - create_plan tool schema updated to accept workorder_id
+
+3. **Refactoring:**
+   - Updated 6 Python files (42 changes)
+   - Updated 13 slash commands (35 changes)
+   - All paths changed: coderef/working → coderef/workorder
+
+4. **Testing:**
+   - All 4 critical tests passed
+   - Real plan.json validation complete
+   - Zero regressions detected
 
 ---
 
@@ -523,18 +590,52 @@ Slash commands are defined in `coderef-docs/.claude/commands/` and orchestrate c
 
 ---
 
-## Recent Changes (v1.0.0)
+## Recent Changes (v1.1.0)
+
+**Major Release - Workorder System & Bug Fixes**
+
+### Bug Fixes
+- ✅ Fixed deliverables crash in generate_deliverables_template (tool_handlers.py:1607)
+- ✅ Fixed plan status lifecycle - now starts as "planning" not "complete"
+
+### Enhancements
+- ✅ Implemented workorder_id tracking throughout system
+- ✅ workorder_id now stored in plan.json META_DOCUMENTATION for audit trail
+- ✅ create_plan tool schema updated to accept optional workorder_id parameter
+- ✅ Workorder-centric architecture with WO-{FEATURE}-{CATEGORY}-### format
+
+### Refactoring
+- ✅ Updated 6 Python files (42 changes) - path from coderef/working → coderef/workorder
+- ✅ Updated 13 slash command files (35 changes)
+- ✅ Updated main documentation (README.md, CLAUDE.md)
+- ✅ All references to coderef/working updated to coderef/workorder
+
+### Testing
+- ✅ All 4 critical tests passed (100% pass rate)
+- ✅ Validated with real plan.json from WO-WORKFLOW-REFACTOR-001
+- ✅ Zero regressions detected
+
+### Documentation
+- ✅ Created comprehensive migration guide
+- ✅ Created detailed change inventory
+- ✅ All user-facing documentation updated
+
+**Reference:** WO-WORKFLOW-REFACTOR-001 (16/16 tasks complete)
+
+---
+
+## Previous Changes (v1.0.0)
 
 - ✅ Complete feature lifecycle management
 - ✅ Context-based planning with coderef-context integration
 - ✅ Multi-agent task coordination
 - ✅ Automated deliverables tracking
 - ✅ Feature archival system
-- ✅ Workorder tracking and audit trail
 - ✅ Risk assessment with code intelligence
 - ✅ Plan validation and scoring (0-100)
 
 ---
 
-**Last Updated:** December 24, 2024
+**Last Updated:** December 25, 2025 (v1.1.0 release)
+**Previous Update:** December 24, 2024 (v1.0.0)
 **Maintained by:** willh, Claude Code AI

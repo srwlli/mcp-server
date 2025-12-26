@@ -14,11 +14,11 @@
 
 **Core Innovation:** Solves the "agent blind coding" problem by combining code intelligence (coderef-context), structured planning (coderef-workflow), expert personas (coderef-personas), and documentation automation (coderef-docs).
 
-**Latest Update (v1.0.0):**
-- ✅ Universal CLAUDEMD-TEMPLATE.json for consistent documentation
-- ✅ Simplified /stub command (2 prompts, centralized backlog)
-- ✅ Refactored coderef-docs/CLAUDE.md (93% reduction: 3,250 → 227 lines)
-- ✅ Updated Lloyd persona for workorder-centric architecture
+**Latest Update (v1.1.0):**
+- ✅ Enhanced /stub command with optional conversation context capture
+- ✅ Smart context extraction from conversation history
+- ✅ Conditional JSON field (context included only when relevant discussion exists)
+- ✅ Complete implementation guide (STUB_COMMAND_IMPLEMENTATION_GUIDE.md)
 
 **Key Relationships:**
 - **coderef-context** = Code intelligence (dependency graph, impact analysis)
@@ -265,12 +265,92 @@ cat ~/.mcp.json                            # Check configuration
 
 ### Usage (Main Workflows)
 ```bash
-/stub                          # Capture quick idea (2 prompts)
+/stub                          # Capture quick idea + optional conversation context
 /create-workorder              # Full planning workflow
 /execute-plan                  # Generate & track execution
 /record-changes                # Auto-detect & record changes
 /generate-docs                 # Create foundation docs
 /archive-feature               # Move to archive
+```
+
+---
+
+## Troubleshooting: MCP Cache Issues
+
+### Problem: Duplicate Commands in Autocomplete
+
+**Symptoms:**
+- `/create-plan` appears multiple times in autocomplete (labeled as both "(user)" and "(project)")
+- `/get-planning-template` appears multiple times
+- Duplicate tool references after deleting local command files
+
+**Root Cause:**
+Claude Code caches MCP tool and command definitions in `mcp-cache.json`. When you delete local commands or modify server configurations, the cache becomes stale and shows old/duplicate references.
+
+### Solution: Clear MCP Cache
+
+**Step 1: Locate the cache file**
+
+The MCP cache is stored in Claude Code's project-specific cache directory. Find it at:
+
+```
+C:\Users\{USERNAME}\.cursor\projects\{PROJECT_ID}\mcp-cache.json
+```
+
+**The PROJECT_ID is a hash based on your project folder name.** For the CodeRef ecosystem:
+
+```
+C:\Users\willh\.cursor\projects\c-Users-willh-Desktop-projects-current-location-coderef-system\mcp-cache.json
+```
+
+**Step 2: Delete the cache file**
+
+```bash
+# Windows
+del "C:\Users\willh\.cursor\projects\c-Users-willh-Desktop-projects-current-location-coderef-system\mcp-cache.json"
+
+# or use Bash
+rm "C:\Users\willh\.cursor\projects\c-Users-willh-Desktop-projects-current-location-coderef-system\mcp-cache.json"
+```
+
+**Step 3: Restart Claude Code**
+
+- Close Claude Code completely
+- Reopen Claude Code
+- Claude Code will automatically rebuild `mcp-cache.json` with current server definitions
+
+**Result:**
+- ✅ Duplicate commands disappear
+- ✅ All 4 servers (coderef-context, coderef-docs, coderef-personas, coderef-workflow) refresh
+- ✅ Global commands from `~/.claude/commands/` load cleanly
+- ✅ No stale references
+
+### Important Notes
+
+**Single Cache for All Servers:**
+The `mcp-cache.json` file contains cached definitions for ALL 4 MCP servers. Deleting one file clears the cache for all servers simultaneously.
+
+**Project-Specific Caches:**
+Each Claude Code project has its own cache. If you work on multiple projects, each may have a separate `mcp-cache.json` file in its own `.cursor/projects/{PROJECT_ID}/` directory.
+
+**When to Clear Cache:**
+- After deleting local command files
+- After modifying `.mcp.json` configuration
+- After adding/removing MCP servers
+- When tools don't appear in autocomplete
+- When seeing duplicate command references
+- After updating tool schemas in server code
+
+### Finding Your PROJECT_ID
+
+If you're unsure of your PROJECT_ID, list all cached projects:
+
+```bash
+# List all cached project directories
+ls "C:\Users\willh\.cursor\projects\"
+
+# Or search for any mcp-cache.json files
+find "C:\Users\willh\.cursor" -name "mcp-cache.json" -type f
 ```
 
 ---
@@ -323,6 +403,13 @@ Agent: "Now I know what breaks. Here's my implementation plan."
 ---
 
 ## Recent Changes
+
+### v1.1.0 - Enhanced Stub Command with Context Capture
+- ✅ Enhanced /stub command with smart conversation context extraction
+- ✅ Optional `context` field in stub.json (conditionally included)
+- ✅ Single /stub command (not two versions) - automatically detects context relevance
+- ✅ Complete implementation guide with examples (STUB_COMMAND_IMPLEMENTATION_GUIDE.md)
+- ✅ Integration with /create-workorder (stub.json used as seed data)
 
 ### v1.0.0 - Complete Ecosystem Release
 - ✅ Universal CLAUDEMD-TEMPLATE.json (15-section template, 530-600 lines)

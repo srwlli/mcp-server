@@ -1,6 +1,6 @@
-Create a new workorder with the complete planning workflow: gather context, analyze project, create plan, and validate.
+Execute the complete 10-step feature planning workflow: gather context, analyze project, create plan, validate, and commit.
 
-This command orchestrates the full planning pipeline in sequence, eliminating the need to run each step manually. Workorders are automatically logged to both local and orchestrator workorder-log.txt for central tracking.
+**GLOBAL DEPLOYMENT:** All artifacts created in global paths ONLY (`coderef/workorder/`, `coderef/foundation-docs/`, `coderef/archived/`). NO local copies.
 
 ## Workflow Overview
 

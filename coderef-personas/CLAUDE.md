@@ -41,6 +41,26 @@ use_persona('ava')
 
 **Note:** Original plan included hierarchical personas (mcp-expert:docs-mcp) and stacking. Final implementation uses independent personas with comprehensive standalone expertise for agentic use.
 
+---
+
+## 🌍 Global Deployment Rule
+
+**NOTHING IS LOCAL. ENTIRE ECOSYSTEM IS GLOBAL.**
+
+All tools, commands, and artifacts must use **global paths only**:
+- `~/.claude/commands/` (commands)
+- `coderef/workorder/` (plans)
+- `coderef/foundation-docs/` (documentation)
+- `coderef/archived/` (completed features)
+- `coderef/standards/` (standards)
+- MCP tools (global endpoints only)
+
+❌ **FORBIDDEN:** Local copies, project-specific variations, `coderef/working/`, per-project configurations
+
+**Rule:** No fallbacks, no exceptions, no local alternatives. Single global source of truth.
+
+---
+
 ### How It Works
 1. User activates a persona via MCP tool
 2. Persona returns system prompt/context

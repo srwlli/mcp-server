@@ -5,7 +5,13 @@
       "mcp__coderef-workflow__update_task_status",
       "Bash(python -m pytest:*)",
       "Bash(cmd /c move \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\STANDALONE_PLAN_GENERATOR_LITE.json\" \"C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\")",
-      "Bash(dir \"C:\\Users\\willh\\Desktop\\assistant\\coderef\")"
+      "Bash(dir \"C:\\Users\\willh\\Desktop\\assistant\\coderef\")",
+      "Bash(dir \"C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\")",
+      "Bash(dir \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\coderef\\workorder\\breaking-change-workflow-integration\")",
+      "Bash(dir:*)",
+      "Bash(__NEW_LINE__ echo \"=== Global Commands Directory ===\" ls \"C:\\Users\\willh\\.claude\\commands\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

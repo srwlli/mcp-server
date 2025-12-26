@@ -3,7 +3,14 @@
     "allow": [
       "Bash(python -m pytest:*)",
       "Bash(pip install:*)",
-      "mcp__coderef-docs__create_context_expert"
+      "mcp__coderef-docs__create_context_expert",
+      "Bash(powershell -Command \"[System.DateTime]::UtcNow.ToString(''o'')\")",
+      "mcp__coderef-context__coderef_scan",
+      "Bash(powershell -Command \"Get-Item ''C:\\Users\\willh\\.claude\\commands\\generate-docs.md'' | Select-Object FullName, Length, LastWriteTime\")",
+      "Bash(powershell -Command \"(Select-String -Path ''C:\\Users\\willh\\.mcp-servers\\coderef-docs\\CLAUDE.md'' -Pattern ''generate_foundation_docs'').LineNumber | head -1\")",
+      "mcp__coderef-docs__generate_individual_doc",
+      "Bash(git add:*)",
+      "Bash(git hash-object:*)"
     ]
   },
   "enabledMcpjsonServers": [

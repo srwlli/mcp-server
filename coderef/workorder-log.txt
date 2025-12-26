@@ -1,2 +1,4 @@
+WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | Remove utility personas (devon, widget-architec... | 2025-12-25T19:37:30.252086+00:00
+WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | remove-utility-personas implementation plan | 2025-12-25T19:00:55.643982+00:00
 WO-RESTRUCTURE-MONOREPO-001 | coderef-dashboard | Restructure monorepo - remove widget system, mo... | 2025-12-25T18:23:26.228569+00:00
 WO-WORKORDER-TRACKING-001 | html-tools | Real-time workorder/stub tracking system - SSE ... | 2025-12-25T08:11:05.652666+00:00

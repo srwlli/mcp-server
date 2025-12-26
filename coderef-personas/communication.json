@@ -1,0 +1,45 @@
+{
+  "workorder_id": "WO-MCP-PERSONAS-001",
+  "session": "MCP-Server-Capabilities-Deep-Dive",
+  "phase": 1,
+  "agent": "personas-analysis-agent",
+  "location": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+  "shared_document": "C:\\Users\\willh\\Desktop\\assistant\\session-mcp-capabilities.json",
+
+  "task": "Phase 1: Deep-dive analysis of coderef-personas capabilities",
+
+  "instructions": [
+    "Read all tools in this coderef-personas server",
+    "List each tool with: name, parameters, purpose, limitations",
+    "Identify current capabilities (what it does well)",
+    "Identify gaps (what it cannot do)",
+    "Identify dependencies (does it rely on other servers?)",
+    "Identify what other servers depend on this one",
+    "Document specialization potential (how deep can personas go?)"
+  ],
+
+  "output_format": {
+    "tools": [
+      {
+        "name": "tool_name",
+        "parameters": ["param1", "param2"],
+        "purpose": "what it does",
+        "limitation": "known constraints"
+      }
+    ],
+    "capabilities": ["capability1", "capability2"],
+    "limitations": ["limitation1", "limitation2"],
+    "gaps": ["missing_feature1", "missing_feature2"],
+    "dependencies_on": ["server_x", "server_y"],
+    "provides_to": ["server_a", "server_b"],
+    "specialization_potential": {
+      "current_depth": "level",
+      "possible_specializations": ["spec1", "spec2"],
+      "custom_persona_capability": "description"
+    }
+  },
+
+  "next_step": "Update session-mcp-capabilities.json servers.coderef-personas with findings and set analysis_complete to true",
+
+  "status": "pending"
+}

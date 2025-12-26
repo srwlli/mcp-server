@@ -1,2 +1,4 @@
+WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | Remove utility personas (devon, widget-architec... | 2025-12-25T19:37:30.252086+00:00
+WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | remove-utility-personas implementation plan | 2025-12-25T19:00:55.643982+00:00
 WO-AGENT-SPECIALIZATION-001 | personas-mcp | Archived feature: Agent Specialization | 2025-12-20T10:39:20.468747+00:00
 WO-PERSONA-MANAGEMENT-001 | personas-mcp | persona-management implementation plan | 2025-12-20T09:19:29.546557+00:00

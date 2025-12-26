@@ -1,0 +1,272 @@
+{
+  "workorder_id": "WO-BREAKING-CHANGE-INTEGRATION-001",
+  "feature_name": "breaking-change-workflow-integration",
+  "status": "planning",
+  "purpose": "Integrate CR-001 Breaking Change Detector into coderef-workflow orchestration process",
+  "created_at": "2025-12-25",
+  "created_by": "Claude",
+  "summary": "Define integration points and workflow stages for breaking change detection in feature implementation",
+
+  "integration_points": [
+    {
+      "stage": "Phase 0: Planning & Risk Assessment",
+      "activities": [
+        {
+          "name": "Analyze existing breaking changes",
+          "tool": "mcp__coderef_breaking__detect",
+          "input": { "baseRef": "main", "headRef": "current-branch" },
+          "purpose": "Identify existing breaking changes before implementation",
+          "output_field": "plan.risks.existing_breaking_changes"
+        },
+        {
+          "name": "Establish breaking change baseline",
+          "tool": "mcp__coderef_breaking__detect",
+          "input": { "baseRef": "main", "useWorktree": true },
+          "purpose": "Record baseline metrics for post-implementation comparison",
+          "output_field": "context.breaking_change_baseline"
+        }
+      ]
+    },
+    {
+      "stage": "Agent Handoff Context",
+      "activities": [
+        {
+          "name": "Include breaking change analysis in claude.md",
+          "purpose": "Provide agents with context on known breaking changes and migration patterns",
+          "includes": [
+            "Known breaking changes from risk assessment",
+            "Available migration patterns (wrap, rename, adapter, defaultParam, optionsObject)",
+            "Checklist: what agent should verify after implementation"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "Phase 3: Verification & Validation",
+      "activities": [
+        {
+          "name": "Detect new breaking changes introduced",
+          "tool": "mcp__coderef_breaking__detect",
+          "input": { "baseRef": "main", "useWorktree": true },
+          "purpose": "Verify agent didn't introduce new breaking changes",
+          "acceptance": "No new breaking changes, or all have migration patterns",
+          "gates": [
+            {
+              "condition": "newBreakingChanges > baseline",
+              "action": "flag_for_review",
+              "requirement": "Agent must implement migration patterns or rollback changes"
+            }
+          ]
+        },
+        {
+          "name": "Risk assessment and test selection",
+          "purpose": "Use breaking change impact to determine which tests to run",
+          "logic": "Run tests for all modules affected by breaking changes"
+        }
+      ]
+    },
+    {
+      "stage": "Phase 5: Documentation",
+      "activities": [
+        {
+          "name": "Generate migration guide",
+          "input": "Breaking change report from verification",
+          "output": "Migration guide markdown",
+          "purpose": "Document breaking changes and migration paths for users"
+        },
+        {
+          "name": "Update CHANGELOG",
+          "input": "Breaking change report",
+          "fields": [
+            "Version",
+            "Breaking changes count",
+            "Affected call sites",
+            "Migration patterns",
+            "Confidence scores"
+          ]
+        }
+      ]
+    }
+  ],
+
+  "workflow_integration": {
+    "plan_json_additions": {
+      "phase_0_preparation": {
+        "task_id": "PREP-BREAKING-001",
+        "title": "Analyze existing breaking changes",
+        "tool": "mcp__coderef_breaking__detect",
+        "acceptance": "Risk assessment complete, baseline documented"
+      },
+      "phase_3_verification": {
+        "task_id": "VERIFY-BREAKING-001",
+        "title": "Detect new breaking changes",
+        "tool": "mcp__coderef_breaking__detect",
+        "acceptance": "No new breaking changes introduced",
+        "gates": [
+          {
+            "condition": "newBreakingChanges > baseline",
+            "action": "require_migration_patterns",
+            "message": "Feature introduced breaking changes - agent must implement migration patterns"
+          }
+        ]
+      }
+    },
+
+    "communication_json_additions": {
+      "shared_gates": [
+        {
+          "name": "breaking-change-validation",
+          "runs_after": "all_agents_complete",
+          "check": "mcp__coderef_breaking__detect(baseRef='main', useWorktree=true)",
+          "pass_condition": "newBreakingChanges <= allowed_threshold",
+          "allowed_threshold": 0
+        }
+      ],
+      "agent_constraints": {
+        "must_not_break_modules": ["src/api/", "src/auth/", "src/public-exports/"],
+        "success_criteria": [
+          "Implementation complete",
+          "No breaking changes to critical modules",
+          "All breaking changes have migration patterns",
+          "Breaking change report generated"
+        ]
+      }
+    }
+  },
+
+  "cli_usage": {
+    "development": [
+      "coderef breaking main --format table",
+      "coderef breaking main --max-depth 10 --verbose",
+      "coderef breaking main -o breaking-changes-report.json"
+    ],
+    "ci_cd_pipeline": {
+      "pre_merge_check": "Check for new breaking changes and exit with code 1 if found",
+      "post_merge": "Archive breaking change report in deliverables"
+    }
+  },
+
+  "task_breakdown": [
+    {
+      "task_id": "WI-001",
+      "title": "Create integration documentation",
+      "description": "Write comprehensive integration guide explaining all integration points",
+      "status": "completed",
+      "file": "BREAKING-CHANGE-WORKFLOW-INTEGRATION.md"
+    },
+    {
+      "task_id": "WI-002",
+      "title": "Update plan.json template",
+      "description": "Add breaking change detection tasks to feature planning template",
+      "status": "pending",
+      "location": "packages/generators/src/templates/plan.json"
+    },
+    {
+      "task_id": "WI-003",
+      "title": "Update communication.json template",
+      "description": "Add breaking change gates to multi-agent coordination template",
+      "status": "pending",
+      "location": "packages/generators/src/templates/communication.json"
+    },
+    {
+      "task_id": "WI-004",
+      "title": "Create workflow hooks for breaking change checks",
+      "description": "Implement pre-implementation and post-implementation breaking change detection hooks",
+      "status": "pending",
+      "files": [
+        "packages/workflow/src/hooks/breaking-change-baseline.ts",
+        "packages/workflow/src/hooks/breaking-change-verification.ts",
+        "packages/workflow/src/hooks/breaking-change-documentation.ts"
+      ]
+    },
+    {
+      "task_id": "WI-005",
+      "title": "Add breaking change context to agent handoff",
+      "description": "Automatically include breaking change analysis in claude.md generation",
+      "status": "pending",
+      "location": "packages/workflow/src/context/handoff-generator.ts"
+    },
+    {
+      "task_id": "WI-006",
+      "title": "Create test selection strategy based on breaking changes",
+      "description": "Use breaking change impact analysis to automatically select affected tests",
+      "status": "pending",
+      "location": "packages/workflow/src/test-strategy/breaking-change-aware-selector.ts"
+    },
+    {
+      "task_id": "WI-007",
+      "title": "Implement breaking change migration guide generation",
+      "description": "Auto-generate markdown migration guides from breaking change reports",
+      "status": "pending",
+      "location": "packages/workflow/src/documentation/migration-guide-generator.ts"
+    },
+    {
+      "task_id": "WI-008",
+      "title": "Create CI/CD pipeline integration",
+      "description": "Add breaking change detection gates to GitHub Actions/CI workflows",
+      "status": "pending",
+      "location": ".github/workflows/breaking-change-check.yml"
+    }
+  ],
+
+  "integration_strategy": {
+    "phase_1_immediate": [
+      "Documentation (DONE - stub.json created)",
+      "Manual integration guide available"
+    ],
+    "phase_2_short_term": [
+      "Update plan.json and communication.json templates",
+      "Add workflow hooks for breaking change checks",
+      "Create agent handoff context integration"
+    ],
+    "phase_3_medium_term": [
+      "Implement test selection strategy",
+      "Create migration guide generation",
+      "Add CI/CD pipeline integration"
+    ],
+    "phase_4_long_term": [
+      "Automatic migration pattern application",
+      "Compatibility layer generation",
+      "API versioning tracking",
+      "Deprecation warning system"
+    ]
+  },
+
+  "success_criteria": [
+    "Planning phase includes breaking change risk assessment",
+    "Agent handoff contexts include breaking change guidance",
+    "Verification phase validates no new breaking changes introduced",
+    "Documentation includes migration guides for breaking changes",
+    "CI/CD pipeline gates on breaking changes",
+    "Agents have access to migration suggestions via MCP tool",
+    "Test suite is sized based on affected modules",
+    "Workflow templates include breaking change detection tasks"
+  ],
+
+  "dependencies": [
+    {
+      "name": "CR-001: Breaking Change Detector",
+      "status": "COMPLETED",
+      "integration_point": "mcp__coderef_breaking__detect MCP tool"
+    },
+    {
+      "name": "coderef-workflow framework",
+      "status": "READY",
+      "integration_point": "plan.json, communication.json, hooks"
+    },
+    {
+      "name": "MCP server for tool exposure",
+      "status": "READY",
+      "integration_point": "packages/coderef-rag-mcp/src/server.ts"
+    }
+  ],
+
+  "next_steps": [
+    "1. Review integration strategy with team",
+    "2. Prioritize phase 2 short-term tasks",
+    "3. Create individual workorders for each task",
+    "4. Begin with template updates (WI-002, WI-003)",
+    "5. Implement workflow hooks (WI-004, WI-005, WI-006)",
+    "6. Test integration with real features"
+  ]
+}

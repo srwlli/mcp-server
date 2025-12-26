@@ -111,7 +111,8 @@
       "Bash(\"/c/Users/willh/.mcp-servers/coderef-workflow/.claude/commands/gather-context.md\")",
       "Bash(__NEW_LINE__ for file in aggregate-agent-deliverables create-workorder features-inventory generate-agent-communication generate-deliverables get-planning-template log-workorder update-task-status validate-plan verify-agent-completion)",
       "Bash(do)",
-      "Bash(\"/c/Users/willh/.mcp-servers/coderef-workflow/.claude/commands/$file.md\")"
+      "Bash(\"/c/Users/willh/.mcp-servers/coderef-workflow/.claude/commands/$file.md\")",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

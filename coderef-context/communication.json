@@ -1,0 +1,45 @@
+{
+  "workorder_id": "WO-MCP-CONTEXT-001",
+  "session": "MCP-Server-Capabilities-Deep-Dive",
+  "phase": 1,
+  "agent": "context-analysis-agent",
+  "location": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "shared_document": "C:\\Users\\willh\\Desktop\\assistant\\session-mcp-capabilities.json",
+
+  "task": "Phase 1: Deep-dive analysis of coderef-context capabilities",
+
+  "instructions": [
+    "Read all tools in this coderef-context server",
+    "List each tool with: name, parameters, purpose, limitations",
+    "Identify current capabilities (what it does well)",
+    "Identify gaps (what it cannot do)",
+    "Identify dependencies (does it rely on other servers?)",
+    "Identify what other servers depend on this one",
+    "Document performance profile (speed, scalability, accuracy)"
+  ],
+
+  "output_format": {
+    "tools": [
+      {
+        "name": "tool_name",
+        "parameters": ["param1", "param2"],
+        "purpose": "what it does",
+        "limitation": "known constraints"
+      }
+    ],
+    "capabilities": ["capability1", "capability2"],
+    "limitations": ["limitation1", "limitation2"],
+    "gaps": ["missing_feature1", "missing_feature2"],
+    "dependencies_on": ["server_x", "server_y"],
+    "provides_to": ["server_a", "server_b"],
+    "performance_profile": {
+      "speed": "fast/medium/slow",
+      "scalability": "description",
+      "accuracy": "high/medium/low"
+    }
+  },
+
+  "next_step": "Update session-mcp-capabilities.json servers.coderef-context with findings and set analysis_complete to true",
+
+  "status": "pending"
+}

@@ -3693,18 +3693,33 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
     generated_count = result.get('generated_count', 0)
     skipped_count = result.get('skipped_count', 0)
     duration = result.get('duration_seconds', 0)
+    files_skipped = result.get('files_skipped', [])
 
     if skipped_count > 0:
         progress_msg = f"generated {generated_count}, skipped {skipped_count}"
+        # Add reason for skipped files
+        skipped_reason = "already exist"
+        if not result.get('force_regenerate', False):
+            skipped_reason = "already exist (use force_regenerate: true to overwrite)"
     else:
         progress_msg = f"generated {generated_count}"
+        skipped_reason = None
 
+    # Build detailed message with scan method and feedback
     if result.get('auto_scan_performed'):
         message = f"✅ Foundation docs complete ({progress_msg}) - auto-scanned {coderef_info.get('element_count', 0)} elements in {duration}s"
     elif coderef_info.get('available'):
         message = f"✅ Foundation docs complete ({progress_msg}) - {coderef_info.get('element_count', 0)} elements from existing index in {duration}s"
     else:
         message = f"✅ Foundation docs complete ({progress_msg}) - regex fallback in {duration}s"
+
+    # Add skip reason if applicable
+    if skipped_reason and files_skipped:
+        message += f"\n\n📋 Skipped files ({skipped_reason}):\n"
+        for f in files_skipped[:5]:  # Show first 5
+            message += f"  - {f}\n"
+        if len(files_skipped) > 5:
+            message += f"  ... and {len(files_skipped) - 5} more"
 
     return format_success_response(
         data=summary,

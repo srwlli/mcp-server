@@ -192,7 +192,7 @@ class PlanningPaths:
     TEMPLATE_AI_PATH = Path('coderef') / 'context' / 'planning-template-for-ai.json'  # AI-optimized template
     PLANS_DIR = Path('plans')
     REVIEWS_DIR = Path('coderef') / 'planning-reviews'
-    WORKING_DIR = Path('coderef') / 'working'  # Working directory for active features
+    WORKING_DIR = Path('coderef') / 'workorder'  # Working directory for active features (WO-WORKFLOW-PATH-001)
 
 
 class ValidationSeverity(Enum):

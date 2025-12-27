@@ -1,0 +1,27 @@
+{
+  "feature_name": "coeref-testing",
+  "description": "Universal MCP server for test orchestration, execution, and reporting that auto-detects and works with any test framework (pytest, jest, cargo, mocha, vitest)",
+  "goal": "Build a complete MCP testing infrastructure server that handles framework-agnostic test discovery, execution, result aggregation, analysis, and reporting",
+  "requirements": [
+    "Framework detection for pytest, jest, cargo, mocha, vitest",
+    "Test discovery and execution tools (6 tools)",
+    "Result aggregation with unified JSON schema",
+    "Analysis tools for coverage, flaky tests, performance, health check",
+    "Testing-expert persona (15 expertise areas)",
+    "Slash commands for all 14 tools",
+    "Integration with CodeRef ecosystem"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must work locally without external APIs",
+    "CLI/MCP tools only, no GUI",
+    "Optional integration with other CodeRef servers"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-COEREF-TESTING-001",
+    "workorder_assigned_at": "2025-12-27T08:19:17.987725+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "COMPONENTS.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Documentation\n\n## Module Dependency Graph\n\n*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*\n\n## Code Patterns\n\n\n*Generated: 2025-12-27T03:19:25.923701*",
+      "headers": [
+        "Architecture Documentation",
+        "Module Dependency Graph",
+        "Code Patterns"
+      ],
+      "size": 308
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Documentation\n\n## Overview\n\n- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** Unknown\n- **Total Endpoints:** 0\n\n## Endpoints\n\n*No API endpoints detected.*\n\n## Authentication\n\n*Authentication method not detected.*\n\n## Error Handling\n\n*Error format not detected.*\n\n*Generated: 2025-12-27T03:19:25.925703*",
+      "headers": [
+        "API Documentation",
+        "Overview",
+        "Endpoints",
+        "Authentication",
+        "Error Handling"
+      ],
+      "size": 333
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Documentation\n\n*No database models detected.*\n\n\n*Generated: 2025-12-27T03:19:25.924639*",
+      "headers": [
+        "Schema Documentation"
+      ],
+      "size": 96
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# coeref-testing\n\n## Overview\n\n<!-- AGENT: Describe what this project does -->\n\n## Quick Stats\n\n| Metric | Value |\n|--------|-------|\n\n## Quick Start\n\n<!-- AGENT: Installation and usage instructions -->\n\n## Documentation\n\n- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-27T03:19:25.922098*",
+      "headers": [
+        "coeref-testing",
+        "Overview",
+        "Quick Stats",
+        "Quick Start",
+        "Documentation"
+      ],
+      "size": 475
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "unknown",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [],
+    "file_counts": {
+      "coderef\\foundation-docs": 4,
+      ".claude": 1,
+      "coderef\\workorder\\coeref-testing": 1
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: COMPONENTS.md, USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

@@ -127,7 +127,7 @@ class TestRunner:
 
     async def _run_pytest(self, project_path: Path, request: TestRunRequest) -> UnifiedTestResults:
         """Run pytest tests."""
-        cmd = ["pytest", "--json-report", "--json-report-file=.pytest-report.json"]
+        cmd = ["pytest", "-v", "--tb=short"]
 
         if request.test_file:
             cmd.append(str(request.test_file))
@@ -135,9 +135,7 @@ class TestRunner:
             cmd.extend(["-k", request.test_pattern])
 
         if request.verbose:
-            cmd.append("-v")
-
-        cmd.append("--tb=short")
+            cmd.append("-vv")
 
         try:
             result = await self._execute_command(
@@ -165,35 +163,9 @@ class TestRunner:
     ) -> UnifiedTestResults:
         """Parse pytest output and return unified results."""
         tests: List[TestResult] = []
-        passed = failed = skipped = 0
 
-        # Try to parse JSON report if it exists
-        report_file = project_path / ".pytest-report.json"
-        if report_file.exists():
-            try:
-                report = json.loads(report_file.read_text())
-                for test in report.get("tests", []):
-                    status = self._map_pytest_status(test.get("outcome", "failed"))
-                    result = TestResult(
-                        name=test.get("nodeid", "unknown"),
-                        status=status,
-                        duration=float(test.get("duration", 0)),
-                        file=test.get("nodeid", "").split("::")[0],
-                    )
-                    tests.append(result)
-                    if status == TestStatus.PASSED:
-                        passed += 1
-                    elif status == TestStatus.FAILED:
-                        failed += 1
-                    elif status == TestStatus.SKIPPED:
-                        skipped += 1
-                report_file.unlink()
-            except Exception as e:
-                logger.warning(f"Error parsing pytest JSON report: {e}")
-
-        # Fallback: parse text output
-        if not tests:
-            tests, passed, failed, skipped = self._parse_pytest_text(stdout)
+        # Parse text output from pytest -v
+        tests, passed, failed, skipped = self._parse_pytest_text(stdout)
 
         return self._create_results(
             str(project_path),

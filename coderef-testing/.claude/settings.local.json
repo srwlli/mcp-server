@@ -11,7 +11,8 @@
       "mcp__coderef-workflow__update_task_status",
       "Bash(python -m pytest:*)",
       "Bash(python -c:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Complete coeref-testing MCP server with universal test orchestration\n\n- Framework auto-detection: pytest, jest, vitest, cargo, mocha\n- Async/parallel test execution with configurable workers\n- Unified result aggregation across all frameworks\n- Comprehensive analysis: coverage, performance, flakiness, health\n- 14 MCP tools: discovery, execution, management, analysis\n- 14 slash commands with detailed documentation\n- testing-expert persona with 15 expertise areas\n- Complete README and USER-GUIDE documentation\n- Registered in global .mcp.json configuration\n\nAll 37 workorder tasks completed across 4 phases:\n- Phase 1: Setup & Architecture (4/4)\n- Phase 2: Framework Detection & Execution (13/13)\n- Phase 3: Result Processing & Analysis (6/6)\n- Phase 4: Tools, Commands, Docs, Release (14/14)\n\nStatus: Production Ready\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ]
   },
   "enabledMcpjsonServers": [

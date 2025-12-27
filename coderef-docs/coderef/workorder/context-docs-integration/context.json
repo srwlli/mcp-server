@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "created": "2025-12-27T00:00:00Z",
+    "feature_name": "context-docs-integration",
+    "project": "coderef-docs",
+    "workorder_id": "WO-CONTEXT-DOCS-INTEGRATION-001"
+  },
+  "description": "Integrate coderef-context MCP server into coderef-docs to enable intelligent code analysis for automatic documentation generation. Currently coderef-docs returns placeholder templates. This feature enables coderef-docs to call coderef-context tools to extract real API endpoints, database schemas, and component definitions from code, then auto-populate documentation templates with actual implementation details.",
+  "goal": "Eliminate manual documentation work by leveraging coderef-context's code intelligence to auto-generate API.md (endpoint signatures), SCHEMA.md (entity definitions), and COMPONENTS.md (component hierarchies) from actual code analysis instead of placeholders.",
+  "requirements": [
+    "Call coderef-context tools from generate_individual_doc() function",
+    "Auto-extract API endpoints for API.md generation",
+    "Auto-extract database schemas for SCHEMA.md generation",
+    "Auto-extract component definitions for COMPONENTS.md generation",
+    "Handle errors gracefully if coderef-context unavailable",
+    "Maintain backward compatibility with existing doc generation",
+    "Return fully populated documentation instead of placeholders",
+    "Support all 5 template types (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)"
+  ],
+  "out_of_scope": [
+    "Implementing new coderef-context tools",
+    "Modifying coderef-context CLI",
+    "Custom template support (Phase 2)",
+    "Semantic search for similar patterns (Phase 3)",
+    "Auto-changelog generation (separate Phase 0 task)"
+  ],
+  "constraints": [
+    "Must not break existing coderef-docs functionality",
+    "coderef-context must be available (add health check)",
+    "Integration point must be in generate_individual_doc() function",
+    "Cannot modify coderef-context server code",
+    "Must handle case where coderef-context returns no results",
+    "Token budget: must stay within reasonable limits for doc generation"
+  ],
+  "success_criteria": {
+    "api_md": "API.md contains real endpoint signatures extracted from code, not placeholders",
+    "schema_md": "SCHEMA.md contains real entity definitions extracted from code",
+    "components_md": "COMPONENTS.md contains real component tree extracted from code",
+    "error_handling": "Gracefully handles coderef-context unavailability without breaking docs",
+    "backward_compat": "All existing doc generation features continue to work",
+    "testing": "All tests passing (unit + integration with coderef-context calls)"
+  }
+}

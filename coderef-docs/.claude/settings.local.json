@@ -20,17 +20,21 @@
       "Bash(git commit:*)",
       "Bash(python -m py_compile:*)",
       "Bash(python -c:*)",
-      "Bash(timeout 5 python:*)"
+      "Bash(timeout 5 python:*)",
+      "Bash(python:*)",
+      "Bash(mkdir:*)",
+      "Bash(timeout 10 python:*)",
+      "Bash(cat:*)",
+      "Bash(proof_test_output.txt)",
+      "Bash(git checkout:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "personas",
-    "coderef",
-    "docs",
-    "hello-world",
     "coderef-personas",
     "coderef-context",
     "coderef-docs",
-    "coderef-workflow"
+    "coderef-workflow",
+    "coeref-testing"
   ]
 }

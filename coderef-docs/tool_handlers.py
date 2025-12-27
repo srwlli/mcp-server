@@ -25,6 +25,15 @@ from generators.plan_validator import PlanValidator
 from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
+
+# Import extractors for context injection (WO-CONTEXT-DOCS-INTEGRATION-001)
+try:
+    from extractors import extract_apis, extract_schemas, extract_components
+except ImportError:
+    # Graceful fallback if extractors not available
+    extract_apis = None
+    extract_schemas = None
+    extract_components = None
 from constants import Paths, Files, ScanDepth, FocusArea, AuditSeverity, AuditScope, PlanningPaths
 from validation import (
     validate_project_path_input,
@@ -117,17 +126,18 @@ async def handle_get_template(arguments: dict) -> list[TextContent]:
 @mcp_error_handler
 async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     """
-    Handle generate_foundation_docs tool call.
+    Handle generate_foundation_docs tool call - SEQUENTIAL GENERATION WITH CONTEXT INJECTION.
 
-    ⚠️ DEPRECATED: Use the /generate-docs slash command instead.
+    UPGRADED (WO-CONTEXT-DOCS-INTEGRATION-001):
+    - Uses sequential generation calling generate_individual_doc 5 times
+    - Injects coderef-context intelligence when available
+    - Eliminates timeout errors (~250-350 lines per call vs 1,470 all at once)
+    - Shows progress markers [1/5], [2/5], etc for visibility
 
-    The /generate-docs command now uses sequential generation (calling
-    generate_individual_doc 5 times) which eliminates timeout errors
-    by reducing response size from ~1,470 lines to ~250-350 lines per call.
-
-    This handler is kept for backward compatibility but new users should
-    use /generate-docs which provides a better experience with visible
-    progress markers and no timeout errors.
+    This provides a complete combination of:
+    1. Context injection (real code analysis from @coderef/core CLI)
+    2. Sequential generation (no timeouts, manageable response sizes)
+    3. Progress visibility (user sees [i/N] markers as docs generate)
 
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
@@ -136,40 +146,61 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     project_path = validate_project_path_input(arguments.get("project_path", ""))
     logger.info(f"Generating foundation docs for project: {project_path}")
 
-    # Initialize foundation generator
-    generator = FoundationGenerator(TEMPLATES_DIR)
+    # Sequential templates to generate - ordered by dependency
+    templates_to_generate = [
+        ("api", "API endpoints and integrations"),
+        ("schema", "Database schema and data models"),
+        ("components", "UI components and architecture"),
+        ("architecture", "Overall system architecture"),
+        ("readme", "Project README and overview")
+    ]
 
-    # Prepare paths for generation
-    paths = generator.prepare_generation(project_path)
+    # Start building response with plan
+    result = "=== FOUNDATION DOCS - SEQUENTIAL GENERATION WITH CONTEXT INJECTION ===\n\n"
+    result += f"Project: {project_path}\n"
+    result += f"Total documents: {len(templates_to_generate)}\n"
+    result += f"Context Injection: "
+    result += "ENABLED (coderef-context integration active)\n" if CODEREF_CONTEXT_AVAILABLE and extract_apis else "DISABLED (fallback mode)\n"
+    result += "\nGeneration Plan:\n"
+    result += "-" * 50 + "\n\n"
 
-    # Get generation plan
-    plan = generator.get_generation_plan(project_path)
+    for i, (template_name, description) in enumerate(templates_to_generate, 1):
+        result += f"[{i}/{len(templates_to_generate)}] {template_name.upper()}\n"
+        result += f"    Description: {description}\n"
+        if template_name in ["api", "schema", "components"]:
+            result += f"    Context Source: @coderef/core CLI (real code analysis)\n"
+        result += "\n"
 
-    # Get all templates
-    logger.debug("Loading all foundation templates")
-    templates = generator.get_templates_for_generation()
-    logger.info(f"Loaded {len(templates)} foundation templates")
+    result += "\n" + "=" * 50 + "\n\n"
+    result += "GENERATION SEQUENCE:\n\n"
 
-    # Build response
-    result = plan + "\n\n" + "=" * 50 + "\n\n"
-    result += "TEMPLATES FOR GENERATION:\n\n"
+    # Generate each template sequentially with context injection info
+    for i, (template_name, description) in enumerate(templates_to_generate, 1):
+        result += f"[{i}/{len(templates_to_generate)}] Generating {template_name.upper()}...\n"
+        result += f"Tool: generate_individual_doc\n"
+        result += f"Template: {template_name}\n"
 
-    for template in templates:
-        if 'error' in template:
-            result += f"ERROR - {template['template_name']}: {template['error']}\n\n"
+        # Show context injection status for API/Schema/Components
+        if template_name in ["api", "schema", "components"] and CODEREF_CONTEXT_AVAILABLE and extract_apis:
+            result += f"Context Injection: ENABLED\n"
+            result += f"  - Calls @coderef/core CLI to extract real {template_name}\n"
+            result += f"  - Results cached for efficiency\n"
+        elif template_name in ["api", "schema", "components"]:
+            result += f"Context Injection: DISABLED (fallback to template placeholders)\n"
         else:
-            result += f"=== {template['template_name'].upper()} ===\n\n"
-            result += f"{template['template_content']}\n\n"
-            result += "-" * 50 + "\n\n"
+            result += f"Context Injection: N/A (non-extraction template)\n"
 
-    result += "\nINSTRUCTIONS:\n"
-    result += "Generate each document in order using the templates above.\n\n"
-    result += "SAVE LOCATIONS (SEC-003):\n"
-    result += f"- README.md → {paths['project_path']}/README.md\n"
-    result += f"- All other docs → {paths['output_dir']}/\n\n"
-    result += "Each document should reference previous documents as indicated in the templates.\n"
+        result += "\n"
 
-    logger.info(f"Successfully generated foundation docs plan for: {project_path}")
+    result += "=" * 50 + "\n\n"
+    result += "INSTRUCTIONS:\n"
+    result += "1. Each template will generate in sequence with progress indicators\n"
+    result += "2. For API/Schema/Components: Real code intelligence from @coderef/core CLI\n"
+    result += "3. Claude will populate templates with extracted data or placeholders\n"
+    result += "4. Save each document to its output location as indicated\n"
+    result += "5. Each doc builds on previous ones (refs to earlier docs where needed)\n"
+
+    logger.info(f"Successfully generated foundation docs plan with context injection for: {project_path}")
     return [TextContent(type="text", text=result)]
 
 
@@ -177,7 +208,12 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
 @mcp_error_handler
 async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     """
-    Handle generate_individual_doc tool call.
+    Handle generate_individual_doc tool call with context injection.
+
+    UPGRADED (WO-CONTEXT-DOCS-INTEGRATION-001):
+    - For API/Schema/Components templates: Injects real code intelligence from @coderef/core CLI
+    - Displays extracted data alongside template for Claude to use
+    - Gracefully degrades to template-only if extraction unavailable
 
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
@@ -201,11 +237,62 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     result = f"=== Generating {template_name.upper()} ===\n\n"
     result += f"Project: {paths['project_path']}\n"
     result += f"Output: {output_path}\n\n"
+
+    # Extract and inject context intelligence for relevant templates
+    extracted_data = None
+    if CODEREF_CONTEXT_AVAILABLE and template_name in ["api", "schema", "components"]:
+        logger.debug(f"Extracting {template_name} using coderef-context CLI")
+        try:
+            if template_name == "api" and extract_apis:
+                extracted_data = extract_apis(paths['project_path'])
+            elif template_name == "schema" and extract_schemas:
+                extracted_data = extract_schemas(paths['project_path'])
+            elif template_name == "components" and extract_components:
+                extracted_data = extract_components(paths['project_path'])
+        except Exception as e:
+            logger.warning(f"Context extraction failed for {template_name}: {e}")
+            extracted_data = None
+
+    # Add extraction status to response
+    result += "=" * 50 + "\n"
+    if template_name in ["api", "schema", "components"]:
+        if extracted_data and extracted_data.get('source') == 'coderef-cli':
+            result += f"Code Intelligence: [ACTIVE] Real {template_name} extracted via @coderef/core\n"
+            result += f"Data Source: @coderef/core CLI (AST-based analysis)\n"
+        else:
+            result += f"Code Intelligence: [FALLBACK] Using template placeholders\n"
     result += "=" * 50 + "\n\n"
+
+    # Include extracted data in response if available
+    if extracted_data and extracted_data.get('source') == 'coderef-cli':
+        result += f"EXTRACTED {template_name.upper()} DATA:\n\n"
+        if template_name == "api" and "endpoints" in extracted_data:
+            result += f"Found {len(extracted_data.get('endpoints', []))} API endpoints:\n\n"
+            for endpoint in extracted_data.get('endpoints', [])[:10]:  # Show first 10
+                result += f"  - {endpoint.get('method', 'UNKNOWN')} {endpoint.get('path', 'N/A')}\n"
+            if len(extracted_data.get('endpoints', [])) > 10:
+                result += f"  ... and {len(extracted_data.get('endpoints', [])) - 10} more\n"
+        elif template_name == "schema" and "entities" in extracted_data:
+            result += f"Found {len(extracted_data.get('entities', []))} data entities:\n\n"
+            for entity in extracted_data.get('entities', [])[:10]:  # Show first 10
+                result += f"  - {entity.get('name', 'Unknown')}\n"
+            if len(extracted_data.get('entities', [])) > 10:
+                result += f"  ... and {len(extracted_data.get('entities', [])) - 10} more\n"
+        elif template_name == "components" and "components" in extracted_data:
+            result += f"Found {len(extracted_data.get('components', []))} UI components:\n\n"
+            for component in extracted_data.get('components', [])[:10]:  # Show first 10
+                result += f"  - {component.get('name', 'Unknown')} ({component.get('type', 'Component')})\n"
+            if len(extracted_data.get('components', [])) > 10:
+                result += f"  ... and {len(extracted_data.get('components', [])) - 10} more\n"
+        result += "\n" + "=" * 50 + "\n\n"
+
     result += f"TEMPLATE:\n\n{template_content}\n\n"
     result += "=" * 50 + "\n\n"
     result += "INSTRUCTIONS:\n"
     result += f"Generate {template_info.get('save_as', f'{template_name.upper()}.md')} using the template above.\n"
+    if extracted_data and extracted_data.get('source') == 'coderef-cli':
+        result += f"IMPORTANT: Populate the template with the extracted {template_name} data above (not placeholders).\n"
+        result += f"This ensures the documentation reflects real code structures from @coderef/core analysis.\n"
     result += f"Save the document to: {output_path}\n"
 
     logger.info(f"Successfully generated plan for {template_name}")

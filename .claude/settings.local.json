@@ -9,7 +9,8 @@
       "Bash(python test_validation_bug_simple.py:*)",
       "Bash(python:*)",
       "Bash(find:*)",
-      "mcp__coderef-context__coderef_scan"
+      "mcp__coderef-context__coderef_scan",
+      "Bash(ls -la \"C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.claude\"\" 2>/dev/null || echo \"Directory does not exist \")"
     ],
     "deny": [],
     "ask": []

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "coeref-testing": {
+    "coderef-testing": {
       "command": "python",
       "args": [
         "C:/Users/willh/.mcp-servers/coderef-testing/server.py"

@@ -1,8 +1,23 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(CODEREF_CLI_PATH=\"C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli\" pytest tests/ -v --tb=short)",
+      "Bash(tee:*)",
+      "Bash(export CODEREF_CLI_PATH=\"/c/Users/willh/Desktop/projects/coderef-system/packages/cli\")",
+      "Bash(pytest:*)",
+      "Bash(node:*)",
+      "Bash(CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\" python -m pytest:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(export CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\")"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "coderef-personas",
     "coderef-context",
     "coderef-docs",
-    "coderef-workflow"
+    "coderef-workflow",
+    "coeref-testing"
   ]
 }

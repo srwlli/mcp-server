@@ -127,7 +127,7 @@ class TestRunner:
 
     async def _run_pytest(self, project_path: Path, request: TestRunRequest) -> UnifiedTestResults:
         """Run pytest tests."""
-        cmd = ["pytest", "-v", "--tb=short"]
+        cmd = ["python", "-m", "pytest", "-v", "--tb=short"]
 
         if request.test_file:
             cmd.append(str(request.test_file))

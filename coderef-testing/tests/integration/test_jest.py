@@ -102,8 +102,8 @@ class TestJestExecution:
         # Note: This test requires jest to be installed
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.JEST
-            assert isinstance(result.summary, dict)
+            assert result.framework.framework == TestFramework.JEST
+            assert isinstance(result.summary, object)
         except FileNotFoundError:
             pytest.skip("jest/npm command not available")
 
@@ -120,7 +120,7 @@ class TestJestExecution:
 
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.JEST
+            assert result.framework.framework == TestFramework.JEST
         except FileNotFoundError:
             pytest.skip("jest/npm command not available")
 
@@ -138,16 +138,16 @@ class TestJestExecution:
             result = await runner.run_tests(req)
 
             # Check summary structure
-            assert "total" in result.summary
-            assert "passed" in result.summary
-            assert "failed" in result.summary
-            assert "skipped" in result.summary
+            assert hasattr(result.summary, 'total')
+            assert hasattr(result.summary, 'passed')
+            assert hasattr(result.summary, 'failed')
+            assert hasattr(result.summary, 'skipped')
 
             # Check counts are non-negative
-            assert result.summary["total"] >= 0
-            assert result.summary["passed"] >= 0
-            assert result.summary["failed"] >= 0
-            assert result.summary["skipped"] >= 0
+            assert result.summary.total >= 0
+            assert result.summary.passed >= 0
+            assert result.summary.failed >= 0
+            assert result.summary.skipped >= 0
 
             # Check tests list
             for test in result.tests:
@@ -176,7 +176,7 @@ class TestJestExecution:
 
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.JEST
+            assert result.framework.framework == TestFramework.JEST
         except FileNotFoundError:
             pytest.skip("jest/npm command not available")
 
@@ -255,7 +255,7 @@ class TestJestErrors:
             try:
                 result = await runner.run_tests(req)
                 # Should handle gracefully
-                assert result.framework == TestFramework.JEST
+                assert result.framework.framework == TestFramework.JEST
             except FileNotFoundError:
                 pytest.skip("jest/npm command not available")
 
@@ -307,6 +307,6 @@ class TestJestIntegration:
         try:
             result = await runner.run_tests(req)
             # Should auto-detect jest and run
-            assert result.framework in [TestFramework.JEST, TestFramework.UNKNOWN]
+            assert result.framework.framework in [TestFramework.JEST, TestFramework.UNKNOWN]
         except FileNotFoundError:
             pytest.skip("jest/npm command not available")

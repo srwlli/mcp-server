@@ -91,8 +91,8 @@ class TestPytestExecution:
         # Skip if pytest command is not available
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.PYTEST
-            assert result.summary["total"] >= 0
+            assert result.framework.framework == TestFramework.PYTEST
+            assert result.summary.total >= 0
             # Result should have some structure
             assert isinstance(result.tests, list)
         except FileNotFoundError:
@@ -111,9 +111,9 @@ class TestPytestExecution:
 
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.PYTEST
+            assert result.framework.framework == TestFramework.PYTEST
             # Should have parsed at least the file structure
-            assert isinstance(result.summary, dict)
+            assert isinstance(result.summary, object)
         except FileNotFoundError:
             pytest.skip("pytest command not available")
 
@@ -131,16 +131,16 @@ class TestPytestExecution:
             result = await runner.run_tests(req)
 
             # Check summary structure
-            assert "total" in result.summary
-            assert "passed" in result.summary
-            assert "failed" in result.summary
-            assert "skipped" in result.summary
+            assert hasattr(result.summary, 'total')
+            assert hasattr(result.summary, 'passed')
+            assert hasattr(result.summary, 'failed')
+            assert hasattr(result.summary, 'skipped')
 
             # Check all counts are non-negative
-            assert result.summary["total"] >= 0
-            assert result.summary["passed"] >= 0
-            assert result.summary["failed"] >= 0
-            assert result.summary["skipped"] >= 0
+            assert result.summary.total >= 0
+            assert result.summary.passed >= 0
+            assert result.summary.failed >= 0
+            assert result.summary.skipped >= 0
 
             # Check tests list
             for test in result.tests:
@@ -170,7 +170,7 @@ class TestPytestExecution:
 
         try:
             result = await runner.run_tests(req)
-            assert result.framework == TestFramework.PYTEST
+            assert result.framework.framework == TestFramework.PYTEST
         except FileNotFoundError:
             pytest.skip("pytest command not available")
 

@@ -143,8 +143,8 @@ class TestRunTestsIntegration:
         """Test running tests with unknown framework."""
         req = TestRunRequest(project_path=str(temp_project))
         result = await runner.run_tests(req)
-        assert result.framework == TestFramework.UNKNOWN
-        assert result.summary["total"] == 0
+        assert result.framework.framework == TestFramework.UNKNOWN
+        assert result.summary.total == 0
 
     @pytest.mark.asyncio
     async def test_unified_results_structure(
@@ -156,12 +156,12 @@ class TestRunTestsIntegration:
 
         # Check required fields
         assert result.project == str(temp_project)
-        assert result.framework in [f for f in TestFramework]
-        assert isinstance(result.summary, dict)
-        assert "total" in result.summary
-        assert "passed" in result.summary
-        assert "failed" in result.summary
-        assert "skipped" in result.summary
+        assert result.framework.framework in [f for f in TestFramework]
+        assert isinstance(result.summary, object)
+        assert hasattr(result.summary, 'total')
+        assert hasattr(result.summary, 'passed')
+        assert hasattr(result.summary, 'failed')
+        assert hasattr(result.summary, 'skipped')
         assert isinstance(result.tests, list)
 
     @pytest.mark.asyncio

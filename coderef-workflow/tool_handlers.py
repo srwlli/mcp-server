@@ -1144,32 +1144,35 @@ async def handle_generate_plan_review_report(arguments: dict) -> list[TextConten
 @mcp_error_handler
 async def handle_create_plan(arguments: dict) -> list[TextContent]:
     """
-    Handle create_plan tool call (meta-tool).
+    Handle create_plan tool call - AUTOMATICALLY generates plan.json.
+
+    NEW in v1.2.0: Auto-generates plan instead of returning instructions.
+    This enables the /create-workorder workflow to run fully automatically
+    without requiring manual AI synthesis of the plan.
 
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
 
-    NEW in v1.7.0: Supports multi_agent parameter for automatic agent coordination setup.
-    NEW in v1.11.0: Automatically instructs AI to generate DELIVERABLES.md after plan.json.
+    Supports multi_agent parameter for automatic agent coordination setup.
+    Automatically generates DELIVERABLES.md template after plan.json.
     """
     # Validate inputs
     project_path_str = arguments.get('project_path', '')
     feature_name = arguments.get('feature_name', '')
-    provided_workorder_id = arguments.get('workorder_id')  # NEW: Accept from tool parameter
-    multi_agent = arguments.get('multi_agent', False)  # NEW: Multi-agent mode flag
+    provided_workorder_id = arguments.get('workorder_id')
+    multi_agent = arguments.get('multi_agent', False)
 
     project_path = Path(validate_project_path_input(project_path_str)).resolve()
     feature_name = validate_feature_name_input(feature_name)
 
-    logger.info(f'Preparing plan synthesis for feature: {feature_name}')
+    logger.info(f'Creating implementation plan for feature: {feature_name}')
 
-    # Initialize PlanningGenerator (let decorator catch FileNotFoundError)
+    # Initialize PlanningGenerator
     generator = PlanningGenerator(project_path)
 
     # Load inputs
     context = generator.load_context(feature_name)
-    analysis = generator.load_analysis(feature_name)  # Load from analysis.json if exists
-    template = generator.load_template()
+    analysis = generator.load_analysis(feature_name)
 
     # Determine workorder ID (priority: provided parameter > context > analysis > generated)
     workorder_id = provided_workorder_id
@@ -1183,246 +1186,83 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
     if not workorder_id:
         workorder_id = generate_workorder_id(feature_name)
         logger.info(
-            f"No existing workorder found, generated new: {workorder_id}",
+            f"Generated new workorder ID: {workorder_id}",
             extra={'workorder_id': workorder_id, 'feature_name': feature_name}
         )
     else:
         source = "provided parameter" if provided_workorder_id else "context/analysis"
         logger.info(
-            f"Using existing workorder from {source}: {workorder_id}",
+            f"Using workorder from {source}: {workorder_id}",
             extra={'workorder_id': workorder_id, 'feature_name': feature_name}
         )
 
-    # Build meta-tool response with synthesis instructions
-    result = f"📋 Implementation Plan Synthesis Workflow\n"
-    result += f"=" * 60 + "\n\n"
-    result += f"Feature: {feature_name}\n"
-    result += f"Project: {project_path.name}\n"
-    result += f"Output: coderef/workorder/{feature_name}/plan.json\n\n"
-    result += f"=" * 60 + "\n\n"
-    result += f"INSTRUCTIONS FOR AI:\n\n"
-    result += f"You have context, analysis, and template data below.\n"
-    result += f"Synthesize these into a complete 10-section implementation plan.\n\n"
+    # AUTOMATICALLY GENERATE PLAN (NEW in v1.2.0)
+    try:
+        plan = generator.generate_plan(
+            feature_name=feature_name,
+            context=context,
+            analysis=analysis,
+            workorder_id=workorder_id
+        )
+        generator.save_plan(feature_name, plan)
+        plan_file = project_path / 'coderef' / 'workorder' / feature_name / 'plan.json'
 
-    # Context section
-    if context:
-        result += f"📦 CONTEXT (from /gather-context):\n"
-        result += f"-" * 60 + "\n"
-        result += json.dumps(context, indent=2) + "\n\n"
-    else:
-        result += f"⚠️  NO CONTEXT - Generate plan without requirements\n\n"
+        logger.info(
+            f'Implementation plan generated and saved successfully',
+            extra={
+                'plan_file': str(plan_file),
+                'feature_name': feature_name,
+                'workorder_id': workorder_id
+            }
+        )
 
-    # Analysis section (if available)
-    if analysis:
-        result += f"🔍 ANALYSIS (from /analyze-for-planning):\n"
-        result += f"-" * 60 + "\n"
+        # Build success message
+        message = f"✅ Implementation Plan Created\n"
+        message += f"=" * 60 + "\n\n"
+        message += f"Feature: {feature_name}\n"
+        message += f"Workorder: {workorder_id}\n"
+        message += f"Location: coderef/workorder/{feature_name}/plan.json\n\n"
+        message += f"📋 Plan includes:\n"
+        message += f"  - META_DOCUMENTATION (version, status, workorder tracking)\n"
+        message += f"  - 0_preparation (discovery & analysis)\n"
+        message += f"  - 1_executive_summary (feature overview & goals)\n"
+        message += f"  - 2_risk_assessment (risks & complexity)\n"
+        message += f"  - 3_current_state_analysis (existing architecture)\n"
+        message += f"  - 4_key_features (requirements breakdown)\n"
+        message += f"  - 5_task_id_system (task definitions with workorder tracking)\n"
+        message += f"  - 6_implementation_phases (phased approach)\n"
+        message += f"  - 7_testing_strategy (test plan)\n"
+        message += f"  - 8_success_criteria (acceptance criteria)\n\n"
+        message += f"Next Steps:\n"
+        message += f"  1. Review plan at coderef/workorder/{feature_name}/plan.json\n"
+        message += f"  2. Generate DELIVERABLES.md template with /generate-deliverables\n"
+        if multi_agent:
+            message += f"  3. Generate communication.json with /generate-agent-communication\n"
+            message += f"  4. Assign agents with /assign-agent-task\n"
+        else:
+            message += f"  3. Execute plan with /execute-plan\n"
+        message += f"  4. Track progress and update deliverables\n"
+        message += f"  5. Archive feature when complete with /archive-feature\n"
 
-        # Highlight foundation doc content (new feature)
-        if 'foundation_doc_content' in analysis and analysis['foundation_doc_content']:
-            result += f"\n📚 FOUNDATION DOCUMENTATION CONTENT:\n"
-            for doc_name, doc_info in analysis['foundation_doc_content'].items():
-                result += f"\n  {doc_name}:\n"
-                result += f"    Location: {doc_info.get('location', 'unknown')}\n"
-                result += f"    Size: {doc_info.get('size', 0)} chars\n"
-                result += f"    Headers: {', '.join(doc_info.get('headers', [])[:5])}\n"
-                preview = doc_info.get('preview', '')[:200]
-                result += f"    Preview: {preview}...\n"
-            result += "\n"
+        return format_success_response(
+            data={
+                'feature_name': feature_name,
+                'workorder_id': workorder_id,
+                'plan_file': str(plan_file),
+                'plan_status': plan.get('META_DOCUMENTATION', {}).get('status', 'unknown'),
+                'has_context': context is not None,
+                'has_analysis': analysis is not None,
+                'multi_agent_mode': multi_agent
+            },
+            message=message
+        )
 
-        # Highlight inventory data (new feature)
-        if 'inventory_data' in analysis and analysis['inventory_data'].get('available'):
-            result += f"\n📊 PROJECT INVENTORY DATA:\n"
-            inv = analysis['inventory_data']
-            result += f"  Available inventories: {', '.join(inv.get('available', []))}\n"
-
-            # Show key metrics from each inventory type
-            if 'dependencies' in inv:
-                deps = inv['dependencies']
-                result += f"\n  Dependencies:\n"
-                result += f"    Total: {deps.get('total_dependencies', 0)}\n"
-                result += f"    Ecosystems: {', '.join(deps.get('ecosystems', []))}\n"
-                if deps.get('security_vulnerabilities', 0) > 0:
-                    result += f"    ⚠️ Security vulnerabilities: {deps.get('security_vulnerabilities')}\n"
-
-            if 'test_infrastructure' in inv:
-                tests = inv['test_infrastructure']
-                result += f"\n  Tests:\n"
-                result += f"    Test files: {tests.get('total_test_files', 0)}\n"
-                result += f"    Frameworks: {', '.join(tests.get('frameworks', []))}\n"
-                result += f"    Coverage: {tests.get('coverage', 'unknown')}\n"
-
-            if 'documentation' in inv:
-                docs = inv['documentation']
-                result += f"\n  Documentation:\n"
-                result += f"    Files: {docs.get('total_files', 0)}\n"
-                result += f"    Quality score: {docs.get('quality_score', 0)}/100\n"
-            result += "\n"
-
-        # Show remaining analysis data
-        result += f"Full analysis data:\n"
-        result += json.dumps(analysis, indent=2) + "\n\n"
-    else:
-        result += f"⚠️  NO ANALYSIS - Run /analyze-for-planning first for better plans\n"
-        result += f"   This provides foundation doc content and inventory data.\n\n"
-
-    # Template structure
-    result += f"📋 TEMPLATE STRUCTURE:\n"
-    result += f"-" * 60 + "\n"
-    result += f"Generate these 10 sections:\n"
-    result += f"0. Preparation - Use analysis data or generic structure\n"
-    result += f"1. Executive Summary - Use context description and goal\n"
-    result += f"2. Risk Assessment - Estimate complexity, identify risks\n"
-    result += f"3. Current State Analysis - List files to create/modify\n"
-    result += f"4. Key Features - Extract from context requirements\n"
-    result += f"5. Task ID System - Break features into specific tasks\n"
-    result += f"6. Implementation Phases - Group tasks into 3-4 phases\n"
-    result += f"7. Testing Strategy - Define unit/integration tests\n"
-    result += f"8. Success Criteria - Measurable acceptance criteria\n"
-    result += f"9. Implementation Checklist - Phase checklists\n\n"
-
-    # NEW: Schema contract section - shows AI the exact structure to follow
-    result += f"=" * 60 + "\n\n"
-    result += f"📐 SCHEMA CONTRACT (CRITICAL):\n"
-    result += f"-" * 60 + "\n"
-    result += f"Your plan.json MUST conform to plan.schema.json v1.0.0\n"
-    result += f"The following structures are REQUIRED - do not deviate:\n\n"
-
-    result += f"1. META_DOCUMENTATION must include schema_version:\n"
-    result += f'   "META_DOCUMENTATION": {{\n'
-    result += f'     "feature_name": "{feature_name}",\n'
-    result += f'     "schema_version": "1.0.0",  // REQUIRED\n'
-    result += f'     "version": "1.0.0",\n'
-    result += f'     "status": "complete"\n'
-    result += f'   }}\n\n'
-
-    result += f"2. 6_implementation_phases MUST use phases[] array:\n"
-    result += f'   "6_implementation_phases": {{\n'
-    result += f'     "phases": [           // MUST be array, NOT phase_1/phase_2 keys\n'
-    result += f'       {{\n'
-    result += f'         "phase": 1,       // Integer phase number\n'
-    result += f'         "name": "Setup",\n'
-    result += f'         "description": "...",\n'
-    result += f'         "tasks": ["SETUP-001", "SETUP-002"],\n'
-    result += f'         "deliverables": ["..."]\n'
-    result += f'       }}\n'
-    result += f'     ]\n'
-    result += f'   }}\n\n'
-
-    result += f"3. 5_task_id_system MUST use tasks[] array:\n"
-    result += f'   "5_task_id_system": {{\n'
-    result += f'     "workorder": {{ ... }},\n'
-    result += f'     "tasks": [            // MUST be array, NOT task_breakdown dict\n'
-    result += f'       {{ "id": "SETUP-001", "workorder_id": "...", ... }}\n'
-    result += f'     ]\n'
-    result += f'   }}\n\n'
-
-    result += f"4. files_to_create MUST use object format:\n"
-    result += f'   "files_to_create": [\n'
-    result += f'     {{ "path": "src/file.ts", "purpose": "..." }}  // NOT just strings\n'
-    result += f'   ]\n\n'
-
-    result += f"⚠️  WRONG formats that will cause errors:\n"
-    result += f'   - "phase_1": {{ }}, "phase_2": {{ }}  // Wrong - use phases[]\n'
-    result += f'   - "task_breakdown": {{ }}             // Wrong - use tasks[]\n'
-    result += f'   - "files_to_create": ["path"]        // Wrong - use [{{path, purpose}}]\n\n'
-
-    result += f"=" * 60 + "\n\n"
-    result += f"📋 WORKORDER INFORMATION:\n"
-    result += f"-" * 60 + "\n"
-    result += f"Workorder ID: {workorder_id}\n"
-    result += f"Feature Directory: coderef/workorder/{feature_name}\n\n"
-    result += f"IMPORTANT: Include workorder in section 5 (5_task_id_system):\n"
-    result += f'{{\n'
-    result += f'  "5_task_id_system": {{\n'
-    result += f'    "workorder": {{\n'
-    result += f'      "id": "{workorder_id}",\n'
-    result += f'      "name": "{feature_name.replace("-", " ").title()}",\n'
-    result += f'      "feature_dir": "coderef/workorder/{feature_name}"\n'
-    result += f'    }},\n'
-    result += f'    "tasks": [\n'
-    result += f'      {{\n'
-    result += f'        "id": "SETUP-001",\n'
-    result += f'        "workorder_id": "{workorder_id}",\n'
-    result += f'        "description": "...",\n'
-    result += f'        ...\n'
-    result += f'      }}\n'
-    result += f'    ]\n'
-    result += f'  }}\n'
-    result += f'}}\n\n'
-    result += f"All tasks MUST include workorder_id field matching: {workorder_id}\n\n"
-    result += f"=" * 60 + "\n\n"
-    result += f"ACTION REQUIRED:\n\n"
-    result += f"Generate the complete plan JSON following this structure:\n"
-    result += f"{{\n"
-    result += f'  "META_DOCUMENTATION": {{\n'
-    result += f'    "feature_name": "{feature_name}",\n'
-    result += f'    "schema_version": "1.0.0",\n'
-    result += f'    "version": "1.0.0",\n'
-    result += f'    "status": "complete",\n'
-    result += f'    "generated_by": "AI Assistant",\n'
-    result += f'    "has_context": {str(context is not None).lower()},\n'
-    result += f'    "has_analysis": {str(analysis is not None).lower()}\n'
-    result += f'  }},\n'
-    result += f'  "UNIVERSAL_PLANNING_STRUCTURE": {{\n'
-    result += f'    "0_preparation": {{ ... }},\n'
-    result += f'    "1_executive_summary": {{ ... }},\n'
-    result += f'    ... (all 10 sections)\n'
-    result += f'  }}\n'
-    result += f'}}\n\n'
-    result += f"Save the plan to:\n"
-    result += f"  {project_path}/coderef/workorder/{feature_name}/plan.json\n\n"
-
-    # NEW in v3.1.0: Log workorder to orchestrator
-    result += f"=" * 60 + "\n\n"
-    result += f"📋 WORKORDER LOGGING (AUTOMATIC)\n"
-    result += f"-" * 60 + "\n\n"
-    result += f"After saving plan.json, AUTOMATICALLY call:\n\n"
-    result += f"  mcp__coderef-docs__log_workorder(\n"
-    result += f"    project_path='{project_path}',\n"
-    result += f"    workorder_id='{workorder_id}',\n"
-    result += f"    project_name='{project_path.name}',\n"
-    result += f"    description='{feature_name} implementation plan'\n"
-    result += f"  )\n\n"
-    result += f"This logs the workorder to both:\n"
-    result += f"- Local: {project_path}/coderef/workorder-log.txt\n"
-    result += f"- Orchestrator: ~/.mcp-servers/coderef/workorder-log.txt\n\n"
-
-    # NEW in v1.11.0: Auto-generate DELIVERABLES.md
-    result += f"=" * 60 + "\n\n"
-    result += f"📊 DELIVERABLES GENERATION (AUTOMATIC)\n"
-    result += f"-" * 60 + "\n\n"
-    result += f"After saving plan.json, AUTOMATICALLY call:\n\n"
-    result += f"  mcp__coderef-docs__generate_deliverables_template(\n"
-    result += f"    project_path='{project_path}',\n"
-    result += f"    feature_name='{feature_name}'\n"
-    result += f"  )\n\n"
-    result += f"This will generate DELIVERABLES.md with:\n"
-    result += f"- Phase structure from plan.json\n"
-    result += f"- Task checklists with [ ] checkboxes\n"
-    result += f"- Metric placeholders (TBD) for LOC, commits, time\n"
-    result += f"- Status: 🚧 Not Started\n"
-    result += f"- Workorder ID: {workorder_id}\n\n"
-
-    # NEW: Multi-agent mode instructions
-    if multi_agent:
-        result += f"=" * 60 + "\n\n"
-        result += f"🤝 MULTI-AGENT MODE ENABLED\n"
-        result += f"-" * 60 + "\n\n"
-        result += f"After generating DELIVERABLES.md, ALSO call:\n\n"
-        result += f"  mcp__coderef-docs__generate_agent_communication(\n"
-        result += f"    project_path='{project_path}',\n"
-        result += f"    feature_name='{feature_name}'\n"
-        result += f"  )\n\n"
-        result += f"This will generate communication.json with:\n"
-        result += f"- Precise steps extracted from implementation phases\n"
-        result += f"- Forbidden files and allowed files\n"
-        result += f"- Success criteria from phase validation\n"
-        result += f"- Agent status fields initialized\n"
-        result += f"- Workorder ID: {workorder_id}\n\n"
-        result += f"Then the feature is ready for parallel agent execution.\n"
-
-    logger.info(f'Plan synthesis instructions prepared for: {feature_name}', extra={'multi_agent': multi_agent})
-    return [TextContent(type='text', text=result)]
+    except Exception as e:
+        logger.error(
+            f'Plan generation failed: {str(e)}',
+            extra={'feature_name': feature_name, 'error': str(e)}
+        )
+        raise ValueError(f"Failed to generate plan: {str(e)}")
 
 
 

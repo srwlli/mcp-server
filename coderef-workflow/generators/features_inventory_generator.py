@@ -23,7 +23,7 @@ class FeaturesInventoryGenerator:
             project_path: Path to project root directory
         """
         self.project_path = project_path
-        self.working_dir = project_path / "coderef" / "working"
+        self.working_dir = project_path / "coderef" / "workorder"
         self.archived_dir = project_path / "coderef" / "archived"
 
     def scan_working_features(self) -> List[Dict[str, Any]]:

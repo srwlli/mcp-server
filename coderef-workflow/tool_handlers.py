@@ -918,8 +918,8 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
     # Feature-specific file persistence (optional)
     if feature_name:
         try:
-            # Create feature working directory
-            feature_dir = project_path_obj / 'coderef' / 'working' / feature_name
+            # Create feature workorder directory
+            feature_dir = project_path_obj / 'coderef' / 'workorder' / feature_name
             feature_dir.mkdir(parents=True, exist_ok=True)
 
             # Try to read workorder from existing context.json
@@ -1479,10 +1479,10 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
         }
     )
     
-    # Create feature working directory
-    feature_dir = project_path_obj / 'coderef' / 'working' / feature_name
+    # Create feature workorder directory
+    feature_dir = project_path_obj / 'coderef' / 'workorder' / feature_name
     feature_dir.mkdir(parents=True, exist_ok=True)
-    
+
     # Generate workorder ID
     workorder_id = generate_workorder_id(feature_name)
     workorder_timestamp = get_workorder_timestamp()
@@ -1570,7 +1570,7 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     )
 
     # Define feature directory
-    feature_dir = Path(project_path) / 'coderef' / 'working' / feature_name
+    feature_dir = Path(project_path) / 'coderef' / 'workorder' / feature_name
 
     # Check if plan.json exists
     plan_path = feature_dir / 'plan.json'
@@ -1691,7 +1691,7 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     feature_name = validate_feature_name_input(arguments.get("feature_name", ""))
 
     # Define feature directory
-    feature_dir = Path(project_path) / 'coderef' / 'working' / feature_name
+    feature_dir = Path(project_path) / 'coderef' / 'workorder' / feature_name
     deliverables_path = feature_dir / 'DELIVERABLES.md'
 
     # Check if DELIVERABLES.md exists
@@ -2459,7 +2459,7 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
     )
 
     # Define paths
-    working_dir = Path(project_path) / 'coderef' / 'working' / feature_name
+    working_dir = Path(project_path) / 'coderef' / 'workorder' / feature_name
     archived_dir = Path(project_path) / 'coderef' / 'archived' / feature_name
 
     # Check if feature exists in working directory
@@ -3754,7 +3754,7 @@ async def handle_update_task_status(arguments: dict) -> list[TextContent]:
         raise ValueError("task_id is required")
 
     # Load plan.json
-    plan_path = project_path / 'coderef' / 'working' / feature_name / 'plan.json'
+    plan_path = project_path / 'coderef' / 'workorder' / feature_name / 'plan.json'
     if not plan_path.exists():
         raise FileNotFoundError(f"Plan not found: {plan_path}")
 
@@ -3892,7 +3892,7 @@ async def handle_audit_plans(arguments: dict) -> list[TextContent]:
         raise ValueError("stale_days must be an integer between 1 and 365")
 
     # Build paths
-    working_dir = project_path / 'coderef' / 'working'
+    working_dir = project_path / 'coderef' / 'workorder'
     archived_dir = project_path / 'coderef' / 'archived'
 
     if not working_dir.exists():

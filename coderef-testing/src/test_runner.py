@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import shutil
 
-from src.models import TestFramework, TestResult, TestStatus, UnifiedTestResults, FrameworkInfo
+from src.models import TestFramework, TestResult, TestStatus, UnifiedTestResults, FrameworkInfo, TestSummary
 
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,39 @@ class TestRunner:
         self.timeout_seconds = 300.0
         self.max_workers = 4
 
+    def _create_results(
+        self,
+        project: str,
+        framework: TestFramework,
+        tests: List[TestResult],
+        duration: float = 0.0,
+        error: Optional[str] = None,
+    ) -> UnifiedTestResults:
+        """Helper to create properly formatted UnifiedTestResults."""
+        passed = sum(1 for t in tests if t.status == TestStatus.PASSED)
+        failed = sum(1 for t in tests if t.status == TestStatus.FAILED)
+        skipped = sum(1 for t in tests if t.status == TestStatus.SKIPPED)
+        errors = sum(1 for t in tests if t.status == TestStatus.ERROR)
+        total = len(tests)
+
+        summary = TestSummary(
+            total=total,
+            passed=passed,
+            failed=failed,
+            skipped=skipped,
+            errors=errors,
+            duration=duration,
+            success_rate=100.0 if total == 0 else (passed / (total - skipped) * 100.0) if (total - skipped) > 0 else 100.0,
+        )
+
+        return UnifiedTestResults(
+            project=project,
+            framework=FrameworkInfo(framework=framework),
+            summary=summary,
+            tests=tests,
+            error=error,
+        )
+
     async def run_tests(self, request: TestRunRequest) -> UnifiedTestResults:
         """
         Run tests according to request specification.
@@ -63,11 +96,10 @@ class TestRunner:
             from src.framework_detector import detect_frameworks
             frameworks = detect_frameworks(str(project_path))
             if not frameworks:
-                return UnifiedTestResults(
-                    project=str(project_path),
-                    framework=TestFramework.UNKNOWN,
-                    summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0},
-                    tests=[],
+                return self._create_results(
+                    str(project_path),
+                    TestFramework.UNKNOWN,
+                    [],
                 )
             framework = frameworks[0].framework
 
@@ -83,11 +115,10 @@ class TestRunner:
         elif framework == TestFramework.MOCHA:
             return await self._run_mocha(project_path, request)
         else:
-            return UnifiedTestResults(
-                project=str(project_path),
-                framework=TestFramework.UNKNOWN,
-                summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0},
-                tests=[],
+            return self._create_results(
+                str(project_path),
+                TestFramework.UNKNOWN,
+                [],
             )
 
     # ========================================================================
@@ -114,20 +145,18 @@ class TestRunner:
             )
             return await self._parse_pytest_output(project_path, result)
         except asyncio.TimeoutError:
-            return UnifiedTestResults(
-                project=str(project_path),
-                framework=TestFramework.PYTEST,
-                summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0, "timeout": 1},
-                tests=[],
+            return self._create_results(
+                str(project_path),
+                TestFramework.PYTEST,
+                [],
                 error="Test execution timed out",
             )
         except Exception as e:
             logger.error(f"Error running pytest: {e}")
-            return UnifiedTestResults(
-                project=str(project_path),
-                framework=TestFramework.PYTEST,
-                summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0},
-                tests=[],
+            return self._create_results(
+                str(project_path),
+                TestFramework.PYTEST,
+                [],
                 error=str(e),
             )
 
@@ -166,16 +195,11 @@ class TestRunner:
         if not tests:
             tests, passed, failed, skipped = self._parse_pytest_text(stdout)
 
-        return UnifiedTestResults(
-            project=str(project_path),
-            framework=TestFramework.PYTEST,
-            summary={
-                "total": len(tests),
-                "passed": passed,
-                "failed": failed,
-                "skipped": skipped,
-            },
-            tests=tests,
+        return self._create_results(
+            str(project_path),
+            TestFramework.PYTEST,
+            tests,
+            duration=sum(t.duration for t in tests),
         )
 
     def _map_pytest_status(self, outcome: str) -> TestStatus:
@@ -236,20 +260,18 @@ class TestRunner:
             )
             return await self._parse_jest_output(project_path, result)
         except asyncio.TimeoutError:
-            return UnifiedTestResults(
-                project=str(project_path),
-                framework=TestFramework.JEST,
-                summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0, "timeout": 1},
-                tests=[],
+            return self._create_results(
+                str(project_path),
+                TestFramework.JEST,
+                [],
                 error="Test execution timed out",
             )
         except Exception as e:
             logger.error(f"Error running jest: {e}")
-            return UnifiedTestResults(
-                project=str(project_path),
-                framework=TestFramework.JEST,
-                summary={"total": 0, "passed": 0, "failed": 0, "skipped": 0},
-                tests=[],
+            return self._create_results(
+                str(project_path),
+                TestFramework.JEST,
+                [],
                 error=str(e),
             )
 
@@ -292,16 +314,11 @@ class TestRunner:
             except Exception as e:
                 logger.warning(f"Error parsing jest JSON results: {e}")
 
-        return UnifiedTestResults(
-            project=str(project_path),
-            framework=TestFramework.JEST,
-            summary={
-                "total": len(tests),
-                "passed": passed,
-                "failed": failed,
-                "skipped": skipped,
-            },
-            tests=tests,
+        return self._create_results(
+            str(project_path),
+            TestFramework.JEST,
+            tests,
+            duration=sum(t.duration for t in tests),
         )
 
     # ========================================================================

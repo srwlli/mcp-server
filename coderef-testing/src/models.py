@@ -101,6 +101,7 @@ class UnifiedTestResults(BaseModel):
     )
     environment: Optional[Dict[str, str]] = Field(None, description="Environment info")
     extra: Optional[Dict[str, Any]] = Field(None, description="Framework-specific extras")
+    error: Optional[str] = Field(None, description="Error message if execution failed")
 
 
 class FrameworkDetectionResult(BaseModel):

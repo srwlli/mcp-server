@@ -53,6 +53,9 @@ import tool_handlers
 # Import logging (ARCH-003)
 from logger_config import logger, log_tool_call
 
+# Import CLI utilities for health check (WO-CONTEXT-DOCS-INTEGRATION-001)
+from cli_utils import validate_cli_available
+
 # Get server directory
 SERVER_DIR = Path(__file__).parent
 TEMPLATES_DIR = SERVER_DIR / Paths.TEMPLATES_DIR
@@ -62,11 +65,45 @@ TOOL_TEMPLATES_DIR = SERVER_DIR / Paths.TOOL_TEMPLATES_DIR
 tool_handlers.set_templates_dir(TEMPLATES_DIR)
 tool_handlers.set_tool_templates_dir(TOOL_TEMPLATES_DIR)
 
+# Global flag for CLI availability (WO-CONTEXT-DOCS-INTEGRATION-001)
+CODEREF_CONTEXT_AVAILABLE = False
+
+
+def health_check() -> None:
+    """
+    Check if @coderef/core CLI is available at startup.
+
+    Sets global CODEREF_CONTEXT_AVAILABLE flag based on CLI availability.
+    If CLI is not available, server runs in degraded mode with fallback behavior.
+
+    Part of WO-CONTEXT-DOCS-INTEGRATION-001 Phase 1.
+    """
+    global CODEREF_CONTEXT_AVAILABLE
+
+    try:
+        CODEREF_CONTEXT_AVAILABLE = validate_cli_available()
+
+        if CODEREF_CONTEXT_AVAILABLE:
+            logger.info("✓ @coderef/core CLI is available - full code intelligence enabled")
+        else:
+            logger.warning("⚠ @coderef/core CLI not found - running in degraded mode with placeholders")
+            logger.warning("  Install CLI at: C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli\\dist\\cli.js")
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        CODEREF_CONTEXT_AVAILABLE = False
+
+
 # Create MCP server
 app = Server("coderef-docs")
 
 # Log server initialization
 logger.info(f"MCP server starting", extra={'version': __version__, 'mcp_version': __mcp_version__})
+
+# Run health check to detect CLI availability
+health_check()
+
+# Propagate CLI availability flag to tool handlers
+tool_handlers.set_coderef_context_available(CODEREF_CONTEXT_AVAILABLE)
 
 
 @app.list_tools()

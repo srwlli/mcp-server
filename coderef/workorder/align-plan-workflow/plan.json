@@ -1,0 +1,303 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "align-plan-workflow",
+    "workorder_id": "WO-ALIGN-PLAN-WORKFLOW-001",
+    "version": "1.0.0",
+    "created_date": "2025-12-27T10:35:00Z",
+    "last_updated": "2025-12-27T10:35:00Z",
+    "status": "planning",
+    "generated_by": "Claude Code AI",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "0_PREPARATION": {
+    "discovery_method": "Manual analysis of existing /create-workorder command and workflow documentation",
+    "codebase_scanned": true,
+    "existing_patterns_found": [
+      "Sequential numbered step workflow (1-10 currently)",
+      "Each step has clear heading, description, and code examples",
+      "Validation loop with max 3 iterations already in place",
+      "Tool calls use mcp__coderef_workflow__* naming convention",
+      "Git commit happens after validation passes"
+    ],
+    "technology_stack": "Slash commands, MCP tools, markdown documentation",
+    "key_files_analyzed": [
+      "~/.claude/commands/create-workorder.md (378 lines)",
+      "coderef-workflow/CLAUDE.md (documentation context)",
+      "command-map-latest.md (command audit)"
+    ],
+    "similar_features_found": [
+      "/create-plan - has validate → commit flow (separate command)",
+      "/gather-context - step-by-step workflow pattern",
+      "/archive-feature - uses git commit in workflow"
+    ]
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Insert /align-plan command between validation (Step 8) and output summary (Step 9), pushing current Steps 9-10 to Steps 10-11",
+    "why": "Ensure plan.json is synchronized with TodoWrite task list before commit, improving tracking clarity and execution readiness",
+    "when": "During feature planning phase, after plan validation but before git commit",
+    "business_impact": "Better task tracking alignment, clearer execution workflow, improved handoff to agents",
+    "technical_scope": "Single file modification (create-workorder.md), no tool changes, no breaking changes"
+  },
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": "None - only reorders workflow steps, no API changes",
+    "security_risks": "None - no new code execution, documentation only",
+    "performance_impact": "Minimal - adds one tool call (execute_plan) which already exists",
+    "compatibility": "100% backward compatible - only affects new workflow executions",
+    "rollback_plan": "Trivial - revert create-workorder.md to previous version",
+    "known_issues": "None identified"
+  },
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_workflow": {
+      "current_steps": 10,
+      "step_order": [
+        "1. Get Feature Name",
+        "2. Gather Context",
+        "3. Generate Foundation Docs",
+        "4. Analyze Project",
+        "5. Create Plan",
+        "6. Multi-Agent Decision",
+        "7. Validate Plan",
+        "8. Validation Loop (if needed)",
+        "9. Output Summary",
+        "10. Commit & Push"
+      ],
+      "commit_timing": "After validation passes, before execution"
+    },
+    "alignment_tool_status": {
+      "tool_name": "execute_plan",
+      "command_name": "/align-plan (renamed from /execute-plan on Dec 27)",
+      "current_usage": "Not in /create-workorder workflow",
+      "location": "Can be called at any point after plan.json exists",
+      "purpose": "Synchronize plan.json with TodoWrite task list"
+    },
+    "existing_patterns": {
+      "workflow_documentation": "Clear step-by-step with numbered sections",
+      "tool_invocations": "Show exact mcp__coderef_workflow__* calls",
+      "code_examples": "Provide bash examples for git operations",
+      "next_steps": "Listed after each major operation"
+    }
+  },
+  "4_KEY_FEATURES": {
+    "must_have": [
+      "Add /align-plan step after validation (Step 9)",
+      "Update workflow diagram to show new step order",
+      "Renumber subsequent steps (9→10, 10→11)",
+      "Document new Step 9 with full examples and output",
+      "Update first line description to mention 11-step workflow",
+      "Update related commands section"
+    ],
+    "should_have": [
+      "Clear explanation of why /align-plan happens before commit",
+      "Example output from /align-plan showing task list format",
+      "Reference to /update-task-status for tracking during execution"
+    ],
+    "nice_to_have": [
+      "Visual indicator of workflow reordering in diff",
+      "Comparison table showing before/after step order"
+    ]
+  },
+  "5_TASK_ID_SYSTEM": {
+    "task_prefix": "ALIGN",
+    "format": "ALIGN-###",
+    "task_categories": {
+      "DOC": "Documentation updates",
+      "STEP": "Workflow step changes",
+      "TEST": "Testing and validation"
+    },
+    "task_breakdown": [
+      "DOC-001: Update workflow overview diagram",
+      "DOC-002: Add Step 9 documentation with /align-plan",
+      "STEP-001: Renumber Step 9→10 (Output Summary)",
+      "STEP-002: Renumber Step 10→11 (Commit & Push)",
+      "DOC-003: Update command description (first line)",
+      "DOC-004: Update related commands section",
+      "TEST-001: Manual workflow test with sample feature"
+    ]
+  },
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_preparation": {
+      "title": "Document Analysis & Change Planning",
+      "description": "Analyze current create-workorder.md structure and identify all change points",
+      "tasks": [
+        "ALIGN-DOC-001: Review current create-workorder.md structure",
+        "ALIGN-DOC-002: Identify all sections that reference step numbers",
+        "ALIGN-DOC-003: Map out exact line numbers for changes"
+      ],
+      "dependencies": "None",
+      "estimated_effort": "30 minutes",
+      "success_criteria": "Clear understanding of all change points"
+    },
+    "phase_2_workflow_update": {
+      "title": "Update Workflow Diagram & Steps",
+      "description": "Modify create-workorder.md with new workflow order",
+      "tasks": [
+        "ALIGN-STEP-001: Update workflow overview diagram (lines 7-39)",
+        "ALIGN-STEP-002: Add new Step 9 documentation with /align-plan",
+        "ALIGN-STEP-003: Renumber current Step 9→Step 10 (Output Summary)",
+        "ALIGN-STEP-004: Renumber current Step 10→Step 11 (Commit & Push)"
+      ],
+      "dependencies": "Phase 1",
+      "estimated_effort": "45 minutes",
+      "success_criteria": "All steps renumbered, new step documented"
+    },
+    "phase_3_documentation": {
+      "title": "Update Documentation & References",
+      "description": "Update command description and related commands section",
+      "tasks": [
+        "ALIGN-DOC-001: Update command description (line 1) to say 11-step",
+        "ALIGN-DOC-002: Update related commands section (lines 370-377)",
+        "ALIGN-DOC-003: Add reference to /update-task-status in Step 9"
+      ],
+      "dependencies": "Phase 2",
+      "estimated_effort": "20 minutes",
+      "success_criteria": "All documentation consistent and accurate"
+    },
+    "phase_4_testing": {
+      "title": "Test & Validation",
+      "description": "Verify workflow changes are correct and don't break existing patterns",
+      "tasks": [
+        "ALIGN-TEST-001: Manual read-through of modified create-workorder.md",
+        "ALIGN-TEST-002: Verify all step references are consistent",
+        "ALIGN-TEST-003: Check that /align-plan tool call is correct",
+        "ALIGN-TEST-004: Verify git commit step comes after /align-plan"
+      ],
+      "dependencies": "Phase 3",
+      "estimated_effort": "30 minutes",
+      "success_criteria": "All changes verified, no inconsistencies"
+    }
+  },
+  "7_TESTING_STRATEGY": {
+    "unit_testing": {
+      "scope": "Individual documentation sections",
+      "approach": "Read-through and validation of each step",
+      "success_criteria": "All steps are clear, numbered correctly, and grammatically correct"
+    },
+    "integration_testing": {
+      "scope": "Complete workflow flow from Step 1 to Step 11",
+      "approach": "Trace through entire workflow to verify logical order",
+      "test_cases": [
+        "Can user follow steps 1-8 without confusion?",
+        "Does Step 9 (/align-plan) make sense after validation?",
+        "Do Steps 10-11 (output + commit) flow logically?",
+        "Are all tool calls syntactically correct?",
+        "Is the git commit message still accurate?"
+      ],
+      "success_criteria": "Workflow is logical and easy to follow"
+    },
+    "manual_testing": {
+      "scope": "Real execution of modified /create-workorder workflow",
+      "approach": "Create a test feature and walk through entire workflow",
+      "acceptance_criteria": [
+        "All 11 steps execute without errors",
+        "Step 9 (/align-plan) generates correct task list",
+        "Git commit happens after /align-plan",
+        "No references to old step numbers remain"
+      ]
+    },
+    "documentation_testing": {
+      "scope": "Verify documentation accuracy and completeness",
+      "approach": "Check that all references to steps, commands, and tools are correct",
+      "checks": [
+        "No references to 'Step 10: Commit' (should be Step 11)",
+        "Step 9 exists and is documented",
+        "All tool names are correct (mcp__coderef_workflow__*)",
+        "Command names use slash prefix (/align-plan, not execute_plan)"
+      ]
+    }
+  },
+  "8_SUCCESS_CRITERIA": {
+    "functional_success": {
+      "workflow_complete": "All 11 steps documented and in correct order",
+      "step_9_exists": "/align-plan is Step 9, between validation and output",
+      "commit_after_align": "Git commit is Step 11, after /align-plan",
+      "no_duplicates": "No duplicate step numbers or references"
+    },
+    "documentation_success": {
+      "diagram_updated": "Workflow diagram shows all 11 steps",
+      "descriptions_accurate": "Command description mentions 11-step workflow",
+      "references_consistent": "All references to /align-plan and /update-task-status are present",
+      "examples_valid": "All code examples are syntactically correct"
+    },
+    "quality_success": {
+      "no_breaking_changes": "Existing workflows continue to work",
+      "backward_compatible": "Old references don't cause errors",
+      "clear_instructions": "Each step is clear and actionable",
+      "consistent_style": "Matches existing documentation patterns"
+    },
+    "verification_checklist": [
+      "✓ Workflow overview diagram updated",
+      "✓ Step 9 documentation complete with examples",
+      "✓ Steps 9→10 and 10→11 renumbering complete",
+      "✓ Command description updated",
+      "✓ Related commands section updated",
+      "✓ No syntax errors in markdown",
+      "✓ All tool calls verified",
+      "✓ Git commit still comes after /align-plan",
+      "✓ No references to old step numbers",
+      "✓ Manual test passes successfully"
+    ]
+  },
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "phase_1": {
+      "section": "Document Analysis & Change Planning",
+      "tasks": [
+        "☐ Review current create-workorder.md line by line",
+        "☐ Document all locations that reference step numbers",
+        "☐ Create change summary with exact line numbers",
+        "☐ Verify no other files reference step numbers"
+      ]
+    },
+    "phase_2": {
+      "section": "Workflow Update",
+      "tasks": [
+        "☐ Update workflow overview diagram (add /align-plan step)",
+        "☐ Renumber all subsequent steps in diagram",
+        "☐ Add new Step 9 section with /align-plan documentation",
+        "☐ Add example output from /align-plan command",
+        "☐ Update Step 10 (Output Summary) header and content",
+        "☐ Update Step 11 (Commit & Push) header and content"
+      ]
+    },
+    "phase_3": {
+      "section": "Documentation",
+      "tasks": [
+        "☐ Update line 1 description: '10-step' → '11-step'",
+        "☐ Update related commands section with /align-plan",
+        "☐ Add /update-task-status to related commands",
+        "☐ Verify all internal cross-references are correct"
+      ]
+    },
+    "phase_4": {
+      "section": "Testing & Validation",
+      "tasks": [
+        "☐ Read through entire modified file for consistency",
+        "☐ Verify all step references are sequential (1-11)",
+        "☐ Check tool call syntax: mcp__coderef_workflow__execute_plan",
+        "☐ Verify command name: /align-plan (not /execute-plan)",
+        "☐ Check git commit message is still accurate",
+        "☐ Verify no placeholder text or TODOs remain",
+        "☐ Test workflow end-to-end with sample feature"
+      ]
+    }
+  },
+  "SUMMARY": {
+    "total_tasks": 17,
+    "estimated_duration": "2-3 hours",
+    "complexity": "Low - documentation only",
+    "risk_level": "Minimal - no breaking changes",
+    "file_changes": 1,
+    "tool_changes": 0,
+    "breaking_changes": 0,
+    "phases": 4,
+    "next_steps": [
+      "1. Review this plan for accuracy",
+      "2. Execute Phase 1 (document analysis)",
+      "3. Execute Phase 2 (workflow update)",
+      "4. Execute Phase 3 (documentation updates)",
+      "5. Execute Phase 4 (testing)",
+      "6. Commit all changes: git commit -m 'plan(align-plan-workflow): ...'",
+      "7. Push to remote: git push"
+    ]
+  }
+}

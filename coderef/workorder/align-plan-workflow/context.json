@@ -1,0 +1,36 @@
+{
+  "feature_name": "align-plan-workflow",
+  "workorder_id": "WO-ALIGN-PLAN-WORKFLOW-001",
+  "description": "Refactor workflow to insert /align-plan command between validation and git commit. This ensures the plan is synchronized with a TodoWrite task list for execution tracking before the plan artifacts are committed to git.",
+  "goal": "Improve the feature planning workflow by adding explicit plan-to-todo synchronization step before commit, ensuring all task tracking is in place before implementation begins.",
+  "requirements": [
+    "Update /create-workorder command definition to include /align-plan step",
+    "Reorder workflow steps: validate → align-plan → output summary → commit",
+    "Update workflow diagram in command documentation",
+    "Renumber all subsequent steps (9→10, 10→11)",
+    "Add new Step 9 documentation with /align-plan tool call",
+    "Update related commands section to reference /align-plan and /update-task-status",
+    "Verify no breaking changes to existing tool implementations",
+    "Test the modified workflow end-to-end"
+  ],
+  "out_of_scope": [
+    "Modifying /create-plan command (separate optimization)",
+    "Modifying /align-plan command itself (already renamed from /execute-plan)",
+    "Changes to coderef-workflow server code",
+    "Multi-agent coordination changes"
+  ],
+  "constraints": [
+    "Only modify ~/.claude/commands/create-workorder.md (single file change)",
+    "No breaking changes to existing workflows",
+    "Must not affect other commands (/gather-context, /create-plan, etc.)",
+    "Workflow must remain clear and logical",
+    "Documentation must be accurate and complete"
+  ],
+  "success_criteria": {
+    "documentation_updated": "create-workorder.md reflects new 11-step workflow",
+    "step_order_correct": "Steps are: validate (8) → align-plan (9) → output (10) → commit (11)",
+    "no_breaking_changes": "Existing workflows continue to work",
+    "references_complete": "All command references updated (/align-plan, /update-task-status)",
+    "clear_instructions": "Step 9 documentation is clear with example output"
+  }
+}

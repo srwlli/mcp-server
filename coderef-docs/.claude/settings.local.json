@@ -16,7 +16,10 @@
       "mcp__coderef-workflow__validate_implementation_plan",
       "Bash(dir:*)",
       "Bash(nul)",
-      "mcp__coderef-workflow__execute_plan"
+      "mcp__coderef-workflow__execute_plan",
+      "Bash(git commit:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python -c:*)"
     ]
   },
   "enabledMcpjsonServers": [

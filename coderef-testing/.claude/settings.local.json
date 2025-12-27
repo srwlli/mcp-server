@@ -8,7 +8,8 @@
       "mcp__coderef-workflow__generate_agent_communication",
       "mcp__coderef-workflow__execute_plan",
       "Bash(python -m json.tool:*)",
-      "mcp__coderef-workflow__update_task_status"
+      "mcp__coderef-workflow__update_task_status",
+      "Bash(python -m pytest:*)"
     ]
   },
   "enabledMcpjsonServers": [

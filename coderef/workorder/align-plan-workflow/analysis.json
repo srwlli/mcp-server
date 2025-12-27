@@ -1,0 +1,58 @@
+{
+  "feature_name": "align-plan-workflow",
+  "workorder_id": "WO-ALIGN-PLAN-WORKFLOW-001",
+  "analysis_date": "2025-12-27T10:30:00Z",
+  "project_structure": {
+    "foundation_docs_status": {
+      "ARCHITECTURE.md": "exists",
+      "SCHEMA.md": "exists",
+      "COMPONENTS.md": "exists",
+      "README.md": "exists"
+    },
+    "command_files": {
+      "location": "~/.claude/commands/",
+      "target_file": "create-workorder.md",
+      "current_steps": 10,
+      "new_steps": 11,
+      "file_size": "378 lines"
+    }
+  },
+  "existing_patterns": {
+    "workflow_structure": "Sequential step-by-step workflow with numbered steps",
+    "step_documentation": "Each step has ### heading, description, and code examples",
+    "validation_loop": "Already implements iterative validation with max 3 iterations",
+    "tool_calls": "Uses mcp__coderef_workflow__* naming convention",
+    "commit_pattern": "Commits planning artifacts after validation passes"
+  },
+  "required_changes": {
+    "file_modifications": 1,
+    "total_change_points": 5,
+    "breaking_changes": 0,
+    "tool_implementations": 0,
+    "command_renames": 0
+  },
+  "integration_points": [
+    "Uses existing execute_plan tool (renamed command to /align-plan)",
+    "Integrates with validation_implementation_plan tool",
+    "Works with existing git commit workflow",
+    "No new MCP tools needed"
+  ],
+  "similar_workflows": {
+    "create_plan": "Has similar validation → commit flow (separate file)",
+    "gather_context": "Sequential step-by-step workflow pattern",
+    "archive_feature": "Uses git commit in final workflow step"
+  },
+  "risk_assessment": {
+    "complexity": "Low - documentation-only change",
+    "breaking_changes": "None - only reordering existing steps",
+    "testing_impact": "Low - can be tested with manual workflow execution",
+    "rollback_feasibility": "Trivial - just revert create-workorder.md"
+  },
+  "key_insights": [
+    "The /align-plan (execute_plan) tool already exists and works correctly",
+    "Validation loop already in place (Step 8)",
+    "Output summary and commit are already separate steps",
+    "This change just reorders the workflow logically",
+    "No tool implementations required - purely documentation"
+  ]
+}

@@ -15,6 +15,7 @@ from datetime import datetime
 # These will be injected from server.py
 TEMPLATES_DIR = None
 TOOL_TEMPLATES_DIR = None
+CODEREF_CONTEXT_AVAILABLE = False  # WO-CONTEXT-DOCS-INTEGRATION-001
 
 # Import dependencies
 from typing import Any
@@ -1016,3 +1017,13 @@ def set_tool_templates_dir(tool_templates_dir: Path) -> None:
     """Set the TOOL_TEMPLATES_DIR global for handlers to use."""
     global TOOL_TEMPLATES_DIR
     TOOL_TEMPLATES_DIR = tool_templates_dir
+
+
+def set_coderef_context_available(available: bool) -> None:
+    """
+    Set the CODEREF_CONTEXT_AVAILABLE global flag for handlers to use.
+
+    Part of WO-CONTEXT-DOCS-INTEGRATION-001 Phase 1.
+    """
+    global CODEREF_CONTEXT_AVAILABLE
+    CODEREF_CONTEXT_AVAILABLE = available

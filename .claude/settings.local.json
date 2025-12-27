@@ -6,7 +6,9 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nplan(context-docs-integration): Add implementation plan for coderef-context integration\n\nWorkorder: WO-CONTEXT-DOCS-INTEGRATION-001\nPriority: P1 (Phase 0 - Stabilization)\nSource: PHASE-3-ROADMAP-SYNTHESIS.md (Critical #4)\n\nObjective:\nIntegrate coderef-context MCP server into coderef-docs to enable intelligent code\nanalysis for automatic documentation generation. Transform docs from placeholders\nto code-aware documentation.\n\nWhat This Does:\n- Enables API.md to auto-populate with real endpoint signatures (from coderef_query)\n- Enables SCHEMA.md to auto-populate with real entity definitions (from coderef_scan)\n- Enables COMPONENTS.md to auto-populate with real component hierarchies\n- Maintains backward compatibility with graceful fallback to placeholders\n- Reduces manual doc work from 2-3 hours to 30 minutes\n\nImplementation (3 Phases, 6-8 hours total):\nPhase 1 (Setup, 1h): Import coderef-context client, add health check, create extractors\nPhase 2 (Integration, 3-4h): Implement API/schema/component extraction + error handling\nPhase 3 (Testing, 2-3h): Unit tests, integration tests, regression tests\n\nFiles Created:\n- context.json (feature requirements and context)\n- plan.json (10-section implementation plan with 9 tasks)\n- DELIVERABLES.md (tracking template with metrics placeholders)\n- AGENT_GUIDE.md (detailed implementation guide for agentic coder)\n\nImpact (ROI):\n- Effort: 6-8 hours implementation\n- Benefit: 90% reduction in manual documentation time (6h → 30min per project)\n- Risk: Low (isolated changes, graceful degradation, backward compatible)\n- Dependencies: coderef-context server must be available (with health check)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit:*)",
       "Bash(python test_validation_bug.py:*)",
-      "Bash(python test_validation_bug_simple.py:*)"
+      "Bash(python test_validation_bug_simple.py:*)",
+      "Bash(python:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

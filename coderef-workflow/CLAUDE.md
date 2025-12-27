@@ -67,7 +67,7 @@ Feature Planning Flow:
 ├─ create_plan()
 │  └─ Uses coderef-context for dependency analysis (coderef_query)
 │  └─ Uses coderef-context for pattern detection (coderef_patterns)
-└─ execute_plan() → Track progress and deliverables
+└─ align_plan() → Align plan with todo list for tracking and progress
 ```
 
 **Key Integration Points:**
@@ -233,7 +233,7 @@ coderef-workflow/
 
 | Tool | Purpose | Uses coderef-context? |
 |------|---------|----------------------|
-| `execute_plan` | Run plan and generate TodoWrite tasks | No |
+| `execute_plan` | Align plan with todo list for tracking (command: `/align-plan`) | No |
 | `update_task_status` | Track individual task progress | No |
 | `track_agent_status` | Dashboard for agent task assignments | No |
 | `generate_handoff_context` | Create claude.md for agent handoffs | No |
@@ -295,10 +295,10 @@ These commands trigger coderef-workflow and coderef-docs tools:
 /get-planning-template         # View 10-section plan template
 ```
 
-### Execution Commands
+### Execution & Tracking Commands
 
 ```
-/execute-plan                  # Run plan and generate todos
+/align-plan                    # Align plan with todo list for tracking
 /update-task-status            # Track individual task progress
 /track-agent-status            # View agent assignment dashboard
 /assign-agent-task             # Assign task to specific agent (1-10)
@@ -475,8 +475,8 @@ ruff check src/
 # Create new feature
 /create-workorder feature-name
 
-# Execute plan
-/execute-plan feature-name
+# Align plan with todo list
+/align-plan feature-name
 
 # Update docs
 /update-docs feature-name 1.0.1

@@ -58,8 +58,8 @@
 ### Orchestration (1)
 7. `/create-workorder` - create-workorder.md
 
-### Execution (5)
-8. `/execute-plan` - execute-plan.md
+### Execution & Tracking (5)
+8. `/align-plan` - align-plan.md (formerly `/execute-plan`)
 9. `/update-task-status` - update-task-status.md
 10. `/update-deliverables` - update-deliverables.md
 11. `/generate-deliverables` - generate-deliverables.md

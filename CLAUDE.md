@@ -267,7 +267,7 @@ cat ~/.mcp.json                            # Check configuration
 ```bash
 /stub                          # Capture quick idea + optional conversation context
 /create-workorder              # Full planning workflow
-/execute-plan                  # Generate & track execution
+/align-plan                    # Align plan with todo list for tracking
 /record-changes                # Auto-detect & record changes
 /generate-docs                 # Create foundation docs
 /archive-feature               # Move to archive

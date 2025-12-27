@@ -10,7 +10,8 @@
       "Bash(python -m json.tool:*)",
       "mcp__coderef-workflow__update_task_status",
       "Bash(python -m pytest:*)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(git add:*)"
     ]
   },
   "enabledMcpjsonServers": [

@@ -1,0 +1,370 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "1.0.0",
+    "created": "2025-12-27T00:00:00Z",
+    "workorder_id": "WO-EXECUTE-PLAN-RENAME-001",
+    "feature_name": "execute-plan-rename",
+    "project": "coderef-workflow",
+    "status": "planning_complete",
+    "priority": "P1",
+    "phase_count": 3,
+    "task_count": 14,
+    "multi_agent": false,
+    "estimated_duration_hours": "1-2",
+    "source": "Systematic codebase audit for tool naming consistency",
+    "reason": "Slash command renamed /execute-plan → /align-plan, but MCP tool still registered as 'execute_plan'. Renaming tool and all references for consistency."
+  },
+
+  "0_PREPARATION": {
+    "analysis_date": "2025-12-27",
+    "key_findings": [
+      "Slash command was renamed from /execute-plan to /align-plan (commit 0332969)",
+      "MCP tool in server.py still registered as 'execute_plan' (line 778)",
+      "Handler function still named handle_execute_plan (tool_handlers.py:2678)",
+      "9 references in tool_handlers.py (function, docstring, 4 debug logs, mapping)",
+      "MCP configuration still references old tool name (settings.local.json:4)",
+      "Documentation (CLAUDE.md, README.md) still references old names",
+      "Total: 14 instances across 4 files need renaming"
+    ],
+    "audit_results": {
+      "files_affected": 4,
+      "total_instances": 14,
+      "critical_instances": 9,
+      "high_priority_instances": 3,
+      "medium_priority_instances": 2
+    },
+    "scope": "Phases 1-3 only (skip historical working directory)",
+    "risks_identified": [
+      "If tool registration (server.py:778) is missed, slash command calls will fail",
+      "If handler mapping (tool_handlers.py:4055) is missed, tool won't route to function",
+      "If MCP config is missed, tool won't be available in external systems"
+    ]
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "problem": "Tool naming is inconsistent: Slash command renamed to /align-plan but MCP tool still named 'execute_plan', causing confusion and potential integration issues.",
+    "solution": "Systematically rename all 14 instances of 'execute_plan' to 'align_plan' across 4 files in 3 phases, tracking each instance to ensure none are missed.",
+    "impact": "Consistent naming across slash commands, MCP tools, and documentation. Zero breaking changes (backward compatible after rename completes).",
+    "scope": "3 phases: Phase 1 (Core tool infrastructure), Phase 2 (User-facing), Phase 3 (Documentation)",
+    "deliverables": [
+      "All 9 core instances renamed in server.py and tool_handlers.py",
+      "MCP configuration updated (settings.local.json)",
+      "User-facing messages updated (help text)",
+      "Documentation updated (CLAUDE.md, README.md)",
+      "Verification that tool remains callable after rename"
+    ]
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": "None - rename is transparent, all references updated together",
+    "security": "Low risk - no security changes, simple string rename",
+    "performance": "Zero impact - simple function/variable rename",
+    "maintainability": "Improves maintainability - naming now consistent",
+    "reversibility": "High - easy to revert if needed (all changes in single workorder)",
+    "overall_risk": "LOW - Well-scoped, systematic rename, comprehensive tracking, no logic changes"
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "current_situation": {
+      "slash_command_name": "/align-plan (renamed)",
+      "mcp_tool_name": "execute_plan (NOT YET RENAMED)",
+      "handler_function_name": "handle_execute_plan (NOT YET RENAMED)",
+      "mcp_config": "mcp__coderef-workflow__execute_plan (NOT YET RENAMED)",
+      "documentation": "Mixed - some docs reference old name, some reference new"
+    },
+    "target_situation": {
+      "slash_command_name": "/align-plan",
+      "mcp_tool_name": "align_plan",
+      "handler_function_name": "handle_align_plan",
+      "mcp_config": "mcp__coderef-workflow__align_plan",
+      "documentation": "All consistent with align_plan"
+    },
+    "integration_points": [
+      "server.py - Tool registration (must match tool_handlers mapping)",
+      "tool_handlers.py - Handler mapping and debug logs",
+      "settings.local.json - MCP configuration for external systems",
+      "CLAUDE.md - Architecture documentation",
+      "README.md - User-facing overview"
+    ]
+  },
+
+  "4_KEY_FEATURES": {
+    "feature_1_core_rename": {
+      "name": "Core Tool Infrastructure Rename",
+      "description": "Rename tool registration, handler function, and all internal references",
+      "affects": ["server.py", "tool_handlers.py"],
+      "success_criteria": "Tool remains callable via slash command, no functional changes"
+    },
+    "feature_2_config_update": {
+      "name": "MCP Configuration Update",
+      "description": "Update tool reference in MCP settings for external system integration",
+      "affects": [".claude/settings.local.json"],
+      "success_criteria": "Tool available in MCP autocomplete and external clients"
+    },
+    "feature_3_messaging": {
+      "name": "User-Facing Message Updates",
+      "description": "Update help text and messages that reference the tool",
+      "affects": ["tool_handlers.py (help messages)"],
+      "success_criteria": "Help text accurately describes /align-plan"
+    },
+    "feature_4_documentation": {
+      "name": "Documentation Updates",
+      "description": "Update all documentation that references the tool",
+      "affects": ["CLAUDE.md", "README.md"],
+      "success_criteria": "All documentation consistently refers to align_plan"
+    }
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "format": "{PHASE}-{NUMBER}: {Description}",
+    "phases": {
+      "CORE": "Core tool infrastructure (server.py, tool_handlers.py)",
+      "CONFIG": "Configuration updates (settings.local.json)",
+      "DOC": "Documentation updates (CLAUDE.md, README.md)"
+    },
+    "example_task": "CORE-001: Rename tool registration in server.py:778",
+    "task_dependencies": "CORE-* must complete before CONFIG-* must complete before DOC-*"
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_core": {
+      "name": "Core Tool Infrastructure",
+      "duration_hours": 0.5,
+      "tasks": [
+        {
+          "id": "CORE-001",
+          "file": "server.py",
+          "line": 778,
+          "title": "Rename tool registration name",
+          "current": "name='execute_plan',",
+          "new": "name='align_plan',",
+          "description": "Update MCP tool registration from execute_plan to align_plan",
+          "effort_hours": 0.1,
+          "dependencies": []
+        },
+        {
+          "id": "CORE-002",
+          "file": "tool_handlers.py",
+          "line": 2678,
+          "title": "Rename handler function",
+          "current": "async def handle_execute_plan(arguments: dict) -> list[TextContent]:",
+          "new": "async def handle_align_plan(arguments: dict) -> list[TextContent]:",
+          "description": "Rename function from handle_execute_plan to handle_align_plan",
+          "effort_hours": 0.1,
+          "dependencies": []
+        },
+        {
+          "id": "CORE-003",
+          "file": "tool_handlers.py",
+          "line": 2680,
+          "title": "Update handler docstring",
+          "current": "Handle execute_plan tool call.",
+          "new": "Handle align_plan tool call.",
+          "description": "Update docstring to reflect new function name",
+          "effort_hours": 0.05,
+          "dependencies": ["CORE-002"]
+        },
+        {
+          "id": "CORE-004",
+          "file": "tool_handlers.py",
+          "line": 2799,
+          "title": "Update debug log 1",
+          "current": "logger.debug(f\"execute_plan: Processing {len(section_9)} phases from section_9\")",
+          "new": "logger.debug(f\"align_plan: Processing {len(section_9)} phases from section_9\")",
+          "description": "Update first debug log message",
+          "effort_hours": 0.05,
+          "dependencies": ["CORE-002"]
+        },
+        {
+          "id": "CORE-005",
+          "file": "tool_handlers.py",
+          "line": 2801,
+          "title": "Update debug log 2",
+          "current": "logger.debug(f\"execute_plan: Phase {key}, value type={type(value).__name__}, is list={isinstance(value, list)}\")",
+          "new": "logger.debug(f\"align_plan: Phase {key}, value type={type(value).__name__}, is list={isinstance(value, list)}\")",
+          "description": "Update second debug log message",
+          "effort_hours": 0.05,
+          "dependencies": ["CORE-002"]
+        },
+        {
+          "id": "CORE-006",
+          "file": "tool_handlers.py",
+          "line": 2807,
+          "title": "Update debug log 3",
+          "current": "logger.debug(f\"execute_plan: Phase {key} has {len(value)} tasks\")",
+          "new": "logger.debug(f\"align_plan: Phase {key} has {len(value)} tasks\")",
+          "description": "Update third debug log message",
+          "effort_hours": 0.05,
+          "dependencies": ["CORE-002"]
+        },
+        {
+          "id": "CORE-007",
+          "file": "tool_handlers.py",
+          "line": 2810,
+          "title": "Update debug log 4",
+          "current": "logger.debug(f\"execute_plan: Task {idx} type={type(task).__name__}\")",
+          "new": "logger.debug(f\"align_plan: Task {idx} type={type(task).__name__}\")",
+          "description": "Update fourth debug log message",
+          "effort_hours": 0.05,
+          "dependencies": ["CORE-002"]
+        },
+        {
+          "id": "CORE-008",
+          "file": "tool_handlers.py",
+          "line": 4055,
+          "title": "Update handler mapping",
+          "current": "'execute_plan': handle_execute_plan,",
+          "new": "'align_plan': handle_align_plan,",
+          "description": "Update tool handler routing map from execute_plan to align_plan",
+          "effort_hours": 0.1,
+          "dependencies": ["CORE-002"]
+        }
+      ],
+      "success_criteria": [
+        "Tool name changed from execute_plan to align_plan in server.py",
+        "Handler function renamed from handle_execute_plan to handle_align_plan",
+        "All debug logs updated to reference align_plan",
+        "Handler mapping updated in routing dictionary"
+      ]
+    },
+    "phase_2_config": {
+      "name": "Configuration Updates",
+      "duration_hours": 0.25,
+      "tasks": [
+        {
+          "id": "CONFIG-001",
+          "file": ".claude/settings.local.json",
+          "line": 4,
+          "title": "Update MCP configuration",
+          "current": "\"mcp__coderef-workflow__execute_plan\",",
+          "new": "\"mcp__coderef-workflow__align_plan\",",
+          "description": "Update MCP tool reference in settings for external system availability",
+          "effort_hours": 0.15,
+          "dependencies": ["CORE-008"]
+        },
+        {
+          "id": "CONFIG-002",
+          "file": "tool_handlers.py",
+          "line": 1243,
+          "title": "Update help message",
+          "current": "message += f\"  3. Execute plan with /execute-plan\\n\"",
+          "new": "message += f\"  3. Execute plan with /align-plan\\n\"",
+          "description": "Update user-facing help message to reference /align-plan command",
+          "effort_hours": 0.1,
+          "dependencies": ["CORE-008"]
+        }
+      ],
+      "success_criteria": [
+        "MCP configuration updated with new tool name",
+        "Help messages reference /align-plan instead of /execute-plan"
+      ]
+    },
+    "phase_3_documentation": {
+      "name": "Documentation Updates",
+      "duration_hours": 0.25,
+      "tasks": [
+        {
+          "id": "DOC-001",
+          "file": "CLAUDE.md",
+          "line": 236,
+          "title": "Update architecture documentation",
+          "current": "| `execute_plan` | Align plan with todo list for tracking (command: `/align-plan`) | No |",
+          "new": "| `align_plan` | Align plan with todo list for tracking (command: `/align-plan`) | No |",
+          "description": "Update CLAUDE.md tools table to reference align_plan tool",
+          "effort_hours": 0.1,
+          "dependencies": ["CONFIG-001"]
+        },
+        {
+          "id": "DOC-002",
+          "file": "README.md",
+          "line": 108,
+          "title": "Update README documentation",
+          "current": "/execute-plan",
+          "new": "/align-plan",
+          "description": "Update README.md examples and references to use /align-plan",
+          "effort_hours": 0.15,
+          "dependencies": ["CONFIG-001"]
+        }
+      ],
+      "success_criteria": [
+        "CLAUDE.md tools table references align_plan",
+        "All README.md examples reference /align-plan",
+        "No remaining references to execute_plan in user-facing documentation"
+      ]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": {
+      "scope": "Verify handler function is correctly renamed and still callable",
+      "approach": "Test that tool can be invoked with name='align_plan' and routes to handler",
+      "coverage_target": "100% - simple rename, all code paths unchanged"
+    },
+    "integration_tests": {
+      "scope": "Verify /align-plan slash command works end-to-end",
+      "approach": "Execute /align-plan command with test context-docs-integration feature",
+      "coverage_target": "Successful TodoWrite task list generation"
+    },
+    "regression_tests": {
+      "scope": "Ensure no other tools or commands affected",
+      "approach": "Run test suite on other tools (create-plan, update-task-status, etc)",
+      "coverage_target": "All other tools still functional"
+    },
+    "acceptance_criteria": "Tool callable via both MCP (align_plan) and slash command (/align-plan), generates correct output"
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "functional": [
+      "/align-plan slash command executes successfully",
+      "align_plan MCP tool is registered and callable",
+      "Handler function correctly maps to align_plan tool",
+      "Debug logs output align_plan messages",
+      "Help text references /align-plan command"
+    ],
+    "quality": [
+      "All 14 instances renamed consistently across all files",
+      "No references to execute_plan remain (except in historical docs/logs)",
+      "Code compiles without errors",
+      "MCP configuration valid JSON"
+    ],
+    "integration": [
+      "Tool available in MCP autocomplete (settings.local.json updated)",
+      "External systems can call align_plan tool",
+      "CLAUDE.md and README.md documentation accurate",
+      "No breaking changes to existing workflows"
+    ],
+    "verification": [
+      "Run test: /align-plan context-docs-integration → TodoWrite task list generated",
+      "Grep for 'execute_plan' → only historical/test files found",
+      "Check MCP cache cleared and tool shows as 'align_plan' in autocomplete"
+    ]
+  },
+
+  "9_implementation_checklist": {
+    "phase_1_core": [
+      "☐ CORE-001: Rename tool registration in server.py:778",
+      "☐ CORE-002: Rename handler function in tool_handlers.py:2678",
+      "☐ CORE-003: Update docstring in tool_handlers.py:2680",
+      "☐ CORE-004: Update debug log in tool_handlers.py:2799",
+      "☐ CORE-005: Update debug log in tool_handlers.py:2801",
+      "☐ CORE-006: Update debug log in tool_handlers.py:2807",
+      "☐ CORE-007: Update debug log in tool_handlers.py:2810",
+      "☐ CORE-008: Update handler mapping in tool_handlers.py:4055"
+    ],
+    "phase_2_config": [
+      "☐ CONFIG-001: Update MCP config in .claude/settings.local.json:4",
+      "☐ CONFIG-002: Update help message in tool_handlers.py:1243"
+    ],
+    "phase_3_documentation": [
+      "☐ DOC-001: Update CLAUDE.md:236",
+      "☐ DOC-002: Update README.md:108"
+    ],
+    "verification": [
+      "☐ Compile check: No syntax errors",
+      "☐ Grep check: grep -r 'execute_plan' coderef-workflow/ (only historical)",
+      "☐ Function test: /align-plan context-docs-integration → success",
+      "☐ MCP check: Tool shows as 'align_plan' in settings",
+      "☐ Regression: Run other tool tests (create-plan, update-task-status)"
+    ]
+  }
+}

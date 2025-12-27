@@ -526,8 +526,8 @@ class PlanningGenerator:
         # Validate feature name (security check)
         feature_name = self.validate_feature_name(feature_name)
 
-        # Create working directory
-        working_dir = self.project_path / Paths.CONTEXT_DIR / "working" / feature_name
+        # Create workorder directory
+        working_dir = self.project_path / Paths.CONTEXT_DIR / "workorder" / feature_name
         working_dir.mkdir(parents=True, exist_ok=True)
 
         # Save plan

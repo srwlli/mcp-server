@@ -19,7 +19,8 @@
       "mcp__coderef-workflow__execute_plan",
       "Bash(git commit:*)",
       "Bash(python -m py_compile:*)",
-      "Bash(python -c:*)"
+      "Bash(python -c:*)",
+      "Bash(timeout 5 python:*)"
     ]
   },
   "enabledMcpjsonServers": [

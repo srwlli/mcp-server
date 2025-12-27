@@ -3,8 +3,9 @@
 **Project:** coderef-docs
 **Feature:** context-docs-integration (Integrate coderef-context for intelligent doc generation)
 **Workorder:** WO-CONTEXT-DOCS-INTEGRATION-001
-**Status:** 🚧 Not Started
+**Status:** 🚧 In Progress (Phase 1 Complete)
 **Generated:** 2025-12-27
+**Last Updated:** 2025-12-27
 
 ---
 
@@ -79,10 +80,10 @@
 
 ## Task Completion Checklist
 
-### Phase 1: Setup
-- [ ] SETUP-001: Import coderef-context client library
-- [ ] SETUP-002: Add coderef-context health check at startup
-- [ ] SETUP-003: Create extract_apis(), extract_schemas(), extract_components() function stubs
+### Phase 1: Setup ✅ COMPLETE
+- [x] SETUP-001: Create subprocess utilities in cli_utils.py (run_coderef_command, get_cli_path, validate_cli_available)
+- [x] SETUP-002: Add CLI health check to server.py (health_check function, CODEREF_CONTEXT_AVAILABLE flag)
+- [x] SETUP-003: Create extract_apis(), extract_schemas(), extract_components() function stubs in extractors.py
 
 ### Phase 2: Integration
 - [ ] INTEGRATE-001: Implement API endpoint extraction logic
@@ -112,14 +113,16 @@
 ## Files Created/Modified
 
 **New Files:**
-- `src/integration/context_extractor.py` - Core extraction logic
-- `tests/test_integration_context_docs.py` - Unit tests
-- `tests/integration/test_context_docs_integration.py` - Integration tests
+- `cli_utils.py` (6.2K) - Subprocess utilities for calling @coderef/core CLI (SETUP-001)
+- `extractors.py` (8.2K) - Code intelligence extractors (stubs for Phase 1, implementation in Phase 2) (SETUP-003)
+- ~~`tests/test_integration_context_docs.py`~~ - Unit tests (Phase 3)
+- ~~`tests/integration/test_context_docs_integration.py`~~ - Integration tests (Phase 3)
 
 **Modified Files:**
-- `server.py` - Import coderef-context client, health check, call extract_* in generate_individual_doc
-- `CLAUDE.md` - Document new integration points
-- `README.md` - Update to mention coderef-context dependency (optional)
+- `server.py` - Added health_check function, CODEREF_CONTEXT_AVAILABLE global flag, CLI imports (SETUP-002)
+- `tool_handlers.py` - Added CODEREF_CONTEXT_AVAILABLE flag, set_coderef_context_available setter (SETUP-002)
+- ~~`CLAUDE.md`~~ - Document new integration points (Phase 2)
+- ~~`README.md`~~ - Update to mention coderef-context dependency (Phase 2)
 
 ---
 

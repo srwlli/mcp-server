@@ -65,7 +65,7 @@ def validate_cli_available() -> bool:
 
     # Check if file is readable
     try:
-        with open(cli_file, 'r') as f:
+        with open(cli_file, 'r', encoding='utf-8', errors='ignore') as f:
             f.read(1)  # Read 1 byte to verify access
         return True
     except (PermissionError, OSError) as e:

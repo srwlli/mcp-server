@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "coeref-testing": {
+      "command": "python",
+      "args": [
+        "C:/Users/willh/.mcp-servers/coderef-testing/server.py"
+      ],
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-testing"
+    },
     "coderef-personas": {
       "command": "python",
       "args": [

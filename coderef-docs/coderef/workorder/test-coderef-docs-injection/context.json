@@ -1,0 +1,21 @@
+{
+  "feature_name": "test-coderef-docs-injection",
+  "goal": "Create a test workorder to prove coderef-docs documentation generation works",
+  "description": "This is a TEST ONLY workorder. The purpose is to run the complete /create-workorder workflow on the coderef-docs project itself, then capture real coderef-context analysis of documentation generation system.",
+  "requirements": [
+    "Run /create-workorder workflow completely",
+    "Capture analysis.json with real coderef_scan results of coderef-docs",
+    "Show structure: generators/, templates/, tool_handlers.py",
+    "Capture dependency analysis of documentation pipeline",
+    "Prove docs generation system works with code intelligence"
+  ],
+  "out_of_scope": [
+    "EXECUTION - do not implement any code changes",
+    "Agent assignments - planning phase only",
+    "Actual feature implementation"
+  ],
+  "constraints": [
+    "Planning documents only - NO code modifications",
+    "Capture real coderef-context output"
+  ]
+}

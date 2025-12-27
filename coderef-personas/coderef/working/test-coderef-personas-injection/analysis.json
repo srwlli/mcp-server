@@ -1,0 +1,127 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "COMPONENTS.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Documentation\n\n## Module Dependency Graph\n\n*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*\n\n## Code Patterns\n\n### Handler Functions\n\n- `handle_use_persona` in `server.py`\n- `handle_get_active_persona` in `server.py`\n- `handle_clear_persona` in `server.py`\n- `handle_list_personas` in `server.py`\n- `handle_generate_todo_list` in `server.py`\n-",
+      "headers": [
+        "Architecture Documentation",
+        "Module Dependency Graph",
+        "Code Patterns",
+        "Handler Functions",
+        "Common Decorators",
+        "Error Types"
+      ],
+      "size": 1072
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Documentation\n\n## Overview\n\n- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** RFC 7807\n- **Total Endpoints:** 0\n\n## Endpoints\n\n*No API endpoints detected.*\n\n## Authentication\n\n*Authentication method not detected.*\n\n## Error Handling\n\n**Format:** RFC 7807\n\nExample:\n\n```json\n{\"type\": \"about:blank\", \"status\": 400, \"title\": \"Bad Request\", \"detail\": \"...\"}\n```\n\n*Generated: 2025-12-20T04:17:11.398875*",
+      "headers": [
+        "API Documentation",
+        "Overview",
+        "Endpoints",
+        "Authentication",
+        "Error Handling"
+      ],
+      "size": 429
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Documentation\n\n## Database Tables\n\n### PersonaBehavior\n\n*File: `src\\models.py`*\n\n\n### PersonaDefinition\n\n*File: `src\\models.py`*\n\n\n### PersonaState\n\n*File: `src\\models.py`*\n\n\n### TaskExecutionStatus\n\n*File: `src\\models.py`*\n\n\n### TaskProgress\n\n*File: `src\\models.py`*\n\n\n### TodoMetadata\n\n*File: `src\\models.py`*\n\n\n### CustomPersonaInput\n\n*File: `src\\models.py`*\n\n\n\n*Generated: 2025-12-20T04:17:11.398355*",
+      "headers": [
+        "Schema Documentation",
+        "Database Tables",
+        "PersonaBehavior",
+        "PersonaDefinition",
+        "PersonaState",
+        "TaskExecutionStatus",
+        "TaskProgress",
+        "TodoMetadata",
+        "CustomPersonaInput"
+      ],
+      "size": 413
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# personas-mcp\n\n**Independent Expert Agent Personas for AI Assistants**\n\nAn MCP server that provides expert personas that influence how AI approaches problems and uses tools.\n\n## What is This?\n\npersonas-mcp allows you to activate expert \"personas\" that give AI assistants specialized knowledge and behavior. Think of it like switching between different expert consultants - each with deep domain knowledge in specific areas.\n\n### v1.4.0 Features\n\n- \u2705 **10 base personas** - mcp-expert, docs-expert, c",
+      "headers": [
+        "personas-mcp",
+        "What is This?",
+        "v1.4.0 Features",
+        "Installation",
+        "Prerequisites",
+        "Setup",
+        "Usage",
+        "Quick Start",
+        "Or use shortcuts:",
+        "Available Tools"
+      ],
+      "size": 12890
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "coderef\\working\\docs-expert-v2"
+    ],
+    "file_counts": {
+      "coderef\\working\\docs-expert-v2": 12,
+      "tests": 9,
+      "personas\\base": 9,
+      "src": 7,
+      "personas_mcp.egg-info": 6,
+      "coderef\\archived\\persona-management": 6,
+      "coderef\\foundation-docs": 4,
+      "coderef\\archived\\coderef-persona-context": 4,
+      "coderef\\working\\lloyd-start-feature": 4,
+      ".pytest_cache": 3
+    },
+    "organization_pattern": "modular (src-based)"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: COMPONENTS.md, USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ]
+}

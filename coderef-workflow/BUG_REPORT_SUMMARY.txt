@@ -1,0 +1,136 @@
+================================================================================
+VALIDATION BUG INVESTIGATION - COMPLETE
+================================================================================
+
+FILE: C:\Users\willh\.mcp-servers\coderef-workflow\schema_validator.py
+FUNCTION: get_checklist() (line 367)
+ISSUE: Returns empty dict for flat-format plans, causing execute_plan to fail
+
+================================================================================
+ROOT CAUSE (CONFIRMED)
+================================================================================
+
+The plan.json file uses FLAT STRUCTURE:
+  {
+    "META_DOCUMENTATION": {...},
+    "0_PREPARATION": {...},
+    "9_implementation_checklist": {...}  <- AT TOP LEVEL
+  }
+
+But get_checklist() ONLY checks NESTED STRUCTURE:
+  structure = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {})
+  section_9 = structure.get("9_implementation_checklist", {})
+
+Since UNIVERSAL_PLANNING_STRUCTURE doesn't exist, it returns empty dict.
+
+Validation logic (tool_handlers.py:2742-2746) checks BOTH locations:
+  has_checklist = (
+      "9_implementation_checklist" in plan_data or      <- TRUE
+      "9_implementation_checklist" in structure         <- FALSE
+  )
+  Result: PASSES (because checks both)
+
+But get_checklist() only checks nested:
+  section_9 = structure.get("9_implementation_checklist", {})
+  Result: RETURNS {} (empty dict)
+
+This is the bug: validation passes but extraction fails.
+
+================================================================================
+PROOF
+================================================================================
+
+Test file created: test_validation_bug_simple.py
+Run with: python test_validation_bug_simple.py
+
+Output shows:
+  - Validation PASSES (has_checklist = True)
+  - Extraction FAILS (section_9 length = 0 items, should be 5)
+  - Plan has correct data at top level with 5 keys
+
+BUG REPRODUCED: Yes (100% confirmed)
+
+================================================================================
+FIX
+================================================================================
+
+File: schema_validator.py
+Lines: 386-388
+
+CHANGE #1 (Line 387):
+  FROM: section_9 = structure.get("9_implementation_checklist", {})
+  TO:   section_9 = structure.get("9_implementation_checklist")
+
+CHANGE #2 (After line 387, INSERT):
+  # Fallback to top-level (flat format)
+  if section_9 is None:
+      section_9 = plan.get("9_implementation_checklist", {})
+
+Complete fixed code (lines 384-392):
+
+def get_checklist(plan: dict, strict: bool = None) -> dict:
+    if strict is None:
+        strict = STRICT_MODE
+
+    structure = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {})
+    section_9 = structure.get("9_implementation_checklist")  # No default {}
+
+    # Fallback to top-level (flat format)
+    if section_9 is None:
+        section_9 = plan.get("9_implementation_checklist", {})
+
+    # Expected format: dict with category keys
+    if isinstance(section_9, dict):
+        # ... rest unchanged
+
+================================================================================
+WHY THIS FIX WORKS
+================================================================================
+
+1. Checks nested structure FIRST (preferred schema format)
+2. Falls back to top-level if not found (handles flat format)
+3. Maintains backward compatibility with BOTH formats
+4. Aligns extraction logic with validation logic
+5. No breaking changes
+6. 2-line change (minimal risk)
+
+================================================================================
+VALIDATION
+================================================================================
+
+After applying fix, run test again:
+  cd C:\Users\willh\.mcp-servers\coderef-workflow
+  python test_validation_bug_simple.py
+
+Expected output:
+  BUG STATUS: NOT REPRODUCED
+  Returned section_9 length: 5 items
+  Returned section_9 keys: ['phase_1_setup', 'phase_2_integration', ...]
+
+Then test execute_plan tool:
+  /execute-plan context-docs-integration
+
+Expected: Success (no "missing required section" error)
+
+================================================================================
+FILES CREATED
+================================================================================
+
+1. test_validation_bug_simple.py - Reproduction test
+2. VALIDATION_BUG_ANALYSIS.md - Complete technical analysis
+3. FIX_get_checklist.py - Fix instructions (has encoding issues on Windows)
+4. BUG_REPORT_SUMMARY.txt - This file (summary)
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Apply the fix to schema_validator.py lines 386-388
+2. Run test_validation_bug_simple.py to verify fix
+3. Test execute_plan tool with context-docs-integration plan
+4. Commit changes with message:
+   "fix: get_checklist() now checks both flat and nested plan formats"
+
+================================================================================
+END OF REPORT
+================================================================================

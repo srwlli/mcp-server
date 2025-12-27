@@ -1,0 +1,24 @@
+{
+  "feature_name": "test-coderef-injection",
+  "goal": "Create a test workorder to prove coderef-context is being injected into planning documents",
+  "description": "This is a TEST ONLY workorder. We will NOT execute this feature. The purpose is to run the complete /create-workorder workflow (gather context, analyze project, create plan, validate) on the coderef-workflow project itself, then capture the real coderef-context injections (coderef_scan, coderef_query, coderef_patterns, coderef_impact results) that appear in the planning documents as proof that coderef-context is actively being used.",
+  "requirements": [
+    "Run /create-workorder workflow completely",
+    "Capture analysis.json with real coderef_scan results",
+    "Capture plan.json with real coderef_query results",
+    "Capture plan.json with real coderef_patterns results",
+    "Capture plan.json with real coderef_impact results",
+    "Create proof document showing explicit coderef-context injections"
+  ],
+  "out_of_scope": [
+    "EXECUTION - do not implement any code changes",
+    "Agent assignments - this is planning phase only",
+    "Actual feature implementation"
+  ],
+  "constraints": [
+    "Planning documents only - NO code modifications",
+    "Capture real coderef-context output, not mock data",
+    "Document explicit tool calls and their outputs",
+    "Prove injection through actual planning artifacts"
+  ]
+}

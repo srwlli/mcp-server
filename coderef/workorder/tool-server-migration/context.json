@@ -1,0 +1,35 @@
+{
+  "feature_name": "tool-server-migration",
+  "description": "Migrate tools from coderef-docs to coderef-workflow server. Move all planning, execution, archive, and admin tools from coderef-docs to coderef-workflow, while keeping agent coordination tools in coderef-docs. This fixes the architectural mismatch causing duplicate tool references in CLI commands.",
+  "goal": "Establish correct server responsibility: coderef-workflow owns planning/execution/archive/admin, coderef-docs owns agent coordination and documentation generation",
+  "requirements": [
+    "Move 18 tools from coderef-docs.server to coderef-workflow.server (one at a time)",
+    "Keep 5 agent coordination tools in coderef-docs (generate_agent_communication, assign_agent_task, verify_agent_completion, aggregate_agent_deliverables, track_agent_status)",
+    "Update all 65+ global command files to use correct server prefixes (mcp__coderef-workflow__ or mcp__coderef-docs__)",
+    "Verify no duplicate tool registrations",
+    "Update .mcp.json if needed",
+    "Test each moved tool after migration",
+    "Update server.py documentation/comments",
+    "Commit each tool migration separately with clear git history"
+  ],
+  "out_of_scope": [
+    "Refactoring tool implementations",
+    "Adding new tools",
+    "Changing tool functionality",
+    "Updating MCP protocol versions"
+  ],
+  "constraints": [
+    "Must move one tool at a time",
+    "Each move must be tested before proceeding to next",
+    "Agent coordination tools must STAY in coderef-docs",
+    "No downtime - Claude Code CLI must remain functional during migration",
+    "Command files must always reference correct server for tools"
+  ],
+  "success_criteria": {
+    "no_duplicate_tools": "Each tool registered in exactly one server",
+    "correct_server_mapping": "All tools in correct server based on responsibility",
+    "commands_updated": "All 65+ command files reference correct server",
+    "tests_pass": "Tool invocation tests pass",
+    "documentation_clear": "server.py comments clearly describe tool responsibility"
+  }
+}

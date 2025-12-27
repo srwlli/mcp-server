@@ -290,34 +290,34 @@
     ]
   },
 
-  "9_IMPLEMENTATION_CHECKLIST": {
+  "9_implementation_checklist": {
     "phase_1_setup": [
-      "[ ] SETUP-001: Import coderef-context client library",
-      "[ ] SETUP-002: Implement health check at startup",
-      "[ ] SETUP-003: Create extract_apis(), extract_schemas(), extract_components() stubs"
+      "☐ SETUP-001: Import coderef-context client library",
+      "☐ SETUP-002: Implement health check at startup",
+      "☐ SETUP-003: Create extract_apis(), extract_schemas(), extract_components() stubs"
     ],
     "phase_2_integration": [
-      "[ ] INTEGRATE-001: Implement API endpoint extraction",
-      "[ ] INTEGRATE-002: Implement database schema extraction",
-      "[ ] INTEGRATE-003: Implement component definition extraction",
-      "[ ] INTEGRATE-004: Add error handling + caching"
+      "☐ INTEGRATE-001: Implement API endpoint extraction",
+      "☐ INTEGRATE-002: Implement database schema extraction",
+      "☐ INTEGRATE-003: Implement component definition extraction",
+      "☐ INTEGRATE-004: Add error handling + caching"
     ],
     "phase_3_testing": [
-      "[ ] TEST-001: Write unit tests for extract_* functions",
-      "[ ] TEST-002: Write integration tests with real coderef-context",
-      "[ ] TEST-003: Verify backward compatibility with existing tests"
+      "☐ TEST-001: Write unit tests for extract_* functions",
+      "☐ TEST-002: Write integration tests with real coderef-context",
+      "☐ TEST-003: Verify backward compatibility with existing tests"
     ],
     "quality": [
-      "[ ] Type checking: mypy src/ passes",
-      "[ ] Code style: black formatted, ruff clean",
-      "[ ] Coverage: ≥90% for new code",
-      "[ ] Documentation: Added docstrings to new functions"
+      "☐ Type checking: mypy src/ passes",
+      "☐ Code style: black formatted, ruff clean",
+      "☐ Coverage: ≥90% for new code",
+      "☐ Documentation: Added docstrings to new functions"
     ],
     "validation": [
-      "[ ] All 3 doc types (API.md, SCHEMA.md, COMPONENTS.md) tested",
-      "[ ] Graceful degradation tested (coderef-context unavailable)",
-      "[ ] Backward compatibility verified (all existing tests pass)",
-      "[ ] Performance acceptable (<10s per doc generation)"
+      "☐ All 3 doc types (API.md, SCHEMA.md, COMPONENTS.md) tested",
+      "☐ Graceful degradation tested (coderef-context unavailable)",
+      "☐ Backward compatibility verified (all existing tests pass)",
+      "☐ Performance acceptable (<10s per doc generation)"
     ]
   }
 }

@@ -1,0 +1,421 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-coderef-docs-injection",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant - Autonomous Proof Test",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+    "created_at": "2025-12-26T15:24:13.544316",
+    "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [
+          "README.md (root)",
+          "API.md (coderef/foundation-docs)",
+          "ARCHITECTURE.md (coderef/foundation-docs)",
+          "COMPONENTS.md (coderef/foundation-docs)",
+          "SCHEMA.md (coderef/foundation-docs)",
+          "USER-GUIDE.md (root)"
+        ],
+        "missing": []
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "Flask",
+        "database": "unknown",
+        "testing": "pytest",
+        "build": "unknown"
+      },
+      "project_structure": {
+        "main_directories": [
+          "generators",
+          "coderef\\archived",
+          "coderef\\inventory",
+          "tests\\integration"
+        ],
+        "total_files": 138,
+        "organization_pattern": "MCP server with generators and tool handlers"
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "BEHAVIOR-STANDARDS.md",
+          "COMPONENT-PATTERN.md",
+          "UI-STANDARDS.md",
+          "UX-PATTERNS.md",
+          "COMPONENT-INDEX.md"
+        ]
+      },
+      "analysis_metadata": {
+        "total_files_scanned": 138,
+        "high_risk_files": 4,
+        "api_endpoints_detected": 27,
+        "documentation_quality_score": 100,
+        "test_readiness_score": 0
+      }
+    },
+    "1_executive_summary": {
+      "feature_name": "Test CodeRef Docs Injection Proof",
+      "goal": "Create a test workorder to prove coderef-docs documentation generation works by running the complete /create-workorder workflow on the coderef-docs project itself, capturing real coderef-context analysis",
+      "description": "This is a TEST ONLY workorder that demonstrates the recursive capability of the coderef ecosystem - the coderef-docs MCP server analyzing itself through coderef-context integration. This proof validates that analysis.json captures real dependency data, the planning system generates valid plan.json, and the validation system scores the result.",
+      "value_proposition": [
+        "Proves coderef-context integration works correctly",
+        "Validates analysis.json contains real scan data (generators/, templates/, tool_handlers.py)",
+        "Demonstrates dependency analysis of documentation pipeline",
+        "Shows the docs generation system works with code intelligence",
+        "Provides reference example for future workorders"
+      ],
+      "success_metrics": [
+        "analysis.json generated with 138+ files detected",
+        "plan.json created following schema v1.0.0",
+        "Validation score >= 85",
+        "DELIVERABLES.md template generated",
+        "Workorder ID properly tracked: WO-TEST-CODEREF-DOCS-INJECTION-001"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk_level": "low",
+      "risk_score": 15,
+      "breaking_changes": {
+        "likelihood": "none",
+        "impact": "none",
+        "mitigation": "This is a planning-only test with no code modifications"
+      },
+      "security_concerns": {
+        "likelihood": "none",
+        "impact": "none",
+        "details": "Read-only operations only"
+      },
+      "performance_impact": {
+        "likelihood": "low",
+        "severity": "minor",
+        "details": "File I/O for plan.json and analysis.json generation"
+      },
+      "maintainability_concerns": [
+        "Test artifacts will accumulate in coderef/workorder/ directory",
+        "Should be archived after proof completion"
+      ],
+      "rollback_strategy": "Simply delete coderef/workorder/test-coderef-docs-injection/ directory"
+    },
+    "3_current_state_analysis": {
+      "existing_architecture": {
+        "summary": "coderef-docs is a focused MCP server providing 11 specialized tools for documentation generation, changelog management, standards enforcement, and quickref guides",
+        "key_components": [
+          "server.py (374 lines) - MCP server entry point",
+          "tool_handlers.py (835 lines) - 11 tool handlers",
+          "generators/ directory - foundation_generator.py, changelog_generator.py, standards_generator.py, audit_generator.py",
+          "templates/power/ - POWER framework templates",
+          ".claude/commands/ - 26 slash commands"
+        ]
+      },
+      "files_to_create": [
+        {
+          "path": "coderef/workorder/test-coderef-docs-injection/plan.json",
+          "purpose": "Complete implementation plan following schema v1.0.0"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-docs-injection/DELIVERABLES.md",
+          "purpose": "Tracking template for test completion metrics"
+        }
+      ],
+      "files_to_modify": [],
+      "files_to_delete": [],
+      "dependencies_to_add": [],
+      "dependencies_to_remove": [],
+      "configuration_changes": []
+    },
+    "4_key_features": {
+      "features": [
+        {
+          "name": "Complete Workflow Execution",
+          "description": "Run /create-workorder workflow completely on coderef-docs project",
+          "priority": "must-have",
+          "user_story": "As a developer, I want to see the complete planning workflow execute successfully to validate the system works"
+        },
+        {
+          "name": "Real CodeRef-Context Analysis",
+          "description": "Capture analysis.json with real coderef_scan results of coderef-docs structure",
+          "priority": "must-have",
+          "user_story": "As a developer, I want to see real dependency data captured from the docs generation system"
+        },
+        {
+          "name": "Structure Discovery",
+          "description": "Show project structure including generators/, templates/, tool_handlers.py in analysis.json",
+          "priority": "must-have",
+          "user_story": "As a developer, I want to see the tool correctly identifies the key architectural components"
+        },
+        {
+          "name": "Dependency Analysis",
+          "description": "Capture dependency analysis of documentation pipeline workflows",
+          "priority": "should-have",
+          "user_story": "As a developer, I want to understand how the documentation generation tools interact"
+        },
+        {
+          "name": "Code Intelligence Proof",
+          "description": "Prove docs generation system works with code intelligence from coderef-context",
+          "priority": "must-have",
+          "user_story": "As a developer, I want confirmation that the integration between coderef-docs and coderef-context is functional"
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+        "name": "Test CodeRef Docs Injection Proof",
+        "feature_dir": "coderef/workorder/test-coderef-docs-injection"
+      },
+      "naming_convention": {
+        "pattern": "{PHASE}-{NUMBER}",
+        "example": "SETUP-001",
+        "phases": ["SETUP", "ANALYSIS", "VALIDATION"]
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Create context.json with test requirements",
+          "status": "completed",
+          "dependencies": [],
+          "estimated_hours": 0.1
+        },
+        {
+          "id": "ANALYSIS-001",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Call analyze_project_for_planning on coderef-docs",
+          "status": "completed",
+          "dependencies": ["SETUP-001"],
+          "estimated_hours": 0.2
+        },
+        {
+          "id": "ANALYSIS-002",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Verify analysis.json contains 138+ files and real coderef-context output",
+          "status": "pending",
+          "dependencies": ["ANALYSIS-001"],
+          "estimated_hours": 0.1
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Call create_plan to generate plan.json from analysis",
+          "status": "in_progress",
+          "dependencies": ["ANALYSIS-001"],
+          "estimated_hours": 0.3
+        },
+        {
+          "id": "VALIDATION-001",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Call validate_implementation_plan and verify score >= 85",
+          "status": "pending",
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 0.2
+        },
+        {
+          "id": "VALIDATION-002",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Verify DELIVERABLES.md template was generated",
+          "status": "pending",
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 0.1
+        },
+        {
+          "id": "VALIDATION-003",
+          "workorder_id": "WO-TEST-CODEREF-DOCS-INJECTION-001",
+          "description": "Verify workorder_id WO-TEST-CODEREF-DOCS-INJECTION-001 is embedded in plan",
+          "status": "pending",
+          "dependencies": ["SETUP-002"],
+          "estimated_hours": 0.1
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Context",
+          "description": "Create context.json with test requirements and verify directory structure",
+          "tasks": ["SETUP-001"],
+          "deliverables": [
+            "context.json with goal, description, requirements, constraints"
+          ],
+          "estimated_duration": "0.1 hours",
+          "dependencies": []
+        },
+        {
+          "phase": 2,
+          "name": "Analysis Execution",
+          "description": "Execute project analysis using coderef-context integration and verify results",
+          "tasks": ["ANALYSIS-001", "ANALYSIS-002"],
+          "deliverables": [
+            "analysis.json with real coderef_scan output",
+            "Verification report showing 138+ files detected",
+            "Structure discovery (generators/, templates/, tool_handlers.py)"
+          ],
+          "estimated_duration": "0.3 hours",
+          "dependencies": ["phase 1"]
+        },
+        {
+          "phase": 3,
+          "name": "Plan Generation",
+          "description": "Create implementation plan from analysis and context data",
+          "tasks": ["SETUP-002"],
+          "deliverables": [
+            "plan.json following schema v1.0.0",
+            "10-section structure properly formatted",
+            "Workorder ID embedded in section 5"
+          ],
+          "estimated_duration": "0.3 hours",
+          "dependencies": ["phase 2"]
+        },
+        {
+          "phase": 4,
+          "name": "Validation & Verification",
+          "description": "Validate plan quality and verify all artifacts generated correctly",
+          "tasks": ["VALIDATION-001", "VALIDATION-002", "VALIDATION-003"],
+          "deliverables": [
+            "Validation score >= 85",
+            "DELIVERABLES.md template",
+            "Workorder tracking verification",
+            "Proof test summary report"
+          ],
+          "estimated_duration": "0.4 hours",
+          "dependencies": ["phase 3"]
+        }
+      ],
+      "total_estimated_duration": "1.1 hours"
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        {
+          "component": "context.json structure",
+          "test": "Verify required fields present (feature_name, goal, description, requirements)",
+          "coverage": "100%"
+        },
+        {
+          "component": "analysis.json validity",
+          "test": "Verify JSON parsing succeeds and contains expected sections",
+          "coverage": "100%"
+        },
+        {
+          "component": "plan.json schema compliance",
+          "test": "Verify plan follows schema v1.0.0 with 10 required sections",
+          "coverage": "100%"
+        }
+      ],
+      "integration_tests": [
+        {
+          "workflow": "analyze_project_for_planning → create_plan",
+          "test": "Verify analysis output feeds into plan generation correctly",
+          "success_criteria": "plan.json references analysis data"
+        },
+        {
+          "workflow": "create_plan → validate_implementation_plan",
+          "test": "Verify validation runs on generated plan",
+          "success_criteria": "Validation score returned"
+        }
+      ],
+      "e2e_tests": [
+        {
+          "scenario": "Complete proof test workflow",
+          "steps": [
+            "Read context.json",
+            "Call analyze_project_for_planning",
+            "Call create_plan",
+            "Call validate_implementation_plan",
+            "Verify all artifacts exist"
+          ],
+          "expected_result": "All tools execute successfully, artifacts generated, validation passes"
+        }
+      ],
+      "test_data": {
+        "source": "coderef-docs project itself (recursive self-analysis)",
+        "note": "Real production data, not mocked"
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "analysis.json generated",
+          "acceptance_criteria": "File exists at coderef/workorder/test-coderef-docs-injection/analysis.json",
+          "verification": "File existence check + valid JSON parsing"
+        },
+        {
+          "requirement": "analysis.json contains real coderef-context data",
+          "acceptance_criteria": "total_files >= 138, foundation_docs array populated, inventory_data present",
+          "verification": "JSON structure validation"
+        },
+        {
+          "requirement": "plan.json generated",
+          "acceptance_criteria": "File exists with all 10 required sections",
+          "verification": "Schema validation against plan.schema.json v1.0.0"
+        },
+        {
+          "requirement": "Validation score meets threshold",
+          "acceptance_criteria": "Score >= 85",
+          "verification": "validate_implementation_plan tool output"
+        },
+        {
+          "requirement": "DELIVERABLES.md template created",
+          "acceptance_criteria": "File exists with phase structure from plan.json",
+          "verification": "File existence + structure validation"
+        },
+        {
+          "requirement": "Workorder ID properly tracked",
+          "acceptance_criteria": "WO-TEST-CODEREF-DOCS-INJECTION-001 appears in plan.json section 5",
+          "verification": "JSON field validation"
+        }
+      ],
+      "non_functional_requirements": [
+        {
+          "requirement": "Performance",
+          "acceptance_criteria": "Complete workflow executes in < 2 minutes",
+          "verification": "Timestamp comparison"
+        },
+        {
+          "requirement": "Data integrity",
+          "acceptance_criteria": "No data corruption, all JSON files valid",
+          "verification": "JSON validation"
+        }
+      ],
+      "documentation_requirements": [
+        {
+          "requirement": "Proof test summary",
+          "acceptance_criteria": "Document contains key findings, validation score, workorder ID",
+          "verification": "Manual review"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "[ ] Create context.json with test requirements",
+        "[ ] Verify directory coderef/workorder/test-coderef-docs-injection/ exists"
+      ],
+      "phase_2": [
+        "[ ] Call mcp__coderef-workflow__analyze_project_for_planning",
+        "[ ] Verify analysis.json generated",
+        "[ ] Check total_files >= 138",
+        "[ ] Verify foundation_docs array contains README, ARCHITECTURE, SCHEMA, etc",
+        "[ ] Check inventory_data contains api_endpoints, documentation, etc"
+      ],
+      "phase_3": [
+        "[ ] Call mcp__coderef-workflow__create_plan",
+        "[ ] Verify plan.json generated",
+        "[ ] Check all 10 sections present (0_preparation through 8_success_criteria)",
+        "[ ] Verify workorder_id = WO-TEST-CODEREF-DOCS-INJECTION-001 in section 5",
+        "[ ] Check schema_version = 1.0.0 in META_DOCUMENTATION"
+      ],
+      "phase_4": [
+        "[ ] Call mcp__coderef-workflow__validate_implementation_plan",
+        "[ ] Verify validation score >= 85",
+        "[ ] Check DELIVERABLES.md exists",
+        "[ ] Verify DELIVERABLES.md contains phase structure",
+        "[ ] Generate proof test summary report with findings"
+      ]
+    }
+  }
+}

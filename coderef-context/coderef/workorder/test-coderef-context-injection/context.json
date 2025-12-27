@@ -1,0 +1,22 @@
+{
+  "feature_name": "test-coderef-context-injection",
+  "goal": "Create a test workorder to prove coderef-context is functional and can analyze code",
+  "description": "This is a TEST ONLY workorder. We will NOT execute this feature. The purpose is to run the complete /create-workorder workflow on the coderef-context project itself, then capture the real coderef-context self-analysis results as proof that code intelligence works.",
+  "requirements": [
+    "Run /create-workorder workflow completely",
+    "Capture analysis.json with real coderef_scan results of coderef-context itself",
+    "Capture plan.json with coderef_query, coderef_patterns results",
+    "Document how coderef-context analyzes itself (recursive proof)",
+    "Show the CLI wrapper, subprocess management, and tool handlers"
+  ],
+  "out_of_scope": [
+    "EXECUTION - do not implement any code changes",
+    "Agent assignments - this is planning phase only",
+    "Actual feature implementation"
+  ],
+  "constraints": [
+    "Planning documents only - NO code modifications",
+    "Capture real coderef-context output, not mock data",
+    "Analyze coderef-context project itself (recursive)"
+  ]
+}

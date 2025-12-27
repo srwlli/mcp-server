@@ -1,0 +1,55 @@
+{
+  "api_context": {
+    "endpoints": [],
+    "count": 0,
+    "frameworks_detected": [],
+    "auth_method": "Unknown",
+    "error_format": "Unknown"
+  },
+  "dependencies": {
+    "count": 0,
+    "production": [],
+    "development": [],
+    "outdated": [],
+    "vulns": []
+  },
+  "database": {
+    "tables": [],
+    "relationships": [],
+    "migrations": [],
+    "table_count": 0,
+    "has_migrations": false
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_files": [],
+    "contributors": [],
+    "has_git": false
+  },
+  "patterns": {
+    "handlers": [],
+    "decorators": [],
+    "error_handling": []
+  },
+  "similar_features": [],
+  "existing_docs": {
+    "architecture": null,
+    "schema": null,
+    "api": null,
+    "components": null,
+    "readme": null
+  },
+  "coderef": {
+    "available": false,
+    "element_count": 0,
+    "has_graph": false,
+    "auto_scan_attempted": true,
+    "auto_scan_performed": false,
+    "auto_scan_success": false
+  },
+  "_metadata": {
+    "generated_at": "2025-12-27T03:19:25.921861",
+    "generator": "coderef_foundation_generator",
+    "version": "2.0.0"
+  }
+}

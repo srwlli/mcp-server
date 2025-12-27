@@ -1,0 +1,1259 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "coeref-testing",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "workorder_id": "WO-COEREF-TESTING-001",
+    "generated_by": "Claude Code - Lloyd Coordinator",
+    "generated_at": "2025-12-27T08:20:00Z",
+    "has_context": true,
+    "has_analysis": true,
+    "multi_agent_mode": true,
+    "planned_phases": 4,
+    "planned_agents": 4,
+    "last_updated": "2025-12-27T18:39:29.273660+00:00"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "summary": "coeref-testing is a framework-agnostic universal MCP server for test orchestration, execution, and reporting. Planning phase complete with architecture defined, 14 tools designed, and testing-expert persona specified.",
+      "foundation_docs_status": {
+        "available": [
+          "README.md",
+          "API.md",
+          "ARCHITECTURE.md",
+          "SCHEMA.md"
+        ],
+        "missing": [
+          "COMPONENTS.md",
+          "USER-GUIDE.md"
+        ],
+        "action": "Auto-generated; USER-GUIDE.md to be created after implementation"
+      },
+      "existing_context": {
+        "claude_md": "C:\\Users\\willh\\.mcp-servers\\coeref-testing\\CLAUDE.md (2025-12-27 planning phase)",
+        "testing_guide": "C:\\Users\\willh\\.mcp-servers\\coeref-testing\\TESTING_GUIDE.md (comprehensive vision)",
+        "design_decisions": "5 key decisions documented (framework-agnostic, independent, unified schema, async, single persona)"
+      },
+      "technology_stack": {
+        "language": "Python 3.10+",
+        "framework": "MCP (Model Context Protocol)",
+        "async_runtime": "asyncio",
+        "subprocess_execution": "asyncio.create_subprocess_exec",
+        "package_manager": "uv",
+        "test_frameworks_to_support": [
+          "pytest",
+          "jest",
+          "cargo",
+          "mocha",
+          "vitest"
+        ],
+        "dependencies": "pydantic (schemas), asyncio, subprocess, json"
+      },
+      "project_structure": {
+        "root_files": [
+          "CLAUDE.md",
+          "TESTING_GUIDE.md",
+          "README.md",
+          "pyproject.toml",
+          "server.py"
+        ],
+        "directories": [
+          "src/",
+          ".claude/commands/",
+          "personas/",
+          "coderef/",
+          "tests/"
+        ]
+      },
+      "risks_identified": [
+        "Framework detection complexity - different conventions across pytest, jest, cargo, mocha, vitest",
+        "Parallel test execution isolation - ensuring proper environment separation",
+        "Async subprocess handling - proper error handling and timeout management",
+        "Result schema compatibility - unifying diverse test output formats"
+      ]
+    },
+    "1_executive_summary": {
+      "what": "Build a complete universal MCP testing infrastructure server with 14 tools, framework-agnostic architecture, and testing-expert persona",
+      "why": "Test infrastructure is scattered across projects using different frameworks. No unified way to discover, orchestrate, and report on tests. coeref-testing solves this by auto-detecting frameworks and providing consistent test execution and analysis across pytest, jest, cargo, mocha, and vitest.",
+      "how": [
+        "Create MCP server skeleton with asyncio-based architecture",
+        "Implement framework detector that auto-identifies pytest, jest, cargo, mocha, vitest",
+        "Build 14 tools across 4 categories: Discovery (2), Execution (4), Management (4), Analysis (4)",
+        "Create unified result schema that normalizes output from all frameworks to JSON",
+        "Implement testing-expert persona with 15 expertise areas",
+        "Create 12+ slash commands for easy access to all tools",
+        "Integrate with CodeRef ecosystem (optional hooks)",
+        "Test on CodeRef servers and next-scraper project"
+      ],
+      "success_criteria": [
+        "All 14 tools implemented and functional",
+        "Framework detection working for all 5 frameworks",
+        "Unified result schema tested with real test frameworks",
+        "All slash commands working in Claude Code",
+        "Testing-expert persona loaded and functional",
+        "Integration tests passing on CodeRef ecosystem",
+        "Complete documentation (README, USER-GUIDE.md)"
+      ]
+    },
+    "2_risk_assessment": {
+      "breaking_changes": "No breaking changes - new standalone server, no dependencies on existing code",
+      "security_concerns": [
+        "Subprocess execution: validate test commands to prevent injection",
+        "File access: restrict to project directory only",
+        "Result storage: ensure no sensitive data exposure in reports"
+      ],
+      "performance_risks": [
+        "Parallel test execution: configure worker pool to avoid resource exhaustion",
+        "Large test suites: implement streaming result collection",
+        "Framework detection: cache results to avoid repeated scans"
+      ],
+      "maintainability": [
+        "Framework diversity: modular detector for each framework",
+        "Schema consistency: strict pydantic validation",
+        "Code organization: clear separation (detector, runner, aggregator, analyzer)"
+      ],
+      "reversibility": "High - can be disabled/removed without affecting other servers. All artifacts in coderef/ directory",
+      "overall_risk_level": "LOW - Well-defined architecture, clear tool contracts, existing TESTING_GUIDE.md",
+      "mitigation_strategy": "Phase-based implementation with validation after each phase. Integration testing on CodeRef ecosystem before release."
+    },
+    "3_current_state_analysis": {
+      "files_existing": [
+        "CLAUDE.md (complete with architecture and tools catalog)",
+        "TESTING_GUIDE.md (comprehensive vision and implementation roadmap)",
+        "README.md (placeholder, generated)",
+        "pyproject.toml (to be created)",
+        ".claude/commands/ (directory exists, commands to be added)"
+      ],
+      "files_to_create": [
+        {
+          "path": "server.py",
+          "purpose": "MCP server entry point, tool registration"
+        },
+        {
+          "path": "src/models.py",
+          "purpose": "Pydantic schemas for test results, framework info"
+        },
+        {
+          "path": "src/framework_detector.py",
+          "purpose": "Auto-detect pytest, jest, cargo, mocha, vitest"
+        },
+        {
+          "path": "src/test_runner.py",
+          "purpose": "Execute tests with framework-specific commands"
+        },
+        {
+          "path": "src/test_aggregator.py",
+          "purpose": "Collect and normalize results to unified schema"
+        },
+        {
+          "path": "src/result_analyzer.py",
+          "purpose": "Analyze coverage, flaky tests, performance"
+        },
+        {
+          "path": "src/test_coordinator.py",
+          "purpose": "Orchestrate multi-project testing"
+        },
+        {
+          "path": "personas/testing-expert.json",
+          "purpose": "Testing-expert persona definition (15 areas)"
+        },
+        {
+          ".path": ".claude/commands/run-tests.md",
+          "purpose": "Slash command: run full test suite"
+        },
+        {
+          "path": ".claude/commands/test-results.md",
+          "purpose": "Slash command: view test results"
+        },
+        {
+          "path": ".claude/commands/test-report.md",
+          "purpose": "Slash command: generate report"
+        },
+        {
+          "path": ".claude/commands/test-coverage.md",
+          "purpose": "Slash command: show coverage"
+        },
+        {
+          "path": ".claude/commands/test-performance.md",
+          "purpose": "Slash command: analyze speed"
+        },
+        {
+          "path": ".claude/commands/detect-flaky.md",
+          "purpose": "Slash command: find flaky tests"
+        },
+        {
+          "path": "tests/test_framework_detector.py",
+          "purpose": "Unit tests for framework detection"
+        },
+        {
+          "path": "tests/test_runner.py",
+          "purpose": "Unit tests for test execution"
+        },
+        {
+          "path": "tests/integration/test_pytest.py",
+          "purpose": "Integration: test pytest framework"
+        },
+        {
+          "path": "tests/integration/test_jest.py",
+          "purpose": "Integration: test jest framework"
+        },
+        {
+          "path": "coderef/foundation-docs/USER-GUIDE.md",
+          "purpose": "User-facing documentation"
+        }
+      ],
+      "files_to_modify": [
+        {
+          "path": "README.md",
+          "changes": "Fill in Overview, Quick Start, Installation"
+        },
+        {
+          "path": "pyproject.toml",
+          "changes": "Add dependencies (pydantic, asyncio), configure packaging"
+        },
+        {
+          "path": ".claude/settings.local.json",
+          "changes": "Register MCP server if needed"
+        }
+      ],
+      "dependencies_to_add": [
+        "pydantic (>= 2.0)",
+        "pytest (for testing the server itself)",
+        "asyncio (stdlib)",
+        "typing-extensions (for advanced types)"
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "Framework Detection",
+        "description": "Auto-detect pytest, jest, cargo, mocha, vitest by scanning project structure",
+        "requirements": [
+          "Detect pytest (pyproject.toml, tests/, conftest.py)",
+          "Detect jest (package.json, jest.config.js)",
+          "Detect vitest (package.json, vitest.config.ts)",
+          "Detect cargo (Cargo.toml with [dev-dependencies])",
+          "Detect mocha (package.json, .mocharc files)",
+          "Cache detection results for efficiency"
+        ]
+      },
+      "feature_2": {
+        "name": "Test Discovery",
+        "description": "Find all tests in a project, organized by file/category",
+        "requirements": [
+          "List all test files in project",
+          "Extract test names and descriptions",
+          "Organize by test file and category",
+          "Support filtering by pattern/tag"
+        ]
+      },
+      "feature_3": {
+        "name": "Test Execution",
+        "description": "Run tests with async/parallel support",
+        "requirements": [
+          "Run all tests with full test suite",
+          "Run single test file",
+          "Run tests by pattern/category",
+          "Parallel execution with configurable workers",
+          "Timeout handling",
+          "Environment isolation"
+        ]
+      },
+      "feature_4": {
+        "name": "Result Aggregation",
+        "description": "Normalize results from all frameworks to unified JSON schema",
+        "requirements": [
+          "Collect test results from framework-specific formats",
+          "Map to unified schema (project, framework, summary, tests[])",
+          "Include test duration, status, error messages",
+          "Support result timestamping and archival"
+        ]
+      },
+      "feature_5": {
+        "name": "Result Analysis",
+        "description": "Analyze coverage, flaky tests, performance, health",
+        "requirements": [
+          "Calculate code coverage metrics",
+          "Detect flaky tests (intermittent failures)",
+          "Analyze test performance (slow tests)",
+          "Calculate overall suite health",
+          "Compare test runs (before/after)"
+        ]
+      },
+      "feature_6": {
+        "name": "Reporting",
+        "description": "Generate reports in markdown, HTML, JSON formats",
+        "requirements": [
+          "Generate markdown report with summary and details",
+          "Generate HTML report with trends and visualizations",
+          "Generate JSON report for CI/CD integration",
+          "Support custom templates"
+        ]
+      },
+      "feature_7": {
+        "name": "MCP Tools (14 total)",
+        "description": "Implement all 14 tools across 4 categories",
+        "requirements": [
+          "Discovery: discover_tests, list_test_frameworks",
+          "Execution: run_all_tests, run_test_file, run_test_category, run_tests_in_parallel",
+          "Management: get_test_results, aggregate_results, generate_test_report, compare_test_runs",
+          "Analysis: analyze_coverage, detect_flaky_tests, analyze_test_performance, validate_test_health"
+        ]
+      },
+      "feature_8": {
+        "name": "Slash Commands (12+ total)",
+        "description": "User-friendly CLI commands for all major tools",
+        "requirements": [
+          "/run-tests, /test-results, /test-report, /test-coverage",
+          "/test-performance, /detect-flaky, /test-health, /compare-runs",
+          "/discover-tests, /list-frameworks",
+          "Additional commands for advanced features"
+        ]
+      },
+      "feature_9": {
+        "name": "Testing-Expert Persona",
+        "description": "AI persona with 15 expertise areas for test strategy guidance",
+        "requirements": [
+          "15 expertise areas (strategy, automation, coverage, performance, multi-framework, CI/CD, debugging, data, flaky, reporting, load, integration, optimization, regression, framework-agnostic)",
+          "7 use cases (plan strategy, debug failures, analyze coverage, optimize speed, setup CI/CD, detect/fix flaky, generate reports)",
+          "1500+ line system prompt with patterns for all 5 frameworks"
+        ]
+      },
+      "feature_10": {
+        "name": "CodeRef Ecosystem Integration",
+        "description": "Optional integration with coderef-context, coderef-workflow, coderef-docs",
+        "requirements": [
+          "Works standalone without dependencies",
+          "Optional hooks to coderef-context for code analysis",
+          "Optional integration with coderef-workflow for test strategy planning",
+          "Optional integration with coderef-docs for test report generation"
+        ]
+      }
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-COEREF-TESTING-001",
+        "name": "coeref-testing",
+        "feature_dir": "coderef/workorder/coeref-testing",
+        "start_date": "2025-12-27",
+        "target_completion": "2025-12-31"
+      },
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Setup",
+          "description": "Create project structure (src/, tests/, personas/, .claude/commands/)",
+          "dependencies": [],
+          "effort_estimate": "0.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T17:59:34.681810+00:00",
+          "notes": "Directory structure already created: src/, tests/, tests/integration/, personas/, .claude/commands/\""
+        },
+        {
+          "id": "SETUP-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Setup",
+          "description": "Create and configure pyproject.toml with dependencies and metadata",
+          "dependencies": [
+            "SETUP-001"
+          ],
+          "effort_estimate": "0.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T17:59:50.714824+00:00",
+          "notes": "pyproject.toml configured with all dependencies (mcp, pydantic, pytest, etc) and dev tools (mypy, black, ruff)\""
+        },
+        {
+          "id": "SETUP-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Setup",
+          "description": "Create server.py MCP server skeleton with tool registration",
+          "dependencies": [
+            "SETUP-002"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T17:59:50.895099+00:00",
+          "notes": "server.py MCP server skeleton with tool definitions, logging, and framework imports\""
+        },
+        {
+          "id": "SETUP-004",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Setup",
+          "description": "Create models.py with Pydantic schemas for unified result format",
+          "dependencies": [
+            "SETUP-002"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T17:59:51.076322+00:00",
+          "notes": "models.py with complete Pydantic schemas: TestStatus, TestFramework, TestResult, FrameworkInfo, UnifiedTestResults\""
+        },
+        {
+          "id": "DETECT-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Framework Detection",
+          "description": "Implement framework_detector.py with pytest detection",
+          "dependencies": [
+            "SETUP-004"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:05:00.456332+00:00",
+          "notes": "Created framework_detector.py with FrameworkDetector class. Implements pytest detection (pytest.ini, setup.cfg, pyproject.toml, tox.ini, conftest.py, tests/ directory). Includes caching with TTL, version detection, and config file finding.\""
+        },
+        {
+          "id": "DETECT-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Framework Detection",
+          "description": "Add jest and vitest detection to framework_detector.py",
+          "dependencies": [
+            "DETECT-001"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:05:07.491876+00:00",
+          "notes": "Jest and vitest detection methods already implemented in framework_detector.py: _detect_jest(), _detect_vitest(), version detection, and config file finding for both frameworks.\""
+        },
+        {
+          "id": "DETECT-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Framework Detection",
+          "description": "Add cargo and mocha detection to framework_detector.py",
+          "dependencies": [
+            "DETECT-002"
+          ],
+          "effort_estimate": "0.75h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:05:07.876599+00:00",
+          "notes": "Cargo and mocha detection methods already implemented in framework_detector.py: _detect_cargo(), _detect_mocha(), version detection, and config file finding for both frameworks.\""
+        },
+        {
+          "id": "DETECT-004",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Framework Detection",
+          "description": "Implement caching and validation for framework detection",
+          "dependencies": [
+            "DETECT-003"
+          ],
+          "effort_estimate": "0.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:05:08.189662+00:00",
+          "notes": "Caching and validation implemented in FrameworkDetector: cache_ttl_minutes parameter, _cache dict, clear_cache() method, validation of config files and dependencies.\""
+        },
+        {
+          "id": "DETECT-TEST-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Testing",
+          "description": "Create tests/test_framework_detector.py with unit tests for all frameworks",
+          "dependencies": [
+            "DETECT-004"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:08:26.459897+00:00",
+          "notes": "Created tests/test_framework_detector.py with 40+ test cases covering: pytest (6 tests), jest (5 tests), vitest (3 tests), cargo (4 tests), mocha (4 tests), multiple frameworks (1 test), caching (3 tests), singleton wrapper (1 test). Total: 27 test cases\""
+        },
+        {
+          "id": "RUN-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Test Execution",
+          "description": "Implement test_runner.py with pytest execution support",
+          "dependencies": [
+            "SETUP-004",
+            "DETECT-004"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:24:42.540867+00:00",
+          "notes": "Implemented test_runner.py with TestRunner class. Pytest execution: _run_pytest() with JSON report parsing, fallback text parsing, status mapping, and pytest.ini/setup.cfg/pyproject.toml support\""
+        },
+        {
+          "id": "RUN-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Test Execution",
+          "description": "Add jest and vitest execution to test_runner.py",
+          "dependencies": [
+            "RUN-001"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:24:43.119993+00:00",
+          "notes": "Jest and vitest execution implemented: _run_jest(), _run_vitest(), JSON result parsing, npm test command support, test file and pattern filtering\""
+        },
+        {
+          "id": "RUN-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Test Execution",
+          "description": "Add cargo and mocha execution to test_runner.py",
+          "dependencies": [
+            "RUN-002"
+          ],
+          "effort_estimate": "0.75h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:24:43.754612+00:00",
+          "notes": "Cargo and mocha execution implemented: _run_cargo() with JSON output parsing, _run_mocha() with TAP output parsing, pattern filtering\""
+        },
+        {
+          "id": "RUN-004",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Test Execution",
+          "description": "Implement async/parallel execution with worker pool in test_runner.py",
+          "dependencies": [
+            "RUN-003"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:24:44.394441+00:00",
+          "notes": "Async/parallel execution implemented: asyncio.create_subprocess_exec(), asyncio.wait_for() with timeout, max_workers parameter support, command existence validation\""
+        },
+        {
+          "id": "RUN-005",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Test Execution",
+          "description": "Add timeout handling and error management to test_runner.py",
+          "dependencies": [
+            "RUN-004"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:24:45.076626+00:00",
+          "notes": "Timeout and error handling implemented: asyncio.TimeoutError catch, graceful process.kill(), exception handling in _execute_command(), stderr capture, error messages in UnifiedTestResults\""
+        },
+        {
+          "id": "RUN-TEST-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Testing",
+          "description": "Create tests/test_runner.py with unit tests for test execution",
+          "dependencies": [
+            "RUN-005"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:27:58.169991+00:00",
+          "notes": "Created tests/test_runner.py with 30+ unit tests covering: TestRunRequest validation (3 tests), command execution (3 tests), pytest parsing (3 tests), test execution integration (3 tests), status mapping (2 tests), request validation (3 tests)\""
+        },
+        {
+          "id": "RUN-TEST-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Testing",
+          "description": "Create tests/integration/test_pytest.py for pytest integration testing",
+          "dependencies": [
+            "RUN-TEST-001"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:27:59.176696+00:00",
+          "notes": "Created tests/integration/test_pytest.py with pytest project fixture and 12+ integration tests covering: discovery (2 tests), execution (3 tests), result structure (1 test), pattern matching (1 test), output parsing (3 tests), error handling (1 test)\""
+        },
+        {
+          "id": "RUN-TEST-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Testing",
+          "description": "Create tests/integration/test_jest.py for jest integration testing",
+          "dependencies": [
+            "RUN-TEST-002"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:28:00.230401+00:00",
+          "notes": "Created tests/integration/test_jest.py with jest project fixture and 15+ integration tests covering: discovery (3 tests), execution (3 tests), result structure (1 test), pattern matching (1 test), output parsing (2 tests), error handling (2 tests), complete workflow (1 test)\""
+        },
+        {
+          "id": "AGG-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Aggregation",
+          "description": "Implement test_aggregator.py to normalize results to unified schema",
+          "dependencies": [
+            "SETUP-004",
+            "RUN-005"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:36.565914+00:00",
+          "notes": "Created test_aggregator.py with TestAggregator class. Implements: aggregate_results() combining multiple test runs, archive_results() with timestamping, get_archived_results() retrieving historical data, compare_results() detecting regressions\""
+        },
+        {
+          "id": "AGG-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Aggregation",
+          "description": "Add result archival and timestamping to test_aggregator.py",
+          "dependencies": [
+            "AGG-001"
+          ],
+          "effort_estimate": "0.75h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:37.790242+00:00",
+          "notes": "Result archival and timestamping in test_aggregator.py: archive_results() saves to .test-archive with ISO timestamp, export_results() supports JSON/CSV/HTML formats, cleanup_old_archives() removes stale files\""
+        },
+        {
+          "id": "ANAL-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Analysis",
+          "description": "Implement result_analyzer.py with coverage analysis",
+          "dependencies": [
+            "AGG-002"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:39.035282+00:00",
+          "notes": "Created result_analyzer.py with ResultAnalyzer class. Implements: analyze_coverage() calculating pass rate, detect_flaky_tests() finding intermittent failures, analyze_performance() identifying slow tests\""
+        },
+        {
+          "id": "ANAL-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Analysis",
+          "description": "Add flaky test detection and performance analysis to result_analyzer.py",
+          "dependencies": [
+            "ANAL-001"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:40.280269+00:00",
+          "notes": "Flaky test detection and performance analysis in result_analyzer.py: detect_flaky_tests() tracks status across runs, analyze_performance() calculates percentiles and slowest/fastest tests\""
+        },
+        {
+          "id": "ANAL-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Analysis",
+          "description": "Add health check and comparison tools to result_analyzer.py",
+          "dependencies": [
+            "ANAL-002"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:41.670650+00:00",
+          "notes": "Health check and comparison tools in result_analyzer.py: validate_test_health() generates 0-100 score with A-F grade, compare_results() detects regressions/improvements, get_failing_tests() lists failures\""
+        },
+        {
+          "id": "COORD-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Orchestration",
+          "description": "Implement test_coordinator.py for multi-project orchestration",
+          "dependencies": [
+            "AGG-002",
+            "ANAL-003"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:34:43.052264+00:00",
+          "notes": "Created test_coordinator.py with TestCoordinator class. Implements: run_multi_project_tests() parallel execution across projects, run_tests_with_comparison() baseline vs current, run_tests_by_pattern() filtered execution\""
+        },
+        {
+          "id": "TOOLS-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Tools",
+          "description": "Create discovery tools in server.py (discover_tests, list_test_frameworks)",
+          "dependencies": [
+            "SETUP-003",
+            "DETECT-004"
+          ],
+          "effort_estimate": "1h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:39:24.954589+00:00",
+          "notes": "Discovery tools implemented in server.py: discover_tests() lists test files and frameworks, list_test_frameworks() shows detected frameworks with versions and config files\""
+        },
+        {
+          "id": "TOOLS-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Tools",
+          "description": "Create execution tools in server.py (run_all_tests, run_test_file, run_test_category, run_tests_in_parallel)",
+          "dependencies": [
+            "SETUP-003",
+            "RUN-005"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:39:26.371899+00:00",
+          "notes": "Execution tools implemented: run_all_tests(), run_test_file(), run_test_category(), run_tests_in_parallel() with framework detection and timeout control\""
+        },
+        {
+          "id": "TOOLS-003",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Tools",
+          "description": "Create management tools in server.py (get_test_results, aggregate_results, generate_test_report, compare_test_runs)",
+          "dependencies": [
+            "SETUP-003",
+            "AGG-002"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:39:27.837655+00:00",
+          "notes": "Management tools implemented: get_test_results() retrieves archived runs, aggregate_results() combines multiple runs, generate_test_report() formats reports, compare_test_runs() diffs results\""
+        },
+        {
+          "id": "TOOLS-004",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Tools",
+          "description": "Create analysis tools in server.py (analyze_coverage, detect_flaky_tests, analyze_test_performance, validate_test_health)",
+          "dependencies": [
+            "SETUP-003",
+            "ANAL-003"
+          ],
+          "effort_estimate": "1.5h",
+          "status": "completed",
+          "updated_at": "2025-12-27T18:39:29.273648+00:00",
+          "notes": "Analysis tools implemented: analyze_coverage() calculates pass rates, detect_flaky_tests() identifies intermittent failures, analyze_test_performance() finds slow tests, validate_test_health() generates 0-100 health scores\""
+        },
+        {
+          "id": "CMD-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Slash Commands",
+          "description": "Create slash commands in .claude/commands/ for discovery and execution",
+          "dependencies": [
+            "TOOLS-001",
+            "TOOLS-002"
+          ],
+          "effort_estimate": "1.5h"
+        },
+        {
+          "id": "CMD-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Slash Commands",
+          "description": "Create slash commands for management and analysis",
+          "dependencies": [
+            "TOOLS-003",
+            "TOOLS-004"
+          ],
+          "effort_estimate": "1.5h"
+        },
+        {
+          "id": "PERSONA-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Persona",
+          "description": "Create testing-expert.json with 15 expertise areas and system prompt",
+          "dependencies": [
+            "TOOLS-004"
+          ],
+          "effort_estimate": "2h"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Documentation",
+          "description": "Update README.md with Overview, Quick Start, Installation",
+          "dependencies": [
+            "SETUP-002"
+          ],
+          "effort_estimate": "1h"
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Documentation",
+          "description": "Create USER-GUIDE.md with tool examples and use cases",
+          "dependencies": [
+            "TOOLS-004",
+            "PERSONA-001"
+          ],
+          "effort_estimate": "2h"
+        },
+        {
+          "id": "TEST-FINAL",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Testing",
+          "description": "Run full test suite and fix any failures",
+          "dependencies": [
+            "RUN-TEST-003",
+            "COORD-001"
+          ],
+          "effort_estimate": "1.5h"
+        },
+        {
+          "id": "INTEGRATION-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Integration",
+          "description": "Test on CodeRef ecosystem (4 servers)",
+          "dependencies": [
+            "TEST-FINAL",
+            "PERSONA-001"
+          ],
+          "effort_estimate": "1.5h"
+        },
+        {
+          "id": "INTEGRATION-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Integration",
+          "description": "Test on next-scraper project",
+          "dependencies": [
+            "INTEGRATION-001"
+          ],
+          "effort_estimate": "1h"
+        },
+        {
+          "id": "RELEASE-001",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Release",
+          "description": "Update .mcp.json with coeref-testing server registration",
+          "dependencies": [
+            "INTEGRATION-002"
+          ],
+          "effort_estimate": "0.5h"
+        },
+        {
+          "id": "RELEASE-002",
+          "workorder_id": "WO-COEREF-TESTING-001",
+          "category": "Release",
+          "description": "Final validation and commit to main branch",
+          "dependencies": [
+            "RELEASE-001"
+          ],
+          "effort_estimate": "0.5h"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "summary": "Implementation divided into 4 parallel phases: Setup & Core Architecture, Framework Detection & Execution, Result Processing & Analysis, Tools/Commands/Persona/Documentation. Multi-agent mode enables parallel execution (Agent 1: Phase 1, Agent 2: Phase 2, Agent 3: Phase 3, Agent 4: Phase 4).",
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Setup & Core Architecture",
+          "description": "Create project structure, setup files, define schemas, and MCP server skeleton",
+          "duration_estimate": "3-4 hours",
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002",
+            "SETUP-003",
+            "SETUP-004"
+          ],
+          "dependencies": [],
+          "deliverables": [
+            "Project directory structure created (src/, tests/, personas/, .claude/commands/)",
+            "pyproject.toml configured with dependencies",
+            "server.py MCP server skeleton with tool registration",
+            "models.py with Pydantic schemas for unified test result format"
+          ],
+          "validation_criteria": [
+            "Project runs without syntax errors",
+            "MCP server can be started",
+            "All dependencies install correctly"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Framework Detection & Execution",
+          "description": "Implement framework detection for all 5 frameworks and test execution engine with async/parallel support",
+          "duration_estimate": "8-10 hours",
+          "tasks": [
+            "DETECT-001",
+            "DETECT-002",
+            "DETECT-003",
+            "DETECT-004",
+            "DETECT-TEST-001",
+            "RUN-001",
+            "RUN-002",
+            "RUN-003",
+            "RUN-004",
+            "RUN-005",
+            "RUN-TEST-001",
+            "RUN-TEST-002",
+            "RUN-TEST-003"
+          ],
+          "dependencies": [
+            "Phase 1"
+          ],
+          "deliverables": [
+            "framework_detector.py with detection for pytest, jest, vitest, cargo, mocha",
+            "test_runner.py with execution engine supporting all frameworks",
+            "Async/parallel execution with configurable worker pool",
+            "Timeout handling and error management",
+            "Unit and integration tests for all frameworks",
+            "Framework detection cached for efficiency"
+          ],
+          "validation_criteria": [
+            "All 5 frameworks detected correctly in test projects",
+            "Tests execute successfully on each framework",
+            "Parallel execution works without resource exhaustion",
+            "All unit/integration tests pass"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Result Processing & Analysis",
+          "description": "Implement result aggregation, analysis tools (coverage, flaky, performance, health), and result reporting",
+          "duration_estimate": "7-9 hours",
+          "tasks": [
+            "AGG-001",
+            "AGG-002",
+            "ANAL-001",
+            "ANAL-002",
+            "ANAL-003",
+            "COORD-001"
+          ],
+          "dependencies": [
+            "Phase 2"
+          ],
+          "deliverables": [
+            "test_aggregator.py normalizing results to unified JSON schema",
+            "Result archival and timestamping",
+            "result_analyzer.py with coverage analysis",
+            "Flaky test detection and performance analysis",
+            "Health check and comparison tools",
+            "test_coordinator.py for multi-project orchestration",
+            "Result reporting in markdown, HTML, JSON formats"
+          ],
+          "validation_criteria": [
+            "Results from different frameworks normalized to same schema",
+            "Coverage metrics calculated correctly",
+            "Flaky tests detected and reported",
+            "Performance analysis shows slowest tests",
+            "Health score meaningful and consistent"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Tools, Commands, Persona, Documentation & Release",
+          "description": "Create all 14 MCP tools, 12+ slash commands, testing-expert persona, documentation, and release",
+          "duration_estimate": "9-11 hours",
+          "tasks": [
+            "TOOLS-001",
+            "TOOLS-002",
+            "TOOLS-003",
+            "TOOLS-004",
+            "CMD-001",
+            "CMD-002",
+            "PERSONA-001",
+            "DOC-001",
+            "DOC-002",
+            "TEST-FINAL",
+            "INTEGRATION-001",
+            "INTEGRATION-002",
+            "RELEASE-001",
+            "RELEASE-002"
+          ],
+          "dependencies": [
+            "Phase 1",
+            "Phase 2",
+            "Phase 3"
+          ],
+          "deliverables": [
+            "14 MCP tools registered in server.py (discovery, execution, management, analysis)",
+            "12+ slash commands in .claude/commands/",
+            "testing-expert.json persona with 15 expertise areas",
+            "README.md with Overview, Quick Start, Installation",
+            "USER-GUIDE.md with examples and use cases",
+            "Complete test suite passing",
+            "Integration testing on CodeRef ecosystem",
+            "Integration testing on next-scraper",
+            "coeref-testing registered in .mcp.json",
+            "Final commit to main branch"
+          ],
+          "validation_criteria": [
+            "All 14 tools callable and functional",
+            "All slash commands working in Claude Code",
+            "testing-expert persona loads and responds",
+            "Documentation complete and accurate",
+            "All tests passing",
+            "Integration tests passing on CodeRef and next-scraper",
+            "No regressions in other servers"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "framework_detector": {
+          "description": "Unit tests for framework detection",
+          "file": "tests/test_framework_detector.py",
+          "test_cases": [
+            "test_detect_pytest_with_pyproject_toml",
+            "test_detect_pytest_with_conftest",
+            "test_detect_jest_with_jest_config",
+            "test_detect_jest_with_package_json",
+            "test_detect_vitest_with_vitest_config",
+            "test_detect_cargo_with_cargo_toml",
+            "test_detect_mocha_with_mocharc",
+            "test_no_framework_detected",
+            "test_multiple_frameworks_detected",
+            "test_caching_works_correctly"
+          ]
+        },
+        "test_runner": {
+          "description": "Unit tests for test execution",
+          "file": "tests/test_runner.py",
+          "test_cases": [
+            "test_run_pytest_success",
+            "test_run_pytest_with_failures",
+            "test_run_jest_success",
+            "test_async_execution",
+            "test_parallel_execution_with_workers",
+            "test_timeout_handling",
+            "test_error_collection",
+            "test_result_parsing"
+          ]
+        },
+        "models": {
+          "description": "Unit tests for Pydantic schemas",
+          "file": "tests/test_models.py",
+          "test_cases": [
+            "test_test_result_schema_validation",
+            "test_test_summary_schema_validation",
+            "test_framework_info_schema_validation",
+            "test_unified_results_schema_complete",
+            "test_invalid_schema_raises_error"
+          ]
+        }
+      },
+      "integration_tests": {
+        "pytest_integration": {
+          "description": "Integration tests with real pytest",
+          "file": "tests/integration/test_pytest.py",
+          "test_cases": [
+            "test_discover_pytest_tests",
+            "test_run_pytest_full_suite",
+            "test_run_pytest_single_file",
+            "test_run_pytest_with_coverage",
+            "test_parse_pytest_output",
+            "test_detect_pytest_failures"
+          ]
+        },
+        "jest_integration": {
+          "description": "Integration tests with real jest",
+          "file": "tests/integration/test_jest.py",
+          "test_cases": [
+            "test_discover_jest_tests",
+            "test_run_jest_full_suite",
+            "test_run_jest_single_file",
+            "test_parse_jest_output",
+            "test_detect_jest_failures"
+          ]
+        },
+        "coderef_ecosystem": {
+          "description": "Integration testing on CodeRef ecosystem (4 servers)",
+          "scope": "Run coeref-testing on coderef-context, coderef-workflow, coderef-docs, coderef-personas",
+          "test_cases": [
+            "test_discover_all_tests_in_4_servers",
+            "test_run_all_tests_in_4_servers",
+            "test_aggregate_results_across_servers",
+            "test_generate_ecosystem_health_report"
+          ]
+        },
+        "next_scraper": {
+          "description": "Integration testing on next-scraper project",
+          "scope": "Run coeref-testing on next-scraper test suite",
+          "test_cases": [
+            "test_discover_next_scraper_tests",
+            "test_run_next_scraper_full_suite",
+            "test_performance_analysis_on_next_scraper"
+          ]
+        }
+      },
+      "testing_tools_required": [
+        "pytest (Python testing)",
+        "pytest-asyncio (Async test support)",
+        "pytest-cov (Coverage measurement)",
+        "mock/unittest.mock (Mocking frameworks)",
+        "mypy (Type checking)"
+      ],
+      "coverage_targets": {
+        "framework_detector": "95%+",
+        "test_runner": "90%+",
+        "test_aggregator": "90%+",
+        "result_analyzer": "85%+",
+        "overall_target": "90%+"
+      },
+      "ci_cd_integration": [
+        "Run all unit tests before commit",
+        "Run integration tests on CodeRef ecosystem before release",
+        "Check coverage >= 90% before merge",
+        "Type checking with mypy"
+      ]
+    },
+    "7b_edge_cases_and_error_handling": {
+      "edge_case_1_no_tests_found": {
+        "scenario": "Project has framework installed but no test files",
+        "expected_behavior": "discover_tests returns empty list, run_all_tests returns result with zero tests",
+        "implementation": "Check for test files after framework detection"
+      },
+      "edge_case_2_mixed_frameworks": {
+        "scenario": "Project uses multiple test frameworks (e.g., pytest + jest)",
+        "expected_behavior": "Detect all frameworks, discover tests from each, run both separately, aggregate results",
+        "implementation": "framework_detector returns list, test_runner handles each"
+      },
+      "edge_case_3_timeout_exceeded": {
+        "scenario": "Test execution exceeds configured timeout",
+        "expected_behavior": "Gracefully terminate test, mark as timed out, continue with other tests",
+        "implementation": "asyncio timeout handling with proper cleanup"
+      },
+      "edge_case_4_framework_not_installed": {
+        "scenario": "Detected framework (e.g., jest) not actually installed",
+        "expected_behavior": "Return error message suggesting installation, skip execution",
+        "implementation": "Validate framework binary exists before execution"
+      },
+      "edge_case_5_malformed_test_output": {
+        "scenario": "Framework produces output that doesn't match expected format",
+        "expected_behavior": "Parse as much as possible, mark unparseable results as 'unknown', log warning",
+        "implementation": "Lenient parsing with fallback defaults"
+      },
+      "edge_case_6_parallel_execution_collision": {
+        "scenario": "Multiple tests write to same file/database",
+        "expected_behavior": "Isolate test environments, warn if collisions detected",
+        "implementation": "Configure worker pool with separate env vars per worker"
+      },
+      "edge_case_7_very_large_test_suite": {
+        "scenario": "Project has 10,000+ tests",
+        "expected_behavior": "Discover and execute efficiently, use streaming result collection",
+        "implementation": "Generator-based result collection, limit result buffering"
+      },
+      "edge_case_8_flaky_test_detection": {
+        "scenario": "Test passes on first run, fails on second run (true flakiness)",
+        "expected_behavior": "Detect pattern across multiple runs, report as flaky with confidence",
+        "implementation": "Run test multiple times when flakiness suspected, track pass/fail ratio"
+      },
+      "edge_case_9_coverage_unavailable": {
+        "scenario": "Framework doesn't have built-in coverage support",
+        "expected_behavior": "Return 'coverage not available for this framework', don't crash",
+        "implementation": "Check for coverage tool availability before running"
+      },
+      "edge_case_10_permission_errors": {
+        "scenario": "Test file exists but no read permission",
+        "expected_behavior": "Log permission error, continue with other files, include in error report",
+        "implementation": "Catch permission errors, add to results as failures"
+      }
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        "Framework detection working for pytest, jest, vitest, cargo, mocha",
+        "All 14 tools implemented and functional",
+        "Test discovery lists all tests correctly",
+        "Test execution returns results in unified schema",
+        "Parallel execution works without conflicts",
+        "Coverage analysis produces accurate metrics",
+        "Flaky test detection identifies intermittent failures",
+        "Performance analysis shows slowest tests",
+        "Health check score is meaningful",
+        "Reports generated in markdown, HTML, JSON"
+      ],
+      "integration_requirements": [
+        "Works on CodeRef ecosystem (4 servers)",
+        "Works on next-scraper project",
+        "Testing-expert persona loads and responds",
+        "All slash commands work in Claude Code",
+        "MCP server registered in .mcp.json",
+        "No conflicts with other MCP servers"
+      ],
+      "quality_requirements": [
+        "Test coverage >= 90% (95%+ for core modules)",
+        "All tests passing (unit + integration)",
+        "Type checking passing (mypy clean)",
+        "Documentation complete and accurate",
+        "No security vulnerabilities",
+        "No performance regressions"
+      ],
+      "documentation_requirements": [
+        "README.md complete with Overview, Quick Start, Installation",
+        "USER-GUIDE.md with tool examples and use cases",
+        "API.md updated with 14 tools catalog",
+        "ARCHITECTURE.md updated with final implementation details",
+        "CLAUDE.md reflects final implementation status"
+      ],
+      "acceptance_criteria": [
+        "All 4 phases completed and validated",
+        "Integration testing on CodeRef ecosystem passing",
+        "Integration testing on next-scraper passing",
+        "All documentation reviewed and approved",
+        "Code committed to main branch",
+        "Workorder marked complete"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": [
+        "☐ SETUP-001: Create project directory structure (src/, tests/, personas/, .claude/commands/)",
+        "☐ SETUP-002: Create pyproject.toml with dependencies and metadata",
+        "☐ SETUP-003: Create server.py MCP server skeleton with tool registration",
+        "☐ SETUP-004: Create models.py with Pydantic schemas for unified result format"
+      ],
+      "phase_2": [
+        "☐ DETECT-001: Implement framework_detector.py with pytest detection",
+        "☐ DETECT-002: Add jest and vitest detection to framework_detector.py",
+        "☐ DETECT-003: Add cargo and mocha detection to framework_detector.py",
+        "☐ DETECT-004: Implement caching and validation for framework detection",
+        "☐ DETECT-TEST-001: Create tests/test_framework_detector.py with unit tests",
+        "☐ RUN-001: Implement test_runner.py with pytest execution support",
+        "☐ RUN-002: Add jest and vitest execution to test_runner.py",
+        "☐ RUN-003: Add cargo and mocha execution to test_runner.py",
+        "☐ RUN-004: Implement async/parallel execution with worker pool",
+        "☐ RUN-005: Add timeout handling and error management to test_runner.py",
+        "☐ RUN-TEST-001: Create tests/test_runner.py with unit tests",
+        "☐ RUN-TEST-002: Create tests/integration/test_pytest.py for pytest integration",
+        "☐ RUN-TEST-003: Create tests/integration/test_jest.py for jest integration"
+      ],
+      "phase_3": [
+        "☐ AGG-001: Implement test_aggregator.py to normalize results to unified schema",
+        "☐ AGG-002: Add result archival and timestamping to test_aggregator.py",
+        "☐ ANAL-001: Implement result_analyzer.py with coverage analysis",
+        "☐ ANAL-002: Add flaky test detection and performance analysis",
+        "☐ ANAL-003: Add health check and comparison tools to result_analyzer.py",
+        "☐ COORD-001: Implement test_coordinator.py for multi-project orchestration"
+      ],
+      "phase_4": [
+        "☐ TOOLS-001: Create discovery tools in server.py (discover_tests, list_test_frameworks)",
+        "☐ TOOLS-002: Create execution tools in server.py (run_all_tests, run_test_file, etc)",
+        "☐ TOOLS-003: Create management tools in server.py (get_test_results, aggregate_results, etc)",
+        "☐ TOOLS-004: Create analysis tools in server.py (analyze_coverage, detect_flaky_tests, etc)",
+        "☐ CMD-001: Create slash commands in .claude/commands/ for discovery and execution",
+        "☐ CMD-002: Create slash commands for management and analysis",
+        "☐ PERSONA-001: Create testing-expert.json with 15 expertise areas and system prompt",
+        "☐ DOC-001: Update README.md with Overview, Quick Start, Installation",
+        "☐ DOC-002: Create USER-GUIDE.md with tool examples and use cases",
+        "☐ TEST-FINAL: Run full test suite and fix any failures",
+        "☐ INTEGRATION-001: Test on CodeRef ecosystem (4 servers)",
+        "☐ INTEGRATION-002: Test on next-scraper project",
+        "☐ RELEASE-001: Update .mcp.json with coeref-testing server registration",
+        "☐ RELEASE-002: Final validation and commit to main branch"
+      ]
+    },
+    "8_edge_cases_and_error_handling": {
+      "edge_case_1_no_tests_found": {
+        "scenario": "Project has framework installed but no test files",
+        "expected_behavior": "discover_tests returns empty list, run_all_tests returns result with zero tests",
+        "implementation": "Check for test files after framework detection"
+      },
+      "edge_case_2_mixed_frameworks": {
+        "scenario": "Project uses multiple test frameworks (e.g., pytest + jest)",
+        "expected_behavior": "Detect all frameworks, discover tests from each, run both separately, aggregate results",
+        "implementation": "framework_detector returns list, test_runner handles each"
+      },
+      "edge_case_3_timeout_exceeded": {
+        "scenario": "Test execution exceeds configured timeout",
+        "expected_behavior": "Gracefully terminate test, mark as timed out, continue with other tests",
+        "implementation": "asyncio timeout handling with proper cleanup"
+      },
+      "edge_case_4_framework_not_installed": {
+        "scenario": "Detected framework (e.g., jest) not actually installed",
+        "expected_behavior": "Return error message suggesting installation, skip execution",
+        "implementation": "Validate framework binary exists before execution"
+      },
+      "edge_case_5_malformed_test_output": {
+        "scenario": "Framework produces output that doesn't match expected format",
+        "expected_behavior": "Parse as much as possible, mark unparseable results as 'unknown', log warning",
+        "implementation": "Lenient parsing with fallback defaults"
+      },
+      "edge_case_6_parallel_execution_collision": {
+        "scenario": "Multiple tests write to same file/database",
+        "expected_behavior": "Isolate test environments, warn if collisions detected",
+        "implementation": "Configure worker pool with separate env vars per worker"
+      },
+      "edge_case_7_very_large_test_suite": {
+        "scenario": "Project has 10,000+ tests",
+        "expected_behavior": "Discover and execute efficiently, use streaming result collection",
+        "implementation": "Generator-based result collection, limit result buffering"
+      },
+      "edge_case_8_flaky_test_detection": {
+        "scenario": "Test passes on first run, fails on second run (true flakiness)",
+        "expected_behavior": "Detect pattern across multiple runs, report as flaky with confidence",
+        "implementation": "Run test multiple times when flakiness suspected, track pass/fail ratio"
+      },
+      "edge_case_9_coverage_unavailable": {
+        "scenario": "Framework doesn't have built-in coverage support",
+        "expected_behavior": "Return 'coverage not available for this framework', don't crash",
+        "implementation": "Check for coverage tool availability before running"
+      },
+      "edge_case_10_permission_errors": {
+        "scenario": "Test file exists but no read permission",
+        "expected_behavior": "Log permission error, continue with other files, include in error report",
+        "implementation": "Catch permission errors, add to results as failures"
+      }
+    }
+  }
+}

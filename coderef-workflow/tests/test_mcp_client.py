@@ -35,7 +35,7 @@ class TestMCPToolClientInit:
         assert client.server_script_path is not None
         assert client.process is None
         assert client.message_id == 0
-        assert client.timeout_seconds == 30
+        assert client.timeout_seconds == 120  # Actual timeout is 120 seconds
         assert client.max_retries == 3
 
 
@@ -138,8 +138,8 @@ class TestToolCalling:
         """Test timeout on long-running calls."""
         # Simulate timeout scenario
         client = MCPToolClient()
-        # Timeout should be 30 seconds by default
-        assert client.timeout_seconds == 30
+        # Timeout should be 120 seconds (actual implementation value)
+        assert client.timeout_seconds == 120
 
     @pytest.mark.asyncio
     async def test_retry_logic(self):

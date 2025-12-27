@@ -1,0 +1,237 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "tool-server-migration",
+    "workorder_id": "WO-TOOL-MIGRATION-001",
+    "status": "planning",
+    "created": "2025-12-26T19:30:00Z",
+    "version": "1.0.0",
+    "generated_by": "Claude Code",
+    "has_context": true,
+    "has_analysis": true,
+    "project_path": "C:/Users/willh/.mcp-servers"
+  },
+
+  "0_PREPARATION": {
+    "summary": "Verify tool locations and plan migration sequence",
+    "discovery": [
+      "coderef-docs/server.py shows 18+ tools marked as 'Removed tools (now in coderef-workflow)'",
+      "All 65+ global command files reference mcp__coderef-docs__ for tools that don't exist there",
+      "Agent coordination tools (5) should remain in coderef-docs",
+      "Clear separation: planning/execution/archive/admin → workflow; agent coordination → docs"
+    ],
+    "existing_patterns": [
+      "Tool organization by responsibility (workflow vs docs)",
+      "Server-specific tool registration in server.py",
+      "Tool references in command files use mcp__SERVER_NAME__ prefix",
+      "Git commits per feature/change"
+    ],
+    "gaps": [
+      "Inconsistent tool location between server.py and command files",
+      "No clear documentation on which tools belong to which server",
+      "Missing validation to prevent duplicate tool registration"
+    ]
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Migrate 18 tools from coderef-docs (deprecated) to coderef-workflow (correct home), keeping 5 agent coordination tools in coderef-docs. Update all 65+ command files to reference correct server.",
+    "why": "Current mismatch causes duplicate tool references, confusion for users invoking /create-plan and other commands, and architectural inconsistency. Separation by responsibility: workflow owns planning/execution/archive, docs owns agent coordination.",
+    "outcome": "Single source of truth for each tool; clean command references; correct server responsibility",
+    "timeline": "Phased migration (one tool at a time) with testing",
+    "risk": "Low - tools already exist in coderef-workflow, command files just need updates"
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": {
+      "risk": "Low",
+      "details": "No API changes, just moving where tools are defined. Tool signatures remain identical.",
+      "mitigation": "Test each tool invocation after moving; verify command files use correct server reference"
+    },
+    "security": {
+      "risk": "None",
+      "details": "No security implications from tool relocation"
+    },
+    "performance": {
+      "risk": "None",
+      "details": "No performance impact; just organizational restructuring"
+    },
+    "maintainability": {
+      "risk": "High benefit",
+      "details": "IMPROVES maintainability by clarifying server responsibilities and eliminating confusion"
+    }
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "server_architecture": {
+      "coderef-workflow": "24 tools registered (planning, execution, archive, admin, agent coordination)",
+      "coderef-docs": "Minimal implementation, server.py comments list 18+ tools as 'removed'",
+      "issue": "Tool definitions exist in workflow but command files still reference docs server"
+    },
+    "tool_inventory": {
+      "to_migrate": {
+        "planning": ["get_planning_template", "analyze_project_for_planning", "gather_context", "create_plan", "validate_implementation_plan", "generate_plan_review_report", "generate_deliverables_template", "generate_handoff_context"],
+        "execution": ["execute_plan", "update_task_status"],
+        "archive": ["archive_feature"],
+        "admin": ["log_workorder", "get_workorder_log", "update_all_documentation", "audit_plans", "coderef_foundation_docs", "generate_features_inventory"]
+      },
+      "keep_in_docs": ["generate_agent_communication", "assign_agent_task", "verify_agent_completion", "aggregate_agent_deliverables", "track_agent_status"]
+    },
+    "command_files": {
+      "total": 65,
+      "affected": "~40 files reference mcp__coderef-docs__ for tools that belong in workflow",
+      "location": "C:/Users/willh/.claude/commands/"
+    }
+  },
+
+  "4_KEY_FEATURES": {
+    "requirements": [
+      "Phase 1: Migrate 8 planning tools (one at a time, test each)",
+      "Phase 2: Migrate 2 execution tools (one at a time, test each)",
+      "Phase 3: Migrate 1 archive tool (test after migration)",
+      "Phase 4: Migrate 6 admin tools (one at a time, test each)",
+      "Phase 5: Update all command files to use correct server references",
+      "Phase 6: Verify no duplicate tool registrations",
+      "Phase 7: Run tool invocation tests",
+      "Phase 8: Update server.py documentation",
+      "Phase 9: Validate all commands work",
+      "Phase 10: Commit with clear git history"
+    ],
+    "success_criteria": [
+      "Each tool registered in exactly one server",
+      "All command files reference correct server (mcp__coderef-workflow__ or mcp__coderef-docs__)",
+      "All tools remain functional after migration",
+      "/create-plan and related commands show no duplicates",
+      "No regression in CLI command execution"
+    ]
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "naming_convention": "PHASE-### (e.g., PLAN-001, PLAN-002)",
+    "phases": {
+      "PLAN": "Planning tool migrations (PLAN-001 through PLAN-008)",
+      "EXEC": "Execution tool migrations (EXEC-001 through EXEC-002)",
+      "ARCH": "Archive tool migrations (ARCH-001)",
+      "ADMIN": "Admin tool migrations (ADMIN-001 through ADMIN-006)",
+      "CMD": "Command file updates (CMD-001 through CMD-N)",
+      "TEST": "Testing and validation (TEST-001 through TEST-003)",
+      "DOC": "Documentation updates (DOC-001 through DOC-002)",
+      "FINAL": "Final validation and commit (FINAL-001)"
+    }
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_planning_tools": {
+      "name": "Migrate Planning Tools (8 tools)",
+      "tasks": [
+        {"id": "PLAN-001", "description": "Migrate get_planning_template tool from coderef-docs to coderef-workflow, update 3+ command files, test /get-planning-template invocation"},
+        {"id": "PLAN-002", "description": "Migrate analyze_project_for_planning tool, update 5+ command files, test /analyze-for-planning"},
+        {"id": "PLAN-003", "description": "Migrate gather_context tool, update 3+ command files, test /gather-context"},
+        {"id": "PLAN-004", "description": "Migrate create_plan tool, update 8+ command files (already fixed create-plan.md), test /create-plan"},
+        {"id": "PLAN-005", "description": "Migrate validate_implementation_plan tool, update 4+ command files, test /validate-plan"},
+        {"id": "PLAN-006", "description": "Migrate generate_plan_review_report tool, update 2+ command files, test /generate-plan-review"},
+        {"id": "PLAN-007", "description": "Migrate generate_deliverables_template tool, update 2+ command files, test /generate-deliverables"},
+        {"id": "PLAN-008", "description": "Migrate generate_handoff_context tool, update 2+ command files, test /generate-handoff-context"}
+      ],
+      "dependencies": []
+    },
+    "phase_2_execution_tools": {
+      "name": "Migrate Execution Tools (2 tools)",
+      "tasks": [
+        {"id": "EXEC-001", "description": "Migrate execute_plan tool, update 5+ command files, test /execute-plan (or future /tracking-plan)"},
+        {"id": "EXEC-002", "description": "Migrate update_task_status tool, update 2+ command files, test /update-task-status"}
+      ],
+      "dependencies": ["PLAN-008"]
+    },
+    "phase_3_archive_tools": {
+      "name": "Migrate Archive Tools (1 tool)",
+      "tasks": [
+        {"id": "ARCH-001", "description": "Migrate archive_feature tool, update 3+ command files, test /archive-feature"}
+      ],
+      "dependencies": ["EXEC-002"]
+    },
+    "phase_4_admin_tools": {
+      "name": "Migrate Admin Tools (6 tools)",
+      "tasks": [
+        {"id": "ADMIN-001", "description": "Migrate log_workorder tool, update 2+ command files, test /log-workorder"},
+        {"id": "ADMIN-002", "description": "Migrate get_workorder_log tool, update 2+ command files, test /get-workorder-log"},
+        {"id": "ADMIN-003", "description": "Migrate update_all_documentation tool, update 2+ command files, test /update-docs"},
+        {"id": "ADMIN-004", "description": "Migrate audit_plans tool, update 2+ command files, test /audit-plans"},
+        {"id": "ADMIN-005", "description": "Migrate coderef_foundation_docs tool, update 3+ command files, test /coderef-foundation-docs"},
+        {"id": "ADMIN-006", "description": "Migrate generate_features_inventory tool, update 2+ command files, test /features-inventory"}
+      ],
+      "dependencies": ["ARCH-001"]
+    },
+    "phase_5_command_updates": {
+      "name": "Bulk Command File Updates",
+      "tasks": [
+        {"id": "CMD-001", "description": "Audit all 65+ command files for remaining mcp__coderef-docs__ references"},
+        {"id": "CMD-002", "description": "Create systematic replacement plan (which commands need what changes)"},
+        {"id": "CMD-003", "description": "Execute bulk updates to command files in safe batches"},
+        {"id": "CMD-004", "description": "Verify no malformed tool references remain"}
+      ],
+      "dependencies": ["ADMIN-006"]
+    },
+    "phase_6_testing": {
+      "name": "Testing & Validation",
+      "tasks": [
+        {"id": "TEST-001", "description": "Run tool invocation tests for all 18 migrated tools"},
+        {"id": "TEST-002", "description": "Verify no duplicate tool registrations across servers"},
+        {"id": "TEST-003", "description": "Run /create-plan and /create-workorder end-to-end test"}
+      ],
+      "dependencies": ["CMD-004"]
+    },
+    "phase_7_documentation": {
+      "name": "Update Documentation",
+      "tasks": [
+        {"id": "DOC-001", "description": "Update coderef-docs/server.py comments to clarify remaining responsibilities (agent coordination only)"},
+        {"id": "DOC-002", "description": "Update coderef-workflow/server.py comments to clarify new responsibilities"}
+      ],
+      "dependencies": ["TEST-003"]
+    },
+    "phase_8_final_validation": {
+      "name": "Final Validation & Commit",
+      "tasks": [
+        {"id": "FINAL-001", "description": "Create single git commit summarizing all 18 tool migrations with clear commit message, then push to remote"}
+      ],
+      "dependencies": ["DOC-002"]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": "After each individual tool migration, verify tool definition correct in target server",
+    "integration_tests": "After command file updates, verify /command-name resolves to correct server tool",
+    "end_to_end": "Run /create-plan and /create-workorder workflows to verify no regressions",
+    "regression": "Verify agent coordination tools remain functional in coderef-docs",
+    "validation": "Search for any remaining mcp__coderef-docs__ references in commands to ensure none missed"
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "tool_responsibility": "Each tool registered in exactly one server based on responsibility",
+    "command_accuracy": "All 65+ command files reference correct server for their tools",
+    "no_duplicates": "Zero duplicate tool registrations across servers",
+    "functionality": "All tools invoke correctly when commands are executed",
+    "documentation": "server.py comments clearly state each server's responsibility",
+    "git_history": "Clear commit trail showing each tool migration",
+    "user_experience": "No more duplicate command references in CLI output"
+  },
+
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "before_starting": [
+      "Read current state of both coderef-workflow/server.py and coderef-docs/server.py",
+      "Verify context.json and analysis.json exist in workorder directory",
+      "Understand which tools belong in which server"
+    ],
+    "during_migration": [
+      "One tool at a time (not bulk)",
+      "After each tool: update 2-5 command files that reference it",
+      "Test tool invocation after each migration",
+      "Commit frequently with descriptive messages"
+    ],
+    "after_migration": [
+      "Run tool invocation tests for all 18 migrated tools",
+      "Verify no duplicate tool registrations",
+      "Update server.py documentation",
+      "Run /create-plan and /create-workorder end-to-end tests",
+      "Create final git commit summarizing changes"
+    ]
+  }
+}

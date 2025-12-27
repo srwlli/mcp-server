@@ -1,0 +1,388 @@
+[
+  {
+    "timestamp": "2025-12-27T03:51:40.013229",
+    "workorder_id": "WO-COEREF-TESTING-001",
+    "feature_name": "coeref-testing",
+    "task_count": 37,
+    "tasks": [
+      {
+        "content": "SETUP-001: Create project directory structure (src/, tests/, personas/, .claude/commands/)",
+        "activeForm": "SETUP-001: Creating project directory structure (src/, tests/, personas/, .claude/commands/)",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-002: Create pyproject.toml with dependencies and metadata",
+        "activeForm": "SETUP-002: Creating pyproject.toml with dependencies and metadata",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-003: Create server.py MCP server skeleton with tool registration",
+        "activeForm": "SETUP-003: Creating server.py MCP server skeleton with tool registration",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-004: Create models.py with Pydantic schemas for unified result format",
+        "activeForm": "SETUP-004: Creating models.py with Pydantic schemas for unified result format",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-001: Implement framework_detector.py with pytest detection",
+        "activeForm": "DETECT-001: Implementing framework_detector.py with pytest detection",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-002: Add jest and vitest detection to framework_detector.py",
+        "activeForm": "DETECT-002: Adding jest and vitest detection to framework_detector.py",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-003: Add cargo and mocha detection to framework_detector.py",
+        "activeForm": "DETECT-003: Adding cargo and mocha detection to framework_detector.py",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-004: Implement caching and validation for framework detection",
+        "activeForm": "DETECT-004: Implementing caching and validation for framework detection",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-TEST-001: Create tests/test_framework_detector.py with unit tests",
+        "activeForm": "DETECT-TEST-001: Creating tests/test_framework_detector.py with unit tests",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-001: Implement test_runner.py with pytest execution support",
+        "activeForm": "RUN-001: Implementing test_runner.py with pytest execution support",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-002: Add jest and vitest execution to test_runner.py",
+        "activeForm": "RUN-002: Adding jest and vitest execution to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-003: Add cargo and mocha execution to test_runner.py",
+        "activeForm": "RUN-003: Adding cargo and mocha execution to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-004: Implement async/parallel execution with worker pool",
+        "activeForm": "RUN-004: Implementing async/parallel execution with worker pool",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-005: Add timeout handling and error management to test_runner.py",
+        "activeForm": "RUN-005: Adding timeout handling and error management to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-001: Create tests/test_runner.py with unit tests",
+        "activeForm": "RUN-TEST-001: Creating tests/test_runner.py with unit tests",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-002: Create tests/integration/test_pytest.py for pytest integration",
+        "activeForm": "RUN-TEST-002: Creating tests/integration/test_pytest.py for pytest integration",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-003: Create tests/integration/test_jest.py for jest integration",
+        "activeForm": "RUN-TEST-003: Creating tests/integration/test_jest.py for jest integration",
+        "status": "pending"
+      },
+      {
+        "content": "AGG-001: Implement test_aggregator.py to normalize results to unified schema",
+        "activeForm": "AGG-001: Implementing test_aggregator.py to normalize results to unified schema",
+        "status": "pending"
+      },
+      {
+        "content": "AGG-002: Add result archival and timestamping to test_aggregator.py",
+        "activeForm": "AGG-002: Adding result archival and timestamping to test_aggregator.py",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-001: Implement result_analyzer.py with coverage analysis",
+        "activeForm": "ANAL-001: Implementing result_analyzer.py with coverage analysis",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-002: Add flaky test detection and performance analysis",
+        "activeForm": "ANAL-002: Adding flaky test detection and performance analysis",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-003: Add health check and comparison tools to result_analyzer.py",
+        "activeForm": "ANAL-003: Adding health check and comparison tools to result_analyzer.py",
+        "status": "pending"
+      },
+      {
+        "content": "COORD-001: Implement test_coordinator.py for multi-project orchestration",
+        "activeForm": "COORD-001: Implementing test_coordinator.py for multi-project orchestration",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-001: Create discovery tools in server.py (discover_tests, list_test_frameworks)",
+        "activeForm": "TOOLS-001: Creating discovery tools in server.py (discover_tests, list_test_frameworks)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-002: Create execution tools in server.py (run_all_tests, run_test_file, etc)",
+        "activeForm": "TOOLS-002: Creating execution tools in server.py (run_all_tests, run_test_file, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-003: Create management tools in server.py (get_test_results, aggregate_results, etc)",
+        "activeForm": "TOOLS-003: Creating management tools in server.py (get_test_results, aggregate_results, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-004: Create analysis tools in server.py (analyze_coverage, detect_flaky_tests, etc)",
+        "activeForm": "TOOLS-004: Creating analysis tools in server.py (analyze_coverage, detect_flaky_tests, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "CMD-001: Create slash commands in .claude/commands/ for discovery and execution",
+        "activeForm": "CMD-001: Creating slash commands in .claude/commands/ for discovery and execution",
+        "status": "pending"
+      },
+      {
+        "content": "CMD-002: Create slash commands for management and analysis",
+        "activeForm": "CMD-002: Creating slash commands for management and analysis",
+        "status": "pending"
+      },
+      {
+        "content": "PERSONA-001: Create testing-expert.json with 15 expertise areas and system prompt",
+        "activeForm": "PERSONA-001: Creating testing-expert.json with 15 expertise areas and system prompt",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update README.md with Overview, Quick Start, Installation",
+        "activeForm": "DOC-001: Updating README.md with Overview, Quick Start, Installation",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: Create USER-GUIDE.md with tool examples and use cases",
+        "activeForm": "DOC-002: Creating USER-GUIDE.md with tool examples and use cases",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-FINAL: Run full test suite and fix any failures",
+        "activeForm": "TEST-FINAL: Running full test suite and fix any failures",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATION-001: Test on CodeRef ecosystem (4 servers)",
+        "activeForm": "INTEGRATION-001: Testing on CodeRef ecosystem (4 servers)",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATION-002: Test on next-scraper project",
+        "activeForm": "INTEGRATION-002: Testing on next-scraper project",
+        "status": "pending"
+      },
+      {
+        "content": "RELEASE-001: Update .mcp.json with coeref-testing server registration",
+        "activeForm": "RELEASE-001: Updating .mcp.json with coeref-testing server registration",
+        "status": "pending"
+      },
+      {
+        "content": "RELEASE-002: Final validation and commit to main branch",
+        "activeForm": "RELEASE-002: Finaling validation and commit to main branch",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-27T12:49:25.893576",
+    "workorder_id": "WO-COEREF-TESTING-001",
+    "feature_name": "coeref-testing",
+    "task_count": 37,
+    "tasks": [
+      {
+        "content": "SETUP-001: Create project directory structure (src/, tests/, personas/, .claude/commands/)",
+        "activeForm": "SETUP-001: Creating project directory structure (src/, tests/, personas/, .claude/commands/)",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-002: Create pyproject.toml with dependencies and metadata",
+        "activeForm": "SETUP-002: Creating pyproject.toml with dependencies and metadata",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-003: Create server.py MCP server skeleton with tool registration",
+        "activeForm": "SETUP-003: Creating server.py MCP server skeleton with tool registration",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-004: Create models.py with Pydantic schemas for unified result format",
+        "activeForm": "SETUP-004: Creating models.py with Pydantic schemas for unified result format",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-001: Implement framework_detector.py with pytest detection",
+        "activeForm": "DETECT-001: Implementing framework_detector.py with pytest detection",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-002: Add jest and vitest detection to framework_detector.py",
+        "activeForm": "DETECT-002: Adding jest and vitest detection to framework_detector.py",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-003: Add cargo and mocha detection to framework_detector.py",
+        "activeForm": "DETECT-003: Adding cargo and mocha detection to framework_detector.py",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-004: Implement caching and validation for framework detection",
+        "activeForm": "DETECT-004: Implementing caching and validation for framework detection",
+        "status": "pending"
+      },
+      {
+        "content": "DETECT-TEST-001: Create tests/test_framework_detector.py with unit tests",
+        "activeForm": "DETECT-TEST-001: Creating tests/test_framework_detector.py with unit tests",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-001: Implement test_runner.py with pytest execution support",
+        "activeForm": "RUN-001: Implementing test_runner.py with pytest execution support",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-002: Add jest and vitest execution to test_runner.py",
+        "activeForm": "RUN-002: Adding jest and vitest execution to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-003: Add cargo and mocha execution to test_runner.py",
+        "activeForm": "RUN-003: Adding cargo and mocha execution to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-004: Implement async/parallel execution with worker pool",
+        "activeForm": "RUN-004: Implementing async/parallel execution with worker pool",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-005: Add timeout handling and error management to test_runner.py",
+        "activeForm": "RUN-005: Adding timeout handling and error management to test_runner.py",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-001: Create tests/test_runner.py with unit tests",
+        "activeForm": "RUN-TEST-001: Creating tests/test_runner.py with unit tests",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-002: Create tests/integration/test_pytest.py for pytest integration",
+        "activeForm": "RUN-TEST-002: Creating tests/integration/test_pytest.py for pytest integration",
+        "status": "pending"
+      },
+      {
+        "content": "RUN-TEST-003: Create tests/integration/test_jest.py for jest integration",
+        "activeForm": "RUN-TEST-003: Creating tests/integration/test_jest.py for jest integration",
+        "status": "pending"
+      },
+      {
+        "content": "AGG-001: Implement test_aggregator.py to normalize results to unified schema",
+        "activeForm": "AGG-001: Implementing test_aggregator.py to normalize results to unified schema",
+        "status": "pending"
+      },
+      {
+        "content": "AGG-002: Add result archival and timestamping to test_aggregator.py",
+        "activeForm": "AGG-002: Adding result archival and timestamping to test_aggregator.py",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-001: Implement result_analyzer.py with coverage analysis",
+        "activeForm": "ANAL-001: Implementing result_analyzer.py with coverage analysis",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-002: Add flaky test detection and performance analysis",
+        "activeForm": "ANAL-002: Adding flaky test detection and performance analysis",
+        "status": "pending"
+      },
+      {
+        "content": "ANAL-003: Add health check and comparison tools to result_analyzer.py",
+        "activeForm": "ANAL-003: Adding health check and comparison tools to result_analyzer.py",
+        "status": "pending"
+      },
+      {
+        "content": "COORD-001: Implement test_coordinator.py for multi-project orchestration",
+        "activeForm": "COORD-001: Implementing test_coordinator.py for multi-project orchestration",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-001: Create discovery tools in server.py (discover_tests, list_test_frameworks)",
+        "activeForm": "TOOLS-001: Creating discovery tools in server.py (discover_tests, list_test_frameworks)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-002: Create execution tools in server.py (run_all_tests, run_test_file, etc)",
+        "activeForm": "TOOLS-002: Creating execution tools in server.py (run_all_tests, run_test_file, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-003: Create management tools in server.py (get_test_results, aggregate_results, etc)",
+        "activeForm": "TOOLS-003: Creating management tools in server.py (get_test_results, aggregate_results, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "TOOLS-004: Create analysis tools in server.py (analyze_coverage, detect_flaky_tests, etc)",
+        "activeForm": "TOOLS-004: Creating analysis tools in server.py (analyze_coverage, detect_flaky_tests, etc)",
+        "status": "pending"
+      },
+      {
+        "content": "CMD-001: Create slash commands in .claude/commands/ for discovery and execution",
+        "activeForm": "CMD-001: Creating slash commands in .claude/commands/ for discovery and execution",
+        "status": "pending"
+      },
+      {
+        "content": "CMD-002: Create slash commands for management and analysis",
+        "activeForm": "CMD-002: Creating slash commands for management and analysis",
+        "status": "pending"
+      },
+      {
+        "content": "PERSONA-001: Create testing-expert.json with 15 expertise areas and system prompt",
+        "activeForm": "PERSONA-001: Creating testing-expert.json with 15 expertise areas and system prompt",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update README.md with Overview, Quick Start, Installation",
+        "activeForm": "DOC-001: Updating README.md with Overview, Quick Start, Installation",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: Create USER-GUIDE.md with tool examples and use cases",
+        "activeForm": "DOC-002: Creating USER-GUIDE.md with tool examples and use cases",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-FINAL: Run full test suite and fix any failures",
+        "activeForm": "TEST-FINAL: Running full test suite and fix any failures",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATION-001: Test on CodeRef ecosystem (4 servers)",
+        "activeForm": "INTEGRATION-001: Testing on CodeRef ecosystem (4 servers)",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATION-002: Test on next-scraper project",
+        "activeForm": "INTEGRATION-002: Testing on next-scraper project",
+        "status": "pending"
+      },
+      {
+        "content": "RELEASE-001: Update .mcp.json with coeref-testing server registration",
+        "activeForm": "RELEASE-001: Updating .mcp.json with coeref-testing server registration",
+        "status": "pending"
+      },
+      {
+        "content": "RELEASE-002: Final validation and commit to main branch",
+        "activeForm": "RELEASE-002: Finaling validation and commit to main branch",
+        "status": "pending"
+      }
+    ]
+  }
+]

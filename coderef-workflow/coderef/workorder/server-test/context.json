@@ -1,0 +1,28 @@
+{
+  "feature_name": "server-test",
+  "description": "Test the coderef-workflow server to verify the path migration works correctly. Ensure that the server creates workorder directories in the correct coderef/workorder/ location instead of the old coderef/working/ path.",
+  "goal": "Verify that the MCP server has been successfully migrated to use the global coderef/workorder/ path for all workorder management operations.",
+  "requirements": [
+    "Server creates workorder files in coderef/workorder/",
+    "gather_context tool saves context.json to correct path",
+    "analyze_project_for_planning uses coderef/workorder/",
+    "create_plan uses coderef/workorder/",
+    "All paths are global, not local"
+  ],
+  "out_of_scope": [
+    "Actual feature implementation",
+    "Code modifications beyond server fixes"
+  ],
+  "constraints": [
+    "Must use coderef/workorder/ path",
+    "Must work with the fixed server code",
+    "All files must be created in global locations"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-SERVER-TEST-001",
+    "workorder_assigned_at": "2025-12-27T05:00:35.940326+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

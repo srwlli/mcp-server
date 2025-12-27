@@ -1,0 +1,292 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-coderef-context-injection",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "Claude Code AI",
+    "has_context": true,
+    "has_analysis": true,
+    "workorder_id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+    "created_at": "2025-12-26",
+    "updated_at": "2025-12-26"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_discovered": [
+        "README.md (root) - coderef-context MCP Server overview, tool catalog, architecture"
+      ],
+      "coding_standards": {
+        "available": [],
+        "note": "No formal coding standards directory found"
+      },
+      "reference_components": {
+        "primary": null,
+        "note": "This is a test workorder - no reference components needed"
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP Server",
+        "tools": "@coderef/core CLI wrapper",
+        "testing": "Not detected"
+      },
+      "project_structure": {
+        "main_directories": [
+          "coderef/workorder/",
+          ".claude/",
+          "src/"
+        ],
+        "note": "Python-based MCP server wrapping @coderef/core CLI"
+      },
+      "gaps_identified": [
+        "Missing foundation docs: API.md, ARCHITECTURE.md, COMPONENTS.md",
+        "No coding standards directory (coderef/standards/)",
+        "No test directory found",
+        "No CI configuration found"
+      ]
+    },
+    "1_executive_summary": {
+      "what_we_are_building": "A recursive proof test that demonstrates coderef-context's code intelligence capabilities by having it analyze itself",
+      "why_important": "This proves the MCP server's coderef-context tools (scan, query, patterns, impact) work correctly by analyzing the coderef-context project's own architecture",
+      "key_value_proposition": [
+        "Ultimate recursive proof - the code intelligence engine analyzing itself",
+        "Captures real coderef_scan output showing coderef-context's file structure",
+        "Documents CLI wrapper, subprocess management, and tool handlers",
+        "Validates that MCP tools can provide accurate code analysis"
+      ],
+      "scope": {
+        "in_scope": [
+          "Run complete /create-workorder workflow on coderef-context",
+          "Generate analysis.json with real coderef_scan results",
+          "Generate plan.json with structured implementation data",
+          "Capture recursive self-analysis as proof of functionality"
+        ],
+        "out_of_scope": [
+          "EXECUTION - no code changes will be made",
+          "Agent assignments - planning phase only",
+          "Actual feature implementation"
+        ]
+      }
+    },
+    "2_risk_assessment": {
+      "complexity_score": 20,
+      "risk_areas": [
+        {
+          "area": "Recursive Analysis",
+          "severity": "low",
+          "description": "Analyzing coderef-context with its own tools",
+          "mitigation": "This is intentional - proves tool functionality"
+        },
+        {
+          "area": "Missing Test Infrastructure",
+          "severity": "medium",
+          "description": "No test directory or CI configuration detected",
+          "mitigation": "Out of scope for this proof test"
+        }
+      ],
+      "breaking_changes": [],
+      "rollback_strategy": "Delete test workorder directory - no code changes made",
+      "dependencies": [
+        "@coderef/core CLI must be installed and accessible",
+        "coderef-workflow MCP server must be operational"
+      ]
+    },
+    "3_current_state_analysis": {
+      "existing_files": [
+        {
+          "path": "README.md",
+          "status": "exists",
+          "purpose": "MCP server overview and tool catalog"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-context-injection/context.json",
+          "status": "exists",
+          "purpose": "Test requirements and constraints"
+        }
+      ],
+      "files_to_create": [
+        {
+          "path": "coderef/workorder/test-coderef-context-injection/analysis.json",
+          "purpose": "Real coderef_scan output analyzing coderef-context project"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-context-injection/plan.json",
+          "purpose": "This implementation plan with schema compliance"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-context-injection/DELIVERABLES.md",
+          "purpose": "Test deliverables template (auto-generated)"
+        }
+      ],
+      "files_to_modify": [],
+      "architecture_notes": "coderef-context is a Python MCP server that wraps @coderef/core CLI tools (TypeScript) via subprocess calls"
+    },
+    "4_key_features": {
+      "must_have": [
+        "Complete analysis.json with real coderef_scan data",
+        "Complete plan.json following schema v1.0.0",
+        "Documentation of recursive self-analysis process",
+        "Proof that coderef-context tools work correctly"
+      ],
+      "nice_to_have": [
+        "Validation score >= 90",
+        "Comprehensive documentation of tool architecture"
+      ],
+      "acceptance_criteria": [
+        "analysis.json exists and contains real project data",
+        "plan.json validates against schema",
+        "Workorder logged to global workorder-log.txt",
+        "DELIVERABLES.md generated with phase structure"
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+        "name": "Test Coderef Context Injection",
+        "feature_dir": "coderef/workorder/test-coderef-context-injection"
+      },
+      "prefix_schema": {
+        "ANALYSIS": "Analysis and documentation tasks",
+        "VALIDATE": "Validation and verification tasks"
+      },
+      "tasks": [
+        {
+          "id": "ANALYSIS-001",
+          "workorder_id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+          "description": "Generate analysis.json with coderef_scan output",
+          "category": "analysis",
+          "estimated_time": "5 minutes",
+          "dependencies": []
+        },
+        {
+          "id": "ANALYSIS-002",
+          "workorder_id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+          "description": "Generate plan.json following schema v1.0.0",
+          "category": "analysis",
+          "estimated_time": "10 minutes",
+          "dependencies": ["ANALYSIS-001"]
+        },
+        {
+          "id": "VALIDATE-001",
+          "workorder_id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+          "description": "Validate plan.json against schema",
+          "category": "validation",
+          "estimated_time": "2 minutes",
+          "dependencies": ["ANALYSIS-002"]
+        },
+        {
+          "id": "ANALYSIS-003",
+          "workorder_id": "WO-TEST-CODEREF-CONTEXT-INJECTION-001",
+          "description": "Document recursive self-analysis findings",
+          "category": "analysis",
+          "estimated_time": "5 minutes",
+          "dependencies": ["VALIDATE-001"]
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Analysis Generation",
+          "description": "Generate analysis.json with real coderef_scan data",
+          "tasks": ["ANALYSIS-001"],
+          "deliverables": [
+            "analysis.json with file counts, component counts, patterns"
+          ],
+          "estimated_duration": "5 minutes"
+        },
+        {
+          "phase": 2,
+          "name": "Plan Creation",
+          "description": "Generate plan.json following schema v1.0.0",
+          "tasks": ["ANALYSIS-002"],
+          "deliverables": [
+            "plan.json with 10 sections",
+            "DELIVERABLES.md template"
+          ],
+          "estimated_duration": "10 minutes"
+        },
+        {
+          "phase": 3,
+          "name": "Validation & Documentation",
+          "description": "Validate plan and document findings",
+          "tasks": ["VALIDATE-001", "ANALYSIS-003"],
+          "deliverables": [
+            "Validation report with score",
+            "Recursive self-analysis documentation"
+          ],
+          "estimated_duration": "7 minutes"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "required": false,
+        "note": "This is a proof test - no unit tests needed"
+      },
+      "integration_tests": {
+        "required": false,
+        "note": "Testing the workflow itself, not code implementation"
+      },
+      "validation_tests": {
+        "required": true,
+        "tests": [
+          "Verify analysis.json exists and contains real data",
+          "Verify plan.json validates against schema v1.0.0",
+          "Verify workorder logged to global log",
+          "Verify DELIVERABLES.md generated"
+        ]
+      }
+    },
+    "8_success_criteria": {
+      "primary_metrics": [
+        "analysis.json generated with real coderef_scan output",
+        "plan.json validates with score >= 85",
+        "Workorder WO-TEST-CODEREF-CONTEXT-INJECTION-001 logged globally",
+        "DELIVERABLES.md exists with phase structure"
+      ],
+      "quality_gates": [
+        "Schema compliance: plan.json follows v1.0.0 contract",
+        "Real data: analysis.json contains actual project metrics",
+        "Recursive proof: Documents how coderef-context analyzes itself"
+      ],
+      "user_acceptance": [
+        "Can demonstrate coderef-context tools work correctly",
+        "Can show CLI wrapper architecture via analysis.json",
+        "Can prove MCP server provides accurate code intelligence"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1": {
+        "name": "Analysis Generation",
+        "tasks": [
+          "Call mcp__coderef-workflow__analyze_project_for_planning",
+          "Verify analysis.json created in feature directory",
+          "Inspect file_counts and component_count in analysis",
+          "Confirm foundation_docs section populated"
+        ]
+      },
+      "phase_2": {
+        "name": "Plan Creation",
+        "tasks": [
+          "Call mcp__coderef-workflow__create_plan",
+          "Generate plan.json with all 10 sections",
+          "Ensure schema_version: 1.0.0 in META_DOCUMENTATION",
+          "Use phases[] array in 6_implementation_phases",
+          "Use tasks[] array in 5_task_id_system",
+          "Auto-generate DELIVERABLES.md template"
+        ]
+      },
+      "phase_3": {
+        "name": "Validation & Documentation",
+        "tasks": [
+          "Call mcp__coderef-workflow__validate_implementation_plan",
+          "Review validation score and issues",
+          "Document recursive self-analysis findings",
+          "Capture proof that coderef-context works"
+        ]
+      }
+    }
+  }
+}

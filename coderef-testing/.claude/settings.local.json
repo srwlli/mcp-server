@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__gather_context",
+      "mcp__coderef-workflow__create_plan",
+      "mcp__coderef-workflow__validate_implementation_plan",
+      "mcp__coderef-workflow__generate_deliverables_template",
+      "mcp__coderef-workflow__generate_agent_communication",
+      "mcp__coderef-workflow__execute_plan",
+      "Bash(python -m json.tool:*)",
+      "mcp__coderef-workflow__update_task_status"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "coderef-personas",
+    "coderef-context",
+    "coderef-docs",
+    "coderef-workflow"
+  ]
+}

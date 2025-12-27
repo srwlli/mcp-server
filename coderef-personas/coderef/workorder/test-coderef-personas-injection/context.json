@@ -1,0 +1,20 @@
+{
+  "feature_name": "test-coderef-personas-injection",
+  "goal": "Create a test workorder to prove coderef-personas expertise injection works",
+  "description": "This is a TEST ONLY workorder. The purpose is to run the complete /create-workorder workflow on the coderef-personas project itself, then capture real coderef-context analysis of the persona system.",
+  "requirements": [
+    "Run /create-workorder workflow completely",
+    "Capture analysis.json with real coderef_scan results of coderef-personas",
+    "Show persona definitions: Ava, Marcus, Quinn, Lloyd, etc.",
+    "Capture dependency analysis of persona activation system",
+    "Prove expertise injection mechanism works"
+  ],
+  "out_of_scope": [
+    "EXECUTION - do not implement any code changes",
+    "Agent assignments - planning phase only"
+  ],
+  "constraints": [
+    "Planning documents only - NO code modifications",
+    "Capture real coderef-context output"
+  ]
+}

@@ -2704,7 +2704,7 @@ async def handle_execute_plan(arguments: dict) -> list[TextContent]:
     feature_name = validate_feature_name_input(feature_name)
 
     # Load plan.json
-    plan_file = Path(project_path) / Paths.CONTEXT_DIR / "working" / feature_name / "plan.json"
+    plan_file = Path(project_path) / Paths.CONTEXT_DIR / "workorder" / feature_name / "plan.json"
 
     if not plan_file.exists():
         return ErrorResponse.not_found(
@@ -2932,7 +2932,7 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
         workorder_id: Workorder ID from plan
         tasks: List of TodoWrite-formatted tasks
     """
-    log_file = Path(project_path) / Paths.CONTEXT_DIR / "working" / feature_name / "execution-log.json"
+    log_file = Path(project_path) / Paths.CONTEXT_DIR / "workorder" / feature_name / "execution-log.json"
 
     execution_entry = {
         "timestamp": datetime.now().isoformat(),

@@ -384,7 +384,11 @@ def get_checklist(plan: dict, strict: bool = None) -> dict:
         strict = STRICT_MODE
 
     structure = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {})
-    section_9 = structure.get("9_implementation_checklist", {})
+    section_9 = structure.get("9_implementation_checklist")
+
+    # Fallback to top-level if not found in nested structure (handles flat format)
+    if section_9 is None:
+        section_9 = plan.get("9_implementation_checklist", {})
 
     # Expected format: dict with category keys like "pre_implementation", "implementation", etc.
     if isinstance(section_9, dict):

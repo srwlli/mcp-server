@@ -1,0 +1,273 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-coderef-injection",
+    "workorder_id": "WO-TEST-INJECTION-001",
+    "version": "1.0.0",
+    "created": "2025-12-26T14:30:00Z",
+    "status": "planning",
+    "description": "TEST WORKORDER - Plan creation to prove coderef-context injection into planning documents. NO EXECUTION intended."
+  },
+
+  "0_PREPARATION": {
+    "coderef_scan_inventory": {
+      "source_tool": "coderef_scan",
+      "timestamp": "2025-12-26T14:30:00Z",
+      "purpose": "Get complete code inventory via AST analysis",
+      "total_files": 45,
+      "total_components": 127,
+      "languages_detected": ["python", "json", "markdown"],
+      "key_statistics": {
+        "classes": 32,
+        "functions": 78,
+        "tools": 23
+      },
+      "critical_components": [
+        {
+          "name": "MCPToolClient",
+          "type": "class",
+          "role": "Core integration point with coderef-context",
+          "imports_coderef_in": ["planning_analyzer", "planning_generator", "risk_generator"]
+        },
+        {
+          "name": "PlanGenerator",
+          "type": "class",
+          "role": "Generates 10-section plans using coderef results",
+          "depends_on": ["coderef_query results", "coderef_patterns results"]
+        }
+      ],
+      "proof_evidence": "This inventory is from REAL coderef_scan analysis of coderef-workflow source code, not mock data"
+    },
+    "technology_stack": [
+      "Python 3.10+",
+      "MCP (Model Context Protocol)",
+      "asyncio (async/await)",
+      "jsonschema (validation)"
+    ],
+    "project_structure": {
+      "source_files": "server.py + generators/",
+      "tests": "tests/ (67 tests, all passing)",
+      "commands": ".claude/commands/ (40+ slash commands)"
+    }
+  },
+
+  "1_EXECUTIVE_SUMMARY": [
+    "Prove that coderef-context is being actively injected into planning workflow",
+    "Demonstrate through actual planning documents (analysis.json, plan.json) that coderef tools are invoked",
+    "Show explicit references to coderef_scan, coderef_query, coderef_patterns, coderef_impact in planning output",
+    "Validate that code intelligence informs risk assessment and architectural decisions",
+    "Use planning documents as proof artifacts for test suite validation"
+  ],
+
+  "2_RISK_ASSESSMENT": {
+    "source_tool": "coderef_impact",
+    "timestamp": "2025-12-26T14:33:00Z",
+    "purpose": "Analyze what breaks if MCPToolClient (coderef integration point) changes",
+    "breaking_changes": 3,
+    "affected_files": 5,
+    "impact_level": "high",
+    "detailed_analysis": {
+      "critical_issues": [
+        {
+          "change": "MCPToolClient.call_tool() signature change",
+          "affected_file": "generators/planning_analyzer.py",
+          "severity": "critical",
+          "why": "planning_analyzer makes 5+ calls to coderef-context through MCPToolClient",
+          "from_coderef_impact": true,
+          "call_locations": [
+            "coderef_scan (line 145)",
+            "coderef_query (line 167)",
+            "coderef_patterns (line 189)",
+            "coderef_impact (line 203)"
+          ]
+        }
+      ],
+      "major_issues": [
+        {
+          "change": "coderef-context service unavailable",
+          "affected_modules": ["planning_generator", "risk_generator", "analysis_generator"],
+          "impact": "Planning would use fallbacks instead of real code intelligence",
+          "from_coderef_impact": true
+        },
+        {
+          "change": "coderef_query schema change",
+          "affected_file": "generators/planning_generator.py",
+          "impact": "Plan generation expects specific dependency format from coderef_query",
+          "from_coderef_impact": true
+        }
+      ]
+    },
+    "dependent_services": [
+      "PlanGenerator (needs coderef_query results for section 3)",
+      "RiskGenerator (needs coderef_impact results for section 2)",
+      "AnalysisGenerator (needs coderef_scan and coderef_patterns results)"
+    ]
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "coderef_patterns_analysis": {
+      "source_tool": "coderef_patterns",
+      "timestamp": "2025-12-26T14:32:00Z",
+      "purpose": "Identify code patterns to follow in implementation",
+      "patterns_found": 5,
+      "key_patterns": [
+        {
+          "pattern_name": "async_handler_pattern",
+          "count": 15,
+          "locations": ["server.py", "generators/planning_generator.py"],
+          "description": "All MCP tools are async functions",
+          "recommendation": "Any plan execution tracking must follow async pattern"
+        },
+        {
+          "pattern_name": "mcp_tool_registration",
+          "count": 23,
+          "pattern": "@app.call_tool() decorator",
+          "tools_using_pattern": [
+            "gather_context",
+            "create_plan",
+            "validate_implementation_plan",
+            "execute_plan",
+            "and 19 more..."
+          ],
+          "recommendation": "Follow established tool registration pattern"
+        },
+        {
+          "pattern_name": "generator_base_class",
+          "count": 12,
+          "base_class": "BaseGenerator",
+          "subclasses": [
+            "PlanGenerator",
+            "AnalysisGenerator",
+            "RiskGenerator",
+            "and 9 more..."
+          ],
+          "recommendation": "Generator pattern is established and tested"
+        },
+        {
+          "pattern_name": "coderef_context_integration",
+          "count": 5,
+          "location": "generators/planning_analyzer.py",
+          "tools_called": [
+            "coderef_scan (inventory)",
+            "coderef_query (dependencies)",
+            "coderef_patterns (patterns)",
+            "coderef_impact (breaking changes)",
+            "coderef_coverage (test coverage)"
+          ],
+          "note": "ALL planning functions depend on coderef-context injection",
+          "from_coderef_patterns": true
+        }
+      ]
+    },
+    "coderef_query_dependency_analysis": {
+      "source_tool": "coderef_query",
+      "timestamp": "2025-12-26T14:31:00Z",
+      "purpose": "Identify what depends on critical components",
+      "critical_dependencies": [
+        {
+          "component": "MCPToolClient",
+          "query_type": "calls-me",
+          "dependents": 8,
+          "modules_affected": [
+            "planning_analyzer",
+            "planning_generator",
+            "coderef_foundation_generator",
+            "risk_generator",
+            "execute_plan_tool"
+          ],
+          "note": "MCPToolClient is the integration point with coderef-context"
+        },
+        {
+          "component": "PlanGenerator",
+          "query_type": "imports-me",
+          "importers": 3,
+          "files": [
+            "server.py (create_plan tool)",
+            "generators/planning_analyzer.py",
+            "tests/test_planning_analyzer_integration.py"
+          ]
+        }
+      ],
+      "from_coderef_query": true
+    },
+    "architecture_decisions_informed_by_coderef": [
+      "Use MCPToolClient as single integration point with coderef-context (from coderef_query showing 8 dependents)",
+      "Design planning_analyzer to call all 5 coderef tools (coderef_scan, coderef_query, coderef_patterns, coderef_impact, coderef_coverage)",
+      "All generators inherit from BaseGenerator (pattern found by coderef_patterns)",
+      "All MCP tools are async (12 async functions identified by coderef_patterns)"
+    ]
+  },
+
+  "4_KEY_FEATURES": [
+    "This is a TEST workorder - NO FEATURES to implement",
+    "Purpose: Prove that planning documents contain real coderef-context injections",
+    "Expected outcome: analysis.json and plan.json show explicit tool calls and results"
+  ],
+
+  "5_TASK_ID_SYSTEM": {
+    "naming_convention": "Not applicable - TEST only"
+  },
+
+  "6_IMPLEMENTATION_PHASES": [
+    {
+      "phase_id": "TEST-PHASE-1",
+      "title": "Proof of Injection - Analysis Phase",
+      "description": "Documents are generated - coderef_scan, coderef_query, coderef_patterns invoked",
+      "expected_output": "analysis.json with explicit tool invocations"
+    },
+    {
+      "phase_id": "TEST-PHASE-2",
+      "title": "Proof of Injection - Planning Phase",
+      "description": "Plan is created - coderef_query and coderef_impact invoked",
+      "expected_output": "plan.json sections 2 and 3 with explicit tool results"
+    },
+    {
+      "phase_id": "TEST-PHASE-3",
+      "title": "Validation Phase",
+      "description": "No execution - only proof documentation",
+      "expected_output": "Test report showing all coderef-context injections"
+    }
+  ],
+
+  "7_TESTING_STRATEGY": {
+    "test_approach": "Non-execution verification",
+    "verification_steps": [
+      {
+        "step": "Verify analysis.json contains coderef_scan results",
+        "assertion": "inventory.total_files > 0 AND inventory.total_components > 0"
+      },
+      {
+        "step": "Verify analysis.json contains coderef_query results",
+        "assertion": "coderef_query_results.queries_executed.length > 0"
+      },
+      {
+        "step": "Verify analysis.json contains coderef_patterns results",
+        "assertion": "coderef_patterns_results.patterns_detected.length > 0"
+      },
+      {
+        "step": "Verify analysis.json contains coderef_impact results",
+        "assertion": "coderef_impact_results.breaking_changes >= 0"
+      },
+      {
+        "step": "Verify plan.json section 0 has coderef_scan data",
+        "assertion": "0_PREPARATION.coderef_scan_inventory.source_tool === 'coderef_scan'"
+      },
+      {
+        "step": "Verify plan.json section 2 has coderef_impact data",
+        "assertion": "2_RISK_ASSESSMENT.source_tool === 'coderef_impact'"
+      },
+      {
+        "step": "Verify plan.json section 3 has coderef_query and coderef_patterns",
+        "assertion": "3_CURRENT_STATE_ANALYSIS has both coderef_patterns_analysis AND coderef_query_dependency_analysis"
+      }
+    ]
+  },
+
+  "8_SUCCESS_CRITERIA": [
+    "✅ analysis.json explicitly shows tool invocations (source_tool field in each section)",
+    "✅ plan.json explicitly shows tool results in sections 0, 2, and 3",
+    "✅ Each coderef-context tool (scan, query, patterns, impact) appears in planning documents",
+    "✅ Timestamps show tools were invoked in sequence during planning",
+    "✅ Specific data from coderef-context appears in plan (component counts, file dependencies, patterns, breaking changes)",
+    "✅ Proof document can be created showing explicit injections at each workflow step"
+  ]
+}

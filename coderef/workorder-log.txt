@@ -1,3 +1,7 @@
+WO-TEST-CODEREF-CONTEXT-INJECTION-001 | coderef-context | test-coderef-context-injection implementation plan | 2025-12-26T20:46:20.938969+00:00
+WO-CODEREF-CONTEXT-DOCS-001 | coderef-ecosystem | Create missing coderef-context CLAUDE.md (592 l... | 2025-12-26T19:43:41.490637+00:00
+WO-CODEREF-CONTEXT-DOCS-001 | coderef-ecosystem | Create missing coderef-context CLAUDE.md (592 l... | 2025-12-26T19:43:41.490637+00:00
+WO-SIDEBAR-001 | coderef-dashboard | Sidebar navigation with collapsible toggle and ... | 2025-12-26T12:08:25.868080+00:00
 WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | Remove utility personas (devon, widget-architec... | 2025-12-25T19:37:30.252086+00:00
 WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | remove-utility-personas implementation plan | 2025-12-25T19:00:55.643982+00:00
 WO-RESTRUCTURE-MONOREPO-001 | coderef-dashboard | Restructure monorepo - remove widget system, mo... | 2025-12-25T18:23:26.228569+00:00

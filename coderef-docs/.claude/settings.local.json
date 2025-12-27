@@ -10,7 +10,13 @@
       "Bash(powershell -Command \"(Select-String -Path ''C:\\Users\\willh\\.mcp-servers\\coderef-docs\\CLAUDE.md'' -Pattern ''generate_foundation_docs'').LineNumber | head -1\")",
       "mcp__coderef-docs__generate_individual_doc",
       "Bash(git add:*)",
-      "Bash(git hash-object:*)"
+      "Bash(git hash-object:*)",
+      "mcp__coderef-workflow__create_plan",
+      "mcp__coderef-workflow__analyze_project_for_planning",
+      "mcp__coderef-workflow__validate_implementation_plan",
+      "Bash(dir:*)",
+      "Bash(nul)",
+      "mcp__coderef-workflow__execute_plan"
     ]
   },
   "enabledMcpjsonServers": [

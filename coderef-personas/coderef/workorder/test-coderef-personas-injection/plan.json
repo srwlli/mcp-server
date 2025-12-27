@@ -1,0 +1,519 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "test-coderef-personas-injection",
+    "schema_version": "1.0.0",
+    "version": "1.0.0",
+    "status": "complete",
+    "generated_by": "AI Assistant - Proof Test",
+    "has_context": true,
+    "has_analysis": true,
+    "created_at": "2025-12-26T15:37:28.345617",
+    "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "discovery": {
+        "existing_documentation": [
+          "README.md (root) - 12,890 bytes",
+          "API.md (coderef/foundation-docs) - 429 bytes",
+          "ARCHITECTURE.md (coderef/foundation-docs) - 1,072 bytes",
+          "SCHEMA.md (coderef/foundation-docs) - 413 bytes"
+        ],
+        "missing_documentation": [
+          "COMPONENTS.md",
+          "USER-GUIDE.md"
+        ],
+        "project_structure": {
+          "language": "Python",
+          "organization": "modular (src-based)",
+          "main_directories": [
+            "coderef/working/docs-expert-v2",
+            "tests",
+            "personas/base",
+            "src",
+            "personas_mcp.egg-info"
+          ],
+          "total_files": {
+            "coderef/working/docs-expert-v2": 12,
+            "tests": 9,
+            "personas/base": 9,
+            "src": 7
+          }
+        }
+      },
+      "analysis_summary": {
+        "foundation_docs_found": 4,
+        "coding_standards_found": 0,
+        "reference_components_found": 0,
+        "persona_definitions": [
+          "mcp-expert",
+          "docs-expert",
+          "coderef-expert",
+          "lloyd",
+          "ava",
+          "marcus",
+          "quinn",
+          "taylor",
+          "devon"
+        ],
+        "key_findings": [
+          "10 base personas available",
+          "Persona activation system with state management",
+          "Tool handlers for persona lifecycle (use, get, clear, list)",
+          "Custom persona creation support",
+          "Todo/workorder integration (generate_todo_list, track_plan_execution)",
+          "v1.4.0 workorder-centric architecture"
+        ]
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "MCP Server",
+        "database": "unknown",
+        "testing": "pytest",
+        "build": "uv"
+      },
+      "gaps_identified": [
+        "Missing foundation docs: COMPONENTS.md, USER-GUIDE.md",
+        "No coding standards directory found (coderef/standards/)",
+        "No CI configuration found"
+      ]
+    },
+    "1_executive_summary": {
+      "what": "Create a test workorder to prove coderef-personas expertise injection works by running the complete /create-workorder workflow on the coderef-personas project itself",
+      "why": "Demonstrate recursive proof that coderef-context analysis tools work correctly by analyzing the persona system itself, capturing real persona definitions, dependency analysis, and expertise injection mechanisms",
+      "scope": [
+        "Run /create-workorder workflow completely",
+        "Capture analysis.json with real coderef_scan results",
+        "Show persona definitions (Ava, Marcus, Quinn, Lloyd, etc.)",
+        "Capture dependency analysis of persona activation system",
+        "Prove expertise injection mechanism works"
+      ],
+      "out_of_scope": [
+        "EXECUTION - do not implement any code changes",
+        "Agent assignments - planning phase only",
+        "Any modifications to coderef-personas codebase"
+      ],
+      "constraints": [
+        "Planning documents only - NO code modifications",
+        "Capture real coderef-context output",
+        "Test workorder only - no production impact"
+      ],
+      "estimated_effort": "2-4 hours (documentation and analysis only)"
+    },
+    "2_risk_assessment": {
+      "breaking_changes": {
+        "risk_level": "none",
+        "affected_areas": [],
+        "mitigation": "No code changes - documentation/analysis only"
+      },
+      "security": {
+        "risk_level": "none",
+        "concerns": [],
+        "recommendations": "Read-only analysis with no system modifications"
+      },
+      "performance": {
+        "risk_level": "low",
+        "impact_areas": [],
+        "optimization_needed": "Analysis tools may take 30-60 seconds to complete scan"
+      },
+      "complexity": {
+        "overall": "low",
+        "high_risk_areas": [],
+        "dependencies": [
+          "coderef-context MCP tools must be operational",
+          "coderef-workflow planning tools must be available"
+        ]
+      },
+      "reversibility": {
+        "can_rollback": true,
+        "rollback_steps": [
+          "Delete coderef/workorder/test-coderef-personas-injection/ directory",
+          "Remove workorder entry from workorder-log.txt"
+        ]
+      }
+    },
+    "3_current_state_analysis": {
+      "existing_features": {
+        "persona_system": {
+          "description": "Expert persona activation with 10 base personas",
+          "implementation": "server.py with tool handlers for use_persona, get_active_persona, clear_persona, list_personas",
+          "patterns": [
+            "Persona definitions in personas/base/",
+            "State management with PersonaState model",
+            "Tool-based persona lifecycle"
+          ]
+        },
+        "workorder_integration": {
+          "description": "Todo generation and plan tracking from workorders",
+          "implementation": "generate_todo_list and track_plan_execution tools",
+          "patterns": [
+            "Parse plan.json for task breakdown",
+            "Convert to TodoWrite format",
+            "Track execution status"
+          ]
+        }
+      },
+      "files_to_modify": [],
+      "files_to_create": [
+        {
+          "path": "coderef/workorder/test-coderef-personas-injection/analysis.json",
+          "purpose": "Capture real coderef-context analysis output"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-personas-injection/plan.json",
+          "purpose": "Implementation plan for proof test"
+        },
+        {
+          "path": "coderef/workorder/test-coderef-personas-injection/DELIVERABLES.md",
+          "purpose": "Track proof test completion metrics"
+        }
+      ],
+      "files_to_delete": [],
+      "technical_debt": {
+        "identified": [
+          "Missing COMPONENTS.md documentation",
+          "Missing coding standards directory",
+          "No CI configuration"
+        ],
+        "priority": "low (outside scope of this proof test)"
+      }
+    },
+    "4_key_features": {
+      "must_have": [
+        {
+          "id": "F1",
+          "name": "Complete Workflow Execution",
+          "description": "Run /create-workorder workflow from start to finish",
+          "acceptance_criteria": [
+            "context.json is read successfully",
+            "analyze_project_for_planning completes",
+            "create_plan generates plan.json",
+            "validate_implementation_plan scores the plan"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "Capture Real Analysis",
+          "description": "analysis.json contains actual coderef-context tool output",
+          "acceptance_criteria": [
+            "analysis.json exists and is valid JSON",
+            "File counts are accurate",
+            "Persona definitions are listed",
+            "Foundation docs are catalogued"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "Dependency Analysis",
+          "description": "Show persona activation system structure",
+          "acceptance_criteria": [
+            "analysis.json shows src/ and personas/base/ structure",
+            "Tool handlers are identified",
+            "Persona models are captured"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "Expertise Injection Proof",
+          "description": "Demonstrate how personas inject expertise",
+          "acceptance_criteria": [
+            "Persona definitions show specialized knowledge areas",
+            "Tool patterns demonstrate persona activation",
+            "State management shows how expertise is maintained"
+          ]
+        }
+      ],
+      "should_have": [
+        {
+          "id": "F5",
+          "name": "Plan Validation",
+          "description": "Validate plan.json quality",
+          "acceptance_criteria": [
+            "Validation score >= 85",
+            "No critical issues",
+            "Plan follows schema contract"
+          ]
+        }
+      ],
+      "could_have": [
+        {
+          "id": "F6",
+          "name": "Review Report",
+          "description": "Generate human-readable review markdown",
+          "acceptance_criteria": [
+            "Review report shows score and grade",
+            "Issues are categorized by severity",
+            "Recommendations are clear"
+          ]
+        }
+      ]
+    },
+    "5_task_id_system": {
+      "workorder": {
+        "id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+        "name": "Test Coderef Personas Injection",
+        "feature_dir": "coderef/workorder/test-coderef-personas-injection"
+      },
+      "prefix_rules": {
+        "ANALYZE": "Analysis and scanning tasks",
+        "PLAN": "Planning and validation tasks",
+        "DOC": "Documentation tasks",
+        "VERIFY": "Verification and proof tasks"
+      },
+      "tasks": [
+        {
+          "id": "ANALYZE-001",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Read context.json to understand test requirements",
+          "phase": 1,
+          "status": "pending"
+        },
+        {
+          "id": "ANALYZE-002",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Call analyze_project_for_planning to scan coderef-personas",
+          "phase": 1,
+          "status": "pending"
+        },
+        {
+          "id": "ANALYZE-003",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Verify analysis.json was generated with real data",
+          "phase": 1,
+          "status": "pending"
+        },
+        {
+          "id": "PLAN-001",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Call create_plan with analysis data",
+          "phase": 2,
+          "status": "pending"
+        },
+        {
+          "id": "PLAN-002",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Verify plan.json follows schema contract v1.0.0",
+          "phase": 2,
+          "status": "pending"
+        },
+        {
+          "id": "PLAN-003",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Call validate_implementation_plan to score plan",
+          "phase": 2,
+          "status": "pending"
+        },
+        {
+          "id": "VERIFY-001",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Check validation score >= 85",
+          "phase": 3,
+          "status": "pending"
+        },
+        {
+          "id": "VERIFY-002",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Verify persona definitions captured (Ava, Marcus, Quinn, Lloyd)",
+          "phase": 3,
+          "status": "pending"
+        },
+        {
+          "id": "DOC-001",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Generate DELIVERABLES.md template",
+          "phase": 3,
+          "status": "pending"
+        },
+        {
+          "id": "DOC-002",
+          "workorder_id": "WO-TEST-CODEREF-PERSONAS-INJECTION-001",
+          "description": "Document key findings from analysis.json",
+          "phase": 3,
+          "status": "pending"
+        }
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Analysis",
+          "description": "Run coderef-context analysis on coderef-personas project",
+          "tasks": [
+            "ANALYZE-001",
+            "ANALYZE-002",
+            "ANALYZE-003"
+          ],
+          "deliverables": [
+            "context.json (pre-existing)",
+            "analysis.json with real coderef-context output"
+          ],
+          "dependencies": [],
+          "estimated_time": "30-60 seconds"
+        },
+        {
+          "phase": 2,
+          "name": "Planning",
+          "description": "Generate and validate implementation plan",
+          "tasks": [
+            "PLAN-001",
+            "PLAN-002",
+            "PLAN-003"
+          ],
+          "deliverables": [
+            "plan.json following schema v1.0.0",
+            "Validation report with score"
+          ],
+          "dependencies": [
+            "Phase 1 complete (analysis.json available)"
+          ],
+          "estimated_time": "1-2 minutes"
+        },
+        {
+          "phase": 3,
+          "name": "Verification",
+          "description": "Verify proof test results and document findings",
+          "tasks": [
+            "VERIFY-001",
+            "VERIFY-002",
+            "DOC-001",
+            "DOC-002"
+          ],
+          "deliverables": [
+            "DELIVERABLES.md template",
+            "Proof test report with key findings"
+          ],
+          "dependencies": [
+            "Phase 2 complete (plan.json validated)"
+          ],
+          "estimated_time": "1-2 minutes"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": {
+        "required": false,
+        "reason": "Test workorder only - no code changes"
+      },
+      "integration_tests": {
+        "required": false,
+        "reason": "Proof test does not modify integration points"
+      },
+      "e2e_tests": {
+        "required": false,
+        "reason": "Documentation/analysis workflow only"
+      },
+      "validation_checks": [
+        {
+          "check": "Verify analysis.json is valid JSON",
+          "method": "JSON schema validation"
+        },
+        {
+          "check": "Verify plan.json follows schema v1.0.0",
+          "method": "validate_implementation_plan tool"
+        },
+        {
+          "check": "Verify persona definitions are captured",
+          "method": "Manual inspection of analysis.json"
+        },
+        {
+          "check": "Verify workorder_id in all tasks",
+          "method": "Script or manual check"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "analysis.json exists and contains real coderef-context data",
+        "plan.json exists and follows schema contract v1.0.0",
+        "Validation score >= 85",
+        "Persona definitions captured (Ava, Marcus, Quinn, Lloyd, etc.)",
+        "File counts are accurate",
+        "Foundation docs are catalogued",
+        "Workorder ID embedded in plan: WO-TEST-CODEREF-PERSONAS-INJECTION-001"
+      ],
+      "non_functional": [
+        "Analysis completes in under 60 seconds",
+        "Plan generation completes in under 2 minutes",
+        "All generated files are valid JSON"
+      ],
+      "documentation": [
+        "DELIVERABLES.md template generated",
+        "Proof test report documents key findings",
+        "Workorder logged to workorder-log.txt"
+      ],
+      "acceptance": [
+        "All 3 phases complete",
+        "No critical validation issues",
+        "Proof test demonstrates coderef-context tools work correctly"
+      ]
+    },
+    "9_implementation_checklist": {
+      "phase_1_analysis": {
+        "title": "Analysis Phase",
+        "tasks": [
+          {
+            "id": "ANALYZE-001",
+            "description": "Read context.json to understand test requirements",
+            "status": "pending"
+          },
+          {
+            "id": "ANALYZE-002",
+            "description": "Call analyze_project_for_planning to scan coderef-personas",
+            "status": "pending"
+          },
+          {
+            "id": "ANALYZE-003",
+            "description": "Verify analysis.json was generated with real data",
+            "status": "pending"
+          }
+        ]
+      },
+      "phase_2_planning": {
+        "title": "Planning Phase",
+        "tasks": [
+          {
+            "id": "PLAN-001",
+            "description": "Call create_plan with analysis data",
+            "status": "pending"
+          },
+          {
+            "id": "PLAN-002",
+            "description": "Verify plan.json follows schema contract v1.0.0",
+            "status": "pending"
+          },
+          {
+            "id": "PLAN-003",
+            "description": "Call validate_implementation_plan to score plan",
+            "status": "pending"
+          }
+        ]
+      },
+      "phase_3_verification": {
+        "title": "Verification Phase",
+        "tasks": [
+          {
+            "id": "VERIFY-001",
+            "description": "Check validation score >= 85",
+            "status": "pending"
+          },
+          {
+            "id": "VERIFY-002",
+            "description": "Verify persona definitions captured (Ava, Marcus, Quinn, Lloyd)",
+            "status": "pending"
+          },
+          {
+            "id": "DOC-001",
+            "description": "Generate DELIVERABLES.md template",
+            "status": "pending"
+          },
+          {
+            "id": "DOC-002",
+            "description": "Document key findings from analysis.json",
+            "status": "pending"
+          }
+        ]
+      }
+    }
+  }
+}

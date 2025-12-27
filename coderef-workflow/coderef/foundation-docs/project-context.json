@@ -1,0 +1,255 @@
+{
+  "api_context": {
+    "endpoints": [],
+    "count": 0,
+    "frameworks_detected": [],
+    "auth_method": "Unknown",
+    "error_format": "RFC 7807"
+  },
+  "dependencies": {
+    "count": 0,
+    "production": [],
+    "development": [],
+    "outdated": [],
+    "vulns": []
+  },
+  "database": {
+    "tables": [
+      {
+        "name": "FoundationGenerator",
+        "columns": [],
+        "file": "generators\\foundation_generator.py"
+      },
+      {
+        "name": "HandoffGenerator",
+        "columns": [],
+        "file": "generators\\handoff_generator.py"
+      },
+      {
+        "name": "QuickrefGenerator",
+        "columns": [],
+        "file": "generators\\quickref_generator.py"
+      }
+    ],
+    "relationships": [],
+    "migrations": [],
+    "table_count": 3,
+    "has_migrations": false
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_files": [],
+    "contributors": [],
+    "has_git": false
+  },
+  "patterns": {
+    "handlers": [
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "handler_decorators.py"
+      },
+      {
+        "name": "handle_list_templates",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_template",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_foundation_docs",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_individual_doc",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_changelog",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_add_changelog_entry",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_update_changelog",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_quickref_interactive",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_establish_standards",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_audit_codebase",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_check_consistency",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_get_planning_template",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_analyze_project_for_planning",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_validate_implementation_plan",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_plan_review_report",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_create_plan",
+        "file": "tool_handlers.py"
+      },
+      {
+        "name": "handle_gather_context",
+        "file": "tool_handlers.py"
+      }
+    ],
+    "decorators": [
+      {
+        "name": "pytest.mark.asyncio",
+        "count": 62
+      },
+      {
+        "name": "log_invocation",
+        "count": 58
+      },
+      {
+        "name": "mcp_error_handler",
+        "count": 58
+      },
+      {
+        "name": "staticmethod",
+        "count": 16
+      },
+      {
+        "name": "pytest.fixture",
+        "count": 5
+      },
+      {
+        "name": "classmethod",
+        "count": 2
+      },
+      {
+        "name": "wraps",
+        "count": 2
+      },
+      {
+        "name": "app",
+        "count": 2
+      },
+      {
+        "name": "app.list_tools",
+        "count": 1
+      },
+      {
+        "name": "app.call_tool",
+        "count": 1
+      },
+      {
+        "name": "router",
+        "count": 1
+      },
+      {
+        "name": "blueprint",
+        "count": 1
+      },
+      {
+        "name": "heroicons",
+        "count": 1
+      },
+      {
+        "name": "auth_required",
+        "count": 1
+      }
+    ],
+    "error_handling": [
+      "UnicodeDecodeError",
+      "PermissionError",
+      "FileNotFoundError",
+      "IOError",
+      "TimeoutError",
+      "RuntimeError",
+      "ValueError",
+      "ConnectionError",
+      "OSError"
+    ]
+  },
+  "similar_features": [],
+  "existing_docs": {
+    "architecture": {
+      "sections": {
+        "architecture_documentation": "",
+        "overview": "",
+        "module_dependency_graph": "*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*",
+        "code_patterns": "### Handler Functions\n\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_list_templates` in `tool_handlers.py`\n- `handle_get_template` in `tool_handlers.py`\n- `handle_generate_foundation_docs` in `tool_handlers.py`\n- `handle_generate_individual_doc` in `tool_handlers.py`\n- `handle_get_changelog` in `tool_handlers.py`\n- `handle_add_changelog_entry` in `tool_handlers.py`\n- `handle_update_changelog` in `tool_handlers.py`\n\n### Common Decorators\n\n- `@pytest.mark.asyncio` (62 uses)\n- `@log_invocation` (58 uses)\n- `@mcp_error_handler` (58 uses)\n- `@staticmethod` (16 uses)\n- `@pytest.fixture` (5 uses)\n- `@classmethod` (2 uses)\n- `@wraps` (2 uses)\n- `@app` (2 uses)\n- `@app.list_tools` (1 uses)\n- `@app.call_tool` (1 uses)\n\n### Error Types\n\n- `UnicodeDecodeError`\n- `PermissionError`\n- `FileNotFoundError`\n- `IOError`\n- `TimeoutError`\n- `RuntimeError`\n- `ValueError`\n- `ConnectionError`\n- `OSError`\n\n\n*Generated: 2025-12-27T00:51:27.049063*"
+      },
+      "full_content": "# Architecture Documentation\n\n## Overview\n\n# Architecture Documentation\n\n## Module Dependency Graph\n\n*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*\n\n## Code Patterns\n\n### Handler Functions\n\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_list_templates` in `tool_handlers.py`\n- `handle_get_template` in `tool_handlers.py`\n- `handle_generate_foundation_docs` in `tool_handlers.py`\n- `handle_generate_individual_doc` in `tool_handlers.py`\n- `handle_get_changelog` in `tool_handlers.py`\n- `handle_add_changelog_entry` in `tool_handlers.py`\n- `handle_update_changelog` in `tool_handlers.py`\n\n### Common Decorators\n\n- `@pytest.mark.asyncio` (62 uses)\n- `@log_invocation` (58 uses)\n- `@mcp_error_handler` (58 uses)\n- `@staticmethod` (16 uses)\n- `@pytest.fixture` (5 uses)\n- `@classmethod` (2 uses)\n- `@wra\n\n## Module Dependency Graph\n\n*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*\n\n## Code Patterns\n\n### Handler Functions\n\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_my_tool` in `handler_decorators.py`\n- `handle_list_templates` in `tool_handlers.py`\n- `handle_get_template` in `tool_handlers.py`\n- `handle_generate_foundation_docs` in `tool_handlers.py`\n- `handle_generate_individual_doc` in `tool_handlers.py`\n- `handle_get_changelog` in `tool_handlers.py`\n- `handle_add_changelog_entry` in `tool_handlers.py`\n- `handle_update_changelog` in `tool_handlers.py`\n\n### Common Decorators\n\n- `@pytest.mark.asyncio` (62 uses)\n- `@log_invocation` (58 uses)\n- `@mcp_error_handler` (58 uses)\n- `@staticmethod` (16 uses)\n- `@pytest.fixture` (5 uses)\n- `@classmethod` (2 uses)\n- `@wraps` (2 uses)\n- `@app` (2 uses)\n- `@app.list_tools` (1 uses)\n- `@app.call_tool` (1 uses)\n\n### Error Types\n\n- `UnicodeDecodeError`\n- `PermissionError`\n- `FileNotFoundError`\n- `IOError`\n- `TimeoutError`\n- `RuntimeError`\n- `ValueError`\n- `ConnectionError`\n- `OSError`\n\n\n*Generated: 2025-12-27T00:51:27.049063*",
+      "word_count": 259
+    },
+    "schema": {
+      "sections": {
+        "schema_documentation": "",
+        "database_tables": "### FoundationGenerator\n\n*File: `generators\\foundation_generator.py`*\n\n\n### HandoffGenerator\n\n*File: `generators\\handoff_generator.py`*\n\n\n### QuickrefGenerator\n\n*File: `generators\\quickref_generator.py`*\n\n\n\n*Generated: 2025-12-27T00:51:27.049688*"
+      },
+      "full_content": "# Schema Documentation\n\n## Database Tables\n\n### FoundationGenerator\n\n*File: `generators\\foundation_generator.py`*\n\n\n### HandoffGenerator\n\n*File: `generators\\handoff_generator.py`*\n\n\n### QuickrefGenerator\n\n*File: `generators\\quickref_generator.py`*\n\n\n\n*Generated: 2025-12-27T00:51:27.049688*",
+      "word_count": 20
+    },
+    "api": {
+      "sections": {
+        "api_documentation": "",
+        "overview": "- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** RFC 7807\n- **Total Endpoints:** 0",
+        "endpoints": "*No API endpoints detected.*",
+        "authentication": "*Authentication method not detected.*",
+        "error_handling": "**Format:** RFC 7807\n\nExample:\n\n```json\n{\"type\": \"about:blank\", \"status\": 400, \"title\": \"Bad Request\", \"detail\": \"...\"}\n```\n\n*Generated: 2025-12-27T00:51:27.050574*"
+      },
+      "full_content": "# API Documentation\n\n## Overview\n\n- **Framework:** Unknown\n- **Authentication:** Unknown\n- **Error Format:** RFC 7807\n- **Total Endpoints:** 0\n\n## Endpoints\n\n*No API endpoints detected.*\n\n## Authentication\n\n*Authentication method not detected.*\n\n## Error Handling\n\n**Format:** RFC 7807\n\nExample:\n\n```json\n{\"type\": \"about:blank\", \"status\": 400, \"title\": \"Bad Request\", \"detail\": \"...\"}\n```\n\n*Generated: 2025-12-27T00:51:27.050574*",
+      "word_count": 52
+    },
+    "components": null,
+    "readme": {
+      "sections": {
+        "coderef-workflow": "",
+        "overview": "<!-- AGENT: Describe what this project does -->",
+        "quick_stats": "| Metric | Value |\n|--------|-------|\n| Database Tables | 3 |",
+        "quick_start": "<!-- AGENT: Installation and usage instructions -->",
+        "documentation": "- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-27T00:51:27.041376*"
+      },
+      "full_content": "# coderef-workflow\n\n## Overview\n\n<!-- AGENT: Describe what this project does -->\n\n## Quick Stats\n\n| Metric | Value |\n|--------|-------|\n| Database Tables | 3 |\n\n## Quick Start\n\n<!-- AGENT: Installation and usage instructions -->\n\n## Documentation\n\n- [API Reference](coderef/foundation-docs/API.md)\n- [Architecture](coderef/foundation-docs/ARCHITECTURE.md)\n- [Components](coderef/foundation-docs/COMPONENTS.md)\n- [Schema](coderef/foundation-docs/SCHEMA.md)\n\n---\n\n*Generated: 2025-12-27T00:51:27.041376*",
+      "word_count": 51
+    }
+  },
+  "coderef": {
+    "available": false,
+    "element_count": 0,
+    "has_graph": false,
+    "auto_scan_attempted": true,
+    "auto_scan_performed": false,
+    "auto_scan_success": false
+  },
+  "_metadata": {
+    "generated_at": "2025-12-27T01:21:53.096387",
+    "generator": "coderef_foundation_generator",
+    "version": "2.0.0"
+  }
+}

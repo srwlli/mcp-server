@@ -1,0 +1,100 @@
+{
+  "feature_name": "tool-server-migration",
+  "project_path": "C:/Users/willh/.mcp-servers",
+  "analysis": {
+    "current_state": {
+      "tool_distribution": {
+        "coderef-workflow": {
+          "count": 24,
+          "description": "Planning, execution, archive, admin tools",
+          "tools": [
+            "aggregate_agent_deliverables",
+            "analyze_project_for_planning",
+            "archive_feature",
+            "assess_risk",
+            "assign_agent_task",
+            "audit_plans",
+            "coderef_foundation_docs",
+            "create_plan",
+            "execute_plan",
+            "gather_context",
+            "generate_agent_communication",
+            "generate_deliverables_template",
+            "generate_features_inventory",
+            "generate_handoff_context",
+            "generate_plan_review_report",
+            "get_planning_template",
+            "get_workorder_log",
+            "log_workorder",
+            "track_agent_status",
+            "update_all_documentation",
+            "update_deliverables",
+            "update_task_status",
+            "validate_implementation_plan",
+            "verify_agent_completion"
+          ]
+        },
+        "coderef-docs": {
+          "count": "unknown - minimal implementation",
+          "description": "Documentation generation, agent coordination (deprecated/partial)",
+          "status": "server.py indicates planning/execution/archive tools were removed but command files not updated"
+        }
+      },
+      "problem": {
+        "cause": "Tools were moved from coderef-docs to coderef-workflow but command files still reference mcp__coderef-docs__ prefix",
+        "impact": "Duplicate tool references in CLI causing confusion when invoking /create-plan and other commands",
+        "evidence": "Server.py comments list 18+ tools in 'Removed tools (now in coderef-workflow)'"
+      }
+    },
+    "tools_to_migrate": {
+      "planning_tools": [
+        "get_planning_template",
+        "analyze_project_for_planning",
+        "gather_context",
+        "create_plan",
+        "validate_implementation_plan",
+        "generate_plan_review_report",
+        "generate_deliverables_template",
+        "generate_handoff_context"
+      ],
+      "execution_tools": [
+        "execute_plan",
+        "update_task_status"
+      ],
+      "archive_tools": [
+        "archive_feature"
+      ],
+      "admin_tools": [
+        "log_workorder",
+        "get_workorder_log",
+        "update_all_documentation",
+        "audit_plans",
+        "coderef_foundation_docs",
+        "generate_features_inventory"
+      ]
+    },
+    "tools_to_keep_in_coderef_docs": [
+      "generate_agent_communication",
+      "assign_agent_task",
+      "verify_agent_completion",
+      "aggregate_agent_deliverables",
+      "track_agent_status"
+    ],
+    "files_affected": {
+      "servers": [
+        "coderef-workflow/server.py",
+        "coderef-docs/server.py"
+      ],
+      "commands": {
+        "count": 65,
+        "location": "C:/Users/willh/.claude/commands/*.md",
+        "pattern": "All files with mcp__coderef-docs__ references need updates"
+      }
+    },
+    "estimated_scope": {
+      "tools_to_move": 18,
+      "command_files_to_update": "~40+ (those using planning/execution/archive/admin tools)",
+      "git_commits": "~18 (one per tool moved)"
+    }
+  }
+}

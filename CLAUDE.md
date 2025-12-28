@@ -1,18 +1,18 @@
 # CodeRef Ecosystem - AI Context Documentation
 
-**Project:** CodeRef Ecosystem (4-Server MCP System)
+**Project:** CodeRef Ecosystem (5-Server MCP System)
 **Version:** 1.0.0
 **Status:** ✅ Production
 **Created:** 2025-12-25
-**Last Updated:** 2025-12-25
+**Last Updated:** 2025-12-28
 
 ---
 
 ## Quick Summary
 
-**CodeRef Ecosystem** is an integrated system of 4 MCP servers that enables AI agents to plan, understand, implement, and document software features with complete code context and dependency awareness.
+**CodeRef Ecosystem** is an integrated system of 5 MCP servers that enables AI agents to plan, understand, implement, test, and document software features with complete code context and dependency awareness.
 
-**Core Innovation:** Solves the "agent blind coding" problem by combining code intelligence (coderef-context), structured planning (coderef-workflow), expert personas (coderef-personas), and documentation automation (coderef-docs).
+**Core Innovation:** Solves the "agent blind coding" problem by combining code intelligence (coderef-context), structured planning (coderef-workflow), expert personas (coderef-personas), documentation automation (coderef-docs), and test automation (coderef-testing).
 
 **Latest Update (v1.1.0):**
 - ✅ Enhanced /stub command with optional conversation context capture
@@ -25,8 +25,9 @@
 - **coderef-workflow** = Planning & orchestration (10-section plans)
 - **coderef-docs** = Documentation (POWER framework templates)
 - **coderef-personas** = Expert agents (9 domain specialists)
+- **coderef-testing** = Test automation (pytest integration, coverage, reporting)
 
-Together they form a complete feature lifecycle: Context → Plan → Code (with intelligence) → Documentation → Archive.
+Together they form a complete feature lifecycle: Context → Plan → Code (with intelligence) → Test → Documentation → Archive.
 
 ---
 
@@ -76,7 +77,7 @@ coderef-docs (/record-changes)
 Complete, documented, tested feature
 ```
 
-### The 4 MCP Servers
+### The 5 MCP Servers
 
 | Server | Purpose | Key Tools | Status |
 |--------|---------|-----------|--------|
@@ -84,6 +85,7 @@ Complete, documented, tested feature
 | **coderef-workflow** | Planning & Orchestration | gather_context, create_plan, execute_plan, verify_agent, archive | ✅ Production (v1.1.0 workorder-centric) |
 | **coderef-docs** | Documentation | generate_docs, record_changes, establish_standards, audit | ✅ Production (POWER framework) |
 | **coderef-personas** | Expert Agents | use_persona, create_custom_persona (9 personas) | ✅ Production |
+| **coderef-testing** | Test Automation | run_tests, test_coverage, test_health, discover_tests | ✅ Production (pytest integration) |
 
 ---
 
@@ -191,6 +193,11 @@ C:\Users\willh\.mcp-servers/
 │   ├── personas/base/                  # 9 domain experts
 │   ├── .claude/commands/               # Persona commands
 │   └── CLAUDE.md
+├── coderef-testing/                    # Test Automation (Python)
+│   ├── server.py                       # MCP server
+│   ├── pytest_runner.py                # pytest integration
+│   ├── .claude/commands/               # Test commands
+│   └── CLAUDE.md
 ├── CLAUDEMD-TEMPLATE.json              # Universal doc template (v1.0.0)
 ├── CLAUDE.md                           # This file (ecosystem overview)
 ├── README.md                           # User-facing ecosystem guide
@@ -252,12 +259,13 @@ C:\Users\willh\.mcp-servers/
 
 ### Development
 ```bash
-# Test all 4 servers
+# Test all 5 servers
 cd C:\Users\willh\.mcp-servers
 python -m coderef-context.server           # Start coderef-context
 python -m coderef-workflow.server          # Start coderef-workflow
 python -m coderef-docs.server              # Start coderef-docs
 python -m coderef-personas.server          # Start coderef-personas
+python -m coderef-testing.server           # Start coderef-testing
 
 # Verify MCP configuration
 cat ~/.mcp.json                            # Check configuration
@@ -268,6 +276,7 @@ cat ~/.mcp.json                            # Check configuration
 /stub                          # Capture quick idea + optional conversation context
 /create-workorder              # Full planning workflow
 /align-plan                    # Align plan with todo list for tracking
+/run-tests                     # Run test suite with coverage
 /record-changes                # Auto-detect & record changes
 /generate-docs                 # Create foundation docs
 /archive-feature               # Move to archive
@@ -321,14 +330,14 @@ rm "C:\Users\willh\.cursor\projects\c-Users-willh-Desktop-projects-current-locat
 
 **Result:**
 - ✅ Duplicate commands disappear
-- ✅ All 4 servers (coderef-context, coderef-docs, coderef-personas, coderef-workflow) refresh
+- ✅ All 5 servers (coderef-context, coderef-docs, coderef-personas, coderef-workflow, coderef-testing) refresh
 - ✅ Global commands from `~/.claude/commands/` load cleanly
 - ✅ No stale references
 
 ### Important Notes
 
 **Single Cache for All Servers:**
-The `mcp-cache.json` file contains cached definitions for ALL 4 MCP servers. Deleting one file clears the cache for all servers simultaneously.
+The `mcp-cache.json` file contains cached definitions for ALL 5 MCP servers. Deleting one file clears the cache for all servers simultaneously.
 
 **Project-Specific Caches:**
 Each Claude Code project has its own cache. If you work on multiple projects, each may have a separate `mcp-cache.json` file in its own `.cursor/projects/{PROJECT_ID}/` directory.
@@ -449,4 +458,4 @@ Agent: "Now I know what breaks. Here's my implementation plan."
 
 **Maintained by:** willh, Claude Code AI
 
-**System Status:** ✅ Production Ready - All 4 servers operational, workorder-centric architecture fully integrated, complete feature lifecycle tested
+**System Status:** ✅ Production Ready - All 5 servers operational, workorder-centric architecture fully integrated, complete feature lifecycle tested

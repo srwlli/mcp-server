@@ -81,7 +81,7 @@ Complete, documented, tested feature
 
 | Server | Purpose | Key Tools | Status |
 |--------|---------|-----------|--------|
-| **coderef-context** | Code Intelligence | scan, query, impact, complexity, patterns, drift | ✅ Production (wraps @coderef/core) |
+| **coderef-context** | Code Intelligence | scan, query, impact, complexity, patterns, tag, drift | ✅ Production (wraps @coderef/core) |
 | **coderef-workflow** | Planning & Orchestration | gather_context, create_plan, execute_plan, verify_agent, archive | ✅ Production (v1.1.0 workorder-centric) |
 | **coderef-docs** | Documentation | generate_docs, record_changes, establish_standards, audit | ✅ Production (POWER framework) |
 | **coderef-personas** | Expert Agents | use_persona, create_custom_persona (9 personas) | ✅ Production |

@@ -15,6 +15,7 @@ Tools exposed:
 - /validate - Validate CodeRef2 references
 - /drift - Detect drift between index and code
 - /diagram - Generate dependency diagrams
+- /tag - Add CodeRef2 tags to source files
 
 Architecture:
 - Each tool wraps a @coderef/core CLI command
@@ -22,7 +23,7 @@ Architecture:
 - JSON parsing for agent consumption
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __mcp_version__ = "1.0"
 
 import asyncio
@@ -337,6 +338,54 @@ async def list_tools() -> List[Tool]:
                 "required": ["project_path"]
             }
         ),
+        Tool(
+            name="coderef_tag",
+            description="Add CodeRef2 tags to source files for better tracking and validation",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "File or directory path to tag"
+                    },
+                    "dry_run": {
+                        "type": "boolean",
+                        "description": "Preview changes without writing to files",
+                        "default": False
+                    },
+                    "force": {
+                        "type": "boolean",
+                        "description": "Force update existing tags",
+                        "default": False
+                    },
+                    "verbose": {
+                        "type": "boolean",
+                        "description": "Show detailed output",
+                        "default": False
+                    },
+                    "update_lineno": {
+                        "type": "boolean",
+                        "description": "Update line numbers in existing tags",
+                        "default": False
+                    },
+                    "include_private": {
+                        "type": "boolean",
+                        "description": "Include private elements (starting with _)",
+                        "default": False
+                    },
+                    "lang": {
+                        "type": "string",
+                        "description": "File extensions to process (comma-separated)",
+                        "default": "ts,tsx,js,jsx"
+                    },
+                    "exclude": {
+                        "type": "string",
+                        "description": "Exclusion patterns (comma-separated)"
+                    }
+                },
+                "required": ["path"]
+            }
+        ),
     ]
 
 
@@ -369,6 +418,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             return await handle_coderef_drift(arguments)
         elif name == "coderef_diagram":
             return await handle_coderef_diagram(arguments)
+        elif name == "coderef_tag":
+            return await handle_coderef_tag(arguments)
         else:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
 
@@ -938,6 +989,66 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
         except json.JSONDecodeError:
             # If not JSON, return as-is
             return [TextContent(type="text", text=stdout_text)]
+
+    except Exception as e:
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+
+async def handle_coderef_tag(args: dict) -> list[TextContent]:
+    """Handle /tag tool - Add CodeRef2 tags to source files.
+
+    Uses async subprocess to prevent blocking the event loop.
+    """
+    path = args.get("path")
+    if not path:
+        return [TextContent(type="text", text="Error: path parameter is required")]
+
+    # Build CLI command: coderef tag <path> [options]
+    cmd = [*CLI_COMMAND, "tag", path]
+
+    # Add optional flags
+    if args.get("dry_run", False):
+        cmd.append("--dry-run")
+    if args.get("force", False):
+        cmd.append("--force")
+    if args.get("verbose", False):
+        cmd.append("--verbose")
+    if args.get("update_lineno", False):
+        cmd.append("--update-lineno")
+    if args.get("include_private", False):
+        cmd.append("--include-private")
+
+    # Add optional parameters
+    if "lang" in args:
+        cmd.extend(["--lang", args["lang"]])
+    if "exclude" in args:
+        cmd.extend(["--exclude", args["exclude"]])
+
+    try:
+        # Use async subprocess instead of blocking subprocess.run()
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(),
+                timeout=120
+            )
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+            return [TextContent(type="text", text="Error: Tagging timeout (120s exceeded)")]
+
+        if process.returncode != 0:
+            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
+
+        stdout_text = stdout.decode()
+
+        # Return the output (shows files tagged, elements processed, etc.)
+        return [TextContent(type="text", text=stdout_text)]
 
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]

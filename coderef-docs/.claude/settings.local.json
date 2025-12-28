@@ -26,7 +26,12 @@
       "Bash(timeout 10 python:*)",
       "Bash(cat:*)",
       "Bash(proof_test_output.txt)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__coderef-docs__generate_foundation_docs",
+      "Bash(timeout 3 python:*)",
+      "Bash(test:*)",
+      "Bash(coderef --version:*)",
+      "Bash(xargs:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

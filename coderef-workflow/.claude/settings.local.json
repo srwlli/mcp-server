@@ -15,7 +15,16 @@
       "Bash(git push)",
       "mcp__coderef-workflow__gather_context",
       "mcp__coderef-workflow__coderef_foundation_docs",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(git show:*)",
+      "Bash(find:*)",
+      "mcp__coderef-docs__generate_foundation_docs",
+      "mcp__coderef-docs__generate_individual_doc",
+      "mcp__coderef-docs__generate_quickref_interactive",
+      "Bash(cat:*)",
+      "Bash(node dist/cli.js:*)",
+      "Bash(node:*)",
+      "Bash(coderef-index.json)"
     ],
     "deny": [],
     "ask": []

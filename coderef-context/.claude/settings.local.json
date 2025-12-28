@@ -9,7 +9,10 @@
       "Bash(CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\" python -m pytest:*)",
       "Bash(python3:*)",
       "Bash(python:*)",
-      "Bash(export CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\")"
+      "Bash(export CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\")",
+      "Bash(where coderef:*)",
+      "Bash(timeout 3 python:*)",
+      "Bash(coderef scan:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

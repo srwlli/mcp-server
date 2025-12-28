@@ -8,7 +8,7 @@
 
 ## Purpose
 
-**coderef-docs** is an MCP server providing 11 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
+**coderef-docs** is an MCP server providing 10 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
 
 **Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection.
 
@@ -49,7 +49,7 @@ Add to `~/.mcp.json` or `.claude/settings.json`:
 
 ```bash
 /generate-docs              # Generate 5 foundation docs with context injection
-/generate-quickref          # Interactive quickref guide generation
+/generate-user-docs         # Generate 4 user-facing docs (my-guide, USER-GUIDE, FEATURES, quickref)
 /record-changes            # Smart changelog with git auto-detection
 /establish-standards        # Extract coding standards from codebase
 /audit-codebase            # Check standards compliance (0-100 score)
@@ -101,13 +101,19 @@ Generate 5 comprehensive docs with real code intelligence:
 - Violations by severity (critical/major/minor)
 - Fix suggestions
 
-### 4. Interactive Quickref Generation
+### 4. User-Facing Documentation Generation
 
-**Tool:** `generate_quickref_interactive`
+**Command:** `/generate-user-docs`
+
+**Generates 4 user docs:**
+- my-guide.md - Concise tool reference (60-80 lines)
+- USER-GUIDE.md - Comprehensive tutorial
+- FEATURES.md - Feature overview
+- quickref.md - Scannable quick reference (150-250 lines)
 
 **Supports:** CLI, Web, API, Desktop, Library applications
 
-**Output:** Scannable `quickref.md` (150-250 lines)
+**Output:** All files saved to `coderef/user/`
 
 ---
 
@@ -153,14 +159,13 @@ See [ARCHITECTURE.md](coderef/foundation-docs/ARCHITECTURE.md) for details.
 | `generate_foundation_docs` | Create 5 docs with context injection | Generator |
 | `generate_individual_doc` | Create single doc | Generator |
 | `generate_quickref_interactive` | Interactive quickref ⭐ | Generator |
-| `get_changelog` | Query changelog | Reader |
 | `add_changelog_entry` | Manual changelog entry | Writer |
 | `record_changes` | Smart recording with git ⭐ | Agentic |
 | `establish_standards` | Extract coding standards | Analyzer |
 | `audit_codebase` | Compliance check (0-100 score) | Auditor |
 | `check_consistency` | Pre-commit gate ⭐ | Auditor |
 
-**Total:** 11 tools across 3 domains (Documentation, Changelog, Standards)
+**Total:** 10 tools across 3 domains (Documentation, Changelog, Standards)
 
 See [API.md](coderef/foundation-docs/API.md) for API reference.
 
@@ -216,7 +221,8 @@ coderef-docs/
 ├── templates/power/               # POWER templates
 ├── tests/                         # Test suites
 ├── coderef/                       # Output artifacts
-│   ├── foundation-docs/           # Generated docs
+│   ├── foundation-docs/           # Technical docs (API, ARCHITECTURE, etc.)
+│   ├── user/                      # User-facing docs (my-guide, USER-GUIDE, etc.)
 │   ├── changelog/                 # CHANGELOG.json
 │   └── standards/                 # Standards docs
 ├── CLAUDE.md                      # AI context (v3.2.0)
@@ -252,9 +258,27 @@ Tool(
 
 ### With @coderef/core CLI
 
-**Detection Order:**
-1. Check `coderef --version` in PATH (global npm install)
-2. Fallback to hardcoded path
+**CLI Path Resolution Order:**
+1. `CODEREF_CLI_PATH` environment variable (explicit override)
+2. Global `coderef` command in PATH (npm install -g @coderef/cli)
+3. Hardcoded path (deprecated, shows warning)
+
+**Configuration:**
+
+```bash
+# Option 1: Environment Variable (Recommended)
+# Windows
+set CODEREF_CLI_PATH=C:\path\to\coderef\packages\cli\dist\cli.js
+
+# Linux/Mac
+export CODEREF_CLI_PATH=/path/to/coderef/packages/cli/dist/cli.js
+
+# Option 2: Global Install (Easiest)
+npm install -g @coderef/cli
+
+# Option 3: Local Development
+# Uses hardcoded path (shows deprecation warning)
+```
 
 **Usage:**
 - Extracts API endpoints
@@ -268,7 +292,7 @@ Tool(
 **Integration Points:**
 - Workflow calls `generate_foundation_docs` after feature completion
 - Workflow calls `record_changes` to update changelog
-- Workflow calls `generate_quickref_interactive` for quickref guides
+- Workflow uses `/generate-user-docs` for user-facing documentation
 
 ---
 
@@ -357,6 +381,6 @@ Tool(
 
 **Maintained by:** willh, Claude Code AI
 
-**For AI Agents:** This server provides 11 specialized documentation tools with optional real code intelligence injection via @coderef/core CLI.
+**For AI Agents:** This server provides 10 specialized documentation tools with optional real code intelligence injection via @coderef/core CLI.
 
 *Generated: 2025-12-27*

@@ -12,7 +12,6 @@ Quick reference for MCP documentation tools.
 
 ## Changelog Management
 
-- **get_changelog** - Retrieve changelog by version or type
 - **add_changelog_entry** - Add changelog entry with full metadata
 - **record_changes** - Auto-detect git changes and create changelog entry
 
@@ -26,11 +25,10 @@ Quick reference for MCP documentation tools.
 
 **Documentation:**
 - `/generate-docs` - Generate 5 foundation docs
-- `/generate-quickref` - Interactive quickref generation
+- `/generate-user-docs` - Generate 4 user-facing docs
 
 **Changelog:**
 - `/record-changes` - Smart changelog with git detection
-- `/add-changelog` - Manual changelog entry
 
 **Standards:**
 - `/establish-standards` - Extract coding standards

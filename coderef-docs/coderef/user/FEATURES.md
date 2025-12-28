@@ -96,7 +96,6 @@ Maintains a structured, searchable changelog with:
 
 - `record_changes` - Smart recording with git auto-detection
 - `add_changelog_entry` - Manual entry with full control
-- `get_changelog` - Query by version/type/breaking
 
 ---
 
@@ -160,7 +159,6 @@ Establishes and enforces coding standards by:
 | **Update after refactor** | Documentation Generation | `generate_foundation_docs` | ~2 min | Refreshed docs |
 | **Quick tool lookup** | Documentation Generation | `generate_quickref_interactive` | ~5 min | quickref.md |
 | **Track feature completion** | Changelog Management | `record_changes` | ~30 sec | CHANGELOG entry |
-| **Release notes** | Changelog Management | `get_changelog` | instant | Filtered changelog |
 | **Setup team standards** | Standards Enforcement | `establish_standards` | ~5 min | 4 standards docs |
 | **Check code quality** | Standards Enforcement | `audit_codebase` | ~10 min | Compliance report |
 | **Pre-commit check** | Standards Enforcement | `check_consistency` | ~10 sec | Pass/fail |

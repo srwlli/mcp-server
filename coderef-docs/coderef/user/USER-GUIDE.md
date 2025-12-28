@@ -303,19 +303,6 @@ Smart changelog with git auto-detection
 
 ---
 
-#### `/add-changelog`
-Manual changelog entry
-
-**When to use:**
-- Non-git environments
-- Retroactive changelog entries
-- Custom metadata needed
-
-**Time:** ~1 minute
-**Output:** CHANGELOG.json entry
-
----
-
 ### Standards Tools
 
 #### `/establish-standards`
@@ -546,7 +533,7 @@ coderef --version
 | Need | Command | Time | Output |
 |------|---------|------|--------|
 | Complete docs | `/generate-docs` | ~2 min | 5 files |
-| Quick reference | `/generate-quickref` | ~5 min | quickref.md |
+| User docs | `/generate-user-docs` | ~5 min | 4 user docs |
 | Update changelog | `/record-changes` | ~30 sec | CHANGELOG entry |
 | Set standards | `/establish-standards` | ~5 min | 4 standards files |
 | Check compliance | `/audit-codebase` | ~10 min | Score + report |

@@ -301,67 +301,6 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
 
 @log_invocation
 @mcp_error_handler
-async def handle_get_changelog(arguments: dict) -> list[TextContent]:
-    """
-    Handle get_changelog tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    # Validate inputs at boundary (REF-003)
-    project_path = validate_project_path_input(arguments.get("project_path"))
-    version = arguments.get("version")
-    if version:
-        version = validate_version_format(version)
-
-    change_type = arguments.get("change_type")
-    breaking_only = arguments.get("breaking_only", False)
-
-    logger.info(f"Reading changelog from: {project_path}", extra={'version': version, 'change_type': change_type, 'breaking_only': breaking_only})
-
-    # Determine changelog location
-    changelog_path = Path(project_path) / Paths.CHANGELOG_DIR / Files.CHANGELOG
-
-    generator = ChangelogGenerator(changelog_path)
-
-    if breaking_only:
-        # Get only breaking changes
-        logger.debug("Filtering for breaking changes only")
-        changes = generator.get_breaking_changes()
-        result = f"Breaking Changes:\n\n"
-        result += json.dumps(changes, indent=2)
-
-    elif version:
-        # Get specific version
-        logger.debug(f"Fetching changes for version: {version}")
-        version_data = generator.get_version_changes(version)
-        if version_data:
-            result = f"Changes for version {version}:\n\n"
-            result += json.dumps(version_data, indent=2)
-        else:
-            logger.warning(f"Version not found in changelog: {version}")
-            result = f"Version {version} not found in changelog"
-
-    elif change_type:
-        # Filter by type
-        logger.debug(f"Filtering by change type: {change_type}")
-        changes = generator.get_changes_by_type(change_type)
-        result = f"Changes of type '{change_type}':\n\n"
-        result += json.dumps(changes, indent=2)
-
-    else:
-        # Get all changelog
-        logger.debug("Fetching full changelog")
-        data = generator.read_changelog()
-        result = "Full Changelog:\n\n"
-        result += json.dumps(data, indent=2)
-
-    logger.info("Successfully retrieved changelog")
-    return [TextContent(type="text", text=result)]
-
-
-@log_invocation
-@mcp_error_handler
 async def handle_add_changelog_entry(arguments: dict) -> list[TextContent]:
     """
     Handle add_changelog_entry tool call.
@@ -440,7 +379,7 @@ async def handle_add_changelog_entry(arguments: dict) -> list[TextContent]:
     result += f"Version: {validated['version']}\n"
     result += f"Type: {validated['change_type']}\n"
     result += f"Title: {validated['title']}\n\n"
-    result += f"The changelog has been updated. Use get_changelog to view changes."
+    result += f"The changelog has been updated. View coderef/changelog/CHANGELOG.json to see all changes."
 
     logger.info(f"Successfully added changelog entry: {change_id}", extra={'version': validated['version'], 'change_id': change_id})
     return [TextContent(type="text", text=result)]
@@ -1077,14 +1016,13 @@ async def handle_check_consistency(arguments: dict) -> list[TextContent]:
 
 
 # =============================================================================
-# Tool handlers registry - MINIMAL (11 documentation tools)
+# Tool handlers registry - MINIMAL (10 documentation tools)
 # =============================================================================
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
     'get_template': handle_get_template,
     'generate_foundation_docs': handle_generate_foundation_docs,
     'generate_individual_doc': handle_generate_individual_doc,
-    'get_changelog': handle_get_changelog,
     'add_changelog_entry': handle_add_changelog_entry,
     'record_changes': handle_record_changes,
     'generate_quickref_interactive': handle_generate_quickref_interactive,

@@ -10,7 +10,7 @@
 
 ## Quick Summary
 
-**coderef-docs** is a focused MCP server providing **11 specialized tools** for documentation generation, changelog management, standards enforcement, and quickref guides. It works with coderef-workflow to deliver end-to-end feature lifecycle documentation.
+**coderef-docs** is a focused MCP server providing **10 specialized tools** for documentation generation, changelog management, standards enforcement, and quickref guides. It works with coderef-workflow to deliver end-to-end feature lifecycle documentation.
 
 **Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with code intelligence injection.
 
@@ -40,7 +40,8 @@ Together they form a complete feature lifecycle: Context → Plan → Code → D
 All tools, commands, and artifacts must use **global paths only**:
 - `~/.claude/commands/` (commands)
 - `coderef/workorder/` (plans)
-- `coderef/foundation-docs/` (documentation)
+- `coderef/foundation-docs/` (technical documentation)
+- `coderef/user/` (user-facing documentation)
 - `coderef/archived/` (completed features)
 - `coderef/standards/` (standards)
 - MCP tools (global endpoints only)
@@ -58,16 +59,16 @@ Generates all project documentation artifacts (README, ARCHITECTURE, SCHEMA, API
 
 ### Documentation Domains
 ```
-Foundation Docs → README, ARCHITECTURE, SCHEMA, API, COMPONENTS
+Foundation Docs → README, ARCHITECTURE, SCHEMA, API, COMPONENTS (coderef/foundation-docs/)
+User Docs → my-guide, USER-GUIDE, FEATURES, quickref (coderef/user/)
 Changelog Ops → Get, add, and record changes with git auto-detection
 Standards & Compliance → Extract patterns, audit for violations, pre-commit checks
-Quickref → Interactive generation for any app type
 ```
 
 ### Key Integration Points
 - **Depends on:** coderef-workflow (for feature context), git (for changelog recording)
 - **Used by:** AI agents and users for documentation workflows
-- **Orchestrated via:** 26 slash commands in `~/.claude/commands/`
+- **Orchestrated via:** 22 slash commands in `~/.claude/commands/`
 
 ---
 
@@ -80,14 +81,13 @@ Quickref → Interactive generation for any app type
 | `generate_foundation_docs` | Create README, ARCHITECTURE, SCHEMA, etc. | Generator |
 | `generate_individual_doc` | Create single doc from template | Generator |
 | `generate_quickref_interactive` | Interactive quickref for any app type ⭐ | Generator |
-| `get_changelog` | Query changelog by version/type | Reader |
 | `add_changelog_entry` | Manually add changelog entry | Writer |
 | `record_changes` | Smart recording with git auto-detection ⭐ | Agentic |
 | `establish_standards` | Extract coding standards from codebase | Analyzer |
 | `audit_codebase` | Check standards compliance (0-100 score) | Auditor |
 | `check_consistency` | Pre-commit gate for staged changes | Auditor |
 
-**Total:** 11 tools across 3 domains (Documentation, Changelog, Standards)
+**Total:** 10 tools across 3 domains (Documentation, Changelog, Standards)
 
 ---
 
@@ -121,11 +121,11 @@ coderef-docs/
 ├── README.md                      # User-facing guide
 ├── CLAUDE.md                      # This file (AI context, v3.2.0)
 ├── tests/                         # Comprehensive proof tests (30 tests, 27 passing)
-└── .claude/commands/              # 26 slash commands
-    ├── /generate-docs
-    ├── /generate-quickref
-    ├── /record-changes
-    └── {22 others}
+└── .claude/commands/              # 22 slash commands
+    ├── /generate-docs              # Foundation docs
+    ├── /generate-user-docs         # User-facing docs
+    ├── /record-changes             # Smart changelog
+    └── {19 others}
 ```
 
 ---
@@ -209,7 +209,7 @@ coderef-docs/
 - ✅ Standards establishment and compliance auditing system
 - ✅ Interactive quickref generation for 5 app types (CLI, Web, API, Desktop, Library)
 - ✅ Context injection from @coderef/core CLI (extractors.py)
-- ✅ 26 slash commands registered in ~/.claude/commands/
+- ✅ 22 slash commands registered in ~/.claude/commands/
 - ✅ Full MCP protocol compliance (JSON-RPC 2.0 over stdio)
 
 ### Testing Status
@@ -245,7 +245,7 @@ mypy src/
 ### Usage / Slash Commands
 ```bash
 /generate-docs              # Generate foundation docs (README, ARCHITECTURE, etc)
-/generate-quickref          # Interactive quickref for any app type
+/generate-user-docs         # Generate all 4 user-facing docs (my-guide, USER-GUIDE, FEATURES, quickref)
 /record-changes             # Smart changelog with git auto-detection
 /establish-standards        # Extract coding standards
 /audit-codebase            # Check standards compliance (0-100 score)
@@ -261,7 +261,12 @@ mypy src/
 User: /generate-docs
 Tool: Analyzes project structure
 Claude: Generates and fills POWER templates
-Output: README.md, ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md
+Output: README.md (root), ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md (coderef/foundation-docs/)
+
+User: /generate-user-docs
+Tool: Generates 4 user-facing docs sequentially
+Output: my-guide.md, USER-GUIDE.md, FEATURES.md, quickref.md (coderef/user/)
+
 All docs follow POWER framework for consistency
 ```
 

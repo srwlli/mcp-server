@@ -1,7 +1,7 @@
 # personas-mcp Quick Reference
 
 **Project:** Expert agent personas for AI assistants via MCP
-**Version:** 1.3.0
+**Version:** 1.5.0
 
 ---
 
@@ -19,6 +19,7 @@
 
 ### Persona Shortcuts
 - **/use-persona <name>** - Activate a persona
+- **/coderef-mcp-lead** - Quick activation of Lead System Architect
 - **/lloyd** - Quick activation of Lloyd project coordinator
 - **/ava** - Quick activation of Ava, the Frontend Specialist
 - **/marcus** - Quick activation of Marcus, the Backend Specialist
@@ -36,11 +37,24 @@
   - Tool design best practices and composability
   - JSON-RPC 2.0 communication and error handling
 
-- **lloyd-expert** (v1.1.0)
+- **coderef-mcp-lead** (v1.1.0)
+  - Lead system architect for all 5 MCP servers (context, workflow, docs, personas, testing)
+  - MCP server architecture and Python SDK patterns
+  - Tool interaction flows and cross-server dependencies
+  - Global deployment architecture and workorder-centric workflow
+  - Server communication via JSON-RPC 2.0
+  - Integration testing and troubleshooting across servers
+  - System-level analysis and optimization
+  - Slash command: /coderef-mcp-lead
+
+- **lloyd** (v1.5.0)
   - Project coordinator and technical leader (Scrum Master + Tech Lead)
-  - Task decomposition and progress tracking
+  - Orchestrates complete 11-step `/create-workorder` workflow
+  - Foundation docs generation, plan validation, task alignment
+  - Task decomposition and progress tracking (TodoWrite)
   - Uses docs-mcp and coderef-mcp tools for planning and analysis
-  - Coordinates multi-agent execution with Agents 2-4
+  - Coordinates multi-agent execution with communication.json protocol
+  - Pre-execution git checkpoints for approved plans
 
 ### Multi-Agent Execution Agents (v1.2.0)
 
@@ -112,6 +126,7 @@
 ### Activate Expert Persona
 ```
 /use-persona mcp-expert
+/coderef-mcp-lead
 /lloyd
 /ava
 /marcus
@@ -156,4 +171,4 @@ Deactivates current persona
 
 ---
 
-**Last Updated:** 2025-12-25
+**Last Updated:** 2025-12-28

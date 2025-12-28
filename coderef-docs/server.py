@@ -168,33 +168,6 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
-            name="get_changelog",
-            description="Get project changelog with structured change history for agent context. Returns all changes or filtered by version/type.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "project_path": {
-                        "type": "string",
-                        "description": "Absolute path to project directory"
-                    },
-                    "version": {
-                        "type": "string",
-                        "description": "Optional: Get specific version (e.g., '1.0.1'). Omit for all versions."
-                    },
-                    "change_type": {
-                        "type": "string",
-                        "enum": ["bugfix", "enhancement", "feature", "breaking_change", "deprecation", "security"],
-                        "description": "Optional: Filter by change type"
-                    },
-                    "breaking_only": {
-                        "type": "boolean",
-                        "description": "Optional: Show only breaking changes"
-                    }
-                },
-                "required": ["project_path"]
-            }
-        ),
-        Tool(
             name="add_changelog_entry",
             description="Add a new entry to the project changelog. Requires all change details including version, type, title, description, files, reason, and impact.",
             inputSchema={

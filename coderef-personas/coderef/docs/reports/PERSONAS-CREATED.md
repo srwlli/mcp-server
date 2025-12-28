@@ -8,13 +8,16 @@
 
 ## Overview
 
-Successfully created **10 independent personas** for the personas-mcp MCP server:
+Successfully created **11 independent personas** for the personas-mcp MCP server:
 
 **Expert Personas (4):**
 - **mcp-expert** - MCP protocol and server implementation expert
 - **docs-expert** - Documentation and planning expert (docs-mcp tools)
 - **coderef-expert** - CodeRef-MCP server building expert
 - **nfl-scraper-expert** - NFL data scraping and next-scraper platform expert
+
+**Lead Architect:**
+- **coderef-mcp-lead** - Lead system architect overseeing all 5 MCP servers (Agent 0)
 
 **Coordinator:**
 - **lloyd-expert** - AI project coordinator and technical leader (Agent 1)
@@ -91,7 +94,48 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 2. docs-expert (Base)
+### 2. coderef-mcp-lead (Custom)
+**File:** `personas/custom/coderef-mcp-lead.json`
+**Version:** 1.1.0
+**Parent:** null
+**Created:** 2025-12-28
+
+**Role:** Lead system architect overseeing the complete coderef MCP ecosystem
+
+**Expertise (10 areas):**
+- MCP server architecture (all 5 servers: context, workflow, docs, personas, testing)
+- Python MCP SDK and async patterns
+- Tool interaction flows and cross-server dependencies
+- Global deployment architecture (~/.mcp-servers)
+- Workorder-centric workflow system
+- coderef-dashboard UI and monitoring
+- Server communication via JSON-RPC 2.0
+- MCP tool schema design and validation
+- Server troubleshooting and debugging
+- Integration testing across servers
+
+**Activation:**
+- `/coderef-mcp-lead`
+
+**Use Cases:**
+- Debugging MCP server integration issues
+- Adding new tools to any of the 5 servers
+- Understanding and explaining tool interaction flows
+- Optimizing server performance
+- Extending server capabilities with new features
+- Troubleshooting cross-server communication
+- Planning new ecosystem features
+- Maintaining consistency across servers
+- Documenting server architecture
+- Training agents on ecosystem usage
+
+**System Prompt:** ~1,500 lines covering system architecture, server communication, deployment strategies, tool interaction patterns
+
+**Key Difference:** This persona provides leadership and oversight across all 5 MCP servers, with system-level expertise and cross-server integration knowledge.
+
+---
+
+### 4. docs-expert (Base)
 **File:** `personas/base/docs-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -138,7 +182,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 3. coderef-expert (Base)
+### 5. coderef-expert (Base)
 **File:** `personas/base/coderef-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -187,7 +231,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 4. nfl-scraper-expert (Base)
+### 6. nfl-scraper-expert (Base)
 **File:** `personas/base/nfl-scraper-expert.json`
 **Version:** 1.2.0
 **Parent:** null
@@ -241,7 +285,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 5. lloyd-expert (Base)
+### 7. lloyd-expert (Base)
 **File:** `personas/base/lloyd-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -295,19 +339,22 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 **Persona Activation Shortcuts:**
 1. `.claude/commands/use-persona.md` - General activation command
-2. `.claude/commands/coderef-expert.md` - CodeRef expert shortcut
-3. `.claude/commands/docs-expert.md` - Docs expert shortcut (renamed from docs-specialist)
-4. `.claude/commands/nfl-scraper-expert.md` - NFL scraper expert shortcut
-5. `.claude/commands/use-lloyd.md` - Lloyd coordinator shortcut
+2. `.claude/commands/coderef-mcp-lead.md` - Lead architect shortcut
+3. `.claude/commands/coderef-expert.md` - CodeRef expert shortcut
+4. `.claude/commands/docs-expert.md` - Docs expert shortcut (renamed from docs-specialist)
+5. `.claude/commands/nfl-scraper-expert.md` - NFL scraper expert shortcut
+6. `.claude/commands/use-lloyd.md` - Lloyd coordinator shortcut
 
 **Usage:**
 ```
 /use-persona mcp-expert
+/use-persona coderef-mcp-lead
 /use-persona docs-expert
 /use-persona coderef-expert
 /use-persona nfl-scraper-expert
 
 # Or use shortcuts:
+/coderef-mcp-lead
 /docs-expert
 /coderef-expert
 /nfl-scraper-expert
@@ -442,10 +489,34 @@ personas-mcp/
 
 ---
 
+## Recent Updates
+
+### v1.5.0 - Lloyd Workflow Alignment (2025-12-28)
+
+**Lloyd Persona Enhanced:**
+- ✅ Version updated to 1.5.0 (from 1.4.0)
+- ✅ System prompt updated with new 11-step `/create-workorder` workflow
+- ✅ Added documentation for foundation docs generation (Step 3)
+- ✅ Enhanced align-plan step with execute_plan tool (Step 10)
+- ✅ Added pre-execution git checkpoint (Step 11)
+- ✅ System prompt expanded from 7,719 to 8,820 characters
+- ✅ Preferred tools expanded from 9 to 11:
+  - Added: `mcp__coderef-workflow__coderef_foundation_docs`
+  - Added: `mcp__coderef-workflow__execute_plan`
+
+**Workflow Documentation:**
+- **Planning Phase (Steps 1-11):** Complete automation via `/create-workorder`
+- **Execution Phase (Steps 12-15):** Post-planning implementation workflow
+- Lloyd now fully aligned with latest `/create-workorder` command
+
+**File Updated:** `personas/base/lloyd.json`
+
+---
+
 ## Success Metrics
 
-✅ **10 independent personas created** with comprehensive expertise (4 expert + 1 coordinator + 4 specialists + 1 generalist)
-✅ **10 slash commands** for quick activation (/devon, /ava, /marcus, /quinn, /taylor, /lloyd, etc.)
+✅ **11 independent personas created** with comprehensive expertise (4 expert + 1 lead architect + 1 coordinator + 4 specialists + 1 generalist)
+✅ **11 slash commands** for quick activation (/coderef-mcp-lead, /devon, /ava, /marcus, /quinn, /taylor, /lloyd, etc.)
 ✅ **PersonaManager simplified** to scan only base/ directory
 ✅ **All personas validated** via local testing
 ✅ **Documentation updated** (my-guide.md, slash commands, this file)
@@ -463,4 +534,4 @@ personas-mcp/
 
 **Created by:** Claude Code AI
 **Date:** 2025-10-18
-**Last Updated:** 2025-10-23 (v1.3.0 - Added Devon as Project Setup Specialist)
+**Last Updated:** 2025-12-28 (v1.5.0 - Lloyd Workflow Alignment)

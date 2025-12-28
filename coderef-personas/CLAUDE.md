@@ -1,10 +1,10 @@
 # personas-mcp - AI Context Documentation
 
 **Project:** personas-mcp
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Status:** ✅ Implemented (5 personas: 1 expert + 1 coordinator + 3 specialists)
 **Created:** 2025-10-18
-**Last Updated:** 2025-12-25
+**Last Updated:** 2025-12-28
 
 ---
 
@@ -12,11 +12,11 @@
 
 **personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "lloyd", "ava", "marcus", or "quinn") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
 
-**v1.4.0 Update (Lloyd Optimization):** Lloyd persona slimmed from 1,017 lines to 153 lines (85% reduction). Reference documentation extracted to `docs/MCP-ECOSYSTEM-REFERENCE.md` and `docs/LLOYD-REFERENCE.md`.
+**v1.5.0 Update (Lloyd Workflow Alignment):** Lloyd persona updated to match the new 11-step `/create-workorder` workflow. Added foundation docs generation (Step 3), enhanced align-plan (Step 10), and pre-execution git checkpoint (Step 11). System prompt expanded from 7,719 to 8,820 characters with complete workflow documentation.
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
-**Current Implementation:** 1 expert base persona (mcp-expert) + specialized agent personas (lloyd, ava, marcus, quinn) - no hierarchical dependencies, all standalone.
+**Current Implementation:** 1 expert base persona (mcp-expert) + 1 lead architect (coderef-mcp-lead) + specialized agent personas (lloyd, ava, marcus, quinn, taylor, research-scout) - no hierarchical dependencies, all standalone.
 
 ---
 
@@ -103,27 +103,23 @@ Planning Expert:
 
 ## Implemented MCP Tools
 
-### Core Tools (v1.0.0)
+| Tool | Purpose | Status |
+|------|---------|--------|
+| `use_persona` | Activate a persona by name | ✅ v1.0.0 |
+| `get_active_persona` | Get currently active persona | ✅ v1.0.0 |
+| `clear_persona` | Reset to default state | ✅ v1.0.0 |
+| `list_personas` | Show available personas | ✅ v1.0.0 |
+| `create_custom_persona` | Create custom personas with guided workflow | ✅ v1.4.0 |
+| `add_persona` | Stack additional persona (composition) | ⏳ Future |
+| `get_active_personas` | Show current persona stack | ⏳ Future |
 
-**Implemented:**
-- ✅ `use_persona(name)` - Activate a persona
-- ✅ `get_active_persona()` - Get currently active persona
-- ✅ `clear_persona()` - Reset to default state
-- ✅ `list_personas()` - Show available personas
-
-### Custom Persona Creation (v1.4.0 - WO-CREATE-CUSTOM-PERSONA-001)
-
-- ✅ `create_custom_persona(...)` - Create custom personas with guided workflow
-  - **Inputs:** name, description, expertise areas (3-10), use cases (3-10), communication style
-  - **Optional:** problem_solving, tool_usage, specializations, key_principles, example_responses
-  - **Validation:** Multi-stage pipeline (schema → semantic → quality)
-  - **Generation:** Template-based system prompt generation with {{placeholders}}
-  - **Output:** Complete PersonaDefinition saved to `personas/custom/{name}.json`
-  - **Activation:** Immediately usable with `use_persona(name)`
-
-**Future (Stacking/Composition):**
-- ⏳ `add_persona(name)` - Stack additional persona
-- ⏳ `get_active_personas()` - Show current persona stack (plural)
+**create_custom_persona Details:**
+- **Inputs:** name, description, expertise areas (3-10), use cases (3-10), communication style
+- **Optional:** problem_solving, tool_usage, specializations, key_principles, example_responses
+- **Validation:** Multi-stage pipeline (schema → semantic → quality)
+- **Generation:** Template-based system prompt with {{placeholders}}
+- **Output:** Complete PersonaDefinition saved to `personas/custom/{name}.json`
+- **Activation:** Immediately usable with `use_persona(name)`
 
 ### Implemented Personas
 
@@ -140,9 +136,17 @@ Planning Expert:
    - Use cases: Planning MCP features, debugging MCP tools, architecture decisions, protocol compliance
    - System prompt: ~2,500 lines (14 expertise areas)
 
+**Lead Architect (1) - NEW in v1.1:**
+
+3. ✅ **coderef-mcp-lead** (v1.1.0) - Lead System Architect
+   - Role: Lead architect overseeing all 5 MCP servers (context, workflow, docs, personas, testing)
+   - Expertise: 10+ architecture areas including server communication, deployment strategies, tool interaction flows
+   - System prompt: ~1,500 lines with ecosystem-wide architecture knowledge
+   - Slash command: /coderef-mcp-lead
+
 **Specialist Personas (3) - NEW in v1.2-1.3:**
 
-3. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
+4. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
    - Domains: UI, React, CSS/Tailwind, accessibility (WCAG 2.1), responsive design, component architecture
    - Expertise: 15+ frontend areas including React hooks, state management, forms, animations, performance optimization
    - Domain Boundaries: Refuses backend/testing tasks, redirects to Marcus/Quinn
@@ -187,6 +191,7 @@ personas/
 ├── base/
 │   └── mcp-expert.json (v1.0.0, parent: null)
 └── custom/
+    ├── coderef-mcp-lead.json (v1.1.0) - Lead architect
     ├── lloyd.json
     ├── ava.json
     ├── marcus.json
@@ -350,9 +355,19 @@ API Expert:
 
 ## Project Status
 
-### Current Phase: ✅ v1.4.1 - Lloyd Optimization
+### Current Phase: ✅ v1.5.0 - Lloyd Workflow Alignment
 
-**v1.4.1 (2025-12-13) - Lloyd Persona Optimization (WO-SLIM-LLOYD-PERSONA-001):**
+**v1.5.0 (2025-12-28) - Lloyd Workflow Alignment:**
+- ✅ Updated Lloyd persona to match new 11-step `/create-workorder` workflow
+- ✅ Added Step 3: Foundation docs generation (coderef_foundation_docs)
+- ✅ Enhanced Step 10: Align plan with execute_plan tool
+- ✅ Added Step 11: Pre-execution git checkpoint
+- ✅ System prompt expanded from 7,719 to 8,820 characters
+- ✅ Added 2 new preferred tools: coderef_foundation_docs, execute_plan
+- ✅ Updated Feature Implementation Workflow section with 15-step complete lifecycle
+- ✅ Documented planning phase (Steps 1-11) and execution phase (Steps 12-15)
+
+**Previous Phase: v1.4.1 (2025-12-13) - Lloyd Persona Optimization (WO-SLIM-LLOYD-PERSONA-001):**
 - ✅ Reduced lloyd.json system_prompt from 1,017 lines to 153 lines (85% reduction)
 - ✅ Extracted reference material to `docs/MCP-ECOSYSTEM-REFERENCE.md`
 - ✅ Extracted workflows/scenarios to `docs/LLOYD-REFERENCE.md`
@@ -544,6 +559,156 @@ A: No hard limit, but context size may impose practical limits (likely 3-4 max).
 
 ---
 
+## Recent Changes
+
+### v1.1.0 - Lead Architect Persona (2025-12-28)
+
+**New Persona: coderef-mcp-lead**
+- ✅ Created coderef-mcp-lead persona (v1.1.0) as lead system architect
+- ✅ Renamed from coderef-mcp-expert to better reflect leadership role
+- ✅ Oversight of all 5 MCP servers (context, workflow, docs, personas, testing)
+- ✅ System-level expertise and cross-server integration knowledge
+- ✅ Created /coderef-mcp-lead slash command
+- ✅ Updated all documentation (CLAUDE.md, my-guide.md, PERSONAS-CREATED.md)
+- ✅ 10 expertise areas covering MCP architecture, deployment, tool flows
+- ✅ System prompt: ~1,500 lines with ecosystem-wide context
+
+**Key Changes:**
+- Persona count: 10 → 11 personas total
+- New category: "Lead Architect" (Agent 0)
+- Better distinction from "expert" personas
+- Emphasizes architectural oversight and leadership
+
+**Reference:** Renamed to establish clear hierarchy (lead > coordinator > specialists)
+
+---
+
+### v1.5.0 - Lloyd Workflow Alignment (2025-12-28)
+
+**Lloyd Persona Updates:**
+- ✅ Version updated to 1.5.0 (from 1.4.0)
+- ✅ System prompt updated with new 11-step `/create-workorder` workflow
+- ✅ Feature Implementation Workflow section completely rewritten:
+  - **Planning Phase (Steps 1-11):** Complete `/create-workorder` automation
+  - **Execution Phase (Steps 12-15):** Post-planning implementation workflow
+- ✅ Added documentation for new Step 3 (foundation docs generation)
+- ✅ Enhanced documentation for Step 10 (align-plan with execute_plan)
+- ✅ Added documentation for new Step 11 (pre-execution git checkpoint)
+- ✅ Preferred tools expanded from 9 to 11 tools:
+  - Added: `mcp__coderef-workflow__coderef_foundation_docs`
+  - Added: `mcp__coderef-workflow__execute_plan`
+
+**Key Workflow Changes Documented:**
+- **Step 3 (NEW):** Foundation docs generation replaces manual inventory
+  - Auto-generates ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md from code
+  - Creates project-context.json with APIs, database schema, dependencies, git activity
+  - Deep extraction from existing docs + code pattern detection
+- **Step 10 (ENHANCED):** Uses execute_plan tool to generate TodoWrite checklist
+- **Step 11 (NEW):** Pre-execution git checkpoint preserves approved plan
+
+**Reference:** Lloyd persona now fully aligned with `/create-workorder` command documentation
+
+### v1.4.1 - Lloyd Persona Optimization (2025-12-13)
+
+**System Prompt Reduction:**
+- ✅ Reduced lloyd.json from 1,017 lines to 153 lines (85% reduction)
+- ✅ Extracted MCP ecosystem reference to `docs/MCP-ECOSYSTEM-REFERENCE.md`
+- ✅ Extracted workflows/scenarios to `docs/LLOYD-REFERENCE.md`
+- ✅ Removed duplicate "Big Picture" and "Deep Understanding" sections
+- ✅ Replaced verbose tool catalogs with summary tables
+
+**Documentation:**
+- ✅ Added reference pointers to extracted docs
+- ✅ Updated lloyd.json version to 1.2.0
+- ✅ Maintained all coordination logic and domain expertise
+
+**Testing:**
+- ✅ All tests passing (JSON parsing, MCP loading, /lloyd command)
+- ✅ Verified Lloyd persona activation with optimized prompt
+- ✅ Confirmed agent assignment logic intact
+
+**Reference:** WO-SLIM-LLOYD-PERSONA-001 (13/13 tasks complete)
+
+### v1.4.0 - Custom Persona Creation (2025-10-23)
+
+**Core Feature:**
+- ✅ `create_custom_persona` MCP tool with guided workflow
+- ✅ Template-based system prompt generation with {{placeholders}}
+- ✅ Custom personas saved to `personas/custom/` and immediately usable
+
+**Validation Pipeline:**
+- ✅ Multi-stage validation (schema → semantic → quality)
+- ✅ CustomPersonaInput Pydantic schema (3-10 expertise areas, 3-10 use cases)
+- ✅ PersonaValidator with uniqueness checking (prevents base persona conflicts)
+- ✅ PersonaGenerator with TemplateRenderer (supports conditional sections)
+
+**Tools & Commands:**
+- ✅ /create-persona slash command
+- ✅ Comprehensive input validation with clear error messages
+- ✅ Activation via `use_persona(custom_name)`
+
+**Testing & Documentation:**
+- ✅ 33 unit + integration tests (100% pass rate)
+- ✅ Documentation: README, CLAUDE.md, CUSTOMIZATION-GUIDE.md
+- ✅ Example workflows with step-by-step guides
+
+**Reference:** WO-CREATE-CUSTOM-PERSONA-001 (15/15 tasks complete)
+
+---
+
+## Next Steps
+
+### Persona Expansion (P0)
+- ⏳ Expand to 20 personas (see coderef/future/claude-20-personas.md)
+- ⏳ Add domain-specific experts (DevOps, Security, Data Science, ML/AI)
+- ⏳ Create language-specific personas (Python, TypeScript, Rust, Go)
+- ⏳ Add methodology experts (Agile, TDD, DDD, Event Sourcing)
+- ⏳ Build industry-specific personas (fintech, healthcare, e-commerce)
+
+### Persona Composition (P1)
+- ⏳ Implement persona stacking (`add_persona`, `get_active_personas`)
+- ⏳ Context composition engine (merge system prompts intelligently)
+- ⏳ Conflict resolution when stacking personas
+- ⏳ Persona overlay patterns (later personas override earlier)
+- ⏳ Maximum stack depth optimization (context size limits)
+
+### Persona Management (P1)
+- ⏳ Persona metadata queries (expertise search, use case search)
+- ⏳ Persona recommendation engine (suggest best persona for task)
+- ⏳ Persona version management (upgrade/downgrade)
+- ⏳ Persona migration tools (update existing personas)
+- ⏳ Persona analytics (usage tracking, effectiveness metrics)
+
+### Agent Coordination Improvements (P2)
+- ⏳ Enhanced Lloyd task assignment (ML-based domain classification)
+- ⏳ Dynamic agent specialization (agents learn from tasks)
+- ⏳ Cross-domain task handling (multi-specialist collaboration)
+- ⏳ Agent performance metrics (speed, quality, accuracy)
+- ⏳ Automated agent selection based on workload
+
+### Custom Persona Enhancements (P2)
+- ⏳ Persona templates for common roles
+- ⏳ Interactive persona builder (guided wizard)
+- ⏳ Persona sharing/export (portable JSON format)
+- ⏳ Persona inheritance (extend existing personas)
+- ⏳ Bulk persona creation from CSV/YAML
+
+### Quality & Testing (P3)
+- ⏳ Comprehensive test suite for all personas
+- ⏳ Persona effectiveness benchmarking
+- ⏳ System prompt quality validation
+- ⏳ Persona behavior regression testing
+- ⏳ Load testing for concurrent persona activations
+
+### Documentation & UX (P3)
+- ⏳ Interactive persona selection guide
+- ⏳ Persona comparison matrix (when to use which)
+- ⏳ Video tutorials for custom persona creation
+- ⏳ Best practices guide for persona usage
+- ⏳ API reference with OpenAPI spec
+
+---
+
 ## Troubleshooting
 
 ### "Error: Persona not found"
@@ -623,6 +788,45 @@ cat personas/custom/{persona-name}.json | grep -E "name|version|system_prompt"
 → Verify expertise/use_cases are unique and meaningful
 → Check all required fields provided
 ```
+
+---
+
+## Resources
+
+### Documentation
+- **[PERSONAS-CREATED.md](PERSONAS-CREATED.md)** - Complete persona implementation summary
+- **[my-guide.md](my-guide.md)** - Quick reference guide for persona usage
+- **[CUSTOMIZATION-GUIDE.md](CUSTOMIZATION-GUIDE.md)** - Guide for creating custom personas
+- **[README.md](README.md)** - User-facing documentation and overview
+
+### Persona Definitions
+- **[personas/base/mcp-expert.json](personas/base/mcp-expert.json)** - MCP protocol expert (14 expertise areas)
+- **[personas/custom/lloyd.json](personas/custom/lloyd.json)** - Multi-agent coordinator
+- **[personas/custom/ava.json](personas/custom/ava.json)** - Frontend specialist
+- **[personas/custom/marcus.json](personas/custom/marcus.json)** - Backend specialist
+- **[personas/custom/quinn.json](personas/custom/quinn.json)** - Testing specialist
+- **[personas/custom/taylor.json](personas/custom/taylor.json)** - General purpose agent
+- **[personas/custom/research-scout.json](personas/custom/research-scout.json)** - Research specialist
+
+### Slash Commands
+- **[.claude/commands/use-persona.md](.claude/commands/use-persona.md)** - /use-persona command
+- **[.claude/commands/create-persona.md](.claude/commands/create-persona.md)** - /create-persona command
+- **[.claude/commands/ava.md](.claude/commands/ava.md)** - /ava (activate Ava)
+- **[.claude/commands/marcus.md](.claude/commands/marcus.md)** - /marcus (activate Marcus)
+- **[.claude/commands/quinn.md](.claude/commands/quinn.md)** - /quinn (activate Quinn)
+- **[.claude/commands/taylor.md](.claude/commands/taylor.md)** - /taylor (activate Taylor)
+- **[.claude/commands/lloyd.md](.claude/commands/lloyd.md)** - /lloyd (activate Lloyd)
+
+### Reference Documentation
+- **[docs/MCP-ECOSYSTEM-REFERENCE.md](docs/MCP-ECOSYSTEM-REFERENCE.md)** - MCP ecosystem overview
+- **[docs/LLOYD-REFERENCE.md](docs/LLOYD-REFERENCE.md)** - Lloyd coordination workflows
+- **[coderef/future/composable-personas-concept.md](coderef/future/composable-personas-concept.md)** - Persona composition design
+- **[coderef/future/claude-20-personas.md](coderef/future/claude-20-personas.md)** - Future persona expansion roadmap
+
+### External References
+- **[MCP Specification](https://spec.modelcontextprotocol.io/)** - Model Context Protocol specification
+- **[MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)** - Official Python SDK
+- **[Pydantic Documentation](https://docs.pydantic.dev/)** - Data validation library
 
 ---
 

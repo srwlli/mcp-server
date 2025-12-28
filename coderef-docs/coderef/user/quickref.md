@@ -138,57 +138,6 @@ Smart changelog with git auto-detection
 
 ---
 
-### add_changelog_entry
-Manual changelog entry
-
-**Usage:**
-```json
-{
-  "tool": "add_changelog_entry",
-  "arguments": {
-    "project_path": "/path/to/project",
-    "version": "3.2.0",
-    "change_type": "feature",
-    "severity": "minor",
-    "title": "Add context injection",
-    "description": "Sequential generation with CLI integration",
-    "files": ["tool_handlers.py", "extractors.py"],
-    "reason": "Improve documentation accuracy",
-    "impact": "Generated docs reflect actual code"
-  }
-}
-```
-
-**Slash:** `/add-changelog`
-
-**Required:** project_path, version, change_type, severity, title, description, files, reason, impact
-
-**Optional:** breaking, migration, contributors, summary
-
----
-
-### get_changelog
-Query changelog by version or type
-
-**Usage:**
-```json
-{
-  "tool": "get_changelog",
-  "arguments": {
-    "project_path": "/path/to/project",
-    "version": "3.2.0",
-    "change_type": "feature",
-    "breaking_only": false
-  }
-}
-```
-
-**Slash:** `/get-changelog`
-
-**Returns:** Filtered changelog entries
-
----
-
 ## Standards & Compliance
 
 ### establish_standards

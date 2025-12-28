@@ -1,0 +1,349 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "enhance-generators-with-papertrail",
+    "workorder_id": "WO-ENHANCE-GENERATORS-WITH-PAPERTRAIL-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": true,
+    "has_analysis": true
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": true,
+      "analysis_complete": true,
+      "context_gathered": true
+    },
+    "1_executive_summary": {
+      "purpose": "Integrate advanced features from paper-trail-parsed-into-modules into coderef-docs generators to improve template processing, AI integration, document health tracking, and overall documentation quality",
+      "value_proposition": "Enhance coderef-docs generators with paper-trail components for better template processing (inheritance, conditionals), AI integration (multi-provider support), document health tracking, and category-based template routing",
+      "real_world_analogy": "Like upgrading a basic word processor to a full-featured publishing system - adding advanced templating, AI assistance, quality metrics, and context-aware document generation",
+      "use_case": "When generating documentation, the enhanced generators will: 1) Use template inheritance to reduce duplication, 2) Optionally use AI to enhance complex sections, 3) Track document health metrics, 4) Select appropriate templates based on project type",
+      "output": "Enhanced BaseGenerator with template inheritance/conditionals, AI provider abstraction layer, AI-enhanced generator, document health metrics system, document type schemas, category router, extension point system, updated readme.txt template, category-specific template variants"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "medium - ~11 new files, ~2000 lines of code, 4 phases",
+      "scope": "Medium - 1 base class enhancement, 7 new generator modules, 1 schema file, template updates",
+      "file_system_risk": "low",
+      "dependencies": {
+        "existing_internal": ["BaseGenerator", "FoundationGenerator"],
+        "existing_external": ["openai (optional)", "anthropic (optional)"],
+        "new_external": [],
+        "new_internal": ["ai_providers", "ai_enhanced_generator", "document_health", "health_metrics", "document_types", "category_router"]
+      },
+      "performance_concerns": [
+        "AI API calls may add latency - mitigated by making AI optional and using fallback",
+        "Template processing overhead - minimal, inheritance/conditionals are lightweight",
+        "Health metrics calculation - should be fast, only runs during generation"
+      ],
+      "security_considerations": [
+        "API keys for AI providers must be securely stored (environment variables)",
+        "Template inheritance must prevent path traversal (reuse existing sanitization)",
+        "Extension points must validate inputs to prevent code injection"
+      ],
+      "breaking_changes": "none - all enhancements are backward compatible, existing templates continue to work"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "generators/base_generator.py - Add enhanced template processing methods",
+        "generators/foundation_generator.py - Integrate AI generator as optional enhancement",
+        "templates/power/readme.txt - Update template with new features (POC)",
+        "generators/ai_providers.py - NEW: AI provider abstraction layer",
+        "generators/ai_enhanced_generator.py - NEW: AI-enhanced generator",
+        "generators/document_health.py - NEW: Document health calculation",
+        "generators/health_metrics.py - NEW: Health metrics utilities",
+        "generators/document_types.py - NEW: Document type system",
+        "generators/category_router.py - NEW: Category-based template routing",
+        "schemas/document_schemas.json - NEW: Document type schemas",
+        "templates/power/categories/ - NEW: Category-specific template variants"
+      ],
+      "dependencies": {
+        "existing_internal": ["BaseGenerator", "FoundationGenerator", "logger_config"],
+        "existing_external": [],
+        "new_external": ["openai (optional)", "anthropic (optional)"],
+        "new_internal": []
+      },
+      "architecture_context": "The coderef-docs generators use a layered architecture: BaseGenerator provides core template reading and file operations. FoundationGenerator extends BaseGenerator for the 5-doc workflow. This enhancement adds advanced template processing (inheritance, conditionals, inclusions) to BaseGenerator, optional AI integration, document health tracking, and category-based routing. All changes maintain backward compatibility."
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Enhanced template engine with inheritance, conditionals, and inclusions - reduces template duplication and enables dynamic content",
+        "AI-enhanced generation with multi-provider support (OpenAI, Anthropic) and fallback - optional AI assistance for complex sections",
+        "Document health metrics tracking - completeness, freshness, validation status stored in coderef/context/",
+        "Category-based template routing - context-aware template selection based on project type detection",
+        "Extension point system - pluggable dynamic content injection at render time"
+      ],
+      "secondary_features": [
+        "Document type system with schemas - structured validation for required/optional sections",
+        "Category-specific template variants - project-type-specific defaults in templates/power/categories/"
+      ],
+      "edge_case_handling": [
+        "Template inheritance cycles - detect and prevent circular extends",
+        "Missing AI provider credentials - graceful fallback to template-only generation",
+        "Invalid extension point references - validate and skip with warning",
+        "Category detection failure - fallback to default templates"
+      ],
+      "configuration_options": [
+        "AI_ENABLED environment variable to enable/disable AI features",
+        "AI_PROVIDER environment variable to select provider (openai/anthropic)",
+        "DOCUMENT_HEALTH_ENABLED to enable/disable health metrics"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "PHASE1-001: Port template engine core from TypeScript to Python - add inheritance, conditionals, and inclusions to BaseGenerator",
+        "PHASE1-002: Update readme.txt template as proof of concept with new template features",
+        "PHASE2-001: Create AI provider abstraction layer supporting OpenAI and Anthropic with fallback",
+        "PHASE2-002: Implement AI-enhanced generator with prompt construction from POWER templates",
+        "PHASE2-003: Integrate AI generator with FoundationGenerator as optional enhancement",
+        "PHASE3-001: Implement document health metrics calculation (completeness, freshness, validation)",
+        "PHASE3-002: Create document type system with schemas and validation rules",
+        "PHASE3-003: Add health reporting to generation workflow and store metrics in coderef/context/",
+        "PHASE4-001: Implement category-based template routing based on project type detection",
+        "PHASE4-002: Add extension point system to BaseGenerator for dynamic content injection",
+        "PHASE4-003: Create category-specific template variants in templates/power/categories/"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "title": "Phase 1: Enhanced Template Engine",
+          "name": "template-engine",
+          "purpose": "Port template engine core from TypeScript to Python and add inheritance, conditionals, and inclusions to BaseGenerator",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "PHASE1-001",
+            "PHASE1-002"
+          ],
+          "deliverables": [
+            "Enhanced BaseGenerator with template inheritance support",
+            "Conditional block processing ({% if %})",
+            "Template inclusion support ({% include %})",
+            "Updated readme.txt template demonstrating new features"
+          ],
+          "completion_criteria": "Template inheritance working for readme.txt, conditionals and inclusions functional, all existing templates still work"
+        },
+        {
+          "phase": 2,
+          "title": "Phase 2: AI Integration",
+          "name": "ai-integration",
+          "purpose": "Create AI provider abstraction layer and implement AI-enhanced generator with optional integration into FoundationGenerator",
+          "complexity": "high",
+          "effort_level": 4,
+          "tasks": [
+            "PHASE2-001",
+            "PHASE2-002",
+            "PHASE2-003"
+          ],
+          "deliverables": [
+            "AI provider abstraction layer (ai_providers.py)",
+            "AI-enhanced generator (ai_enhanced_generator.py)",
+            "Integration with FoundationGenerator as optional enhancement",
+            "Fallback mechanism when AI unavailable"
+          ],
+          "completion_criteria": "AI generation works with OpenAI and Anthropic, fallback works when credentials missing, FoundationGenerator can optionally use AI"
+        },
+        {
+          "phase": 3,
+          "title": "Phase 3: Document Health & Types",
+          "name": "health-types",
+          "purpose": "Implement document health metrics calculation and create document type system with schemas",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "PHASE3-001",
+            "PHASE3-002",
+            "PHASE3-003"
+          ],
+          "deliverables": [
+            "Document health metrics calculation (document_health.py, health_metrics.py)",
+            "Document type system with schemas (document_types.py, document_schemas.json)",
+            "Health reporting in generation workflow",
+            "Metrics stored in coderef/context/"
+          ],
+          "completion_criteria": "Health metrics calculated for all generated documents, document types validated against schemas, metrics stored and accessible"
+        },
+        {
+          "phase": 4,
+          "title": "Phase 4: Category Routing & Extension Points",
+          "name": "category-extension",
+          "purpose": "Implement category-based template routing and add extension point system for dynamic content injection",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "PHASE4-001",
+            "PHASE4-002",
+            "PHASE4-003"
+          ],
+          "deliverables": [
+            "Category-based template router (category_router.py)",
+            "Extension point system in BaseGenerator",
+            "Category-specific template variants in templates/power/categories/"
+          ],
+          "completion_criteria": "Category router detects project type and selects appropriate templates, extension points work for dynamic content, category variants created"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test template inheritance with extends keyword",
+        "Test conditional blocks ({% if %}) with various conditions",
+        "Test template inclusion ({% include %})",
+        "Test AI provider abstraction with mock providers",
+        "Test AI-enhanced generator with mocked API responses",
+        "Test document health metrics calculation",
+        "Test document type validation against schemas",
+        "Test category router project type detection",
+        "Test extension point processing and validation"
+      ],
+      "integration_tests": [
+        "Test full template rendering with inheritance and conditionals",
+        "Test AI generation integrated with FoundationGenerator",
+        "Test health metrics generation during document creation",
+        "Test category routing in FoundationGenerator workflow"
+      ],
+      "end_to_end_tests": [
+        "Test complete documentation generation with all enhancements enabled",
+        "Test fallback behavior when AI unavailable",
+        "Test backward compatibility with existing templates"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Circular template inheritance",
+          "setup": "Create template A that extends B, and B that extends A",
+          "expected_behavior": "Detect cycle and raise ValueError with clear error message",
+          "verification": "Check error message mentions circular dependency",
+          "error_handling": "ValueError with descriptive message"
+        },
+        {
+          "scenario": "Missing AI provider credentials",
+          "setup": "Set AI_ENABLED=true but no API keys in environment",
+          "expected_behavior": "Fallback to template-only generation, log warning",
+          "verification": "Check logs for warning, verify document generated without AI",
+          "error_handling": "Warning logged, generation continues"
+        },
+        {
+          "scenario": "Invalid extension point reference",
+          "setup": "Template references {{extension:invalid_point}}",
+          "expected_behavior": "Skip extension point, log warning, continue generation",
+          "verification": "Check logs for warning, verify document generated",
+          "error_handling": "Warning logged, placeholder left as-is or removed"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Template inheritance working",
+          "metric": "Number of templates using inheritance",
+          "target": "At least 1 template (readme.txt) uses inheritance",
+          "validation": "Generate README.md using inherited template, verify content includes parent template sections"
+        },
+        {
+          "requirement": "AI generation integrated",
+          "metric": "AI generation success rate",
+          "target": "AI generation works when credentials provided, fallback works when not",
+          "validation": "Test with and without API keys, verify appropriate behavior"
+        },
+        {
+          "requirement": "Document health metrics calculated",
+          "metric": "Health metrics present in coderef/context/",
+          "target": "Health metrics file created for each generated document",
+          "validation": "Check coderef/context/ directory after generation"
+        },
+        {
+          "requirement": "Category-based routing functional",
+          "metric": "Correct template selection based on project type",
+          "target": "Router detects Python/TypeScript/etc. and selects appropriate templates",
+          "validation": "Test with different project types, verify correct templates used"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run pytest with coverage, verify coverage report"
+        },
+        {
+          "requirement": "Backward compatibility",
+          "metric": "Existing templates still work",
+          "target": "100% of existing templates generate without errors",
+          "validation": "Run all existing template generation, verify no errors"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Template processing overhead",
+          "metric": "Generation time increase",
+          "target": "<10% increase in generation time",
+          "validation": "Benchmark generation time before/after enhancements"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "API key security",
+          "metric": "No hardcoded credentials",
+          "target": "All API keys from environment variables",
+          "validation": "Code review, grep for API keys in code"
+        },
+        {
+          "requirement": "Path traversal prevention",
+          "metric": "Template name validation",
+          "target": "All template names validated, no path traversal possible",
+          "validation": "Test with malicious template names, verify rejection"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review complete plan for gaps",
+        "☐ Verify paper-trail source code available for reference",
+        "☐ Set up development environment with Python 3.8+"
+      ],
+      "phase_1": [
+        "☐ PHASE1-001: Port template engine core from TypeScript to Python",
+        "☐ Add inheritance support to BaseGenerator",
+        "☐ Add conditional block processing",
+        "☐ Add template inclusion support",
+        "☐ PHASE1-002: Update readme.txt template as proof of concept",
+        "☐ Test template inheritance with readme.txt",
+        "☐ Verify backward compatibility"
+      ],
+      "phase_2": [
+        "☐ PHASE2-001: Create AI provider abstraction layer",
+        "☐ PHASE2-002: Implement AI-enhanced generator",
+        "☐ PHASE2-003: Integrate with FoundationGenerator",
+        "☐ Test AI generation with OpenAI",
+        "☐ Test AI generation with Anthropic",
+        "☐ Test fallback when credentials missing"
+      ],
+      "phase_3": [
+        "☐ PHASE3-001: Implement document health metrics",
+        "☐ PHASE3-002: Create document type system",
+        "☐ PHASE3-003: Add health reporting to workflow",
+        "☐ Test health metrics calculation",
+        "☐ Test document type validation",
+        "☐ Verify metrics stored in coderef/context/"
+      ],
+      "phase_4": [
+        "☐ PHASE4-001: Implement category-based routing",
+        "☐ PHASE4-002: Add extension point system",
+        "☐ PHASE4-003: Create category-specific template variants",
+        "☐ Test category detection",
+        "☐ Test extension points",
+        "☐ Verify category variants work"
+      ],
+      "finalization": [
+        "☐ All tests passing",
+        "☐ Code review completed",
+        "☐ Documentation updated",
+        "☐ Changelog entry created",
+        "☐ All success criteria met"
+      ]
+    }
+  }
+}

@@ -376,28 +376,9 @@ Archive index updated with:
 - Completion date: 2025-12-28
 - Status: Complete
 - Metrics: 247 LOC, 12 commits, 3.5 hours
-
-Run /features-inventory to see all features.
 ```
 
-**Inventory:**
-```bash
-/features-inventory
-```
-
-**Output:**
-```
-Active Features (2):
-- dark-mode-toggle (WO-DARK-MODE-UI-001) - Status: in_progress
-- api-rate-limiting (WO-API-SECURITY-002) - Status: planning
-
-Archived Features (5):
-- jwt-authentication (WO-AUTH-SYSTEM-001) - Completed 2025-12-28
-- user-profile (WO-PROFILE-UI-003) - Completed 2025-12-20
-...
-```
-
-**Time:** < 1 minute to archive, < 1 minute to view inventory
+**Time:** < 1 minute to archive
 
 ---
 
@@ -471,64 +452,6 @@ Archived Features (5):
 **Output:** `coderef/reviews/review-jwt-authentication-20251228.md` with detailed analysis
 
 **Time:** < 1 minute per validation, < 3 iterations to reach 90+
-
----
-
-## Workorder Audit Trail
-
-### What You Can Do
-
-✅ **Global Workorder Log** - Single source of truth for all features ever created
-✅ **Unique Workorder IDs** - WO-{FEATURE}-{CATEGORY}-### format
-✅ **Query History** - Filter by project, pattern, date range
-✅ **Audit Compliance** - Complete trail from idea → planning → execution → archive
-✅ **Cross-Project Tracking** - One log tracks multiple projects
-
-### Use Cases
-
-**For Auditors:**
-- When was WO-AUTH-SYSTEM-001 created?
-- What features were implemented in Q4 2025?
-- Complete history for compliance reporting
-
-**For Managers:**
-- How many features completed this month?
-- Which features are still in planning?
-- Track velocity across sprints
-
-**For Developers:**
-- Find related workorders for similar features
-- Reference past implementation approaches
-- Estimate effort based on historical data
-
-### Example
-
-**Log New Workorder:**
-```bash
-/log-workorder WO-AUTH-SYSTEM-001 "coderef-workflow" "Add JWT authentication"
-```
-
-**Appends to workorder-log.txt:**
-```
-WO-AUTH-SYSTEM-001 | coderef-workflow | Add JWT authentication | 2025-12-28T10:30:00Z
-```
-
-**Query History:**
-```bash
-/get-workorder-log --project coderef-workflow --limit 10
-```
-
-**Output:**
-```
-Recent Workorders (10):
-
-WO-DARK-MODE-UI-002 | coderef-workflow | Dark mode toggle | 2025-12-27
-WO-AUTH-SYSTEM-001 | coderef-workflow | JWT authentication | 2025-12-28
-WO-API-RATE-003 | coderef-workflow | Rate limiting middleware | 2025-12-26
-...
-```
-
-**Time:** < 1 second to log, < 1 second to query
 
 ---
 

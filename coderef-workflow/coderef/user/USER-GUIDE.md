@@ -528,7 +528,6 @@ mcp__coderef_workflow__assess_risk({
 ### 💡 Tips
 
 - **Use tab completion for feature names** - Claude Code autocompletes from `coderef/workorder/`
-- **Check plan health regularly** - `/audit-plans` shows stale or incomplete plans
 - **Enable coderef-context integration** - Dramatically improves plan quality
 - **Use risk assessment for critical changes** - Catches breaking changes early
 - **Read ARCHITECTURE.md first** - Understand existing patterns before planning
@@ -659,7 +658,6 @@ Error: Cannot archive feature with status 'in_progress'
 | `/align-plan` | Generate TodoWrite task list | < 1 min |
 | `/update-deliverables` | Capture git metrics | < 1 min |
 | `/archive-feature` | Move to archive | < 1 min |
-| `/audit-plans` | Health check all plans | < 1 min |
 | `/validate-plan` | Score plan quality | < 1 min |
 
 ### MCP Tool Patterns

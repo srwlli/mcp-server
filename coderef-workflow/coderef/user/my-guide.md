@@ -32,12 +32,6 @@ Quick reference for MCP tools and slash commands.
 
 ### Archival & Inventory
 - archive_feature - Move completed feature to archive
-- generate_features_inventory - List all active & archived features
-- audit_plans - Health check on all plans in coderef/workorder
-
-### Workorder Tracking
-- log_workorder - Add entry to global workorder log
-- get_workorder_log - Query workorder history
 
 ## Slash Commands
 
@@ -66,12 +60,6 @@ Quick reference for MCP tools and slash commands.
 
 ### Feature Management
 - /archive-feature - Archive completed feature
-- /features-inventory - List all features
-- /audit-plans - Health check all plans
-
-### Workorder Management
-- /log-workorder - Add to global log
-- /get-workorder-log - Query workorder history
 
 ## Quick Workflow
 

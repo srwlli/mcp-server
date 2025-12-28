@@ -56,7 +56,6 @@ python server.py
 ### Archive (1 min)
 ```bash
 /archive-feature {feature}     # Move to coderef/archived/
-/features-inventory            # List all features
 ```
 
 ---
@@ -97,17 +96,9 @@ assess_risk(project_path, proposed_change, threshold?, options?)
 generate_agent_communication(project_path, feature_name)
 ```
 
-### Archival & Inventory
+### Archival
 ```python
 archive_feature(project_path, feature_name, force?)
-generate_features_inventory(project_path, include_archived?, format?, save_to_file?)
-audit_plans(project_path, stale_days?, include_archived?)
-```
-
-### Workorder Tracking
-```python
-log_workorder(project_path, workorder_id, project_name, description, timestamp?)
-get_workorder_log(project_path, project_name?, workorder_pattern?, limit?)
 ```
 
 ---

@@ -216,7 +216,7 @@ coderef-workflow/
 
 ---
 
-## Core Tools (23 MCP Tools)
+## Core Tools (24 MCP Tools)
 
 ### Planning & Analysis Phase
 
@@ -448,6 +448,70 @@ When creating plans, coderef-workflow automatically:
 
 ---
 
+## Use Cases
+
+### UC-1: Plan & Implement a New Feature
+```
+User: /create-workorder
+      → Feature: "dark-mode-toggle"
+      → Gathers context, analyzes project, creates plan
+      ↓
+Agent: /execute-plan
+       → Works through tasks step by step
+       → Calls coderef-context for CSS/component patterns
+       ↓
+User: /update-deliverables → /archive-feature
+      → Captures metrics, archives
+```
+
+### UC-2: Multi-Agent Feature Implementation
+```
+User: /create-workorder --multi-agent
+      → Creates plan with 3 parallel phases
+      ↓
+Lloyd (Coordinator): /generate-agent-communication
+                     → Creates communication.json for agents
+                     ↓
+Agent 1 (Ava): /assign-agent-task → Works on frontend
+Agent 2 (Marcus): /assign-agent-task → Works on backend
+Agent 3 (Quinn): /assign-agent-task → Works on tests
+                     ↓
+Lloyd: /verify-agent-completion → Validates all agents
+       ↓
+/aggregate-agent-deliverables → Combines metrics
+/archive-feature → Complete
+```
+
+### UC-3: Refactoring with Impact Analysis
+```
+Agent: "I want to rename AuthService"
+       ↓
+coderef-context: /coderef_impact
+                 ↓ Returns: "12 files depend on this, here's the ripple"
+                 ↓
+Agent: "Now I know what breaks. Here's my implementation plan."
+       ↓ Safe refactoring with full context
+```
+
+### UC-4: Plan Validation & Review
+```
+User: /create-plan
+      → Plan created from context + analysis
+      ↓
+User: /validate-plan
+      ↓ Returns: Score 75/100, 3 critical issues, 5 minor issues
+      ↓
+Agent: Refines plan based on validation feedback
+      ↓
+User: /validate-plan
+      ↓ Returns: Score 92/100, ready for execution
+      ↓
+User: /generate-plan-review
+      → Creates markdown report for stakeholder review
+```
+
+---
+
 ## Essential Commands
 
 ### Development
@@ -651,6 +715,78 @@ Slash commands are defined in `coderef-docs/.claude/commands/` and orchestrate c
 - ✅ Feature archival system
 - ✅ Risk assessment with code intelligence
 - ✅ Plan validation and scoring (0-100)
+
+---
+
+## Troubleshooting
+
+### "Error: Feature not found in coderef/workorder/"
+
+```bash
+# Check if feature exists
+ls coderef/workorder/
+
+# Verify feature name spelling (case-sensitive)
+ls coderef/workorder/ | grep -i "feature-name"
+
+# Check if already archived
+ls coderef/archived/ | grep -i "feature-name"
+```
+
+### "Error: plan.json validation failed"
+
+```bash
+# Validate JSON syntax
+python -m json.tool coderef/workorder/{feature}/plan.json
+
+# Check plan structure
+cat coderef/workorder/{feature}/plan.json | grep META_DOCUMENTATION
+
+# Re-run plan validation
+/validate-plan {feature-name}
+```
+
+### "Error: coderef-context tools not available"
+
+```
+→ Check if coderef-context MCP server is running
+→ Verify .mcp.json configuration includes coderef-context
+→ Check CODEREF_CLI_PATH environment variable
+→ Restart Claude Code to reload MCP servers
+```
+
+### "Error: Workorder ID generation failed"
+
+```bash
+# Check workorder log
+cat coderef/workorder-log.txt | tail -20
+
+# Manually specify workorder ID
+/create-plan --workorder-id "WO-FEATURE-NAME-001"
+
+# Verify workorder format (WO-{FEATURE}-{CATEGORY}-###)
+```
+
+### "Error: DELIVERABLES.md not found"
+
+```
+→ Feature may not have completed planning phase
+→ Run /generate-deliverables to create template
+→ Ensure plan.json exists before generating deliverables
+```
+
+### "Error: Archive operation failed"
+
+```bash
+# Check if feature already archived
+ls coderef/archived/{feature-name}
+
+# Check DELIVERABLES.md status
+cat coderef/workorder/{feature-name}/DELIVERABLES.md | grep "Status:"
+
+# Force archive (skip confirmation)
+/archive-feature {feature-name} --force
+```
 
 ---
 

@@ -63,6 +63,7 @@ class Paths:
     """Path constants for documentation and changelog locations."""
     CODEREF = 'coderef'
     FOUNDATION_DOCS = 'coderef/foundation-docs'
+    USER_DOCS = 'coderef/user'  # User-facing documentation (my-guide, USER-GUIDE, FEATURES, quickref)
     CHANGELOG_DIR = 'coderef/changelog'
     TEMPLATES_DIR = 'templates/power'  # POWER framework templates only
     TOOL_TEMPLATES_DIR = 'templates/tools'  # Tool-specific templates (DELIVERABLES, communication)
@@ -111,6 +112,7 @@ class TemplateNames(str, Enum):
     MY_GUIDE = 'my-guide'
     SCHEMA = 'schema'
     USER_GUIDE = 'user-guide'
+    FEATURES = 'features'
 
 
 class ChangeType(str, Enum):

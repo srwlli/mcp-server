@@ -115,7 +115,7 @@ class QuickrefGenerator(BaseGenerator):
                     "step": 8,
                     "name": "Generate",
                     "action": "AI generates quickref.md following universal pattern",
-                    "output_location": "coderef/quickref.md"
+                    "output_location": "coderef/user/quickref.md"
                 },
                 {
                     "step": 9,
@@ -175,7 +175,7 @@ class QuickrefGenerator(BaseGenerator):
 - Minimal: Remove all fluff, keep only essentials
 - Target length: 150-250 lines
 
-**Save Location:** coderef/quickref.md
+**Save Location:** coderef/user/quickref.md
         """.strip()
 
     def generate_quickref_template(self, app_info: Dict[str, any]) -> str:
@@ -366,12 +366,12 @@ class QuickrefGenerator(BaseGenerator):
         # Validate project path
         validated_path = self.validate_project_path(project_path)
 
-        # Create coderef directory if needed
-        coderef_dir = validated_path / Paths.CODEREF
-        coderef_dir.mkdir(parents=True, exist_ok=True)
+        # Create coderef/user directory if needed
+        user_docs_dir = validated_path / Paths.USER_DOCS
+        user_docs_dir.mkdir(parents=True, exist_ok=True)
 
         # Save quickref.md
-        quickref_path = coderef_dir / "quickref.md"
+        quickref_path = user_docs_dir / "quickref.md"
         try:
             with open(quickref_path, 'w', encoding='utf-8') as f:
                 f.write(content)

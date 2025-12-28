@@ -113,10 +113,12 @@ Review and workorder reports:
 #### `/coderef/docs/integration/` (empty for now)
 Reserved for future integration documentation.
 
-#### `/coderef/docs/reference/` (2 files)
-User guides and reference documentation:
-- user-guide.md - Complete user guide
-- my-guide.md - Developer guide
+#### `/coderef/user/` (4 files)
+User-facing guides and reference documentation:
+- USER-GUIDE.md - Complete user guide
+- my-guide.md - Quick tool reference
+- FEATURES.md - Feature overview
+- quickref.md - Scannable quick reference
 
 **Purpose:** End-user and developer reference materials
 

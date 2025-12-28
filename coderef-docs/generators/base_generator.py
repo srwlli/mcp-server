@@ -148,12 +148,15 @@ class BaseGenerator:
     # Template name constants for special handling
     TEMPLATE_README = 'readme'
     TEMPLATE_MY_GUIDE = 'my-guide'
+    TEMPLATE_USER_GUIDE = 'user-guide'
+    TEMPLATE_FEATURES = 'features'
 
     def get_doc_output_path(self, project_path: Path, template_name: str) -> Path:
         """
         Get the correct output path for a documentation file (SEC-003).
 
-        README.md and my-guide.md are special and go to project root.
+        README.md goes to project root.
+        User-facing docs (my-guide, user-guide, features) go to coderef/user/.
         All other docs go to coderef/foundation-docs/.
 
         Args:
@@ -166,9 +169,15 @@ class BaseGenerator:
         template_info = self.get_template_info(template_name)
         filename = template_info.get('save_as', f'{template_name.upper()}.md')
 
-        # README.md and my-guide.md go to project root (SEC-003)
-        if template_name.lower() in [self.TEMPLATE_README, self.TEMPLATE_MY_GUIDE]:
+        # README.md goes to project root (SEC-003)
+        if template_name.lower() == self.TEMPLATE_README:
             return project_path / filename
+
+        # User-facing docs go to coderef/user/
+        if template_name.lower() in [self.TEMPLATE_MY_GUIDE, self.TEMPLATE_USER_GUIDE, self.TEMPLATE_FEATURES]:
+            user_docs_dir = project_path / Paths.USER_DOCS
+            user_docs_dir.mkdir(parents=True, exist_ok=True)
+            return user_docs_dir / filename
 
         # All other docs go to foundation-docs/ (using constant)
         # Only create directory when needed (not for root docs)

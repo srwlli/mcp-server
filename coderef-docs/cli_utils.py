@@ -40,8 +40,9 @@ def validate_cli_available() -> bool:
     Check if @coderef/core CLI exists and is accessible.
 
     Verifies that:
-    1. CLI file exists at expected path
-    2. File is readable
+    1. First checks if 'coderef' command is available in PATH (global install)
+    2. Falls back to checking hardcoded CLI path
+    3. Verifies file is readable
 
     Returns:
         bool: True if CLI is available, False otherwise
@@ -52,11 +53,26 @@ def validate_cli_available() -> bool:
         ... else:
         ...     print("CLI not found - running in degraded mode")
     """
+    # First, check if 'coderef' is available in PATH (global npm install)
+    try:
+        result = subprocess.run(
+            ["coderef", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0:
+            logger.info(f"CLI found in PATH (global install): coderef --version = {result.stdout.strip()}")
+            return True
+    except (FileNotFoundError, subprocess.TimeoutExpired, Exception) as e:
+        logger.debug(f"Global 'coderef' command not found in PATH: {e}")
+
+    # Fallback: Check hardcoded CLI path
     cli_path = get_cli_path()
     cli_file = Path(cli_path)
 
     if not cli_file.exists():
-        logger.warning(f"CLI not found at {cli_path}")
+        logger.warning(f"CLI not found at {cli_path} and not in PATH")
         return False
 
     if not cli_file.is_file():
@@ -67,6 +83,7 @@ def validate_cli_available() -> bool:
     try:
         with open(cli_file, 'r', encoding='utf-8', errors='ignore') as f:
             f.read(1)  # Read 1 byte to verify access
+        logger.info(f"CLI found at hardcoded path: {cli_path}")
         return True
     except (PermissionError, OSError) as e:
         logger.warning(f"CLI file not readable: {e}")

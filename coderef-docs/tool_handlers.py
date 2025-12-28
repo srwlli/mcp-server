@@ -688,7 +688,7 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
     result = f"📋 Universal Quickref Generator - Interactive Workflow\n"
     result += f"=" * 60 + "\n\n"
     result += f"Project: {Path(project_path).name}\n"
-    result += f"Output: coderef/quickref.md\n"
+    result += f"Output: coderef/user/quickref.md\n"
     if app_type:
         result += f"App Type: {app_type.upper()}\n"
     result += f"\n" + "=" * 60 + "\n\n"
@@ -719,7 +719,7 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
     result += f"=" * 60 + "\n\n"
     result += f"Begin the interview by asking the Step 1 questions.\n"
     result += f"After gathering all information, generate quickref.md using the universal pattern.\n"
-    result += f"Save to: {project_path}/coderef/quickref.md\n"
+    result += f"Save to: {project_path}/coderef/user/quickref.md\n"
 
     logger.info(f"Quickref generation workflow initiated")
     return [TextContent(type="text", text=result)]

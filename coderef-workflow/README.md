@@ -2,10 +2,24 @@
 
 **Enterprise-grade MCP server for AI-powered feature lifecycle management**
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/willh/coderef-workflow)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/willh/coderef-workflow)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-1.0%2B-green.svg)](https://modelcontextprotocol.io)
 [![Status](https://img.shields.io/badge/status-production-brightgreen.svg)]()
+
+---
+
+## What's New in v1.2.0
+
+🚀 **Autonomous Implementation** - New `/complete-workorder` command that fully automates feature implementation:
+
+- ✅ Reads plan.json and executes all tasks sequentially
+- ✅ Real-time TodoWrite progress tracking
+- ✅ Automatic testing, deliverables updates, and documentation
+- ✅ Auto-archives on completion
+- ✅ Zero manual intervention required
+
+**Complete workflow:** `/create-workorder` → manual review → `/complete-workorder` → done!
 
 ---
 
@@ -19,14 +33,15 @@
 
 ## Overview
 
-This MCP server is part of the **CodeRef Ecosystem** (4-server system):
+This MCP server is part of the **CodeRef Ecosystem** (5-server system):
 
 1. **coderef-context** - Code intelligence (AST analysis, dependency graphs)
 2. **coderef-workflow** - Planning & orchestration (this project)
 3. **coderef-docs** - Documentation generation (POWER framework)
 4. **coderef-personas** - Expert AI agents (domain specialists)
+5. **coderef-testing** - Test automation (pytest integration, coverage)
 
-**coderef-workflow** provides **23 MCP tools** and **40+ slash commands** for:
+**coderef-workflow** provides **19 MCP tools** and **32+ slash commands** for:
 
 - 📋 **Context Gathering** - Collect requirements, constraints, goals
 - 🧠 **Intelligent Planning** - Generate 10-section implementation plans with code intelligence
@@ -145,7 +160,7 @@ coderef/workorder/{feature-name}/
 **Feature Management:**
 ```bash
 /archive-feature              # Move completed feature to archive
-/features-inventory           # List all active & archived features
+/complete-workorder           # Autonomously implement plan.json through to archive
 ```
 
 ---

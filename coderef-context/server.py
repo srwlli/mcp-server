@@ -36,19 +36,55 @@ from mcp.server import Server
 from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
 
-# Get CLI path from environment or use default
-DEFAULT_CLI_PATH = os.path.expandvars(
-    r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
-)
-CLI_PATH = os.environ.get("CODEREF_CLI_PATH", DEFAULT_CLI_PATH)
-CLI_BIN = os.path.join(CLI_PATH, "dist", "cli.js")
+# Get CLI path - check global install first, then local, then environment variable
+def get_cli_command():
+    """Get the CLI command, checking global install first."""
+    # 1. Check if coderef is globally installed (via npm) AND actually works
+    try:
+        result = subprocess.run(
+            ["where", "coderef"] if os.name == "nt" else ["which", "coderef"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            global_path = result.stdout.strip().split('\n')[0]
+            # Test if it actually works
+            test_result = subprocess.run(
+                ["coderef", "--version"],
+                capture_output=True,
+                timeout=5
+            )
+            if test_result.returncode == 0:
+                print(f"[coderef-context] Using global coderef install: {global_path}")
+                return ["coderef"]
+            else:
+                print(f"[coderef-context] Global coderef exists but doesn't work, using local")
+    except Exception as e:
+        print(f"[coderef-context] Global coderef check failed: {e}")
+
+    # 2. Fall back to local development path
+    default_cli_path = os.path.expandvars(
+        r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
+    )
+    cli_path = os.environ.get("CODEREF_CLI_PATH", default_cli_path)
+    cli_bin = os.path.join(cli_path, "dist", "cli.js")
+
+    if os.path.exists(cli_bin):
+        print(f"[coderef-context] Using local CLI: {cli_bin}")
+        return ["node", cli_bin]
+
+    # 3. If nothing works, try environment variable path
+    print(f"[coderef-context] WARNING: CLI not found at {cli_bin}, will try 'coderef' command")
+    return ["coderef"]
+
+CLI_COMMAND = get_cli_command()
 
 # Initialize MCP server
 app = Server("coderef-context")
 
 print(f"[coderef-context] Initializing MCP server v{__version__}")
-print(f"[coderef-context] CLI path: {CLI_BIN}")
-print(f"[coderef-context] CLI exists: {os.path.exists(CLI_BIN)}")
+print(f"[coderef-context] CLI command: {' '.join(CLI_COMMAND)}")
 
 
 # ============================================================================
@@ -356,7 +392,7 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef scan <sourceDir> --lang ts,tsx --json [--ast]
     cmd = [
-        "node", CLI_BIN, "scan",
+        *CLI_COMMAND, "scan",
         project_path,
         "--lang", ",".join(languages),
         "--json"
@@ -422,7 +458,7 @@ async def handle_coderef_query(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef query <target> --type <type> --depth <depth> --format json
     cmd = [
-        "node", CLI_BIN, "query",
+        *CLI_COMMAND, "query",
         target,
         "--type", query_type,
         "--depth", str(max_depth),
@@ -488,7 +524,7 @@ async def handle_coderef_impact(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef impact <target> --depth <depth> --format json
     cmd = [
-        "node", CLI_BIN, "impact",
+        *CLI_COMMAND, "impact",
         element,
         "--depth", str(max_depth),
         "--format", "json"
@@ -545,7 +581,7 @@ async def handle_coderef_complexity(args: dict) -> list[TextContent]:
     # Complexity metrics come from context command with element filtering
     # For now, return a note that this should use context command
     cmd = [
-        "node", CLI_BIN, "context",
+        *CLI_COMMAND, "context",
         project_path,
         "--lang", "ts,tsx,js,jsx",
         "--json"
@@ -600,7 +636,7 @@ async def handle_coderef_patterns(args: dict) -> list[TextContent]:
 
     # Pattern discovery comes from context command's test pattern analysis
     cmd = [
-        "node", CLI_BIN, "context",
+        *CLI_COMMAND, "context",
         project_path,
         "--lang", "ts,tsx,js,jsx",
         "--json"
@@ -653,7 +689,7 @@ async def handle_coderef_coverage(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef coverage --format json
     cmd = [
-        "node", CLI_BIN, "coverage",
+        *CLI_COMMAND, "coverage",
         "--format", "json"
     ]
 
@@ -703,7 +739,7 @@ async def handle_coderef_context(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef context <sourceDir> --lang <langs> --json
     cmd = [
-        "node", CLI_BIN, "context",
+        *CLI_COMMAND, "context",
         project_path,
         "--lang", ",".join(languages)
     ]
@@ -754,7 +790,7 @@ async def handle_coderef_validate(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef validate <sourceDir> --pattern <pattern> --format json
     cmd = [
-        "node", CLI_BIN, "validate",
+        *CLI_COMMAND, "validate",
         project_path,
         "--pattern", pattern,
         "--format", "json"
@@ -806,7 +842,7 @@ async def handle_coderef_drift(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef drift <sourceDir> --index <indexPath> --format json
     cmd = [
-        "node", CLI_BIN, "drift",
+        *CLI_COMMAND, "drift",
         project_path,
         "--index", index_path,
         "--format", "json"
@@ -859,7 +895,7 @@ async def handle_coderef_diagram(args: dict) -> list[TextContent]:
 
     # Build CLI command: coderef diagram --format <format> --depth <depth> --output stdout
     cmd = [
-        "node", CLI_BIN, "diagram",
+        *CLI_COMMAND, "diagram",
         "--format", format_type,
         "--depth", str(depth)
     ]

@@ -18,6 +18,24 @@
 
 ---
 
+## 🌍 Global Deployment Rule
+
+**NOTHING IS LOCAL. ENTIRE ECOSYSTEM IS GLOBAL.**
+
+All tools, commands, and artifacts must use **global paths only**:
+- `~/.claude/commands/` (commands)
+- `coderef/workorder/` (plans)
+- `coderef/foundation-docs/` (documentation)
+- `coderef/archived/` (completed features)
+- `coderef/standards/` (standards)
+- MCP tools (global endpoints only)
+
+❌ **FORBIDDEN:** Local copies, project-specific variations, `coderef/working/`, per-project configurations
+
+**Rule:** No fallbacks, no exceptions, no local alternatives. Single global source of truth.
+
+---
+
 ## System Architecture
 
 ### How It Works
@@ -254,6 +272,36 @@ async def handle_coderef_scan(args: dict) -> list[TextContent]:
 - scan/context tools timeout at 120s (acceptable for most projects <100k LOC)
 - No caching (fresh analysis on each call—intentional for accuracy)
 - No result streaming (entire result returned at once)
+
+---
+
+## File Structure
+
+```
+coderef-context/
+├── server.py                      # MCP server entry point & tool registration
+├── pyproject.toml                 # Project metadata & dependencies
+├── README.md                      # User-facing documentation
+├── CLAUDE.md                      # This file (AI context)
+├── TOOLS_REFERENCE.md             # Detailed tool specifications
+│
+├── src/                           # Tool implementations
+│  ├── tool_handlers.py            # All 10 tool handlers (async/subprocess)
+│  ├── mcp_client.py               # CLI subprocess manager
+│  └── validators.py               # Input validation
+│
+├── tests/                         # Test suite
+│  ├── test_tool_handlers.py      # Unit tests for handlers
+│  ├── test_integration.py         # Integration with @coderef/core
+│  └── test_agent_usage.py         # Agent workflow tests
+│
+└── .coderef-index.json            # Generated index (gitignored)
+```
+
+**Key Directories:**
+- `src/` - All tool handler implementations
+- `tests/` - Comprehensive test coverage (unit, integration, agent)
+- External dependency: `@coderef/core` CLI at configured path
 
 ---
 

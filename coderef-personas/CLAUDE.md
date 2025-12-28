@@ -544,6 +544,88 @@ A: No hard limit, but context size may impose practical limits (likely 3-4 max).
 
 ---
 
+## Troubleshooting
+
+### "Error: Persona not found"
+
+```bash
+# List all available personas
+/use-persona
+# Or call MCP tool
+list_personas()
+
+# Check persona file exists
+ls personas/base/*.json
+ls personas/custom/*.json
+
+# Verify persona name (case-sensitive)
+# Valid: mcp-expert, lloyd, ava, marcus, quinn, taylor, research-scout
+```
+
+### "Error: Persona JSON invalid"
+
+```bash
+# Validate JSON syntax
+python -m json.tool personas/custom/{persona-name}.json
+
+# Check required fields
+cat personas/custom/{persona-name}.json | grep -E "name|version|system_prompt"
+
+# Reload persona definitions
+# Restart MCP server or Claude Code
+```
+
+### "Error: Custom persona creation failed"
+
+```
+→ Check name is alphanumeric with hyphens/underscores only
+→ Ensure name doesn't conflict with base personas
+→ Verify 3-10 expertise areas provided
+→ Verify 3-10 use cases provided
+→ Check communication_style is non-empty (20-200 chars)
+```
+
+### "Error: Persona activation has no effect"
+
+```
+→ Verify persona returned system_prompt in response
+→ Check if persona expertise matches task requirements
+→ Ensure Claude Code is respecting persona context
+→ Try deactivating (clear_persona) and re-activating
+```
+
+### "Error: Lloyd can't assign tasks to specialists"
+
+```
+→ Verify Ava, Marcus, Quinn personas exist
+→ Check communication.json format is valid
+→ Ensure task description contains domain keywords
+→ Lloyd uses keyword-based scoring (50+ keywords per domain)
+→ Check lloyd.json has agent assignment logic
+```
+
+### "Error: Specialist refuses valid task"
+
+```
+→ Domain boundary detection may be too strict
+→ Check task description for cross-domain keywords
+→ Specialists refuse out-of-domain tasks by design
+→ Use Taylor (general purpose) for mixed tasks
+→ Check refusal protocol in persona system_prompt
+```
+
+### "Error: create_custom_persona validation failed"
+
+```
+→ Multi-stage validation: schema → semantic → quality
+→ Check error message for specific validation failure
+→ Ensure no duplicate names with existing personas
+→ Verify expertise/use_cases are unique and meaningful
+→ Check all required fields provided
+```
+
+---
+
 **Last Updated:** 2025-10-18
 **Next Review:** After implementation plan created
 

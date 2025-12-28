@@ -130,6 +130,19 @@ coderef-docs/
 
 ---
 
+## Tech Stack
+
+- **Language:** Python 3.10+
+- **Framework:** MCP (Model Context Protocol) 1.0+
+- **Async:** asyncio (fully async/await for all tool handlers)
+- **Validation:** jsonschema 4.0+ (for CHANGELOG.json and plan validation)
+- **Template Engine:** Custom POWER framework templates (markdown-based)
+- **Testing:** pytest 8.0+ with pytest-asyncio
+- **External Integration:** @coderef/core CLI (optional, for context injection)
+- **Package Manager:** uv (or pip)
+
+---
+
 ## Design Decisions
 
 **1. Separated from coderef-workflow**
@@ -183,6 +196,34 @@ coderef-docs/
   - `extractors.py`: Calls @coderef/core CLI to extract real code intelligence
   - `tool_handlers.py`: Uses extraction results in doc generation handlers
   - `tests/`: Comprehensive proof tests validating end-to-end integration
+
+---
+
+## Implementation Status
+
+### Completed ✅
+- ✅ All 11 MCP tools implemented and operational
+- ✅ POWER framework templates (README, ARCHITECTURE, API, COMPONENTS, SCHEMA, USER-GUIDE, MY-GUIDE)
+- ✅ Sequential foundation doc generation with context injection (v3.2.0)
+- ✅ Agentic changelog recording with git auto-detection
+- ✅ Standards establishment and compliance auditing system
+- ✅ Interactive quickref generation for 5 app types (CLI, Web, API, Desktop, Library)
+- ✅ Context injection from @coderef/core CLI (extractors.py)
+- ✅ 26 slash commands registered in ~/.claude/commands/
+- ✅ Full MCP protocol compliance (JSON-RPC 2.0 over stdio)
+
+### Testing Status
+- ✅ 27/30 proof tests passing (90% pass rate)
+- ✅ End-to-end integration tests with @coderef/core CLI
+- ✅ Real-world validation with WO-CONTEXT-DOCS-INTEGRATION-001
+- ⏳ 3 tests pending (non-blocking issues)
+- ⏳ Performance benchmarks for large codebases (>100k LOC)
+
+### Known Limitations
+- Context injection requires @coderef/core CLI (graceful degradation if unavailable)
+- Standards auditing requires pre-established standards (run /establish-standards first)
+- Changelog auto-detection requires git repository
+- Template customization not yet supported (fixed POWER framework)
 
 ---
 
@@ -279,6 +320,85 @@ Output: CHANGELOG.json entry with workorder tracking, README version bump
 - **[SLASH-COMMANDS-REFERENCE.md](SLASH-COMMANDS-REFERENCE.md)** - Detailed slash command docs (if separate doc exists)
 - **[MCP Specification](https://spec.modelcontextprotocol.io/)** - Official MCP protocol
 - **[POWER Framework](https://example.com/power-framework)** - Documentation template guide
+
+---
+
+## Troubleshooting
+
+### "Error: Template not found"
+
+```bash
+# List all available templates
+/list-templates
+
+# Verify template name (case-sensitive)
+# Valid names: readme, architecture, api, components, schema, user-guide, my-guide
+
+# Get specific template
+/get-template readme
+```
+
+### "Error: CHANGELOG.json validation failed"
+
+```bash
+# Validate JSON syntax
+python -m json.tool coderef/CHANGELOG.json
+
+# Check changelog schema
+cat coderef/CHANGELOG.json | head -50
+
+# Backup and regenerate if corrupted
+cp coderef/CHANGELOG.json coderef/CHANGELOG.json.bak
+# Then manually fix or regenerate
+```
+
+### "Error: Git auto-detection failed in record_changes"
+
+```
+→ Ensure you're in a git repository
+→ Check git status returns valid output
+→ Verify staged changes exist (git add files first)
+→ Use add_changelog_entry for manual entry if git unavailable
+```
+
+### "Error: @coderef/core CLI not found (context injection)"
+
+```
+→ Check CODEREF_CLI_PATH environment variable
+→ Verify CLI exists at path: C:/Users/willh/Desktop/projects/coderef-system/packages/cli
+→ Tool gracefully degrades to template-only if CLI unavailable
+→ No blocking error - docs still generate with placeholders
+```
+
+### "Error: Standards not established"
+
+```bash
+# Run establish_standards first
+/establish-standards
+
+# Check if standards directory exists
+ls coderef/standards/
+
+# Verify standards files
+ls coderef/standards/*.md
+```
+
+### "Error: Audit failed - no standards found"
+
+```
+→ Run /establish-standards before /audit-codebase
+→ Standards must exist in coderef/standards/ directory
+→ Standards files: ui-patterns.md, behavior-patterns.md, ux-patterns.md
+```
+
+### "Error: Foundation docs generation timeout"
+
+```
+→ v3.2.0+ uses sequential generation (5 calls, ~250-350 lines each)
+→ Timeout should not occur with sequential approach
+→ If timeout persists, check Claude Code response time
+→ Fall back to /generate-individual-doc for single docs
+```
 
 ---
 

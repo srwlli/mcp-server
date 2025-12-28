@@ -1,0 +1,39 @@
+{
+  "feature_name": "complete-workorder-command",
+  "description": "Create autonomous /complete-workorder slash command that implements plan.json tasks and handles all post-implementation steps",
+  "goal": "Enable fully autonomous feature implementation from plan.json through to archive, eliminating manual implementation steps",
+  "requirements": [
+    "Read and parse plan.json (10-section structure)",
+    "Execute tasks from 6_IMPLEMENTATION_PHASES sequentially",
+    "Update TodoWrite task status as tasks complete",
+    "Handle errors according to plan.json guidance",
+    "Run tests per 7_TESTING_STRATEGY",
+    "Verify 8_SUCCESS_CRITERIA before post-implementation",
+    "Call update_deliverables to capture git metrics",
+    "Call update_all_documentation with version parameter",
+    "Auto-archive if DELIVERABLES.md status = Complete",
+    "Display progress and final summary to user"
+  ],
+  "constraints": [
+    "Must work with existing plan.json format",
+    "No persona activation (direct AI implementation)",
+    "Must be global command (~/.claude/commands/)",
+    "Must handle both simple and complex features",
+    "Git commits after each task with meaningful messages",
+    "Error handling must follow plan's risk assessment guidance"
+  ],
+  "out_of_scope": [
+    "Interactive/guided implementation (fully autonomous only)",
+    "Multi-agent parallel execution (sequential only)",
+    "Plan.json validation or modification",
+    "Custom test framework integration beyond pytest/jest"
+  ],
+  "acceptance_criteria": [
+    "Command reads plan.json and implements all tasks",
+    "TodoWrite status updates in real-time",
+    "All tests pass before post-implementation",
+    "Deliverables, docs, and archive complete automatically",
+    "Works for features of varying complexity",
+    "Clear progress reporting throughout execution"
+  ]
+}

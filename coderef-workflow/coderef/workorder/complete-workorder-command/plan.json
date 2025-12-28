@@ -1,0 +1,324 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "1.0.0",
+    "workorder_id": "WO-COMPLETE-WORKORDER-CMD-001",
+    "feature_name": "complete-workorder-command",
+    "status": "planning",
+    "created_date": "2025-12-28",
+    "phase_count": 4,
+    "task_count": 16,
+    "estimated_duration": "2-3 hours",
+    "generated_by": "AI Assistant",
+    "has_context": true,
+    "has_analysis": true
+  },
+
+  "0_PREPARATION": {
+    "discovery": [
+      "Reviewed existing slash command patterns in ~/.claude/commands/",
+      "Analyzed plan.json structure (10 sections)",
+      "Identified MCP tools: update_task_status, update_deliverables, update_all_documentation, archive_feature",
+      "Reviewed TodoWrite integration and status tracking",
+      "Examined /create-workorder workflow for reference"
+    ],
+    "existing_code_patterns": [
+      "Slash commands use step-by-step markdown format",
+      "MCP tools called via mcp__coderef_workflow__{tool_name} pattern",
+      "Plan.json sections: 6_IMPLEMENTATION_PHASES contains task breakdown",
+      "TodoWrite displays tasks with status indicators (☐/☑)",
+      "Git commits use workorder ID in commit messages"
+    ],
+    "project_context": "CodeRef Ecosystem - coderef-workflow MCP server with global slash commands for feature lifecycle management"
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Create /complete-workorder slash command that autonomously implements plan.json tasks and executes all post-implementation steps (deliverables, documentation, archival)",
+    "why": "Currently users must manually implement tasks from /align-plan. This command automates the entire implementation and completion workflow.",
+    "how": "Parse plan.json, execute tasks sequentially, update TodoWrite status, run tests, verify success criteria, then trigger post-implementation MCP tools",
+    "impact": "Enables fully autonomous feature implementation from plan to archive, reducing manual effort by 80-90%"
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": {
+      "score": 15,
+      "description": "Low risk - New command, doesn't modify existing workflows",
+      "mitigation": "Command is additive, users can continue manual implementation if preferred"
+    },
+    "security": {
+      "score": 40,
+      "description": "Moderate risk - Autonomous code generation and execution",
+      "mitigation": "Command runs in user's context with same permissions. Git commits provide rollback capability."
+    },
+    "performance": {
+      "score": 60,
+      "description": "High duration for complex features (1-3 hours)",
+      "mitigation": "Progress reporting keeps user informed. Can be interrupted/resumed."
+    },
+    "complexity": {
+      "score": 75,
+      "description": "Complex - Must parse JSON, generate code, run tests, handle errors",
+      "mitigation": "Follow plan.json guidance strictly. Comprehensive error messages."
+    },
+    "reversibility": {
+      "score": 20,
+      "description": "Easy rollback via git revert",
+      "mitigation": "Each task commits separately for granular rollback"
+    }
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_workflow": [
+      "/create-workorder → creates plan.json + align tasks + commits",
+      "User manually implements tasks from TodoWrite checklist",
+      "User runs /update-deliverables, /update-docs, /archive-feature separately"
+    ],
+    "gaps": [
+      "No autonomous implementation capability",
+      "Manual task execution is time-consuming",
+      "Post-implementation steps often forgotten or delayed",
+      "No integrated progress tracking during implementation"
+    ],
+    "proposed_solution": "Single command that handles implementation + post-implementation automatically"
+  },
+
+  "4_KEY_FEATURES": {
+    "must_have": [
+      "Parse plan.json (all 10 sections)",
+      "Execute tasks from 6_IMPLEMENTATION_PHASES sequentially",
+      "Update TodoWrite status (pending → in_progress → completed)",
+      "Run tests per 7_TESTING_STRATEGY",
+      "Verify 8_SUCCESS_CRITERIA before finalization",
+      "Call update_deliverables (git metrics)",
+      "Call update_all_documentation (with version)",
+      "Auto-archive if status = Complete",
+      "Display progress and summary"
+    ],
+    "nice_to_have": [
+      "Estimated time remaining display",
+      "Parallel task execution for independent tasks",
+      "Rollback on failure option",
+      "Resume from checkpoint if interrupted"
+    ],
+    "explicitly_excluded": [
+      "Interactive/guided mode (fully autonomous only)",
+      "Persona activation (Ava/Marcus/Quinn)",
+      "Plan modification or validation",
+      "Custom test framework integration"
+    ]
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "format": "{PHASE}-{NUMBER}",
+    "examples": ["SETUP-001", "PARSE-001", "IMPL-001", "TEST-001", "POST-001"],
+    "phases": {
+      "SETUP": "Setup and validation",
+      "PARSE": "Parse plan.json structure",
+      "IMPL": "Implementation logic",
+      "TEST": "Testing integration",
+      "POST": "Post-implementation steps"
+    },
+    "numbering": "Sequential 001-999 per phase"
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_setup": {
+      "name": "Setup & Validation",
+      "description": "Create command file and validate prerequisites",
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "title": "Create ~/.claude/commands/complete-workorder.md",
+          "description": "Create new slash command file in global commands directory",
+          "dependencies": [],
+          "estimated_time": "10 min"
+        },
+        {
+          "id": "SETUP-002",
+          "title": "Add command header and description",
+          "description": "Write command purpose, usage, and workflow overview",
+          "dependencies": ["SETUP-001"],
+          "estimated_time": "5 min"
+        },
+        {
+          "id": "SETUP-003",
+          "title": "Document command parameters",
+          "description": "Specify {feature-name} and {version} parameters with examples",
+          "dependencies": ["SETUP-002"],
+          "estimated_time": "5 min"
+        }
+      ]
+    },
+    "phase_2_parsing": {
+      "name": "Plan.json Parsing Logic",
+      "description": "Implement logic to read and parse plan.json structure",
+      "tasks": [
+        {
+          "id": "PARSE-001",
+          "title": "Read plan.json from coderef/workorder/{feature}/",
+          "description": "Load and validate plan.json file exists and has correct structure",
+          "dependencies": ["SETUP-003"],
+          "estimated_time": "15 min"
+        },
+        {
+          "id": "PARSE-002",
+          "title": "Extract 6_IMPLEMENTATION_PHASES section",
+          "description": "Parse phases and tasks with IDs, titles, descriptions, dependencies",
+          "dependencies": ["PARSE-001"],
+          "estimated_time": "20 min"
+        },
+        {
+          "id": "PARSE-003",
+          "title": "Extract 7_TESTING_STRATEGY section",
+          "description": "Parse test commands, frameworks, and coverage requirements",
+          "dependencies": ["PARSE-001"],
+          "estimated_time": "15 min"
+        },
+        {
+          "id": "PARSE-004",
+          "title": "Extract 8_SUCCESS_CRITERIA section",
+          "description": "Parse verification checklist for post-implementation validation",
+          "dependencies": ["PARSE-001"],
+          "estimated_time": "10 min"
+        }
+      ]
+    },
+    "phase_3_implementation": {
+      "name": "Autonomous Implementation Engine",
+      "description": "Core logic for executing tasks and updating status",
+      "tasks": [
+        {
+          "id": "IMPL-001",
+          "title": "Create task execution loop",
+          "description": "Iterate through phases, then tasks within each phase sequentially",
+          "dependencies": ["PARSE-002"],
+          "estimated_time": "30 min"
+        },
+        {
+          "id": "IMPL-002",
+          "title": "Implement task execution logic",
+          "description": "For each task: read description, generate code, write files",
+          "dependencies": ["IMPL-001"],
+          "estimated_time": "45 min"
+        },
+        {
+          "id": "IMPL-003",
+          "title": "Add TodoWrite status updates",
+          "description": "Call update_task_status to mark pending → in_progress → completed",
+          "dependencies": ["IMPL-002"],
+          "estimated_time": "20 min"
+        },
+        {
+          "id": "IMPL-004",
+          "title": "Add git commit after each task",
+          "description": "Commit changes with message: 'feat: {task-id} - {task-title} (WO-{workorder-id})'",
+          "dependencies": ["IMPL-003"],
+          "estimated_time": "15 min"
+        },
+        {
+          "id": "IMPL-005",
+          "title": "Add progress reporting",
+          "description": "Display 'Implementing task X/Y: {task-title}' messages to CLI",
+          "dependencies": ["IMPL-001"],
+          "estimated_time": "10 min"
+        }
+      ]
+    },
+    "phase_4_testing_and_post": {
+      "name": "Testing & Post-Implementation",
+      "description": "Test execution, verification, and final steps",
+      "tasks": [
+        {
+          "id": "TEST-001",
+          "title": "Implement test execution",
+          "description": "Run test commands from 7_TESTING_STRATEGY after implementation",
+          "dependencies": ["IMPL-004", "PARSE-003"],
+          "estimated_time": "25 min"
+        },
+        {
+          "id": "TEST-002",
+          "title": "Verify success criteria",
+          "description": "Check 8_SUCCESS_CRITERIA checklist before post-implementation",
+          "dependencies": ["TEST-001", "PARSE-004"],
+          "estimated_time": "15 min"
+        },
+        {
+          "id": "POST-001",
+          "title": "Call update_deliverables",
+          "description": "Execute mcp__coderef_workflow__update_deliverables to capture git metrics",
+          "dependencies": ["TEST-002"],
+          "estimated_time": "5 min"
+        },
+        {
+          "id": "POST-002",
+          "title": "Call update_all_documentation",
+          "description": "Execute mcp__coderef_workflow__update_all_documentation with version parameter",
+          "dependencies": ["POST-001"],
+          "estimated_time": "5 min"
+        },
+        {
+          "id": "POST-003",
+          "title": "Implement auto-archive logic",
+          "description": "If DELIVERABLES.md status = Complete, call archive_feature",
+          "dependencies": ["POST-002"],
+          "estimated_time": "10 min"
+        },
+        {
+          "id": "POST-004",
+          "title": "Display final summary",
+          "description": "Show metrics, files updated, archive status, workorder ID",
+          "dependencies": ["POST-003"],
+          "estimated_time": "10 min"
+        }
+      ]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      "Manual testing: Create test plan.json in coderef/workorder/test-feature/",
+      "Run /complete-workorder test-feature 1.0.0",
+      "Verify each phase executes correctly",
+      "Verify TodoWrite status updates",
+      "Verify git commits created"
+    ],
+    "integration_tests": [
+      "Test with simple feature (2-3 tasks)",
+      "Test with medium feature (10-15 tasks)",
+      "Test with complex feature (30+ tasks)",
+      "Test error handling (intentional test failure)",
+      "Test archival (status = Complete)"
+    ],
+    "success_metrics": [
+      "All tasks execute in correct order",
+      "TodoWrite reflects accurate status",
+      "Git commits contain workorder ID",
+      "Tests run and pass/fail correctly",
+      "Deliverables captured accurately",
+      "Documentation updated with version",
+      "Archive completes successfully"
+    ]
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "functional_requirements": [
+      "✅ Command reads plan.json without errors",
+      "✅ All tasks from 6_IMPLEMENTATION_PHASES execute",
+      "✅ TodoWrite status updates in real-time",
+      "✅ Git commits created after each task",
+      "✅ Tests run per 7_TESTING_STRATEGY",
+      "✅ Success criteria verified before finalization",
+      "✅ update_deliverables captures metrics correctly",
+      "✅ update_all_documentation updates all 3 files",
+      "✅ Auto-archive works when status = Complete",
+      "✅ Progress and summary displayed clearly"
+    ],
+    "non_functional_requirements": [
+      "✅ Command completes features in reasonable time",
+      "✅ Error messages are clear and actionable",
+      "✅ Code generated is functional and follows project patterns",
+      "✅ Git history is clean with meaningful commits",
+      "✅ No data loss or corruption"
+    ],
+    "acceptance_test": "Run /complete-workorder on a real feature and verify all steps complete successfully from implementation through archive"
+  }
+}

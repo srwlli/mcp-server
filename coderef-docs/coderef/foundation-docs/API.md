@@ -1,200 +1,283 @@
-# API Documentation
+# API Reference - coderef-docs MCP Server
+
+**Version:** 3.2.0  
+**Last Updated:** 2025-12-27  
+**Protocol:** Model Context Protocol (MCP)  
+**Total Tools:** 11
+
+---
+
+## Purpose
+
+This document provides the complete API reference for the coderef-docs MCP server's 11 specialized tools for documentation generation, changelog management, and standards enforcement.
+
+---
 
 ## Overview
 
-- **Framework:** Flask, FastAPI
-- **Authentication:** Unknown
-- **Error Format:** RFC 7807
-- **Total Endpoints:** 27
+The coderef-docs MCP server exposes tools through the Model Context Protocol, enabling AI assistants to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
 
-## Endpoints
+**Tool Categories:**
+1. Documentation Templates (2 tools)
+2. Foundation Generation (2 tools)  
+3. Changelog Management (3 tools)
+4. Standards & Compliance (3 tools)
+5. Interactive Quickref (1 tool)
 
-### Flask
+---
 
-| Method | Path | File |
-|--------|------|------|
-| `'GET'` | `/` | `http_server.py` |
-| `'GET'` | `/health` | `http_server.py` |
-| `'GET'` | `/debug` | `http_server.py` |
-| `'GET'` | `/tools` | `http_server.py` |
-| `'GET'` | `/openapi.json` | `http_server.py` |
-| `'GET'` | `/sse` | `http_server.py` |
-| `'GET', 'POST'` | `/api/hello` | `http_server.py` |
-| `'POST'` | `/api/<tool_name>` | `http_server.py` |
-| `'POST'` | `/mcp` | `http_server.py` |
-| `"GET", "POST"` | `/api/items` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `"GET", "PUT", "DELETE"` | `/api/items/<int:item_id>` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `'GET'` | `/health` | `coderef\archived\http_server_full.py` |
-| `'GET'` | `/tools` | `coderef\archived\http_server_full.py` |
-| `'POST'` | `/mcp` | `coderef\archived\http_server_full.py` |
+## MCP Tools
 
-### FastAPI
+### 1. Documentation Templates
 
-| Method | Path | File |
-|--------|------|------|
-| `GET` | `/` | `tests\integration\test_coderef_foundation_docs.py` |
-| `GET` | `/users` | `tests\integration\test_coderef_foundation_docs.py` |
-| `POST` | `/users` | `tests\integration\test_coderef_foundation_docs.py` |
-| `GET` | `/` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/users/{user_id}` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `POST` | `/users` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `PUT` | `/users/{user_id}` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `DELETE` | `/users/{user_id}` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/api/data` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/api/endpoint{i}` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/` | `tests\unit\generators\test_coderef_foundation_generator.py` |
-| `GET` | `/api/v1` | `tests\unit\generators\test_coderef_foundation_generator.py` |
+#### `list_templates`
 
-### Endpoint Details
+Lists all available POWER framework templates.
 
-#### `'GET'` /
+**Arguments:** None
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+**Returns:** List of template names (readme, architecture, api, schema, components, my-guide, user-guide)
 
-#### `'GET'` /health
+---
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+#### `get_template`
 
-#### `'GET'` /debug
+Retrieves a specific template by name.
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+**Arguments:**
+- `template_name` (string): Template identifier
 
-#### `'GET'` /tools
+**Returns:** Template content in POWER framework format
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+---
 
-#### `'GET'` /openapi.json
+### 2. Foundation Documentation Generation
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+#### `generate_foundation_docs`
 
-#### `'GET'` /sse
+Orchestrates sequential generation of 5 foundation documents with context injection.
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+**Arguments:**
+- `project_path` (string): Absolute path to project directory
 
-#### `'GET', 'POST'` /api/hello
+**Returns:** Generation plan with:
+- Document sequence: API → Schema → Components → Architecture → README
+- Context injection status
+- Progress indicators [1/5] through [5/5]
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+**Features:**
+- Extracts real API endpoints via @coderef/core CLI
+- Extracts real data entities  
+- Extracts real UI components
+- Sequential generation to avoid timeouts
 
-#### `'POST'` /api/<tool_name>
+---
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+#### `generate_individual_doc`
 
-#### `'POST'` /mcp
+Generates a single documentation file with optional context injection.
 
-- **File:** `http_server.py`
-- **Framework:** Flask
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `template_name` (string): Template to generate
 
-#### `GET` /
+**Returns:** Template + extracted data (if context injection enabled)
 
-- **File:** `tests\integration\test_coderef_foundation_docs.py`
-- **Framework:** FastAPI
+**Output Paths:**
+- README.md → Project root
+- All others → `coderef/foundation-docs/`
 
-#### `GET` /users
+---
 
-- **File:** `tests\integration\test_coderef_foundation_docs.py`
-- **Framework:** FastAPI
+### 3. Changelog Management
 
-#### `POST` /users
+#### `get_changelog`
 
-- **File:** `tests\integration\test_coderef_foundation_docs.py`
-- **Framework:** FastAPI
+Retrieves project changelog with optional filtering.
 
-#### `GET` /
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `version` (string, optional): Filter by version
+- `change_type` (string, optional): Filter by type
+- `breaking_only` (boolean, optional): Show only breaking changes
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+**Returns:** Structured changelog entries in JSON format
 
-#### `GET` /users/{user_id}
+---
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+#### `add_changelog_entry`
 
-#### `POST` /users
+Manually adds a changelog entry with full metadata.
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+**Required Arguments:**
+- `project_path`, `version`, `change_type`, `severity`, `title`, `description`, `files`, `reason`, `impact`
 
-#### `PUT` /users/{user_id}
+**Optional Arguments:**
+- `breaking`, `migration`, `contributors`, `summary`
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+**Returns:** Confirmation of entry creation
 
-#### `DELETE` /users/{user_id}
+---
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+#### `record_changes`
 
-#### `GET` /api/data
+Smart changelog recording with git auto-detection (agentic tool).
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `version` (string): Version number
+- `context` (object, optional): Additional context
 
-#### `GET` /api/endpoint{i}
+**Behavior:**
+1. Auto-detects changed files via git
+2. Suggests change_type from commits
+3. Calculates severity from scope
+4. Shows preview for confirmation
+5. Creates changelog entry
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+---
 
-#### `GET` /
+### 4. Standards & Compliance
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+#### `establish_standards`
 
-#### `GET` /
+Scans codebase to discover UI/UX/behavior patterns.
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `focus_areas` (array, optional): Areas to analyze
+- `scan_depth` (string, optional): Analysis depth (quick/standard/deep)
 
-#### `GET` /api/v1
+**Output:** Creates 4 markdown files in `coderef/standards/`
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** FastAPI
+---
 
-#### `"GET", "POST"` /api/items
+#### `audit_codebase`
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** Flask
+Audits codebase for standards violations.
 
-#### `"GET", "PUT", "DELETE"` /api/items/<int:item_id>
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `scope` (array, optional): Areas to audit
+- `severity_filter` (string, optional): Filter by severity
+- `generate_fixes` (boolean, optional): Include fix suggestions
 
-- **File:** `tests\unit\generators\test_coderef_foundation_generator.py`
-- **Framework:** Flask
+**Returns:** Compliance report with 0-100 score
 
-#### `'GET'` /health
+---
 
-- **File:** `coderef\archived\http_server_full.py`
-- **Framework:** Flask
+#### `check_consistency`
 
-#### `'GET'` /tools
+Pre-commit gate for checking staged changes.
 
-- **File:** `coderef\archived\http_server_full.py`
-- **Framework:** Flask
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `files` (array, optional): Files to check (auto-detects if omitted)
+- `scope` (array, optional): Standards to check
+- `severity_threshold` (string, optional): Fail threshold
+- `fail_on_violations` (boolean, optional): Return error status
 
-#### `'POST'` /mcp
+**Returns:** Violations or success status
 
-- **File:** `coderef\archived\http_server_full.py`
-- **Framework:** Flask
+---
 
-## Authentication
+### 5. Interactive Quickref
 
-*Authentication method not detected.*
+#### `generate_quickref_interactive`
+
+Interactive workflow for universal quickref guide generation.
+
+**Arguments:**
+- `project_path` (string): Absolute path to project
+- `app_type` (string, optional): Application type (cli/web/api/desktop/library)
+
+**Returns:** Interview questions for AI to ask user
+
+**Output:** Generates `quickref.md` (150-250 lines) after user responses
+
+---
 
 ## Error Handling
 
-**Format:** RFC 7807
+All tools use consistent error response format with descriptive messages.
 
-Example:
+**Common Errors:**
+- Invalid project path
+- Template not found
+- Git repository required
+- Version format invalid
+- Standards directory missing
+
+---
+
+## Context Injection
+
+When @coderef/core CLI is available:
+
+**API.md:** Extracts real API endpoints from codebase  
+**SCHEMA.md:** Extracts real data entities  
+**COMPONENTS.md:** Extracts real UI components
+
+**Fallback:** Uses template placeholders if CLI unavailable
+
+**Cache:** Extracted data cached with `@lru_cache(maxsize=32)`
+
+---
+
+## Examples
+
+### Generate Foundation Docs with Context Injection
 
 ```json
-{"type": "about:blank", "status": 400, "title": "Bad Request", "detail": "..."}
+{
+  "tool": "generate_foundation_docs",
+  "arguments": {
+    "project_path": "/path/to/project"
+  }
+}
 ```
 
-*Generated: 2025-12-15T15:05:23.286534*
+Returns sequential plan → Call `generate_individual_doc` 5 times → Complete docs with real code intelligence
+
+### Smart Changelog Recording
+
+```json
+{
+  "tool": "record_changes",
+  "arguments": {
+    "project_path": "/path/to/project",
+    "version": "3.2.0"
+  }
+}
+```
+
+Auto-detects git changes → Suggests metadata → Shows preview → Creates entry
+
+### Pre-commit Standards Check
+
+```json
+{
+  "tool": "check_consistency",
+  "arguments": {
+    "project_path": "/path/to/project",
+    "severity_threshold": "major"
+  }
+}
+```
+
+Checks staged files → Returns violations or success
+
+---
+
+## References
+
+- **Server Implementation:** `server.py`, `tool_handlers.py`
+- **MCP Specification:** https://spec.modelcontextprotocol.io/
+- **POWER Framework:** `templates/power/`
+- **Context Injection:** `extractors.py` (WO-CONTEXT-DOCS-INTEGRATION-001)
+- **Related Documentation:** ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md
+
+---
+
+*Generated: 2025-12-27*  
+*For AI Agents: This API is optimized for AI-driven documentation workflows*

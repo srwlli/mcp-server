@@ -1,285 +1,430 @@
-# Project Components
+# Components Reference - coderef-docs MCP Server
 
-## Summary
+**Version:** 3.2.0
+**Last Updated:** 2025-12-27
+**Architecture:** Modular Python MCP Server
 
-- **Total Elements:** 20068 (from coderef scan)
-- **Classs:** 3518 | **Functions:** 5885 | **Methods:** 10665
+---
 
-## Dependency Diagram
+## Purpose
 
-<!-- AGENT: Generate Mermaid diagram from relationships -->
+This document describes the software components (modules, generators, handlers, utilities) that make up the coderef-docs MCP server architecture.
 
-## Handlers (186 detected)
+---
 
-### handle_handshake_error
+## Overview
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/anyio/streams/tls.py:316`
-- **Type:** function
-- **Purpose:** <!-- AGENT: Describe purpose -->
+The coderef-docs server is organized into 8 main component categories with clear separation of concerns.
 
-### handle_parse_result
+**Component Hierarchy:**
+```
+server.py (MCP entry point)
+├── tool_handlers.py (11 tool handlers)
+├── generators/ (Document generation logic)
+├── extractors.py (Code intelligence extraction)
+├── validation.py (Input validation)
+├── error_responses.py (Error handling)
+├── logger_config.py (Logging)
+└── cli_utils.py (CLI integration)
+```
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/click/core.py:2538`
-- **Type:** function
-- **Purpose:** <!-- AGENT: Describe purpose -->
+---
 
-### handle_async_request
+## 1. Core Server Components
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/connection.py:69`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### server.py
 
-### handle_async_request
+**Purpose:** MCP server entry point and tool registration
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/connection_pool.py:199`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Responsibilities:**
+- Initialize MCP server
+- Register 11 tools with schemas
+- Health check for @coderef/core CLI
+- Route tool calls to handlers
 
-### handle_async_request
+**Key Functions:**
+- `health_check()` - Detect CLI availability
+- `list_tools()` - Return tool schemas
+- `call_tool()` - Route to handler
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/http11.py:65`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Dependencies:** mcp.server, tool_handlers
 
-### handle_async_request
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/http2.py:85`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### tool_handlers.py
 
-### handle_async_request
+**Purpose:** Business logic for all 11 MCP tools
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/http_proxy.py:191`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Components:**
+```
+Template Tools:
+- handle_list_templates()
+- handle_get_template()
 
-### handle_async_request
+Foundation Generation:
+- handle_generate_foundation_docs()
+- handle_generate_individual_doc()
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/http_proxy.py:265`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+Changelog:
+- handle_get_changelog()
+- handle_add_changelog_entry()
+- handle_record_changes()
 
-### handle_async_request
+Standards:
+- handle_establish_standards()
+- handle_audit_codebase()
+- handle_check_consistency()
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/interfaces.py:83`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+Quickref:
+- handle_generate_quickref_interactive()
+```
 
-### handle_async_request
+**Features:**
+- Decorated with `@log_invocation` and `@mcp_error_handler`
+- Context injection support (WO-CONTEXT-DOCS-INTEGRATION-001)
+- Sequential doc generation orchestration
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_async/socks_proxy.py:216`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Dependencies:** generators, extractors, validation, error_responses
 
-### handle_request
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_sync/connection.py:69`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+## 2. Generator Components
 
-### handle_request
+### generators/base_generator.py
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_sync/connection_pool.py:199`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Purpose:** Base class for all document generators
 
-### handle_request
+**Responsibilities:**
+- Template loading
+- Path resolution
+- Output directory creation
+- Common generation utilities
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_sync/http11.py:65`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Key Methods:**
+- `read_template(name)` - Load POWER template
+- `get_template_info(name)` - Parse template metadata
+- `prepare_generation(project_path)` - Setup paths
+- `get_doc_output_path(path, template)` - Determine output location
 
-### handle_request
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_sync/http2.py:85`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### generators/foundation_generator.py
 
-### handle_request
+**Purpose:** 5-document foundation workflow
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/httpcore/_sync/http_proxy.py:191`
-- **Type:** method
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Workflow:**
+```
+api → schema → components → architecture → readme
+```
 
-## Generators (18 detected)
+**Key Methods:**
+- `get_workflow_info()` - Return 5-template sequence
+- `get_generation_plan(project_path)` - Human-readable plan
 
-### CGenerator
+**Template Order:** Ordered by dependency (API first, README last)
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/pycparser/c_generator.py:12`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+---
 
-### ASTCodeGenerator
+### generators/changelog_generator.py
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/pycparser/_ast_gen.py:16`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Purpose:** Changelog CRUD operations
 
-### AliasGenerator
+**Key Methods:**
+- `load_changelog(project_path)` - Read CHANGELOG.json
+- `save_changelog(project_path, data)` - Write with validation
+- `add_entry(version, change_data)` - Append new change
+- `get_version(version)` - Filter by version
+- `get_by_type(change_type)` - Filter by type
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/pydantic/aliases.py:89`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Validation:** Uses jsonschema for CHANGELOG.json schema
 
-### BaseSchemaGenerator
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/schemas.py:36`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### generators/standards_generator.py
 
-### SchemaGenerator
+**Purpose:** Extract and document coding standards
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/schemas.py:128`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Key Methods:**
+- `scan_codebase(project_path, focus_areas, depth)` - Extract patterns
+- `generate_standards_docs(patterns)` - Create markdown files
+- `create_standards_index(standards)` - Summary document
 
-### Generator
+**Output:** 4 files in `coderef/standards/`
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32com/client/genpy.py:854`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+---
 
-### AuditGenerator
+### generators/audit_generator.py
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/generators/audit_generator.py:25`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Purpose:** Standards compliance auditing
 
-### BaseGenerator
+**Key Methods:**
+- `audit_files(files, standards)` - Check violations
+- `calculate_compliance_score(violations)` - 0-100 score
+- `generate_audit_report(results)` - Markdown report
+- `suggest_fixes(violations)` - Auto-fix recommendations
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/generators/base_generator.py:16`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Scoring:** Weighted by severity (critical=10, major=5, minor=1)
 
-### ChangelogGenerator
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/generators/changelog_generator.py:16`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### generators/quickref_generator.py
 
-### CoderefFoundationGenerator
+**Purpose:** Interactive quickref generation
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/generators/coderef_foundation_generator.py:48`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Key Methods:**
+- `generate_interview_questions(app_type)` - Context gathering
+- `process_user_responses(responses)` - Parse answers
+- `generate_quickref(data)` - Create scannable guide
 
-## Services (13 detected)
+**Output:** `quickref.md` (150-250 lines)
 
-### NativeTestPipeService
+---
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/Demos/service/nativePipeTestService.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+## 3. Extraction Components
 
-### TestPipeService
+### extractors.py
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/Demos/service/pipeTestService.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Purpose:** Code intelligence extraction via @coderef/core CLI
 
-### EventDemoService
+**Functions:**
+```python
+@lru_cache(maxsize=32)
+def extract_apis(project_path: str) -> Dict[str, Any]:
+    """Extract API endpoints from codebase"""
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/Demos/service/serviceEvents.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+@lru_cache(maxsize=32)
+def extract_schemas(project_path: str) -> Dict[str, Any]:
+    """Extract data models and entities"""
 
-### SmartOpenService
+@lru_cache(maxsize=32)
+def extract_components(project_path: str) -> Dict[str, Any]:
+    """Extract UI components"""
+```
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Features:**
+- Calls `coderef scan` command
+- Parses JSON output
+- Caches results with LRU cache
+- Graceful fallback on failure
 
-### InstallPerfmonForService
+**Dependencies:** cli_utils, logger_config
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+---
 
-### InstallService
+## 4. Validation Components
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+### validation.py
 
-### RemoveService
+**Purpose:** Input validation at API boundary (REF-003)
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Functions:**
+- `validate_project_path_input(path)` - Path exists and is directory
+- `validate_version_format(version)` - Matches x.y.z pattern
+- `validate_template_name_input(name)` - Template exists
+- `validate_changelog_inputs(args)` - Complete changelog data
 
-### ControlService
+**Error Handling:** Raises descriptive ValueError on validation failure
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+---
 
-### StopService
+### error_responses.py
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+**Purpose:** Consistent error response formatting (ARCH-001)
 
-### StartService
+**Class:**
+```python
+class ErrorResponse:
+    @staticmethod
+    def invalid_input(message: str) -> list[TextContent]:
+        """Format invalid input error"""
 
-- **File:** `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/win32/lib/win32serviceutil.py`
-- **Purpose:** <!-- AGENT: Describe purpose -->
+    @staticmethod
+    def file_not_found(path: str) -> list[TextContent]:
+        """Format file not found error"""
 
-## Middleware (24 detected)
+    @staticmethod
+    def validation_error(details: str) -> list[TextContent]:
+        """Format validation error"""
+```
 
-- `AuthContextMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/mcp/server/auth/middleware/auth_context.py`
-- `RequireAuthMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/mcp/server/auth/middleware/bearer_auth.py`
-- `cors_middleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/mcp/server/auth/routes.py`
-- `TransportSecurityMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/mcp/server/transport_security.py`
-- `AuthenticationMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/authentication.py`
-- `BaseHTTPMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/base.py`
-- `CORSMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/cors.py`
-- `ServerErrorMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/errors.py`
-- `ExceptionMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/exceptions.py`
-- `GZipMiddleware` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/starlette/middleware/gzip.py`
+**Format:** User-friendly error messages with context
 
-## UI Components (691 detected)
+---
 
-| Component | File | Type |
-|-----------|------|------|
-| Python | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/is64bit.py` | function |
-| Date | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| Time | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| Timestamp | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| DateFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| TimeFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| TimestampFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| Binary | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | function |
-| Python | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/is64bit.py` | function |
-| Binary | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| Date | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| Time | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| Timestamp | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| DateFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| TimeFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| TimestampFromTicks | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/__init__.py` | function |
-| ConstPointerType | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/cffi/model.py` | function |
-| GetConsoleScreenBufferInfo | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/colorama/win32.py` | function |
-| SetConsoleTextAttribute | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/colorama/win32.py` | function |
-| SetConsoleCursorPosition | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/colorama/win32.py` | function |
+## 5. Utility Components
 
-## Utilities (5089 detected)
+### cli_utils.py
 
-| Utility | File | Purpose |
-|---------|------|---------|
-| randomstring | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py` | <!-- AGENT: Purpose --> |
-| helpTestDataType | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py` | <!-- AGENT: Purpose --> |
-| os | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/is64bit.py` | <!-- AGENT: Purpose --> |
-| maketemp | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| _cleanup_function | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| getcleanupfunction | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| find_ado_path | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| makeadopackage | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| makemdb | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py` | <!-- AGENT: Purpose --> |
-| try_connection | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/tryconnection.py` | <!-- AGENT: Purpose --> |
-| try_operation_with_expected_exception | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/tryconnection.py` | <!-- AGENT: Purpose --> |
-| getIndexedValue | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/adodbapi.py` | <!-- AGENT: Purpose --> |
-| make_COM_connecter | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/adodbapi.py` | <!-- AGENT: Purpose --> |
-| connect | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/adodbapi.py` | <!-- AGENT: Purpose --> |
-| format_parameters | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/adodbapi.py` | <!-- AGENT: Purpose --> |
-| _configure_parameter | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/adodbapi.py` | <!-- AGENT: Purpose --> |
-| ado_direction_name | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/ado_consts.py` | <!-- AGENT: Purpose --> |
-| ado_type_name | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/ado_consts.py` | <!-- AGENT: Purpose --> |
-| standardErrorHandler | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | <!-- AGENT: Purpose --> |
-| pyTypeToADOType | `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/apibase.py` | <!-- AGENT: Purpose --> |
+**Purpose:** @coderef/core CLI integration
 
-## Other Classes (3478 detected)
+**Functions:**
+- `validate_cli_available()` - Check CLI exists (PATH first, then hardcoded)
+- `get_cli_path()` - Return CLI executable path
+- `run_coderef_command(cmd, args)` - Execute CLI with timeout
 
-- `CommonDBTests` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `XtendString` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `XtendInt` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `XtendFloat` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TestADOwithSQLServer` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TestADOwithAccessDB` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TestADOwithMySql` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TestADOwithPostgres` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TimeConverterInterfaceTest` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
-- `TestPythonTimeConverter` in `C:/Users/willh/.mcp-servers/docs-mcp/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`
+**Features:**
+- Subprocess management
+- JSON parsing
+- Error handling
+- Timeout support (120s default)
 
+**CLI Detection Order:**
+1. Check `coderef --version` in PATH (global npm install)
+2. Fallback to hardcoded path `C:\...\cli.js`
 
-*Generated: 2025-12-19T18:54:14.371747*
+---
+
+### logger_config.py
+
+**Purpose:** Centralized logging configuration
+
+**Components:**
+- `logger` - Global logger instance
+- `log_tool_call(tool_name, args)` - Log MCP tool invocations
+- `@log_invocation` decorator - Auto-log tool calls
+
+**Format:** Structured logging with timestamps, levels, context
+
+---
+
+### constants.py
+
+**Purpose:** Global constants (REF-002)
+
+**Classes:**
+```python
+class Paths:
+    TEMPLATES_DIR = "templates/power"
+    TOOL_TEMPLATES_DIR = "templates/tools"
+    OUTPUT_DIR = "coderef/foundation-docs"
+
+class Files:
+    CHANGELOG = "CHANGELOG.json"
+    STANDARDS_INDEX = "standards-index.md"
+```
+
+---
+
+### type_defs.py
+
+**Purpose:** TypedDict and Literal type definitions
+
+**Types:**
+- `TemplateDict` - Template metadata
+- `WorkflowStepDict` - Generation step
+- `ChangeType` - Changelog change types
+- `Severity` - Severity levels
+- `ScanDepth` - Standards scan depth
+
+**Usage:** Type hints for better IDE support and validation
+
+---
+
+## 6. Decorator Components
+
+### Logging Decorators
+
+```python
+@log_invocation
+def handler_function(args):
+    """Automatically logs entry/exit"""
+```
+
+**Purpose:** Trace tool invocations
+
+---
+
+### Error Handling Decorators
+
+```python
+@mcp_error_handler
+def handler_function(args):
+    """Catches exceptions and formats errors"""
+```
+
+**Purpose:** Consistent error responses
+
+---
+
+## 7. Test Components
+
+### tests/unit/
+
+**Test Suites:**
+- `test_server.py` - Server initialization
+- `test_tool_handlers.py` - Handler logic
+- `test_generators.py` - Generator output
+- `test_validation.py` - Input validation
+
+### tests/integration/
+
+**Integration Tests:**
+- `test_mcp_workflows.py` - End-to-end workflows
+- `test_coderef_foundation_docs.py` - Context injection
+- `test_tools_integration.py` - Tool integration
+
+**Coverage:** 27/30 tests passing (90% coverage)
+
+---
+
+## 8. Template Components
+
+### templates/power/
+
+**POWER Framework Templates:**
+- `readme.txt` - Project overview
+- `architecture.txt` - System architecture
+- `api.txt` - API reference
+- `schema.txt` - Data schemas
+- `components.txt` - Component structure
+- `my-guide.txt` - Development guide
+- `user-guide.txt` - User documentation
+
+**Format:** Text files with embedded metadata
+
+---
+
+## Component Dependencies
+
+```
+server.py
+    → tool_handlers.py
+        → generators/ (all generators)
+            → base_generator.py
+            → foundation_generator.py
+            → changelog_generator.py
+            → standards_generator.py
+            → audit_generator.py
+            → quickref_generator.py
+        → extractors.py
+            → cli_utils.py
+        → validation.py
+        → error_responses.py
+        → logger_config.py
+```
+
+---
+
+## Design Patterns
+
+**Factory Pattern:** BaseGenerator creates specific generators
+
+**Decorator Pattern:** `@log_invocation`, `@mcp_error_handler`
+
+**Strategy Pattern:** Different generators for different doc types
+
+**Template Method:** BaseGenerator defines workflow, subclasses implement details
+
+---
+
+## References
+
+- **Component Implementations:** All files in project root + `generators/`
+- **Architectural Principles:** ARCHITECTURE.md
+- **API Specifications:** API.md
+- **Type Definitions:** `type_defs.py`
+
+---
+
+*Generated: 2025-12-27*
+*For AI Agents: All components follow single responsibility principle*

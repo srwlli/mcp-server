@@ -54,6 +54,7 @@ from logger_config import logger
 # Import decorators and helpers (ARCH-004, ARCH-005, QUA-004)
 from handler_decorators import mcp_error_handler, log_invocation
 from handler_helpers import format_success_response, generate_workorder_id, get_workorder_timestamp, add_response_timestamp
+from uds_helpers import get_server_version
 
 
 @log_invocation
@@ -949,6 +950,24 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
             # Save to analysis.json (no timestamp)
             analysis_file = feature_dir / 'analysis.json'
 
+            # Inject UDS metadata (WO-UDS-INTEGRATION-001)
+            from datetime import timedelta
+            update_date = datetime.utcnow().strftime("%Y-%m-%d")
+            review_date = (datetime.utcnow() + timedelta(days=30)).strftime("%Y-%m-%d")
+
+            result['_uds'] = {
+                'generated_by': get_server_version(),
+                'document_type': 'Project Analysis',
+                'workorder_id': workorder_id,
+                'feature_id': feature_name,
+                'last_updated': update_date,
+                'ai_assistance': True,
+                'status': 'DRAFT',
+                'next_review': review_date
+            }
+
+            logger.info(f"UDS metadata injected into analysis.json for workorder: {workorder_id}")
+
             with open(analysis_file, 'w', encoding='utf-8') as f:
                 json.dump(result, f, indent=2)
 
@@ -1352,7 +1371,25 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
             'workorder_assigned_by': 'gather_context'
         }
     }
-    
+
+    # Inject UDS metadata (WO-UDS-INTEGRATION-001)
+    from datetime import timedelta
+    update_date = datetime.utcnow().strftime("%Y-%m-%d")
+    review_date = (datetime.utcnow() + timedelta(days=30)).strftime("%Y-%m-%d")
+
+    context_data['_uds'] = {
+        'generated_by': get_server_version(),
+        'document_type': 'Feature Context',
+        'workorder_id': workorder_id,
+        'feature_id': feature_name,
+        'last_updated': update_date,
+        'ai_assistance': True,
+        'status': 'DRAFT',
+        'next_review': review_date
+    }
+
+    logger.info(f"UDS metadata injected into context.json for workorder: {workorder_id}")
+
     # Save context.json
     context_file = feature_dir / 'context.json'
     with open(context_file, 'w', encoding='utf-8') as f:
@@ -1494,6 +1531,25 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     deliverables_content = deliverables_content.replace('{{TASKS}}', '\n'.join(tasks_md) if tasks_md else '- No tasks defined')
     deliverables_content = deliverables_content.replace('{{FILES}}', '\n'.join(files_md) if files_md else '- No files listed')
     deliverables_content = deliverables_content.replace('{{SUCCESS_CRITERIA}}', '\n'.join(success_md) if success_md else '- No success criteria defined')
+
+    # Inject UDS YAML frontmatter (WO-UDS-INTEGRATION-001)
+    from uds_helpers import generate_uds_header, generate_uds_footer
+
+    if workorder_id and workorder_id != "[NO WORKORDER]":
+        uds_header = generate_uds_header(
+            title=f"DELIVERABLES - {feature_name}",
+            workorder_id=workorder_id,
+            feature_name=feature_name,
+            status="IN_PROGRESS",
+            doc_version="1.0"
+        )
+        uds_footer = generate_uds_footer(
+            workorder_id=workorder_id,
+            feature_name=feature_name,
+            status="IN_PROGRESS"
+        )
+        deliverables_content = f"{uds_header}\n\n{deliverables_content}\n\n{uds_footer}"
+        logger.info(f"UDS YAML frontmatter added to DELIVERABLES.md for workorder: {workorder_id}")
 
     # Save DELIVERABLES.md
     deliverables_path = feature_dir / 'DELIVERABLES.md'

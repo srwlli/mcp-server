@@ -1320,7 +1320,33 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
     
     if not isinstance(requirements, list):
         raise ValueError("requirements must be an array of strings")
-    
+
+    # Validate that requirements are MUST-HAVE only (no "nice to have" features)
+    forbidden_patterns = [
+        'nice to have', 'nice-to-have',
+        'optional', 'optionally',
+        'should have', 'should-have',
+        'could have', 'could-have',
+        'would be nice', 'if possible',
+        'maybe', 'perhaps', 'potentially',
+        'consider', 'might want',
+        'future', 'later', 'eventually'
+    ]
+
+    for i, req in enumerate(requirements):
+        if not isinstance(req, str):
+            raise ValueError(f"requirement {i+1} must be a string")
+
+        req_lower = req.lower()
+        for pattern in forbidden_patterns:
+            if pattern in req_lower:
+                raise ValueError(
+                    f"Requirement {i+1} contains forbidden phrase '{pattern}'. "
+                    f"Workorders must contain ONLY must-have requirements. "
+                    f"Move optional features to 'out_of_scope' instead.\n"
+                    f"Rejected requirement: {req}"
+                )
+
     # Get optional fields with defaults
     out_of_scope = arguments.get('out_of_scope', [])
     constraints = arguments.get('constraints', [])

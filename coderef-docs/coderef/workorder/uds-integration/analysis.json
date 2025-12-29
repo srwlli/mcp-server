@@ -1,0 +1,90 @@
+{
+  "workorder_id": "WO-UDS-INTEGRATION-001",
+  "feature_name": "uds-integration",
+  "timestamp": "2025-12-28T18:35:00Z",
+  "project_overview": {
+    "name": "coderef-docs",
+    "version": "3.1.1",
+    "type": "MCP Server - Documentation Generation",
+    "primary_language": "Python 3.10+",
+    "framework": "MCP (Model Context Protocol)"
+  },
+  "foundation_docs": {
+    "available": [
+      "README.md (project root)",
+      "CLAUDE.md (AI context)",
+      "API.md (coderef/foundation-docs/)",
+      "ARCHITECTURE.md (coderef/foundation-docs/)",
+      "SCHEMA.md (coderef/foundation-docs/)",
+      "COMPONENTS.md (coderef/foundation-docs/)"
+    ],
+    "missing": []
+  },
+  "coding_standards": {
+    "patterns": [
+      "POWER framework for all documentation templates",
+      "TypedDict for complex return types",
+      "Async/await for all tool handlers",
+      "ErrorResponse factory for consistent errors",
+      "Structured logging with logger_config",
+      "Input validation at all boundaries"
+    ],
+    "reference_files": [
+      "templates/power/*.txt (POWER framework templates)",
+      "generators/base_generator.py (template routing)",
+      "tool_handlers.py (handler patterns)",
+      "constants.py (centralized config)"
+    ]
+  },
+  "technology_stack": {
+    "core": ["Python 3.10+", "asyncio", "pathlib"],
+    "validation": ["jsonschema 4.0+"],
+    "testing": ["pytest 8.0+", "pytest-asyncio"],
+    "package_manager": "uv (or pip)"
+  },
+  "key_patterns": {
+    "template_system": {
+      "location": "templates/",
+      "subdirectories": ["power/", "handoff/", "prompts/", "risk/", "tools/"],
+      "pattern": "Templates use POWER framework with metadata headers"
+    },
+    "generator_pattern": {
+      "base": "generators/base_generator.py",
+      "specialized": [
+        "generators/foundation_generator.py",
+        "generators/changelog_generator.py",
+        "generators/planning_generator.py",
+        "generators/handoff_generator.py"
+      ],
+      "pattern": "Inherit from BaseGenerator, override generate() method"
+    },
+    "tool_handler_pattern": {
+      "location": "tool_handlers.py",
+      "pattern": "@log_invocation + @mcp_error_handler decorators, async def handle_*",
+      "registry": "TOOL_HANDLERS dict maps tool names to handlers"
+    }
+  },
+  "similar_features": {
+    "template_additions": [
+      "templates/power/my-guide.txt (v1.2.1)",
+      "templates/power/features.txt (recent)",
+      "templates/handoff/ (v1.12.0)"
+    ],
+    "helper_modules": [
+      "handler_helpers.py (deliverables, workorder helpers)",
+      "uds_helpers.py (TO BE CREATED for UDS)"
+    ]
+  },
+  "risks": [
+    "YAML parsing errors if frontmatter format is invalid",
+    "Breaking existing workorder docs that don't expect YAML",
+    "Need to handle both with-UDS and without-UDS docs gracefully"
+  ],
+  "recommendations": [
+    "Create UDS templates first (templates/uds/header.yaml, footer.yaml)",
+    "Build uds_helpers.py with validation functions",
+    "Update generators incrementally (start with one, test, then expand)",
+    "Add optional UDS parameter to maintain backward compatibility",
+    "Test with existing workorder docs to ensure no breakage"
+  ]
+}

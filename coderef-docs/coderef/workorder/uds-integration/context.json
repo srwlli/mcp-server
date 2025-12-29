@@ -1,0 +1,49 @@
+{
+  "workorder_id": "WO-UDS-INTEGRATION-001",
+  "feature_name": "uds-integration",
+  "timestamp": "2025-12-28T18:30:00Z",
+  "description": "Implement Universal Document Standard (UDS) system that adds YAML headers/footers to all workorder-generated documents (plan.json, DELIVERABLES.md, context.json, analysis.json, claude.md) with workorder_id, feature_id, status, timestamps, and review dates",
+  "goal": "Add structured YAML frontmatter metadata to all workorder documentation for tracking, lifecycle management, and traceability",
+  "requirements": [
+    "UDS header template with YAML frontmatter (workorder_id, feature_id, status, timestamp, version, generated_by)",
+    "UDS footer template with metadata (generated_by, last_updated, review_date, AI assistance flag)",
+    "Helper functions in uds_helpers.py (generate_uds_header, generate_uds_footer, get_server_version)",
+    "Integration into all workorder generators (planning_generator.py, handoff_generator.py, tool_handlers.py)",
+    "Apply UDS to all workorder docs: plan.json, DELIVERABLES.md, context.json, analysis.json, claude.md"
+  ],
+  "out_of_scope": [
+    "Foundation docs (README.md, ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md)",
+    "User-facing docs (USER-GUIDE.md, my-guide.md, FEATURES.md, quickref.md)",
+    "Classification field (INTERNAL/PUBLIC/CONFIDENTIAL)",
+    "Copyright headers"
+  ],
+  "constraints": [
+    "Backward compatible with existing workorder docs without UDS",
+    "Must use valid YAML frontmatter format",
+    "Only docs with workorder_id get UDS metadata",
+    "No breaking changes to existing workflows",
+    "Foundation doc generators remain unchanged"
+  ],
+  "success_criteria": {
+    "functionality": [
+      "All workorder docs include UDS YAML header with required fields",
+      "All workorder docs include UDS YAML footer with metadata",
+      "Helper functions generate valid YAML frontmatter",
+      "Existing workorder workflows continue working",
+      "UDS templates exist in templates/uds/ directory"
+    ],
+    "quality": [
+      "YAML validates against schema",
+      "Timestamps use ISO 8601 format",
+      "Status values use controlled vocabulary (DRAFT/IN_REVIEW/APPROVED/ARCHIVED)",
+      "Review dates calculated correctly (default: +30 days)",
+      "Server version detection works correctly"
+    ],
+    "documentation": [
+      "UDS templates documented with field descriptions",
+      "Integration guide for adding UDS to new workorder docs",
+      "Examples of UDS-enhanced documents",
+      "CHANGELOG entry for v3.2.0 with UDS feature"
+    ]
+  }
+}

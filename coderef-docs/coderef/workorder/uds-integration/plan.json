@@ -1,0 +1,374 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_version": "1.0",
+    "workorder_id": "WO-UDS-INTEGRATION-001",
+    "feature_name": "uds-integration",
+    "created_at": "2025-12-28T18:40:00Z",
+    "status": "DRAFT",
+    "validation_score": null
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "discovery": {
+        "foundation_docs_reviewed": ["README.md", "CLAUDE.md", "API.md"],
+        "coding_standards_identified": ["POWER framework", "TypedDict patterns", "Async handlers"],
+        "reference_components": ["templates/power/", "generators/base_generator.py", "handler_helpers.py"],
+        "similar_features": ["my-guide template addition (v1.2.1)", "handoff templates (v1.12.0)"]
+      },
+      "analysis_summary": "UDS will add YAML frontmatter to all workorder docs (plan.json, DELIVERABLES.md, context.json, analysis.json, claude.md) with metadata for tracking, lifecycle management, and traceability. Foundation docs remain unchanged."
+    },
+    "1_executive_summary": {
+      "what": "Universal Document Standard (UDS) system for workorder documentation metadata",
+      "why": "Enable workorder lifecycle tracking, improve traceability, and provide machine-readable metadata for all feature implementation documents",
+      "impact": "All workorder docs will include structured YAML headers/footers with workorder_id, status, timestamps, and review dates for better organization and audit trails"
+    },
+    "2_risk_assessment": {
+      "breaking_changes": {
+        "severity": "LOW",
+        "details": "UDS adds YAML frontmatter which existing parsers might not expect",
+        "mitigation": "Make UDS optional via parameter, maintain backward compatibility, test with existing workorder docs"
+      },
+      "security": {
+        "severity": "LOW",
+        "details": "YAML parsing could introduce injection risks",
+        "mitigation": "Use safe YAML loading, validate all metadata fields, sanitize user inputs"
+      },
+      "performance": {
+        "severity": "MINIMAL",
+        "details": "Adding header/footer generation adds <5ms overhead",
+        "mitigation": "No mitigation needed - overhead negligible"
+      },
+      "maintainability": {
+        "severity": "LOW",
+        "details": "New uds_helpers.py module to maintain",
+        "mitigation": "Well-documented helper functions, comprehensive tests, clear integration guide"
+      },
+      "reversibility": {
+        "can_rollback": true,
+        "rollback_steps": ["Remove UDS templates", "Revert generator changes", "Remove uds_helpers.py", "Existing docs unaffected"]
+      }
+    },
+    "3_current_state_analysis": {
+      "architecture": {
+        "template_system": "templates/ directory with subdirs (power/, handoff/, prompts/, risk/, tools/)",
+        "generator_pattern": "BaseGenerator inheritance with specialized generators",
+        "tool_handlers": "Registry pattern in tool_handlers.py with decorators"
+      },
+      "existing_workflows": {
+        "workorder_creation": "/create-workorder → gather_context → analyze → create_plan → validate",
+        "documentation_generation": "generate_foundation_docs, generate_individual_doc, generate_quickref",
+        "workorder_tracking": "DELIVERABLES.md, context.json, analysis.json, plan.json, communication.json"
+      },
+      "gaps": [
+        "No structured metadata in workorder docs",
+        "No lifecycle status tracking (DRAFT/APPROVED/ARCHIVED)",
+        "No machine-readable provenance (which server generated doc)",
+        "No review scheduling or timestamps"
+      ]
+    },
+    "4_key_features": {
+      "feature_1": {
+        "name": "UDS Template System",
+        "description": "Create reusable YAML header/footer templates in templates/uds/",
+        "must_have": true
+      },
+      "feature_2": {
+        "name": "UDS Helper Functions",
+        "description": "Generate valid YAML frontmatter with generate_uds_header() and generate_uds_footer()",
+        "must_have": true
+      },
+      "feature_3": {
+        "name": "Workorder Generator Integration",
+        "description": "Update all workorder generators to inject UDS metadata",
+        "must_have": true
+      },
+      "feature_4": {
+        "name": "Backward Compatibility",
+        "description": "Existing workorder docs without UDS continue working",
+        "must_have": true
+      }
+    },
+    "5_task_id_system": {
+      "format": "WO-UDS-INTEGRATION-001-{CATEGORY}-{NUMBER}",
+      "categories": {
+        "SETUP": "Environment setup and template creation",
+        "IMPL": "Implementation of helpers and integration",
+        "TEST": "Testing and validation",
+        "DOC": "Documentation updates"
+      },
+      "examples": [
+        "SETUP-001: Create templates/uds/ directory",
+        "IMPL-001: Write generate_uds_header() function",
+        "TEST-001: Test UDS header generation"
+      ]
+    },
+    "6_implementation_phases": {
+      "phase_1_setup": {
+        "name": "UDS Template Creation",
+        "duration_estimate": "30 minutes",
+        "tasks": [
+          {
+            "id": "SETUP-001",
+            "description": "Create templates/uds/ directory structure",
+            "dependencies": [],
+            "acceptance_criteria": ["Directory exists at C:\\Users\\willh\\.mcp-servers\\coderef-docs\\templates\\uds\\"]
+          },
+          {
+            "id": "SETUP-002",
+            "description": "Create templates/uds/header.yaml with YAML frontmatter structure",
+            "dependencies": ["SETUP-001"],
+            "acceptance_criteria": ["Template includes: title, version, generated_by, workorder_id, feature_id, status, timestamp fields"]
+          },
+          {
+            "id": "SETUP-003",
+            "description": "Create templates/uds/footer.yaml with metadata structure",
+            "dependencies": ["SETUP-001"],
+            "acceptance_criteria": ["Template includes: generated_by, workorder, feature, last_updated, ai_assistance, status, next_review fields"]
+          }
+        ]
+      },
+      "phase_2_helpers": {
+        "name": "Helper Function Implementation",
+        "duration_estimate": "45 minutes",
+        "tasks": [
+          {
+            "id": "IMPL-001",
+            "description": "Create uds_helpers.py module with generate_uds_header() function",
+            "dependencies": ["SETUP-002"],
+            "acceptance_criteria": [
+              "Function accepts: title, workorder_id, feature_name, status parameters",
+              "Returns valid YAML string with --- delimiters",
+              "Uses ISO 8601 timestamps",
+              "Includes server version from get_server_version()"
+            ]
+          },
+          {
+            "id": "IMPL-002",
+            "description": "Implement generate_uds_footer() function in uds_helpers.py",
+            "dependencies": ["SETUP-003"],
+            "acceptance_criteria": [
+              "Function accepts: workorder_id, feature_name, status, review_days parameters",
+              "Calculates next_review as today + review_days (default 30)",
+              "Returns valid YAML string",
+              "Includes AI assistance flag (always true for agent-generated docs)"
+            ]
+          },
+          {
+            "id": "IMPL-003",
+            "description": "Implement get_server_version() helper function",
+            "dependencies": [],
+            "acceptance_criteria": [
+              "Reads version from server.py or constants.py",
+              "Returns string in format 'coderef-docs vX.Y.Z'",
+              "Handles errors gracefully (fallback to 'unknown')"
+            ]
+          }
+        ]
+      },
+      "phase_3_integration": {
+        "name": "Generator Integration",
+        "duration_estimate": "1 hour",
+        "tasks": [
+          {
+            "id": "IMPL-004",
+            "description": "Update tool_handlers.py handle_gather_context() to add UDS to context.json",
+            "dependencies": ["IMPL-001", "IMPL-002"],
+            "acceptance_criteria": [
+              "Import uds_helpers functions",
+              "Generate UDS header with context metadata",
+              "Prepend header to context.json content",
+              "Append UDS footer to context.json"
+            ]
+          },
+          {
+            "id": "IMPL-005",
+            "description": "Update planning_generator.py to add UDS to plan.json",
+            "dependencies": ["IMPL-001", "IMPL-002"],
+            "acceptance_criteria": [
+              "Extract workorder_id from META_DOCUMENTATION",
+              "Generate UDS header with plan metadata",
+              "Insert header at top of plan.json",
+              "Append UDS footer"
+            ]
+          },
+          {
+            "id": "IMPL-006",
+            "description": "Update tool_handlers.py handle_generate_deliverables_template() to add UDS to DELIVERABLES.md",
+            "dependencies": ["IMPL-001", "IMPL-002"],
+            "acceptance_criteria": [
+              "Read workorder_id from plan.json",
+              "Generate markdown-compatible UDS header",
+              "Prepend to DELIVERABLES template",
+              "Append UDS footer"
+            ]
+          },
+          {
+            "id": "IMPL-007",
+            "description": "Update handoff_generator.py to add UDS to claude.md",
+            "dependencies": ["IMPL-001", "IMPL-002"],
+            "acceptance_criteria": [
+              "Extract metadata from plan.json",
+              "Generate UDS header for handoff doc",
+              "Insert at top of claude.md",
+              "Append UDS footer"
+            ]
+          },
+          {
+            "id": "IMPL-008",
+            "description": "Update tool_handlers.py handle_analyze_for_planning() to add UDS to analysis.json",
+            "dependencies": ["IMPL-001", "IMPL-002"],
+            "acceptance_criteria": [
+              "Generate UDS header with analysis metadata",
+              "Prepend to analysis.json",
+              "Append UDS footer"
+            ]
+          }
+        ]
+      },
+      "phase_4_testing": {
+        "name": "Testing & Validation",
+        "duration_estimate": "30 minutes",
+        "tasks": [
+          {
+            "id": "TEST-001",
+            "description": "Test generate_uds_header() with various inputs",
+            "dependencies": ["IMPL-001"],
+            "acceptance_criteria": [
+              "Valid YAML output for all test cases",
+              "Timestamp in ISO 8601 format",
+              "All required fields present",
+              "YAML parses without errors"
+            ]
+          },
+          {
+            "id": "TEST-002",
+            "description": "Test generate_uds_footer() with date calculations",
+            "dependencies": ["IMPL-002"],
+            "acceptance_criteria": [
+              "Review date = today + review_days",
+              "Valid YAML output",
+              "All metadata fields correct"
+            ]
+          },
+          {
+            "id": "TEST-003",
+            "description": "Integration test: Create full workorder with UDS",
+            "dependencies": ["IMPL-004", "IMPL-005", "IMPL-006", "IMPL-007", "IMPL-008"],
+            "acceptance_criteria": [
+              "Run /create-workorder for test feature",
+              "Verify all 5 files have UDS headers/footers",
+              "YAML validates in all files",
+              "Workorder_id matches across all docs"
+            ]
+          },
+          {
+            "id": "TEST-004",
+            "description": "Backward compatibility test: Verify existing workorder docs still work",
+            "dependencies": ["IMPL-004", "IMPL-005", "IMPL-006", "IMPL-007", "IMPL-008"],
+            "acceptance_criteria": [
+              "Old workorder docs without UDS still parse",
+              "No errors when reading non-UDS docs",
+              "Workflows continue functioning"
+            ]
+          }
+        ]
+      },
+      "phase_5_documentation": {
+        "name": "Documentation Updates",
+        "duration_estimate": "30 minutes",
+        "tasks": [
+          {
+            "id": "DOC-001",
+            "description": "Add UDS example to CLAUDE.md or create UDS-GUIDE.md",
+            "dependencies": ["TEST-003"],
+            "acceptance_criteria": [
+              "Show example UDS header/footer",
+              "Explain field meanings",
+              "Provide integration guide for new docs"
+            ]
+          },
+          {
+            "id": "DOC-002",
+            "description": "Update CHANGELOG.json with UDS feature entry",
+            "dependencies": ["TEST-003"],
+            "acceptance_criteria": [
+              "Add entry for v3.2.0 or v3.1.2",
+              "Type: feature, Severity: minor",
+              "List all files modified",
+              "Describe impact on workorder docs"
+            ]
+          },
+          {
+            "id": "DOC-003",
+            "description": "Update README.md to mention UDS in features",
+            "dependencies": ["TEST-003"],
+            "acceptance_criteria": [
+              "Add UDS to feature list",
+              "Brief description of metadata tracking"
+            ]
+          }
+        ]
+      }
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "tests/test_uds_helpers.py: Test generate_uds_header(), generate_uds_footer(), get_server_version()",
+        "tests/test_yaml_validation.py: Ensure generated YAML is valid"
+      ],
+      "integration_tests": [
+        "tests/test_workorder_with_uds.py: Create full workorder, verify UDS in all docs",
+        "tests/test_backward_compatibility.py: Load old workorder docs without UDS"
+      ],
+      "acceptance_criteria": [
+        "All unit tests pass with 100% coverage for uds_helpers.py",
+        "Integration tests create valid UDS in all 5 workorder doc types",
+        "Backward compatibility tests pass without errors",
+        "YAML validation passes for all generated documents"
+      ]
+    },
+    "8_success_criteria": {
+      "functional": [
+        "All workorder docs (plan.json, DELIVERABLES.md, context.json, analysis.json, claude.md) include UDS headers/footers",
+        "UDS metadata includes: workorder_id, feature_id, status, timestamp, version, generated_by, review_date",
+        "Helper functions generate valid YAML frontmatter",
+        "Existing workorder workflows continue working without modification",
+        "/create-workorder command produces UDS-enhanced documents"
+      ],
+      "quality": [
+        "YAML validates against schema (no parsing errors)",
+        "Timestamps use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ)",
+        "Status values use controlled vocabulary (DRAFT/IN_REVIEW/APPROVED/ARCHIVED)",
+        "Review dates calculated correctly (default: current_date + 30 days)",
+        "Server version detection works reliably"
+      ],
+      "documentation": [
+        "UDS templates exist in templates/uds/ with field descriptions",
+        "Integration guide explains how to add UDS to new workorder doc types",
+        "Example UDS-enhanced documents available for reference",
+        "CHANGELOG entry documents UDS feature with version bump"
+      ]
+    },
+    "QUALITY_CHECKLIST_FOR_PLANS": {
+      "completeness_check": {
+        "all_10_sections_present": true,
+        "meta_documentation_complete": true,
+        "preparation_analysis_done": true,
+        "executive_summary_clear": true,
+        "risk_assessment_thorough": true,
+        "current_state_documented": true,
+        "key_features_defined": true,
+        "task_id_system_explained": true,
+        "implementation_phases_detailed": true,
+        "testing_strategy_comprehensive": true,
+        "success_criteria_measurable": true
+      },
+      "quality_indicators": {
+        "tasks_have_clear_acceptance_criteria": true,
+        "dependencies_mapped": true,
+        "risk_mitigation_strategies": true,
+        "backward_compatibility_considered": true,
+        "testing_coverage_adequate": true
+      }
+    }
+  }
+}

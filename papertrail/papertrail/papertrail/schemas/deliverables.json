@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CodeRef Deliverables Schema",
+  "description": "UDS schema for DELIVERABLES.md - execution tracking and metrics",
+  "type": "object",
+  "document_type": "deliverables",
+  "required_sections": [
+    "Overview",
+    "Completion Status",
+    "Implementation Metrics",
+    "Testing & Validation"
+  ],
+  "optional_sections": [
+    "Phase Breakdown",
+    "Challenges & Solutions",
+    "Lessons Learned",
+    "Next Steps"
+  ],
+  "required_metadata": {
+    "workorder_id": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9]+(-[A-Z0-9]+)+-\\d{3}$"
+    },
+    "feature_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+    },
+    "generated_by": {
+      "type": "string",
+      "pattern": "^coderef-(workflow|docs) v.*$"
+    }
+  },
+  "required_metrics": {
+    "lines_of_code": {
+      "added": "number",
+      "removed": "number",
+      "modified": "number"
+    },
+    "commits": {
+      "count": "number"
+    },
+    "time_spent": {
+      "first_commit": "ISO 8601 timestamp",
+      "last_commit": "ISO 8601 timestamp",
+      "duration": "string (e.g., '3 hours 45 minutes')"
+    },
+    "contributors": {
+      "type": "array",
+      "items": "string"
+    }
+  },
+  "validation_rules": {
+    "critical": [
+      "Must have workorder_id",
+      "Must have completion status",
+      "Must have implementation metrics section",
+      "Must have LOC metrics if status is COMPLETE"
+    ],
+    "warnings": [
+      "Should have git commit metrics",
+      "Should have testing results",
+      "Should track contributors"
+    ]
+  }
+}

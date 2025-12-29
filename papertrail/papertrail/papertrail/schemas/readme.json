@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CodeRef README Schema",
+  "description": "UDS schema for README.md - project overview following POWER framework",
+  "type": "object",
+  "document_type": "readme",
+  "required_sections": [
+    "Purpose",
+    "Overview",
+    "What/Why/When",
+    "Examples",
+    "References"
+  ],
+  "optional_sections": [
+    "Installation",
+    "Quick Start",
+    "Configuration",
+    "Usage",
+    "API Documentation",
+    "Contributing",
+    "License",
+    "Changelog"
+  ],
+  "required_metadata": {
+    "workorder_id": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9]+(-[A-Z0-9]+)+-\\d{3}$"
+    },
+    "generated_by": {
+      "type": "string",
+      "pattern": "^coderef-docs v.*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    }
+  },
+  "validation_rules": {
+    "critical": [
+      "Must follow POWER framework",
+      "Must have workorder_id",
+      "Must have version number",
+      "Must have project purpose clearly stated"
+    ],
+    "warnings": [
+      "Should include installation instructions",
+      "Should include usage examples",
+      "Should link to other documentation"
+    ]
+  }
+}

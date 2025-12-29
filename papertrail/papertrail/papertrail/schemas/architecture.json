@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CodeRef Architecture Document Schema",
+  "description": "UDS schema for ARCHITECTURE.md - system architecture following POWER framework",
+  "type": "object",
+  "document_type": "architecture",
+  "required_sections": [
+    "Purpose",
+    "Overview",
+    "What/Why/When",
+    "Examples",
+    "References"
+  ],
+  "optional_sections": [
+    "Component Diagram",
+    "Data Flow",
+    "API Contracts",
+    "Security Considerations",
+    "Performance Considerations",
+    "Deployment Architecture"
+  ],
+  "required_metadata": {
+    "workorder_id": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9]+(-[A-Z0-9]+)+-\\d{3}$"
+    },
+    "generated_by": {
+      "type": "string",
+      "pattern": "^coderef-docs v.*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    }
+  },
+  "validation_rules": {
+    "critical": [
+      "Must follow POWER framework (all 5 sections)",
+      "Must have workorder_id",
+      "Must have MCP attribution (generated_by)",
+      "Purpose section must explain why architecture exists"
+    ],
+    "warnings": [
+      "Should include component diagrams or references",
+      "Should document key architectural decisions",
+      "Should link to related documents"
+    ]
+  }
+}

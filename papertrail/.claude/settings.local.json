@@ -1,14 +1,19 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__execute_plan",
+      "mcp__coderef-workflow__update_task_status",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  },
   "enabledMcpjsonServers": [
     "coderef-personas",
     "coderef-context",
     "coderef-docs",
     "coderef-workflow",
     "coderef-testing"
-  ],
-  "permissions": {
-    "allow": [
-      "mcp__coderef-workflow__execute_plan"
-    ]
-  }
+  ]
 }

@@ -1,0 +1,173 @@
+Metadata-Version: 2.4
+Name: papertrail
+Version: 1.0.0
+Summary: Universal Documentation Standards (UDS) for CodeRef Ecosystem
+Home-page: https://github.com/coderef/papertrail
+Author: CodeRef Ecosystem
+Author-email: noreply@anthropic.com
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: jsonschema>=4.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Requires-Dist: black>=23.0; extra == "dev"
+Requires-Dist: mypy>=1.0; extra == "dev"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# Papertrail - Universal Documentation Standards
+
+**Version:** 1.0.0
+**Status:** Beta
+**Workorder:** WO-PAPERTRAIL-PYTHON-PACKAGE-001
+
+## Purpose
+
+Papertrail provides Universal Documentation Standards (UDS) for the CodeRef ecosystem with complete workorder traceability, automatic validation, and health tracking.
+
+## Features
+
+- **UDS Headers/Footers** - YAML frontmatter with workorder_id, generated_by, feature_id
+- **Schema Validation** - Enforce required sections for 5 CodeRef doc types
+- **Health Scoring** - 0-100 score (traceability 40%, completeness 30%, freshness 20%, validation 10%)
+- **Template Engine** - Inheritance, conditionals, includes (Phase 2)
+- **CodeRef Extensions** - Auto-inject from coderef-context, git, workflow (Phase 2)
+
+## Installation
+
+```bash
+# Install in development mode
+cd papertrail/
+pip install -e .
+
+# Install with dev dependencies
+pip install -e .[dev]
+```
+
+## Quick Start
+
+```python
+from papertrail import UDSHeader, UDSFooter, validate_uds, calculate_health
+
+# Create UDS header
+header = UDSHeader(
+    workorder_id="WO-AUTH-SYSTEM-001",
+    generated_by="coderef-docs v1.2.0",
+    feature_id="auth-system",
+    timestamp="2025-12-29T10:15:00Z",
+    title="Authentication System Architecture",
+    version="2.1.0"
+)
+
+# Generate YAML frontmatter
+yaml_header = header.to_yaml()
+print(yaml_header)
+
+# Validate document
+doc_content = """
+---
+workorder_id: WO-AUTH-SYSTEM-001
+generated_by: coderef-docs v1.2.0
+feature_id: auth-system
+timestamp: 2025-12-29T10:15:00Z
+---
+
+# Architecture
+
+## Purpose
+...
+"""
+
+result = validate_uds(doc_content, "architecture")
+print(f"Valid: {result.valid}, Score: {result.score}")
+
+# Calculate health score
+health = calculate_health(doc_content, "architecture")
+print(f"Health Score: {health.score}/100")
+print(f"  Traceability: {health.traceability}/40")
+print(f"  Completeness: {health.completeness}/30")
+print(f"  Freshness: {health.freshness}/20")
+print(f"  Validation: {health.validation}/10")
+```
+
+## Document Types
+
+Papertrail supports 5 CodeRef-specific document types:
+
+1. **plan** - Implementation plans (plan.json) with 10-section structure
+2. **deliverables** - Execution tracking (DELIVERABLES.md) with metrics
+3. **architecture** - Architecture docs (ARCHITECTURE.md) following POWER framework
+4. **readme** - Project overview (README.md) following POWER framework
+5. **api** - API documentation (API.md) following POWER framework
+
+## Development
+
+```bash
+# Run tests
+pytest
+
+# Run tests with coverage
+pytest --cov=papertrail
+
+# Format code
+black papertrail/
+
+# Type checking
+mypy papertrail/
+```
+
+## Project Structure
+
+```
+papertrail/
+â”œâ”€â”€ papertrail/
+â”‚   â”œâ”€â”€ __init__.py           # Public API
+â”‚   â”œâ”€â”€ uds.py                # UDSHeader, UDSFooter classes
+â”‚   â”œâ”€â”€ validator.py          # Schema validation
+â”‚   â”œâ”€â”€ health.py             # Health scoring
+â”‚   â”œâ”€â”€ engine.py             # Template engine (Phase 2)
+â”‚   â”œâ”€â”€ extensions/           # CodeRef extensions (Phase 2)
+â”‚   â”‚   â”œâ”€â”€ coderef_context.py
+â”‚   â”‚   â”œâ”€â”€ git_integration.py
+â”‚   â”‚   â””â”€â”€ workflow.py
+â”‚   â””â”€â”€ schemas/              # JSON schemas
+â”‚       â”œâ”€â”€ plan.json
+â”‚       â”œâ”€â”€ deliverables.json
+â”‚       â”œâ”€â”€ architecture.json
+â”‚       â”œâ”€â”€ readme.json
+â”‚       â””â”€â”€ api.json
+â”œâ”€â”€ tests/                    # Unit tests
+â”œâ”€â”€ setup.py                  # Package configuration
+â””â”€â”€ README.md                 # This file
+```
+
+## License
+
+MIT License
+
+Copyright Â© 2025 CodeRef Ecosystem
+
+---
+Generated by: Papertrail v1.0.0
+Workorder: WO-PAPERTRAIL-PYTHON-PACKAGE-001
+Last Updated: 2025-12-29

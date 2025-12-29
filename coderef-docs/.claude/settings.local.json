@@ -1,38 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -m pytest:*)",
-      "Bash(pip install:*)",
-      "mcp__coderef-docs__create_context_expert",
-      "Bash(powershell -Command \"[System.DateTime]::UtcNow.ToString(''o'')\")",
-      "mcp__coderef-context__coderef_scan",
-      "Bash(powershell -Command \"Get-Item ''C:\\Users\\willh\\.claude\\commands\\generate-docs.md'' | Select-Object FullName, Length, LastWriteTime\")",
-      "Bash(powershell -Command \"(Select-String -Path ''C:\\Users\\willh\\.mcp-servers\\coderef-docs\\CLAUDE.md'' -Pattern ''generate_foundation_docs'').LineNumber | head -1\")",
-      "mcp__coderef-docs__generate_individual_doc",
       "Bash(git add:*)",
-      "Bash(git hash-object:*)",
-      "mcp__coderef-workflow__create_plan",
-      "mcp__coderef-workflow__analyze_project_for_planning",
-      "mcp__coderef-workflow__validate_implementation_plan",
-      "Bash(dir:*)",
-      "Bash(nul)",
-      "mcp__coderef-workflow__execute_plan",
-      "Bash(git commit:*)",
-      "Bash(python -m py_compile:*)",
-      "Bash(python -c:*)",
-      "Bash(timeout 5 python:*)",
-      "Bash(python:*)",
-      "Bash(mkdir:*)",
-      "Bash(timeout 10 python:*)",
       "Bash(cat:*)",
-      "Bash(proof_test_output.txt)",
-      "Bash(git checkout:*)",
-      "mcp__coderef-docs__generate_foundation_docs",
-      "Bash(timeout 3 python:*)",
-      "Bash(test:*)",
-      "Bash(coderef --version:*)",
-      "Bash(xargs:*)"
-    ]
+      "Bash(mkdir:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(test:*)"
+    ],
+    "deny": [],
+    "ask": []
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [

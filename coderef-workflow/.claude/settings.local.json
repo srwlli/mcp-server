@@ -24,7 +24,10 @@
       "Bash(cat:*)",
       "Bash(node dist/cli.js:*)",
       "Bash(node:*)",
-      "Bash(coderef-index.json)"
+      "Bash(coderef-index.json)",
+      "mcp__coderef-workflow__update_all_documentation",
+      "Bash(nul)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

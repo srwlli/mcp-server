@@ -12,7 +12,9 @@
       "Bash(export CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\")",
       "Bash(where coderef:*)",
       "Bash(timeout 3 python:*)",
-      "Bash(coderef scan:*)"
+      "Bash(coderef scan:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

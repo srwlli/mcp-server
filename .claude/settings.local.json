@@ -50,7 +50,13 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git rm:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "mcp__coderef-personas__use_persona",
+      "mcp__coderef-docs__generate_individual_doc",
+      "mcp__coderef-docs__generate_quickref_interactive",
+      "Bash(nul)",
+      "Bash(tree:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

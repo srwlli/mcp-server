@@ -1,3 +1,7 @@
+WO-ISLAND-ESCAPE-MVP-001 | Phaser-Cursor | Archived feature: Island Escape Mvp | 2025-12-29T21:09:22.117575+00:00
+WO-GAME-STATE-MACHINE-001 | IslandEscape-IE | Implement Game State Machine and transitions (S... | 2025-12-29T20:09:59.023589+00:00
+WO-ISLAND-ESCAPE-001 | Claude-IE | Island Escape MVP implementation plan | 2025-12-29T20:09:57.763186+00:00
+WO-INITIAL-BOOTSTRAP-001 | IslandEscape-IE | Initialize Godot project and settings (Step 1) | 2025-12-29T19:48:15.672662+00:00
 WO-TEST-CODEREF-CONTEXT-INJECTION-001 | coderef-context | test-coderef-context-injection implementation plan | 2025-12-26T20:46:20.938969+00:00
 WO-CODEREF-CONTEXT-DOCS-001 | coderef-ecosystem | Create missing coderef-context CLAUDE.md (592 l... | 2025-12-26T19:43:41.490637+00:00
 WO-CODEREF-CONTEXT-DOCS-001 | coderef-ecosystem | Create missing coderef-context CLAUDE.md (592 l... | 2025-12-26T19:43:41.490637+00:00

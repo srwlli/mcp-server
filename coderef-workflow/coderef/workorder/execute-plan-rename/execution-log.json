@@ -1,0 +1,145 @@
+[
+  {
+    "timestamp": "2025-12-28T00:31:56.757840",
+    "workorder_id": "WO-EXECUTE-PLAN-RENAME-001",
+    "feature_name": "execute-plan-rename",
+    "task_count": 27,
+    "tasks": [
+      {
+        "content": "CORE-001: server.py:778 - Rename tool registration name",
+        "activeForm": "CORE-001: server.py:778ing - Rename tool registration name",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-002: tool_handlers.py:2678 - Rename handler function definition",
+        "activeForm": "CORE-002: tool_handlers.py:2678ing - Rename handler function definition",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-003: tool_handlers.py:2680 - Update handler docstring",
+        "activeForm": "CORE-003: tool_handlers.py:2680ing - Update handler docstring",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-004: tool_handlers.py:2799 - Update debug log 1",
+        "activeForm": "CORE-004: tool_handlers.py:2799ing - Update debug log 1",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-005: tool_handlers.py:2801 - Update debug log 2",
+        "activeForm": "CORE-005: tool_handlers.py:2801ing - Update debug log 2",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-006: tool_handlers.py:2807 - Update debug log 3",
+        "activeForm": "CORE-006: tool_handlers.py:2807ing - Update debug log 3",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-007: tool_handlers.py:2810 - Update debug log 4",
+        "activeForm": "CORE-007: tool_handlers.py:2810ing - Update debug log 4",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-008: tool_handlers.py:4055 - Update handler routing map",
+        "activeForm": "CORE-008: tool_handlers.py:4055ing - Update handler routing map",
+        "status": "pending"
+      },
+      {
+        "content": "CORE-009: tool_handlers.py:1243 - Update help message",
+        "activeForm": "CORE-009: tool_handlers.py:1243ing - Update help message",
+        "status": "pending"
+      },
+      {
+        "content": "CONFIG-001: .claude/settings.local.json:4 - Update MCP configuration",
+        "activeForm": "CONFIG-001: .claude/settings.local.json:4ing - Update MCP configuration",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: CLAUDE.md:236 - Update tools table",
+        "activeForm": "DOC-001: CLAUDE.md:236ing - Update tools table",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: coderef/working/README.md:26 - Update diagram",
+        "activeForm": "DOC-002: coderef/working/README.md:26ing - Update diagram",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-003: coderef/working/README.md:60 - Update command table",
+        "activeForm": "DOC-003: coderef/working/README.md:60ing - Update command table",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-004: coderef/working/README.md:108 - Update quick start",
+        "activeForm": "DOC-004: coderef/working/README.md:108ing - Update quick start",
+        "status": "pending"
+      },
+      {
+        "content": "Compile: python -m py_compile server.py tool_handlers.py",
+        "activeForm": "Compile: pythoning -m py_compile server.py tool_handlers.py",
+        "status": "pending"
+      },
+      {
+        "content": "Syntax: No Python errors from linter",
+        "activeForm": "Syntax: Noing Python errors from linter",
+        "status": "pending"
+      },
+      {
+        "content": "Grep: grep -r 'execute_plan' coderef-workflow/ returns only historical files",
+        "activeForm": "Grep: greping -r 'execute_plan' coderef-workflow/ returns only historical files",
+        "status": "pending"
+      },
+      {
+        "content": "Function: Verify handle_align_plan exists and is callable",
+        "activeForm": "Function: Verifying handle_align_plan exists and is callable",
+        "status": "pending"
+      },
+      {
+        "content": "Routing: Verify 'align_plan': handle_align_plan in handler map",
+        "activeForm": "Routing: Verifying 'align_plan': handle_align_plan in handler map",
+        "status": "pending"
+      },
+      {
+        "content": "Config: Validate .claude/settings.local.json JSON syntax",
+        "activeForm": "Config: Validateing .claude/settings.local.json JSON syntax",
+        "status": "pending"
+      },
+      {
+        "content": "Functional: /align-plan context-docs-integration succeeds",
+        "activeForm": "Functional: /align-planing context-docs-integration succeeds",
+        "status": "pending"
+      },
+      {
+        "content": "Git: Review 'git diff' shows all 16 changes correct",
+        "activeForm": "Git: Reviewing 'git diff' shows all 16 changes correct",
+        "status": "pending"
+      },
+      {
+        "content": "POST-DEP-001: Clear MCP cache (restart Claude Code)",
+        "activeForm": "POST-DEP-001: Clearing MCP cache (restart Claude Code)",
+        "status": "pending"
+      },
+      {
+        "content": "POST-DEP-002: Verify tool shows as 'align_plan' in MCP autocomplete",
+        "activeForm": "POST-DEP-002: Verifying tool shows as 'align_plan' in MCP autocomplete",
+        "status": "pending"
+      },
+      {
+        "content": "POST-DEP-003: Test /align-plan with sample feature",
+        "activeForm": "POST-DEP-003: Testing /align-plan with sample feature",
+        "status": "pending"
+      },
+      {
+        "content": "POST-DEP-004: Commit all changes with descriptive message",
+        "activeForm": "POST-DEP-004: Commiting all changes with descriptive message",
+        "status": "pending"
+      },
+      {
+        "content": "POST-DEP-005: Update CHANGELOG.json with rename details",
+        "activeForm": "POST-DEP-005: Updating CHANGELOG.json with rename details",
+        "status": "pending"
+      }
+    ]
+  }
+]

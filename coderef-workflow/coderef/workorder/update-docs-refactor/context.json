@@ -1,0 +1,48 @@
+{
+  "feature_name": "update-docs-refactor",
+  "description": "Consolidate 3 redundant documentation commands (/record-changes, /update-docs, /update-foundation-docs) into a single unified /update-docs command with scope flags (--changelog-only, --with-foundation) to eliminate confusion and reduce maintenance burden.",
+  "goal": "Reduce 3 confusing documentation commands to 1 flexible command that handles all documentation update scenarios with clear flags, improving user experience and reducing decision fatigue.",
+  "requirements": [
+    "Merge update_all_documentation and record_changes tools into unified tool with scope parameter",
+    "Add --changelog-only flag to /update-docs for quick CHANGELOG.json updates (replaces /record-changes)",
+    "Add --with-foundation flag to /update-docs for API.md/my-guide.md/user-guide.md updates (replaces /update-foundation-docs)",
+    "Default behavior updates README + CLAUDE.md + CHANGELOG.json (current /update-docs behavior)",
+    "Maintain backward compatibility with existing workflows",
+    "Update /complete-workorder to use new unified command",
+    "Add deprecation notices to old commands with migration guidance",
+    "Update all workflow documentation to reference unified command"
+  ],
+  "out_of_scope": [
+    "Changing CHANGELOG.json format or schema",
+    "Modifying foundation doc templates (API.md, user-guide.md, etc.)",
+    "Changing version numbering scheme",
+    "Adding new documentation types beyond current scope"
+  ],
+  "constraints": [
+    "Must not break existing /complete-workorder workflow",
+    "Must preserve all current functionality (no feature loss)",
+    "Git-based auto-detection from record_changes must be retained",
+    "Agent-based context from update_all_documentation must be retained",
+    "Semantic versioning auto-increment must work correctly",
+    "CHANGELOG.json schema validation must be maintained"
+  ],
+  "decisions": {
+    "consolidation_approach": "Single /update-docs command with scope flags",
+    "scope_values": "full (default) | changelog-only | with-foundation",
+    "deprecated_commands": "/record-changes and /update-foundation-docs",
+    "tool_consolidation": "Merge update_all_documentation + record_changes into unified tool",
+    "migration_strategy": "Deprecation notices with 1-2 version grace period"
+  },
+  "success_criteria": {
+    "user_experience": "Users only need to remember one documentation command",
+    "backward_compatibility": "Existing /update-docs calls work without changes",
+    "feature_parity": "All functionality from 3 commands available in unified command",
+    "documentation_clarity": "Workflow docs show single clear path for doc updates",
+    "reduction_metric": "66% reduction in doc commands (3 to 1)"
+  },
+  "_metadata": {
+    "workorder_id": "WO-UPDATE-DOCS-REFACTOR-001",
+    "workorder_assigned_at": "2025-12-29T00:08:25.846903+00:00",
+    "workorder_assigned_by": "gather_context"
+  }
+}

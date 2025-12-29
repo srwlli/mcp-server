@@ -4,7 +4,20 @@ CLI utilities for calling @coderef/core CLI from coderef-docs MCP server.
 Provides subprocess utilities for executing the @coderef/core command-line tool
 and parsing its JSON output. Handles errors gracefully with logging.
 
-Part of WO-CONTEXT-DOCS-INTEGRATION-001 Phase 1.
+CLI Path Configuration:
+    The CLI path is resolved in the following priority order:
+    1. CODEREF_CLI_PATH environment variable (recommended)
+    2. Global 'coderef' command in PATH (npm install -g @coderef/cli)
+    3. Hardcoded DEFAULT_CLI_PATH (deprecated, shows warning)
+
+    Example configuration:
+        # Windows
+        set CODEREF_CLI_PATH=C:\\path\\to\\coderef\\packages\\cli\\dist\\cli.js
+
+        # Linux/Mac
+        export CODEREF_CLI_PATH=/path/to/coderef/packages/cli/dist/cli.js
+
+Part of WO-CONTEXT-DOCS-INTEGRATION-001 Phase 1 + WO-ENV-VAR-CLI-PATH-001.
 """
 
 import subprocess
@@ -23,16 +36,61 @@ def get_cli_path() -> str:
     """
     Get path to @coderef/core CLI binary.
 
+    Resolution order:
+    1. CODEREF_CLI_PATH environment variable (explicit override)
+    2. Check if 'coderef' in PATH (global npm install)
+    3. Fallback to DEFAULT_CLI_PATH (local development)
+
     Returns:
-        str: Absolute path to CLI executable (Node.js script)
+        str: Absolute path to CLI executable
+
+    Raises:
+        FileNotFoundError: If CLI not found in any location
 
     Example:
+        >>> # Using environment variable
+        >>> os.environ['CODEREF_CLI_PATH'] = '/custom/path/cli.js'
         >>> path = get_cli_path()
         >>> print(path)
-        'C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli\\dist\\cli.js'
+        '/custom/path/cli.js'
     """
-    # TODO: Support environment variable override (CODEREF_CLI_PATH)
-    return DEFAULT_CLI_PATH
+    import os
+    import shutil
+
+    # Priority 1: Environment variable (explicit override)
+    env_path = os.getenv("CODEREF_CLI_PATH")
+    if env_path:
+        env_path_obj = Path(env_path)
+        if env_path_obj.exists() and env_path_obj.is_file():
+            logger.info(f"Using CLI from CODEREF_CLI_PATH: {env_path}")
+            return str(env_path_obj.absolute())
+        else:
+            logger.warning(f"CODEREF_CLI_PATH set but invalid: {env_path}")
+
+    # Priority 2: Check PATH for global install
+    global_cli = shutil.which("coderef")
+    if global_cli:
+        logger.info(f"Using global CLI from PATH: {global_cli}")
+        return global_cli
+
+    # Priority 3: Fallback to hardcoded path (deprecated)
+    default_path = Path(DEFAULT_CLI_PATH)
+    if default_path.exists():
+        logger.warning(
+            f"Using hardcoded CLI path (deprecated): {DEFAULT_CLI_PATH}\n"
+            "  → Recommendation: Set CODEREF_CLI_PATH environment variable\n"
+            "  → Example (Windows): set CODEREF_CLI_PATH=C:\\path\\to\\cli.js\n"
+            "  → Example (Linux/Mac): export CODEREF_CLI_PATH=/path/to/cli.js\n"
+            "  → Or install globally: npm install -g @coderef/cli"
+        )
+        return DEFAULT_CLI_PATH
+
+    # No CLI found anywhere
+    raise FileNotFoundError(
+        "Could not find @coderef/core CLI. "
+        "Set CODEREF_CLI_PATH environment variable or install globally with: "
+        "npm install -g @coderef/cli"
+    )
 
 
 def validate_cli_available() -> bool:
@@ -67,26 +125,31 @@ def validate_cli_available() -> bool:
     except (FileNotFoundError, subprocess.TimeoutExpired, Exception) as e:
         logger.debug(f"Global 'coderef' command not found in PATH: {e}")
 
-    # Fallback: Check hardcoded CLI path
-    cli_path = get_cli_path()
-    cli_file = Path(cli_path)
-
-    if not cli_file.exists():
-        logger.warning(f"CLI not found at {cli_path} and not in PATH")
-        return False
-
-    if not cli_file.is_file():
-        logger.warning(f"CLI path exists but is not a file: {cli_path}")
-        return False
-
-    # Check if file is readable
+    # Fallback: Use get_cli_path() which checks all sources
     try:
-        with open(cli_file, 'r', encoding='utf-8', errors='ignore') as f:
-            f.read(1)  # Read 1 byte to verify access
-        logger.info(f"CLI found at hardcoded path: {cli_path}")
-        return True
-    except (PermissionError, OSError) as e:
-        logger.warning(f"CLI file not readable: {e}")
+        cli_path = get_cli_path()
+        cli_file = Path(cli_path)
+
+        if not cli_file.exists():
+            logger.warning(f"CLI not found at {cli_path}")
+            return False
+
+        if not cli_file.is_file():
+            logger.warning(f"CLI path exists but is not a file: {cli_path}")
+            return False
+
+        # Check if file is readable
+        try:
+            with open(cli_file, 'r', encoding='utf-8', errors='ignore') as f:
+                f.read(1)  # Read 1 byte to verify access
+            logger.info(f"CLI validated successfully: {cli_path}")
+            return True
+        except (PermissionError, OSError) as e:
+            logger.warning(f"CLI file not readable: {e}")
+            return False
+
+    except FileNotFoundError as e:
+        logger.warning(f"CLI not found: {e}")
         return False
 
 

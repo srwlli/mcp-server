@@ -5,5 +5,5 @@ generated_by: coderef-docs v{{server_version}}
 workorder_id: {{workorder_id}}
 feature_id: {{feature_name}}
 status: {{status}}
-timestamp: {{iso_timestamp}}
+timestamp: "{{iso_timestamp}}"
 ---

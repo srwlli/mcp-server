@@ -70,9 +70,9 @@ class TestGenerateUdsHeader:
         )
 
         assert "timestamp:" in header
-        # Check format YYYY-MM-DDTHH:MM:SSZ
+        # Check format YYYY-MM-DDTHH:MM:SSZ (with quotes for YAML)
         import re
-        timestamp_match = re.search(r'timestamp: (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)', header)
+        timestamp_match = re.search(r'timestamp: "(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)"', header)
         assert timestamp_match is not None
 
     def test_includes_server_version(self):
@@ -161,9 +161,9 @@ class TestGenerateUdsFooter:
         )
 
         assert "last_updated:" in footer
-        # Check format YYYY-MM-DD
+        # Check format YYYY-MM-DD (with quotes for YAML)
         import re
-        date_match = re.search(r'last_updated: (\d{4}-\d{2}-\d{2})', footer)
+        date_match = re.search(r'last_updated: "(\d{4}-\d{2}-\d{2})"', footer)
         assert date_match is not None
 
     def test_calculates_next_review_date(self):
@@ -177,9 +177,9 @@ class TestGenerateUdsFooter:
 
         assert "next_review:" in footer
 
-        # Extract review date
+        # Extract review date (with quotes for YAML)
         import re
-        review_match = re.search(r'next_review: (\d{4}-\d{2}-\d{2})', footer)
+        review_match = re.search(r'next_review: "(\d{4}-\d{2}-\d{2})"', footer)
         assert review_match is not None
 
         review_date_str = review_match.group(1)
@@ -200,7 +200,7 @@ class TestGenerateUdsFooter:
         )
 
         import re
-        review_match = re.search(r'next_review: (\d{4}-\d{2}-\d{2})', footer)
+        review_match = re.search(r'next_review: "(\d{4}-\d{2}-\d{2})"', footer)
         review_date = datetime.strptime(review_match.group(1), "%Y-%m-%d")
 
         expected_date = datetime.utcnow() + timedelta(days=7)

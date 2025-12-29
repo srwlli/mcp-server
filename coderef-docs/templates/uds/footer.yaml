@@ -2,8 +2,8 @@
 generated_by: coderef-docs v{{server_version}}
 workorder: {{workorder_id}}
 feature: {{feature_name}}
-last_updated: {{update_date}}
+last_updated: "{{update_date}}"
 ai_assistance: true
 status: {{status}}
-next_review: {{review_date}}
+next_review: "{{review_date}}"
 ---

@@ -2,8 +2,70 @@
   "$schema": "./schema.json",
   "project": "docs-mcp",
   "changelog_version": "1.0",
-  "current_version": "3.1.0",
+  "current_version": "3.2.0",
   "entries": [
+    {
+      "version": "3.2.0",
+      "date": "2025-12-28",
+      "summary": "v3.2.0: Universal Document Standard (UDS) for workorder metadata",
+      "changes": [
+        {
+          "id": "change-047",
+          "type": "feature",
+          "severity": "minor",
+          "title": "Implemented Universal Document Standard (UDS) system for workorder metadata tracking",
+          "description": "Implemented UDS system (WO-UDS-INTEGRATION-001) that adds structured metadata to all workorder documents. For markdown files (DELIVERABLES.md, claude.md), UDS injects YAML frontmatter headers/footers with workorder_id, feature_id, status, timestamps, and review dates. For JSON files (plan.json, context.json, analysis.json), UDS adds _uds metadata section. Created templates/uds/ with header.yaml and footer.yaml. Implemented uds_helpers.py with generate_uds_header(), generate_uds_footer(), get_server_version(). Updated generators in both coderef-docs (planning_generator.py, handoff_generator.py) and coderef-workflow (tool_handlers.py) to inject UDS. Added comprehensive test suite (tests/test_uds_helpers.py) with 15+ test cases. UDS is backward compatible - only applies when workorder_id exists.",
+          "files": [
+            "templates/uds/header.yaml",
+            "templates/uds/footer.yaml",
+            "uds_helpers.py",
+            "generators/planning_generator.py",
+            "generators/handoff_generator.py",
+            "tests/test_uds_helpers.py",
+            "CLAUDE.md",
+            "../coderef-workflow/uds_helpers.py",
+            "../coderef-workflow/tool_handlers.py"
+          ],
+          "reason": "Enable structured metadata tracking for workorder documents to improve lifecycle management, traceability, and review scheduling. Previous workorder docs lacked machine-readable metadata for tracking status, provenance, review dates, and AI assistance attribution.",
+          "impact": "All new workorder documents automatically include UDS metadata. plan.json gets UDS in META_DOCUMENTATION.uds section. context.json and analysis.json get _uds section with document_type, workorder_id, feature_id, last_updated, ai_assistance, status, next_review fields. DELIVERABLES.md and claude.md get YAML frontmatter with --- delimiters. Backward compatible - existing docs without workorder IDs unchanged. Enables future tooling for workorder lifecycle management, automated review scheduling, and cross-project workorder queries.",
+          "breaking": false
+        }
+      ],
+      "contributors": [
+        "Claude Code AI"
+      ]
+    },
+    {
+      "version": "3.1.1",
+      "date": "2025-12-28",
+      "summary": "v3.1.1: Changelog workflow consolidation and cleanup",
+      "changes": [
+        {
+          "id": "change-046",
+          "type": "enhancement",
+          "severity": "minor",
+          "title": "Consolidated changelog commands and removed unused get_changelog tool",
+          "description": "Removed get_changelog MCP tool (11→10 tools) and consolidated 3 changelog slash commands (/get-changelog, /add-changelog, /update-changelog) into single /record-changes command. Enhanced /record-changes workflow to have agent auto-select version number by reading CHANGELOG.json and analyzing changes (patch/minor/major bump logic). Updated command documentation to remove user prompts for version - agent now determines version automatically. Removed get_changelog references from all documentation (CLAUDE.md, README.md, user docs). Users can still read CHANGELOG.json directly for queries.",
+          "files": [
+            "server.py",
+            "tool_handlers.py",
+            "CLAUDE.md",
+            "README.md",
+            "coderef/user/my-guide.md",
+            "coderef/user/USER-GUIDE.md",
+            "coderef/user/FEATURES.md",
+            "coderef/user/quickref.md",
+            "~/.claude/commands/record-changes.md"
+          ],
+          "reason": "Simplify changelog workflow by removing unused query tool and consolidating commands. get_changelog was rarely used since users can read CHANGELOG.json directly. Multiple changelog commands created confusion. Enhanced /record-changes to be fully autonomous - agent determines version instead of prompting user.",
+          "impact": "Streamlined changelog workflow: single /record-changes command handles all changelog updates with autonomous version selection. Tool count reduced from 11→10. Users lose MCP query capability but can read CHANGELOG.json directly. Enhanced agent autonomy - no user prompt for version number, agent analyzes changes and bumps version appropriately (patch/minor/major).",
+          "breaking": false
+        }
+      ],
+      "contributors": [
+        "Claude Code AI"
+      ]
+    },
     {
       "version": "2.0.0",
       "date": "2025-12-23",

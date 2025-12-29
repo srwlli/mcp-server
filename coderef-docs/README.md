@@ -115,6 +115,28 @@ Generate 5 comprehensive docs with real code intelligence:
 
 **Output:** All files saved to `coderef/user/`
 
+### 5. Universal Document Standard (UDS)
+
+**NEW in v3.2.0** - Structured metadata for workorder documents
+
+**What is UDS?**
+- YAML frontmatter for markdown files (DELIVERABLES.md, claude.md)
+- JSON metadata for JSON files (plan.json, context.json, analysis.json)
+- Tracks workorder_id, status, timestamps, review dates
+- Enables lifecycle management and traceability
+
+**UDS Fields:**
+- `workorder_id` - Links to workorder (e.g., WO-FEATURE-001)
+- `feature_id` - Feature name
+- `status` - DRAFT/IN_REVIEW/APPROVED/ARCHIVED
+- `generated_by` - Server version that created the doc
+- `last_updated` - Last modification date
+- `next_review` - Auto-calculated review date (+30 days)
+- `ai_assistance` - Marks AI-generated docs
+
+**Scope:** Only workorder documents (has workorder_id)
+**Backward Compatible:** Existing docs without workorder IDs unchanged
+
 ---
 
 ## Architecture

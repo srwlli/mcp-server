@@ -1,0 +1,146 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-PYTHON-PACKAGE-001",
+  "feature_name": "papertrail-python-package",
+  "title": "Papertrail: Universal Documentation System for CodeRef Ecosystem",
+  "description": "Build Papertrail as a Python package providing universal documentation standards (UDS) with headers/footers, schema validation, health scoring, and CodeRef-native extensions. Integrate into coderef-docs only as the documentation authority for the entire ecosystem.",
+  "category": "feature",
+  "priority": "high",
+  "created": "2025-12-29T00:00:00Z",
+  "status": "planning",
+
+  "context": {
+    "motivation": "CodeRef ecosystem currently lacks unified documentation standards. Each server generates docs differently, with no traceability to workorders, no validation, and no health tracking. Papertrail solves this by providing a universal documentation system that ALL servers use (via coderef-docs).",
+
+    "problem_statement": "Current state:\n- No workorder → doc traceability (can't link docs to originating feature)\n- No MCP attribution (unknown which server generated which doc)\n- No validation (typos, missing sections, incomplete docs)\n- No health tracking (is documentation current? complete?)\n- 5 servers, 5 different doc formats (inconsistent)\n- Manual documentation (time-consuming, error-prone)\n\nDesired state:\n- Every doc links to workorder (complete traceability)\n- Every doc shows MCP attribution (generated_by: coderef-docs v1.2.0)\n- Automatic validation (enforces required sections)\n- Health scores (0-100 for each doc)\n- 5 servers, 1 unified format (UDS-compliant)\n- Automated documentation (AI-assisted, template-driven)",
+
+    "solution_approach": "Build Papertrail as standalone Python package, integrate into coderef-docs only. Other 4 servers call coderef-docs for documentation (like they call coderef-context for code intelligence).\n\nArchitecture:\n  papertrail (Python package)\n    ↓ import\n  coderef-docs (enhanced generators)\n    ↓ MCP tools\n  Other 4 servers (consumers)\n\nPapertrail provides:\n1. UDS headers/footers (workorder_id, generated_by, timestamps)\n2. Template engine (inheritance, conditionals, includes)\n3. Schema validation (enforce required sections)\n4. Health scoring (0-100 completeness/freshness)\n5. CodeRef extensions (integrate with coderef-context, git)",
+
+    "goal": "Universal documentation system with complete traceability, validation, and health tracking across the entire CodeRef ecosystem",
+
+    "requirements": [
+      "Build Papertrail as standalone Python package (no MCP dependencies)",
+      "Define 5 CodeRef-specific UDS schemas (plan, deliverables, architecture, readme, api)",
+      "Implement UDS header/footer generators with workorder tracking",
+      "Build template engine supporting inheritance, conditionals, includes",
+      "Create schema validator (check required sections, validate metadata)",
+      "Implement health scoring algorithm (traceability, completeness, freshness, validation)",
+      "Add CodeRef-native extensions (coderef-context, git, workflow integrations)",
+      "Integrate into coderef-docs only (other servers unchanged)",
+      "Feature flag deployment (safe rollout with instant rollback)",
+      "100% test coverage for Papertrail package",
+      "All generated docs UDS-compliant with workorder traceability"
+    ],
+
+    "constraints": [
+      "Zero modifications to production MCP servers during Phases 1-2 (4 weeks)",
+      "Python-only implementation (no TypeScript, no Node.js dependencies)",
+      "Standalone package (can be tested independently)",
+      "Integration only through coderef-docs (centralized documentation authority)",
+      "Backward compatible (existing templates continue to work)",
+      "Feature flags for safe rollout (instant rollback capability)",
+      "No Streamlit or UI dependencies (core package CLI/library only)"
+    ],
+
+    "out_of_scope": [
+      "AI enhancement layer (Phase 2 future work)",
+      "Streamlit dashboard (optional dev tool, not core)",
+      "Version control (use git instead)",
+      "Search indexing (use grep instead)",
+      "Complex conditional logic (start simple)",
+      "Extension points (future enhancement)",
+      "Multi-user features (single-user local tool)"
+    ],
+
+    "success_criteria": {
+      "phase_1_core_uds": [
+        "Papertrail package installs standalone (pip install -e papertrail/)",
+        "UDS headers/footers generate correctly with workorder_id",
+        "5 CodeRef schemas defined (plan, deliverables, architecture, readme, api)",
+        "Validation detects missing sections and invalid metadata",
+        "Health scoring calculates correctly (0-100)",
+        "100% test coverage, all tests pass"
+      ],
+      "phase_2_template_engine": [
+        "Template inheritance works ({% extends 'base.md' %})",
+        "Conditionals work ({% if feature_type == 'api' %})",
+        "Includes work ({% include 'header.md' %})",
+        "CodeRef extensions work ({% coderef.scan project_path %})",
+        "Git extensions work ({% git.stats feature_name %})",
+        "All templates render correctly with extensions"
+      ],
+      "phase_3_integration": [
+        "coderef-docs imports papertrail successfully",
+        "Feature flag deployment works (PAPERTRAIL_ENABLED=true/false)",
+        "All foundation docs generated with UDS headers/footers",
+        "Validation runs automatically, reports errors",
+        "Health scores tracked in coderef/context/",
+        "Other 4 servers unchanged, still call coderef-docs"
+      ],
+      "ecosystem_validation": [
+        "100% of generated docs have workorder_id",
+        "100% of generated docs have MPC attribution",
+        "100% of generated docs pass schema validation",
+        "Average health score >= 85/100",
+        "Complete traceability chain: User → Workorder → Feature → Docs",
+        "Zero errors in production, rollback capability verified"
+      ]
+    }
+  },
+
+  "related_stubs": {
+    "STUB-058": {
+      "title": "mcp-doc-standards-integration",
+      "incorporated": "UDS header/footer templates with workorder tracking",
+      "scope": "Phase 1 - Core UDS"
+    },
+    "STUB-064": {
+      "title": "uds-framework-coderef-docs",
+      "incorporated": "UDS schema definitions and validation",
+      "scope": "Phase 1 - Core UDS"
+    },
+    "STUB-059": {
+      "title": "papertrail-mcp-integration",
+      "incorporated": "AI Generator concepts (deferred to Phase 2)",
+      "scope": "Future enhancement"
+    }
+  },
+
+  "design_documents": [
+    "coderef/workorder/papertrail-integration/CODEREF_TAILORED_DESIGN.md - CodeRef-native adaptations",
+    "coderef/workorder/papertrail-integration/context-v2.md - Python package architecture",
+    "coderef/workorder/papertrail-integration/SAFE_DEVELOPMENT_PLAN.md - Development strategy"
+  ],
+
+  "source_reference": {
+    "papertrail_codebase": "C:\\Users\\willh\\Desktop\\ARCHIVED\\projects-idle\\paper-trail-parsed-into-modules",
+    "key_modules": [
+      "uds-framework/uds.ts (623 lines) - UDS schemas and document types",
+      "updated-template-engine/template-engine-extended.ts - Template processing",
+      "document-systems/document-system.ts (543 lines) - Document lifecycle"
+    ],
+    "adaptation_notes": "Port TypeScript to Python, simplify from 9 generic doc types to 5 CodeRef-specific types, skip version control and search (use git/grep instead)"
+  },
+
+  "affected_systems": {
+    "new": [
+      "papertrail/ - New Python package (standalone)"
+    ],
+    "modified": [
+      "coderef-docs/ - Import papertrail, enhance generators with UDS"
+    ],
+    "unchanged": [
+      "coderef-workflow/ - Calls coderef-docs (no changes)",
+      "coderef-context/ - Calls coderef-docs (no changes)",
+      "coderef-personas/ - Calls coderef-docs (no changes)",
+      "coderef-testing/ - Calls coderef-docs (no changes)"
+    ]
+  },
+
+  "timeline": {
+    "phase_1_core_uds": "2-3 weeks - Build standalone package",
+    "phase_2_template_engine": "1-2 weeks - Template processing + extensions",
+    "phase_3_integration": "1 week - Integrate into coderef-docs",
+    "phase_4_rollout": "1-2 weeks - Feature flag deployment, testing",
+    "total": "5-8 weeks - Safe, methodical implementation"
+  }
+}

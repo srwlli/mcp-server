@@ -1,0 +1,1372 @@
+{
+  "meta": {
+    "title": "Commands and Tools Best Practices - CodeRef Ecosystem",
+    "version": "1.0.0",
+    "owner": "All AI Agents (Claude, Ava, Marcus, Quinn, Taylor, Lloyd)",
+    "created": "2025-12-28",
+    "last_updated": "2025-12-28",
+    "purpose": "Single source of truth for all agents on when and how to use commands and tools across the CodeRef ecosystem",
+    "scope": "All 5 MCP servers: coderef-context, coderef-docs, coderef-personas, coderef-workflow, coderef-testing",
+    "total_commands": 76,
+    "total_tools": 63,
+    "authority_level": "MANDATORY - All agents must follow these practices"
+  },
+
+  "ecosystem_overview": {
+    "servers": [
+      {
+        "name": "coderef-context",
+        "purpose": "Code intelligence and dependency analysis",
+        "tools": 11,
+        "commands": 11,
+        "when_to_use": "Understanding code structure, dependencies, impact analysis before making changes"
+      },
+      {
+        "name": "coderef-docs",
+        "purpose": "Documentation generation and standards enforcement",
+        "tools": 11,
+        "commands": 22,
+        "when_to_use": "Generating docs, managing changelogs, enforcing coding standards"
+      },
+      {
+        "name": "coderef-personas",
+        "purpose": "Expert agent personas for domain-specific tasks",
+        "tools": 9,
+        "commands": 9,
+        "when_to_use": "Activating specialized expertise (frontend, backend, testing, etc.)"
+      },
+      {
+        "name": "coderef-workflow",
+        "purpose": "Feature planning, workorder management, orchestration",
+        "tools": 24,
+        "commands": 26,
+        "when_to_use": "Planning features, tracking progress, coordinating multi-agent work"
+      },
+      {
+        "name": "coderef-testing",
+        "purpose": "Test automation, coverage analysis, health tracking",
+        "tools": 8,
+        "commands": 8,
+        "when_to_use": "Running tests, measuring coverage, validating implementation"
+      }
+    ]
+  },
+
+  "command_catalog": {
+    "description": "Complete catalog of all slash commands across 5 servers",
+
+    "coderef_workflow_commands": {
+      "server": "coderef-workflow",
+      "total": 26,
+      "categories": {
+        "planning": [
+          {
+            "command": "/create-workorder",
+            "purpose": "Create complete implementation plan with 10-section structure",
+            "when_to_use": "Starting ANY new feature or significant code change",
+            "best_practice": "ALWAYS use at feature start - never skip planning",
+            "estimated_time": "5-10 minutes",
+            "agent_action": "Run interactive workflow, generate plan.json",
+            "outputs": ["coderef/workorder/{feature}/plan.json", "coderef/workorder/{feature}/context.json", "coderef/workorder/{feature}/analysis.json"]
+          },
+          {
+            "command": "/gather-context",
+            "purpose": "Gather feature requirements interactively",
+            "when_to_use": "First step of planning workflow OR when requirements unclear",
+            "best_practice": "Use before /create-plan if starting from scratch",
+            "estimated_time": "3-5 minutes",
+            "outputs": ["coderef/workorder/{feature}/context.json"]
+          },
+          {
+            "command": "/analyze-for-planning",
+            "purpose": "Auto-discover foundation docs, patterns, standards for planning",
+            "when_to_use": "After /gather-context, before /create-plan",
+            "best_practice": "Reduces planning prep from 30-60 min to 30-60 sec",
+            "estimated_time": "30-60 seconds",
+            "outputs": ["coderef/workorder/{feature}/analysis.json"]
+          },
+          {
+            "command": "/get-planning-template",
+            "purpose": "Retrieve feature-implementation-planning-standard.json template",
+            "when_to_use": "Reference during manual plan creation",
+            "best_practice": "Use /create-workorder instead (automated)",
+            "outputs": ["Template content"]
+          },
+          {
+            "command": "/validate-plan",
+            "purpose": "Score plan quality 0-100 against standards",
+            "when_to_use": "After creating plan, before execution",
+            "best_practice": "ALWAYS validate - don't execute plans scoring < 85",
+            "estimated_time": "10-20 seconds",
+            "outputs": ["Validation report with score and issues"]
+          }
+        ],
+        "execution": [
+          {
+            "command": "/execute-plan",
+            "purpose": "Generate TodoWrite task list from plan.json",
+            "when_to_use": "After plan validated, ready to start implementation",
+            "best_practice": "Use to convert plan → actionable todos",
+            "estimated_time": "5 seconds",
+            "outputs": ["TodoWrite task list with WO-ID | TASK-ID format"]
+          },
+          {
+            "command": "/update-task-status",
+            "purpose": "Update task status in plan.json as work progresses",
+            "when_to_use": "After completing each task",
+            "best_practice": "Keep plan.json in sync with actual progress",
+            "estimated_time": "2 seconds",
+            "outputs": ["Updated plan.json with new task status"]
+          },
+          {
+            "command": "/generate-deliverables",
+            "purpose": "Auto-generate DELIVERABLES.md from plan.json at planning time",
+            "when_to_use": "After /create-plan (shift-left docs)",
+            "best_practice": "Create deliverables template early, fill incrementally",
+            "estimated_time": "5 seconds",
+            "outputs": ["coderef/workorder/{feature}/DELIVERABLES.md"]
+          },
+          {
+            "command": "/update-deliverables",
+            "purpose": "Calculate actual metrics from git history",
+            "when_to_use": "After feature implementation complete",
+            "best_practice": "Run BEFORE /record-changes and /archive-feature",
+            "estimated_time": "10-20 seconds",
+            "outputs": ["Updated DELIVERABLES.md with LOC, commits, time"]
+          }
+        ],
+        "multi_agent": [
+          {
+            "command": "/generate-agent-communication",
+            "purpose": "Create communication.json for multi-agent coordination",
+            "when_to_use": "When plan has parallel phases for multiple agents",
+            "best_practice": "Auto-generates from plan.json - no manual creation",
+            "estimated_time": "5 seconds",
+            "outputs": ["coderef/workorder/{feature}/communication.json"]
+          },
+          {
+            "command": "/assign-agent-task",
+            "purpose": "Assign specific phase/task to an agent",
+            "when_to_use": "Coordinating work across multiple agents",
+            "best_practice": "Use workorder-scoped IDs (WO-{FEATURE}-{AGENT}-001)",
+            "estimated_time": "3 seconds",
+            "outputs": ["Updated communication.json with assignment"]
+          },
+          {
+            "command": "/verify-agent-completion",
+            "purpose": "Validate agent completed work per success criteria",
+            "when_to_use": "After agent reports completion",
+            "best_practice": "ALWAYS verify - don't trust without validation",
+            "estimated_time": "10-30 seconds",
+            "outputs": ["Verification report with pass/fail"]
+          },
+          {
+            "command": "/aggregate-agent-deliverables",
+            "purpose": "Combine metrics from multiple agent DELIVERABLES.md files",
+            "when_to_use": "After all agents complete their phases",
+            "best_practice": "Final step before archiving multi-agent feature",
+            "estimated_time": "5 seconds",
+            "outputs": ["Combined deliverables report"]
+          },
+          {
+            "command": "/track-agent-status",
+            "purpose": "Dashboard of agent status across features",
+            "when_to_use": "Monitoring multi-agent coordination",
+            "best_practice": "Run periodically during long implementations",
+            "estimated_time": "5 seconds",
+            "outputs": ["Status dashboard for all agents"]
+          },
+          {
+            "command": "/generate-handoff-context",
+            "purpose": "Auto-generate agent handoff context (claude.md)",
+            "when_to_use": "Handing work from one agent to another",
+            "best_practice": "Reduces handoff time from 20-30 min to < 5 min",
+            "estimated_time": "30-60 seconds",
+            "outputs": ["coderef/workorder/{feature}/claude.md"]
+          }
+        ],
+        "documentation": [
+          {
+            "command": "/generate-plan-review",
+            "purpose": "Generate human-readable review report from validation",
+            "when_to_use": "After /validate-plan to share with team",
+            "best_practice": "Use for plan approval workflows",
+            "estimated_time": "5 seconds",
+            "outputs": ["coderef/reviews/review-{planname}-{timestamp}.md"]
+          }
+        ],
+        "lifecycle": [
+          {
+            "command": "/archive-feature",
+            "purpose": "Move completed feature to coderef/archived/",
+            "when_to_use": "After feature 100% complete and documented",
+            "best_practice": "Run AFTER /update-deliverables and /record-changes",
+            "estimated_time": "5 seconds",
+            "outputs": ["Feature moved to coderef/archived/, index updated"]
+          },
+          {
+            "command": "/audit-plans",
+            "purpose": "Audit all plans in coderef/workorder/ for health",
+            "when_to_use": "Periodic health check (weekly/monthly)",
+            "best_practice": "Identifies stale plans, missing docs, issues",
+            "estimated_time": "10-30 seconds",
+            "outputs": ["Audit report with health score 0-100"]
+          }
+        ],
+        "logging": [
+          {
+            "command": "/log-workorder",
+            "purpose": "Add entry to global workorder-log.txt",
+            "when_to_use": "Creating new workorder for audit trail",
+            "best_practice": "Auto-called by /create-workorder - rarely manual",
+            "estimated_time": "1 second",
+            "outputs": ["Entry in coderef/workorder-log.txt"]
+          },
+          {
+            "command": "/get-workorder-log",
+            "purpose": "Query global workorder log by project/ID/date",
+            "when_to_use": "Looking up past workorders or audit trail",
+            "best_practice": "Use for historical tracking",
+            "estimated_time": "2 seconds",
+            "outputs": ["Filtered log entries"]
+          }
+        ],
+        "risk_assessment": [
+          {
+            "command": "/assess-risk",
+            "purpose": "AI-powered risk assessment across 5 dimensions",
+            "when_to_use": "Before making risky code changes",
+            "best_practice": "Use for breaking changes, migrations, refactors",
+            "estimated_time": "5 seconds",
+            "outputs": ["Risk report with score 0-100 and go/no-go recommendation"]
+          }
+        ],
+        "inventory": [
+          {
+            "command": "/generate-features-inventory",
+            "purpose": "List all features in workorder/ and archived/",
+            "when_to_use": "Need overview of all features",
+            "best_practice": "Use for project status reporting",
+            "estimated_time": "10 seconds",
+            "outputs": ["features-inventory.json or .md"]
+          }
+        ]
+      }
+    },
+
+    "coderef_docs_commands": {
+      "server": "coderef-docs",
+      "total": 22,
+      "categories": {
+        "foundation_docs": [
+          {
+            "command": "/generate-docs",
+            "purpose": "Generate 5 foundation docs with code intelligence",
+            "when_to_use": "New project OR major architecture changes",
+            "best_practice": "Run early in project, re-run after major refactors",
+            "estimated_time": "2-3 minutes",
+            "outputs": ["README.md (root)", "ARCHITECTURE.md", "API.md", "SCHEMA.md", "COMPONENTS.md (coderef/foundation-docs/)"]
+          },
+          {
+            "command": "/list-templates",
+            "purpose": "Show available POWER framework templates",
+            "when_to_use": "Exploring available documentation types",
+            "best_practice": "Reference only - use specific generation commands",
+            "estimated_time": "1 second",
+            "outputs": ["List of template names"]
+          },
+          {
+            "command": "/get-template",
+            "purpose": "Retrieve specific template content",
+            "when_to_use": "Understanding template structure",
+            "best_practice": "Use for reference, not for generation",
+            "estimated_time": "2 seconds",
+            "outputs": ["Template content with POWER framework"]
+          }
+        ],
+        "user_docs": [
+          {
+            "command": "/generate-user-docs",
+            "purpose": "Generate 4 user-facing docs (my-guide, USER-GUIDE, FEATURES, quickref)",
+            "when_to_use": "After foundation docs, for user-facing documentation",
+            "best_practice": "Run after /generate-docs completes",
+            "estimated_time": "5-7 minutes",
+            "outputs": ["my-guide.md", "USER-GUIDE.md", "FEATURES.md", "quickref.md (coderef/user/)"]
+          },
+          {
+            "command": "/generate-quickref",
+            "purpose": "Interactive quickref generation for any app type",
+            "when_to_use": "Need scannable quick reference (150-250 lines)",
+            "best_practice": "Use for CLI, Web, API, Desktop, or Library apps",
+            "estimated_time": "5 minutes (interactive)",
+            "outputs": ["coderef/user/quickref.md"]
+          },
+          {
+            "command": "/generate-my-guide",
+            "purpose": "Generate concise tool reference (60-80 lines)",
+            "when_to_use": "Need quick tool lookup guide",
+            "best_practice": "Auto-called by /generate-user-docs",
+            "estimated_time": "1 minute",
+            "outputs": ["coderef/user/my-guide.md"]
+          },
+          {
+            "command": "/generate-user-guide",
+            "purpose": "Generate comprehensive tutorial (500+ lines)",
+            "when_to_use": "Need detailed onboarding documentation",
+            "best_practice": "Auto-called by /generate-user-docs",
+            "estimated_time": "3 minutes",
+            "outputs": ["coderef/user/USER-GUIDE.md"]
+          }
+        ],
+        "changelog": [
+          {
+            "command": "/record-changes",
+            "purpose": "Smart changelog with git auto-detection",
+            "when_to_use": "After feature completion, before archiving",
+            "best_practice": "ALWAYS use instead of manual add-changelog",
+            "estimated_time": "30 seconds",
+            "outputs": ["CHANGELOG.json entry with workorder tracking"]
+          },
+          {
+            "command": "/add-changelog",
+            "purpose": "Manual changelog entry (all fields required)",
+            "when_to_use": "Git unavailable OR manual override needed",
+            "best_practice": "Use /record-changes instead (automated)",
+            "estimated_time": "2 minutes (manual)",
+            "outputs": ["CHANGELOG.json entry"]
+          },
+          {
+            "command": "/get-changelog",
+            "purpose": "Query changelog by version/type",
+            "when_to_use": "Looking up past changes",
+            "best_practice": "Use for historical reference",
+            "estimated_time": "2 seconds",
+            "outputs": ["Filtered changelog entries"]
+          },
+          {
+            "command": "/update-changelog",
+            "purpose": "DEPRECATED - use /record-changes",
+            "when_to_use": "NEVER - deprecated in v3.1.0",
+            "best_practice": "Use /record-changes instead",
+            "estimated_time": "N/A",
+            "outputs": []
+          }
+        ],
+        "standards": [
+          {
+            "command": "/establish-standards",
+            "purpose": "Extract UI/UX/behavior patterns from codebase",
+            "when_to_use": "Once per project at start",
+            "best_practice": "Run ONCE, then use /audit-codebase periodically",
+            "estimated_time": "3-5 minutes",
+            "outputs": ["coderef/standards/ (4 files)"]
+          },
+          {
+            "command": "/audit-codebase",
+            "purpose": "Check compliance with standards (0-100 score)",
+            "when_to_use": "Before release OR periodic quality checks",
+            "best_practice": "Run after /establish-standards exists",
+            "estimated_time": "5-10 minutes",
+            "outputs": ["Compliance report with violations and fixes"]
+          },
+          {
+            "command": "/check-consistency",
+            "purpose": "Pre-commit gate for staged changes",
+            "when_to_use": "Before git commit (in pre-commit hook)",
+            "best_practice": "Add to pre-commit hooks for automatic checks",
+            "estimated_time": "10 seconds",
+            "outputs": ["Pass/fail + violations for staged files"]
+          }
+        ]
+      }
+    },
+
+    "coderef_context_commands": {
+      "server": "coderef-context",
+      "total": 11,
+      "categories": {
+        "analysis": [
+          {
+            "command": "/coderef-scan",
+            "purpose": "Discover all code elements (functions, classes, components)",
+            "when_to_use": "Understanding codebase structure",
+            "best_practice": "Run BEFORE making changes to understand dependencies",
+            "estimated_time": "10-30 seconds",
+            "outputs": [".coderef-index.json with all code elements"]
+          },
+          {
+            "command": "/coderef-query",
+            "purpose": "Query relationships (calls, imports, dependencies)",
+            "when_to_use": "Understanding how code connects",
+            "best_practice": "Use before refactoring to see ripple effects",
+            "estimated_time": "2-5 seconds",
+            "outputs": ["Relationship graph"]
+          },
+          {
+            "command": "/coderef-impact",
+            "purpose": "Analyze impact of modifying/deleting element",
+            "when_to_use": "Before making breaking changes",
+            "best_practice": "ALWAYS check impact before deleting/refactoring",
+            "estimated_time": "3-10 seconds",
+            "outputs": ["Impact analysis with affected files"]
+          },
+          {
+            "command": "/coderef-complexity",
+            "purpose": "Get complexity metrics for code element",
+            "when_to_use": "Identifying refactoring candidates",
+            "best_practice": "Use to find high-complexity code",
+            "estimated_time": "2 seconds",
+            "outputs": ["Complexity score and metrics"]
+          },
+          {
+            "command": "/coderef-patterns",
+            "purpose": "Discover code patterns and test coverage gaps",
+            "when_to_use": "Finding common patterns OR coverage gaps",
+            "best_practice": "Use for code quality analysis",
+            "estimated_time": "5-15 seconds",
+            "outputs": ["Pattern list with examples"]
+          },
+          {
+            "command": "/coderef-coverage",
+            "purpose": "Analyze test coverage",
+            "when_to_use": "Understanding what's tested vs untested",
+            "best_practice": "Run periodically to track coverage trends",
+            "estimated_time": "10-20 seconds",
+            "outputs": ["Coverage summary or detailed report"]
+          }
+        ],
+        "utilities": [
+          {
+            "command": "/coderef-context",
+            "purpose": "Generate comprehensive codebase context (markdown + JSON)",
+            "when_to_use": "Creating AI context files",
+            "best_practice": "Use for onboarding new agents to codebase",
+            "estimated_time": "30-60 seconds",
+            "outputs": ["Context markdown and JSON"]
+          },
+          {
+            "command": "/coderef-validate",
+            "purpose": "Validate CodeRef2 references in codebase",
+            "when_to_use": "After tagging code with CodeRef2 tags",
+            "best_practice": "Verify tags are correct and up-to-date",
+            "estimated_time": "5-10 seconds",
+            "outputs": ["Validation report"]
+          },
+          {
+            "command": "/coderef-drift",
+            "purpose": "Detect drift between index and current code",
+            "when_to_use": "After code changes, before committing",
+            "best_practice": "Run after major changes to update index",
+            "estimated_time": "5-10 seconds",
+            "outputs": ["Drift report with outdated elements"]
+          },
+          {
+            "command": "/coderef-diagram",
+            "purpose": "Generate visual dependency diagrams (Mermaid/Graphviz)",
+            "when_to_use": "Visualizing architecture for documentation",
+            "best_practice": "Use for architecture docs or presentations",
+            "estimated_time": "10-20 seconds",
+            "outputs": ["Mermaid or DOT diagram"]
+          },
+          {
+            "command": "/coderef-tag",
+            "purpose": "Add CodeRef2 tags to source files",
+            "when_to_use": "Tagging code for better tracking",
+            "best_practice": "Use dry-run first, then apply",
+            "estimated_time": "10-30 seconds",
+            "outputs": ["Tagged source files"]
+          }
+        ]
+      }
+    },
+
+    "coderef_personas_commands": {
+      "server": "coderef-personas",
+      "total": 9,
+      "categories": {
+        "persona_activation": [
+          {
+            "command": "/coderef-assistant",
+            "purpose": "Activate CodeRef Assistant (Orchestrator persona)",
+            "when_to_use": "Need orchestration and coordination",
+            "best_practice": "Use for multi-agent coordination",
+            "estimated_time": "1 second",
+            "outputs": ["Activated persona with system prompt"]
+          },
+          {
+            "command": "/ava",
+            "purpose": "Activate Ava (Frontend Specialist)",
+            "when_to_use": "Frontend/UI work (React, CSS, components)",
+            "best_practice": "Use for all frontend implementation",
+            "estimated_time": "1 second",
+            "outputs": ["Activated Ava persona"]
+          },
+          {
+            "command": "/marcus",
+            "purpose": "Activate Marcus (Backend Specialist)",
+            "when_to_use": "Backend/API work (Python, databases, APIs)",
+            "best_practice": "Use for all backend implementation",
+            "estimated_time": "1 second",
+            "outputs": ["Activated Marcus persona"]
+          },
+          {
+            "command": "/quinn",
+            "purpose": "Activate Quinn (Testing Specialist)",
+            "when_to_use": "Test implementation and quality assurance",
+            "best_practice": "Use for all testing tasks",
+            "estimated_time": "1 second",
+            "outputs": ["Activated Quinn persona"]
+          },
+          {
+            "command": "/taylor",
+            "purpose": "Activate Taylor (General Purpose Agent)",
+            "when_to_use": "General tasks not requiring specialization",
+            "best_practice": "Use when no specialized persona needed",
+            "estimated_time": "1 second",
+            "outputs": ["Activated Taylor persona"]
+          },
+          {
+            "command": "/lloyd",
+            "purpose": "Activate Lloyd (Coordination Specialist)",
+            "when_to_use": "Multi-agent coordination and tracking",
+            "best_practice": "Use for complex multi-agent workflows",
+            "estimated_time": "1 second",
+            "outputs": ["Activated Lloyd persona"]
+          },
+          {
+            "command": "/use-persona",
+            "purpose": "Activate any persona by name",
+            "when_to_use": "Generic persona activation",
+            "best_practice": "Use specific commands (/ava, /marcus) instead",
+            "estimated_time": "1 second",
+            "outputs": ["Activated persona"]
+          },
+          {
+            "command": "/create-persona",
+            "purpose": "Create custom persona via guided workflow",
+            "when_to_use": "Need new specialized persona",
+            "best_practice": "Use for project-specific expertise",
+            "estimated_time": "5-10 minutes (interactive)",
+            "outputs": ["personas/custom/{name}.json"]
+          },
+          {
+            "command": "/debug-ui",
+            "purpose": "Debug UI issues using Chrome DevTools MCP",
+            "when_to_use": "Debugging frontend issues",
+            "best_practice": "Use with Ava for frontend debugging",
+            "estimated_time": "Variable",
+            "outputs": ["Debug session with DevTools integration"]
+          }
+        ]
+      }
+    },
+
+    "coderef_testing_commands": {
+      "server": "coderef-testing",
+      "total": 8,
+      "categories": {
+        "test_execution": [
+          {
+            "command": "/run-tests",
+            "purpose": "Run pytest test suite with coverage",
+            "when_to_use": "After implementation, before committing",
+            "best_practice": "ALWAYS run before committing code",
+            "estimated_time": "Variable (depends on test count)",
+            "outputs": ["Test results with pass/fail counts"]
+          },
+          {
+            "command": "/test-coverage",
+            "purpose": "Generate coverage report",
+            "when_to_use": "Understanding what code is tested",
+            "best_practice": "Run periodically to track coverage trends",
+            "estimated_time": "Variable",
+            "outputs": ["Coverage report (HTML or terminal)"]
+          },
+          {
+            "command": "/test-health",
+            "purpose": "Analyze test suite health metrics",
+            "when_to_use": "Assessing test quality",
+            "best_practice": "Run monthly for test suite maintenance",
+            "estimated_time": "10-30 seconds",
+            "outputs": ["Health metrics report"]
+          },
+          {
+            "command": "/discover-tests",
+            "purpose": "Discover all test files and functions",
+            "when_to_use": "Understanding test structure",
+            "best_practice": "Use for test inventory",
+            "estimated_time": "5-10 seconds",
+            "outputs": ["Test inventory"]
+          }
+        ]
+      }
+    }
+  },
+
+  "best_practices_by_workflow": {
+    "description": "Prescriptive guidance for common workflows",
+
+    "new_feature_workflow": {
+      "workflow_name": "Complete Feature Implementation (Single Agent)",
+      "phases": [
+        {
+          "phase": 1,
+          "name": "PLAN",
+          "duration": "5-10 minutes",
+          "commands_in_order": [
+            "/create-workorder",
+            "/validate-plan"
+          ],
+          "best_practices": [
+            "ALWAYS start with /create-workorder - never skip planning",
+            "ALWAYS validate plan before execution",
+            "Ensure plan scores >= 85 before proceeding",
+            "Use /assess-risk for risky changes"
+          ],
+          "outputs": ["plan.json", "context.json", "analysis.json"]
+        },
+        {
+          "phase": 2,
+          "name": "UNDERSTAND",
+          "duration": "5-15 minutes",
+          "commands_in_order": [
+            "/coderef-scan",
+            "/coderef-impact",
+            "/coderef-patterns"
+          ],
+          "best_practices": [
+            "ALWAYS scan codebase before making changes",
+            "ALWAYS check impact before refactoring/deleting",
+            "Identify existing patterns to follow"
+          ],
+          "outputs": [".coderef-index.json", "impact analysis", "pattern list"]
+        },
+        {
+          "phase": 3,
+          "name": "EXECUTE",
+          "duration": "1-8 hours",
+          "commands_in_order": [
+            "/execute-plan",
+            "/update-task-status (as you go)"
+          ],
+          "best_practices": [
+            "Use /execute-plan to generate todo list",
+            "Update task status after each completion",
+            "Activate appropriate persona (/ava for frontend, /marcus for backend)",
+            "Run /run-tests frequently during implementation"
+          ],
+          "outputs": ["Code implementation", "Updated plan.json"]
+        },
+        {
+          "phase": 4,
+          "name": "TEST",
+          "duration": "30-60 minutes",
+          "commands_in_order": [
+            "/run-tests",
+            "/test-coverage",
+            "/check-consistency"
+          ],
+          "best_practices": [
+            "ALWAYS run tests before committing",
+            "Ensure coverage meets project standards",
+            "Check code consistency before commit"
+          ],
+          "outputs": ["Test results", "Coverage report", "Consistency check"]
+        },
+        {
+          "phase": 5,
+          "name": "DOCUMENT",
+          "duration": "2-5 minutes",
+          "commands_in_order": [
+            "/update-deliverables",
+            "/record-changes",
+            "/generate-docs (if needed)"
+          ],
+          "best_practices": [
+            "ALWAYS update deliverables before archiving",
+            "ALWAYS record changes for audit trail",
+            "Re-generate docs if architecture changed"
+          ],
+          "outputs": ["DELIVERABLES.md", "CHANGELOG.json", "Updated docs"]
+        },
+        {
+          "phase": 6,
+          "name": "ARCHIVE",
+          "duration": "1 minute",
+          "commands_in_order": [
+            "/archive-feature"
+          ],
+          "best_practices": [
+            "Only archive after phases 1-5 complete",
+            "Verify DELIVERABLES.md status = Complete"
+          ],
+          "outputs": ["Feature in coderef/archived/"]
+        }
+      ],
+      "total_duration": "2-10 hours (mostly implementation time)",
+      "success_criteria": [
+        "Plan validated (score >= 85)",
+        "All tests passing",
+        "Coverage meets standards",
+        "Consistency checks pass",
+        "DELIVERABLES.md complete",
+        "CHANGELOG.json updated",
+        "Feature archived"
+      ]
+    },
+
+    "multi_agent_workflow": {
+      "workflow_name": "Multi-Agent Feature Implementation",
+      "coordinator": "Lloyd",
+      "phases": [
+        {
+          "phase": 1,
+          "name": "PLAN & COORDINATE",
+          "duration": "10-15 minutes",
+          "commands_in_order": [
+            "/create-workorder (with multi_agent: true)",
+            "/validate-plan",
+            "/generate-agent-communication"
+          ],
+          "best_practices": [
+            "Enable multi_agent mode in /create-workorder",
+            "Auto-generates communication.json for coordination",
+            "Assign clear phase boundaries per agent"
+          ],
+          "outputs": ["plan.json", "communication.json"]
+        },
+        {
+          "phase": 2,
+          "name": "ASSIGN TASKS",
+          "duration": "5 minutes",
+          "commands_in_order": [
+            "/assign-agent-task (per agent)",
+            "/generate-handoff-context (per agent)"
+          ],
+          "best_practices": [
+            "Assign one phase per agent",
+            "Generate handoff context for each agent",
+            "Use workorder-scoped IDs (WO-{FEATURE}-{AGENT}-###)"
+          ],
+          "outputs": ["Updated communication.json", "claude.md per agent"]
+        },
+        {
+          "phase": 3,
+          "name": "PARALLEL EXECUTION",
+          "duration": "Variable",
+          "commands_in_order": [
+            "Agents work in parallel",
+            "/track-agent-status (Lloyd monitors)"
+          ],
+          "best_practices": [
+            "Agents work independently on assigned phases",
+            "Lloyd tracks status with /track-agent-status",
+            "Agents update DELIVERABLES.md as they go"
+          ],
+          "outputs": ["Code from multiple agents"]
+        },
+        {
+          "phase": 4,
+          "name": "VERIFICATION",
+          "duration": "10-30 minutes",
+          "commands_in_order": [
+            "/verify-agent-completion (per agent)"
+          ],
+          "best_practices": [
+            "ALWAYS verify each agent's work",
+            "Check forbidden files unchanged",
+            "Validate success criteria met"
+          ],
+          "outputs": ["Verification reports per agent"]
+        },
+        {
+          "phase": 5,
+          "name": "AGGREGATE & ARCHIVE",
+          "duration": "5 minutes",
+          "commands_in_order": [
+            "/aggregate-agent-deliverables",
+            "/record-changes",
+            "/archive-feature"
+          ],
+          "best_practices": [
+            "Combine metrics from all agents",
+            "Single changelog entry for entire feature",
+            "Archive with combined deliverables"
+          ],
+          "outputs": ["Combined DELIVERABLES.md", "Feature archived"]
+        }
+      ],
+      "total_duration": "Variable (depends on parallel work)",
+      "success_criteria": [
+        "All agents verified",
+        "No forbidden files modified",
+        "All success criteria met",
+        "Deliverables aggregated",
+        "Feature archived"
+      ]
+    },
+
+    "documentation_workflow": {
+      "workflow_name": "Complete Documentation Generation",
+      "phases": [
+        {
+          "phase": 1,
+          "name": "FOUNDATION DOCS",
+          "duration": "2-3 minutes",
+          "commands_in_order": [
+            "/generate-docs"
+          ],
+          "best_practices": [
+            "Run early in project lifecycle",
+            "Re-run after major architecture changes",
+            "Uses code intelligence if @coderef/core available"
+          ],
+          "outputs": ["README.md", "ARCHITECTURE.md", "API.md", "SCHEMA.md", "COMPONENTS.md"]
+        },
+        {
+          "phase": 2,
+          "name": "USER DOCS",
+          "duration": "5-7 minutes",
+          "commands_in_order": [
+            "/generate-user-docs"
+          ],
+          "best_practices": [
+            "Run after foundation docs complete",
+            "Generates all 4 user-facing docs",
+            "Interactive quickref via /generate-quickref"
+          ],
+          "outputs": ["my-guide.md", "USER-GUIDE.md", "FEATURES.md", "quickref.md"]
+        },
+        {
+          "phase": 3,
+          "name": "STANDARDS",
+          "duration": "3-5 minutes",
+          "commands_in_order": [
+            "/establish-standards"
+          ],
+          "best_practices": [
+            "Run ONCE per project",
+            "Extracts UI/UX/behavior patterns",
+            "Use for ongoing compliance checks"
+          ],
+          "outputs": ["coderef/standards/ (4 files)"]
+        }
+      ],
+      "total_duration": "10-15 minutes",
+      "success_criteria": [
+        "All foundation docs generated",
+        "All user docs generated",
+        "Standards established"
+      ]
+    }
+  },
+
+  "decision_trees": {
+    "description": "Decision trees for choosing the right command/tool",
+
+    "which_planning_command": {
+      "question": "What planning task do you need?",
+      "options": [
+        {
+          "condition": "Starting a new feature from scratch",
+          "recommended_command": "/create-workorder",
+          "rationale": "Complete workflow with context gathering, analysis, and plan generation"
+        },
+        {
+          "condition": "Already have requirements, need plan only",
+          "recommended_command": "/create-plan",
+          "rationale": "Skip context gathering if requirements already known"
+        },
+        {
+          "condition": "Need to validate existing plan",
+          "recommended_command": "/validate-plan",
+          "rationale": "Score plan quality before execution"
+        },
+        {
+          "condition": "Need to assess risk of proposed change",
+          "recommended_command": "/assess-risk",
+          "rationale": "Evaluate risk across 5 dimensions"
+        },
+        {
+          "condition": "Converting plan to actionable todos",
+          "recommended_command": "/execute-plan",
+          "rationale": "Generates TodoWrite task list from plan.json"
+        }
+      ]
+    },
+
+    "which_documentation_command": {
+      "question": "What documentation do you need?",
+      "options": [
+        {
+          "condition": "Complete technical documentation (README, ARCHITECTURE, etc.)",
+          "recommended_command": "/generate-docs",
+          "rationale": "Generates all 5 foundation docs with code intelligence"
+        },
+        {
+          "condition": "User-facing documentation (guides, quickref)",
+          "recommended_command": "/generate-user-docs",
+          "rationale": "Generates all 4 user docs"
+        },
+        {
+          "condition": "Just a quick reference guide",
+          "recommended_command": "/generate-quickref",
+          "rationale": "Interactive quickref generation (150-250 lines)"
+        },
+        {
+          "condition": "Update changelog after feature completion",
+          "recommended_command": "/record-changes",
+          "rationale": "Auto-detects git changes and creates entry"
+        },
+        {
+          "condition": "Extract coding standards from codebase",
+          "recommended_command": "/establish-standards",
+          "rationale": "One-time standard extraction"
+        },
+        {
+          "condition": "Check code compliance with standards",
+          "recommended_command": "/audit-codebase",
+          "rationale": "Full compliance audit with score"
+        },
+        {
+          "condition": "Pre-commit check for staged files",
+          "recommended_command": "/check-consistency",
+          "rationale": "Fast gate for git pre-commit hook"
+        }
+      ]
+    },
+
+    "which_code_analysis_command": {
+      "question": "What code analysis do you need?",
+      "options": [
+        {
+          "condition": "Understanding codebase structure",
+          "recommended_command": "/coderef-scan",
+          "rationale": "Discover all code elements"
+        },
+        {
+          "condition": "Understanding how code connects",
+          "recommended_command": "/coderef-query",
+          "rationale": "Query relationships (calls, imports, dependencies)"
+        },
+        {
+          "condition": "Checking impact before changing code",
+          "recommended_command": "/coderef-impact",
+          "rationale": "See ripple effects before making changes"
+        },
+        {
+          "condition": "Finding complex code to refactor",
+          "recommended_command": "/coderef-complexity",
+          "rationale": "Get complexity metrics"
+        },
+        {
+          "condition": "Finding code patterns or coverage gaps",
+          "recommended_command": "/coderef-patterns",
+          "rationale": "Discover patterns and test gaps"
+        },
+        {
+          "condition": "Analyzing test coverage",
+          "recommended_command": "/coderef-coverage",
+          "rationale": "Coverage summary or detailed report"
+        },
+        {
+          "condition": "Creating AI context for codebase",
+          "recommended_command": "/coderef-context",
+          "rationale": "Generate comprehensive context markdown/JSON"
+        },
+        {
+          "condition": "Visualizing architecture",
+          "recommended_command": "/coderef-diagram",
+          "rationale": "Generate Mermaid or Graphviz diagrams"
+        }
+      ]
+    },
+
+    "which_persona": {
+      "question": "Which persona should you activate?",
+      "options": [
+        {
+          "condition": "Frontend/UI work (React, CSS, components)",
+          "recommended_command": "/ava",
+          "rationale": "Ava is the Frontend Specialist"
+        },
+        {
+          "condition": "Backend/API work (Python, databases, APIs)",
+          "recommended_command": "/marcus",
+          "rationale": "Marcus is the Backend Specialist"
+        },
+        {
+          "condition": "Testing/QA work",
+          "recommended_command": "/quinn",
+          "rationale": "Quinn is the Testing Specialist"
+        },
+        {
+          "condition": "Multi-agent coordination",
+          "recommended_command": "/lloyd",
+          "rationale": "Lloyd is the Coordination Specialist"
+        },
+        {
+          "condition": "General work (no specialization needed)",
+          "recommended_command": "/taylor",
+          "rationale": "Taylor is the General Purpose Agent"
+        },
+        {
+          "condition": "Orchestration and planning",
+          "recommended_command": "/coderef-assistant",
+          "rationale": "CodeRef Assistant for orchestration"
+        }
+      ]
+    }
+  },
+
+  "anti_patterns": {
+    "description": "What NOT to do - common mistakes to avoid",
+    "forbidden_practices": [
+      {
+        "anti_pattern": "Skipping /create-workorder and jumping directly to coding",
+        "why_bad": "No plan = no structure, high risk of missing requirements",
+        "correct_approach": "ALWAYS start with /create-workorder for any feature",
+        "severity": "CRITICAL"
+      },
+      {
+        "anti_pattern": "Not validating plans before execution",
+        "why_bad": "Low-quality plans lead to poor implementation",
+        "correct_approach": "ALWAYS run /validate-plan and ensure score >= 85",
+        "severity": "HIGH"
+      },
+      {
+        "anti_pattern": "Making code changes without checking impact",
+        "why_bad": "Breaking changes to dependent code, ripple effects",
+        "correct_approach": "ALWAYS run /coderef-impact before refactoring/deleting",
+        "severity": "CRITICAL"
+      },
+      {
+        "anti_pattern": "Not running tests before committing",
+        "why_bad": "Breaking changes get committed, CI/CD fails",
+        "correct_approach": "ALWAYS run /run-tests before git commit",
+        "severity": "CRITICAL"
+      },
+      {
+        "anti_pattern": "Manually editing CHANGELOG.json instead of using /record-changes",
+        "why_bad": "Inconsistent format, missing git context, human error",
+        "correct_approach": "ALWAYS use /record-changes (auto-detects changes)",
+        "severity": "MEDIUM"
+      },
+      {
+        "anti_pattern": "Archiving features without updating DELIVERABLES.md",
+        "why_bad": "Lost metrics, no audit trail",
+        "correct_approach": "Run /update-deliverables BEFORE /archive-feature",
+        "severity": "HIGH"
+      },
+      {
+        "anti_pattern": "Using /generate-docs on every small change",
+        "why_bad": "Expensive (time/tokens), unnecessary churn",
+        "correct_approach": "Only regenerate docs after major architecture changes",
+        "severity": "LOW"
+      },
+      {
+        "anti_pattern": "Running /establish-standards multiple times",
+        "why_bad": "Standards should be stable, not regenerated often",
+        "correct_approach": "Run ONCE per project, then use /audit-codebase",
+        "severity": "MEDIUM"
+      },
+      {
+        "anti_pattern": "Not using personas for specialized work",
+        "why_bad": "Missing domain expertise, lower quality",
+        "correct_approach": "Activate appropriate persona (/ava, /marcus, /quinn)",
+        "severity": "MEDIUM"
+      },
+      {
+        "anti_pattern": "Verifying multi-agent work without /verify-agent-completion",
+        "why_bad": "No validation, trust without verification",
+        "correct_approach": "ALWAYS verify each agent with /verify-agent-completion",
+        "severity": "HIGH"
+      },
+      {
+        "anti_pattern": "Skipping pre-commit /check-consistency",
+        "why_bad": "Standards violations get committed",
+        "correct_approach": "Add /check-consistency to pre-commit hooks",
+        "severity": "MEDIUM"
+      },
+      {
+        "anti_pattern": "Using deprecated commands (/update-changelog)",
+        "why_bad": "Deprecated commands may be removed",
+        "correct_approach": "Use replacement commands (/record-changes)",
+        "severity": "LOW"
+      }
+    ]
+  },
+
+  "performance_guidelines": {
+    "description": "Optimizing command usage for speed and efficiency",
+    "guidelines": [
+      {
+        "guideline": "Run expensive commands (scan, audit) sparingly",
+        "commands": ["/coderef-scan", "/audit-codebase", "/generate-docs"],
+        "recommendation": "Cache results, only re-run when needed",
+        "impact": "High - can save minutes per session"
+      },
+      {
+        "guideline": "Use /check-consistency (fast) over /audit-codebase (slow) for pre-commit",
+        "commands": ["/check-consistency"],
+        "recommendation": "check-consistency only scans modified files (10 sec vs 5-10 min)",
+        "impact": "High - 30x faster"
+      },
+      {
+        "guideline": "Batch document generation",
+        "commands": ["/generate-docs", "/generate-user-docs"],
+        "recommendation": "Generate all docs at once, not one at a time",
+        "impact": "Medium - saves repeated setup time"
+      },
+      {
+        "guideline": "Use /execute-plan to generate todos vs manual creation",
+        "commands": ["/execute-plan"],
+        "recommendation": "Auto-generates from plan.json in 5 seconds",
+        "impact": "Medium - saves 5-10 minutes"
+      },
+      {
+        "guideline": "Parallelize independent agent work",
+        "commands": ["/assign-agent-task"],
+        "recommendation": "Use multi-agent mode for parallel phases",
+        "impact": "Critical - 3x faster for parallelizable work"
+      }
+    ]
+  },
+
+  "integration_patterns": {
+    "description": "How commands work together across servers",
+    "patterns": [
+      {
+        "pattern_name": "Plan → Execute → Document → Archive",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "commands_sequence": [
+          "/create-workorder",
+          "/validate-plan",
+          "/execute-plan",
+          "[implementation work]",
+          "/update-deliverables",
+          "/record-changes",
+          "/archive-feature"
+        ],
+        "integration_points": [
+          "plan.json feeds /execute-plan",
+          "git history feeds /update-deliverables",
+          "DELIVERABLES.md feeds /record-changes",
+          "All artifacts go to coderef/archived/"
+        ]
+      },
+      {
+        "pattern_name": "Code Analysis → Risk Assessment → Planning",
+        "servers": ["coderef-context", "coderef-workflow"],
+        "commands_sequence": [
+          "/coderef-scan",
+          "/coderef-impact",
+          "/assess-risk",
+          "/create-workorder"
+        ],
+        "integration_points": [
+          "coderef-scan output informs impact analysis",
+          "Impact analysis feeds risk assessment",
+          "Risk assessment informs planning decisions"
+        ]
+      },
+      {
+        "pattern_name": "Documentation Generation with Code Intelligence",
+        "servers": ["coderef-context", "coderef-docs"],
+        "commands_sequence": [
+          "/coderef-scan (optional - for context)",
+          "/generate-docs"
+        ],
+        "integration_points": [
+          "generate-docs calls @coderef/core CLI internally",
+          "Extracts real APIs/schemas/components",
+          "Injects into POWER templates"
+        ]
+      },
+      {
+        "pattern_name": "Multi-Agent Coordination",
+        "servers": ["coderef-workflow", "coderef-personas"],
+        "commands_sequence": [
+          "/create-workorder (multi_agent: true)",
+          "/generate-agent-communication",
+          "/lloyd (activate coordinator)",
+          "/assign-agent-task (per agent)",
+          "/ava (frontend agent)",
+          "/marcus (backend agent)",
+          "/verify-agent-completion (per agent)",
+          "/aggregate-agent-deliverables"
+        ],
+        "integration_points": [
+          "plan.json → communication.json",
+          "Lloyd orchestrates via communication.json",
+          "Each agent has scoped workorder ID",
+          "DELIVERABLES.md aggregated from all agents"
+        ]
+      },
+      {
+        "pattern_name": "Test-Driven Development",
+        "servers": ["coderef-testing", "coderef-workflow"],
+        "commands_sequence": [
+          "/discover-tests",
+          "[write tests]",
+          "/run-tests",
+          "/test-coverage",
+          "/update-task-status"
+        ],
+        "integration_points": [
+          "Test results inform task status",
+          "Coverage metrics tracked in DELIVERABLES.md"
+        ]
+      }
+    ]
+  },
+
+  "error_handling": {
+    "description": "How to handle common errors",
+    "scenarios": [
+      {
+        "error": "Command not found in autocomplete",
+        "cause": "MCP cache stale or server not loaded",
+        "solution": "Follow mcp-cache-clearing-process.json",
+        "related_document": "coderef/agent/standards/mcp-cache-clearing-process.json"
+      },
+      {
+        "error": "Plan validation fails (score < 85)",
+        "cause": "Incomplete or low-quality plan",
+        "solution": "Review validation report, fix issues, re-validate",
+        "commands": ["/validate-plan", "/generate-plan-review"]
+      },
+      {
+        "error": "Tests failing after implementation",
+        "cause": "Breaking changes or bugs introduced",
+        "solution": "Fix failing tests before proceeding",
+        "commands": ["/run-tests", "/test-coverage"]
+      },
+      {
+        "error": "Standards violations in /check-consistency",
+        "cause": "Code doesn't match established patterns",
+        "solution": "Fix violations or update standards if intentional",
+        "commands": ["/check-consistency", "/audit-codebase"]
+      },
+      {
+        "error": "Agent verification fails",
+        "cause": "Success criteria not met or forbidden files modified",
+        "solution": "Review verification report, fix issues, re-verify",
+        "commands": ["/verify-agent-completion"]
+      },
+      {
+        "error": "@coderef/core CLI not found (context injection disabled)",
+        "cause": "CLI not installed or not in PATH",
+        "solution": "npm install -g @coderef/core OR set CODEREF_CLI_PATH",
+        "impact": "Docs use placeholders instead of real code extraction"
+      }
+    ]
+  },
+
+  "quick_reference": {
+    "description": "Quick lookup for most common commands",
+    "most_used_commands": [
+      {
+        "rank": 1,
+        "command": "/create-workorder",
+        "frequency": "Start of every feature",
+        "one_liner": "Create complete implementation plan"
+      },
+      {
+        "rank": 2,
+        "command": "/run-tests",
+        "frequency": "Before every commit",
+        "one_liner": "Run test suite with coverage"
+      },
+      {
+        "rank": 3,
+        "command": "/execute-plan",
+        "frequency": "After plan validation",
+        "one_liner": "Generate todo list from plan"
+      },
+      {
+        "rank": 4,
+        "command": "/record-changes",
+        "frequency": "After feature completion",
+        "one_liner": "Auto-detect changes, update changelog"
+      },
+      {
+        "rank": 5,
+        "command": "/coderef-impact",
+        "frequency": "Before refactoring",
+        "one_liner": "Check impact of code changes"
+      },
+      {
+        "rank": 6,
+        "command": "/validate-plan",
+        "frequency": "After creating plan",
+        "one_liner": "Score plan quality 0-100"
+      },
+      {
+        "rank": 7,
+        "command": "/update-deliverables",
+        "frequency": "After feature completion",
+        "one_liner": "Calculate actual metrics from git"
+      },
+      {
+        "rank": 8,
+        "command": "/archive-feature",
+        "frequency": "End of every feature",
+        "one_liner": "Move completed feature to archive"
+      },
+      {
+        "rank": 9,
+        "command": "/generate-docs",
+        "frequency": "Start of project or major changes",
+        "one_liner": "Generate 5 foundation docs"
+      },
+      {
+        "rank": 10,
+        "command": "/check-consistency",
+        "frequency": "Pre-commit hook",
+        "one_liner": "Fast standards check for staged files"
+      }
+    ]
+  },
+
+  "version_history": [
+    {
+      "version": "1.0.0",
+      "date": "2025-12-28",
+      "changes": [
+        "Initial creation of commands and tools best practices guide",
+        "Complete catalog of 76+ commands across 5 servers",
+        "Best practices for 3 major workflows (single-agent, multi-agent, documentation)",
+        "4 decision trees for command selection",
+        "12 anti-patterns with corrections",
+        "5 integration patterns showing cross-server workflows",
+        "6 error handling scenarios",
+        "Quick reference for top 10 most-used commands"
+      ],
+      "author": "Claude (AI Agent)",
+      "reviewed_by": "willh"
+    }
+  ],
+
+  "references": {
+    "related_standards": [
+      "coderef/agent/standards/mcp-cache-clearing-process.json",
+      "C:\\Users\\willh\\.mcp-servers\\CLAUDE.md",
+      "C:\\Users\\willh\\.mcp-servers\\CLAUDEMD-TEMPLATE.json"
+    ],
+    "server_documentation": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\CLAUDE.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\CLAUDE.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-context\\README.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\CLAUDE.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-testing\\CLAUDE.md"
+    ]
+  },
+
+  "notes": {
+    "authority": "This document is the SINGLE SOURCE OF TRUTH for all agents. All agents (Claude, Ava, Marcus, Quinn, Taylor, Lloyd) MUST follow these best practices.",
+    "maintenance": "Update this document when new commands are added or workflows change. Version history tracks all changes.",
+    "enforcement": "Critical practices marked as 'CRITICAL' severity are mandatory. Violations should be flagged and corrected.",
+    "continuous_improvement": "Agents should suggest improvements based on real-world usage patterns."
+  }
+}

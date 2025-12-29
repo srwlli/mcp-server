@@ -1,0 +1,692 @@
+{
+  "meta": {
+    "title": "MCP Cache Clearing Process - CodeRef Ecosystem",
+    "version": "1.0.0",
+    "owner": "Claude (AI Agent)",
+    "created": "2025-12-28",
+    "last_updated": "2025-12-28",
+    "purpose": "Agentic process for safely clearing MCP cache across all projects when CodeRef servers are updated",
+    "scope": "All 5 CodeRef MCP servers (context, docs, personas, workflow, testing)",
+    "execution_mode": "agent-driven",
+    "human_approval_required": true
+  },
+
+  "when_to_execute": {
+    "triggers": [
+      "After adding/removing MCP tools in any of the 5 servers",
+      "After modifying tool schemas (input/output parameters)",
+      "After updating server.py or tool_handlers.py in any server",
+      "After migrating server code to new structure",
+      "When duplicate commands appear in autocomplete",
+      "When new tools don't appear after server update",
+      "When tool schemas don't match latest server code"
+    ],
+    "frequency": "As needed (not scheduled)",
+    "criticality": "HIGH - Prevents stale tool definitions across projects"
+  },
+
+  "affected_servers": {
+    "total": 5,
+    "servers": [
+      {
+        "name": "coderef-context",
+        "tools": 11,
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-context"
+      },
+      {
+        "name": "coderef-docs",
+        "tools": 11,
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs"
+      },
+      {
+        "name": "coderef-personas",
+        "tools": 9,
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas"
+      },
+      {
+        "name": "coderef-workflow",
+        "tools": 24,
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow"
+      },
+      {
+        "name": "coderef-testing",
+        "tools": 8,
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing"
+      }
+    ]
+  },
+
+  "pre_flight_checklist": {
+    "description": "Validation steps BEFORE clearing cache",
+    "required_checks": [
+      {
+        "id": "CHECK-001",
+        "check": "Verify server code changes committed",
+        "validation": "git status shows clean working tree or only untracked files",
+        "fail_action": "Abort - commit changes first",
+        "automated": false,
+        "human_confirmation": true
+      },
+      {
+        "id": "CHECK-002",
+        "check": "Verify updated server works in isolation",
+        "validation": "python -m {server}.server runs without errors",
+        "fail_action": "Abort - fix server errors first",
+        "automated": false,
+        "human_confirmation": true
+      },
+      {
+        "id": "CHECK-003",
+        "check": "Identify all active projects using CodeRef servers",
+        "validation": "List all projects in C:\\Users\\willh\\.cursor\\projects\\",
+        "fail_action": "Continue with warning",
+        "automated": true,
+        "command": "ls \"C:\\Users\\willh\\.cursor\\projects\\\""
+      },
+      {
+        "id": "CHECK-004",
+        "check": "Verify no unsaved work in Claude Code",
+        "validation": "Human confirms all work saved",
+        "fail_action": "Abort - save work first",
+        "automated": false,
+        "human_confirmation": true
+      },
+      {
+        "id": "CHECK-005",
+        "check": "Verify file system access to .cursor directory",
+        "validation": "Can read/write C:\\Users\\willh\\.cursor\\projects\\",
+        "fail_action": "Abort - fix permissions",
+        "automated": true,
+        "command": "test -w \"C:\\Users\\willh\\.cursor\\projects\\\""
+      }
+    ],
+    "abort_if_any_fail": true
+  },
+
+  "execution_process": {
+    "description": "Exact order of operations - DO NOT REORDER",
+    "critical_order": true,
+    "steps": [
+      {
+        "step": 1,
+        "id": "STEP-001",
+        "action": "Request user to close ALL Claude Code windows",
+        "rationale": "Cache files are locked while Claude Code is running",
+        "agent_action": "ASK_USER",
+        "prompt": "Please close ALL Claude Code windows before I proceed with cache clearing. Confirm when done.",
+        "wait_for_confirmation": true,
+        "validation": {
+          "type": "human_confirmation",
+          "required": true
+        },
+        "fail_action": "ABORT - Cannot proceed while Claude Code is running",
+        "automated": false,
+        "estimated_duration_seconds": 10
+      },
+      {
+        "step": 2,
+        "id": "STEP-002",
+        "action": "Verify Claude Code processes terminated",
+        "rationale": "Ensure no file locks remain",
+        "agent_action": "INFORM_USER",
+        "message": "Verifying all Claude Code processes are closed...",
+        "validation": {
+          "type": "process_check",
+          "command_powershell": "Get-Process | Where-Object {$_.ProcessName -like '*Claude*'}",
+          "expected_output": "No processes found",
+          "automated": false,
+          "manual_override": true
+        },
+        "fail_action": "ASK_USER to verify manually via Task Manager",
+        "estimated_duration_seconds": 5
+      },
+      {
+        "step": 3,
+        "id": "STEP-003",
+        "action": "Delete cache files for ALL projects",
+        "rationale": "Clear stale tool definitions from all project caches",
+        "agent_action": "EXECUTE_COMMAND",
+        "commands": {
+          "powershell": "Remove-Item \"$env:USERPROFILE\\.cursor\\projects\\*\\mcp-cache.json\" -Force",
+          "bash": "rm ~/.cursor/projects/*/mcp-cache.json",
+          "platform": "windows"
+        },
+        "validation": {
+          "type": "file_deletion_check",
+          "command": "Get-ChildItem -Path \"$env:USERPROFILE\\.cursor\\projects\" -Filter \"mcp-cache.json\" -Recurse",
+          "expected_output": "No files found",
+          "acceptable_errors": ["FileNotFoundError - normal if no cache exists"]
+        },
+        "fail_action": "RETRY with elevated permissions or ASK_USER for manual deletion",
+        "automated": true,
+        "estimated_duration_seconds": 5
+      },
+      {
+        "step": 4,
+        "id": "STEP-004",
+        "action": "Verify cache deletion successful",
+        "rationale": "Confirm all cache files removed",
+        "agent_action": "VALIDATE",
+        "validation": {
+          "type": "file_check",
+          "command": "Get-ChildItem -Path \"$env:USERPROFILE\\.cursor\\projects\" -Filter \"mcp-cache.json\" -Recurse | Measure-Object | Select-Object -ExpandProperty Count",
+          "expected_result": 0,
+          "automated": true
+        },
+        "success_message": "✅ All cache files deleted successfully",
+        "fail_action": "REPORT undeleted files and ASK_USER to delete manually",
+        "estimated_duration_seconds": 3
+      },
+      {
+        "step": 5,
+        "id": "STEP-005",
+        "action": "Request user to restart Claude Code",
+        "rationale": "Trigger cache rebuild with latest tool definitions",
+        "agent_action": "ASK_USER",
+        "prompt": "Cache cleared successfully. Please restart Claude Code now and open your active CodeRef projects. Confirm when Claude Code has fully loaded.",
+        "wait_for_confirmation": true,
+        "validation": {
+          "type": "human_confirmation",
+          "required": true
+        },
+        "estimated_duration_seconds": 30
+      },
+      {
+        "step": 6,
+        "id": "STEP-006",
+        "action": "Verify MCP servers reconnected",
+        "rationale": "Ensure all 5 servers loaded successfully",
+        "agent_action": "ASK_USER",
+        "prompt": "Please confirm you see connection notifications for all 5 MCP servers: coderef-context, coderef-docs, coderef-personas, coderef-workflow, coderef-testing",
+        "validation": {
+          "type": "human_confirmation",
+          "expected": "All 5 servers connected",
+          "required": true
+        },
+        "fail_action": "TROUBLESHOOT - Go to troubleshooting decision tree",
+        "estimated_duration_seconds": 10
+      },
+      {
+        "step": 7,
+        "id": "STEP-007",
+        "action": "Verify tool count matches expected",
+        "rationale": "Confirm all tools loaded from all servers",
+        "agent_action": "ASK_USER",
+        "prompt": "Please type / and count the total slash commands. Expected: approximately 76 commands (no duplicates). How many do you see?",
+        "validation": {
+          "type": "count_check",
+          "expected_min": 70,
+          "expected_max": 80,
+          "required": true
+        },
+        "fail_action": "TROUBLESHOOT - Identify which server is missing tools",
+        "estimated_duration_seconds": 20
+      },
+      {
+        "step": 8,
+        "id": "STEP-008",
+        "action": "Test updated tools",
+        "rationale": "Verify new/modified tools are accessible",
+        "agent_action": "EXECUTE_TEST",
+        "test_commands": [
+          "/list-templates",
+          "/use-persona",
+          "/coderef-scan"
+        ],
+        "validation": {
+          "type": "command_execution",
+          "expected": "All commands execute without errors",
+          "required": true
+        },
+        "fail_action": "TROUBLESHOOT - Specific server may not have loaded",
+        "estimated_duration_seconds": 30
+      },
+      {
+        "step": 9,
+        "id": "STEP-009",
+        "action": "Check for duplicate commands",
+        "rationale": "Verify no stale definitions remain",
+        "agent_action": "ASK_USER",
+        "prompt": "Scroll through the / autocomplete. Do you see any duplicate commands or commands with (user) and (project) labels?",
+        "validation": {
+          "type": "human_confirmation",
+          "expected": "No duplicates",
+          "required": true
+        },
+        "fail_action": "TROUBLESHOOT - Cache may not have fully cleared",
+        "estimated_duration_seconds": 15
+      }
+    ],
+    "total_estimated_duration_seconds": 128,
+    "total_estimated_duration_human": "~2 minutes"
+  },
+
+  "critical_rules": {
+    "description": "Absolute rules - NEVER violate these",
+    "rules": [
+      {
+        "rule_id": "RULE-001",
+        "rule": "NEVER delete cache while Claude Code is running",
+        "severity": "CRITICAL",
+        "consequence": "File lock errors, incomplete deletion, corrupted cache",
+        "enforcement": "Block STEP-003 if STEP-001 not confirmed"
+      },
+      {
+        "rule_id": "RULE-002",
+        "rule": "ALWAYS clear cache for ALL projects, not just one",
+        "severity": "CRITICAL",
+        "consequence": "Other projects retain stale definitions",
+        "enforcement": "Use wildcard pattern projects/*/mcp-cache.json"
+      },
+      {
+        "rule_id": "RULE-003",
+        "rule": "NEVER delete entire .cursor directory",
+        "severity": "CRITICAL",
+        "consequence": "Loss of ALL Claude Code settings",
+        "enforcement": "Only delete mcp-cache.json files specifically"
+      },
+      {
+        "rule_id": "RULE-004",
+        "rule": "NEVER manually edit mcp-cache.json",
+        "severity": "HIGH",
+        "consequence": "Manual edits overwritten on rebuild",
+        "enforcement": "Only delete, never modify"
+      },
+      {
+        "rule_id": "RULE-005",
+        "rule": "ALWAYS verify deletion before requesting restart",
+        "severity": "HIGH",
+        "consequence": "User restarts without cache actually cleared",
+        "enforcement": "STEP-004 must pass before STEP-005"
+      },
+      {
+        "rule_id": "RULE-006",
+        "rule": "NEVER skip verification steps",
+        "severity": "HIGH",
+        "consequence": "Silent failures, stale definitions persist",
+        "enforcement": "Steps 6-9 are mandatory, not optional"
+      },
+      {
+        "rule_id": "RULE-007",
+        "rule": "ALWAYS request human confirmation before deleting files",
+        "severity": "MEDIUM",
+        "consequence": "Unexpected data loss",
+        "enforcement": "STEP-001 requires explicit user permission"
+      }
+    ]
+  },
+
+  "do_not_actions": {
+    "description": "Actions to NEVER perform",
+    "forbidden_actions": [
+      {
+        "action": "Delete cache while Claude Code running",
+        "why_forbidden": "File locks prevent deletion, causes errors",
+        "alternative": "Close Claude Code first (STEP-001)"
+      },
+      {
+        "action": "Clear cache for only one project",
+        "why_forbidden": "Other projects keep stale definitions",
+        "alternative": "Use wildcard to clear all projects"
+      },
+      {
+        "action": "Delete .cursor directory",
+        "why_forbidden": "Loses all settings, not just cache",
+        "alternative": "Only delete mcp-cache.json files"
+      },
+      {
+        "action": "Manually edit mcp-cache.json",
+        "why_forbidden": "File auto-generated, edits overwritten",
+        "alternative": "Delete and let Claude Code rebuild"
+      },
+      {
+        "action": "Skip verification steps",
+        "why_forbidden": "Can't confirm cache clear worked",
+        "alternative": "Always complete steps 6-9"
+      },
+      {
+        "action": "Update servers incrementally with cache clears between",
+        "why_forbidden": "Inefficient, multiple interruptions",
+        "alternative": "Update all servers, then clear cache once"
+      },
+      {
+        "action": "Assume cache cleared without verification",
+        "why_forbidden": "Silent failures happen",
+        "alternative": "Always verify with STEP-004"
+      }
+    ]
+  },
+
+  "success_criteria": {
+    "description": "Conditions that define successful cache clear",
+    "criteria": [
+      {
+        "id": "SUCCESS-001",
+        "metric": "All cache files deleted",
+        "validation": "STEP-004 passes (count = 0)",
+        "required": true
+      },
+      {
+        "id": "SUCCESS-002",
+        "metric": "All 5 MCP servers reconnected",
+        "validation": "STEP-006 confirms all servers",
+        "required": true
+      },
+      {
+        "id": "SUCCESS-003",
+        "metric": "Tool count matches expected range",
+        "validation": "STEP-007 shows 70-80 commands",
+        "required": true
+      },
+      {
+        "id": "SUCCESS-004",
+        "metric": "Test commands execute successfully",
+        "validation": "STEP-008 tests pass",
+        "required": true
+      },
+      {
+        "id": "SUCCESS-005",
+        "metric": "No duplicate commands",
+        "validation": "STEP-009 confirms no duplicates",
+        "required": true
+      },
+      {
+        "id": "SUCCESS-006",
+        "metric": "New/updated tools accessible",
+        "validation": "User can call new tools added in server update",
+        "required": true
+      }
+    ],
+    "overall_success": "All 6 criteria must pass"
+  },
+
+  "troubleshooting_decision_tree": {
+    "description": "Decision tree for handling failures",
+    "scenarios": [
+      {
+        "scenario_id": "TROUBLE-001",
+        "issue": "Cache files won't delete (Access Denied)",
+        "diagnosis": [
+          "Check if Claude Code still running",
+          "Check Task Manager for Claude processes",
+          "Check file permissions"
+        ],
+        "solutions": [
+          {
+            "solution": "Close all Claude Code windows via Task Manager",
+            "steps": [
+              "Open Task Manager",
+              "Find Claude Code processes",
+              "End all processes",
+              "Wait 5 seconds",
+              "Retry STEP-003"
+            ]
+          },
+          {
+            "solution": "Run PowerShell as Administrator",
+            "steps": [
+              "Right-click PowerShell",
+              "Select 'Run as Administrator'",
+              "Retry deletion command"
+            ]
+          },
+          {
+            "solution": "Manual deletion via File Explorer",
+            "steps": [
+              "Navigate to C:\\Users\\willh\\.cursor\\projects\\",
+              "For each project folder, delete mcp-cache.json manually",
+              "Proceed to STEP-004 verification"
+            ]
+          }
+        ],
+        "escalation": "If all solutions fail, ASK_USER to reboot system"
+      },
+      {
+        "scenario_id": "TROUBLE-002",
+        "issue": "MCP servers don't reconnect after restart",
+        "diagnosis": [
+          "Check .mcp.json configuration syntax",
+          "Verify server paths exist",
+          "Check server code for errors"
+        ],
+        "solutions": [
+          {
+            "solution": "Verify .mcp.json configuration",
+            "steps": [
+              "Read ~/.mcp.json or .claude/settings.json",
+              "Validate JSON syntax",
+              "Confirm all 5 servers listed",
+              "Verify paths are correct"
+            ]
+          },
+          {
+            "solution": "Test servers individually",
+            "steps": [
+              "cd to each server directory",
+              "Run: python -m {server}.server",
+              "Check for Python errors",
+              "Fix errors before retrying"
+            ]
+          },
+          {
+            "solution": "Restart Claude Code again",
+            "steps": [
+              "Sometimes takes 2 restarts for full reload",
+              "Close Claude Code",
+              "Wait 10 seconds",
+              "Reopen and check"
+            ]
+          }
+        ],
+        "escalation": "Check server logs for detailed error messages"
+      },
+      {
+        "scenario_id": "TROUBLE-003",
+        "issue": "Tools still duplicated after cache clear",
+        "diagnosis": [
+          "Check local .claude/commands/ for duplicates",
+          "Check global ~/.claude/commands/ for conflicts",
+          "Verify cache was actually deleted"
+        ],
+        "solutions": [
+          {
+            "solution": "Check for command file duplicates",
+            "steps": [
+              "ls .claude/commands/",
+              "ls ~/.claude/commands/",
+              "Remove local duplicates (keep global only)",
+              "Clear cache again"
+            ]
+          },
+          {
+            "solution": "Nuclear option - clear all caches globally",
+            "steps": [
+              "Close ALL Claude Code instances across all projects",
+              "Delete: rm ~/.cursor/projects/*/mcp-cache.json",
+              "Restart Claude Code",
+              "Verify duplicates gone"
+            ]
+          }
+        ],
+        "escalation": "Check MCP server definitions for duplicate tool names"
+      },
+      {
+        "scenario_id": "TROUBLE-004",
+        "issue": "Wrong tool count (missing tools)",
+        "diagnosis": [
+          "Count tools per server",
+          "Identify which server is missing tools",
+          "Check server logs for errors"
+        ],
+        "solutions": [
+          {
+            "solution": "Identify missing server",
+            "steps": [
+              "Type /coderef- (context tools)",
+              "Type /generate- (docs tools)",
+              "Type /use-persona (persona tools)",
+              "Type /create-workorder (workflow tools)",
+              "Identify which prefix has missing tools"
+            ]
+          },
+          {
+            "solution": "Test specific server",
+            "steps": [
+              "cd C:\\Users\\willh\\.mcp-servers\\{server}",
+              "python server.py",
+              "Check for errors in output",
+              "Fix errors and restart Claude Code"
+            ]
+          }
+        ],
+        "escalation": "Check if server code has syntax errors preventing tool registration"
+      },
+      {
+        "scenario_id": "TROUBLE-005",
+        "issue": "Specific server not loading",
+        "diagnosis": [
+          "Test server manually",
+          "Check dependencies installed",
+          "Check .mcp.json entry"
+        ],
+        "solutions": [
+          {
+            "solution": "Test server in isolation",
+            "steps": [
+              "cd to server directory",
+              "uv sync (install dependencies)",
+              "python server.py",
+              "Look for startup errors"
+            ]
+          },
+          {
+            "solution": "Verify .mcp.json entry",
+            "steps": [
+              "Check server name matches",
+              "Check command path is correct",
+              "Check args array is valid",
+              "Try removing and re-adding server entry"
+            ]
+          }
+        ],
+        "escalation": "Check Python version compatibility (requires 3.10+)"
+      }
+    ]
+  },
+
+  "agent_communication": {
+    "description": "How I (Claude) communicate with user during process",
+    "communication_style": {
+      "tone": "Professional, clear, reassuring",
+      "verbosity": "Concise but complete",
+      "emoji_usage": "Use ✅ for success, ⚠️ for warnings, ❌ for errors",
+      "technical_level": "Assume user understands MCP and CodeRef ecosystem"
+    },
+    "status_updates": [
+      {
+        "phase": "pre_flight",
+        "message": "🔍 Running pre-flight checks before cache clearing..."
+      },
+      {
+        "phase": "requesting_close",
+        "message": "⚠️ Please close ALL Claude Code windows. This is critical to prevent file lock errors."
+      },
+      {
+        "phase": "deleting_cache",
+        "message": "🗑️ Deleting cache files for all projects..."
+      },
+      {
+        "phase": "verifying_deletion",
+        "message": "✅ Verifying cache deletion..."
+      },
+      {
+        "phase": "requesting_restart",
+        "message": "🔄 Cache cleared! Please restart Claude Code now."
+      },
+      {
+        "phase": "verifying_reconnection",
+        "message": "🔌 Verifying MCP servers reconnected..."
+      },
+      {
+        "phase": "testing_tools",
+        "message": "🧪 Testing tool accessibility..."
+      },
+      {
+        "phase": "success",
+        "message": "✅ Cache clear complete! All 5 servers reconnected with latest tool definitions."
+      },
+      {
+        "phase": "failure",
+        "message": "❌ Cache clear encountered issues. Entering troubleshooting mode..."
+      }
+    ],
+    "user_prompts": {
+      "close_claude_code": "Please close ALL Claude Code windows before I proceed. Confirm when done.",
+      "restart_claude_code": "Cache cleared successfully. Please restart Claude Code and confirm when fully loaded.",
+      "verify_servers": "Do you see connection notifications for all 5 servers (context, docs, personas, workflow, testing)?",
+      "count_commands": "Please type / and count total commands. How many do you see? (Expected: ~76)",
+      "check_duplicates": "Scroll through / autocomplete. Any duplicate commands?",
+      "permission_to_proceed": "Ready to clear MCP cache for all projects. This will delete all mcp-cache.json files. Proceed?"
+    }
+  },
+
+  "execution_log": {
+    "description": "Template for logging each execution",
+    "log_structure": {
+      "execution_id": "Generated UUID",
+      "timestamp": "ISO 8601 timestamp",
+      "trigger": "Why cache clear was initiated",
+      "servers_updated": ["List of servers that were updated"],
+      "steps_completed": [],
+      "steps_failed": [],
+      "duration_seconds": 0,
+      "success": false,
+      "issues_encountered": [],
+      "resolutions_applied": [],
+      "final_verification": {
+        "cache_deleted": false,
+        "servers_reconnected": 0,
+        "tool_count": 0,
+        "duplicates_found": false
+      }
+    },
+    "log_location": "coderef/agent/logs/cache-clear-{timestamp}.json"
+  },
+
+  "version_history": [
+    {
+      "version": "1.0.0",
+      "date": "2025-12-28",
+      "changes": [
+        "Initial creation of agentic cache clearing process",
+        "Comprehensive pre-flight checklist with 5 validation checks",
+        "9-step execution process with human confirmations",
+        "7 critical rules with enforcement mechanisms",
+        "6 success criteria for validation",
+        "5 troubleshooting scenarios with decision trees",
+        "Agent communication templates and status updates"
+      ],
+      "author": "Claude (AI Agent)",
+      "reviewed_by": "willh"
+    }
+  ],
+
+  "references": {
+    "related_documents": [
+      "C:\\Users\\willh\\.mcp-servers\\CLAUDE.md - Ecosystem overview",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\CLAUDE.md - Server-specific docs",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\CLAUDE.md - Workflow documentation"
+    ],
+    "external_links": [
+      "https://spec.modelcontextprotocol.io/ - MCP Specification",
+      "https://github.com/anthropics/claude-code - Claude Code GitHub"
+    ]
+  },
+
+  "notes": {
+    "ownership": "This process is owned and executed by Claude (AI Agent). I will follow this process whenever cache clearing is needed after MCP server updates.",
+    "human_role": "Human provides confirmations at critical steps (close windows, restart, verify). All validation and execution is agent-driven.",
+    "continuous_improvement": "I will update this document based on lessons learned from each execution. Version history tracks all changes.",
+    "criticality": "Cache clearing is a HIGH-criticality operation. Mistakes can cause data loss or broken MCP server connections. Follow this process exactly."
+  }
+}

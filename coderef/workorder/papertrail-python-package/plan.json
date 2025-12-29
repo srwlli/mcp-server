@@ -1,0 +1,464 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "papertrail-python-package",
+    "workorder_id": "WO-PAPERTRAIL-PYTHON-PACKAGE-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "Manual (consolidated from STUB-058, STUB-064, STUB-059)",
+    "has_context": true,
+    "has_analysis": false,
+    "development_strategy": "standalone_python_package_then_integrate",
+    "architecture": "Python package → coderef-docs integration → ecosystem-wide adoption"
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs_available": true,
+      "analysis_complete": false,
+      "context_gathered": true,
+      "design_documents": [
+        "CODEREF_TAILORED_DESIGN.md - CodeRef-specific adaptations",
+        "context-v2.md - Python package architecture",
+        "SAFE_DEVELOPMENT_PLAN.md - Development strategy"
+      ],
+      "source_reference": {
+        "papertrail_location": "C:\\Users\\willh\\Desktop\\ARCHIVED\\projects-idle\\paper-trail-parsed-into-modules",
+        "key_files_reviewed": [
+          "uds-framework/uds.ts (623 lines)",
+          "updated-template-engine/template-engine-extended.ts",
+          "document-systems/document-system.ts (543 lines)"
+        ]
+      },
+      "development_approach": {
+        "strategy": "Build standalone Python package first, integrate later",
+        "rationale": "Zero risk to production during development (Phases 1-2). Only touch MCP servers in Phase 3 with feature flags for safe rollout.",
+        "timeline": "5-8 weeks total, production safe for first 4 weeks"
+      }
+    },
+
+    "1_executive_summary": {
+      "purpose": "Build Papertrail as a Python package providing universal documentation standards (UDS) for the CodeRef ecosystem",
+      "value_proposition": "Complete documentation traceability (workorder → docs), automatic validation, health tracking, and unified format across all 5 MCP servers",
+      "real_world_analogy": "Like ESLint for code, but for documentation - enforces standards, catches errors, ensures quality",
+      "use_case": "When any server generates docs → coderef-docs uses Papertrail → docs have UDS headers/footers, pass validation, get health scored, link to workorders",
+      "output": "Standalone Python package (papertrail/) + enhanced coderef-docs + ecosystem-wide UDS compliance"
+    },
+
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "medium - ~800 lines Python, 4 phases, TypeScript → Python port",
+      "scope": "Medium - 1 new package, 1 server enhanced, 4 servers unchanged",
+      "file_system_risk": "minimal",
+      "development_strategy_risk_mitigation": {
+        "standalone_development": "Phases 1-2 (4 weeks) = zero MCP changes, build and test Papertrail independently",
+        "feature_flags": "Phase 3 integration uses PAPERTRAIL_ENABLED flag, instant rollback",
+        "gradual_rollout": "Phase 4 enables per tool (quickref → foundation → all), validate at each step"
+      },
+      "dependencies": {
+        "existing_internal": [],
+        "existing_external": [],
+        "new_external": [],
+        "new_internal": ["papertrail package (standalone)"]
+      },
+      "performance_concerns": [
+        "Template processing overhead - minimal, inheritance/conditionals are lightweight",
+        "Validation overhead - runs once per doc generation, negligible",
+        "Health scoring - simple calculation, <100ms"
+      ],
+      "security_considerations": [
+        "No external API calls (unless AI enhancement Phase 2)",
+        "No user input validation needed (internal tool)",
+        "Template inheritance must prevent path traversal (sanitize paths)"
+      ],
+      "breaking_changes": "none - all enhancements backward compatible, existing templates continue to work with feature flag OFF"
+    },
+
+    "3_current_state_analysis": {
+      "affected_files": {
+        "new": [
+          "papertrail/setup.py",
+          "papertrail/papertrail/__init__.py",
+          "papertrail/papertrail/uds.py - UDS headers/footers/schemas",
+          "papertrail/papertrail/engine.py - Template processing",
+          "papertrail/papertrail/validator.py - Schema validation",
+          "papertrail/papertrail/health.py - Health scoring",
+          "papertrail/papertrail/extensions/ - CodeRef integrations",
+          "papertrail/papertrail/schemas/ - JSON schemas",
+          "papertrail/tests/ - Test suite"
+        ],
+        "modified": [
+          "coderef-docs/generators/foundation_generator.py - Import papertrail",
+          "coderef-docs/tool_handlers.py - Add validate/health tools",
+          "coderef-docs/requirements.txt - Add papertrail dependency"
+        ],
+        "unchanged": [
+          "coderef-workflow/",
+          "coderef-context/",
+          "coderef-personas/",
+          "coderef-testing/"
+        ]
+      },
+      "architecture_context": "CodeRef ecosystem has 5 MCP servers. coderef-docs is the documentation authority (like coderef-context is the code intelligence authority). All servers call coderef-docs when they need documentation. Papertrail enhances coderef-docs with UDS standards, validation, and health tracking. Other servers see no changes - they just get better docs back from coderef-docs."
+    },
+
+    "4_key_features": {
+      "primary_features": [
+        "UDS Headers/Footers - Every doc gets workorder_id, generated_by, timestamp, status metadata for complete traceability",
+        "Schema Validation - Enforce required sections for each doc type (plan, deliverables, architecture, readme, api)",
+        "Health Scoring - 0-100 score based on traceability (40%), completeness (30%), freshness (20%), validation (10%)",
+        "Template Engine - Support inheritance ({% extends %}), conditionals ({% if %}), includes ({% include %})",
+        "CodeRef Extensions - Auto-inject data from coderef-context, git, workflow ({% coderef.scan %}, {% git.stats %})"
+      ],
+      "secondary_features": [
+        "5 CodeRef-specific schemas - plan.json, DELIVERABLES.md, ARCHITECTURE.md, README.md, API.md",
+        "Feature flag integration - Safe rollout with PAPERTRAIL_ENABLED environment variable",
+        "Health tracking - Store scores in coderef/context/ for dashboard"
+      ],
+      "edge_case_handling": [
+        "Template inheritance cycles - Detect and prevent circular extends",
+        "Missing workorder_id - Validation error, doc generation fails",
+        "Invalid extension point - Log warning, skip extension, continue generation",
+        "Feature flag OFF - Fallback to legacy generators (backward compatible)"
+      ],
+      "configuration_options": [
+        "PAPERTRAIL_ENABLED - Enable/disable Papertrail (default: false)",
+        "PAPERTRAIL_STRICT_VALIDATION - Fail on warnings (default: false)",
+        "PAPERTRAIL_HEALTH_THRESHOLD - Minimum health score (default: 0)"
+      ]
+    },
+
+    "5_task_id_system": {
+      "naming_convention": "PHASE{N}-{CATEGORY}-{###}",
+      "categories": ["SETUP", "UDS", "ENGINE", "VALIDATION", "HEALTH", "EXTENSIONS", "INTEGRATION", "TESTING", "ROLLOUT"],
+      "tasks": [
+        "PHASE1-SETUP-001: Create papertrail/ package structure with setup.py",
+        "PHASE1-UDS-001: Define UDSHeader class with workorder_id, generated_by, feature_id, timestamp fields",
+        "PHASE1-UDS-002: Define UDSFooter class with copyright, workorder, ai_assistance fields",
+        "PHASE1-UDS-003: Implement to_yaml() methods for header/footer YAML frontmatter generation",
+        "PHASE1-UDS-004: Define 5 CodeRef schemas (plan, deliverables, architecture, readme, api)",
+        "PHASE1-VALIDATION-001: Implement validate_uds() function checking required sections",
+        "PHASE1-VALIDATION-002: Implement metadata validation (workorder_id format, timestamps)",
+        "PHASE1-HEALTH-001: Implement calculate_health() with 4-factor scoring algorithm",
+        "PHASE1-HEALTH-002: Implement health score storage to coderef/context/",
+        "PHASE1-TESTING-001: Write unit tests for UDS classes (100% coverage)",
+        "PHASE1-TESTING-002: Write unit tests for validation (all edge cases)",
+        "PHASE1-TESTING-003: Write unit tests for health scoring",
+
+        "PHASE2-ENGINE-001: Implement TemplateEngine class with render() method",
+        "PHASE2-ENGINE-002: Add template inheritance support ({% extends 'base.md' %})",
+        "PHASE2-ENGINE-003: Add conditional support ({% if condition %})",
+        "PHASE2-ENGINE-004: Add include support ({% include 'partial.md' %})",
+        "PHASE2-ENGINE-005: Implement inject_uds() method wrapping content with headers/footers",
+        "PHASE2-EXTENSIONS-001: Create CodeRefContextExtension (scan, query, impact methods)",
+        "PHASE2-EXTENSIONS-002: Create GitExtension (stats, files, contributors methods)",
+        "PHASE2-EXTENSIONS-003: Create WorkflowExtension (plan, tasks, progress methods)",
+        "PHASE2-EXTENSIONS-004: Register extensions with TemplateEngine",
+        "PHASE2-TESTING-004: Write template engine tests (inheritance, conditionals, includes)",
+        "PHASE2-TESTING-005: Write extension tests (mock MCP calls)",
+
+        "PHASE3-INTEGRATION-001: Add papertrail to coderef-docs/requirements.txt",
+        "PHASE3-INTEGRATION-002: Update foundation_generator.py to import papertrail",
+        "PHASE3-INTEGRATION-003: Add PAPERTRAIL_ENABLED feature flag with fallback logic",
+        "PHASE3-INTEGRATION-004: Modify generate_readme() to use papertrail when enabled",
+        "PHASE3-INTEGRATION-005: Modify generate_architecture() to use papertrail",
+        "PHASE3-INTEGRATION-006: Add new MCP tools: validate_document, check_document_health",
+        "PHASE3-TESTING-006: Integration tests with coderef-docs (feature flag ON/OFF)",
+
+        "PHASE4-ROLLOUT-001: Enable for generate_quickref only, test with 10 projects",
+        "PHASE4-ROLLOUT-002: Enable for generate_foundation_docs, test with 5 projects",
+        "PHASE4-ROLLOUT-003: Enable for all doc generation, monitor 24 hours",
+        "PHASE4-ROLLOUT-004: Verify 100% docs have workorder_id and MCP attribution",
+        "PHASE4-ROLLOUT-005: Calculate average health score across ecosystem",
+        "PHASE4-ROLLOUT-006: If stable (health >= 85, zero errors), remove feature flag"
+      ]
+    },
+
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "title": "Phase 1: Core UDS - Standalone Package",
+          "name": "core-uds",
+          "purpose": "Build Papertrail package with UDS headers/footers, schemas, validation, health scoring - completely standalone, no MCP dependencies",
+          "complexity": "medium",
+          "effort_level": 3,
+          "duration": "2-3 weeks",
+          "tasks": ["PHASE1-SETUP-001", "PHASE1-UDS-001", "PHASE1-UDS-002", "PHASE1-UDS-003", "PHASE1-UDS-004", "PHASE1-VALIDATION-001", "PHASE1-VALIDATION-002", "PHASE1-HEALTH-001", "PHASE1-HEALTH-002", "PHASE1-TESTING-001", "PHASE1-TESTING-002", "PHASE1-TESTING-003"],
+          "deliverables": [
+            "papertrail/ package installable via pip",
+            "UDSHeader and UDSFooter classes with to_yaml() methods",
+            "5 CodeRef schemas (plan, deliverables, architecture, readme, api)",
+            "validate_uds() function checking required sections and metadata",
+            "calculate_health() function with 4-factor algorithm",
+            "100% test coverage, all tests passing"
+          ],
+          "completion_criteria": "Can install papertrail standalone, generate UDS headers/footers, validate docs, calculate health scores - all without any MCP server running",
+          "mcp_server_changes": "ZERO - production completely untouched"
+        },
+        {
+          "phase": 2,
+          "title": "Phase 2: Template Engine & Extensions",
+          "name": "template-engine",
+          "purpose": "Add template processing (inheritance, conditionals, includes) and CodeRef-native extensions (coderef-context, git, workflow integrations)",
+          "complexity": "medium",
+          "effort_level": 3,
+          "duration": "1-2 weeks",
+          "tasks": ["PHASE2-ENGINE-001", "PHASE2-ENGINE-002", "PHASE2-ENGINE-003", "PHASE2-ENGINE-004", "PHASE2-ENGINE-005", "PHASE2-EXTENSIONS-001", "PHASE2-EXTENSIONS-002", "PHASE2-EXTENSIONS-003", "PHASE2-EXTENSIONS-004", "PHASE2-TESTING-004", "PHASE2-TESTING-005"],
+          "deliverables": [
+            "TemplateEngine class with render() method",
+            "Template inheritance ({% extends %}), conditionals ({% if %}), includes ({% include %})",
+            "CodeRefContextExtension (scan, query, impact)",
+            "GitExtension (stats, files, contributors)",
+            "WorkflowExtension (plan, tasks, progress)",
+            "inject_uds() method wrapping content with headers/footers",
+            "All template features tested with mocked extensions"
+          ],
+          "completion_criteria": "Can render templates with inheritance, conditionals, and includes. Extensions can call MCP tools (mocked in tests). UDS injection works correctly.",
+          "mcp_server_changes": "ZERO - still standalone development"
+        },
+        {
+          "phase": 3,
+          "title": "Phase 3: Integration into coderef-docs",
+          "name": "integration",
+          "purpose": "Integrate Papertrail into coderef-docs with feature flag for safe rollout. Add new MCP tools for validation and health checking.",
+          "complexity": "low",
+          "effort_level": 2,
+          "duration": "1 week",
+          "tasks": ["PHASE3-INTEGRATION-001", "PHASE3-INTEGRATION-002", "PHASE3-INTEGRATION-003", "PHASE3-INTEGRATION-004", "PHASE3-INTEGRATION-005", "PHASE3-INTEGRATION-006", "PHASE3-TESTING-006"],
+          "deliverables": [
+            "papertrail added to coderef-docs/requirements.txt",
+            "foundation_generator.py imports papertrail",
+            "PAPERTRAIL_ENABLED feature flag with fallback logic",
+            "generate_readme() enhanced to use papertrail when enabled",
+            "generate_architecture() enhanced",
+            "New MCP tools: validate_document, check_document_health",
+            "Integration tests (flag ON/OFF scenarios)"
+          ],
+          "completion_criteria": "coderef-docs can use Papertrail when PAPERTRAIL_ENABLED=true, falls back to legacy when false. New validation/health tools work. Tests pass for both modes.",
+          "mcp_server_changes": "ONLY coderef-docs modified, with feature flag defaulting to OFF (production unchanged)"
+        },
+        {
+          "phase": 4,
+          "title": "Phase 4: Gradual Rollout & Validation",
+          "name": "rollout",
+          "purpose": "Enable Papertrail gradually per tool, validate ecosystem-wide, verify health scores, remove feature flag when stable",
+          "complexity": "low",
+          "effort_level": 2,
+          "duration": "1-2 weeks",
+          "tasks": ["PHASE4-ROLLOUT-001", "PHASE4-ROLLOUT-002", "PHASE4-ROLLOUT-003", "PHASE4-ROLLOUT-004", "PHASE4-ROLLOUT-005", "PHASE4-ROLLOUT-006"],
+          "deliverables": [
+            "Papertrail enabled for quickref (tested with 10 projects)",
+            "Papertrail enabled for foundation docs (tested with 5 projects)",
+            "Papertrail enabled for all docs (monitored 24 hours)",
+            "100% docs have workorder_id and MCP attribution verified",
+            "Average health score calculated (target: >= 85/100)",
+            "Feature flag removed (Papertrail becomes default)"
+          ],
+          "completion_criteria": "All generated docs UDS-compliant, health scores >= 85 average, zero errors in production, traceability chain complete, feature flag removed",
+          "mcp_server_changes": "coderef-docs feature flag removed (Papertrail now default)"
+        }
+      ]
+    },
+
+    "7_testing_strategy": {
+      "unit_tests": [
+        "UDSHeader.to_yaml() generates valid YAML frontmatter",
+        "UDSFooter.to_yaml() generates valid YAML footer",
+        "validate_uds() detects missing required sections",
+        "validate_uds() validates workorder_id format (WO-{FEATURE}-{CATEGORY}-###)",
+        "calculate_health() scores traceability correctly (has workorder_id = 20 points)",
+        "calculate_health() scores completeness correctly (required sections = 20 points)",
+        "calculate_health() scores freshness correctly (<7 days = 20 points)",
+        "calculate_health() scores validation correctly (passes schema = 10 points)",
+        "TemplateEngine.render() resolves inheritance ({% extends %})",
+        "TemplateEngine.render() evaluates conditionals ({% if %})",
+        "TemplateEngine.render() includes partials ({% include %})",
+        "inject_uds() wraps content with header and footer correctly"
+      ],
+      "integration_tests": [
+        "coderef-docs with PAPERTRAIL_ENABLED=true generates UDS-compliant docs",
+        "coderef-docs with PAPERTRAIL_ENABLED=false uses legacy generators (backward compatible)",
+        "validate_document MCP tool returns validation results",
+        "check_document_health MCP tool returns health score",
+        "Extensions call real MCP tools (coderef-context, not mocked)"
+      ],
+      "end_to_end_tests": [
+        "Generate README.md with Papertrail → verify workorder_id present",
+        "Generate ARCHITECTURE.md with {% coderef.scan %} → verify dependency graph injected",
+        "Generate DELIVERABLES.md with {% git.stats %} → verify git metrics auto-filled",
+        "Validate generated doc → verify passes schema validation",
+        "Calculate health of generated doc → verify score >= 85"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Template inheritance cycle (A extends B, B extends A)",
+          "setup": "Create two templates with circular extends",
+          "expected_behavior": "Detect cycle, raise TemplateInheritanceCycleError",
+          "verification": "Error message mentions circular dependency",
+          "error_handling": "Fail fast with clear error message"
+        },
+        {
+          "scenario": "Missing workorder_id in header",
+          "setup": "Generate doc without workorder_id",
+          "expected_behavior": "Validation fails with CRITICAL error",
+          "verification": "Error: 'Missing workorder_id in header'",
+          "error_handling": "Fail doc generation, require workorder_id"
+        },
+        {
+          "scenario": "Invalid workorder_id format",
+          "setup": "Use workorder_id = 'invalid-format'",
+          "expected_behavior": "Validation fails, regex check",
+          "verification": "Error: 'workorder_id must match WO-{FEATURE}-{CATEGORY}-###'",
+          "error_handling": "Fail validation, show correct format"
+        },
+        {
+          "scenario": "Extension point fails (coderef-context unavailable)",
+          "setup": "Render template with {% coderef.scan %} but coderef-context offline",
+          "expected_behavior": "Log warning, skip extension, continue rendering",
+          "verification": "Warning logged, doc generated without extension data",
+          "error_handling": "Graceful degradation, don't fail entire doc generation"
+        }
+      ]
+    },
+
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "UDS headers present in all docs",
+          "metric": "Percentage of docs with workorder_id",
+          "target": "100%",
+          "validation": "Scan all generated docs, check for workorder_id in header"
+        },
+        {
+          "requirement": "MCP attribution present",
+          "metric": "Percentage of docs with generated_by field",
+          "target": "100%",
+          "validation": "Scan all docs, verify generated_by matches pattern 'coderef-{server} v{version}'"
+        },
+        {
+          "requirement": "Schema validation passes",
+          "metric": "Percentage of docs passing validation",
+          "target": "100%",
+          "validation": "Run validate_uds() on all docs, verify zero errors"
+        },
+        {
+          "requirement": "Health scores tracked",
+          "metric": "Average health score across ecosystem",
+          "target": ">= 85/100",
+          "validation": "Calculate average health score from coderef/context/ storage"
+        },
+        {
+          "requirement": "Complete traceability chain",
+          "metric": "Can trace any doc back to originating workorder",
+          "target": "100% traceable",
+          "validation": "Pick random doc, verify workorder_id → plan.json → context.json exists"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Test coverage",
+          "metric": "Line coverage",
+          "target": ">= 95%",
+          "validation": "pytest --cov=papertrail, verify coverage report"
+        },
+        {
+          "requirement": "Backward compatibility",
+          "metric": "Existing templates work with feature flag OFF",
+          "target": "100% compatible",
+          "validation": "Test all existing templates with PAPERTRAIL_ENABLED=false"
+        },
+        {
+          "requirement": "Zero production errors",
+          "metric": "Error rate in production",
+          "target": "0 errors",
+          "validation": "Monitor logs for 48 hours after rollout"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Generation time overhead",
+          "metric": "Time increase vs legacy generators",
+          "target": "< 10%",
+          "validation": "Benchmark before/after, measure time difference"
+        },
+        {
+          "requirement": "Validation speed",
+          "metric": "Time to validate doc",
+          "target": "< 100ms",
+          "validation": "Benchmark validate_uds() with typical docs"
+        }
+      ]
+    },
+
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review complete plan for gaps and ambiguities",
+        "☐ Set up development environment (Python 3.8+, pytest)",
+        "☐ Review Papertrail source code (uds.ts, template-engine-extended.ts)",
+        "☐ Create papertrail/ package directory structure",
+        "☐ Set up git tracking for papertrail package"
+      ],
+      "phase_1_core_uds": [
+        "☐ PHASE1-SETUP-001: Create setup.py with package metadata",
+        "☐ PHASE1-UDS-001: Implement UDSHeader class",
+        "☐ PHASE1-UDS-002: Implement UDSFooter class",
+        "☐ PHASE1-UDS-003: Implement to_yaml() methods",
+        "☐ PHASE1-UDS-004: Define 5 CodeRef schemas in JSON",
+        "☐ PHASE1-VALIDATION-001: Implement validate_uds() function",
+        "☐ PHASE1-VALIDATION-002: Implement metadata validation",
+        "☐ PHASE1-HEALTH-001: Implement calculate_health() algorithm",
+        "☐ PHASE1-HEALTH-002: Implement health score storage",
+        "☐ PHASE1-TESTING-001: Write UDS tests (100% coverage)",
+        "☐ PHASE1-TESTING-002: Write validation tests",
+        "☐ PHASE1-TESTING-003: Write health scoring tests",
+        "☐ Test standalone: pip install -e papertrail/ → import works",
+        "☐ Verify all Phase 1 tests pass"
+      ],
+      "phase_2_template_engine": [
+        "☐ PHASE2-ENGINE-001: Implement TemplateEngine class",
+        "☐ PHASE2-ENGINE-002: Add {% extends %} support",
+        "☐ PHASE2-ENGINE-003: Add {% if %} support",
+        "☐ PHASE2-ENGINE-004: Add {% include %} support",
+        "☐ PHASE2-ENGINE-005: Implement inject_uds() method",
+        "☐ PHASE2-EXTENSIONS-001: Create CodeRefContextExtension",
+        "☐ PHASE2-EXTENSIONS-002: Create GitExtension",
+        "☐ PHASE2-EXTENSIONS-003: Create WorkflowExtension",
+        "☐ PHASE2-EXTENSIONS-004: Register extensions",
+        "☐ PHASE2-TESTING-004: Write template engine tests",
+        "☐ PHASE2-TESTING-005: Write extension tests (mocked)",
+        "☐ Test template inheritance with real examples",
+        "☐ Verify all Phase 2 tests pass"
+      ],
+      "phase_3_integration": [
+        "☐ PHASE3-INTEGRATION-001: Add papertrail to requirements.txt",
+        "☐ PHASE3-INTEGRATION-002: Update foundation_generator.py imports",
+        "☐ PHASE3-INTEGRATION-003: Add PAPERTRAIL_ENABLED feature flag",
+        "☐ PHASE3-INTEGRATION-004: Enhance generate_readme() with papertrail",
+        "☐ PHASE3-INTEGRATION-005: Enhance generate_architecture()",
+        "☐ PHASE3-INTEGRATION-006: Add validate_document and check_document_health MCP tools",
+        "☐ PHASE3-TESTING-006: Integration tests (flag ON/OFF)",
+        "☐ Test with PAPERTRAIL_ENABLED=false (verify backward compatible)",
+        "☐ Test with PAPERTRAIL_ENABLED=true (verify UDS output)",
+        "☐ Verify coderef-docs still works with all other servers"
+      ],
+      "phase_4_rollout": [
+        "☐ PHASE4-ROLLOUT-001: Enable for quickref, test 10 projects",
+        "☐ PHASE4-ROLLOUT-002: Enable for foundation docs, test 5 projects",
+        "☐ PHASE4-ROLLOUT-003: Enable for all docs, monitor 24 hours",
+        "☐ PHASE4-ROLLOUT-004: Verify 100% docs have workorder_id",
+        "☐ PHASE4-ROLLOUT-005: Calculate average health score",
+        "☐ PHASE4-ROLLOUT-006: If stable, remove feature flag",
+        "☐ Document rollout results in DELIVERABLES.md",
+        "☐ Archive workorder when complete"
+      ],
+      "finalization": [
+        "☐ All tests passing (unit, integration, e2e)",
+        "☐ Code review completed",
+        "☐ Documentation updated (README.md, CLAUDE.md)",
+        "☐ CHANGELOG entry created for Papertrail integration",
+        "☐ All success criteria met",
+        "☐ Workorder archived to coderef/archived/"
+      ]
+    }
+  }
+}

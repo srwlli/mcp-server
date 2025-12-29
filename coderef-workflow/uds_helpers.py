@@ -86,7 +86,7 @@ generated_by: {server_version}
 workorder_id: {workorder_id}
 feature_id: {feature_name}
 status: {status}
-timestamp: {timestamp}
+timestamp: "{timestamp}"
 ---"""
 
     return header
@@ -124,10 +124,10 @@ def generate_uds_footer(
 generated_by: {server_version}
 workorder: {workorder_id}
 feature: {feature_name}
-last_updated: {update_date}
+last_updated: "{update_date}"
 ai_assistance: true
 status: {status}
-next_review: {review_date}
+next_review: "{review_date}"
 ---"""
 
     return footer

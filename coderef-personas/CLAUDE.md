@@ -10,13 +10,13 @@
 
 ## Quick Summary
 
-**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "mcp-expert", "lloyd", "ava", "marcus", or "quinn") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
+**personas-mcp** is an MCP server that provides **independent expert agent personas**. Users can activate personas (like "coderef-mcp-lead", "lloyd", "ava", "marcus", or "quinn") that influence how the AI uses tools and approaches problems. Each persona provides comprehensive domain expertise with system prompts designed for agentic use.
 
 **v1.5.0 Update (Lloyd Workflow Alignment):** Lloyd persona updated to match the new 11-step `/create-workorder` workflow. Added foundation docs generation (Step 3), enhanced align-plan (Step 10), and pre-execution git checkpoint (Step 11). System prompt expanded from 7,719 to 8,820 characters with complete workflow documentation.
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
-**Current Implementation:** 1 expert base persona (mcp-expert) + 4 CodeRef ecosystem server agents (coderef-mcp-lead, coderef-context-agent, coderef-docs-agent, coderef-testing-agent) + specialized agent personas (lloyd, ava, marcus, quinn, taylor, research-scout) - no hierarchical dependencies, all standalone.
+**Current Implementation:** 4 CodeRef ecosystem server agents (coderef-mcp-lead, coderef-context-agent, coderef-docs-agent, coderef-testing-agent) + 6 specialized agent personas (lloyd, ava, marcus, quinn, taylor, research-scout) - no hierarchical dependencies, all standalone.
 
 ---
 
@@ -29,8 +29,8 @@ AI assistants are generalists. Sometimes you need an **expert** - someone with d
 Create an MCP server that provides expert personas that can be activated:
 
 ```
-# Activate MCP expert
-use_persona('mcp-expert')
+# Activate CodeRef lead architect
+use_persona('coderef-mcp-lead')
 
 # Activate multi-agent coordinator
 use_persona('lloyd')
@@ -39,7 +39,7 @@ use_persona('lloyd')
 use_persona('ava')
 ```
 
-**Note:** Original plan included hierarchical personas (mcp-expert:docs-mcp) and stacking. Final implementation uses independent personas with comprehensive standalone expertise for agentic use.
+**Note:** Original plan included hierarchical personas and stacking. Final implementation uses independent personas with comprehensive standalone expertise for agentic use.
 
 ---
 
@@ -71,15 +71,6 @@ All tools, commands, and artifacts must use **global paths only**:
 ---
 
 ## Current Implementation
-
-### Core Expert Persona
-
-**mcp-expert**
-```
-use_persona('mcp-expert')
-# MCP protocol and server implementation expert
-# 14 expertise areas, ~2,500 line system prompt
-```
 
 **Architecture:** All personas are independent (parent: null) with no hierarchical dependencies. Each has comprehensive standalone expertise designed for agentic use.
 
@@ -123,7 +114,7 @@ Planning Expert:
 
 ### Implemented Personas
 
-**Core Personas (5):**
+**Core Personas (4):**
 
 1. ✅ **lloyd-expert** (v1.2.0)
    - Role: Multi-Agent Coordinator
@@ -131,14 +122,9 @@ Planning Expert:
    - Assignment Logic: Keyword-based scoring with 50+ keywords per domain (frontend, backend, testing)
    - System prompt: ~3,000 lines with Multi-Agent Coordination & Task Assignment section
 
-2. ✅ **mcp-expert** (v1.0.0)
-   - Expertise: MCP protocol specification, server architecture, tool design, Python SDK, JSON-RPC 2.0
-   - Use cases: Planning MCP features, debugging MCP tools, architecture decisions, protocol compliance
-   - System prompt: ~2,500 lines (14 expertise areas)
-
 **Lead Architect (1) - NEW in v1.1:**
 
-3. ✅ **coderef-mcp-lead** (v1.1.0) - Lead System Architect
+2. ✅ **coderef-mcp-lead** (v1.1.0) - Lead System Architect
    - Role: Lead architect overseeing all 5 MCP servers (context, workflow, docs, personas, testing)
    - Expertise: 10+ architecture areas including server communication, deployment strategies, tool interaction flows
    - System prompt: ~1,500 lines with ecosystem-wide architecture knowledge
@@ -146,7 +132,7 @@ Planning Expert:
 
 **Specialist Personas (3) - NEW in v1.2-1.3:**
 
-4. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
+3. ✅ **ava** (v1.2.0) - Frontend Specialist (Agent 2)
    - Domains: UI, React, CSS/Tailwind, accessibility (WCAG 2.1), responsive design, component architecture
    - Expertise: 15+ frontend areas including React hooks, state management, forms, animations, performance optimization
    - Domain Boundaries: Refuses backend/testing tasks, redirects to Marcus/Quinn
@@ -215,7 +201,7 @@ Planning Expert:
 ```
 personas/
 ├── base/
-│   └── mcp-expert.json (v1.0.0, parent: null)
+│   └── (empty - base personas archived)
 ├── custom/
 │   ├── lloyd.json
 │   ├── ava.json
@@ -334,17 +320,17 @@ Docs Specialist:
 
 ### UC-3: Complex Task with Stacked Personas
 ```
-User: use_persona('mcp-expert')
-User: add_persona('planning-expert')
+User: use_persona('coderef-docs-agent')
+User: add_persona('coderef-context-agent')
 
-AI: "I'm combining MCP expertise with planning expertise."
+AI: "I'm combining documentation expertise with code intelligence."
 
-User: "Plan a new changelog feature for docs-mcp"
+User: "Plan a new changelog feature that tracks code dependencies"
 
 Combined Expert:
-  1. Uses MCP architecture knowledge
-  2. Applies planning workflows
-  3. Uses docs-mcp tools effectively
+  1. Uses POWER framework for documentation
+  2. Applies code intelligence for dependency tracking
+  3. Uses docs-mcp and context tools effectively
   4. Creates comprehensive plan with both expertises
 ```
 
@@ -492,14 +478,19 @@ personas-mcp/
 │           └── context.json           ← Feature requirements
 ├── personas/
 │   ├── base/
-│   │   └── mcp-expert.json            ← ✅ v1.0.0 (14 expertise areas)
-│   └── custom/
-│       ├── lloyd.json
-│       ├── ava.json
-│       ├── marcus.json
-│       ├── quinn.json
-│       ├── taylor.json
-│       └── research-scout.json
+│   │   └── (empty - archived)
+│   ├── custom/
+│   │   ├── lloyd.json
+│   │   ├── ava.json
+│   │   ├── marcus.json
+│   │   ├── quinn.json
+│   │   ├── taylor.json
+│   │   └── research-scout.json
+│   └── coderef-personas/
+│       ├── coderef-mcp-lead.json
+│       ├── coderef-context-agent.json
+│       ├── coderef-docs-agent.json
+│       └── coderef-testing-agent.json
 ├── src/
 │   ├── models.py                      ← PersonaDefinition Pydantic schema
 │   └── persona_manager.py             ← PersonaManager (simplified)
@@ -863,13 +854,20 @@ cat personas/custom/{persona-name}.json | grep -E "name|version|system_prompt"
 - **[README.md](README.md)** - User-facing documentation and overview
 
 ### Persona Definitions
-- **[personas/base/mcp-expert.json](personas/base/mcp-expert.json)** - MCP protocol expert (14 expertise areas)
+
+**Custom Personas:**
 - **[personas/custom/lloyd.json](personas/custom/lloyd.json)** - Multi-agent coordinator
 - **[personas/custom/ava.json](personas/custom/ava.json)** - Frontend specialist
 - **[personas/custom/marcus.json](personas/custom/marcus.json)** - Backend specialist
 - **[personas/custom/quinn.json](personas/custom/quinn.json)** - Testing specialist
 - **[personas/custom/taylor.json](personas/custom/taylor.json)** - General purpose agent
 - **[personas/custom/research-scout.json](personas/custom/research-scout.json)** - Research specialist
+
+**CodeRef Ecosystem Agents:**
+- **[personas/coderef-personas/coderef-mcp-lead.json](personas/coderef-personas/coderef-mcp-lead.json)** - Lead system architect
+- **[personas/coderef-personas/coderef-context-agent.json](personas/coderef-personas/coderef-context-agent.json)** - Code intelligence specialist
+- **[personas/coderef-personas/coderef-docs-agent.json](personas/coderef-personas/coderef-docs-agent.json)** - Documentation & planning specialist
+- **[personas/coderef-personas/coderef-testing-agent.json](personas/coderef-personas/coderef-testing-agent.json)** - Test automation specialist
 
 ### Slash Commands
 - **[.claude/commands/use-persona.md](.claude/commands/use-persona.md)** - /use-persona command

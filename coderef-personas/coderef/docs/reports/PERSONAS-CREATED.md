@@ -10,8 +10,7 @@
 
 Successfully created **11 independent personas** for the personas-mcp MCP server:
 
-**Expert Personas (4):**
-- **mcp-expert** - MCP protocol and server implementation expert
+**Expert Personas (3):**
 - **docs-expert** - Documentation and planning expert (docs-mcp tools)
 - **coderef-expert** - CodeRef-MCP server building expert
 - **nfl-scraper-expert** - NFL data scraping and next-scraper platform expert
@@ -40,10 +39,8 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 ## Architecture Change: Hierarchical → Independent
 
 **Original Plan:** Hierarchical personas with parent:child relationships
-- Base: mcp-expert, docs-specialist
-- Specialized: mcp-expert:coderef (child of mcp-expert)
 
-**Final Implementation:** 3 independent base personas
+**Final Implementation:** Independent personas
 - All in `personas/base/` directory
 - No parent/child relationships (parent: null)
 - PersonaManager simplified (only scans base/ directory)
@@ -55,46 +52,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ## Personas
 
-### 1. mcp-expert (Base)
-**File:** `personas/base/mcp-expert.json`
-**Version:** 1.0.0
-**Parent:** null
-**Created:** 2025-10-18
-
-**Expertise (14 areas):**
-- MCP protocol specification (2024-11-05)
-- MCP server architecture and design patterns
-- Tool, Resource, and Prompt primitive design
-- Python MCP SDK implementation
-- JSON-RPC 2.0 communication patterns
-- Async server implementation with asyncio
-- Tool composition and workflow design
-- Schema validation with Pydantic
-- Error handling and MCP-compliant responses
-- Security and input validation patterns
-- Performance optimization for MCP servers
-- Testing strategies for MCP tools
-- MCP ecosystem patterns and conventions
-- Client integration (Claude Code, Claude Desktop)
-
-**Activation:**
-- `/use-persona mcp-expert`
-
-**Use Cases:**
-- Planning new MCP server features and tools
-- Debugging MCP server implementation issues
-- Designing tool schemas and interfaces
-- Architecting MCP server structure and organization
-- Reviewing MCP code for protocol compliance
-- Optimizing MCP server performance
-- Creating composable tool workflows
-- Implementing async MCP handlers
-
-**System Prompt:** ~2,500 lines covering MCP architecture, implementation patterns, tool design, best practices
-
----
-
-### 2. coderef-mcp-lead (Custom)
+### 1. coderef-mcp-lead (Custom)
 **File:** `personas/custom/coderef-mcp-lead.json`
 **Version:** 1.1.0
 **Parent:** null
@@ -135,7 +93,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 4. docs-expert (Base)
+### 2. docs-expert (Base)
 **File:** `personas/base/docs-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -182,7 +140,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 5. coderef-expert (Base)
+### 3. coderef-expert (Base)
 **File:** `personas/base/coderef-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -231,7 +189,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 6. nfl-scraper-expert (Base)
+### 4. nfl-scraper-expert (Base)
 **File:** `personas/base/nfl-scraper-expert.json`
 **Version:** 1.2.0
 **Parent:** null
@@ -285,7 +243,7 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 ---
 
-### 7. lloyd-expert (Base)
+### 5. lloyd-expert (Base)
 **File:** `personas/base/lloyd-expert.json`
 **Version:** 1.0.0
 **Parent:** null
@@ -347,7 +305,6 @@ All personas are **independent base personas** (no hierarchical dependencies) wi
 
 **Usage:**
 ```
-/use-persona mcp-expert
 /use-persona coderef-mcp-lead
 /use-persona docs-expert
 /use-persona coderef-expert
@@ -404,17 +361,14 @@ cd C:/Users/willh/.mcp-servers/personas-mcp
 
 # List available personas
 python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); print(pm.list_available_personas())"
-# Output: ['coderef-expert', 'docs-expert', 'mcp-expert']
+# Output: 15 personas including coderef ecosystem agents
 
-# Test loading each persona
-python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); p = pm.load_persona('mcp-expert'); print(f'mcp-expert loaded: v{p.version}, {len(p.expertise)} expertise areas')"
-# Output: mcp-expert loaded: v1.0.0, 14 expertise areas
+# Test loading CodeRef ecosystem agents
+python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); p = pm.load_persona('coderef-mcp-lead'); print(f'coderef-mcp-lead loaded: v{p.version}, {len(p.expertise)} expertise areas')"
+# Output: coderef-mcp-lead loaded: v1.1.0, 10 expertise areas
 
-python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); p = pm.load_persona('docs-expert'); print(f'docs-expert loaded: v{p.version}, {len(p.expertise)} expertise areas')"
-# Output: docs-expert loaded: v1.0.0, 20 expertise areas
-
-python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); p = pm.load_persona('coderef-expert'); print(f'coderef-expert loaded: v{p.version}, {len(p.expertise)} expertise areas')"
-# Output: coderef-expert loaded: v1.0.0, 18 expertise areas
+python -c "from src.persona_manager import PersonaManager; from pathlib import Path; pm = PersonaManager(Path('personas')); p = pm.load_persona('coderef-context-agent'); print(f'coderef-context-agent loaded: v{p.version}, {len(p.expertise)} expertise areas')"
+# Output: coderef-context-agent loaded: v1.0.0, 10 expertise areas
 ```
 
 ---
@@ -425,16 +379,17 @@ python -c "from src.persona_manager import PersonaManager; from pathlib import P
 The personas-mcp server needs to restart to load the updated PersonaManager code and new personas.
 
 **After restart, you'll have:**
-- 3 independent personas available via `list_personas` tool
-- Slash commands functional (`/docs-expert`, `/coderef-expert`, `/use-persona <name>`)
+- 15 independent personas available via `list_personas` tool
+- Slash commands functional (`/coderef-mcp-lead`, `/lloyd`, `/ava`, etc.)
 - Full persona activation capabilities
 - No hierarchical dependencies
+- CodeRef ecosystem agents in dedicated `coderef-personas/` directory
 
 ### Verification After Restart
-1. Call `list_personas` tool - should show 3 personas
-2. Try `/docs-expert` - should activate docs expert
-3. Try `/coderef-expert` - should activate CodeRef expert
-4. Try `/use-persona mcp-expert` - should activate MCP expert
+1. Call `list_personas` tool - should show 15 personas
+2. Try `/coderef-mcp-lead` - should activate lead architect
+3. Try `/coderef-context-agent` - should activate code intelligence specialist
+4. Try `/lloyd` - should activate project coordinator
 5. Call `get_active_persona` - should show active persona details
 6. Call `clear_persona` - should deactivate current persona
 

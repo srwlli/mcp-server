@@ -8,7 +8,7 @@
 ## MCP Tools
 
 ### Persona Management
-- **use_persona** - Activate an expert persona (e.g., 'mcp-expert', 'mcp-expert:coderef')
+- **use_persona** - Activate an expert persona (e.g., 'coderef-mcp-lead', 'lloyd')
 - **get_active_persona** - Show currently active persona and expertise
 - **clear_persona** - Deactivate current persona, return to default behavior
 - **list_personas** - List all available personas with descriptions
@@ -30,12 +30,7 @@
 
 ## Available Personas
 
-### Base Personas
-- **mcp-expert** (v1.0.0)
-  - MCP protocol specification and architecture
-  - Server implementation patterns (Python SDK, async handlers)
-  - Tool design best practices and composability
-  - JSON-RPC 2.0 communication and error handling
+### CodeRef Ecosystem Agents
 
 - **coderef-mcp-lead** (v1.1.0)
   - Lead system architect for all 5 MCP servers (context, workflow, docs, personas, testing)
@@ -125,7 +120,6 @@
 
 ### Activate Expert Persona
 ```
-/use-persona mcp-expert
 /coderef-mcp-lead
 /lloyd
 /ava
@@ -151,8 +145,9 @@ Deactivates current persona
 ## Architecture
 
 **Persona Structure:**
-- `personas/base/` - Independent base persona (mcp-expert)
+- `personas/base/` - (empty - archived)
 - `personas/custom/` - Specialist personas (lloyd, ava, marcus, quinn, taylor, research-scout)
+- `personas/coderef-personas/` - CodeRef ecosystem agents (coderef-mcp-lead, coderef-context-agent, coderef-docs-agent, coderef-testing-agent)
 - All personas are standalone - no hierarchical dependencies
 
 **Server Components:**

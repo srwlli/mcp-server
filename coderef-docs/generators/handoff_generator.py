@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from generators.base_generator import BaseGenerator
 from logger_config import logger, log_error
 from constants import PlanningPaths
+from uds_helpers import generate_uds_header, generate_uds_footer
 
 
 class HandoffGenerator(BaseGenerator):
@@ -79,6 +80,30 @@ class HandoffGenerator(BaseGenerator):
             analysis_data,
             git_data
         )
+
+        # Inject UDS YAML frontmatter if workorder_id exists
+        if plan_data and 'META_DOCUMENTATION' in plan_data:
+            workorder_id = plan_data['META_DOCUMENTATION'].get('workorder_id')
+            status = plan_data['META_DOCUMENTATION'].get('status', 'DRAFT')
+
+            if workorder_id:
+                # Generate UDS header and footer
+                uds_header = generate_uds_header(
+                    title=f"Agent Handoff Context - {feature_name}",
+                    workorder_id=workorder_id,
+                    feature_name=feature_name,
+                    status=status,
+                    doc_version="1.0"
+                )
+                uds_footer = generate_uds_footer(
+                    workorder_id=workorder_id,
+                    feature_name=feature_name,
+                    status=status
+                )
+
+                # Wrap content with UDS frontmatter
+                context = f"{uds_header}\n\n{context}\n\n{uds_footer}"
+                logger.info(f"UDS YAML frontmatter added to claude.md for workorder: {workorder_id}")
 
         # Handle existing claude.md
         output_path = feature_dir / "claude.md"

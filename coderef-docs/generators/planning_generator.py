@@ -9,6 +9,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from constants import Paths, Files
 from logger_config import logger, log_error, log_security_event
+from uds_helpers import generate_uds_header, generate_uds_footer, get_server_version
 
 
 class PlanningGenerator:
@@ -506,7 +507,7 @@ class PlanningGenerator:
 
     def save_plan(self, feature_name: str, plan: Dict[str, Any]) -> str:
         """
-        Save plan to coderef/working/<feature-name>/plan.json.
+        Save plan to coderef/working/<feature-name>/plan.json with UDS metadata.
 
         Args:
             feature_name: Feature name
@@ -520,6 +521,23 @@ class PlanningGenerator:
         """
         # Validate feature name (security check)
         feature_name = self.validate_feature_name(feature_name)
+
+        # Inject UDS metadata into META_DOCUMENTATION if workorder_id exists
+        if 'META_DOCUMENTATION' in plan and 'workorder_id' in plan['META_DOCUMENTATION']:
+            from datetime import datetime
+
+            workorder_id = plan['META_DOCUMENTATION']['workorder_id']
+            status = plan['META_DOCUMENTATION'].get('status', 'DRAFT')
+
+            # Add UDS fields to META_DOCUMENTATION
+            plan['META_DOCUMENTATION']['uds'] = {
+                'generated_by': get_server_version(),
+                'document_type': 'Implementation Plan',
+                'last_updated': datetime.utcnow().strftime("%Y-%m-%d"),
+                'ai_assistance': True,
+                'next_review': (datetime.utcnow() + __import__('datetime').timedelta(days=30)).strftime("%Y-%m-%d")
+            }
+            logger.info(f"UDS metadata injected into plan for workorder: {workorder_id}")
 
         # Create working directory
         working_dir = self.project_path / Paths.CONTEXT_DIR / "working" / feature_name

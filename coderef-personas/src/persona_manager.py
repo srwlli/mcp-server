@@ -42,16 +42,20 @@ class PersonaManager:
         if name in self._persona_cache:
             return self._persona_cache[name]
 
-        # Check both base/ and custom/ directories
+        # Check base/, custom/, and coderef-personas/ directories
         persona_file = self.personas_dir / "base" / f"{name}.json"
 
         # If not in base/, check custom/
         if not persona_file.exists():
             persona_file = self.personas_dir / "custom" / f"{name}.json"
 
+        # If not in custom/, check coderef-personas/
+        if not persona_file.exists():
+            persona_file = self.personas_dir / "coderef-personas" / f"{name}.json"
+
         if not persona_file.exists():
             raise FileNotFoundError(
-                f"Persona '{name}' not found in base/ or custom/ directories. "
+                f"Persona '{name}' not found in base/, custom/, or coderef-personas/ directories. "
                 f"Available personas: {self.list_available_personas()}"
             )
 
@@ -115,7 +119,7 @@ class PersonaManager:
 
     def list_available_personas(self) -> list[str]:
         """
-        List all available persona names from base/ and custom/ directories.
+        List all available persona names from base/, custom/, and coderef-personas/ directories.
 
         Returns:
             List of persona names (e.g., ['coderef-expert', 'docs-expert', 'mcp-expert', 'research-scout'])
@@ -134,6 +138,14 @@ class PersonaManager:
         custom_dir = self.personas_dir / "custom"
         if custom_dir.exists():
             for file in custom_dir.glob("*.json"):
+                # Skip backup files
+                if not file.stem.endswith('.old') and not file.stem.endswith('.backup'):
+                    personas.append(file.stem)
+
+        # Check coderef-personas/ directory
+        coderef_dir = self.personas_dir / "coderef-personas"
+        if coderef_dir.exists():
+            for file in coderef_dir.glob("*.json"):
                 # Skip backup files
                 if not file.stem.endswith('.old') and not file.stem.endswith('.backup'):
                     personas.append(file.stem)

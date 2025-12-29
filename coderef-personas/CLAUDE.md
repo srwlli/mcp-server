@@ -16,7 +16,7 @@
 
 **Core Innovation:** Personas can call other MCP tools (like `mcp__docs-mcp__gather_context`) while acting with specialized knowledge and behavior patterns.
 
-**Current Implementation:** 1 expert base persona (mcp-expert) + 1 lead architect (coderef-mcp-lead) + specialized agent personas (lloyd, ava, marcus, quinn, taylor, research-scout) - no hierarchical dependencies, all standalone.
+**Current Implementation:** 1 expert base persona (mcp-expert) + 4 CodeRef ecosystem server agents (coderef-mcp-lead, coderef-context-agent, coderef-docs-agent, coderef-testing-agent) + specialized agent personas (lloyd, ava, marcus, quinn, taylor, research-scout) - no hierarchical dependencies, all standalone.
 
 ---
 
@@ -179,6 +179,32 @@ Planning Expert:
    - Expertise: 10+ areas including web search, documentation analysis, code pattern discovery
    - Slash command: /research-scout
 
+**CodeRef Ecosystem Server Agents (4) - NEW in v1.2:**
+
+8. ✅ **coderef-mcp-lead** (v1.1.0) - Lead System Architect
+   - Server: All 5 servers (context, workflow, docs, personas, testing)
+   - Expertise: 10+ architecture areas including server communication, deployment, tool flows
+   - System prompt: ~1,500 lines with ecosystem-wide knowledge
+   - Slash command: /coderef-mcp-lead
+
+9. ✅ **coderef-context-agent** (v1.0.0) - Code Intelligence Specialist
+   - Server: coderef-context MCP server
+   - Expertise: AST parsing, dependency graphs, impact analysis, CodeRef2 grammar, drift detection
+   - Tools mastery: scan, query, impact, complexity, patterns, drift, validate, tag, diagram
+   - System prompt: ~1,500 lines with code intelligence patterns
+
+10. ✅ **coderef-docs-agent** (v1.0.0) - Documentation & Planning Specialist
+   - Server: coderef-docs MCP server
+   - Expertise: POWER framework, planning workflows, changelog management, standards enforcement
+   - Tools mastery: 30+ docs-mcp tools (templates, planning, changelog, standards, inventory, workflows)
+   - System prompt: ~1,500 lines with documentation patterns
+
+11. ✅ **coderef-testing-agent** (v1.0.0) - Test Automation Specialist
+   - Server: coderef-testing MCP server
+   - Expertise: Pytest integration, coverage analysis, test health metrics, CI/CD patterns
+   - Tools mastery: run_tests, test_coverage, test_health, discover_tests
+   - System prompt: ~1,500 lines with testing patterns
+
 **Future Personas:** See `coderef/future/claude-20-personas.md` for expansion roadmap
 
 ---
@@ -190,17 +216,21 @@ Planning Expert:
 personas/
 ├── base/
 │   └── mcp-expert.json (v1.0.0, parent: null)
-└── custom/
+├── custom/
+│   ├── lloyd.json
+│   ├── ava.json
+│   ├── marcus.json
+│   ├── quinn.json
+│   ├── taylor.json
+│   └── research-scout.json
+└── coderef-personas/
     ├── coderef-mcp-lead.json (v1.1.0) - Lead architect
-    ├── lloyd.json
-    ├── ava.json
-    ├── marcus.json
-    ├── quinn.json
-    ├── taylor.json
-    └── research-scout.json
+    ├── coderef-context-agent.json (v1.0.0) - Code intelligence specialist
+    ├── coderef-docs-agent.json (v1.0.0) - Documentation & planning specialist
+    └── coderef-testing-agent.json (v1.0.0) - Test automation specialist
 ```
 
-All personas are independent (no hierarchical structure). Future expansion will add more specialized personas.
+All personas are independent (no hierarchical structure). **coderef-personas/** directory contains ecosystem-specific server agents.
 
 ### Persona Definition Format
 ```json
@@ -560,6 +590,39 @@ A: No hard limit, but context size may impose practical limits (likely 3-4 max).
 ---
 
 ## Recent Changes
+
+### v1.2.0 - CodeRef Ecosystem Server Agents (2025-12-28)
+
+**New Directory: personas/coderef-personas/**
+- ✅ Created dedicated directory for CodeRef ecosystem server agents
+- ✅ Organized 4 server-specific personas for the MCP ecosystem
+- ✅ Updated PersonaManager to scan coderef-personas/ directory
+
+**New Personas (3):**
+- ✅ **coderef-context-agent** (v1.0.0) - Code intelligence specialist
+  - AST parsing, dependency graphs, impact analysis
+  - Tools: scan, query, impact, complexity, patterns, drift, validate, tag, diagram
+  - System prompt: ~1,500 lines with CodeRef2 grammar knowledge
+
+- ✅ **coderef-docs-agent** (v1.0.0) - Documentation & planning specialist
+  - POWER framework, planning workflows, changelog management
+  - Tools: 30+ docs-mcp tools across 6 categories
+  - System prompt: ~1,500 lines with standards enforcement patterns
+
+- ✅ **coderef-testing-agent** (v1.0.0) - Test automation specialist
+  - Pytest integration, coverage analysis, test health metrics
+  - Tools: run_tests, test_coverage, test_health, discover_tests
+  - System prompt: ~1,500 lines with CI/CD integration patterns
+
+**Organizational Changes:**
+- Persona count: 11 → 15 personas total (4 ecosystem + 11 others)
+- New category: "CodeRef Ecosystem Server Agents"
+- Directory structure: base/, custom/, **coderef-personas/**
+- Moved coderef-mcp-lead to coderef-personas/ for organization
+
+**Reference:** Complete server-specific expertise for coderef MCP ecosystem
+
+---
 
 ### v1.1.0 - Lead Architect Persona (2025-12-28)
 

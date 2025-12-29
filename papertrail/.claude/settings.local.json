@@ -1,0 +1,14 @@
+{
+  "enabledMcpjsonServers": [
+    "coderef-personas",
+    "coderef-context",
+    "coderef-docs",
+    "coderef-workflow",
+    "coderef-testing"
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__execute_plan"
+    ]
+  }
+}

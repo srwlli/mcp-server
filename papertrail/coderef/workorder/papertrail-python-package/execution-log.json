@@ -1,0 +1,290 @@
+[
+  {
+    "timestamp": "2025-12-29T16:05:47.478083",
+    "workorder_id": "WO-PAPERTRAIL-PYTHON-PACKAGE-001",
+    "feature_name": "papertrail-python-package",
+    "task_count": 56,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Review complete plan for gaps and ambiguities",
+        "activeForm": "PRE-IMPL-001: Reviewing complete plan for gaps and ambiguities",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-002: Set up development environment (Python 3.8+, pytest)",
+        "activeForm": "PRE-IMPL-002: Seting up development environment (Python 3.8+, pytest)",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-003: Review Papertrail source code (uds.ts, template-engine-extended.ts)",
+        "activeForm": "PRE-IMPL-003: Reviewing Papertrail source code (uds.ts, template-engine-extended.ts)",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-004: Create papertrail/ package directory structure",
+        "activeForm": "PRE-IMPL-004: Creating papertrail/ package directory structure",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-005: Set up git tracking for papertrail package",
+        "activeForm": "PRE-IMPL-005: Seting up git tracking for papertrail package",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-SETUP-001: Create setup.py with package metadata",
+        "activeForm": "PHASE1-SETUP-001: Creating setup.py with package metadata",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-UDS-001: Implement UDSHeader class",
+        "activeForm": "PHASE1-UDS-001: Implementing UDSHeader class",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-UDS-002: Implement UDSFooter class",
+        "activeForm": "PHASE1-UDS-002: Implementing UDSFooter class",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-UDS-003: Implement to_yaml() methods",
+        "activeForm": "PHASE1-UDS-003: Implementing to_yaml() methods",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-UDS-004: Define 5 CodeRef schemas in JSON",
+        "activeForm": "PHASE1-UDS-004: Defineing 5 CodeRef schemas in JSON",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-VALIDATION-001: Implement validate_uds() function",
+        "activeForm": "PHASE1-VALIDATION-001: Implementing validate_uds() function",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-VALIDATION-002: Implement metadata validation",
+        "activeForm": "PHASE1-VALIDATION-002: Implementing metadata validation",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-HEALTH-001: Implement calculate_health() algorithm",
+        "activeForm": "PHASE1-HEALTH-001: Implementing calculate_health() algorithm",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-HEALTH-002: Implement health score storage",
+        "activeForm": "PHASE1-HEALTH-002: Implementing health score storage",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-TESTING-001: Write UDS tests (100% coverage)",
+        "activeForm": "PHASE1-TESTING-001: Writing UDS tests (100% coverage)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-TESTING-002: Write validation tests",
+        "activeForm": "PHASE1-TESTING-002: Writing validation tests",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE1-TESTING-003: Write health scoring tests",
+        "activeForm": "PHASE1-TESTING-003: Writing health scoring tests",
+        "status": "pending"
+      },
+      {
+        "content": "Test standalone: pip install -e papertrail/ \u2192 import works",
+        "activeForm": "Test standalone: piping install -e papertrail/ \u2192 import works",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-1--014: Verify all Phase 1 tests pass",
+        "activeForm": "PHASE-1--014: Verifying all Phase 1 tests pass",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-ENGINE-001: Implement TemplateEngine class",
+        "activeForm": "PHASE2-ENGINE-001: Implementing TemplateEngine class",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-ENGINE-002: Add {% extends %} support",
+        "activeForm": "PHASE2-ENGINE-002: Adding {% extends %} support",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-ENGINE-003: Add {% if %} support",
+        "activeForm": "PHASE2-ENGINE-003: Adding {% if %} support",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-ENGINE-004: Add {% include %} support",
+        "activeForm": "PHASE2-ENGINE-004: Adding {% include %} support",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-ENGINE-005: Implement inject_uds() method",
+        "activeForm": "PHASE2-ENGINE-005: Implementing inject_uds() method",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-EXTENSIONS-001: Create CodeRefContextExtension",
+        "activeForm": "PHASE2-EXTENSIONS-001: Creating CodeRefContextExtension",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-EXTENSIONS-002: Create GitExtension",
+        "activeForm": "PHASE2-EXTENSIONS-002: Creating GitExtension",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-EXTENSIONS-003: Create WorkflowExtension",
+        "activeForm": "PHASE2-EXTENSIONS-003: Creating WorkflowExtension",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-EXTENSIONS-004: Register extensions",
+        "activeForm": "PHASE2-EXTENSIONS-004: Registering extensions",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-TESTING-004: Write template engine tests",
+        "activeForm": "PHASE2-TESTING-004: Writing template engine tests",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE2-TESTING-005: Write extension tests (mocked)",
+        "activeForm": "PHASE2-TESTING-005: Writing extension tests (mocked)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--012: Test template inheritance with real examples",
+        "activeForm": "PHASE-2--012: Testing template inheritance with real examples",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-2--013: Verify all Phase 2 tests pass",
+        "activeForm": "PHASE-2--013: Verifying all Phase 2 tests pass",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-001: Add papertrail to requirements.txt",
+        "activeForm": "PHASE3-INTEGRATION-001: Adding papertrail to requirements.txt",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-002: Update foundation_generator.py imports",
+        "activeForm": "PHASE3-INTEGRATION-002: Updating foundation_generator.py imports",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-003: Add PAPERTRAIL_ENABLED feature flag",
+        "activeForm": "PHASE3-INTEGRATION-003: Adding PAPERTRAIL_ENABLED feature flag",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-004: Enhance generate_readme() with papertrail",
+        "activeForm": "PHASE3-INTEGRATION-004: Enhanceing generate_readme() with papertrail",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-005: Enhance generate_architecture()",
+        "activeForm": "PHASE3-INTEGRATION-005: Enhanceing generate_architecture()",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-INTEGRATION-006: Add validate_document and check_document_health MCP tools",
+        "activeForm": "PHASE3-INTEGRATION-006: Adding validate_document and check_document_health MCP tools",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE3-TESTING-006: Integration tests (flag ON/OFF)",
+        "activeForm": "PHASE3-TESTING-006: Integrationing tests (flag ON/OFF)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--008: Test with PAPERTRAIL_ENABLED=false (verify backward compatible)",
+        "activeForm": "PHASE-3--008: Testing with PAPERTRAIL_ENABLED=false (verify backward compatible)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--009: Test with PAPERTRAIL_ENABLED=true (verify UDS output)",
+        "activeForm": "PHASE-3--009: Testing with PAPERTRAIL_ENABLED=true (verify UDS output)",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-3--010: Verify coderef-docs still works with all other servers",
+        "activeForm": "PHASE-3--010: Verifying coderef-docs still works with all other servers",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-001: Enable for quickref, test 10 projects",
+        "activeForm": "PHASE4-ROLLOUT-001: Enableing for quickref, test 10 projects",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-002: Enable for foundation docs, test 5 projects",
+        "activeForm": "PHASE4-ROLLOUT-002: Enableing for foundation docs, test 5 projects",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-003: Enable for all docs, monitor 24 hours",
+        "activeForm": "PHASE4-ROLLOUT-003: Enableing for all docs, monitor 24 hours",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-004: Verify 100% docs have workorder_id",
+        "activeForm": "PHASE4-ROLLOUT-004: Verifying 100% docs have workorder_id",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-005: Calculate average health score",
+        "activeForm": "PHASE4-ROLLOUT-005: Calculateing average health score",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE4-ROLLOUT-006: If stable, remove feature flag",
+        "activeForm": "PHASE4-ROLLOUT-006: Ifing stable, remove feature flag",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--007: Document rollout results in DELIVERABLES.md",
+        "activeForm": "PHASE-4--007: Documenting rollout results in DELIVERABLES.md",
+        "status": "pending"
+      },
+      {
+        "content": "PHASE-4--008: Archive workorder when complete",
+        "activeForm": "PHASE-4--008: Archiveing workorder when complete",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (unit, integration, e2e)",
+        "activeForm": "FINALIZA-001: Alling tests passing (unit, integration, e2e)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Code review completed",
+        "activeForm": "FINALIZA-002: Codeing review completed",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: Documentation updated (README.md, CLAUDE.md)",
+        "activeForm": "FINALIZA-003: Documentationing updated (README.md, CLAUDE.md)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: CHANGELOG entry created for Papertrail integration",
+        "activeForm": "FINALIZA-004: CHANGELOGing entry created for Papertrail integration",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: All success criteria met",
+        "activeForm": "FINALIZA-005: Alling success criteria met",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-006: Workorder archived to coderef/archived/",
+        "activeForm": "FINALIZA-006: Workordering archived to coderef/archived/",
+        "status": "pending"
+      }
+    ]
+  }
+]

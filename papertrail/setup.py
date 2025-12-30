@@ -26,6 +26,7 @@ setup(
     install_requires=[
         "pyyaml>=6.0",
         "jsonschema>=4.0",
+        "jinja2>=3.0",
     ],
     extras_require={
         "dev": [

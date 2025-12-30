@@ -1,6 +1,7 @@
 README.md
 setup.py
 papertrail/__init__.py
+papertrail/engine.py
 papertrail/health.py
 papertrail/uds.py
 papertrail/validator.py
@@ -9,12 +10,17 @@ papertrail.egg-info/SOURCES.txt
 papertrail.egg-info/dependency_links.txt
 papertrail.egg-info/requires.txt
 papertrail.egg-info/top_level.txt
+papertrail/extensions/__init__.py
+papertrail/extensions/coderef_context.py
+papertrail/extensions/git_integration.py
+papertrail/extensions/workflow.py
 papertrail/schemas/api.json
 papertrail/schemas/architecture.json
 papertrail/schemas/deliverables.json
 papertrail/schemas/plan.json
 papertrail/schemas/readme.json
 tests/__init__.py
+tests/test_engine.py
 tests/test_health.py
 tests/test_uds.py
 tests/test_validator.py

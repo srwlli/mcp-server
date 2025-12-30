@@ -13,6 +13,8 @@ __version__ = "1.0.0"
 from .uds import UDSHeader, UDSFooter, DocumentType
 from .validator import validate_uds, ValidationResult
 from .health import calculate_health, HealthScore
+from .engine import TemplateEngine, create_template_engine
+from .extensions import CodeRefContextExtension, GitExtension, WorkflowExtension
 
 __all__ = [
     "UDSHeader",
@@ -22,4 +24,9 @@ __all__ = [
     "ValidationResult",
     "calculate_health",
     "HealthScore",
+    "TemplateEngine",
+    "create_template_engine",
+    "CodeRefContextExtension",
+    "GitExtension",
+    "WorkflowExtension",
 ]

@@ -56,7 +56,8 @@
       "mcp__coderef-docs__generate_quickref_interactive",
       "Bash(nul)",
       "Bash(tree:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

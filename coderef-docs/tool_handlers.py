@@ -10,6 +10,7 @@ from mcp.types import TextContent
 import json
 import jsonschema
 import time
+import os
 from datetime import datetime
 
 # These will be injected from server.py
@@ -215,14 +216,75 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     - Displays extracted data alongside template for Claude to use
     - Gracefully degrades to template-only if extraction unavailable
 
+    PHASE 4 (WO-PAPERTRAIL-PYTHON-PACKAGE-001):
+    - Optional Papertrail UDS integration when PAPERTRAIL_ENABLED=true
+    - Generates complete document with workorder tracking
+
     Uses @log_invocation and @mcp_error_handler decorators for automatic
     logging and error handling (ARCH-004, ARCH-005).
     """
     # Validate inputs at boundary (REF-003)
     project_path = validate_project_path_input(arguments.get("project_path", ""))
     template_name = validate_template_name_input(arguments.get("template_name", ""))
+
+    # Phase 4: Extract optional Papertrail parameters
+    workorder_id = arguments.get("workorder_id")
+    feature_id = arguments.get("feature_id", template_name)  # Default to template_name
+    version = arguments.get("version", "1.0.0")
+
     logger.info(f"Generating individual doc: {template_name} for project: {project_path}")
 
+    # Phase 4: Check if we should use Papertrail
+    use_papertrail = (
+        os.getenv("PAPERTRAIL_ENABLED", "false").lower() == "true" and
+        workorder_id is not None
+    )
+
+    if use_papertrail:
+        logger.info(f"Papertrail enabled for {template_name} (workorder: {workorder_id})")
+        try:
+            from generators.foundation_generator import FoundationGenerator
+            generator = FoundationGenerator(TEMPLATES_DIR)
+
+            # Build context for Papertrail
+            context = {
+                "project_path": project_path,
+                "title": template_name.upper(),
+                "template_name": template_name
+            }
+
+            # Generate with UDS
+            final_doc = generator.generate_with_uds(
+                template_name=template_name,
+                context=context,
+                workorder_id=workorder_id,
+                feature_id=feature_id,
+                version=version
+            )
+
+            # Get output path
+            paths = generator.prepare_generation(project_path)
+            output_path = generator.get_doc_output_path(paths['project_path'], template_name)
+
+            # Return complete document with UDS
+            result = f"=== Generated {template_name.upper()} with UDS ===\n\n"
+            result += f"Workorder: {workorder_id}\n"
+            result += f"Feature: {feature_id}\n"
+            result += f"Version: {version}\n"
+            result += f"Output: {output_path}\n\n"
+            result += "=" * 50 + "\n\n"
+            result += final_doc
+            result += "\n\n" + "=" * 50 + "\n\n"
+            result += f"Save this document to: {output_path}\n"
+
+            logger.info(f"Successfully generated {template_name} with Papertrail UDS")
+            return [TextContent(type="text", text=result)]
+
+        except Exception as e:
+            logger.warning(f"Papertrail generation failed: {e}, falling back to template")
+            # Fall through to legacy generation
+
+    # Legacy generation (template-only)
     generator = BaseGenerator(TEMPLATES_DIR)
 
     paths = generator.prepare_generation(project_path)

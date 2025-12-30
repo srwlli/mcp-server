@@ -150,7 +150,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="generate_individual_doc",
-            description="Generate a single individual documentation file for a project. Returns the template - Claude will generate and save the document.",
+            description="Generate a single individual documentation file for a project. Returns the template - Claude will generate and save the document. Phase 4: Optional Papertrail UDS parameters for workorder tracking.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -162,6 +162,18 @@ async def list_tools() -> list[Tool]:
                         "type": "string",
                         "description": "Name of template to generate",
                         "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"]
+                    },
+                    "workorder_id": {
+                        "type": "string",
+                        "description": "Optional: Workorder ID for UDS tracking (e.g., WO-FEATURE-001). Enables Papertrail if PAPERTRAIL_ENABLED=true."
+                    },
+                    "feature_id": {
+                        "type": "string",
+                        "description": "Optional: Feature ID for UDS tracking. Defaults to template_name if not provided."
+                    },
+                    "version": {
+                        "type": "string",
+                        "description": "Optional: Document version (default: 1.0.0)"
                     }
                 },
                 "required": ["project_path", "template_name"]

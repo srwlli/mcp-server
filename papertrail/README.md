@@ -1,7 +1,7 @@
 # Papertrail - Universal Documentation Standards
 
 **Version:** 1.0.0
-**Status:** Beta
+**Status:** Production (Phase 4 Complete)
 **Workorder:** WO-PAPERTRAIL-PYTHON-PACKAGE-001
 
 ## Purpose
@@ -13,8 +13,18 @@ Papertrail provides Universal Documentation Standards (UDS) for the CodeRef ecos
 - **UDS Headers/Footers** - YAML frontmatter with workorder_id, generated_by, feature_id
 - **Schema Validation** - Enforce required sections for 5 CodeRef doc types
 - **Health Scoring** - 0-100 score (traceability 40%, completeness 30%, freshness 20%, validation 10%)
-- **Template Engine** - Inheritance, conditionals, includes (Phase 2)
-- **CodeRef Extensions** - Auto-inject from coderef-context, git, workflow (Phase 2)
+- **Template Engine** - Jinja2 with inheritance, conditionals, includes
+- **CodeRef Extensions** - Auto-inject from coderef-context, git, workflow
+- **coderef-docs Integration** - Automatic UDS injection for all 5 doc types
+
+## Implementation Status
+
+- ✅ **Phase 1**: Core UDS (31/31 tests passing)
+- ✅ **Phase 2**: Template Engine (44/44 tests passing)
+- ✅ **Phase 3**: coderef-docs integration (6/6 tests passing)
+- ✅ **Phase 4**: Gradual rollout (5/5 doc types passing)
+
+**Total:** 86/86 tests passing | Status: Production Ready
 
 ## Installation
 
@@ -83,6 +93,33 @@ Papertrail supports 5 CodeRef-specific document types:
 4. **readme** - Project overview (README.md) following POWER framework
 5. **api** - API documentation (API.md) following POWER framework
 
+## Integration with coderef-docs (Phase 4)
+
+Papertrail is fully integrated into **coderef-docs** MCP server for automatic UDS injection:
+
+```python
+# Enable Papertrail in coderef-docs
+export PAPERTRAIL_ENABLED=true
+
+# Generate document with UDS using MCP tool
+{
+  "tool": "generate_individual_doc",
+  "arguments": {
+    "project_path": "/path/to/project",
+    "template_name": "readme",
+    "workorder_id": "WO-FEATURE-001",  # Optional: enables UDS
+    "feature_id": "my-feature",        # Optional: defaults to template_name
+    "version": "1.0.0"                 # Optional: defaults to 1.0.0
+  }
+}
+
+# Result: Complete document with UDS headers/footers automatically injected
+```
+
+**Supported doc types:** README, ARCHITECTURE, API, SCHEMA, COMPONENTS
+
+**Feature flag:** Set `PAPERTRAIL_ENABLED=false` to use legacy generation (backward compatible)
+
 ## Development
 
 ```bash
@@ -91,6 +128,10 @@ pytest
 
 # Run tests with coverage
 pytest --cov=papertrail
+
+# Run Phase 4 integration tests
+cd ../coderef-docs
+python test_phase4_all_docs.py  # Tests all 5 doc types with UDS
 
 # Format code
 black papertrail/

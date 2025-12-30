@@ -10,7 +10,7 @@ Provides:
 
 __version__ = "1.0.0"
 
-from .uds import UDSHeader, UDSFooter, DocumentType
+from .uds import UDSHeader, UDSFooter, DocumentType, DocumentStatus
 from .validator import validate_uds, ValidationResult
 from .health import calculate_health, HealthScore
 from .engine import TemplateEngine, create_template_engine
@@ -20,6 +20,7 @@ __all__ = [
     "UDSHeader",
     "UDSFooter",
     "DocumentType",
+    "DocumentStatus",
     "validate_uds",
     "ValidationResult",
     "calculate_health",

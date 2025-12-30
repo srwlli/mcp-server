@@ -7,7 +7,10 @@
       "Bash(python -m pytest:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(python test_phase3.py:*)",
+      "Bash(python test_phase3_simple.py:*)",
+      "Bash(python:*)"
     ]
   },
   "enabledMcpjsonServers": [

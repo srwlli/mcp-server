@@ -1,13 +1,37 @@
 """Foundation documentation generator for 5-doc workflow."""
 
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 from .base_generator import BaseGenerator
 import sys
+import os
+from datetime import datetime
 
 # Add parent directory to path for types import
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from type_defs import WorkflowStepDict, TemplateDict
+
+# Papertrail imports (Phase 3 integration)
+try:
+    from papertrail import (
+        UDSHeader,
+        UDSFooter,
+        TemplateEngine,
+        create_template_engine,
+        validate_uds,
+        calculate_health
+    )
+    from papertrail.extensions import (
+        CodeRefContextExtension,
+        GitExtension,
+        WorkflowExtension
+    )
+    PAPERTRAIL_AVAILABLE = True
+except ImportError:
+    PAPERTRAIL_AVAILABLE = False
+
+# Feature flag (defaults to OFF for safety)
+PAPERTRAIL_ENABLED = os.getenv("PAPERTRAIL_ENABLED", "false").lower() == "true"
 
 
 class FoundationGenerator(BaseGenerator):
@@ -128,3 +152,78 @@ class FoundationGenerator(BaseGenerator):
                 })
 
         return templates
+
+    def generate_with_uds(
+        self,
+        template_name: str,
+        context: Dict,
+        workorder_id: str,
+        feature_id: str,
+        version: str = "1.0.0"
+    ) -> str:
+        """
+        Generate document with UDS headers/footers using Papertrail.
+
+        Phase 3: Papertrail integration with feature flag support.
+
+        Args:
+            template_name: Name of template (readme, architecture, etc.)
+            context: Template variables
+            workorder_id: WO-{FEATURE}-{CATEGORY}-###
+            feature_id: Feature identifier
+            version: Document version (default: 1.0.0)
+
+        Returns:
+            Generated document with UDS wrapping
+        """
+        # Fallback to legacy if Papertrail unavailable or disabled
+        if not PAPERTRAIL_ENABLED or not PAPERTRAIL_AVAILABLE:
+            return self.generate(template_name, context)
+
+        try:
+            # Create UDS header
+            header = UDSHeader(
+                workorder_id=workorder_id,
+                generated_by="coderef-docs v2.0.0",
+                feature_id=feature_id,
+                timestamp=datetime.utcnow().isoformat() + "Z",
+                title=context.get("title", template_name.upper()),
+                version=version,
+                status="draft"
+            )
+
+            # Create UDS footer
+            footer = UDSFooter(
+                copyright_year=datetime.utcnow().year,
+                organization="CodeRef",
+                generated_by="coderef-docs v2.0.0",
+                workorder_id=workorder_id,
+                feature_id=feature_id,
+                last_updated=datetime.utcnow().strftime("%Y-%m-%d")
+            )
+
+            # Setup template engine with CodeRef extensions
+            project_path = context.get("project_path")
+            engine = create_template_engine(extensions={
+                "git": GitExtension(project_path),
+                "workflow": WorkflowExtension(),
+                "coderef": CodeRefContextExtension(project_path)
+            })
+
+            # Read template
+            template_content = self.read_template(template_name)
+
+            # Render with extensions
+            rendered = engine.render(template_content, context)
+
+            # Wrap with UDS
+            final_doc = engine.inject_uds(rendered, header, footer)
+
+            return final_doc
+
+        except Exception as e:
+            # Log error and fallback to legacy
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Papertrail generation failed: {e}, falling back to legacy")
+            return self.generate(template_name, context)

@@ -390,6 +390,56 @@ async def list_tools() -> list[Tool]:
                 "required": ["project_path"]
             }
         ),
+        Tool(
+            name="validate_document",
+            description=(
+                "Validate document against UDS (Universal Documentation Standards) schema. "
+                "Checks for required sections, metadata format (workorder_id, timestamps), "
+                "and returns validation errors/warnings with severity levels. "
+                "Phase 3: Papertrail integration."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "document_path": {
+                        "type": "string",
+                        "description": "Absolute path to document file to validate"
+                    },
+                    "doc_type": {
+                        "type": "string",
+                        "enum": ["plan", "deliverables", "architecture", "readme", "api"],
+                        "description": "Document type (determines which schema to validate against)"
+                    }
+                },
+                "required": ["document_path", "doc_type"]
+            }
+        ),
+        Tool(
+            name="check_document_health",
+            description=(
+                "Calculate health score (0-100) for document based on 4 factors: "
+                "Traceability (40%% - has workorder_id, feature_id, MCP attribution), "
+                "Completeness (30%% - required sections present), "
+                "Freshness (20%% - document age), "
+                "Validation (10%% - passes schema). "
+                "Phase 3: Papertrail integration."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "document_path": {
+                        "type": "string",
+                        "description": "Absolute path to document file"
+                    },
+                    "doc_type": {
+                        "type": "string",
+                        "enum": ["plan", "deliverables", "architecture", "readme", "api"],
+                        "description": "Document type"
+                    }
+                },
+                "required": ["document_path", "doc_type"]
+            }
+        ),
     ]
 
 @app.call_tool()

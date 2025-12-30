@@ -1014,9 +1014,134 @@ async def handle_check_consistency(arguments: dict) -> list[TextContent]:
     return [TextContent(type="text", text=summary)]
 
 
+async def handle_validate_document(arguments: dict) -> list[TextContent]:
+    """
+    Handle validate_document tool - Phase 3 Papertrail integration.
+
+    Validates document against UDS schema using Papertrail.
+    """
+    try:
+        from papertrail import validate_uds
+        PAPERTRAIL_AVAILABLE = True
+    except ImportError:
+        PAPERTRAIL_AVAILABLE = False
+
+    if not PAPERTRAIL_AVAILABLE:
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "Papertrail not available. Install: pip install papertrail>=1.0.0",
+                "success": False
+            }, indent=2)
+        )]
+
+    try:
+        document_path = arguments.get("document_path")
+        doc_type = arguments.get("doc_type")
+
+        # Read document
+        with open(document_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Validate with Papertrail
+        result = validate_uds(content, doc_type)
+
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "valid": result.is_valid,
+                "errors": [
+                    {
+                        "severity": err.severity,
+                        "message": err.message,
+                        "location": err.location
+                    } for err in result.errors
+                ],
+                "warnings": [
+                    {
+                        "severity": warn.severity,
+                        "message": warn.message
+                    } for warn in result.warnings
+                ],
+                "validation_score": result.validation_score,
+                "success": True
+            }, indent=2)
+        )]
+
+    except Exception as e:
+        logger.error(f"validate_document failed: {e}")
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "error": str(e),
+                "success": False
+            }, indent=2)
+        )]
+
+
+async def handle_check_document_health(arguments: dict) -> list[TextContent]:
+    """
+    Handle check_document_health tool - Phase 3 Papertrail integration.
+
+    Calculates document health score (0-100) using Papertrail.
+    """
+    try:
+        from papertrail import calculate_health
+        PAPERTRAIL_AVAILABLE = True
+    except ImportError:
+        PAPERTRAIL_AVAILABLE = False
+
+    if not PAPERTRAIL_AVAILABLE:
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "Papertrail not available. Install: pip install papertrail>=1.0.0",
+                "success": False
+            }, indent=2)
+        )]
+
+    try:
+        document_path = arguments.get("document_path")
+        doc_type = arguments.get("doc_type")
+
+        # Read document
+        with open(document_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Calculate health with Papertrail
+        health = calculate_health(content, doc_type)
+
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "score": health.score,
+                "grade": health.grade,
+                "breakdown": {
+                    "traceability": health.traceability,
+                    "completeness": health.completeness,
+                    "freshness": health.freshness,
+                    "validation": health.validation_score
+                },
+                "issues": health.issues,
+                "recommendations": health.recommendations,
+                "success": True
+            }, indent=2)
+        )]
+
+    except Exception as e:
+        logger.error(f"check_document_health failed: {e}")
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "error": str(e),
+                "success": False
+            }, indent=2)
+        )]
+
+
 
 # =============================================================================
-# Tool handlers registry - MINIMAL (10 documentation tools)
+# Tool handlers registry - MINIMAL (12 documentation tools)
 # =============================================================================
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
@@ -1029,6 +1154,8 @@ TOOL_HANDLERS = {
     'establish_standards': handle_establish_standards,
     'audit_codebase': handle_audit_codebase,
     'check_consistency': handle_check_consistency,
+    'validate_document': handle_validate_document,
+    'check_document_health': handle_check_document_health,
 }
 
 

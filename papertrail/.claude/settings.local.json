@@ -10,7 +10,10 @@
       "Bash(git push:*)",
       "Bash(python test_phase3.py:*)",
       "Bash(python test_phase3_simple.py:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(pushd:*)",
+      "mcp__coderef-workflow__archive_feature",
+      "Bash(done)"
     ]
   },
   "enabledMcpjsonServers": [

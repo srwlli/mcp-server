@@ -21,7 +21,8 @@
       "Bash(pnpm -r list:*)",
       "Bash(node:*)",
       "Bash(where /r \"C:\\Users\\willh\\Desktop\\projects\" island-escape 2)",
-      "Bash(NUL)"
+      "Bash(NUL)",
+      "Bash(grep:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

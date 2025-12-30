@@ -12,7 +12,7 @@ This document provides a complete reference for the **coderef-workflow** MCP (Mo
 
 ## Overview
 
-coderef-workflow exposes **23 MCP tools** organized into 6 functional categories:
+coderef-workflow exposes **25 MCP tools** organized into 6 functional categories:
 
 1. **Planning & Analysis** - Context gathering and plan creation
 2. **Execution & Tracking** - Task management and progress monitoring
@@ -160,6 +160,104 @@ Score plan quality (0-100) and identify issues.
   }
 }
 ```
+
+---
+
+#### `get_planning_template`
+
+Retrieve feature-implementation-planning-standard.json template content for AI reference.
+
+**Parameters:**
+```json
+{
+  "section": "string (optional) - Which section to return (default: all)",
+  // Valid sections:
+  // "all", "META_DOCUMENTATION", "0_preparation", "1_executive_summary",
+  // "2_risk_assessment", "3_current_state_analysis", "4_key_features",
+  // "5_task_id_system", "6_implementation_phases", "7_testing_strategy",
+  // "8_success_criteria", "9_implementation_checklist",
+  // "QUALITY_CHECKLIST_FOR_PLANS", "COMMON_MISTAKES_TO_AVOID",
+  // "USAGE_INSTRUCTIONS"
+}
+```
+
+**Returns:**
+```json
+{
+  "template": {
+    "META_DOCUMENTATION": {
+      "template_version": "1.0.0",
+      "created": "2025-12-15",
+      "purpose": "Universal template for feature implementation planning"
+    },
+    "0_preparation": {
+      "foundation_docs": [],
+      "coding_standards": [],
+      "tech_stack": []
+    }
+    // ... full 10-section structure or specific section
+  }
+}
+```
+
+**Example:**
+```bash
+# Get full template
+mcp__coderef_workflow__get_planning_template({"section": "all"})
+
+# Get specific section only
+mcp__coderef_workflow__get_planning_template({"section": "2_risk_assessment"})
+```
+
+**Usage Note:** AI agents use this to reference the canonical plan structure during `create_plan` operations. Returns the template as a reference, not for direct editing.
+
+---
+
+#### `generate_plan_review_report`
+
+Transform validation results into human-readable markdown review reports.
+
+**Parameters:**
+```json
+{
+  "project_path": "string (required) - Absolute path to project directory",
+  "plan_file_path": "string (required) - Relative path to plan.json (e.g., coderef/workorder/auth/plan.json)",
+  "output_path": "string (optional) - Custom output path (default: coderef/reviews/review-{name}-{timestamp}.md)"
+}
+```
+
+**Returns:**
+```json
+{
+  "status": "success",
+  "report_file": "string - Path to generated review report",
+  "score": 92,
+  "grade": "A",
+  "approval_status": "approved",
+  "issue_count": {
+    "critical": 0,
+    "major": 0,
+    "minor": 2
+  }
+}
+```
+
+**Example:**
+```bash
+mcp__coderef_workflow__generate_plan_review_report({
+  "project_path": "/workspace/my-app",
+  "plan_file_path": "coderef/workorder/dark-mode/plan.json"
+})
+
+# Result: coderef/reviews/review-dark-mode-20251229.md created
+# Contains:
+# - Score: 92/100 (Grade: A)
+# - Issue breakdown by severity
+# - Recommendations for improvement
+# - Approval status
+```
+
+**Usage Note:** Typically used after `validate_implementation_plan` to generate shareable review reports for team review. Auto-creates `coderef/reviews/` directory if it doesn't exist.
 
 ---
 

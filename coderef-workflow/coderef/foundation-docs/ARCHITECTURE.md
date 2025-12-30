@@ -107,6 +107,128 @@ JSON Files <────────────────────┘
 
 ---
 
+### Planning Workflow System
+
+The **Planning Workflow System** is a core subsystem responsible for generating comprehensive implementation plans from raw feature requirements. It orchestrates 6 specialized tools through a multi-phase workflow.
+
+#### Architecture Components
+
+```
+Feature Idea
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  PHASE 1: CONTEXT GATHERING                  │
+├─────────────────────────────────────────────────────────────┤
+│  gather_context()                                           │
+│  ├─ Interactive Q&A with user/agent                         │
+│  ├─ Captures: description, goal, requirements, constraints  │
+│  └─ Outputs: context.json                                   │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  PHASE 2: PROJECT ANALYSIS                   │
+├─────────────────────────────────────────────────────────────┤
+│  analyze_project_for_planning()                             │
+│  ├─ Scans foundation docs (ARCHITECTURE, SCHEMA)            │
+│  ├─ Extracts coding standards and patterns                  │
+│  ├─ Calls coderef-context for dependency analysis           │
+│  ├─ Identifies similar completed features (from archive)    │
+│  └─ Outputs: analysis.json (30-60 sec analysis)             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  PHASE 3: PLAN GENERATION                    │
+├─────────────────────────────────────────────────────────────┤
+│  get_planning_template() → create_plan()                    │
+│  ├─ Loads feature-implementation-planning-standard.json     │
+│  ├─ Synthesizes context.json + analysis.json + template     │
+│  ├─ Generates 10-section plan with phased tasks             │
+│  ├─ Assigns workorder ID (WO-{FEATURE}-###)                 │
+│  └─ Outputs: plan.json + DELIVERABLES.md template           │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  PHASE 4: VALIDATION                         │
+├─────────────────────────────────────────────────────────────┤
+│  validate_implementation_plan()                             │
+│  ├─ Scores plan quality (0-100)                             │
+│  ├─ Checks 15-point quality checklist                       │
+│  ├─ Identifies critical/major/minor issues                  │
+│  └─ Outputs: validation results (approve if score >= 85)    │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  PHASE 5: REVIEW REPORTING                   │
+├─────────────────────────────────────────────────────────────┤
+│  generate_plan_review_report()                              │
+│  ├─ Transforms validation results to markdown               │
+│  ├─ Creates human-readable review with grade                │
+│  ├─ Provides actionable recommendations                     │
+│  └─ Outputs: coderef/reviews/review-{name}-{date}.md        │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+                Ready for Execution
+             (execute_plan / align_plan)
+```
+
+#### Data Flow
+
+1. **Inputs:**
+   - User requirements (via gather_context)
+   - Project codebase (scanned by analyze_project_for_planning)
+   - Planning template (feature-implementation-planning-standard.json)
+
+2. **Intermediate Artifacts:**
+   - `context.json` - Feature requirements, goals, constraints
+   - `analysis.json` - Project patterns, standards, tech stack
+   - `plan.json` - 10-section implementation plan with tasks
+
+3. **Outputs:**
+   - Validated plan ready for execution
+   - Review report with quality score
+   - DELIVERABLES.md template for metrics tracking
+
+#### Tool Integration
+
+```python
+# Planning tools call coderef-context for code intelligence
+analyze_project_for_planning()
+  └─> mcp_client.call("coderef_scan", {"project_path": "..."})
+      └─> Returns: dependency graph, API endpoints, entities
+
+# Results injected into plan.json section 3: CURRENT_STATE_ANALYSIS
+plan.json["3_current_state_analysis"]["existing_components"] = scan_results
+```
+
+#### Quality Assurance
+
+The planning system enforces quality through:
+- **Template Compliance:** All plans follow 10-section structure
+- **Validation Scoring:** 15-point checklist (completeness, clarity, actionability)
+- **Iterative Refinement:** AI agents refine plans until score >= 85
+- **Review Reports:** Markdown reports for human review
+
+#### Performance Characteristics
+
+| Phase | Tool | Typical Duration |
+|-------|------|------------------|
+| 1 | gather_context | 30-60 seconds |
+| 2 | analyze_project_for_planning | 30-60 seconds |
+| 3 | create_plan | 10-60 seconds |
+| 4 | validate_implementation_plan | 2-5 seconds |
+| 5 | generate_plan_review_report | 1-2 seconds |
+| **Total** | **Full workflow** | **~2-3 minutes** |
+
+**Note:** Phase 2 and 3 can be parallelized in future versions for ~50% speedup.
+
+---
+
 ## Why: Design Decisions
 
 ### 1. MCP Protocol Over REST/GraphQL

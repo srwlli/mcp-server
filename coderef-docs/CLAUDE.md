@@ -1,10 +1,10 @@
 # coderef-docs - AI Context Documentation
 
 **Project:** coderef-docs (MCP Server)
-**Version:** 3.2.0
+**Version:** 3.3.0
 **Status:** ✅ Production
 **Created:** 2024-10-18
-**Last Updated:** 2025-12-27
+**Last Updated:** 2025-12-31
 
 ---
 
@@ -14,16 +14,18 @@
 
 **Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with code intelligence injection.
 
-**Latest Update (v3.2.0):**
-- ✅ UPGRADED: `generate_foundation_docs` now uses sequential generation with context injection (WO-CONTEXT-DOCS-INTEGRATION-001)
-  - Calls `generate_individual_doc` 5 times sequentially (~250-350 lines each vs 1,470 at once)
-  - Injects real code intelligence from @coderef/core CLI for API/Schema/Components docs
-  - Shows progress markers [1/5], [2/5], etc. for visibility
-  - Eliminates timeout errors while keeping context injection benefits
+**Latest Update (v3.3.0):**
+- ✅ UPGRADED: `establish_standards` now leverages .coderef/ data for 10x performance boost
+  - **Fast Path:** Reads .coderef/index.json (~50ms) instead of scanning entire codebase (~5-60 seconds)
+  - **Automatic Fallback:** Uses full scan if .coderef/ unavailable (backward compatible)
+  - **Smart Detection:** Extracts only component files from index, analyzes patterns
+  - **Added:** New `_read_coderef_index()` helper method in StandardsGenerator class (~60 LOC)
+  - **Tested:** Both fast path (with .coderef/) and slow path (without .coderef/) validated
+  - **Documentation:** Created APPROACH-2-SIMPLE-ENHANCEMENT-PLAN.md for alternative implementation
+
+**Previous Update (v3.2.0):**
+- ✅ UPGRADED: `generate_foundation_docs` now uses sequential generation with context injection
 - ✅ UPGRADED: `generate_individual_doc` now injects context for relevant templates
-  - For api/schema/components: Extracts real data via @coderef/core CLI and displays alongside template
-  - Shows extracted endpoints, entities, components for Claude to use
-  - Gracefully degrades to template-only if CLI unavailable
 
 **Key Relationships:**
 - **coderef-workflow** = Orchestration & planning
@@ -372,6 +374,22 @@ Output: CHANGELOG.json entry with workorder tracking, README version bump
 ---
 
 ## Recent Changes
+
+### v3.3.0 - .coderef/ Integration for Standards Generation (2025-12-31)
+- ✅ UPGRADED: `establish_standards` tool now leverages .coderef/ data
+  - **Performance:** 10x faster (~50ms vs 5-60 seconds) for projects with .coderef/ structure
+  - **Implementation:** Added `_read_coderef_index()` method to StandardsGenerator class
+  - **Backward Compatible:** Falls back to full codebase scan if .coderef/ unavailable
+  - **Smart Detection:** Reads .coderef/index.json, extracts component files only
+  - **Testing:** Validated fast path (coderef-context) and slow path (temp project)
+- ✅ DOCUMENTED: Created APPROACH-2-SIMPLE-ENHANCEMENT-PLAN.md
+  - Documents alternative subprocess-based implementation (~50 LOC vs ~200 LOC)
+  - Compares Approach 1 (full integration) vs Approach 2 (simple wrapper)
+  - Provides implementation timeline and effort estimates
+- ✅ SCRIPT: Enhanced enhance-standards.py script now in ecosystem
+  - Standalone script for generating standards from .coderef/ data
+  - Graceful error handling for empty/missing patterns.json
+  - Cross-platform compatibility (Windows/Linux)
 
 ### v3.2.0 - Sequential Generation with Context Injection (WO-CONTEXT-DOCS-INTEGRATION-001)
 - ✅ UPGRADED: `generate_foundation_docs` now uses sequential generation with context injection

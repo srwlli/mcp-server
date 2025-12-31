@@ -6,6 +6,7 @@ standards documentation.
 """
 
 import re
+import json
 from pathlib import Path
 from typing import List, Dict
 from datetime import datetime
@@ -53,6 +54,63 @@ class StandardsGenerator:
         self._theme_export = re.compile(r'export\s+const\s+Themes\s*[:=]', re.MULTILINE)
 
         logger.debug(f"Initialized StandardsGenerator for {project_path} with depth={scan_depth}")
+
+    def _read_coderef_index(self, index_path: Path) -> Dict[str, List[Path]]:
+        """
+        Read .coderef/index.json and extract component file paths.
+
+        This is the FAST PATH - uses pre-scanned .coderef/ data instead of
+        scanning the entire codebase again.
+
+        Args:
+            index_path: Path to .coderef/index.json
+
+        Returns:
+            Dict with files grouped by type (tsx, jsx, ts, js, css)
+        """
+        logger.info(f"Reading .coderef/index.json from {index_path}")
+
+        try:
+            index_data = json.loads(index_path.read_text(encoding='utf-8'))
+            logger.debug(f"Loaded {len(index_data)} elements from index.json")
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            logger.warning(f"Failed to read .coderef/index.json: {e}. Falling back to full scan.")
+            return self.scan_codebase()
+
+        # Extract components from index
+        components = [elem for elem in index_data if elem.get('type') == 'component']
+        logger.info(f"Found {len(components)} components in .coderef/index.json")
+
+        # Group files by extension
+        files_by_type: Dict[str, List[Path]] = {
+            'tsx': [],
+            'jsx': [],
+            'ts': [],
+            'js': [],
+            'css': []
+        }
+
+        for comp in components:
+            file_str = comp.get('file', '')
+            if not file_str:
+                continue
+
+            file_path = Path(file_str)
+
+            # Determine file type from extension
+            suffix = file_path.suffix.lstrip('.')
+            if suffix in files_by_type:
+                # Only add if file exists
+                if file_path.exists():
+                    files_by_type[suffix].append(file_path)
+                else:
+                    logger.debug(f"Component file not found: {file_path}")
+
+        # Log summary
+        total_files = sum(len(files) for files in files_by_type.values())
+        logger.info(f"Extracted {total_files} component files from .coderef/index.json")
+
+        return files_by_type
 
     def scan_codebase(self) -> Dict[str, List[Path]]:
         """
@@ -1048,8 +1106,16 @@ This document defines the UX patterns discovered in the {project_name} codebase.
         # Ensure directory exists
         standards_dir.mkdir(parents=True, exist_ok=True)
 
-        # Scan codebase
-        files = self.scan_codebase()
+        # Check for .coderef/ data first (fast path)
+        coderef_index_path = self.project_path / '.coderef' / 'index.json'
+
+        if coderef_index_path.exists():
+            logger.info("Using .coderef/index.json (fast path)")
+            files = self._read_coderef_index(coderef_index_path)
+        else:
+            logger.info("Using full codebase scan (slow path)")
+            # Scan codebase (existing behavior)
+            files = self.scan_codebase()
 
         # Analyze patterns
         ui_patterns = self.analyze_ui_patterns(files)

@@ -3,9 +3,14 @@ Persona management - loading, activation, and state tracking.
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Optional, Dict
 from datetime import datetime
+
+# Add coderef/ utilities to path for wrapper functions
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from coderef.utils import read_coderef_output, check_coderef_available
 
 from src.models import PersonaDefinition, PersonaState
 
@@ -77,15 +82,52 @@ class PersonaManager:
         except Exception as e:
             raise ValueError(f"Failed to load persona '{name}': {e}")
 
-    def activate_persona(self, name: str) -> PersonaDefinition:
+    def load_coderef_patterns(self, project_path: Optional[Path] = None) -> Optional[Dict]:
+        """
+        Load code patterns from .coderef/patterns.json for enhanced persona context.
+
+        Args:
+            project_path: Path to project directory (default: use current directory)
+
+        Returns:
+            Dict with pattern data or None if not available
+
+        Example pattern data:
+            {
+                'handlers': [...],
+                'decorators': [...],
+                'error_handling': [...]
+            }
+        """
+        if project_path is None:
+            project_path = Path.cwd()
+
+        try:
+            if check_coderef_available(str(project_path)):
+                patterns = read_coderef_output(str(project_path), 'patterns')
+                return patterns
+        except Exception:
+            pass  # Silently skip if patterns not available
+
+        return None
+
+    def activate_persona(self, name: str, project_path: Optional[Path] = None, load_patterns: bool = True) -> Dict:
         """
         Activate a persona (loads if not cached).
 
+        Optionally enriches persona with project-specific code patterns from .coderef/patterns.json
+
         Args:
             name: Persona name to activate
+            project_path: Optional path to project for pattern loading
+            load_patterns: Whether to load .coderef/patterns.json (default: True)
 
         Returns:
-            Activated PersonaDefinition
+            Dict with persona and optional patterns:
+            {
+                'persona': PersonaDefinition,
+                'patterns': Optional[Dict]  # Only if load_patterns=True and patterns exist
+            }
 
         Raises:
             FileNotFoundError: If persona doesn't exist
@@ -94,7 +136,20 @@ class PersonaManager:
         persona = self.load_persona(name)
         self.state.active_persona = persona
         self.state.activated_at = datetime.now()
-        return persona
+
+        result = {'persona': persona}
+
+        # Optionally load code patterns for enhanced context
+        if load_patterns:
+            patterns = self.load_coderef_patterns(project_path)
+            if patterns:
+                result['patterns'] = patterns
+                result['patterns_loaded'] = True
+                result['pattern_source'] = str(project_path or Path.cwd())
+            else:
+                result['patterns_loaded'] = False
+
+        return result
 
     def get_active_persona(self) -> Optional[PersonaDefinition]:
         """

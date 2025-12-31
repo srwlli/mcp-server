@@ -1,3 +1,4 @@
+WO-FOUNDATION3-001 | island-escape | Phase 3 Foundation: State Store, Workers, & AI. | 2025-12-31T04:13:57.915469+00:00
 WO-STATS-CARD-ENHANCEMENT-001 | coderef-dashboard | Archived feature: Stats Card Enhancement | 2025-12-30T07:31:41.966411+00:00
 WO-STATS-CARD-ENHANCEMENT-001 | coderef-dashboard | Stats card size reduction and stub breakdown en... | 2025-12-30T07:03:27.933181+00:00
 WO-PAPERTRAIL-PYTHON-PACKAGE-001 | papertrail | Archived feature: Papertrail Python Package | 2025-12-30T05:09:32.946222+00:00
@@ -14,3 +15,4 @@ WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | Remove utility personas (dev
 WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | remove-utility-personas implementation plan | 2025-12-25T19:00:55.643982+00:00
 WO-RESTRUCTURE-MONOREPO-001 | coderef-dashboard | Restructure monorepo - remove widget system, mo... | 2025-12-25T18:23:26.228569+00:00
 WO-WORKORDER-TRACKING-001 | html-tools | Real-time workorder/stub tracking system - SSE ... | 2025-12-25T08:11:05.652666+00:00
+WO-CODEREF-OUTPUT-UTILIZATION-001 | coderef-context | Maximize coderef output utilization to 80%+ | 2025-12-31T10:42:49Z | COMPLETE - 91% tool utilization achieved

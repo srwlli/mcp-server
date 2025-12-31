@@ -341,21 +341,21 @@
     },
     "9_implementation_checklist": {
       "pre_implementation": [
-        "\u2610 Review complete plan for gaps",
-        "\u2610 Verify coderef CLI is functional (test `coderef --version`)",
-        "\u2610 Confirm CODEREF_CLI_PATH environment variable is set"
+        "\☑ Review complete plan for gaps",
+        "\☑ Verify coderef CLI is functional (test `coderef --version`)",
+        "\☑ Confirm CODEREF_CLI_PATH environment variable is set"
       ],
       "phase_1": [
-        "\u2610 SETUP-001: Create universal .coderef/ structure with exports/ subdirectory",
-        "\u2610 SETUP-002: Create processors/ and utils/ directories in coderef-context",
-        "\u2610 EXPORT-001: Implement export_processor.py with CLI wrapper logic",
-        "\u2610 EXPORT-002: Add coderef_export tool to coderef-context/server.py",
-        "\u2610 EXPORT-003: Test coderef_export with all 4 formats (json, jsonld, mermaid, dot)"
+        "\☑ SETUP-001: Create universal .coderef/ structure with exports/ subdirectory",
+        "\☑ SETUP-002: Create processors/ and utils/ directories in coderef-context",
+        "\☑ EXPORT-001: Implement export_processor.py with CLI wrapper logic",
+        "\☑ EXPORT-002: Add coderef_export tool to coderef-context/server.py",
+        "\☑ EXPORT-003: Test coderef_export with all 4 formats (json, jsonld, mermaid, dot)"
       ],
       "phase_2": [
-        "\u2610 SCAN-001: Run coderef scan on all 5 MCP servers",
-        "\u2610 SCAN-002: Organize scan results into .coderef/ directories",
-        "\u2610 SCAN-003: Copy to centralized coderef/intelligence/ hub"
+        "\☑ SCAN-001: Run coderef scan on all 5 MCP servers",
+        "\☑ SCAN-002: Organize scan results into .coderef/ directories",
+        "\☑ SCAN-003: Copy to centralized coderef/intelligence/ hub"
       ],
       "phase_3": [
         "\u2610 INTEGRATE-001: Update analysis_generator.py to call coderef_scan",
@@ -364,7 +364,7 @@
         "\u2610 INTEGRATE-004: Update testing to use impact-based test selection"
       ],
       "phase_4": [
-        "\u2610 TEST-001: Unit tests for export_processor.py",
+        "\u2611 TEST-001: Unit tests for export_processor.py",
         "\u2610 TEST-002: Integration tests for coderef_export tool",
         "\u2610 TEST-003: End-to-end test (scan \u2192 organize \u2192 query)",
         "\u2610 DOC-001: Update CODEREF-OUTPUT-CAPABILITIES.md with implementation details",

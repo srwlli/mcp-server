@@ -10,6 +10,11 @@ from typing import List, Dict
 import json
 import re
 import asyncio
+import sys
+
+# Add coderef/ utilities to path for wrapper functions
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from coderef.utils import check_coderef_available, read_coderef_output
 
 from type_defs import PreparationSummaryDict
 from logger_config import logger
@@ -202,15 +207,43 @@ class PlanningAnalyzer:
         """
         Read existing inventory data from coderef/inventory/ or generate live inventory.
 
-        Attempts to call coderef_scan for live AST-based inventory generation.
-        Falls back to reading manifest files if tool unavailable.
+        Priority order:
+        1. Read .coderef/index.json (fastest - pre-scanned data)
+        2. Call coderef_scan MCP tool (AST-based live scan)
+        3. Read coderef/inventory/ manifest files (legacy fallback)
 
         Returns:
             Dict with inventory type as key, summary data as value
         """
         logger.debug("Reading inventory data...")
 
-        # Try to use coderef_scan for live inventory
+        # Priority 1: Try to read .coderef/index.json (FASTEST)
+        if check_coderef_available(str(self.project_path)):
+            try:
+                index_data = read_coderef_output(str(self.project_path), 'index')
+                logger.info(f"Read .coderef/index.json: {len(index_data)} elements")
+
+                # Group by type for summary
+                by_type = {}
+                for element in index_data:
+                    element_type = element.get('type', 'unknown')
+                    by_type[element_type] = by_type.get(element_type, 0) + 1
+
+                # Extract unique files
+                files = set(e.get('file') for e in index_data if 'file' in e)
+
+                return {
+                    'index_data': index_data,
+                    'source': 'coderef_index',
+                    'total_elements': len(index_data),
+                    'by_type': by_type,
+                    'files': len(files),
+                    'utilization': '.coderef/index.json (preprocessed)'
+                }
+            except Exception as e:
+                logger.debug(f".coderef/index.json read failed: {str(e)}, trying coderef_scan")
+
+        # Priority 2: Try to use coderef_scan for live inventory
         try:
             result = await call_coderef_tool(
                 "coderef_scan",

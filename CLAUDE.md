@@ -596,6 +596,53 @@ Agent: "Now I know what breaks. Here's my implementation plan."
 
 ---
 
+## Active Workorders
+
+### WO-CODEREF-OUTPUT-UTILIZATION-001 - Phase 3: Workflow Integration
+
+**Status:** 5/20 tasks complete (preparation done, implementation in progress)
+**Plan:** `coderef/workorder/workflow-integration-phase3/plan.json`
+**Goal:** Increase .coderef/ output utilization from 2.6% to 80%+ by integrating scan outputs into 4 workflows
+**Risk:** Low (existing production scripts proven, just need integration wrappers)
+**Effort:** 9 units (reduced from 11 by leveraging existing scripts)
+
+#### Progress Summary
+
+**✅ Preparation Complete (5/5)**
+- Verified .coderef/ structure on all 5+ MCP servers
+- Validated scan-all.py populated all required files
+- Validated existing scripts: `packages/parse_coderef_data.py` (149 lines, 275K elements) ✅
+- Validated existing scripts: `scripts/parse_coderef_data.py` (492 lines, 8 docs generated) ✅
+
+**Phase 1: Adapt Existing Scripts (0/1)** - Effort: 1
+- ☐ ADAPT-001: Create wrapper utilities in `coderef/utils/`
+
+**Phase 2: Core Integrations (0/4)** - Effort: 3
+- ☐ INTEGRATE-001: Update `analysis_generator.py` → call `packages/parse_coderef_data.py`
+- ☐ INTEGRATE-002: Update `foundation_generator.py` → call `scripts/parse_coderef_data.py` ⭐ *~80% done*
+- ☐ INTEGRATE-003: Update 9 personas → load `.coderef/patterns.json`
+- ☐ INTEGRATE-004: Update `pytest_runner.py` → use `coderef_impact` tool
+
+**Phase 3: Testing (0/5)** - Effort: 3
+- ☐ TEST-001 through TEST-005 (integration tests + E2E verification)
+
+**Phase 4: Documentation (0/5)** - Effort: 2
+- ☐ DOC-001 through DOC-005 (update CLAUDE.md files + create integration guide)
+
+**Finalization (0/5)**
+- ☐ All tests passing (>80% coverage)
+- ☐ Verify 80%+ utilization target met (12+/15 outputs used)
+- ☐ Documentation complete
+- ☐ Performance targets verified (<5s planning, <10s docs)
+- ☐ Update workorder-log.txt
+
+**Key Decisions:**
+- Using existing production scripts instead of creating new ones (50% effort reduction)
+- `.coderef/generated-docs/` pattern for drafts, `coderef/foundation-docs/` for final output
+- INTEGRATE-002 mostly complete (script exists, just needs wrapper integration)
+
+---
+
 ## Recent Changes
 
 ### v1.1.0 - Enhanced Stub Command with Context Capture

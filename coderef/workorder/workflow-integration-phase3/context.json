@@ -1,0 +1,37 @@
+{
+  "feature_name": "workflow-integration-phase3",
+  "description": "Implement Phase 3 of WO-CODEREF-OUTPUT-UTILIZATION-001: Make all 4 MCP servers (coderef-workflow, coderef-docs, coderef-personas, coderef-testing) consume .coderef/ scan outputs instead of manual analysis. Includes updating analysis_generator.py, foundation_generator.py, persona pattern loading, and impact-based test selection.",
+  "goal": "Increase utilization from 2.6% (data exists but unused) to 80%+ (data actively consumed by workflows). Enable workflows to leverage existing .coderef/ intelligence instead of re-scanning code manually.",
+  "requirements": [
+    "Update analysis_generator.py to call coderef_scan tool during planning phase",
+    "Update foundation_generator.py to read from .coderef/ files instead of manual scanning",
+    "Update personas to load project patterns from .coderef/patterns.json before implementation",
+    "Update testing runner to use coderef_impact for selective test execution",
+    "All changes must maintain backward compatibility (graceful fallback if .coderef/ missing)",
+    "Integration tests proving workflows consume .coderef/ data"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Cannot break existing workflows (backward compatibility required)",
+    "Must handle missing .coderef/ gracefully (not all projects scanned)",
+    "Performance must not degrade (reading files should be faster than scanning)",
+    ".coderef/ data may be stale (need drift detection)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-WORKFLOW-INTEGRATION-PHASE3-001",
+    "workorder_assigned_at": "2025-12-31T17:32:06.343386+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-WORKFLOW-INTEGRATION-PHASE3-001",
+    "feature_id": "workflow-integration-phase3",
+    "last_updated": "2025-12-31",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-01-30"
+  }
+}

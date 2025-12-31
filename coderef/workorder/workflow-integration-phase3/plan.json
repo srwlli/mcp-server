@@ -1,0 +1,406 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "workflow-integration-phase3",
+    "workorder_id": "WO-WORKFLOW-INTEGRATION-PHASE3-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "created": "2025-12-31",
+    "parent_workorder": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "relationship": "Phase 3 implementation from parent workorder",
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Implementation Plan",
+    "ai_assistance": true,
+    "last_updated": "2025-12-31",
+    "next_review": "2026-01-15"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+    "discovery": {
+      "foundation_docs_reviewed": [
+        "README.md",
+        "ARCHITECTURE.md (coderef/foundation-docs)",
+        "API.md (coderef/foundation-docs)",
+        "SCHEMA.md (coderef/foundation-docs)"
+      ],
+      "existing_patterns_identified": [
+        "Async/await subprocess execution pattern (coderef-context)",
+        "MCP tool registration pattern (server.py files)",
+        "Generator classes pattern (coderef-workflow, coderef-docs)",
+        "Pytest fixture pattern (tests/conftest.py across all servers)"
+      ],
+      "reference_implementation": "coderef-system/scripts/parse_coderef_data.py (PRODUCTION-READY 492-line full doc generator)",
+      "existing_scripts": [
+        "packages/parse_coderef_data.py (149 lines, data extraction, tested 2025-12-31)",
+        "scripts/parse_coderef_data.py (492 lines, generates 8 docs, tested 2025-12-31)"
+      ],
+      "technology_stack": {
+        "language": "Python 3.13",
+        "framework": "Flask (coderef-docs), MCP protocol (all servers)",
+        "testing": "pytest with async support",
+        "code_intelligence": "@coderef/core CLI via subprocess"
+      }
+    },
+    "constraints_identified": [
+      "Backward compatibility required - cannot break existing workflows",
+      "Graceful fallback needed when .coderef/ directory missing",
+      "Performance must not degrade (reading .coderef/ should be faster than scanning)",
+      "Stale data handling - .coderef/ may be out of sync with code",
+      "All 4 servers must maintain independent operation (no shared state)"
+    ],
+    "dependencies_mapped": {
+      "coderef-workflow": {
+        "file": "generators/analysis_generator.py",
+        "current_behavior": "Manual project analysis via file scanning",
+        "new_dependency": ".coderef/index.json, .coderef/patterns.json"
+      },
+      "coderef-docs": {
+        "file": "generators/foundation_generator.py",
+        "current_behavior": "Manual code extraction for documentation",
+        "new_dependency": ".coderef/index.json, .coderef/context.md, .coderef/diagrams/"
+      },
+      "coderef-personas": {
+        "files": "personas/base/*.py (9 persona files)",
+        "current_behavior": "Generic domain knowledge only",
+        "new_dependency": ".coderef/patterns.json for project-specific patterns"
+      },
+      "coderef-testing": {
+        "file": "pytest_runner.py",
+        "current_behavior": "Runs all tests every time",
+        "new_dependency": ".coderef/ impact analysis for selective testing"
+      }
+    }
+  },
+  "1_executive_summary": {
+    "what": "Integrate .coderef/ scan outputs into 4 MCP server workflows (analysis, documentation, personas, testing)",
+    "why": "Increase coderef output utilization from 2.6% (data exists but unused) to 80%+ (data actively consumed)",
+    "how": "Update 4 generator/runner files to read from .coderef/ instead of manual scanning",
+    "impact": "Faster workflows (2-10x speedup), more accurate analysis (99% AST vs 60% regex), consistent patterns",
+    "value_proposition": [
+      "Planning phase completes in <5 seconds instead of 30-60 seconds (read .coderef/index.json vs full scan)",
+      "Documentation generation uses pre-analyzed data (no duplicate scanning)",
+      "Personas give project-specific advice (learn from .coderef/patterns.json)",
+      "Testing runs only affected tests (use impact analysis from .coderef/)"
+    ],
+    "real_world_analogy": "Like a GPS using cached map data instead of discovering roads every trip - faster navigation with consistent accuracy",
+    "use_case_workflow": [
+      "User: /create-workorder for new feature",
+      "analysis_generator.py: Reads .coderef/index.json (160 elements in <1s) instead of scanning",
+      "Planning phase: Completes in 5s vs 45s (90% faster)",
+      "User: /execute-plan with Ava persona",
+      "Ava: Loads .coderef/patterns.json, gives project-specific React advice",
+      "Testing: Runs only 12 affected tests vs all 140 (use impact analysis)"
+    ],
+    "success_metrics": [
+      "Planning phase latency: <5 seconds (from ~45s)",
+      "Documentation generation: <10 seconds (from ~60s)",
+      "Persona pattern loading: <2 seconds (new capability)",
+      "Test selection accuracy: >90% (correct affected tests identified)"
+    ]
+  },
+  "2_risk_assessment": {
+    "overall_risk": "low",
+    "complexity": "low (4 files to modify, ~100-150 LOC changes total, existing scripts reused)",
+    "scope": "Medium - 4 servers, 4 primary files, ~15 test files affected",
+    "file_system_risk": "low (read-only operations on .coderef/)",
+    "breaking_changes": "none (backward compatible fallback to manual scanning)",
+    "performance_concerns": [
+      "File I/O for reading .coderef/ files (mitigated: files are small, <5MB)",
+      "JSON parsing overhead (mitigated: json.loads() is fast in Python)",
+      "Stale data risk (mitigated: drift detection via timestamps)"
+    ],
+    "security_considerations": [
+      "Path traversal when reading .coderef/ (mitigated: validate paths, use Path.resolve())",
+      "JSON injection (mitigated: use json.loads() not eval(), validate schema)",
+      "No sensitive data in .coderef/ files (code structure only, no credentials)"
+    ],
+    "dependencies": {
+      "new_external": [],
+      "new_internal": [
+        "Requires .coderef/ structure populated (dependency on scan-all.py or manual scan)",
+        "Requires valid JSON format in .coderef/ files"
+      ],
+      "fragile_points": [
+        "If .coderef/index.json is malformed, fallback to manual scanning",
+        "If .coderef/ missing entirely, graceful degradation to current behavior"
+      ]
+    },
+    "rollback_plan": "All changes include try/except fallback to original behavior - zero risk of breaking workflows"
+  },
+  "3_current_state_analysis": {
+    "affected_files": [
+      "coderef-workflow/generators/analysis_generator.py (~500 LOC, modify scan logic)",
+      "coderef-docs/generators/foundation_generator.py (~600 LOC, modify doc generation)",
+      "coderef-personas/personas/base/ava.py (and 8 other personas, ~100 LOC each)",
+      "coderef-testing/pytest_runner.py (~400 LOC, add selective test logic)",
+      "Tests: create 4 new integration test files (~100 LOC each)"
+    ],
+    "current_architecture": {
+      "analysis_generator": "Uses glob + manual file parsing → slow, regex-based",
+      "foundation_generator": "Uses extractors.py (API/DB detection) → slow, brittle",
+      "personas": "Static domain knowledge → no project-specific awareness",
+      "pytest_runner": "Runs all tests → slow for large suites"
+    },
+    "new_architecture": {
+      "analysis_generator": "Reads .coderef/index.json → fast, AST-accurate",
+      "foundation_generator": "Reads .coderef/context.md + diagrams → fast, comprehensive",
+      "personas": "Loads .coderef/patterns.json → project-aware advice",
+      "pytest_runner": "Uses coderef_impact tool → selective testing"
+    },
+    "migration_path": "Additive changes with fallback - old code paths remain, new paths tried first"
+  },
+  "4_key_features": {
+    "primary_features": [
+      "INTEGRATE-001: analysis_generator.py reads .coderef/index.json for project inventory (replaces manual scan)",
+      "INTEGRATE-002: foundation_generator.py reads .coderef/ for doc generation (proof-of-concept demonstrated)",
+      "INTEGRATE-003: Personas load .coderef/patterns.json for project-specific pattern awareness",
+      "INTEGRATE-004: pytest_runner.py uses coderef_impact for selective test execution"
+    ],
+    "secondary_features": [
+      "Drift detection: Check .coderef/ timestamps vs file mtimes",
+      "Fallback mechanism: Graceful degradation when .coderef/ unavailable",
+      "Logging: INFO-level logs when using .coderef/, WARN when fallback"
+    ],
+    "edge_case_handling": [
+      {
+        "scenario": ".coderef/ directory missing",
+        "behavior": "Log warning, fallback to manual scanning (current behavior)"
+      },
+      {
+        "scenario": ".coderef/index.json malformed JSON",
+        "behavior": "Catch json.JSONDecodeError, log error, fallback"
+      },
+      {
+        "scenario": ".coderef/ data stale (>7 days old)",
+        "behavior": "Log warning suggesting re-scan, use stale data anyway (better than nothing)"
+      },
+      {
+        "scenario": "Project has no Python/TS code (index.json empty)",
+        "behavior": "Return empty results gracefully, don't crash"
+      }
+    ],
+    "configuration_options": [
+      "CODEREF_FORCE_MANUAL_SCAN env var (bypass .coderef/, force old behavior)",
+      "CODEREF_DRIFT_THRESHOLD_DAYS env var (default 7, warn if data older)"
+    ]
+  },
+  "5_task_id_system": {
+    "task_prefix": "INTEGRATE",
+    "tasks": [
+      "ADAPT-001: Create wrapper utilities to call existing parse_coderef_data.py scripts from MCP servers",
+      "INTEGRATE-001: Update analysis_generator.py to call packages/parse_coderef_data.py for preprocessing",
+      "INTEGRATE-002: Update foundation_generator.py to call scripts/parse_coderef_data.py (EXISTING 492-line script)",
+      "INTEGRATE-003: Update 9 persona files to load .coderef/patterns.json for project patterns",
+      "INTEGRATE-004: Update pytest_runner.py to use coderef_impact for selective testing",
+      "TEST-001: Integration test for analysis_generator.py with .coderef/",
+      "TEST-002: Integration test for foundation_generator.py with .coderef/",
+      "TEST-003: Integration test for personas loading patterns",
+      "TEST-004: Integration test for selective testing with impact analysis",
+      "TEST-005: End-to-end test (scan → integrate → verify 80%+ utilization)",
+      "DOC-001: Update coderef-workflow/CLAUDE.md with .coderef/ usage",
+      "DOC-002: Update coderef-docs/CLAUDE.md with .coderef/ usage",
+      "DOC-003: Update coderef-personas/CLAUDE.md with pattern loading",
+      "DOC-004: Update coderef-testing/CLAUDE.md with selective testing",
+      "DOC-005: Create .coderef/ usage guide (coderef/user/CODEREF-INTEGRATION-GUIDE.md)"
+    ]
+  },
+  "6_implementation_phases": {
+    "phases": [
+      {
+        "phase": "1",
+        "name": "Foundation & Helpers",
+        "title": "Phase 1: Adapt Existing Scripts",
+        "purpose": "Adapt existing parse_coderef_data.py scripts for MCP server integration",
+        "complexity": "low",
+        "effort_level": 1,
+        "tasks": [
+          "ADAPT-001"
+        ],
+        "deliverables": [
+          "EXISTING: coderef-system/packages/parse_coderef_data.py (149 lines, data extraction)",
+          "EXISTING: coderef-system/scripts/parse_coderef_data.py (492 lines, full doc generator)",
+          "NEW: Wrapper utilities in coderef/utils/ for MCP servers to call these scripts",
+          "TESTED: Both scripts validated (275K elements processed, 8 docs generated)"
+        ],
+        "completion_criteria": "Existing scripts accessible from MCP servers, wrapper tested",
+        "notes": "Scripts already exist and work! Just need integration wrappers."
+      },
+      {
+        "phase": "2",
+        "name": "Core Integrations",
+        "title": "Phase 2: Update 4 Workflows",
+        "purpose": "Integrate existing parse_coderef_data.py into analysis, docs, personas, testing workflows",
+        "complexity": "medium",
+        "effort_level": 3,
+        "tasks": [
+          "INTEGRATE-001",
+          "INTEGRATE-002",
+          "INTEGRATE-003",
+          "INTEGRATE-004"
+        ],
+        "deliverables": [
+          "Updated analysis_generator.py (call parse_coderef_data.py for preprocessing)",
+          "Updated foundation_generator.py (USE EXISTING scripts/parse_coderef_data.py)",
+          "Updated 9 persona files (read .coderef/patterns.json directly)",
+          "Updated pytest_runner.py (call coderef_impact tool for selective testing)"
+        ],
+        "completion_criteria": "All 4 integrations working end-to-end, existing scripts integrated",
+        "notes": "INTEGRATE-002 is mostly done - scripts/parse_coderef_data.py already generates 8 foundation docs!"
+      },
+      {
+        "phase": "3",
+        "name": "Testing",
+        "title": "Phase 3: Integration Tests",
+        "purpose": "Comprehensive testing of all integrations",
+        "complexity": "medium",
+        "effort_level": 3,
+        "tasks": [
+          "TEST-001",
+          "TEST-002",
+          "TEST-003",
+          "TEST-004",
+          "TEST-005"
+        ],
+        "deliverables": [
+          "test_analysis_integration.py (tests INTEGRATE-001)",
+          "test_docs_integration.py (tests INTEGRATE-002)",
+          "test_persona_patterns.py (tests INTEGRATE-003)",
+          "test_selective_testing.py (tests INTEGRATE-004)",
+          "test_e2e_utilization.py (80%+ verification)"
+        ],
+        "completion_criteria": "All integration tests passing, 80%+ utilization verified"
+      },
+      {
+        "phase": "4",
+        "name": "Documentation",
+        "title": "Phase 4: Documentation Updates",
+        "purpose": "Update all server docs with new .coderef/ integration details",
+        "complexity": "low",
+        "effort_level": 2,
+        "tasks": [
+          "DOC-001",
+          "DOC-002",
+          "DOC-003",
+          "DOC-004",
+          "DOC-005"
+        ],
+        "deliverables": [
+          "Updated CLAUDE.md for 4 servers",
+          "New CODEREF-INTEGRATION-GUIDE.md usage guide"
+        ],
+        "completion_criteria": "All docs updated, guide created, examples verified"
+      }
+    ]
+  },
+  "7_testing_strategy": {
+    "unit_tests": [
+      "test_coderef_reader.py: Test read_index(), read_context(), read_patterns(), check_drift()",
+      "test_fallback_logic.py: Test fallback when .coderef/ missing or malformed",
+      "test_drift_detection.py: Test stale data warning logic"
+    ],
+    "integration_tests": [
+      "test_analysis_integration.py: Test analysis_generator.py with real .coderef/ data",
+      "test_docs_integration.py: Test foundation_generator.py generates docs from .coderef/",
+      "test_persona_patterns.py: Test Ava loads patterns and gives project-specific advice",
+      "test_selective_testing.py: Test pytest_runner.py runs only affected tests"
+    ],
+    "end_to_end_tests": [
+      "test_e2e_utilization.py: Scan project → verify all 4 integrations use .coderef/ → measure utilization 80%+"
+    ],
+    "edge_case_scenarios": [
+      {
+        "scenario": ".coderef/ directory missing entirely",
+        "setup": "Delete .coderef/ from test project",
+        "expected_behavior": "All workflows fallback to manual scanning, log warnings",
+        "verification": "Check logs contain fallback warnings, workflows complete successfully",
+        "error_handling": "No errors raised, graceful degradation"
+      },
+      {
+        "scenario": ".coderef/index.json is malformed JSON",
+        "setup": "Write invalid JSON to index.json",
+        "expected_behavior": "JSONDecodeError caught, fallback to manual scanning",
+        "verification": "Check logs show JSON parsing error, workflow completes",
+        "error_handling": "Exception caught, logged, fallback triggered"
+      },
+      {
+        "scenario": ".coderef/ data is 30 days old (stale)",
+        "setup": "Set .coderef/index.json mtime to 30 days ago",
+        "expected_behavior": "Log warning about stale data, use anyway",
+        "verification": "Check logs show drift warning, data still used",
+        "error_handling": "Warning logged, no error"
+      }
+    ]
+  },
+  "8_success_criteria": {
+    "functional_requirements": [
+      "analysis_generator.py reads .coderef/index.json successfully",
+      "foundation_generator.py generates docs from .coderef/ data",
+      "Personas load .coderef/patterns.json and reference patterns in advice",
+      "pytest_runner.py uses impact analysis to run selective tests",
+      "Fallback to manual scanning works when .coderef/ missing"
+    ],
+    "performance_targets": [
+      "Planning phase completes in <5 seconds (from ~45s baseline)",
+      "Documentation generation completes in <10 seconds (from ~60s baseline)",
+      "Pattern loading completes in <2 seconds (new capability)",
+      "Test selection completes in <3 seconds (new capability)"
+    ],
+    "quality_metrics": [
+      "Test coverage >80% for all new code",
+      "All integration tests passing",
+      "No regressions in existing workflows (backward compatibility verified)",
+      "Utilization: 80%+ of .coderef/ outputs actively consumed (12+/15 output types)"
+    ],
+    "documentation_requirements": [
+      "All 4 server CLAUDE.md files updated with .coderef/ usage",
+      "CODEREF-INTEGRATION-GUIDE.md created with examples",
+      "Inline code comments explaining .coderef/ reading logic"
+    ],
+    "acceptance_criteria": [
+      "User runs /create-workorder → planning completes in <5s using .coderef/",
+      "User runs /generate-docs → docs generated from .coderef/ in <10s",
+      "User activates Ava → Ava references project-specific patterns from .coderef/",
+      "User runs tests → only affected tests execute based on impact analysis",
+      "Utilization verified: 12+/15 .coderef/ outputs actively used (80%+)"
+    ]
+  },
+  "9_implementation_checklist": {
+    "preparation": [
+      "☑ Verify .coderef/ structure exists on all 5+ MCP servers",
+      "☑ Confirm scan-all.py has populated all required files",
+      "☑ Review proof-of-concept: coderef-context/.coderef/generate_docs.py",
+      "☑ EXISTING SCRIPTS VALIDATED: packages/parse_coderef_data.py (149 lines) tested with 275K elements",
+      "☑ EXISTING SCRIPTS VALIDATED: scripts/parse_coderef_data.py (492 lines) generated 8 docs successfully"
+    ],
+    "phase_1": [
+      "☐ ADAPT-001: Create wrapper utilities in coderef/utils/ to call existing parse_coderef_data.py scripts"
+    ],
+    "phase_2": [
+      "☐ INTEGRATE-001: Update analysis_generator.py to call packages/parse_coderef_data.py",
+      "☐ INTEGRATE-002: Update foundation_generator.py to call scripts/parse_coderef_data.py (USE EXISTING)",
+      "☐ INTEGRATE-003: Update personas to load .coderef/patterns.json",
+      "☐ INTEGRATE-004: Update pytest_runner.py to use coderef_impact tool"
+    ],
+    "phase_3": [
+      "☐ TEST-001: Integration tests for analysis_generator.py",
+      "☐ TEST-002: Integration tests for foundation_generator.py",
+      "☐ TEST-003: Integration tests for persona pattern loading",
+      "☐ TEST-004: Integration tests for selective testing",
+      "☐ TEST-005: End-to-end test (scan → organize → query → verify 80%+ utilization)"
+    ],
+    "phase_4": [
+      "☐ DOC-001: Update coderef-workflow/CLAUDE.md",
+      "☐ DOC-002: Update coderef-docs/CLAUDE.md",
+      "☐ DOC-003: Update coderef-personas/CLAUDE.md",
+      "☐ DOC-004: Update coderef-testing/CLAUDE.md",
+      "☐ DOC-005: Create CODEREF-INTEGRATION-GUIDE.md"
+    ],
+    "finalization": [
+      "☐ All tests passing (>80% coverage)",
+      "☐ Verify 80%+ utilization target met (12+/15 output types actively used)",
+      "☐ Documentation complete and accurate",
+      "☐ Performance targets verified (<5s planning, <10s docs, etc.)",
+      "☐ Update workorder-log.txt with WO-WORKFLOW-INTEGRATION-PHASE3-001 completion"
+    ]
+  }
+  }
+}

@@ -18,7 +18,12 @@ import json
 import re
 import subprocess
 import os
+import sys
 from datetime import datetime
+
+# Add coderef/ utilities to path for wrapper functions
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from coderef.utils import generate_foundation_docs as coderef_generate_docs, check_coderef_available
 
 from logger_config import logger
 from constants import EXCLUDE_DIRS, ALLOWED_FILE_EXTENSIONS
@@ -123,6 +128,39 @@ class CoderefFoundationGenerator:
 
         if has_coderef:
             logger.info(f"Coderef data loaded: {len(coderef_data.get('elements', []))} elements")
+
+            # FAST PATH: Try external script generation (scripts/parse_coderef_data.py)
+            # This is MUCH faster than internal generation for large codebases
+            if not self.force_regenerate:  # Only use fast path if not forcing regeneration
+                try:
+                    logger.info("Attempting fast-path generation via scripts/parse_coderef_data.py...")
+                    external_docs = coderef_generate_docs(str(self.project_path))
+
+                    if external_docs:
+                        duration = time.time() - start_time
+                        logger.info(f"Fast-path generation successful in {duration:.2f}s ({len(external_docs)} docs)")
+
+                        # Return early with external generation results
+                        return {
+                            'files_generated': list(external_docs.values()),
+                            'files_skipped': [],
+                            'generated_count': len(external_docs),
+                            'skipped_count': 0,
+                            'doc_timings': {doc: {'skipped': False, 'duration': duration / len(external_docs)} for doc in external_docs.keys()},
+                            'output_dir': str(self.foundation_docs_dir),
+                            'project_context': {'source': 'external_script'},
+                            'is_ui_project': is_ui_project,
+                            'has_coderef_data': True,
+                            'auto_scan_performed': auto_scan_performed,
+                            'auto_scan_success': auto_scan_success,
+                            'force_regenerate': False,
+                            'generation_method': 'external_script',
+                            'duration_seconds': round(duration, 2),
+                            'success': True,
+                            'utilization': 'scripts/parse_coderef_data.py (external)'
+                        }
+                except Exception as e:
+                    logger.debug(f"Fast-path generation failed: {str(e)}, falling back to internal generation")
         else:
             logger.info("No coderef data found, falling back to regex detection")
 

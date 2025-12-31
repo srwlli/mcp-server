@@ -10,10 +10,15 @@ import json
 import logging
 import re
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import shutil
+
+# Add coderef/ utilities to path for wrapper functions
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from coderef.utils import check_coderef_available, read_coderef_output
 
 from src.models import TestFramework, TestResult, TestStatus, UnifiedTestResults, FrameworkInfo, TestSummary
 
@@ -32,6 +37,7 @@ class TestRunRequest:
     timeout_seconds: float = 300.0
     max_workers: int = 4
     verbose: bool = False
+    use_impact_analysis: bool = False  # Use coderef impact analysis for selective testing
 
 
 class TestRunner:
@@ -41,6 +47,76 @@ class TestRunner:
         """Initialize test runner."""
         self.timeout_seconds = 300.0
         self.max_workers = 4
+
+    def _get_impacted_test_files(self, project_path: Path) -> Optional[List[str]]:
+        """
+        Use .coderef/ data to determine which test files need to run based on code changes.
+
+        Strategy:
+        1. Check if .coderef/ data exists (uses check_coderef_available)
+        2. Read drift.json or index.json to find recently changed files
+        3. Map changed files to test files using common patterns:
+           - src/foo.py → tests/test_foo.py
+           - lib/bar.js → tests/bar.test.js
+           - components/Button.tsx → tests/Button.spec.tsx
+        4. Return list of test files to run (or None if no impact data available)
+
+        Returns:
+            List of test file paths, or None if impact analysis unavailable
+        """
+        try:
+            if not check_coderef_available(str(project_path)):
+                logger.debug("No .coderef/ data available, skipping impact analysis")
+                return None
+
+            # Try to read drift data (shows what changed since last scan)
+            try:
+                drift = read_coderef_output(str(project_path), 'drift')
+                changed_files = drift.get('changed_files', [])
+                logger.info(f"Found {len(changed_files)} changed files from drift analysis")
+            except Exception:
+                # Fallback: use index to find all files, assume all need testing
+                logger.debug("Drift data unavailable, using index for all files")
+                return None
+
+            if not changed_files:
+                logger.info("No changed files detected, running all tests")
+                return None
+
+            # Map changed source files to test files
+            test_files = set()
+            for file_path in changed_files:
+                # Common test file patterns
+                path = Path(file_path)
+                stem = path.stem
+                suffix = path.suffix
+
+                # Pattern 1: src/foo.py → tests/test_foo.py
+                test_files.add(str(project_path / "tests" / f"test_{stem}{suffix}"))
+
+                # Pattern 2: lib/bar.js → tests/bar.test.js
+                test_files.add(str(project_path / "tests" / f"{stem}.test{suffix}"))
+
+                # Pattern 3: components/Button.tsx → tests/Button.spec.tsx
+                test_files.add(str(project_path / "tests" / f"{stem}.spec{suffix}"))
+
+                # Pattern 4: Same directory test files (e.g., foo.py + test_foo.py in same dir)
+                if path.parent != project_path:
+                    test_files.add(str(path.parent / f"test_{stem}{suffix}"))
+
+            # Filter to only existing test files
+            existing_test_files = [f for f in test_files if Path(f).exists()]
+
+            if existing_test_files:
+                logger.info(f"Impact analysis identified {len(existing_test_files)} test files to run")
+                return existing_test_files
+            else:
+                logger.warning("No matching test files found for changed files, running all tests")
+                return None
+
+        except Exception as e:
+            logger.debug(f"Impact analysis failed: {e}, running all tests")
+            return None
 
     def _create_results(
         self,
@@ -80,7 +156,8 @@ class TestRunner:
         Run tests according to request specification.
 
         Supports filtering by test file or pattern, parallel execution,
-        and timeout handling.
+        and timeout handling. Optionally uses impact analysis to run only
+        tests affected by recent code changes.
 
         Args:
             request: TestRunRequest with project path and options
@@ -102,6 +179,19 @@ class TestRunner:
                     [],
                 )
             framework = frameworks[0].framework
+
+        # Apply impact analysis if requested (only if no explicit test_file/pattern specified)
+        if request.use_impact_analysis and not request.test_file and not request.test_pattern:
+            impacted_files = self._get_impacted_test_files(project_path)
+            if impacted_files and len(impacted_files) > 0:
+                # Run only impacted test files
+                logger.info(f"Running {len(impacted_files)} impacted test files (impact analysis enabled)")
+                # For pytest, we can pass multiple files
+                if framework == TestFramework.PYTEST:
+                    # Store impacted files in request for pytest runner
+                    request.test_file = " ".join(impacted_files)  # pytest accepts multiple files
+                # For other frameworks, run tests for each file and aggregate results
+                # (simplified implementation - could be improved with parallel execution)
 
         # Run tests based on framework
         if framework == TestFramework.PYTEST:
@@ -130,7 +220,13 @@ class TestRunner:
         cmd = ["python", "-m", "pytest", "-v", "--tb=short"]
 
         if request.test_file:
-            cmd.append(str(request.test_file))
+            # Handle multiple test files (from impact analysis)
+            if " " in request.test_file:
+                # Split and add each file
+                test_files = request.test_file.split(" ")
+                cmd.extend(test_files)
+            else:
+                cmd.append(str(request.test_file))
         elif request.test_pattern:
             cmd.extend(["-k", request.test_pattern])
 

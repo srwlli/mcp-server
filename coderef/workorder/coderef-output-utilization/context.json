@@ -1,0 +1,36 @@
+{
+  "feature_name": "coderef-output-utilization",
+  "description": "Complete system to maximize coderef scan capabilities by organizing all 15+ output types into a universal .coderef/ structure. Increases utilization from 2.6% (2 files) to 80%+ (65-90 files) across all projects. Adds missing coderef_export MCP tool for JSON-LD and wrapped Mermaid support. Works for both MCP ecosystem and external standalone projects.",
+  "goal": "Maximize coderef intelligence utilization - increase from 2.6% to 80%+ usage of all scan outputs across workflows. Enable agents to leverage comprehensive code intelligence instead of blind coding.",
+  "requirements": [
+    "Universal .coderef/ structure (same for MCP and non-MCP projects)",
+    "Add coderef_export MCP tool (JSON-LD, wrapped Mermaid, standard JSON graph)",
+    "Scan all 5 MCP servers (populate .coderef/ for context, docs, workflow, personas, testing)",
+    "Integrate with workflows (planning, docs, personas, testing all leverage scan data)"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must work for external projects (not just MCP ecosystem - any project using coderef CLI)",
+    "No modifications to coderef-system CLI (only add MCP wrappers, don't modify upstream source)",
+    "Backward compatibility (existing .coderef/ directories continue to work, adding exports/ doesn't break existing tools)",
+    "Performance considerations (scanning 5 servers <5min total, cache results, large files load <500ms)",
+    "Global deployment rule compliance (all outputs to coderef/intelligence/, single source of truth)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "workorder_assigned_at": "2025-12-31T07:09:42.155133+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "feature_id": "coderef-output-utilization",
+    "last_updated": "2025-12-31",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-01-30"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "COMPONENTS.md",
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Documentation\n\n## Module Dependency Graph\n\n*Auto-scan attempted but failed. Check that:*\n- *Node.js is installed*\n- *CODEREF_CLI_PATH environment variable is set correctly*\n- *The coderef CLI is built (`pnpm build` in cli directory)*\n\n## Code Patterns\n\n### Handler Functions\n\n- `handle_coderef_scan` in `coderef-context\\server.py`\n- `handle_coderef_query` in `coderef-context\\server.py`\n- `handle_coderef_impact` in `coderef-context\\server.py`\n- `handle_coderef_complexity` in `coderef",
+      "headers": [
+        "Architecture Documentation",
+        "Module Dependency Graph",
+        "Code Patterns",
+        "Handler Functions",
+        "Common Decorators",
+        "Error Types",
+        "API Architecture",
+        "Recent Activity"
+      ],
+      "size": 1574
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Documentation\n\n## Overview\n\n- **Framework:** FastAPI, Flask\n- **Authentication:** Unknown\n- **Error Format:** RFC 7807\n- **Total Endpoints:** 30\n\n## Endpoints\n\n### FastAPI\n\n| Method | Path | File |\n|--------|------|------|\n| `GET` | `/users` | `coderef-docs\\extractors.py` |\n| `POST` | `/auth/login` | `coderef-docs\\extractors.py` |\n| `GET` | `/` | `coderef-docs\\tests\\integration\\test_coderef_foundation_docs.py` |\n| `GET` | `/users` | `coderef-docs\\tests\\integration\\test_coderef_foundation_d",
+      "headers": [
+        "API Documentation",
+        "Overview",
+        "Endpoints",
+        "FastAPI",
+        "Flask",
+        "Endpoint Details",
+        "Authentication",
+        "Error Handling"
+      ],
+      "size": 6387
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Documentation\n\n## Database Tables\n\n### FoundationGenerator\n\n*File: `coderef-workflow\\generators\\foundation_generator.py`*\n\n\n### HandoffGenerator\n\n*File: `coderef-workflow\\generators\\handoff_generator.py`*\n\n\n### QuickrefGenerator\n\n*File: `coderef-workflow\\generators\\quickref_generator.py`*\n\n\n### FrameworkInfo\n\n*File: `coderef-testing\\src\\models.py`*\n\n\n### TestResult\n\n*File: `coderef-testing\\src\\models.py`*\n\n\n### TestSummary\n\n*File: `coderef-testing\\src\\models.py`*\n\n\n### CoverageInfo\n\n*Fi",
+      "headers": [
+        "Schema Documentation",
+        "Database Tables",
+        "FoundationGenerator",
+        "HandoffGenerator",
+        "QuickrefGenerator",
+        "FrameworkInfo",
+        "TestResult",
+        "TestSummary",
+        "CoverageInfo",
+        "UnifiedTestResults"
+      ],
+      "size": 1457
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# CodeRef Ecosystem - AI-Native Code Intelligence & Feature Lifecycle Management\n\n**Version:** 1.0.0 | **Status:** \u2705 Production | **Last Updated:** 2025-12-25\n\n---\n\n## What This Ecosystem Does\n\n**CodeRef** is a complete system that enables AI agents to plan, understand, implement, and document software features safely and efficiently. It solves the \"agent blind coding\" problem by providing code intelligence, semantic context, and structured planning throughout the entire feature lifecycle.\n\n### ",
+      "headers": [
+        "CodeRef Ecosystem - AI-Native Code Intelligence & Feature Lifecycle Management",
+        "What This Ecosystem Does",
+        "Core Problem",
+        "System Architecture",
+        "The 4 MCP Servers",
+        "How They Work Together",
+        "Complete Feature Lifecycle",
+        "Key Concepts",
+        "Workorder System",
+        "Plan.json Structure"
+      ],
+      "size": 9368
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "Flask",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "coderef-context",
+      "coderef-docs",
+      "coderef-personas",
+      "coderef-testing",
+      "coderef-workflow",
+      "archived\\coderef-mcp",
+      "coderef-docs\\generators",
+      "coderef-docs\\tests",
+      "coderef-personas\\tests",
+      "coderef-workflow\\generators"
+    ],
+    "file_counts": {
+      "coderef-docs": 51,
+      "coderef-workflow": 21,
+      "coderef-testing": 20,
+      "coderef-docs\\tests": 20,
+      "coderef-personas": 19,
+      "archived\\coderef-mcp": 19,
+      "coderef-docs\\generators": 17,
+      "coderef-workflow\\generators": 17,
+      "coderef-workflow\\tests": 17,
+      "coderef-testing\\.claude\\commands": 14
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: COMPONENTS.md, USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No test directory found (tests/, test/, or __tests__/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ],
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Project Analysis",
+    "workorder_id": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "feature_id": "coderef-output-utilization",
+    "last_updated": "2025-12-31",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-01-30"
+  }
+}

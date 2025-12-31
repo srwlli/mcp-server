@@ -1,0 +1,383 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "coderef-output-utilization",
+    "workorder_id": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": false,
+    "has_analysis": true,
+    "uds": {
+      "generated_by": "coderef-workflow v2.0.0",
+      "document_type": "Implementation Plan",
+      "last_updated": "2025-12-31",
+      "ai_assistance": true,
+      "next_review": "2026-01-30"
+    }
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "discovery_completed": true,
+      "foundation_docs_reviewed": ["README.md", "ARCHITECTURE.md", "API.md", "SCHEMA.md"],
+      "analysis_completed": true,
+      "context_gathered": true,
+      "key_insights": [
+        "Current utilization: 2.6% (2 files out of 75 potential)",
+        "Only coderef-docs has scan results in .coderef/",
+        "Missing coderef_export MCP tool for JSON-LD and wrapped Mermaid",
+        "11 MCP tools exist but workflows don't leverage outputs",
+        "Need universal .coderef/ structure for MCP and non-MCP projects"
+      ]
+    },
+    "1_executive_summary": {
+      "purpose": "Maximize utilization of coderef scan outputs from 2.6% to 80%+ by organizing all 15+ output types into a universal .coderef/ structure and integrating with all workflows",
+      "value_proposition": "Transform agent workflows from 'blind coding' to 'informed implementation' by leveraging comprehensive code intelligence. Agents will understand existing architecture, follow patterns, assess impact, and estimate effort using real data instead of guesses.",
+      "real_world_analogy": "Like upgrading from driving blindfolded (guessing where roads go) to having GPS navigation with real-time traffic and street view (complete situational awareness).",
+      "use_case": "When planning a new feature, agent calls coderef_scan → discovers existing ThemeProvider and useTheme hook → extends existing system instead of rebuilding from scratch (saves 4-6 hours of duplicate work).",
+      "output": [
+        "Universal .coderef/ directory structure (works for any project)",
+        "coderef_export MCP tool (JSON-LD, wrapped Mermaid support)",
+        "Scan results for all 5 MCP servers (65-90 organized files)",
+        "Integration layer for workflows (planning, docs, personas, testing)",
+        "Documentation updates (CODEREF-OUTPUT-CAPABILITIES.md updated)"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low-medium",
+      "complexity": "medium (~15 files to create/modify, ~800-1200 lines of code total)",
+      "scope": "Medium - 5 server projects, 1 new MCP tool, documentation updates",
+      "file_system_risk": "low - all changes additive (new directories, new tool)",
+      "dependencies": [
+        "coderef-system CLI must be functional (existing dependency)",
+        "All 5 MCP servers must be scannable",
+        "Subprocess execution reliability (existing pattern)"
+      ],
+      "performance_concerns": [
+        "Scanning 5 servers will take 2-5 minutes total (acceptable for one-time setup)",
+        "Large scan files (4MB index.json, 6.2MB graph.json) need efficient loading",
+        "Cache invalidation strategy needed to avoid stale data"
+      ],
+      "security_considerations": [
+        "File system access (reading .coderef/ directories) - read-only, low risk",
+        "Subprocess execution (coderef CLI) - existing pattern, sandboxed",
+        "No user input validation needed (all paths are programmatic)"
+      ],
+      "breaking_changes": "none - all changes are additive and backward compatible"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "coderef-context/server.py (add coderef_export tool)",
+        "coderef-context/processors/__init__.py (new)",
+        "coderef-context/processors/export_processor.py (new)",
+        "coderef-context/utils/cli_runner.py (new)",
+        "coderef-workflow/generators/analysis_generator.py (integrate scan)",
+        "coderef-docs/generators/foundation_generator.py (integrate scan)",
+        "coderef/user/CODEREF-OUTPUT-CAPABILITIES.md (update)",
+        "All 5 servers: .coderef/ directories (populate)",
+        "coderef/intelligence/ directory structure (new)"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "coderef-context MCP server (existing 11 tools)",
+          "coderef-workflow planning generators",
+          "coderef-docs foundation generators"
+        ],
+        "existing_external": [
+          "coderef-system CLI (C:/Users/willh/Desktop/projects/coderef-system/packages/cli)",
+          "Node.js runtime for CLI subprocess",
+          "Python asyncio for async subprocess execution"
+        ],
+        "new_external": [],
+        "new_internal": [
+          "export_processor.py module",
+          "cli_runner.py utility module"
+        ]
+      },
+      "architecture_context": "Extends existing MCP wrapper pattern (subprocess → CLI → JSON parsing). Follows processors/ + utils/ separation of concerns established in server structure analysis. Integrates with existing workflow generators via MCP client calls."
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Universal .coderef/ directory structure with exports/ subdirectory for JSON-LD and wrapped Mermaid",
+        "coderef_export MCP tool supporting 4 formats (JSON, JSON-LD, Mermaid, GraphViz DOT)",
+        "Scan all 5 MCP servers and populate .coderef/ directories (65-90 files total)",
+        "Integration with coderef-workflow planning (use scan results during analysis phase)",
+        "Integration with coderef-docs generators (auto-generate ARCHITECTURE.md from scans)"
+      ],
+      "secondary_features": [
+        "Centralized intelligence hub (coderef/intelligence/) for cross-server queries",
+        "Drift detection to invalidate stale cache",
+        "Performance optimization (cache results, lazy loading)"
+      ],
+      "edge_case_handling": [
+        "Server has no .coderef/ directory → create empty structure, log warning",
+        "Scan fails (CLI not available) → graceful degradation, use fallback",
+        "Large files (>10MB) → stream processing, progress indicators"
+      ],
+      "configuration_options": [
+        "CODEREF_CLI_PATH environment variable (existing)",
+        "export format selection (json|jsonld|mermaid|dot)",
+        "max-nodes limit for large graphs"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "SETUP-001: Create universal .coderef/ structure with exports/ subdirectory",
+        "SETUP-002: Create processors/ and utils/ directories in coderef-context",
+        "EXPORT-001: Implement export_processor.py with CLI wrapper logic",
+        "EXPORT-002: Add coderef_export tool to coderef-context/server.py",
+        "EXPORT-003: Test coderef_export with all 4 formats (json, jsonld, mermaid, dot)",
+        "SCAN-001: Run coderef scan on all 5 MCP servers",
+        "SCAN-002: Organize scan results into .coderef/ directories",
+        "SCAN-003: Copy to centralized coderef/intelligence/ hub",
+        "INTEGRATE-001: Update analysis_generator.py to call coderef_scan",
+        "INTEGRATE-002: Update foundation_generator.py to use scan results",
+        "INTEGRATE-003: Update personas to load project patterns from scans",
+        "INTEGRATE-004: Update testing to use impact-based test selection",
+        "TEST-001: Unit tests for export_processor.py",
+        "TEST-002: Integration tests for coderef_export tool",
+        "TEST-003: End-to-end test (scan → organize → query)",
+        "DOC-001: Update CODEREF-OUTPUT-CAPABILITIES.md with implementation details",
+        "DOC-002: Create usage guide for .coderef/ structure",
+        "DOC-003: Update server CLAUDE.md files with new capabilities"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": "1",
+          "name": "Structure & Export Tool",
+          "title": "Phase 1: Structure & Export Tool",
+          "purpose": "Create universal .coderef/ structure and implement coderef_export MCP tool",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002",
+            "EXPORT-001",
+            "EXPORT-002",
+            "EXPORT-003"
+          ],
+          "deliverables": [
+            "Universal .coderef/ structure with exports/ subdirectory",
+            "processors/ and utils/ directories in coderef-context",
+            "export_processor.py module",
+            "coderef_export MCP tool registered in server.py",
+            "Working exports for all 4 formats (JSON, JSON-LD, Mermaid, DOT)"
+          ],
+          "completion_criteria": "coderef_export tool working with all 4 formats (json, jsonld, mermaid, dot), exports/ directory created"
+        },
+        {
+          "phase": "2",
+          "name": "Scan & Organize",
+          "title": "Phase 2: Scan & Organize",
+          "purpose": "Scan all 5 MCP servers and organize results into .coderef/ and centralized hub",
+          "complexity": "low",
+          "effort_level": 2,
+          "tasks": [
+            "SCAN-001",
+            "SCAN-002",
+            "SCAN-003"
+          ],
+          "deliverables": [
+            "Scan results for all 5 servers (coderef-context, coderef-docs, coderef-workflow, coderef-personas, coderef-testing)",
+            "Populated .coderef/ directories (index.json, graph.json, reports/, diagrams/, exports/)",
+            "Centralized intelligence hub at coderef/intelligence/",
+            "65-90 organized output files total"
+          ],
+          "completion_criteria": "All 5 servers have populated .coderef/ directories, centralized hub has 65-90 organized files"
+        },
+        {
+          "phase": "3",
+          "name": "Workflow Integration",
+          "title": "Phase 3: Workflow Integration",
+          "purpose": "Integrate scan results into all workflows (planning, docs, personas, testing)",
+          "complexity": "high",
+          "effort_level": 4,
+          "tasks": [
+            "INTEGRATE-001",
+            "INTEGRATE-002",
+            "INTEGRATE-003",
+            "INTEGRATE-004"
+          ],
+          "deliverables": [
+            "Updated analysis_generator.py (calls coderef_scan during planning)",
+            "Updated foundation_generator.py (auto-generates ARCHITECTURE.md from scans)",
+            "Updated persona system (loads project patterns from scans)",
+            "Updated test runner (uses impact analysis for test selection)"
+          ],
+          "completion_criteria": "Planning uses real architecture data, docs auto-generate, personas give project-specific advice, testing uses impact analysis"
+        },
+        {
+          "phase": "4",
+          "name": "Testing & Documentation",
+          "title": "Phase 4: Testing & Documentation",
+          "purpose": "Comprehensive testing and documentation updates",
+          "complexity": "medium",
+          "effort_level": 3,
+          "tasks": [
+            "TEST-001",
+            "TEST-002",
+            "TEST-003",
+            "DOC-001",
+            "DOC-002",
+            "DOC-003"
+          ],
+          "deliverables": [
+            "Unit tests for export_processor.py (>80% coverage)",
+            "Integration tests for coderef_export tool",
+            "End-to-end test (scan → organize → query)",
+            "Updated CODEREF-OUTPUT-CAPABILITIES.md",
+            "Usage guide for .coderef/ structure",
+            "Updated server CLAUDE.md files"
+          ],
+          "completion_criteria": "All tests passing (>80% coverage), documentation complete and accurate"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "test_export_processor.py: Test CLI command building for all 4 formats",
+        "test_export_processor.py: Test JSON parsing and error handling",
+        "test_export_processor.py: Test format validation (valid/invalid formats)",
+        "test_cli_runner.py: Test subprocess execution with timeout",
+        "test_cli_runner.py: Test CLI path detection (global → env var → local)"
+      ],
+      "integration_tests": [
+        "test_coderef_export_tool.py: Test coderef_export with real CLI (all formats)",
+        "test_scan_organization.py: Test scan → organize → centralized hub pipeline",
+        "test_workflow_integration.py: Test analysis_generator.py with scan results",
+        "test_docs_integration.py: Test foundation_generator.py with scan results"
+      ],
+      "end_to_end_tests": [
+        "test_full_workflow.py: Scan all 5 servers → organize → query → verify 80%+ utilization"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "CLI not available (CODEREF_CLI_PATH invalid)",
+          "setup": "Set invalid CODEREF_CLI_PATH environment variable",
+          "expected_behavior": "Graceful degradation, return error message, don't crash server",
+          "verification": "Tool returns error JSON, server stays running",
+          "error_handling": "CommandNotFoundError with helpful message"
+        },
+        {
+          "scenario": "Scan produces huge file (>10MB)",
+          "setup": "Scan very large project (>500k LOC)",
+          "expected_behavior": "Process file in chunks, show progress, no memory spike",
+          "verification": "Memory usage stays <200MB, file loads successfully",
+          "error_handling": "No error - stream processing handles large files"
+        },
+        {
+          "scenario": "Server has no .coderef/ directory",
+          "setup": "Delete .coderef/ directory from coderef-personas",
+          "expected_behavior": "Create empty directory structure, log warning, continue",
+          "verification": ".coderef/ created with exports/ subdirectory",
+          "error_handling": "Warning logged, no error raised"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "coderef_export tool works with all formats",
+          "metric": "Successful exports",
+          "target": "4/4 formats (JSON, JSON-LD, Mermaid, DOT) working",
+          "validation": "Integration tests pass for all formats"
+        },
+        {
+          "requirement": "All 5 servers scanned and organized",
+          "metric": "File count in .coderef/ directories",
+          "target": "65-90 files across 5 servers",
+          "validation": "Count files in .coderef/ and coderef/intelligence/"
+        },
+        {
+          "requirement": "Utilization increase",
+          "metric": "Percentage of output types used",
+          "target": "80%+ (12+/15 output types leveraged)",
+          "validation": "Audit tool usage in workflows (count scan/query/impact/patterns/etc calls)"
+        },
+        {
+          "requirement": "Workflow integration working",
+          "metric": "Scan results used in planning/docs/personas/testing",
+          "target": "4/4 workflows integrated",
+          "validation": "Test each workflow, verify scan data usage"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run pytest --cov"
+        },
+        {
+          "requirement": "Backward compatibility",
+          "metric": "Existing .coderef/ directories work",
+          "target": "0 breaking changes",
+          "validation": "All existing scan results still readable"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Scan speed",
+          "metric": "Total time to scan 5 servers",
+          "target": "<5 minutes",
+          "validation": "Time the full scan operation"
+        },
+        {
+          "requirement": "File loading",
+          "metric": "Time to load index.json (4MB)",
+          "target": "<500ms",
+          "validation": "Benchmark with time.time()"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Read-only file access",
+          "metric": "No file modifications outside .coderef/",
+          "target": "0 unintended writes",
+          "validation": "Audit file system operations"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "\u2610 Review complete plan for gaps",
+        "\u2610 Verify coderef CLI is functional (test `coderef --version`)",
+        "\u2610 Confirm CODEREF_CLI_PATH environment variable is set"
+      ],
+      "phase_1": [
+        "\u2610 SETUP-001: Create universal .coderef/ structure with exports/ subdirectory",
+        "\u2610 SETUP-002: Create processors/ and utils/ directories in coderef-context",
+        "\u2610 EXPORT-001: Implement export_processor.py with CLI wrapper logic",
+        "\u2610 EXPORT-002: Add coderef_export tool to coderef-context/server.py",
+        "\u2610 EXPORT-003: Test coderef_export with all 4 formats (json, jsonld, mermaid, dot)"
+      ],
+      "phase_2": [
+        "\u2610 SCAN-001: Run coderef scan on all 5 MCP servers",
+        "\u2610 SCAN-002: Organize scan results into .coderef/ directories",
+        "\u2610 SCAN-003: Copy to centralized coderef/intelligence/ hub"
+      ],
+      "phase_3": [
+        "\u2610 INTEGRATE-001: Update analysis_generator.py to call coderef_scan",
+        "\u2610 INTEGRATE-002: Update foundation_generator.py to use scan results",
+        "\u2610 INTEGRATE-003: Update personas to load project patterns from scans",
+        "\u2610 INTEGRATE-004: Update testing to use impact-based test selection"
+      ],
+      "phase_4": [
+        "\u2610 TEST-001: Unit tests for export_processor.py",
+        "\u2610 TEST-002: Integration tests for coderef_export tool",
+        "\u2610 TEST-003: End-to-end test (scan \u2192 organize \u2192 query)",
+        "\u2610 DOC-001: Update CODEREF-OUTPUT-CAPABILITIES.md with implementation details",
+        "\u2610 DOC-002: Create usage guide for .coderef/ structure",
+        "\u2610 DOC-003: Update server CLAUDE.md files with new capabilities"
+      ],
+      "finalization": [
+        "\u2610 All tests passing (>80% coverage)",
+        "\u2610 Verify 80%+ utilization target met (12+/15 output types)",
+        "\u2610 All 5 servers have populated .coderef/ directories",
+        "\u2610 Documentation complete and accurate",
+        "\u2610 Update workorder-log.txt with completion"
+      ]
+    }
+  }
+}

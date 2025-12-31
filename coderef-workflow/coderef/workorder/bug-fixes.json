@@ -1,0 +1,296 @@
+{
+  "document_type": "Bug Fixes Tracker",
+  "generated_by": "coderef-mcp-lead",
+  "feature": "create-workorder-flow",
+  "version": "1.0.0",
+  "created": "2025-12-30",
+  "status": "NEEDS_REVIEW",
+  "priority_summary": {
+    "critical": 2,
+    "major": 4,
+    "minor": 3,
+    "total": 9
+  },
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "severity": "critical",
+      "title": "Missing workorder log notification in Step 9 output",
+      "description": "The create_plan tool calls log_workorder to write to the global workorder-log.txt, but the /create-workorder command Step 9 output summary doesn't mention this to the user.",
+      "impact": "Users are unaware that their workorders are being tracked globally. They don't know about the global audit trail or how to query it with /get-workorder-log.",
+      "current_behavior": "Step 9 shows files created (context.json, analysis.json, plan.json, DELIVERABLES.md) but omits workorder-log.txt update.",
+      "expected_behavior": "Step 9 should inform users: 'Workorder logged to: coderef/workorder-log.txt' and 'View all workorders: /get-workorder-log'",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 240-268)"
+      ],
+      "proposed_fix": {
+        "type": "documentation_update",
+        "changes": [
+          "Add 2 lines to Step 9 output summary template",
+          "Add after 'Files Created:' section",
+          "Include: 'Workorder Tracking: Logged to coderef/workorder-log.txt (view with /get-workorder-log)'"
+        ]
+      },
+      "effort": "5 minutes",
+      "risk": "low"
+    },
+    {
+      "id": "BUG-002",
+      "severity": "critical",
+      "title": "No error handling for Step 3 (coderef_foundation_docs) failures",
+      "description": "If coderef_foundation_docs fails (timeout, @coderef/core CLI missing, permission errors), the entire workflow halts with no recovery path.",
+      "impact": "Complete workflow failure on large codebases (>50k LOC) or when @coderef/core CLI is unavailable. User loses all progress from Steps 1-2.",
+      "current_behavior": "Step 3 calls mcp__coderef_workflow__coderef_foundation_docs without try/catch. Any error terminates workflow.",
+      "expected_behavior": "Step 3 should catch errors, log warning, and fall back to lightweight analysis (basic file scanning without code intelligence).",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 89-113)",
+        "C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py (handle_coderef_foundation_docs)"
+      ],
+      "proposed_fix": {
+        "type": "code_change",
+        "changes": [
+          "Wrap Step 3 tool call in try/except block",
+          "On TimeoutError or ToolError: log warning, set foundation_docs_available=false",
+          "Continue to Step 4 with degraded analysis (skip code intelligence)",
+          "Update Step 9 output to show: 'Foundation docs: Generated' or 'Foundation docs: Skipped (fallback mode)'"
+        ]
+      },
+      "effort": "30 minutes",
+      "risk": "medium",
+      "testing_required": true
+    },
+    {
+      "id": "BUG-003",
+      "severity": "major",
+      "title": "Validation loop exhaustion saves low-quality plans",
+      "description": "If plan validation score remains < 90 after 3 iterations, the workflow saves the plan anyway with 'NEEDS_REVISION' status. User may proceed with incomplete plan.",
+      "impact": "Low-quality plans enter execution phase. Risk of incomplete task breakdowns, missing dependencies, or vague success criteria.",
+      "current_behavior": "After 3 failed validation iterations, Step 8 exits loop and saves plan with score < 90.",
+      "expected_behavior": "Offer user choice: (1) Save anyway, (2) Restart from Step 2 with better context, (3) Abort workflow and delete artifacts.",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 224-238)"
+      ],
+      "proposed_fix": {
+        "type": "workflow_enhancement",
+        "changes": [
+          "After 3rd iteration failure, use AskUserQuestion with 3 options",
+          "Option 1: 'Save incomplete plan (you can fix manually)'",
+          "Option 2: 'Restart from Step 2 (improve context gathering)'",
+          "Option 3: 'Abort workflow (delete all artifacts)'",
+          "Implement cleanup logic for Option 3"
+        ]
+      },
+      "effort": "1 hour",
+      "risk": "medium",
+      "testing_required": true
+    },
+    {
+      "id": "BUG-004",
+      "severity": "major",
+      "title": "Multi-agent decision happens after plan creation",
+      "description": "Step 6 asks about multi-agent mode AFTER plan.json is created in Step 5. If user cancels or changes mind, plan.json already exists on disk.",
+      "impact": "Confusing UX. User may want to regenerate plan with different structure for multi-agent mode. Wasted work if plan needs restructuring.",
+      "current_behavior": "Step 5 creates plan.json → Step 6 asks about multi-agent → If yes, generates communication.json as separate file.",
+      "expected_behavior": "Ask about multi-agent mode in Step 1 (with feature name) so plan generation can optimize structure for parallel execution.",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 150-188)"
+      ],
+      "proposed_fix": {
+        "type": "workflow_reordering",
+        "changes": [
+          "Move multi-agent question to Step 1 (combine with feature name prompt)",
+          "Pass multi_agent flag to create_plan tool",
+          "Plan generator adjusts phase structure for multi-agent (more granular tasks)",
+          "Auto-generate communication.json as part of Step 5 if multi_agent=true"
+        ]
+      },
+      "effort": "2 hours",
+      "risk": "high",
+      "testing_required": true,
+      "breaking_change": false
+    },
+    {
+      "id": "BUG-005",
+      "severity": "major",
+      "title": "Git repository dependency not validated upfront",
+      "description": "Step 11 requires git repository for commit & push, but no validation happens in Steps 1-10. Workflow fails at final step after 5-10 minutes of work.",
+      "impact": "Frustrating UX. User invests time in planning only to discover git is required at the end. All artifacts created but not committed.",
+      "current_behavior": "No git validation. Step 11 fails with 'fatal: not a git repository' if .git/ missing.",
+      "expected_behavior": "Step 1 checks for .git/ directory. If missing, warn user: 'Not a git repository - Step 11 (commit & push) will be skipped. Continue anyway?'",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 46-60)"
+      ],
+      "proposed_fix": {
+        "type": "validation_enhancement",
+        "changes": [
+          "Add git check after feature name prompt in Step 1",
+          "Check: project_path / '.git' exists",
+          "If missing: Use AskUserQuestion to confirm or abort",
+          "Set git_available flag for conditional Step 11 execution",
+          "Update Step 11 to skip gracefully if git_available=false"
+        ]
+      },
+      "effort": "45 minutes",
+      "risk": "low",
+      "testing_required": true
+    },
+    {
+      "id": "BUG-006",
+      "severity": "major",
+      "title": "Step 3 may timeout on large codebases",
+      "description": "coderef_foundation_docs generates 3-4 large markdown files sequentially. On codebases >50k LOC, this can exceed Claude Code's response timeout (2-3 minutes).",
+      "impact": "Workflow failure on large projects. User forced to skip Step 3 or split into smaller projects.",
+      "current_behavior": "Step 3 generates all foundation docs in single tool call. No chunking or progress feedback.",
+      "expected_behavior": "Step 3 should use sequential generation (already implemented in coderef-docs v3.2.0) with progress markers.",
+      "affected_files": [
+        "C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py (handle_coderef_foundation_docs)"
+      ],
+      "proposed_fix": {
+        "type": "integration_verification",
+        "changes": [
+          "Verify coderef-workflow is using coderef-docs v3.2.0+",
+          "Check that coderef_foundation_docs tool uses sequential generation",
+          "Confirm progress markers [1/5], [2/5], etc. are displayed",
+          "If not: Update dependency to coderef-docs v3.2.0 or newer"
+        ]
+      },
+      "effort": "15 minutes (verification only)",
+      "risk": "low",
+      "testing_required": true,
+      "note": "May already be fixed in coderef-docs v3.2.0 - requires verification"
+    },
+    {
+      "id": "BUG-007",
+      "severity": "minor",
+      "title": "No progress indicators during Steps 3-5",
+      "description": "Steps 3-5 (foundation docs, analysis, plan creation) can take 1-3 minutes each with no visual feedback. User may think system is frozen.",
+      "impact": "Poor UX. User confusion about workflow status. May interrupt thinking system is hung.",
+      "current_behavior": "Silent execution. No progress updates between tool calls.",
+      "expected_behavior": "Show progress markers: '[Step 3/11] Generating foundation docs...' with estimated time or spinner.",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (all steps)"
+      ],
+      "proposed_fix": {
+        "type": "ux_enhancement",
+        "changes": [
+          "Add explicit progress messages between each step",
+          "Format: '[Step X/11] {Action}... (estimated: Y seconds)'",
+          "Use logger.info() or direct text output before each tool call",
+          "Show completion confirmations: '✓ Step X complete'"
+        ]
+      },
+      "effort": "30 minutes",
+      "risk": "low",
+      "testing_required": false
+    },
+    {
+      "id": "BUG-008",
+      "severity": "minor",
+      "title": "Step 10 output format unclear in documentation",
+      "description": "Command says 'generates TodoWrite task list' but doesn't show example output format. User doesn't know what to expect.",
+      "impact": "Minor confusion. User needs to run workflow to see what task list looks like.",
+      "current_behavior": "Step 10 description shows example but not the actual CLI checklist format.",
+      "expected_behavior": "Show exact output format with TodoWrite emoji checkboxes and task IDs.",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (lines 318-344)"
+      ],
+      "proposed_fix": {
+        "type": "documentation_update",
+        "changes": [
+          "Add realistic example output to Step 10 description",
+          "Show: '☐ WO-AUTH-001 | SETUP-001: Install dependencies'",
+          "Include note about Lloyd's CLI checklist integration",
+          "Reference /align-plan for regenerating task list"
+        ]
+      },
+      "effort": "10 minutes",
+      "risk": "none",
+      "testing_required": false
+    },
+    {
+      "id": "BUG-009",
+      "severity": "minor",
+      "title": "No dry-run mode for preview without file creation",
+      "description": "Users cannot preview the plan without creating actual files in coderef/workorder/. Makes experimentation difficult.",
+      "impact": "Cluttered workorder directory with test features. User must manually delete failed experiments.",
+      "current_behavior": "All steps create files immediately. No preview mode.",
+      "expected_behavior": "Support --dry-run or --preview flag to show validation results without saving files.",
+      "affected_files": [
+        "~/.claude/commands/create-workorder.md (all steps)",
+        "C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py (all handlers)"
+      ],
+      "proposed_fix": {
+        "type": "feature_enhancement",
+        "changes": [
+          "Add optional dry_run parameter to gather_context, create_plan tools",
+          "If dry_run=true: generate all JSON in-memory, skip file writes",
+          "Show validation results and plan summary",
+          "Output: 'Preview complete. Run without --dry-run to save.'",
+          "Requires schema updates to all affected tools"
+        ]
+      },
+      "effort": "3 hours",
+      "risk": "medium",
+      "testing_required": true,
+      "priority": "low",
+      "note": "Enhancement, not a bug - consider for v2.0"
+    }
+  ],
+  "testing_requirements": {
+    "unit_tests": [
+      "Validation loop exhaustion (BUG-003)",
+      "Git validation logic (BUG-005)",
+      "Error handling fallbacks (BUG-002)"
+    ],
+    "integration_tests": [
+      "Full workflow with Step 3 timeout simulation",
+      "Multi-agent flow with early decision (BUG-004)",
+      "Dry-run mode end-to-end (BUG-009)"
+    ],
+    "manual_tests": [
+      "Large codebase (>50k LOC) foundation docs generation",
+      "Non-git repository workflow",
+      "Validation loop with intentionally bad context"
+    ]
+  },
+  "implementation_order": [
+    {
+      "phase": "Hot Fixes (Week 1)",
+      "bugs": ["BUG-001", "BUG-007", "BUG-008"],
+      "estimated_effort": "45 minutes",
+      "risk": "low"
+    },
+    {
+      "phase": "Critical Fixes (Week 2)",
+      "bugs": ["BUG-002", "BUG-005", "BUG-006"],
+      "estimated_effort": "2 hours",
+      "risk": "medium"
+    },
+    {
+      "phase": "Major Improvements (Week 3-4)",
+      "bugs": ["BUG-003", "BUG-004"],
+      "estimated_effort": "3 hours",
+      "risk": "high"
+    },
+    {
+      "phase": "Future Enhancements (v2.0)",
+      "bugs": ["BUG-009"],
+      "estimated_effort": "3 hours",
+      "risk": "medium"
+    }
+  ],
+  "related_workorders": [
+    {
+      "id": "WO-CREATE-WORKORDER-FIXES-001",
+      "description": "Implement hot fixes and critical fixes for /create-workorder flow",
+      "status": "pending",
+      "created": "2025-12-30"
+    }
+  ],
+  "notes": [
+    "BUG-006 may already be fixed in coderef-docs v3.2.0 - verify integration",
+    "BUG-004 is highest risk due to workflow reordering - test thoroughly",
+    "BUG-009 is an enhancement, not a true bug - defer to v2.0",
+    "All documentation bugs (BUG-001, BUG-007, BUG-008) can be fixed in single commit"
+  ]
+}

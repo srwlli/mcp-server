@@ -750,6 +750,205 @@ result = await call_tool("coderef_context", "coderef_patterns", {
 
 ---
 
+## Automation: scan-all.py Script
+
+**Location:** `C:/Users/willh/Desktop/projects/coderef-system/scripts/scan-all.py`
+
+**Purpose:** Automated script to populate the **complete universal `.coderef/` structure** for any project.
+
+### What It Does
+
+Runs 15 CLI commands in 4 phases to generate the full code intelligence structure:
+
+**Phase 1: Root Files (4)**
+- `index.json` - All code elements (scan)
+- `graph.json` - Dependency graph (query)
+- `context.json` - Comprehensive context (JSON)
+- `context.md` - Comprehensive context (Markdown)
+
+**Phase 2: Reports (4)**
+- `reports/patterns.json` - Code patterns
+- `reports/coverage.json` - Test coverage
+- `reports/validation.json` - Reference validation
+- `reports/drift.json` - Drift detection
+
+**Phase 3: Diagrams (4)**
+- `diagrams/dependencies.mmd` - Mermaid dependencies
+- `diagrams/dependencies.dot` - GraphViz dependencies
+- `diagrams/calls.mmd` - Call graph
+- `diagrams/imports.mmd` - Import graph
+
+**Phase 4: Exports (3)**
+- `exports/graph.json` - JSON export
+- `exports/graph.jsonld` - JSON-LD export
+- `exports/diagram-wrapped.md` - Wrapped Mermaid
+
+### Usage
+
+```bash
+# Scan a single project
+cd C:/Users/willh/Desktop/projects/coderef-system
+python scripts/scan-all.py "C:/Users/willh/.mcp-servers/coderef-context"
+
+# Interactive mode
+python scripts/scan-all.py
+# Prompts: Enter project path:
+
+# Scan all MCP servers
+for server in coderef-context coderef-docs coderef-workflow coderef-personas coderef-testing papertrail; do
+    python scripts/scan-all.py "C:/Users/willh/.mcp-servers/$server"
+done
+```
+
+### Output
+
+```
+PHASE 1: ROOT LEVEL FILES
+========================================
+[*] Running: node packages/cli/dist/cli.js scan "..." --json
+[OK] Saved to .coderef/index.json (24.3 KB)
+...
+
+SUMMARY
+========================================
+Success:  12
+Failed:   0
+Skipped:  3
+
+DIRECTORY STRUCTURE
+========================================
+.coderef/
+├── index.json (24.3 KB)
+├── graph.json (156.2 KB)
+├── context.json (89.5 KB)
+├── context.md (45.1 KB)
+├── reports/
+│   ├── patterns.json (12.4 KB)
+│   ├── coverage.json (8.9 KB)
+│   └── validation.json (5.2 KB)
+├── diagrams/
+│   ├── dependencies.mmd (15.3 KB)
+│   └── dependencies.dot (18.7 KB)
+└── exports/
+    ├── graph.json (156.2 KB)
+    └── graph.jsonld (203.4 KB)
+```
+
+### Benefits
+
+- **Complete structure** - All 15 files in one command
+- **Automated** - No manual CLI commands
+- **Statistics** - Success/failed/skipped tracking
+- **Tree view** - Visual directory structure
+- **Consistent** - Same structure across all projects
+
+**Note:** Much more comprehensive than running `coderef scan` alone. Generates the full universal `.coderef/` structure as defined in the ecosystem documentation.
+
+---
+
+## Additional Automation Scripts
+
+### 1. populate-coderef.py (Complete Structure Generator)
+
+**Location:** `C:/Users/willh/Desktop/projects/coderef-system/scripts/populate-coderef.py`
+
+**Purpose:** Generate complete universal .coderef/ structure with all 16 output types.
+
+**Features:**
+- Runs 16 CLI commands in 4 phases
+- Creates all directories (.coderef/reports, diagrams, exports)
+- Handles errors gracefully (skips on failure, continues)
+- Shows tree view and statistics summary
+
+**Usage:**
+```bash
+python scripts/populate-coderef.py "/path/to/project"
+python scripts/populate-coderef.py "C:/Users/willh/.mcp-servers/coderef-context"
+```
+
+**Output:** 13/16 success rate (some CLI flags may be unsupported)
+
+**Test Results:**
+- ✅ Works: index.json, graph.json, context.md, diagrams, exports
+- ❌ Issues: context.json (-f flag unsupported), coverage.json (empty)
+
+---
+
+### 2. parse_coderef_data.py (Preprocessor)
+
+**Location:** `C:/Users/willh/Desktop/projects/coderef-system/packages/parse_coderef_data.py`
+
+**Purpose:** Parse large .coderef/index.json files and extract statistics for doc generation.
+
+**What It Does:**
+- Reads .coderef/index.json (handles large files like 527.9KB)
+- Groups elements by type, file, package
+- Calculates statistics (total elements, by type, exported count)
+- Outputs .coderef/doc_generation_data.json (summarized data)
+
+**Usage:**
+```bash
+cd /path/to/project
+python C:/Users/willh/Desktop/projects/coderef-system/packages/parse_coderef_data.py
+```
+
+**Output:**
+```json
+{
+  "statistics": {
+    "total_elements": 247,
+    "by_type": {"function": 120, "class": 45, ...},
+    "exported": 89
+  },
+  "top_files": [["server.py", 23], ...],
+  "sample_elements": {...}
+}
+```
+
+**Use Case:** Agents use this to preprocess data before generating foundation docs (avoids reading huge index.json directly).
+
+---
+
+### 3. generate_docs.py (Foundation Doc Generator)
+
+**Location:** `.coderef/generate_docs.py` (created per-project by agents)
+
+**Purpose:** Generate foundation documentation (README, ARCHITECTURE, API) from .coderef/index.json.
+
+**What It Generates:**
+1. **README.md** - Overview, statistics, project structure, key components
+2. **ARCHITECTURE.md** - Module organization, core components, design patterns
+3. **API.md** - All functions and classes grouped by file
+
+**Usage:**
+```bash
+cd /path/to/project/.coderef
+python generate_docs.py
+```
+
+**Output:** `.coderef/generated-docs/` with 3 markdown files
+
+**Example Output:**
+```
+[OK] Generated README.md
+   - 1432 characters
+   - 43 lines
+[OK] Generated ARCHITECTURE.md
+   - 1876 characters
+   - 67 lines
+[OK] Generated API.md
+   - 6621 characters
+   - 235 lines
+```
+
+**How Agents Use It:**
+1. Run populate-coderef.py to generate .coderef/ structure
+2. Run parse_coderef_data.py to preprocess (optional, for large index files)
+3. Run generate_docs.py to create foundation docs
+4. Move docs from .coderef/generated-docs/ to coderef/foundation-docs/
+
+---
+
 ## Troubleshooting
 
 ### "Error: CLI path not found"

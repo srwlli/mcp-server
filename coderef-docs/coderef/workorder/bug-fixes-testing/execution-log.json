@@ -1,0 +1,140 @@
+[
+  {
+    "timestamp": "2025-12-30T19:38:53.931680",
+    "workorder_id": "WO-BUG-FIXES-TESTING-001",
+    "feature_name": "bug-fixes-testing",
+    "task_count": 26,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Review bug-fixes.json testing_requirements section",
+        "activeForm": "PRE-IMPL-001: Reviewing bug-fixes.json testing_requirements section",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-002: Read existing test files in tests/ for patterns",
+        "activeForm": "PRE-IMPL-002: Reading existing test files in tests/ for patterns",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-003: Verify pytest 8.0+ installed (pip list | grep pytest)",
+        "activeForm": "PRE-IMPL-003: Verifying pytest 8.0+ installed (pip list | grep pytest)",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-001: Create pytest.ini with coverage config",
+        "activeForm": "SETUP-001: Creating pytest.ini with coverage config",
+        "status": "pending"
+      },
+      {
+        "content": "SETUP-002: Create tests/conftest.py with fixtures",
+        "activeForm": "SETUP-002: Creating tests/conftest.py with fixtures",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-001: Write test for BUG-001 (workorder log)",
+        "activeForm": "TEST-001: Writing test for BUG-001 (workorder log)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-002: Write test for BUG-002 (error handling)",
+        "activeForm": "TEST-002: Writing test for BUG-002 (error handling)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-003: Write test for BUG-003 (validation loop)",
+        "activeForm": "TEST-003: Writing test for BUG-003 (validation loop)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-004: Write test for BUG-004 (multi-agent timing)",
+        "activeForm": "TEST-004: Writing test for BUG-004 (multi-agent timing)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-005: Write test for BUG-005 (git validation)",
+        "activeForm": "TEST-005: Writing test for BUG-005 (git validation)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-006: Write test for BUG-006 (timeout handling)",
+        "activeForm": "TEST-006: Writing test for BUG-006 (timeout handling)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-007: Write test for BUG-007 (progress indicators)",
+        "activeForm": "TEST-007: Writing test for BUG-007 (progress indicators)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-008: Write test for BUG-008 (output format)",
+        "activeForm": "TEST-008: Writing test for BUG-008 (output format)",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-009: Write test for BUG-009 (dry-run mode)",
+        "activeForm": "TEST-009: Writing test for BUG-009 (dry-run mode)",
+        "status": "pending"
+      },
+      {
+        "content": "INTEG-001: Write integration test for Step 3 timeout",
+        "activeForm": "INTEG-001: Writing integration test for Step 3 timeout",
+        "status": "pending"
+      },
+      {
+        "content": "INTEG-002: Write integration test for multi-agent flow",
+        "activeForm": "INTEG-002: Writing integration test for multi-agent flow",
+        "status": "pending"
+      },
+      {
+        "content": "INTEG-003: Write integration test for dry-run e2e",
+        "activeForm": "INTEG-003: Writing integration test for dry-run e2e",
+        "status": "pending"
+      },
+      {
+        "content": "MANUAL-001: Document manual test for large codebase",
+        "activeForm": "MANUAL-001: Documenting manual test for large codebase",
+        "status": "pending"
+      },
+      {
+        "content": "MANUAL-002: Document manual test for non-git repo",
+        "activeForm": "MANUAL-002: Documenting manual test for non-git repo",
+        "status": "pending"
+      },
+      {
+        "content": "MANUAL-003: Document manual test for bad context",
+        "activeForm": "MANUAL-003: Documenting manual test for bad context",
+        "status": "pending"
+      },
+      {
+        "content": "VERIFY-001: Run pytest with coverage",
+        "activeForm": "VERIFY-001: Running pytest with coverage",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update tests/README.md",
+        "activeForm": "DOC-001: Updating tests/README.md",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (pytest exit code 0)",
+        "activeForm": "FINALIZA-001: Alling tests passing (pytest exit code 0)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Coverage report generated (htmlcov/index.html)",
+        "activeForm": "FINALIZA-002: Coverageing report generated (htmlcov/index.html)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: Manual test procedures reviewed",
+        "activeForm": "FINALIZA-003: Manualing test procedures reviewed",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: Test README updated with instructions",
+        "activeForm": "FINALIZA-004: Testing README updated with instructions",
+        "status": "pending"
+      }
+    ]
+  }
+]

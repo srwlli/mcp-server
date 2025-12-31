@@ -1,0 +1,206 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture Reference - coderef-docs MCP Server\n\n**Version:** 3.2.0\n**Last Updated:** 2025-12-27\n**Style:** Modular Python with MCP Protocol\n\n---\n\n## Purpose\n\nThis document describes the system architecture, design principles, data flow, and integration patterns of the coderef-docs MCP server.\n\n---\n\n## Overview\n\nThe coderef-docs MCP server is designed as a **documentation-focused microservice** that integrates with the Model Context Protocol to provide AI agents with 11 specialized documentat",
+      "headers": [
+        "Architecture Reference - coderef-docs MCP Server",
+        "Purpose",
+        "Overview",
+        "System Architecture",
+        "High-Level Architecture",
+        "Component Architecture",
+        "Layer 1: MCP Protocol Layer",
+        "Layer 2: Handler Layer",
+        "Layer 3: Generator Layer",
+        "Layer 4: Extraction Layer"
+      ],
+      "size": 14198
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Reference - coderef-docs MCP Server\n\n**Version:** 3.2.0\n**Last Updated:** 2025-12-28\n**Framework:** MCP (Model Context Protocol) 1.0+\n\n---\n\n## Purpose\n\nThis document serves as the complete API reference for the coderef-docs MCP server, documenting all 11 tools, their schemas, request/response formats, and integration patterns. It enables AI agents and developers to understand and invoke documentation generation tools programmatically.\n\n---\n\n## Overview\n\nThe coderef-docs MCP server exposes ",
+      "headers": [
+        "API Reference - coderef-docs MCP Server",
+        "Purpose",
+        "Overview",
+        "Authentication",
+        "Base URL / Endpoint",
+        "API Domains",
+        "1. Documentation Generation",
+        "Request",
+        "Response",
+        "2. Changelog Management"
+      ],
+      "size": 18100
+    },
+    "COMPONENTS.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Components Reference - coderef-docs MCP Server\n\n**Version:** 3.2.0\n**Last Updated:** 2025-12-27\n**Architecture:** Modular Python MCP Server\n\n---\n\n## Purpose\n\nThis document describes the software components (modules, generators, handlers, utilities) that make up the coderef-docs MCP server architecture.\n\n---\n\n## Overview\n\nThe coderef-docs server is organized into 8 main component categories with clear separation of concerns.\n\n**Component Hierarchy:**\n```\nserver.py (MCP entry point)\n\u251c\u2500\u2500 tool_han",
+      "headers": [
+        "Components Reference - coderef-docs MCP Server",
+        "Purpose",
+        "Overview",
+        "1. Core Server Components",
+        "server.py",
+        "tool_handlers.py",
+        "2. Generator Components",
+        "generators/base_generator.py",
+        "generators/foundation_generator.py",
+        "generators/changelog_generator.py"
+      ],
+      "size": 9785
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Data Schema Reference - coderef-docs MCP Server\n\n**Version:** 3.2.0\n**Last Updated:** 2025-12-27\n**Schema Format:** JSON (file-based storage)\n\n---\n\n## Purpose\n\nThis document defines all data schemas used by the coderef-docs MCP server for changelogs, templates, standards, and configuration data.\n\n---\n\n## Overview\n\nThe coderef-docs server uses file-based JSON storage. No database required. All schemas are validated using jsonschema.\n\n**Schema Categories:**\n1. Changelog Schema\n2. Template Metada",
+      "headers": [
+        "Data Schema Reference - coderef-docs MCP Server",
+        "Purpose",
+        "Overview",
+        "1. Changelog Schema",
+        "CHANGELOG.json Structure",
+        "2. Template Metadata Schema",
+        "Template Info Structure",
+        "3. Standards Schema",
+        "Standards Document Structure",
+        "4. Risk Assessment Schema"
+      ],
+      "size": 5109
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# coderef-docs\n\n**Version:** 3.2.0\n**Status:** \u2705 Production Ready\n**Protocol:** Model Context Protocol (MCP)\n\n---\n\n## Purpose\n\n**coderef-docs** is an MCP server providing 10 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.\n\n**Core Innovation:** Sequential foundation doc generation with context injecti",
+      "headers": [
+        "coderef-docs",
+        "Purpose",
+        "Quick Start",
+        "Installation",
+        "Clone repository",
+        "Install dependencies",
+        "Run server",
+        "MCP Configuration",
+        "Usage (via Slash Commands)",
+        "Features"
+      ],
+      "size": 11413
+    }
+  },
+  "inventory_data": {
+    "file_inventory": {
+      "total_files": 138,
+      "categories": [],
+      "high_risk_files": 4
+    },
+    "api_endpoints": {
+      "total_endpoints": 0,
+      "frameworks": [],
+      "undocumented_endpoints": 0
+    },
+    "configuration": {
+      "total_files": 0,
+      "formats_detected": [],
+      "sensitive_values_found": 0
+    },
+    "test_infrastructure": {
+      "total_test_files": 0,
+      "frameworks": [],
+      "coverage": "unknown",
+      "test_readiness_score": 0
+    },
+    "documentation": {
+      "total_files": 62,
+      "formats": [
+        "markdown",
+        "html"
+      ],
+      "quality_score": 100,
+      "coverage_percentage": 27
+    },
+    "available": [
+      "manifest.json",
+      "api.json",
+      "config.json",
+      "tests.json",
+      "documentation.json"
+    ],
+    "missing": [
+      "dependencies.json",
+      "database.json"
+    ]
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "Flask",
+    "database": "unknown",
+    "testing": "pytest",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "generators",
+      "tests",
+      "coderef\\archived",
+      "coderef\\future",
+      "coderef\\inventory",
+      "tests\\integration"
+    ],
+    "file_counts": {
+      "tests": 20,
+      "generators": 17,
+      "coderef\\inventory": 14,
+      "coderef\\archived": 11,
+      "coderef\\future": 11,
+      "tests\\integration": 11,
+      "templates\\power": 8,
+      "tests\\unit\\handlers": 8,
+      "coderef\\archived\\planning-workflow": 8,
+      "coderef\\archived\\rename-docs-mcp-to-coderef-docs": 8
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ],
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Project Analysis",
+    "workorder_id": "WO-BUG-FIXES-TESTING-001",
+    "feature_id": "bug-fixes-testing",
+    "last_updated": "2025-12-30",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-01-29"
+  }
+}

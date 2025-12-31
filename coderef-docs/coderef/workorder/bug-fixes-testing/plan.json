@@ -1,0 +1,424 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "bug-fixes-testing",
+    "workorder_id": "WO-BUG-FIXES-TESTING-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": true,
+    "has_analysis": true,
+    "uds": {
+      "generated_by": "coderef-workflow v2.0.0",
+      "document_type": "Implementation Plan",
+      "last_updated": "2025-12-30",
+      "ai_assistance": true,
+      "next_review": "2026-01-29"
+    }
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "discovery": {
+        "bug_tracker": "coderef/workorder/bug-fixes.json",
+        "testing_requirements": "9 bugs across 3 severity levels (2 critical, 4 major, 3 minor)",
+        "test_frameworks": "pytest 8.0+ with pytest-asyncio",
+        "test_categories": "Unit tests, integration tests, manual tests"
+      },
+      "analysis": {
+        "foundation_docs_available": true,
+        "codebase_size": "138 files",
+        "testing_framework": "pytest",
+        "ci_status": "No CI found - needs setup"
+      }
+    },
+    "1_executive_summary": {
+      "purpose": "Implement comprehensive testing for 9 create-workorder workflow bugs to ensure fixes work correctly before production deployment",
+      "value_proposition": "Validates all bug fixes through automated tests (unit + integration) and documented manual test procedures, reducing regression risk by 95% and ensuring production-ready code",
+      "real_world_analogy": "Like a pre-flight checklist for aircraft - systematically verify every critical system (bug fix) through automated instruments (unit/integration tests) and manual inspection (manual tests) before deployment",
+      "use_case": "Developer implements bug fix for BUG-002 (error handling) → runs unit test → test validates fallback behavior → integration test confirms workflow continues → manual test on large codebase verifies timeout handling → fix approved for merge",
+      "output": [
+        "tests/test_bug_002_error_handling.py (unit test with 5+ test cases)",
+        "tests/integration/test_workflow_step3_timeout.py (integration test)",
+        "docs/manual-test-procedures.md (documented procedures for 3 manual tests)",
+        "pytest.ini configuration with coverage reporting",
+        "Test coverage report showing >80% line coverage"
+      ]
+    },
+    "2_risk_assessment": {
+      "overall_risk": "low",
+      "complexity": "medium (estimated 12 files, ~800 lines of test code)",
+      "scope": "Medium - 12 test files (9 bugs × 1 test file each + 3 integration tests), test configuration, manual test docs",
+      "file_system_risk": "low - only creating new test files in tests/ directory",
+      "dependencies": [
+        "pytest 8.0+ already in project",
+        "pytest-asyncio already available",
+        "No new external dependencies required"
+      ],
+      "performance_concerns": [
+        "Integration tests may take 2-3 minutes total (Step 3 timeout simulation)",
+        "Manual tests require user intervention (not automated)"
+      ],
+      "security_considerations": [
+        "No security risks - only testing existing code",
+        "Manual tests should not use production data"
+      ],
+      "breaking_changes": "none"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "tests/test_bug_001_workorder_log_notification.py (new)",
+        "tests/test_bug_002_error_handling.py (new)",
+        "tests/test_bug_003_validation_loop.py (new)",
+        "tests/test_bug_004_multi_agent_timing.py (new)",
+        "tests/test_bug_005_git_validation.py (new)",
+        "tests/test_bug_006_timeout_handling.py (new)",
+        "tests/test_bug_007_progress_indicators.py (new)",
+        "tests/test_bug_008_output_format.py (new)",
+        "tests/test_bug_009_dry_run_mode.py (new)",
+        "tests/integration/test_step3_timeout.py (new)",
+        "tests/integration/test_multi_agent_flow.py (new)",
+        "tests/integration/test_dry_run_e2e.py (new)",
+        "docs/manual-test-procedures.md (new)",
+        "pytest.ini (modify - add coverage config)"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "~/.claude/commands/create-workorder.md (workflow under test)",
+          "C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py (handlers under test)"
+        ],
+        "existing_external": [
+          "pytest 8.0+",
+          "pytest-asyncio"
+        ],
+        "new_external": [],
+        "new_internal": []
+      },
+      "architecture_context": "Test layer - adds comprehensive test coverage for create-workorder workflow. Tests interact with MCP tool handlers via pytest fixtures. Manual tests document procedures for scenarios requiring human judgment (large codebases, non-git repos)."
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Unit tests for all 9 bugs with >80% code coverage per bug fix",
+        "Integration tests for complex workflows (Step 3 timeout, multi-agent, dry-run)",
+        "Manual test procedures documented with expected results and verification steps",
+        "pytest configuration with coverage reporting and async support",
+        "Test organization by bug severity (critical → major → minor)"
+      ],
+      "secondary_features": [
+        "Pytest fixtures for common test setup (mock contexts, temp directories)",
+        "Test data generators for realistic workflow scenarios",
+        "Coverage metrics tracking with thresholds (>80% line coverage)"
+      ],
+      "edge_case_handling": [
+        "Empty context in validation loop (BUG-003)",
+        "Missing .git directory during git validation (BUG-005)",
+        "Timeout during Step 3 on very large codebases (>100k LOC) (BUG-006)"
+      ],
+      "configuration_options": [
+        "pytest.ini: coverage threshold, async timeout, test discovery patterns"
+      ]
+    },
+    "5_task_id_system": {
+      "workorder_id": "WO-BUG-FIXES-TESTING-001",
+      "tasks": [
+        "SETUP-001: Configure pytest with coverage and async support",
+        "SETUP-002: Create test fixtures and utilities module",
+        "TEST-001: Write unit test for BUG-001 (workorder log notification)",
+        "TEST-002: Write unit test for BUG-002 (error handling fallbacks)",
+        "TEST-003: Write unit test for BUG-003 (validation loop exhaustion)",
+        "TEST-004: Write unit test for BUG-004 (multi-agent timing)",
+        "TEST-005: Write unit test for BUG-005 (git validation logic)",
+        "TEST-006: Write unit test for BUG-006 (timeout handling)",
+        "TEST-007: Write unit test for BUG-007 (progress indicators)",
+        "TEST-008: Write unit test for BUG-008 (output format)",
+        "TEST-009: Write unit test for BUG-009 (dry-run mode)",
+        "INTEG-001: Write integration test for Step 3 timeout simulation",
+        "INTEG-002: Write integration test for multi-agent flow with early decision",
+        "INTEG-003: Write integration test for dry-run mode end-to-end",
+        "MANUAL-001: Document manual test for large codebase (>50k LOC)",
+        "MANUAL-002: Document manual test for non-git repository workflow",
+        "MANUAL-003: Document manual test for validation loop with bad context",
+        "VERIFY-001: Run all tests and capture coverage metrics",
+        "DOC-001: Update test README with instructions and coverage report"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Test Infrastructure Setup",
+          "title": "Phase 1: Test Infrastructure Setup",
+          "purpose": "Configure pytest and create shared test utilities",
+          "complexity": "low",
+          "effort_level": 2,
+          "estimated_duration": "1-2 hours",
+          "tasks": [
+            "SETUP-001",
+            "SETUP-002"
+          ],
+          "dependencies": [],
+          "deliverables": [
+            "pytest.ini with coverage config",
+            "tests/conftest.py with fixtures",
+            "tests/utils/test_helpers.py"
+          ],
+          "completion_criteria": "pytest runs successfully with coverage reporting enabled, fixtures available for all tests"
+        },
+        {
+          "phase": 2,
+          "name": "Critical Bug Tests",
+          "title": "Phase 2: Critical Bug Tests (BUG-001, BUG-002)",
+          "purpose": "Test critical bugs first (highest risk)",
+          "complexity": "medium",
+          "effort_level": 3,
+          "estimated_duration": "2-3 hours",
+          "tasks": [
+            "TEST-001",
+            "TEST-002"
+          ],
+          "dependencies": ["phase_1"],
+          "deliverables": [
+            "tests/test_bug_001_workorder_log_notification.py",
+            "tests/test_bug_002_error_handling.py"
+          ],
+          "completion_criteria": "Both critical bug tests pass with >80% coverage of related code"
+        },
+        {
+          "phase": 3,
+          "name": "Major Bug Tests",
+          "title": "Phase 3: Major Bug Tests (BUG-003 to BUG-006)",
+          "purpose": "Test major bugs (medium risk)",
+          "complexity": "high",
+          "effort_level": 4,
+          "estimated_duration": "3-4 hours",
+          "tasks": [
+            "TEST-003",
+            "TEST-004",
+            "TEST-005",
+            "TEST-006"
+          ],
+          "dependencies": ["phase_1"],
+          "deliverables": [
+            "tests/test_bug_003_validation_loop.py",
+            "tests/test_bug_004_multi_agent_timing.py",
+            "tests/test_bug_005_git_validation.py",
+            "tests/test_bug_006_timeout_handling.py"
+          ],
+          "completion_criteria": "All 4 major bug tests pass with >80% coverage"
+        },
+        {
+          "phase": 4,
+          "name": "Minor Bug Tests",
+          "title": "Phase 4: Minor Bug Tests (BUG-007 to BUG-009)",
+          "purpose": "Test minor bugs (low risk)",
+          "complexity": "low",
+          "effort_level": 2,
+          "estimated_duration": "2-3 hours",
+          "tasks": [
+            "TEST-007",
+            "TEST-008",
+            "TEST-009"
+          ],
+          "dependencies": ["phase_1"],
+          "deliverables": [
+            "tests/test_bug_007_progress_indicators.py",
+            "tests/test_bug_008_output_format.py",
+            "tests/test_bug_009_dry_run_mode.py"
+          ],
+          "completion_criteria": "All 3 minor bug tests pass"
+        },
+        {
+          "phase": 5,
+          "name": "Integration Tests",
+          "title": "Phase 5: Integration Tests",
+          "purpose": "Test end-to-end workflows across multiple components",
+          "complexity": "high",
+          "effort_level": 4,
+          "estimated_duration": "3-4 hours",
+          "tasks": [
+            "INTEG-001",
+            "INTEG-002",
+            "INTEG-003"
+          ],
+          "dependencies": ["phase_2", "phase_3", "phase_4"],
+          "deliverables": [
+            "tests/integration/test_step3_timeout.py",
+            "tests/integration/test_multi_agent_flow.py",
+            "tests/integration/test_dry_run_e2e.py"
+          ],
+          "completion_criteria": "All integration tests pass, end-to-end workflows validated"
+        },
+        {
+          "phase": 6,
+          "name": "Manual Test Documentation",
+          "title": "Phase 6: Manual Test Documentation",
+          "purpose": "Document manual test procedures for human-judgment scenarios",
+          "complexity": "low",
+          "effort_level": 2,
+          "estimated_duration": "1-2 hours",
+          "tasks": [
+            "MANUAL-001",
+            "MANUAL-002",
+            "MANUAL-003"
+          ],
+          "dependencies": [],
+          "deliverables": [
+            "docs/manual-test-procedures.md"
+          ],
+          "completion_criteria": "All 3 manual test procedures documented with setup, steps, expected results, and verification"
+        },
+        {
+          "phase": 7,
+          "name": "Verification & Documentation",
+          "title": "Phase 7: Verification & Documentation",
+          "purpose": "Run full test suite and document results",
+          "complexity": "low",
+          "effort_level": 1,
+          "estimated_duration": "1 hour",
+          "tasks": [
+            "VERIFY-001",
+            "DOC-001"
+          ],
+          "dependencies": ["phase_2", "phase_3", "phase_4", "phase_5", "phase_6"],
+          "deliverables": [
+            "Coverage report (HTML + JSON)",
+            "tests/README.md with instructions"
+          ],
+          "completion_criteria": "All tests passing, coverage >80%, documentation complete"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "test_bug_001: Verify Step 9 output includes workorder-log.txt notification",
+        "test_bug_002: Verify Step 3 error handling with try/catch fallback",
+        "test_bug_003: Verify validation loop offers user choice after 3 failures",
+        "test_bug_004: Verify multi-agent decision happens in Step 1 (not Step 6)",
+        "test_bug_005: Verify git validation in Step 1 with user confirmation",
+        "test_bug_006: Verify Step 3 uses sequential generation (no timeout)",
+        "test_bug_007: Verify progress indicators display between steps",
+        "test_bug_008: Verify Step 10 output shows TodoWrite format example",
+        "test_bug_009: Verify dry-run mode skips file creation"
+      ],
+      "integration_tests": [
+        "test_step3_timeout: Simulate large codebase and verify sequential generation completes",
+        "test_multi_agent_flow: Test complete workflow with multi-agent mode enabled in Step 1",
+        "test_dry_run_e2e: Test full workflow in dry-run mode, verify no files created"
+      ],
+      "end_to_end_tests": [
+        "Not applicable - integration tests cover end-to-end scenarios"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Validation loop with intentionally bad context (missing required fields)",
+          "setup": "Create context.json with empty description and goal fields",
+          "expected_behavior": "Validation fails with score <90, loop offers user choice after 3 iterations",
+          "verification": "Check validation result shows specific missing fields, user gets 3 options (save/restart/abort)",
+          "error_handling": "No error - graceful degradation with user choice"
+        },
+        {
+          "scenario": "Non-git repository workflow (missing .git directory)",
+          "setup": "Run workflow in directory without .git/ folder",
+          "expected_behavior": "Step 1 detects missing git, warns user, asks to continue or abort, Step 11 skips gracefully",
+          "verification": "Check git_available=false flag set, Step 11 shows 'Git unavailable - skipped' message",
+          "error_handling": "No error - graceful skip with user notification"
+        },
+        {
+          "scenario": "Large codebase timeout (>100k LOC)",
+          "setup": "Test on project with >100k lines of code",
+          "expected_behavior": "Step 3 uses sequential generation with progress markers, completes without timeout",
+          "verification": "Check foundation docs generated successfully, progress markers [1/5], [2/5], etc. displayed",
+          "error_handling": "No error - sequential generation prevents timeout"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "All 9 unit tests pass",
+          "metric": "pytest test count",
+          "target": "9/9 tests passing (100%)",
+          "validation": "Run pytest tests/ -v --tb=short"
+        },
+        {
+          "requirement": "All 3 integration tests pass",
+          "metric": "pytest integration test count",
+          "target": "3/3 tests passing (100%)",
+          "validation": "Run pytest tests/integration/ -v"
+        },
+        {
+          "requirement": "All 3 manual tests documented",
+          "metric": "Manual test procedure count",
+          "target": "3 procedures in docs/manual-test-procedures.md",
+          "validation": "Read docs/manual-test-procedures.md, verify 3 sections present"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Test code coverage",
+          "metric": "Line coverage percentage",
+          "target": ">80%",
+          "validation": "Run pytest --cov=. --cov-report=html, check htmlcov/index.html"
+        },
+        {
+          "requirement": "No test failures",
+          "metric": "Test failure count",
+          "target": "0 failures",
+          "validation": "pytest exit code 0"
+        },
+        {
+          "requirement": "Test execution time",
+          "metric": "Total test suite runtime",
+          "target": "<5 minutes",
+          "validation": "Check pytest duration output"
+        }
+      ],
+      "performance_requirements": [],
+      "security_requirements": []
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review bug-fixes.json testing_requirements section",
+        "☐ Read existing test files in tests/ for patterns",
+        "☐ Verify pytest 8.0+ installed (pip list | grep pytest)"
+      ],
+      "phase_1": [
+        "☐ SETUP-001: Create pytest.ini with coverage config",
+        "☐ SETUP-002: Create tests/conftest.py with fixtures"
+      ],
+      "phase_2": [
+        "☐ TEST-001: Write test for BUG-001 (workorder log)",
+        "☐ TEST-002: Write test for BUG-002 (error handling)"
+      ],
+      "phase_3": [
+        "☐ TEST-003: Write test for BUG-003 (validation loop)",
+        "☐ TEST-004: Write test for BUG-004 (multi-agent timing)",
+        "☐ TEST-005: Write test for BUG-005 (git validation)",
+        "☐ TEST-006: Write test for BUG-006 (timeout handling)"
+      ],
+      "phase_4": [
+        "☐ TEST-007: Write test for BUG-007 (progress indicators)",
+        "☐ TEST-008: Write test for BUG-008 (output format)",
+        "☐ TEST-009: Write test for BUG-009 (dry-run mode)"
+      ],
+      "phase_5": [
+        "☐ INTEG-001: Write integration test for Step 3 timeout",
+        "☐ INTEG-002: Write integration test for multi-agent flow",
+        "☐ INTEG-003: Write integration test for dry-run e2e"
+      ],
+      "phase_6": [
+        "☐ MANUAL-001: Document manual test for large codebase",
+        "☐ MANUAL-002: Document manual test for non-git repo",
+        "☐ MANUAL-003: Document manual test for bad context"
+      ],
+      "phase_7": [
+        "☐ VERIFY-001: Run pytest with coverage",
+        "☐ DOC-001: Update tests/README.md"
+      ],
+      "finalization": [
+        "☐ All tests passing (pytest exit code 0)",
+        "☐ Coverage report generated (htmlcov/index.html)",
+        "☐ Manual test procedures reviewed",
+        "☐ Test README updated with instructions"
+      ]
+    }
+  }
+}

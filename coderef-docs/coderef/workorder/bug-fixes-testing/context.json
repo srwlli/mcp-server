@@ -1,0 +1,44 @@
+{
+  "feature_name": "bug-fixes-testing",
+  "description": "Execute all required tests (unit, integration, manual) per bug-fixes.json testing requirements for the 9 create-workorder workflow bugs",
+  "goal": "Ensure all 9 bugs have complete test coverage with unit, integration, and manual tests to validate fixes work correctly before production deployment",
+  "requirements": [
+    "Unit tests for validation loop exhaustion (BUG-003)",
+    "Unit tests for git validation logic (BUG-005)",
+    "Unit tests for error handling fallbacks (BUG-002)",
+    "Integration test for Step 3 timeout simulation",
+    "Integration test for multi-agent flow with early decision (BUG-004)",
+    "Integration test for dry-run mode end-to-end (BUG-009)",
+    "Manual test for large codebase (>50k LOC) foundation docs generation",
+    "Manual test for non-git repository workflow",
+    "Manual test for validation loop with intentionally bad context",
+    "Test documentation with procedures and expected results",
+    "Coverage metrics tracking"
+  ],
+  "out_of_scope": [
+    "Implementing the actual bug fixes (only testing)",
+    "Production deployment of fixes"
+  ],
+  "constraints": [
+    "Must follow testing_requirements section from bug-fixes.json as source of truth",
+    "All tests must use pytest 8.0+ with pytest-asyncio framework",
+    "Tests organized by bug severity (critical first, then major, then minor)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-BUG-FIXES-TESTING-001",
+    "workorder_assigned_at": "2025-12-30T23:32:21.997610+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-BUG-FIXES-TESTING-001",
+    "feature_id": "bug-fixes-testing",
+    "last_updated": "2025-12-30",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-01-29"
+  }
+}

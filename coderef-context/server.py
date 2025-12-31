@@ -16,6 +16,7 @@ Tools exposed:
 - /drift - Detect drift between index and code
 - /diagram - Generate dependency diagrams
 - /tag - Add CodeRef2 tags to source files
+- /export - Export data in various formats (JSON, JSON-LD, Mermaid, DOT)
 
 Architecture:
 - Each tool wraps a @coderef/core CLI command
@@ -23,7 +24,7 @@ Architecture:
 - JSON parsing for agent consumption
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __mcp_version__ = "1.0"
 
 import asyncio
@@ -36,6 +37,9 @@ from typing import Any, Dict, List, Optional
 from mcp.server import Server
 from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
+
+# Import processors
+from processors.export_processor import export_coderef
 
 # Get CLI path - check global install first, then local, then environment variable
 def get_cli_command():
@@ -386,6 +390,33 @@ async def list_tools() -> List[Tool]:
                 "required": ["path"]
             }
         ),
+        Tool(
+            name="coderef_export",
+            description="Export coderef data in various formats (JSON, JSON-LD, Mermaid, DOT)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project root"
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["json", "jsonld", "mermaid", "dot"],
+                        "description": "Export format"
+                    },
+                    "output_path": {
+                        "type": "string",
+                        "description": "Optional output file path (defaults to .coderef/exports/{format})"
+                    },
+                    "max_nodes": {
+                        "type": "integer",
+                        "description": "Optional limit on graph nodes (for large codebases)"
+                    }
+                },
+                "required": ["project_path", "format"]
+            }
+        ),
     ]
 
 
@@ -420,6 +451,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             return await handle_coderef_diagram(arguments)
         elif name == "coderef_tag":
             return await handle_coderef_tag(arguments)
+        elif name == "coderef_export":
+            return await handle_coderef_export(arguments)
         else:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
 
@@ -1052,6 +1085,31 @@ async def handle_coderef_tag(args: dict) -> list[TextContent]:
 
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+
+async def handle_coderef_export(args: dict) -> list[TextContent]:
+    """Handle /export tool - Export coderef data in various formats.
+
+    Uses async subprocess to prevent blocking the event loop.
+    Delegates to export_processor module for CLI interaction.
+    """
+    project_path = args.get("project_path", ".")
+    format = args.get("format")
+    output_path = args.get("output_path")
+    max_nodes = args.get("max_nodes")
+
+    if not format:
+        return [TextContent(type="text", text="Error: format parameter is required")]
+
+    # Call export processor with CLI command
+    return await export_coderef(
+        cli_command=CLI_COMMAND,
+        project_path=project_path,
+        format=format,
+        output_path=output_path,
+        max_nodes=max_nodes,
+        timeout=120
+    )
 
 
 # ============================================================================

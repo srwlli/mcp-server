@@ -255,6 +255,191 @@ C:\Users\willh\.mcp-servers/
 
 ---
 
+## Using .coderef/ Structure (Agent Workflow)
+
+### Overview
+
+The universal `.coderef/` structure provides agents with static code intelligence files and dynamic MCP tools for understanding and modifying projects. All 6 MCP servers now have complete `.coderef/` directories with 16 output types.
+
+### Step 1: Generate Structure (One-Time Setup)
+
+```bash
+# Complete structure (all 16 outputs, ~30-60 seconds)
+python scripts/populate-coderef.py /path/to/project
+
+# Quick foundation only (2 files, ~5-10 seconds)
+./scripts/scan-all.py /path/to/project
+
+# Example for MCP server:
+python scripts/populate-coderef.py C:/Users/willh/.mcp-servers/coderef-workflow
+```
+
+**Output:** Creates `.coderef/` with:
+- 4 root files (index.json, graph.json, context.json, context.md)
+- 5 reports (patterns, coverage, validation, drift, complexity)
+- 4 diagrams (dependencies, calls, imports)
+- 3 exports (graph.json, graph.jsonld, diagram-wrapped.md)
+
+### Step 2: Agent Reads Files (During Tasks)
+
+#### For Understanding Project Structure:
+```python
+# Read foundation scan
+index = json.loads(read_file("project/.coderef/index.json"))
+# Returns: Array of all functions, classes, components with locations
+
+# Example: "What components exist?"
+components = [e for e in index if e["type"] == "component"]
+```
+
+#### For Planning Features:
+```python
+# Read existing patterns (reuse vs rebuild decision)
+patterns = json.loads(read_file("project/.coderef/reports/patterns.json"))
+# Returns: Existing code patterns to follow
+
+# Read architecture context
+context = read_file("project/.coderef/context.md")
+# Returns: Human-readable project overview
+```
+
+#### For Impact Analysis (Use MCP Tools, Not Files):
+```python
+# Real-time analysis (doesn't read files, runs fresh scan)
+result = await call_tool("coderef_context", "coderef_impact", {
+    "project_path": "/path/to/project",
+    "element": "AuthService",
+    "operation": "refactor"
+})
+# Returns: What breaks if I change this element
+```
+
+#### For Documentation:
+```python
+# Embed diagrams in README/ARCHITECTURE.md
+diagram = read_file("project/.coderef/diagrams/dependencies.mmd")
+wrapped = read_file("project/.coderef/exports/diagram-wrapped.md")
+```
+
+### Step 3: When to Re-Generate
+
+**Re-run populate-coderef.py when:**
+- Major code changes (new files, renamed modules, refactoring)
+- Before planning workflows (`/create-workorder`)
+- After completing features (for updated documentation)
+- When drift detected (see check below)
+
+**Check if refresh needed:**
+```bash
+# Check drift (compares index vs current code)
+coderef drift /path/to/project --json -i .coderef/index.json
+
+# If drift > 10%, re-generate:
+python scripts/populate-coderef.py /path/to/project
+```
+
+### File-to-Use-Case Mapping
+
+| Agent Task | Read These Files | Call These MCP Tools |
+|------------|------------------|---------------------|
+| **"What exists?"** | `index.json` | `coderef_scan` (for fresh data) |
+| **"Plan feature"** | `context.md`, `patterns.json` | `coderef_patterns` |
+| **"Refactor safely"** | - | `coderef_impact`, `coderef_query` |
+| **"Document architecture"** | `diagrams/*.mmd`, `exports/diagram-wrapped.md` | - |
+| **"Find similar code"** | `patterns.json` | `coderef_patterns` |
+| **"Check coverage"** | `reports/coverage.json` | `coderef_coverage` |
+
+### Integration Examples
+
+#### Example 1: Planning Workflow (Already Integrated!)
+```python
+# coderef-workflow/generators/planning_analyzer.py
+
+# Line 215: Read index for inventory
+index_data = json.loads(Path(project_path / ".coderef/index.json").read_text())
+
+# Line 397: Call MCP tool for reference components
+result = await call_coderef_tool("coderef_query", {
+    "query_type": "depends-on-me",
+    "target": component_name
+})
+
+# Line 445: Read patterns for conventions
+patterns = json.loads(Path(project_path / ".coderef/reports/patterns.json").read_text())
+```
+
+#### Example 2: Agent Implementing Feature
+```python
+# Task: "Add dark mode toggle"
+
+# Step 1: Check what exists
+index = json.loads(read_file(".coderef/index.json"))
+theme_components = [e for e in index if "theme" in e["name"].lower()]
+# Finds: ThemeProvider, useTheme, ThemeContext exist
+
+# Step 2: Understand patterns
+patterns = json.loads(read_file(".coderef/reports/patterns.json"))
+# Finds: React hooks pattern used 23 times → follow convention
+
+# Step 3: Check dependencies
+await call_tool("coderef_context", "coderef_query", {
+    "query_type": "imports",
+    "target": "ThemeProvider"
+})
+# Returns: 3 files import ThemeProvider
+
+# Step 4: Implement extending existing theme system (not rebuilding)
+```
+
+#### Example 3: Documentation Update
+```python
+# Task: "Update ARCHITECTURE.md with dependency diagram"
+
+# Read wrapped diagram (includes usage notes)
+diagram = read_file(".coderef/exports/diagram-wrapped.md")
+
+# Embed in ARCHITECTURE.md
+architecture = f"""
+# Architecture
+
+{diagram}
+
+## Key Components
+...
+"""
+```
+
+### Quick Reference
+
+```bash
+# Generate everything (run once per project)
+python scripts/populate-coderef.py /path/to/project
+
+# Quick scan (foundation only, faster)
+./scripts/scan-all.py /path/to/project
+
+# Check if stale
+coderef drift /path/to/project --json -i .coderef/index.json
+
+# Re-generate if needed
+python scripts/populate-coderef.py /path/to/project
+```
+
+### Key Principles
+
+1. **Files are static context** - Use for quick lookups during implementation
+2. **MCP tools are dynamic analysis** - Use for real-time dependency/impact checks
+3. **Re-generate after major changes** - Keep index fresh for accurate data
+4. **Read, don't modify** - `.coderef/` is generated, never hand-edited
+
+### Documentation
+
+- **Complete Reference:** `scripts/README-CODEREF-STRUCTURE.md` (500+ lines)
+- **All 16 Output Types:** Detailed descriptions, use cases, examples
+- **Completion Report:** `scripts/WORKORDER-COMPLETION-SUMMARY.md`
+
+---
+
 ## Essential Commands
 
 ### Development

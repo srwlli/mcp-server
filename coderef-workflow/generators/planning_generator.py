@@ -309,20 +309,36 @@ class PlanningGenerator:
     ) -> Dict[str, Any]:
         """Generate Section 1: Executive Summary."""
         if context:
+            description = context.get("description", f"Implement {feature_name} feature")
+            goal = context.get("goal", "Enhance system capabilities")
+            requirements = context.get("requirements", [])
+
+            # Generate use case from requirements
+            use_case = "User requests feature"
+            if requirements:
+                use_case = f"User requests {feature_name} → System implements: {', '.join(requirements[:3])} → Feature is functional"
+
+            # Generate output list from requirements
+            output = "New feature implementation"
+            if requirements:
+                output = f"Implemented {len(requirements)} requirements: {', '.join(requirements[:3])}"
+
             return {
-                "purpose": context.get("description", f"Implement {feature_name} feature"),
-                "value_proposition": context.get("goal", "Enhance system capabilities"),
-                "real_world_analogy": "TODO: Add real-world analogy",
-                "use_case": "TODO: Add use case workflow",
-                "output": "TODO: List tangible artifacts"
+                "purpose": description,
+                "value_proposition": goal,
+                "real_world_analogy": f"Similar to building {feature_name} - systematically implementing each requirement to deliver complete functionality",
+                "use_case": use_case,
+                "output": output
             }
 
+        # Without context, provide minimal structure
+        feature_title = feature_name.replace("-", " ").replace("_", " ").title()
         return {
-            "purpose": f"Implement {feature_name} feature",
-            "value_proposition": "TODO: Define value proposition",
-            "real_world_analogy": "TODO: Add real-world analogy",
-            "use_case": "TODO: Add use case workflow",
-            "output": "TODO: List tangible artifacts"
+            "purpose": f"Implement {feature_title} feature to extend system capabilities",
+            "value_proposition": f"Enables users to {feature_title.lower()} functionality",
+            "real_world_analogy": f"Building {feature_title} from scratch following established patterns",
+            "use_case": f"User triggers {feature_name} → System processes request → Feature delivers result",
+            "output": f"{feature_title} implementation with tests and documentation"
         }
 
     def _generate_risk_assessment(
@@ -331,44 +347,95 @@ class PlanningGenerator:
         analysis: Optional[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Generate Section 2: Risk Assessment."""
+        requirements_count = len(context.get("requirements", [])) if context else 0
+
+        # Estimate complexity based on requirements count
+        if requirements_count <= 3:
+            complexity = "low (estimated 3-5 files, <200 lines)"
+            overall_risk = "low"
+        elif requirements_count <= 8:
+            complexity = "medium (estimated 5-15 files, 200-1000 lines)"
+            overall_risk = "medium"
+        else:
+            complexity = "high (estimated 15+ files, 1000+ lines)"
+            overall_risk = "medium"
+
+        # Get constraints as dependencies
+        constraints = context.get("constraints", []) if context else []
+        dependencies = constraints if constraints else ["None identified - may require discovery during implementation"]
+
         return {
-            "overall_risk": "medium",
-            "complexity": "medium (TODO: estimate file count and lines)",
-            "scope": "Medium - TODO files, TODO components affected",
-            "file_system_risk": "low",
-            "dependencies": context.get("constraints", []) if context else [],
-            "performance_concerns": ["TODO: identify performance concerns"],
-            "security_considerations": ["TODO: identify security considerations"],
-            "breaking_changes": "none"
+            "overall_risk": overall_risk,
+            "complexity": complexity,
+            "scope": f"Estimated {requirements_count} requirements affecting multiple components",
+            "file_system_risk": "low (standard code changes only)",
+            "dependencies": dependencies,
+            "performance_concerns": ["No significant performance concerns identified - monitor during implementation"],
+            "security_considerations": ["Follow existing security patterns - review during implementation"],
+            "breaking_changes": "none (extending existing functionality)"
         }
 
     def _generate_current_state(self, analysis: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate Section 3: Current State Analysis."""
+        if analysis:
+            # Extract from analysis if available
+            tech_stack = analysis.get("preparation_summary", {}).get("technology_stack", {})
+            patterns = analysis.get("preparation_summary", {}).get("key_patterns_identified", [])
+
+            return {
+                "affected_files": ["Identify during implementation based on feature scope"],
+                "dependencies": {
+                    "existing_internal": ["Existing modules and components - identify during implementation"],
+                    "existing_external": tech_stack.get("key_libraries", []),
+                    "new_external": [],
+                    "new_internal": []
+                },
+                "architecture_context": f"Follows existing patterns: {', '.join(patterns[:3]) if patterns else 'Standard implementation patterns'}"
+            }
+
         return {
-            "affected_files": ["TODO: List all files to create/modify"],
+            "affected_files": ["Identify during implementation based on feature scope"],
             "dependencies": {
-                "existing_internal": [],
-                "existing_external": [],
+                "existing_internal": ["Existing modules and components - identify during implementation"],
+                "existing_external": ["Standard project dependencies"],
                 "new_external": [],
                 "new_internal": []
             },
-            "architecture_context": "TODO: Describe architecture layer and patterns"
+            "architecture_context": "Standard implementation following existing project architecture and patterns"
         }
 
     def _generate_key_features(self, context: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate Section 4: Key Features."""
         if context and "requirements" in context:
+            requirements = context["requirements"]
+            primary_count = min(5, len(requirements))
+
             return {
-                "primary_features": context["requirements"][:5],
-                "secondary_features": context["requirements"][5:] if len(context["requirements"]) > 5 else [],
-                "edge_case_handling": ["TODO: Define edge cases"],
+                "primary_features": requirements[:primary_count],
+                "secondary_features": requirements[primary_count:] if len(requirements) > primary_count else [],
+                "edge_case_handling": [
+                    "Empty or null input validation",
+                    "Invalid input error handling",
+                    "Boundary conditions and limits"
+                ],
                 "configuration_options": ["None"]
             }
 
         return {
-            "primary_features": ["TODO: List 3-5 primary features"],
-            "secondary_features": ["TODO: List 2-3 secondary features"],
-            "edge_case_handling": ["TODO: List 2-3 edge cases"],
+            "primary_features": [
+                "Implement core functionality",
+                "Add error handling",
+                "Integrate with existing system"
+            ],
+            "secondary_features": [
+                "Add logging and monitoring",
+                "Optimize performance"
+            ],
+            "edge_case_handling": [
+                "Empty or null input validation",
+                "Invalid input error handling",
+                "Boundary conditions and limits"
+            ],
             "configuration_options": ["None"]
         }
 
@@ -378,50 +445,59 @@ class PlanningGenerator:
         analysis: Optional[Dict[str, Any]]
     ) -> Dict[str, list]:
         """Generate Section 5: Task ID System."""
-        return {
-            "tasks": [
-                "SETUP-001: TODO: Initial setup task",
-                "LOGIC-001: TODO: Core logic task",
-                "TEST-001: TODO: Testing task",
-                "DOC-001: TODO: Documentation task"
-            ]
-        }
+        tasks = []
+
+        # Setup tasks
+        tasks.append("SETUP-001: Create initial project structure and setup development environment with required dependencies")
+
+        # Logic tasks based on requirements
+        if context and "requirements" in context:
+            requirements = context["requirements"]
+            for idx, req in enumerate(requirements[:5], start=1):
+                tasks.append(f"LOGIC-{idx:03d}: Implement {req} following existing project patterns and architecture")
+        else:
+            tasks.append("LOGIC-001: Implement core feature functionality following existing project patterns and architecture")
+
+        # Testing tasks
+        tasks.append("TEST-001: Write unit tests for all new functionality with minimum 80% code coverage")
+        tasks.append("TEST-002: Write integration tests to verify end-to-end functionality and component interactions")
+
+        # Documentation tasks
+        tasks.append("DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces")
+
+        return {"tasks": tasks}
 
     def _generate_phases(self) -> Dict[str, Any]:
-        """Generate Section 6: Implementation Phases."""
+        """Generate Section 6: Implementation Phases with NEW schema format."""
         return {
             "phases": [
                 {
-                    "title": "Phase 1: Foundation",
-                    "purpose": "Setup and scaffolding",
-                    "complexity": "low",
-                    "effort_level": 2,
+                    "phase": 1,
+                    "name": "Phase 1: Foundation",
+                    "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
                     "tasks": ["SETUP-001"],
-                    "completion_criteria": "All files exist, dependencies installed"
+                    "deliverables": ["All files exist", "Dependencies installed", "Environment configured"]
                 },
                 {
-                    "title": "Phase 2: Core Implementation",
-                    "purpose": "Implement primary features",
-                    "complexity": "high",
-                    "effort_level": 4,
+                    "phase": 2,
+                    "name": "Phase 2: Core Implementation",
+                    "description": "Implement primary features and business logic following existing patterns",
                     "tasks": ["LOGIC-001"],
-                    "completion_criteria": "Happy path works end-to-end"
+                    "deliverables": ["Happy path works end-to-end", "Core functionality complete"]
                 },
                 {
-                    "title": "Phase 3: Testing",
-                    "purpose": "Comprehensive testing",
-                    "complexity": "medium",
-                    "effort_level": 3,
+                    "phase": 3,
+                    "name": "Phase 3: Testing",
+                    "description": "Comprehensive testing at unit, integration, and end-to-end levels",
                     "tasks": ["TEST-001"],
-                    "completion_criteria": "All tests passing"
+                    "deliverables": ["All tests passing", "Coverage meets requirements"]
                 },
                 {
-                    "title": "Phase 4: Documentation",
-                    "purpose": "Complete documentation",
-                    "complexity": "low",
-                    "effort_level": 2,
+                    "phase": 4,
+                    "name": "Phase 4: Documentation",
+                    "description": "Complete documentation for users and developers",
                     "tasks": ["DOC-001"],
-                    "completion_criteria": "All docs complete"
+                    "deliverables": ["All documentation complete", "Examples provided"]
                 }
             ]
         }
@@ -429,50 +505,113 @@ class PlanningGenerator:
     def _generate_testing_strategy(self) -> Dict[str, Any]:
         """Generate Section 7: Testing Strategy."""
         return {
-            "unit_tests": ["TODO: List unit tests"],
-            "integration_tests": ["TODO: List integration tests"],
-            "end_to_end_tests": ["Not applicable" ],
+            "unit_tests": [
+                "Test individual functions and methods in isolation",
+                "Verify input validation and error handling",
+                "Test edge cases and boundary conditions",
+                "Achieve minimum 80% code coverage"
+            ],
+            "integration_tests": [
+                "Test component interactions and data flow",
+                "Verify end-to-end functionality",
+                "Test integration with existing systems"
+            ],
+            "end_to_end_tests": ["Not applicable"],
             "edge_case_scenarios": [
                 {
-                    "scenario": "TODO: Edge case 1",
-                    "setup": "TODO: How to create",
-                    "expected_behavior": "TODO: What should happen",
-                    "verification": "TODO: How to verify",
-                    "error_handling": "TODO: Error type or 'No error'"
+                    "scenario": "Empty or null input provided",
+                    "setup": "Call function with None or empty string",
+                    "expected_behavior": "Function validates input and returns appropriate error",
+                    "verification": "Assert error message and status code",
+                    "error_handling": "ValueError or ValidationError"
+                },
+                {
+                    "scenario": "Invalid input format provided",
+                    "setup": "Call function with malformed or incorrect data type",
+                    "expected_behavior": "Function validates input type and returns error",
+                    "verification": "Assert error message indicates invalid format",
+                    "error_handling": "TypeError or ValidationError"
+                },
+                {
+                    "scenario": "Boundary conditions at limits",
+                    "setup": "Test with minimum and maximum allowed values",
+                    "expected_behavior": "Function handles boundary values correctly",
+                    "verification": "Assert results are within expected range",
+                    "error_handling": "No error expected for valid boundaries"
                 }
             ]
         }
 
     def _generate_success_criteria(self, context: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate Section 8: Success Criteria."""
+        functional = [
+            {
+                "requirement": "Feature implementation complete",
+                "metric": "All requirements implemented",
+                "target": "100% of specified requirements",
+                "validation": "Manual verification against requirements list"
+            },
+            {
+                "requirement": "Integration successful",
+                "metric": "Feature works with existing system",
+                "target": "No breaking changes to existing functionality",
+                "validation": "Run full test suite"
+            }
+        ]
+
+        # Add requirement-specific criteria if context available
+        if context and "requirements" in context:
+            requirements = context["requirements"]
+            for idx, req in enumerate(requirements[:3], start=1):
+                functional.append({
+                    "requirement": req,
+                    "metric": "Functionality verified",
+                    "target": "Works as specified",
+                    "validation": f"Test cases for: {req}"
+                })
+
         return {
-            "functional_requirements": [
-                {"requirement": "TODO", "metric": "TODO", "target": "TODO", "validation": "TODO"}
-            ],
+            "functional_requirements": functional,
             "quality_requirements": [
-                {"requirement": "Code coverage", "metric": "Line coverage", "target": ">80%", "validation": "Run coverage tool"}
+                {"requirement": "Code coverage", "metric": "Line coverage", "target": ">80%", "validation": "Run coverage tool"},
+                {"requirement": "Code quality", "metric": "Linter passes", "target": "Zero linting errors", "validation": "Run linter"},
+                {"requirement": "Type safety", "metric": "Type checker passes", "target": "Zero type errors", "validation": "Run type checker"}
             ],
-            "performance_requirements": [],
-            "security_requirements": []
+            "performance_requirements": [
+                {"requirement": "Response time", "metric": "Execution time", "target": "< 1 second for typical operations", "validation": "Performance tests"}
+            ],
+            "security_requirements": [
+                {"requirement": "Input validation", "metric": "All inputs validated", "target": "100% validation coverage", "validation": "Security review"}
+            ]
         }
 
     def _generate_checklist(self) -> Dict[str, list]:
         """Generate Section 9: Implementation Checklist."""
         return {
             "pre_implementation": [
-                "☐ Review complete plan for gaps",
-                "☐ Get stakeholder approval",
-                "☐ Set up development environment"
+                "☐ Review complete plan for gaps or ambiguities",
+                "☐ Verify all requirements are clear and testable",
+                "☐ Set up development environment with required dependencies"
             ],
-            "phase_1": ["☐ SETUP-001: TODO"],
-            "phase_2": ["☐ LOGIC-001: TODO"],
-            "phase_3": ["☐ TEST-001: TODO"],
-            "phase_4": ["☐ DOC-001: TODO"],
+            "phase_1": [
+                "☐ SETUP-001: Create initial project structure and setup development environment with required dependencies"
+            ],
+            "phase_2": [
+                "☐ LOGIC-001: Implement core feature functionality following existing project patterns and architecture"
+            ],
+            "phase_3": [
+                "☐ TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
+                "☐ TEST-002: Write integration tests to verify end-to-end functionality and component interactions"
+            ],
+            "phase_4": [
+                "☐ DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+            ],
             "finalization": [
-                "☐ All tests passing",
-                "☐ Code review completed",
-                "☐ Documentation updated",
-                "☐ Changelog entry created"
+                "☐ All tests passing (unit + integration)",
+                "☐ Code review completed and approved",
+                "☐ Documentation updated and complete",
+                "☐ Changelog entry created with version bump",
+                "☐ Final verification against success criteria"
             ]
         }
 

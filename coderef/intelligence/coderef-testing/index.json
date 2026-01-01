@@ -1,0 +1,3097 @@
+🔍 Scanning ....
+[
+  {
+    "type": "method",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 23,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "detect_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 33,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "clear_cache",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 110,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_detect_pytest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 131,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_get_pytest_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 162,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_find_pytest_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 178,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_detect_jest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 196,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_get_jest_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 219,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_find_jest_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 232,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_detect_vitest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 243,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_get_vitest_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 265,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_find_vitest_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 278,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_detect_cargo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 289,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_get_cargo_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 314,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_find_cargo_toml",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 319,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_detect_mocha",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 329,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_get_mocha_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 360,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_find_mocha_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 373,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "detect_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 385,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "clear_cache",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 390,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "FrameworkDetector",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+    "line": 20,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "calculate_success_rate",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 72,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestStatus",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 10,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFramework",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 21,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "FrameworkInfo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 32,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 43,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestSummary",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 59,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "CoverageInfo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 82,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "UnifiedTestResults",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 91,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "FrameworkDetectionResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 107,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRunRequest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 116,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestAnalysisResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+    "line": 127,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 22,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "load_plan",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 28,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "generate_proof_report",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 35,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_generate_plan_comparison",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 216,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "save_report",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 243,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestingProofGenerator",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+    "line": 19,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "analyze_coverage",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 21,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "detect_flaky_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 55,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "analyze_performance",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 101,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "validate_test_health",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 166,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "compare_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 246,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "get_failing_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 293,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "get_test_distribution_by_status",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 317,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "get_test_distribution_by_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 334,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "analyze_coverage",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 363,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "detect_flaky_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 368,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "analyze_performance",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 373,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "validate_test_health",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 378,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "ResultAnalyzer",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+    "line": 18,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 24,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "aggregate_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 36,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "archive_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 102,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "get_archived_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 159,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "get_latest_result",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 186,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "compare_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 199,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "get_result_history",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 258,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "export_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 282,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_export_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 314,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_export_csv",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 339,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_export_html",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 365,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "cleanup_old_archives",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 436,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "aggregate_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 468,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "archive_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 473,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestAggregator",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+    "line": 21,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 24,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_multi_project_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 42,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_run_project_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 105,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_tests_with_comparison",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 131,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_create_unified_result",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 168,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_tests_by_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 178,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_run_project_tests_with_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 217,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_tests_by_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 231,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_run_single_test_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 271,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "get_execution_summary",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 285,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_multi_project_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 314,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCoordinator",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_coordinator.py",
+    "line": 21,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 40,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_create_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 45,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "run_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 78,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_run_pytest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 128,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_parse_pytest_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 161,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_map_pytest_status",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 177,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_parse_pytest_text",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 189,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_run_jest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 215,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_parse_jest_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 250,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_run_vitest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 300,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_parse_vitest_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 335,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_run_cargo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 389,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_parse_cargo_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 422,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_run_mocha",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 470,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "_parse_mocha_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 505,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "_execute_command",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 543,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "run_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 575,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRunRequest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 25,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRunner",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_runner.py",
+    "line": 37,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_complete_workflow",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 30,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_passing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 46,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_failing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 49,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_from_pyproject_toml",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 109,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_from_pytest_ini",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 118,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_jest_from_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 127,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_jest_from_config_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 138,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_cargo_from_cargo_toml",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 147,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_timeout_handling",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 162,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_quick",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 174,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parallel_execution",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 190,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_archive_creates_timestamped_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 221,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_archived_results_sorted_by_date",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 242,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_coverage_analysis_identifies_gaps",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 264,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_performance_analysis_finds_slow_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 283,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_health_scoring_calculation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 304,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_flaky_test_detection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 321,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_missing_project_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 364,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_no_tests_found",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 376,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_invalid_framework_enum",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 391,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "sample_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 400,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCompleteWorkflow",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 26,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFrameworkDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 106,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestExecutionScenarios",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 158,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestResultAggregation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 218,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestAnalysisFeatures",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 261,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestErrorHandling",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_end_to_end.py",
+    "line": 360,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_discover_tests_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 38,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_list_test_frameworks_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 56,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_all_tests_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 73,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_test_file_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 91,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_example",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 96,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_test_category_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 112,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_tests_in_parallel_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 127,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_test_results_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 147,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_aggregate_results_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 158,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_generate_test_report_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 169,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_test_runs_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 183,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_coverage_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 202,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_flaky_tests_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 214,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_test_performance_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 228,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_test_health_tool",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 242,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_discover_tests_invalid_path",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 257,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_all_tests_missing_framework",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 268,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_test_file_nonexistent_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 281,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_all_tools_return_text_content",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 299,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_json_responses_are_valid",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 321,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "pytest_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 336,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_example",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 353,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_another",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 356,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestDiscoveryTools",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 34,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestExecutionTools",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 69,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestManagementTools",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 143,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestAnalysisTools",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 198,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestErrorHandling",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 253,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestResponseFormat",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/comprehensive/test_mcp_integration.py",
+    "line": 295,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "jest_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 16,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_discover_jest_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 73,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_config_exists",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 78,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_package_json_exists",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 82,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_jest_full_suite",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 94,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_jest_single_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 112,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_result_structure",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 129,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_with_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 168,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_json_results_parsing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 187,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_status_mapping",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 220,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_missing_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 243,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_with_timeout",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 264,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_complete_workflow",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 295,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestDiscovery",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 70,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestExecution",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 89,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestOutput",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 184,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestErrors",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 238,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestIntegration",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_jest.py",
+    "line": 290,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "pytest_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 15,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_addition",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 28,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_subtraction",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 31,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_multiplication",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 34,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_skipped",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 38,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_division_by_zero",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 41,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_uppercase",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 47,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_lowercase",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 50,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_length",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 53,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_discover_pytest_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 63,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_ini_exists",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 72,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_pytest_full_suite",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 82,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_pytest_single_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 103,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_result_structure",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 122,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_with_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 162,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parse_pytest_output_structure",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 181,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parse_pytest_with_failures",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 200,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parse_pytest_with_skipped",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 216,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_with_timeout",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 237,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestDiscovery",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 60,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestExecution",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 77,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestOutput",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 178,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestErrors",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/integration/test_pytest.py",
+    "line": 232,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "temp_archive_dir",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 25,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "aggregator",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 32,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "sample_test_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 38,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_aggregate_single_result",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 64,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_aggregate_multiple_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 72,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_aggregate_empty_list",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 110,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_aggregate_with_optional_fields",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 118,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_archive_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 153,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_archive_with_custom_timestamp",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 169,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_archive_with_run_name",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 179,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_archive_preserves_error_details",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 192,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_get_archived_results_all",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 228,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_get_archived_results_by_framework",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 239,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_get_latest_result",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 266,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_latest_result_empty",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 279,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_results_basic",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 288,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_detects_regression",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 317,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_tracks_status_changes",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 342,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_detects_new_and_removed_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 371,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_export_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 401,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_export_csv",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 414,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_export_html",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 426,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_export_creates_parent_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 439,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_export_invalid_format_raises_error",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 449,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_get_result_history",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 461,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_history_sorted_by_date",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 473,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_cleanup_old_archives",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 490,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_cleanup_keeps_recent_archives",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 507,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_aggregate_results_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 522,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_archive_results_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 534,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestAggregation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 61,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestArchival",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 150,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRetrievingArchivedResults",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 225,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestComparison",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 285,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestExport",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 398,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestHistory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 458,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCleanup",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 487,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestSingletonWrappers",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_aggregator.py",
+    "line": 519,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "analyzer",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 27,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "passing_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 33,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "mixed_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 49,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_coverage_with_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 75,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_coverage_with_failures",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 86,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_coverage_no_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 96,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_coverage_all_failing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 113,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_flaky_tests_basic",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 135,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_flaky_tests_no_flakiness",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 176,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_flaky_tests_insufficient_history",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 181,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_flaky_tests_always_failing_not_flaky",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 186,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_flaky_test_status_history",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 198,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_performance_basic",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 225,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_performance_no_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 248,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_performance_percentiles",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 262,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analyze_performance_identifies_slow_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 284,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_perfect_score",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 309,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_with_failures",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 321,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_no_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 330,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_all_failing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 344,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_with_errors",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 361,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_validate_health_grades",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 386,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_results_improvement",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 430,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_results_regression",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 459,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_compare_results_stable",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 478,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_failing_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 490,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_test_distribution_by_status",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 497,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_get_test_distribution_by_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 505,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_analyze_coverage_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 533,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_detect_flaky_tests_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 538,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_analyze_performance_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 543,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_validate_test_health_wrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 548,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCoverageAnalysis",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 72,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFlakyTestDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 132,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPerformanceAnalysis",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 222,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestHealthValidation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 306,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestResultComparison",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 427,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestUtilityMethods",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 487,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestSingletonWrappers",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_analyzer.py",
+    "line": 530,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "temp_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 15,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "detector",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 22,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_pytest_ini",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 30,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_setup_cfg",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 37,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_pyproject_toml",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 43,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_conftest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 49,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_tests_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 55,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_example",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 59,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_pytest_with_tox_ini",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 63,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_config_file_finding",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 69,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_jest_with_jest_config_js",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 81,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_jest_with_jest_config_ts",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 87,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_jest_in_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 93,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_version_detection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 100,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_config_file_finding",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 109,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_vitest_with_vitest_config_ts",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 121,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_vitest_in_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 127,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_vitest_version_detection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 134,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_cargo_with_cargo_toml",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 147,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_cargo_with_tests_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 154,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_cargo_with_inline_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 162,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_cargo_config_file_finding",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 171,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_mocha_with_mocharc_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 183,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_mocha_in_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 189,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_mocha_with_test_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 196,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_mocha_version_detection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 204,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_multiple_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 217,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_caching_works",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 234,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_cache_clear",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 248,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_no_frameworks_detected",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 264,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detect_frameworks_function",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 273,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_empty_project_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 283,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_invalid_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 288,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_empty_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 295,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_package_json_without_dev_dependencies",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 303,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_vitest_in_vite_config_without_vitest_string",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 310,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_cargo_without_dev_dependencies_or_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 316,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_empty_tests_directory",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 322,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_nonexistent_path_raises_error",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 329,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_symlink_handling",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 344,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_version_with_double_equals",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 365,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_version_with_tilde",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 375,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_version_extraction_with_no_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 384,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_pytest_prioritizes_pytest_ini_over_setup_cfg",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 397,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_jest_config_js_over_package_json",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 407,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_cache_expires_after_ttl",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 421,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_cache_clear_all",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 446,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_python_and_javascript_frameworks_together",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 470,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_rust_and_python_together",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 486,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 27,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestJestDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 78,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestVitestDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 118,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCargoDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 144,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestMochaDetection",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 180,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestMultipleFrameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 214,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCaching",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 231,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestSingletonWrapper",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 270,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestEdgeCases",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 280,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestVersionExtraction",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 362,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestConfigFilePriority",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 394,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCacheTTL",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 418,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFrameworkCombinations",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_framework_detector.py",
+    "line": 467,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "colorize",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 31,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "__init__",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 39,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "get_project_id_hash",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 45,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "find_cache_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 61,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "read_mcp_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 84,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "read_cache",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 98,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "check_server_definitions",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 106,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "check_tool_definitions",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 138,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "check_command_definitions",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 164,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "check_cache_age",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 190,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "check_local_commands_deleted",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 211,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "validate",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 235,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_mcp_cache_validation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 292,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "MCPCacheValidator",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_mcp_cache_validation.py",
+    "line": 36,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_status_values",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 28,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_framework_values",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 37,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_enum_membership",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 46,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_framework_info_creation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 55,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_framework_info_with_version",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 63,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_framework_info_with_config",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 68,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_framework_info_missing_framework_fails",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 75,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_minimal",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 84,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_with_file_and_line",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 96,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_with_error_details",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 108,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_with_markers",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 120,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_with_metadata",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 130,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_result_missing_required_fields_fails",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 141,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_summary_minimal",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 153,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_test_summary_with_optional_fields",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 165,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_calculate_success_rate_normal",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 182,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_calculate_success_rate_with_skipped",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 195,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_calculate_success_rate_zero_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 209,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_calculate_success_rate_all_skipped",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 222,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_coverage_info_creation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 239,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_coverage_info_with_missing_lines",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 249,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_unified_results_minimal",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 263,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_unified_results_with_coverage",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 291,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_unified_results_with_error",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 320,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_unified_results_with_environment",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 343,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detection_result_with_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 373,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_detection_result_no_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 393,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_request_minimal",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 405,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_request_with_framework",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 415,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_request_with_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 422,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_run_request_custom_workers_and_timeout",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 429,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analysis_result_basic",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 441,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analysis_result_with_details",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 455,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_analysis_result_with_recommendations",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 466,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_invalid_framework_type_fails",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 484,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_invalid_status_type_fails",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 489,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_negative_duration_allowed",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 496,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_empty_test_name_allowed",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 502,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_none_values_in_optional_fields",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 507,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestEnums",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 25,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFrameworkInfo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 52,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestTestResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 81,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestTestSummary",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 150,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCoverageInfo",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 236,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestUnifiedTestResults",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 260,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestFrameworkDetectionResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 370,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestTestRunRequest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 402,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestTestAnalysisResult",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 438,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestModelValidation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_models.py",
+    "line": 481,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "temp_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 15,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "runner",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 22,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "basic_pytest_project",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 28,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_pass",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 34,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_fail",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 34,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_basic_request",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 42,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_request_with_options",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 50,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_execute_command_success",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 71,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_execute_command_missing_command",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 78,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_execute_command_timeout",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 88,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_map_pytest_status",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 100,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parse_pytest_text_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 110,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_parse_empty_pytest_output",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 126,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_run_tests_unknown_framework",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 140,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_unified_results_structure",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 150,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_timeout_error_handling",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 168,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "test_slow",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 175,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_all_test_statuses_defined",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 192,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_all_frameworks_defined",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 204,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_request_with_both_file_and_pattern",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 220,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_request_timeout_validation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 231,
+    "exported": false
+  },
+  {
+    "type": "method",
+    "name": "test_request_workers_validation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 238,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestTestRunRequest",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 39,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestCommandExecution",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 67,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestPytestParsing",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 97,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRunTestsIntegration",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 136,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestStatusMapping",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 189,
+    "exported": false
+  },
+  {
+    "type": "class",
+    "name": "TestRunRequestValidation",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/tests/test_runner.py",
+    "line": 217,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "list_tools",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 303,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_tool_call",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 313,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_discover_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 352,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_list_frameworks",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 382,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_run_all_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 411,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_run_test_file",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 444,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_run_test_category",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 470,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_run_tests_parallel",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 496,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_get_test_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 523,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_aggregate_results",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 543,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_generate_test_report",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 565,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_compare_test_runs",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 590,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_analyze_coverage",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 610,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_detect_flaky_tests",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 631,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_analyze_test_performance",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 658,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_validate_test_health",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 681,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "main",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+    "line": 706,
+    "exported": false
+  },
+  {
+    "type": "function",
+    "name": "handle_generate_testing_proof",
+    "file": "C:/Users/willh/.mcp-servers/coderef-testing/server_additions.py",
+    "line": 53,
+    "exported": false
+  }
+]

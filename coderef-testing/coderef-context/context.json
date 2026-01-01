@@ -1,0 +1,31 @@
+{
+  "overview": {
+    "sourceDir": ".",
+    "languages": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
+    "totalFiles": 0,
+    "totalElements": 0
+  },
+  "entryPoints": [],
+  "criticalFunctions": [],
+  "architecturePatterns": {
+    "errorHandling": 0,
+    "barrelExports": 0,
+    "decorators": 0,
+    "asyncAwait": 0
+  },
+  "dependencies": {
+    "nodeCount": 0,
+    "edgeCount": 0,
+    "circularity": 0,
+    "isolatedNodes": 0
+  },
+  "health": {
+    "complexity": 0,
+    "maintainability": "Good"
+  }
+}

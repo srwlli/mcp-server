@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__coderef-workflow__execute_plan",
+      "mcp__coderef-workflow__update_task_status",
+      "Bash(pip install:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(python test_phase3.py:*)",
+      "Bash(python test_phase3_simple.py:*)",
+      "Bash(python:*)",
+      "Bash(pushd:*)",
+      "mcp__coderef-workflow__archive_feature",
+      "Bash(done)",
+      "mcp__coderef-docs__generate_foundation_docs",
+      "mcp__coderef-docs__generate_individual_doc",
+      "Bash(mkdir:*)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "coderef-personas",
+    "coderef-context",
+    "coderef-docs",
+    "coderef-workflow",
+    "coderef-testing"
+  ]
+}

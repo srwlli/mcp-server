@@ -1,543 +1,234 @@
-# Architecture Reference - coderef-docs MCP Server
+# Architecture
 
-**Version:** 3.2.0
-**Last Updated:** 2025-12-27
-**Style:** Modular Python with MCP Protocol
+## Dependency Graph
 
----
+```mermaid
 
-## Purpose
+graph LR
+    file_C__Users_willh__mcp_servers_coderef_docs_validation_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
+    file_boundaries["boundaries"]:::fileStyle
+    file_validate_project_path_input["validate_project_path_input"]:::fileStyle
+    file_isinstance["isinstance"]:::fileStyle
+    file_ValueError["ValueError"]:::fileStyle
+    file_len["len"]:::fileStyle
+    file_bytes["bytes"]:::fileStyle
+    file_validate_version_format["validate_version_format"]:::fileStyle
+    file_validate["validate"]:::fileStyle
+    file_match["match"]:::fileStyle
+    file_validate_template_name_input["validate_template_name_input"]:::fileStyle
+    file_templates["templates"]:::fileStyle
+    file_validate_changelog_inputs["validate_changelog_inputs"]:::fileStyle
+    file_change_type["change_type"]:::fileStyle
+    file_severity["severity"]:::fileStyle
+    file_all["all"]:::fileStyle
+    file_Functions["Functions"]:::fileStyle
+    file_validate_scan_depth["validate_scan_depth"]:::fileStyle
+    file_depth["depth"]:::fileStyle
+    file_list["list"]:::fileStyle
+    file_validate_focus_areas["validate_focus_areas"]:::fileStyle
+    file_validate_severity_filter["validate_severity_filter"]:::fileStyle
+    file_by["by"]:::fileStyle
+    file_validate_audit_scope["validate_audit_scope"]:::fileStyle
+    file_validate_severity_threshold["validate_severity_threshold"]:::fileStyle
+    file_threshold["threshold"]:::fileStyle
+    file_values["values"]:::fileStyle
+    file_validate_file_list["validate_file_list"]:::fileStyle
+    file_paths["paths"]:::fileStyle
+    file_is_absolute["is_absolute"]:::fileStyle
+    file_Path["Path"]:::fileStyle
+    file_traversal["traversal"]:::fileStyle
+    file_reuse["reuse"]:::fileStyle
+    file_validate_section_name["validate_section_name"]:::fileStyle
+    file_validate_plan_file_path["validate_plan_file_path"]:::fileStyle
+    file_resolve["resolve"]:::fileStyle
+    file_is_relative_to["is_relative_to"]:::fileStyle
+    file_validate_plan_json_structure["validate_plan_json_structure"]:::fileStyle
+    file_validate_feature_name_input["validate_feature_name_input"]:::fileStyle
+    file_underscores["underscores"]:::fileStyle
+    file_validate_workorder_id["validate_workorder_id"]:::fileStyle
+    file_validate_risk_inputs["validate_risk_inputs"]:::fileStyle
+    file_project_path["project_path"]:::fileStyle
+    file_proposed_change["proposed_change"]:::fileStyle
+    file_options["options"]:::fileStyle
+    file_go["go"]:::fileStyle
+    file_enumerate["enumerate"]:::fileStyle
+    file_get["get"]:::fileStyle
+    file_validate_resource_path["validate_resource_path"]:::fileStyle
+    file_path["path"]:::fileStyle
+    file_exists["exists"]:::fileStyle
+    file_validate_expert_id["validate_expert_id"]:::fileStyle
+    file_validate_resource_type["validate_resource_type"]:::fileStyle
+    file_resource["resource"]:::fileStyle
+    file_validate_expert_domain["validate_expert_domain"]:::fileStyle
+    file_specialization["specialization"]:::fileStyle
+    file_validate_expert_capabilities["validate_expert_capabilities"]:::fileStyle
+    file_validate_context_expert_inputs["validate_context_expert_inputs"]:::fileStyle
+    file_resource_path["resource_path"]:::fileStyle
+    file_resource_type["resource_type"]:::fileStyle
+    file_expert_id["expert_id"]:::fileStyle
+    file_domain["domain"]:::fileStyle
+    file_capabilities["capabilities"]:::fileStyle
+    file_C__Users_willh__mcp_servers_coderef_docs_uds_helpers_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
+    file_Standard["Standard"]:::fileStyle
+    file_get_server_version["get_server_version"]:::fileStyle
+    file_gracefully["gracefully"]:::fileStyle
+    file_read_text["read_text"]:::fileStyle
+    file_search["search"]:::fileStyle
+    file_generate_uds_header["generate_uds_header"]:::fileStyle
+    file_title["title"]:::fileStyle
+    file_ID["ID"]:::fileStyle
+    file_name["name"]:::fileStyle
+    file_status["status"]:::fileStyle
+    file_version["version"]:::fileStyle
+    file_strftime["strftime"]:::fileStyle
+    file_utcnow["utcnow"]:::fileStyle
+    file_generate_uds_footer["generate_uds_footer"]:::fileStyle
+    file_review["review"]:::fileStyle
+    file_review_days["review_days"]:::fileStyle
+    file_flag["flag"]:::fileStyle
+    file_timedelta["timedelta"]:::fileStyle
+    file_C__Users_willh__mcp_servers_coderef_docs_type_defs_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
+    file_server["server"]:::fileStyle
+    file_TypedDicts["TypedDicts"]:::fileStyle
+    file_type["type"]:::fileStyle
+    file_position["position"]:::fileStyle
+    file_names["names"]:::fileStyle
+    file_extension["extension"]:::fileStyle
+    file_license["license"]:::fileStyle
+    file_affected["affected"]:::fileStyle
+    file_score["score"]:::fileStyle
+    file_dependencies["dependencies"]:::fileStyle
+    file_Transitive["Transitive"]:::fileStyle
+    file_managers["managers"]:::fileStyle
+    file_documentation["documentation"]:::fileStyle
+    file_found["found"]:::fileStyle
+    file_percentage["percentage"]:::fileStyle
+    file_constraints["constraints"]:::fileStyle
+    file_validators["validators"]:::fileStyle
 
-This document describes the system architecture, design principles, data flow, and integration patterns of the coderef-docs MCP server.
+    %% Style definitions
+    classDef functionStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef classStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef componentStyle fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    classDef fileStyle fill:#f5f5f5,stroke:#616161,stroke-width:2px
 
----
 
-## Overview
+ Diagram Summary:
+   Format: mermaid
+   Nodes: 100
+   Edges: 0
+   Direction: LR
+     Truncated: Yes (original size: 100)
 
-The coderef-docs MCP server is designed as a **documentation-focused microservice** that integrates with the Model Context Protocol to provide AI agents with 11 specialized documentation tools.
-
-**Core Architecture Principles:**
-1. **Single Responsibility** - Each component has one clear purpose
-2. **Separation of Concerns** - Handlers, generators, validation, errors separated
-3. **Fail-Safe Degradation** - Context injection degrades gracefully to placeholders
-4. **Validation at Boundaries** - All inputs validated before processing
-5. **Consistent Error Handling** - Uniform error response format
-
----
-
-## System Architecture
-
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│         MCP Client (Claude Code / ChatGPT)          │
-└──────────────────┬──────────────────────────────────┘
-                   │ MCP Protocol (JSON-RPC over stdio)
-                   ↓
-┌─────────────────────────────────────────────────────┐
-│              server.py (MCP Entry Point)             │
-│  • Health Check (@coderef/core CLI detection)       │
-│  • Tool Registration (11 tools)                     │
-│  • Request Routing                                  │
-└──────────────────┬──────────────────────────────────┘
-                   │
-                   ↓
-┌─────────────────────────────────────────────────────┐
-│          tool_handlers.py (Business Logic)          │
-│  • @log_invocation decorator                        │
-│  • @mcp_error_handler decorator                     │
-│  • 11 handler functions                             │
-└──────────────────┬──────────────────────────────────┘
-                   │
-         ┌─────────┴─────────┬──────────────┬─────────┐
-         ↓                   ↓              ↓         ↓
-    ┌─────────┐      ┌──────────────┐  ┌──────┐  ┌─────────┐
-    │Generator│      │ extractors.py│  │Valid.│  │ Errors  │
-    │ Stack   │      │   (Context   │  │      │  │         │
-    │         │      │  Injection)  │  │      │  │         │
-    └─────────┘      └──────────────┘  └──────┘  └─────────┘
-         │                   │
-         ↓                   ↓
-    ┌─────────┐      ┌──────────────┐
-    │Templates│      │  cli_utils   │
-    │ (POWER) │      │(@coderef CLI)│
-    └─────────┘      └──────────────┘
-         │                   │
-         ↓                   ↓
-    ┌─────────────────────────────┐
-    │  File System (JSON + MD)    │
-    └─────────────────────────────┘
-```
-
----
-
-## Component Architecture
-
-### Layer 1: MCP Protocol Layer
-
-**Component:** `server.py`
-
-**Responsibilities:**
-- Initialize MCP server instance
-- Register 11 tools with JSON schemas
-- Health check for @coderef/core CLI availability
-- Route tool calls to handlers
-
-**Key Design Decision:**
-- **Health check on startup** sets global `CODEREF_CONTEXT_AVAILABLE` flag
-- If CLI unavailable, server runs in degraded mode (fallback to placeholders)
-
----
-
-### Layer 2: Handler Layer
-
-**Component:** `tool_handlers.py`
-
-**Responsibilities:**
-- Implement business logic for all 11 tools
-- Coordinate between generators, extractors, validators
-- Apply decorators for logging and error handling
-
-**Handler Categories:**
-1. **Template Tools** (2) - list_templates, get_template
-2. **Foundation Generation** (2) - generate_foundation_docs, generate_individual_doc
-3. **Changelog** (3) - get_changelog, add_changelog_entry, record_changes
-4. **Standards** (3) - establish_standards, audit_codebase, check_consistency
-5. **Quickref** (1) - generate_quickref_interactive
-
-**Decorator Stack:**
-```python
-@log_invocation  # Outer: Logs entry/exit with args
-@mcp_error_handler  # Inner: Catches exceptions, formats errors
-async def handle_tool_name(arguments: dict) -> list[TextContent]:
-    # Validate inputs at boundary
-    project_path = validate_project_path_input(arguments.get("project_path"))
-
-    # Business logic
-    result = generator.generate(project_path)
-
-    # Return TextContent
-    return [TextContent(type="text", text=result)]
-```
-
----
-
-### Layer 3: Generator Layer
-
-**Components:** `generators/` (6 generators + 1 base)
-
-**Pattern:** Template Method + Strategy
-
-**Base Class:** `BaseGenerator`
-- Defines common workflow (load template, prepare paths, parse metadata)
-- Subclasses implement specific generation logic
-
-**Generators:**
-1. `FoundationGenerator` - Orchestrates 5-doc workflow
-2. `ChangelogGenerator` - CRUD for CHANGELOG.json
-3. `StandardsGenerator` - Extract coding standards from codebase
-4. `AuditGenerator` - Compliance checking with scoring
-5. `QuickrefGenerator` - Interactive quickref generation
-6. `HandoffGenerator` - Agent handoff context (legacy)
-
-**Key Design Decision:**
-- Generators are **stateless** - all state passed via method parameters
-- All generators extend `BaseGenerator` for consistent interface
-
----
-
-### Layer 4: Extraction Layer
-
-**Component:** `extractors.py` (WO-CONTEXT-DOCS-INTEGRATION-001)
-
-**Purpose:** Code intelligence extraction via @coderef/core CLI
-
-**Functions:**
-```python
-@lru_cache(maxsize=32)
-def extract_apis(project_path: str) -> Dict[str, Any]:
-    """Extract API endpoints from codebase via CLI scan"""
-
-@lru_cache(maxsize=32)
-def extract_schemas(project_path: str) -> Dict[str, Any]:
-    """Extract data models and entities"""
-
-@lru_cache(maxsize=32)
-def extract_components(project_path: str) -> Dict[str, Any]:
-    """Extract UI components"""
-```
-
-**Design Decisions:**
-- **LRU Cache:** Results cached to avoid redundant CLI calls
-- **Graceful Degradation:** Returns `source: "placeholder"` on CLI failure
-- **Subprocess Isolation:** CLI runs in separate process with timeout
-
-**Integration:**
-```
-extractors.py → cli_utils.py → subprocess → coderef scan → JSON output
-```
-
----
-
-### Layer 5: Validation Layer
-
-**Component:** `validation.py` (REF-003 principle)
-
-**Purpose:** Validate all inputs at API boundary before processing
-
-**Functions:**
-- `validate_project_path_input(path)` - Path exists and is directory
-- `validate_version_format(version)` - Matches semantic versioning
-- `validate_template_name_input(name)` - Template exists in POWER framework
-- `validate_changelog_inputs(args)` - Complete changelog data
-
-**Error Handling:**
-```python
-def validate_project_path_input(path: str) -> str:
-    if not path:
-        raise ValueError("project_path is required")
-    if not Path(path).exists():
-        raise ValueError(f"project_path does not exist: {path}")
-    if not Path(path).is_dir():
-        raise ValueError(f"project_path is not a directory: {path}")
-    return str(Path(path).resolve())
-```
-
-**Key Design Decision:**
-- Validation raises `ValueError` with descriptive messages
-- Handlers catch and convert to error responses via decorator
-
----
-
-### Layer 6: Error Handling Layer
-
-**Component:** `error_responses.py` (ARCH-001 principle)
-
-**Purpose:** Consistent error response formatting
-
-**Factory Methods:**
-```python
-class ErrorResponse:
-    @staticmethod
-    def invalid_input(message: str) -> list[TextContent]:
-        return [TextContent(type="text", text=f"Error: {message}")]
-
-    @staticmethod
-    def file_not_found(path: str) -> list[TextContent]:
-        return [TextContent(type="text", text=f"Error: File not found - {path}")]
-```
-
-**Integration with Decorator:**
-```python
-@mcp_error_handler
-async def handle_tool(args):
-    # If any ValueError raised...
-    # Decorator catches and calls ErrorResponse.invalid_input()
-```
-
----
-
-## Data Flow
-
-### Tool Invocation Flow
+ Tip: Render at https://mermaid.live or in GitHub markdown
 
 ```
-1. MCP Client sends tool call (JSON-RPC)
-      ↓
-2. server.py routes to handler
-      ↓
-3. @log_invocation logs entry
-      ↓
-4. Validation layer checks inputs (raises ValueError on fail)
-      ↓
-5. Handler calls generator/extractor
-      ↓
-6. Generator loads template from templates/power/
-      ↓
-7. Extractor calls @coderef/core CLI (if available)
-      ↓
-8. Generator combines template + extracted data
-      ↓
-9. Handler formats response as TextContent
-      ↓
-10. @log_invocation logs exit
-      ↓
-11. MCP server returns response to client
-```
 
-### Context Injection Flow (WO-CONTEXT-DOCS-INTEGRATION-001)
 
-```
-1. handle_generate_individual_doc(template="api")
-      ↓
-2. Check CODEREF_CONTEXT_AVAILABLE flag
-      ↓
-3. If TRUE and template in ["api", "schema", "components"]:
-      ↓
-   4. Call extract_apis(project_path)
-         ↓
-   5. cli_utils.run_coderef_command("scan", ["--project", path])
-         ↓
-   6. subprocess executes: coderef scan --project /path --output json
-         ↓
-   7. Parse JSON output, extract endpoints
-         ↓
-   8. Cache result with @lru_cache
-      ↓
-9. Return template + extracted data (or template only if extraction failed)
-```
+## Core Components
 
----
+### Functions (6020)
+
+- **`randomstring()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:40
+- **`helpTestDataType()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:182
+- **`Python()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/is64bit.py:6
+- **`os()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/is64bit.py:10
+- **`maketemp()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:10
+- **`_cleanup_function()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:20
+- **`getcleanupfunction()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:32
+- **`find_ado_path()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:36
+- **`makeadopackage()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:43
+- **`makemdb()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:62
+- **`try_connection()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/tryconnection.py:1
+- **`try_operation_with_expected_exception()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/tryconnection.py:21
+- **`getIndexedValue()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:58
+- **`make_COM_connecter()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:66
+- **`connect()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:77
+- **`format_parameters()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:120
+- **`_configure_parameter()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:158
+- **`ado_direction_name()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/ado_consts.py:47
+- **`ado_type_name()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/ado_consts.py:170
+- **`standardErrorHandler()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:24
+
+### Classes (3632)
+
+- **`CommonDBTests`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:44
+- **`XtendString`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1022
+- **`XtendInt`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1025
+- **`XtendFloat`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1028
+- **`TestADOwithSQLServer`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1063
+- **`TestADOwithAccessDB`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1211
+- **`TestADOwithMySql`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1243
+- **`TestADOwithPostgres`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1309
+- **`TimeConverterInterfaceTest`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1372
+- **`TestPythonTimeConverter`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1415
+- **`TestPythonDateTimeConverter`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1459
+- **`cleanup_manager`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1522
+- **`DatabaseAPI20Test`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/dbapi20.py:86
+- **`mytest`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/dbapi20.py:101
+- **`test_adodbapi`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/test_adodbapi_dbapi20.py:88
+- **`Connection`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:212
+- **`Cursor`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:519
+- **`Error`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:38
+- **`Warning`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:47
+- **`InterfaceError`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:51
+
+### Components (0)
+
+_No components found_
+
+## Module Organization
+
+### `C:\Users\willh\.mcp-servers\coderef-docs/`
+- Elements: 251
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages/`
+- Elements: 340
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\adodbapi/`
+- Elements: 153
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\adodbapi\test/`
+- Elements: 169
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\annotated_types/`
+- Elements: 44
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio/`
+- Elements: 124
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\_backends/`
+- Elements: 441
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\_core/`
+- Elements: 407
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\abc/`
+- Elements: 128
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\streams/`
+- Elements: 111
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\attr/`
+- Elements: 250
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\certifi/`
+- Elements: 5
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\cffi/`
+- Elements: 640
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\click/`
+- Elements: 606
+
+### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\colorama/`
+- Elements: 77
+
 
 ## Design Patterns
 
-### 1. Decorator Pattern
-
-**Usage:** Logging and error handling
-
-```python
-@log_invocation  # Cross-cutting concern: logging
-@mcp_error_handler  # Cross-cutting concern: error formatting
-async def handle_tool(args):
-    pass
-```
-
-**Benefits:**
-- Separates cross-cutting concerns from business logic
-- Consistent behavior across all 11 handlers
+_No patterns detected_
 
 ---
-
-### 2. Template Method Pattern
-
-**Usage:** BaseGenerator and subclasses
-
-```python
-class BaseGenerator:
-    def generate(self, project_path):
-        # Template method defines workflow
-        self.prepare_generation(project_path)
-        template = self.read_template()
-        return self.process_template(template)
-
-class FoundationGenerator(BaseGenerator):
-    def process_template(self, template):
-        # Subclass implements specific logic
-        pass
-```
-
-**Benefits:**
-- Consistent workflow across all generators
-- Easy to add new generator types
-
----
-
-### 3. Strategy Pattern
-
-**Usage:** Different generators for different doc types
-
-```python
-# Select strategy based on template_name
-if template_name == "api":
-    generator = APIGenerator()
-elif template_name == "schema":
-    generator = SchemaGenerator()
-```
-
-**Benefits:**
-- Flexible doc generation
-- Each strategy encapsulates specific algorithm
-
----
-
-### 4. Factory Pattern
-
-**Usage:** Error response creation
-
-```python
-ErrorResponse.invalid_input(message)  # Factory method
-ErrorResponse.file_not_found(path)    # Factory method
-```
-
-**Benefits:**
-- Centralized error response creation
-- Consistent error formatting
-
----
-
-## Architectural Principles (REF-xxx)
-
-### ARCH-001: Consistent Error Response Format
-
-All errors returned as `TextContent` with user-friendly messages.
-
-**Implementation:** `error_responses.py` + `@mcp_error_handler` decorator
-
----
-
-### REF-002: Centralized Constants
-
-All paths, filenames, configurations in `constants.py`.
-
-**Implementation:**
-```python
-class Paths:
-    TEMPLATES_DIR = "templates/power"
-    OUTPUT_DIR = "coderef/foundation-docs"
-```
-
----
-
-### REF-003: Validation at Boundaries
-
-All inputs validated before entering business logic.
-
-**Implementation:** `validation.py` with descriptive ValueError messages
-
----
-
-### ARCH-004: Structured Logging
-
-All tool calls logged with entry/exit, arguments, results.
-
-**Implementation:** `logger_config.py` + `@log_invocation` decorator
-
----
-
-### ARCH-005: Graceful Degradation
-
-Context injection fails gracefully to template placeholders.
-
-**Implementation:** `extractors.py` returns `source: "placeholder"` on error
-
----
-
-## Integration Architecture
-
-### Integration with @coderef/core CLI
-
-**Detection Strategy:**
-1. Check `coderef --version` in PATH (global npm install)
-2. Fallback to hardcoded path `C:\Users\willh\Desktop\projects\coderef-system\packages\cli\dist\cli.js`
-
-**Execution:**
-```python
-subprocess.run(["coderef", "scan", "--project", path], timeout=120)
-```
-
-**Error Handling:**
-- `FileNotFoundError` → CLI not found (fallback mode)
-- `subprocess.TimeoutExpired` → Timeout (fallback mode)
-- `json.JSONDecodeError` → Invalid output (fallback mode)
-
----
-
-### Integration with coderef-workflow
-
-**Relationship:** coderef-docs provides documentation tools; coderef-workflow orchestrates planning
-
-**Integration Points:**
-- Workflow calls `generate_foundation_docs` after feature completion
-- Workflow calls `record_changes` to update changelog
-- Workflow calls `generate_quickref_interactive` for quickref guides
-
----
-
-## Security Architecture
-
-### Input Validation
-
-All file paths resolved to absolute paths and validated before use.
-
-**Protection Against:**
-- Path traversal attacks (../)
-- Invalid file operations
-- Command injection (subprocess uses list args, not shell=True)
-
----
-
-### Subprocess Isolation
-
-CLI commands executed with:
-- **No shell expansion** (`shell=False`)
-- **Timeout limits** (120s default)
-- **Separate process** (isolated from server)
-
----
-
-## Performance Architecture
-
-### Caching Strategy
-
-**LRU Cache on Extractors:**
-```python
-@lru_cache(maxsize=32)
-def extract_apis(project_path: str):
-    # Expensive CLI call cached
-```
-
-**Benefits:**
-- Avoid redundant CLI scans
-- 32-entry cache covers typical usage
-- Cache keyed by project_path
-
----
-
-### Async Design
-
-All tool handlers are `async` for non-blocking I/O:
-```python
-async def handle_tool(args):
-    result = await some_async_operation()
-```
-
-**Benefits:**
-- MCP server can handle concurrent requests
-- Non-blocking file I/O
-
----
-
-## Deployment Architecture
-
-### File-Based Storage
-
-No database required. All data stored as JSON files:
-- `coderef/changelog/CHANGELOG.json`
-- `coderef/standards/*.md`
-- `coderef/workorder/{feature}/*.json`
-
-**Benefits:**
-- Simple deployment
-- Git-friendly
-- No database overhead
-
----
-
-### Configuration
-
-**MCP Configuration** (`~/.mcp.json` or `.claude/settings.json`):
-```json
-{
-  "mcpServers": {
-    "coderef-docs": {
-      "command": "python",
-      "args": ["-m", "coderef-docs.server"]
-    }
-  }
-}
-```
-
----
-
-## References
-
-- **Component Details:** COMPONENTS.md
-- **API Specifications:** API.md
-- **Data Schemas:** SCHEMA.md
-- **MCP Specification:** https://spec.modelcontextprotocol.io/
-
----
-
-*Generated: 2025-12-27*
-*For AI Agents: This architecture prioritizes simplicity, modularity, and fail-safe degradation*
+**Generated from:** `.coderef/index.json`, `.coderef/diagrams/dependencies.mmd`
+**Date:** 2025-12-31

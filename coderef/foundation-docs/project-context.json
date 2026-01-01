@@ -1,0 +1,932 @@
+{
+  "api_context": {
+    "endpoints": [
+      {
+        "method": "GET",
+        "path": "/users",
+        "file": "coderef-docs\\extractors.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/login",
+        "file": "coderef-docs\\extractors.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "\"GET\"",
+        "path": "/users",
+        "file": "coderef-docs\\extractors.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/health",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/debug",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/tools",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/openapi.json",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/sse",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET', 'POST'",
+        "path": "/api/hello",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/api/<tool_name>",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/mcp",
+        "file": "coderef-docs\\http_server.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "coderef-docs\\tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/users",
+        "file": "coderef-docs\\tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/users",
+        "file": "coderef-docs\\tests\\integration\\test_coderef_foundation_docs.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/users/{user_id}",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "POST",
+        "path": "/users",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "PUT",
+        "path": "/users/{user_id}",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "DELETE",
+        "path": "/users/{user_id}",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/data",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/endpoint{i}",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "FastAPI"
+      },
+      {
+        "method": "\"GET\", \"POST\"",
+        "path": "/api/items",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "\"GET\", \"PUT\", \"DELETE\"",
+        "path": "/api/items/<int:item_id>",
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/health",
+        "file": "coderef-docs\\coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'GET'",
+        "path": "/tools",
+        "file": "coderef-docs\\coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      },
+      {
+        "method": "'POST'",
+        "path": "/mcp",
+        "file": "coderef-docs\\coderef\\archived\\http_server_full.py",
+        "framework": "Flask"
+      }
+    ],
+    "count": 30,
+    "frameworks_detected": [
+      "FastAPI",
+      "Flask"
+    ],
+    "auth_method": "Unknown",
+    "error_format": "RFC 7807"
+  },
+  "dependencies": {
+    "count": 10,
+    "production": [
+      {
+        "name": "mcp",
+        "version": "1.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "jsonschema",
+        "version": "4.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "toml",
+        "version": "0.10.2",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "python-dotenv",
+        "version": "1.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "flask",
+        "version": "3.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pydantic",
+        "version": "2.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "pydantic-settings",
+        "version": "2.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "python-json-logger",
+        "version": "2.0.0",
+        "ecosystem": "pip"
+      },
+      {
+        "name": "gunicorn",
+        "version": "21.0.0",
+        "ecosystem": "pip"
+      }
+    ],
+    "development": [],
+    "outdated": [],
+    "vulns": []
+  },
+  "database": {
+    "tables": [
+      {
+        "name": "FoundationGenerator",
+        "columns": [],
+        "file": "coderef-workflow\\generators\\foundation_generator.py"
+      },
+      {
+        "name": "HandoffGenerator",
+        "columns": [],
+        "file": "coderef-workflow\\generators\\handoff_generator.py"
+      },
+      {
+        "name": "QuickrefGenerator",
+        "columns": [],
+        "file": "coderef-workflow\\generators\\quickref_generator.py"
+      },
+      {
+        "name": "FrameworkInfo",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "TestResult",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "TestSummary",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "CoverageInfo",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "UnifiedTestResults",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "FrameworkDetectionResult",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "TestRunRequest",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "TestAnalysisResult",
+        "columns": [],
+        "file": "coderef-testing\\src\\models.py"
+      },
+      {
+        "name": "PersonaBehavior",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "PersonaDefinition",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "PersonaState",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "TaskExecutionStatus",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "TaskProgress",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "TodoMetadata",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "CustomPersonaInput",
+        "columns": [],
+        "file": "coderef-personas\\src\\models.py"
+      },
+      {
+        "name": "FoundationGenerator",
+        "columns": [],
+        "file": "coderef-docs\\generators\\foundation_generator.py"
+      },
+      {
+        "name": "HandoffGenerator",
+        "columns": [],
+        "file": "coderef-docs\\generators\\handoff_generator.py"
+      },
+      {
+        "name": "QuickrefGenerator",
+        "columns": [],
+        "file": "coderef-docs\\generators\\quickref_generator.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          }
+        ],
+        "file": "coderef-docs\\tests\\integration\\test_coderef_foundation_docs.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "User",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "Post",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "Comment",
+        "columns": [
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "email",
+            "definition": "String(255"
+          },
+          {
+            "name": "name",
+            "definition": "String(100"
+          },
+          {
+            "name": "created_at",
+            "definition": "DateTime"
+          },
+          {
+            "name": "is_active",
+            "definition": "Boolean, default=True"
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "title",
+            "definition": "String(200"
+          },
+          {
+            "name": "content",
+            "definition": "String"
+          },
+          {
+            "name": "author_id",
+            "definition": "Integer, ForeignKey(\"users.id\""
+          },
+          {
+            "name": "id",
+            "definition": "Integer, primary_key=True"
+          },
+          {
+            "name": "text",
+            "definition": "String(500"
+          },
+          {
+            "name": "post_id",
+            "definition": "Integer, ForeignKey(\"posts.id\""
+          }
+        ],
+        "file": "coderef-docs\\tests\\unit\\generators\\test_coderef_foundation_generator.py"
+      },
+      {
+        "name": "MetadataValue",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ElementMetadata",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "Relationship",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "CodeRef2Element",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "QueryFilter",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "QueryRequest",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "QueryResponse",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ImpactNode",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ImpactAnalysis",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "AnalysisRequest",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "AnalysisResponse",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "CoverageInfo",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "CoverageAnalysis",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "TraversalRequest",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "TraversalNode",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "TraversalResponse",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "BatchQueryItem",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "BatchQueryRequest",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "BatchQueryResult",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "BatchQueryResponse",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ErrorDetail",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ErrorResponse",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ToolStatus",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      },
+      {
+        "name": "ServiceStatus",
+        "columns": [],
+        "file": "archived\\coderef-mcp\\coderef\\models.py"
+      }
+    ],
+    "relationships": [],
+    "migrations": [],
+    "table_count": 50,
+    "has_migrations": false
+  },
+  "activity": {
+    "recent_commits": [],
+    "active_files": [],
+    "contributors": [],
+    "has_git": true
+  },
+  "patterns": {
+    "handlers": [
+      {
+        "name": "handle_coderef_scan",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_query",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_impact",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_complexity",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_patterns",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_coverage",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_context",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_validate",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_drift",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_diagram",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_coderef_tag",
+        "file": "coderef-context\\server.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "coderef-docs\\handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "coderef-docs\\handler_decorators.py"
+      },
+      {
+        "name": "handle_my_tool",
+        "file": "coderef-docs\\handler_decorators.py"
+      },
+      {
+        "name": "handle_list_templates",
+        "file": "coderef-docs\\tool_handlers.py"
+      },
+      {
+        "name": "handle_get_template",
+        "file": "coderef-docs\\tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_foundation_docs",
+        "file": "coderef-docs\\tool_handlers.py"
+      },
+      {
+        "name": "handle_generate_individual_doc",
+        "file": "coderef-docs\\tool_handlers.py"
+      },
+      {
+        "name": "handle_add_changelog_entry",
+        "file": "coderef-docs\\tool_handlers.py"
+      },
+      {
+        "name": "handle_update_changelog",
+        "file": "coderef-docs\\tool_handlers.py"
+      }
+    ],
+    "decorators": [
+      {
+        "name": "pytest.mark.asyncio",
+        "count": 386
+      },
+      {
+        "name": "pytest.fixture",
+        "count": 155
+      },
+      {
+        "name": "mcp_error_handler",
+        "count": 107
+      },
+      {
+        "name": "log_invocation",
+        "count": 97
+      },
+      {
+        "name": "Fn",
+        "count": 58
+      },
+      {
+        "name": "patch",
+        "count": 46
+      },
+      {
+        "name": "coderef",
+        "count": 45
+      },
+      {
+        "name": "staticmethod",
+        "count": 39
+      },
+      {
+        "name": "app.route",
+        "count": 19
+      },
+      {
+        "name": "dataclass",
+        "count": 19
+      },
+      {
+        "name": "pytest.mark.integration",
+        "count": 17
+      },
+      {
+        "name": "pytest.mark.performance",
+        "count": 14
+      },
+      {
+        "name": "C",
+        "count": 14
+      },
+      {
+        "name": "F",
+        "count": 11
+      },
+      {
+        "name": "classmethod",
+        "count": 10
+      }
+    ],
+    "error_handling": [
+      "ServiceUnavailableError",
+      "RuntimeError",
+      "ValidationError",
+      "TypeError",
+      "TimeoutError",
+      "UnicodeDecodeError",
+      "ConnectionError",
+      "AssertionError",
+      "OSError",
+      "JSONSchemaValidationError",
+      "ValueError",
+      "ImportError",
+      "FileNotFoundError",
+      "PermissionError",
+      "UnicodeEncodeError",
+      "IOError"
+    ]
+  },
+  "similar_features": [
+    {
+      "name": "align-plan-workflow",
+      "workorder_id": "WO-ALIGN-PLAN-WORKFLOW-001",
+      "goal": ""
+    }
+  ],
+  "existing_docs": {
+    "architecture": null,
+    "schema": null,
+    "api": null,
+    "components": null,
+    "readme": {
+      "sections": {
+        "coderef_ecosystem_-_ai-native_code_intelligence_&_feature_lifecycle_management": "**Version:** 1.0.0 | **Status:** \u2705 Production | **Last Updated:** 2025-12-25\n\n---",
+        "what_this_ecosystem_does": "**CodeRef** is a complete system that enables AI agents to plan, understand, implement, and document software features safely and efficiently. It solves the \"agent blind coding\" problem by providing code intelligence, semantic context, and structured planning throughout the entire feature lifecycle.\n\n### Core Problem\n\n- \u274c **Before:** Agents generate code without knowing dependencies \u2192 runtime failures, breaking changes, regressions\n- \u2705 **After:** Agents get complete context (dependencies, impact, tests, risks, architecture) \u2192 safe, confident implementations\n\n---",
+        "system_architecture": "The ecosystem consists of 4 specialized MCP servers that work together:\n\n```\nInput: Feature Idea\n    \u2193\ncoderef-workflow (Planning)\n    \u251c\u2500 Gathers context (requirements, constraints)\n    \u251c\u2500 Analyzes project (code intelligence from coderef-context)\n    \u251c\u2500 Creates plan (10-section JSON with tasks)\n    \u2514\u2500 Validates plan (quality scoring)\n    \u2193\nAgent + Personas (Implementation)\n    \u251c\u2500 Uses expert personas for domain knowledge\n    \u251c\u2500 Queries coderef-context for code intelligence\n    \u251c\u2500 Implements features with dependency context\n    \u2514\u2500 Updates DELIVERABLES.md with progress\n    \u2193\ncoderef-docs (Documentation)\n    \u251c\u2500 Records changes (auto-detects git diffs)\n    \u251c\u2500 Generates foundation docs (README, ARCHITECTURE, etc)\n    \u251c\u2500 Updates CHANGELOG (with workorder tracking)\n    \u2514\u2500 Archives feature (for historical reference)\n    \u2193\nOutput: Complete, documented, safe feature\n```\n\n---",
+        "the_4_mcp_servers": "| Server | Purpose | Key Tools | Location |\n|--------|---------|-----------|----------|\n| **coderef-context** | Code Intelligence | scan, query, impact, complexity, patterns, coverage, drift | Python wrapper for @coderef/core |\n| **coderef-workflow** | Planning & Orchestration | gather_context, analyze, create_plan, validate, execute, verify, archive | Feature lifecycle management |\n| **coderef-docs** | Documentation | generate_foundation_docs, quickref, record_changes, establish_standards, audit, check_consistency | Generate all project docs |\n| **coderef-personas** | Expert Agents | use_persona, list_personas, create_custom_persona | 9 domain experts (Lloyd, Ava, Marcus, Quinn, Taylor, Devon, + 3 more) |\n\n### How They Work Together\n\n**1. Planning Phase** (coderef-workflow)\n```\n/create-workorder \u2192 Gathers context + Analyzes project + Creates plan\n                 \u2193 Uses coderef-context for code intelligence\n                 \u2192 Outputs: plan.json (10-section structure)\n```\n\n**2. Intelligence Phase** (coderef-context)\n```\nAgents query: \"What will break if I change this?\"\n             \u2193\ncoderef-context wraps @coderef/core CLI\n             \u2193\nReturns: Dependencies, impact radius, affected files, risk level\n```\n\n**3. Implementation Phase** (Agent + Personas)\n```\nAgent executes plan tasks\n    \u251c\u2500 Uses Ava for frontend work (CSS, React, accessibility)\n    \u251c\u2500 Uses Marcus for backend work (API, database, auth)\n    \u251c\u2500 Uses Quinn for testing (test generation, coverage)\n    \u2514\u2500 Calls coderef-context for code context\n```\n\n**4. Documentation Phase** (coderef-docs)\n```\nAfter implementation:\n    \u251c\u2500 /record-changes \u2192 Auto-detects git diffs \u2192 Updates CHANGELOG\n    \u251c\u2500 /generate-docs \u2192 Creates README, ARCHITECTURE, SCHEMA\n    \u2514\u2500 /archive-feature \u2192 Moves to coderef/archived/ for reference\n```\n\n---",
+        "complete_feature_lifecycle": "```\nPLAN (5-10 min)\n\u251c\u2500 /create-workorder\n\u251c\u2500 Gathers requirements\n\u251c\u2500 Analyzes project structure\n\u251c\u2500 Creates implementation plan\n\u2514\u2500 Output: coderef/workorder/{feature}/plan.json\n\nEXECUTE (varies)\n\u251c\u2500 /execute-plan \u2192 TodoWrite task list\n\u251c\u2500 Agent works through tasks using personas + code context\n\u251c\u2500 Updates task status as progress\n\u2514\u2500 Output: Code implementation + DELIVERABLES.md\n\nDOCUMENT (2-5 min)\n\u251c\u2500 /update-deliverables \u2192 Captures git metrics (LOC, commits, time)\n\u251c\u2500 /record-changes \u2192 Smart changelog recording\n\u251c\u2500 /update-docs \u2192 Bumps version, updates README/CHANGELOG\n\u2514\u2500 Output: Updated documentation\n\nARCHIVE (1 min)\n\u251c\u2500 /archive-feature\n\u251c\u2500 Move to coderef/archived/\n\u2514\u2500 Update archive index\n\nTotal: Feature from idea \u2192 documented & archived in ~1-2 hours\n```\n\n---",
+        "key_concepts": "### Workorder System\n**Format:** `WO-{FEATURE}-{CATEGORY}-###`\n\nExample: `WO-AUTH-SYSTEM-001`\n- Tracked in `coderef/workorder-log.txt` (audit trail)\n- Stored in plan.json META_DOCUMENTATION\n- Enables multi-agent work with unique IDs per agent\n\n### Plan.json Structure\n**10 sections** covering everything from discovery to success criteria:\n\n1. META_DOCUMENTATION (project info, version, workorder_id)\n2. 0_PREPARATION (discovery, analysis, existing patterns)\n3. 1_EXECUTIVE_SUMMARY (what & why)\n4. 2_RISK_ASSESSMENT (breaking changes, security, performance)\n5. 3_CURRENT_STATE_ANALYSIS (existing code, architecture)\n6. 4_KEY_FEATURES (requirements)\n7. 5_TASK_ID_SYSTEM (task naming conventions)\n8. 6_IMPLEMENTATION_PHASES (phased breakdown)\n9. 7_TESTING_STRATEGY (test plan)\n10. 8_SUCCESS_CRITERIA (completion verification)\n\n### POWER Framework\nAll documentation follows **POWER** for consistency:\n- **P**urpose - Why this exists\n- **O**verview - What it covers\n- **W**hat/Why/When - Detailed content\n- **E**xamples - Concrete illustrations\n- **R**eferences - Related docs\n\n---",
+        "getting_started": "### Installation\n```bash",
+        "verify_configuration_in_~/.mcp.json": "",
+        "test_connection_(in_any_project)": "/stub                          # Quick idea capture\n/create-workorder              # Full planning workflow\n/generate-docs                 # Generate project docs\n```\n\n### Common Workflows\n\n**Capture an idea:**\n```\n/stub\n\u2192 Feature name: \"dark-mode-toggle\"\n\u2192 Description: \"Add dark mode theme toggle to UI\"\n\u2192 stub.json saved to: C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\{feature}/\n```\n\n**Plan a feature:**\n```\n/create-workorder\n\u2192 Gathers context (interactive)\n\u2192 Analyzes project (with code intelligence)\n\u2192 Creates & validates plan\n\u2192 Output: coderef/workorder/{feature}/plan.json\n```\n\n**Implement with help:**\n```\n/execute-plan\n\u2192 Generate TodoWrite task list\n\u2192 Agent works through tasks\n\u2192 Uses personas for domain expertise\n\u2192 Calls coderef-context for code context\n```\n\n**Record completion:**\n```\n/record-changes\n\u2192 Auto-detects git changes\n\u2192 Suggests change_type (feature/fix/breaking)\n\u2192 Updates CHANGELOG.json + README version\n```\n\n---",
+        "directory_structure": "```\n.mcp-servers/                                # All MCP servers\n\u251c\u2500\u2500 coderef-context/                        # Code intelligence (Python)\n\u2502   \u251c\u2500\u2500 server.py                           # Wraps @coderef/core CLI\n\u2502   \u2514\u2500\u2500 README.md                           # Details\n\u251c\u2500\u2500 coderef-workflow/                       # Planning (Python)\n\u2502   \u251c\u2500\u2500 generators/                         # plan.json, analysis generation\n\u2502   \u251c\u2500\u2500 .claude/commands/                   # 26 slash commands\n\u2502   \u2514\u2500\u2500 CLAUDE.md                           # Architecture\n\u251c\u2500\u2500 coderef-docs/                           # Documentation (Python)\n\u2502   \u251c\u2500\u2500 generators/                         # doc generation\n\u2502   \u251c\u2500\u2500 templates/power/                    # POWER framework templates\n\u2502   \u2514\u2500\u2500 .claude/commands/                   # 26 slash commands\n\u251c\u2500\u2500 coderef-personas/                       # Expert personas (Python)\n\u2502   \u251c\u2500\u2500 personas/base/                      # 9 personas\n\u2502   \u2514\u2500\u2500 .claude/commands/                   # Persona activation\n\u251c\u2500\u2500 CLAUDEMD-TEMPLATE.json                  # Universal doc template\n\u251c\u2500\u2500 coderef/                                # Global artifacts\n\u2502   \u251c\u2500\u2500 workorder/                          # Active features\n\u2502   \u251c\u2500\u2500 archived/                           # Completed features\n\u2502   \u2514\u2500\u2500 workorder-log.txt                   # Audit trail\n\u2514\u2500\u2500 README.md                               # This file\n```\n\n---",
+        "design_philosophy": "**1. Separation of Concerns**\n- coderef-context = Code intelligence ONLY\n- coderef-workflow = Planning & orchestration ONLY\n- coderef-docs = Documentation ONLY\n- coderef-personas = Expertise & behavior ONLY\n\n**2. Agent-First Design**\n- Tools designed for AI-to-AI communication\n- No manual interactive forms\n- Structured JSON throughout\n- Complete context provided upfront\n\n**3. Safety & Confidence**\n- Full dependency context before implementation\n- Impact analysis before refactoring\n- Validation at each stage (plan scoring, agent verification)\n- Complete audit trails\n\n**4. Lean & Efficient**\n- 530-600 line CLAUDE.md per server (using CLAUDEMD-TEMPLATE.json)\n- No repetition (link instead)\n- Version history trimmed to last 2 versions\n- One source of truth per concern\n\n---",
+        "resources": "- **[coderef-context/README.md](coderef-context/README.md)** - Code intelligence details\n- **[coderef-workflow/CLAUDE.md](coderef-workflow/CLAUDE.md)** - Planning architecture\n- **[coderef-docs/CLAUDE.md](coderef-docs/CLAUDE.md)** - Documentation system\n- **[coderef-personas/CLAUDE.md](coderef-personas/CLAUDE.md)** - Persona system\n- **[CLAUDEMD-TEMPLATE.json](CLAUDEMD-TEMPLATE.json)** - Documentation template\n- **[coderef-system](../Desktop/projects/coderef-system/)** - TypeScript @coderef/core\n\n---\n\n**Maintained by:** willh, Claude Code AI\n\n**System Status:** \u2705 Production Ready - All 4 servers operational, full feature lifecycle tested and working"
+      },
+      "full_content": "# CodeRef Ecosystem - AI-Native Code Intelligence & Feature Lifecycle Management\n\n**Version:** 1.0.0 | **Status:** \u2705 Production | **Last Updated:** 2025-12-25\n\n---\n\n## What This Ecosystem Does\n\n**CodeRef** is a complete system that enables AI agents to plan, understand, implement, and document software features safely and efficiently. It solves the \"agent blind coding\" problem by providing code intelligence, semantic context, and structured planning throughout the entire feature lifecycle.\n\n### Core Problem\n\n- \u274c **Before:** Agents generate code without knowing dependencies \u2192 runtime failures, breaking changes, regressions\n- \u2705 **After:** Agents get complete context (dependencies, impact, tests, risks, architecture) \u2192 safe, confident implementations\n\n---\n\n## System Architecture\n\nThe ecosystem consists of 4 specialized MCP servers that work together:\n\n```\nInput: Feature Idea\n    \u2193\ncoderef-workflow (Planning)\n    \u251c\u2500 Gathers context (requirements, constraints)\n    \u251c\u2500 Analyzes project (code intelligence from coderef-context)\n    \u251c\u2500 Creates plan (10-section JSON with tasks)\n    \u2514\u2500 Validates plan (quality scoring)\n    \u2193\nAgent + Personas (Implementation)\n    \u251c\u2500 Uses expert personas for domain knowledge\n    \u251c\u2500 Queries coderef-context for code intelligence\n    \u251c\u2500 Implements features with dependency context\n    \u2514\u2500 Updates DELIVERABLES.md with progress\n    \u2193\ncoderef-docs (Documentation)\n    \u251c\u2500 Records changes (auto-detects git diffs)\n    \u251c\u2500 Generates foundation docs (README, ARCHITECTURE, etc)\n    \u251c\u2500 Updates CHANGELOG (with workorder tracking)\n    \u2514\u2500 Archives feature (for historical reference)\n    \u2193\nOutput: Complete, documented, safe feature\n```\n\n---\n\n## The 4 MCP Servers\n\n| Server | Purpose | Key Tools | Location |\n|--------|---------|-----------|----------|\n| **coderef-context** | Code Intelligence | scan, query, impact, complexity, patterns, coverage, drift | Python wrapper for @coderef/core |\n| **coderef-workflow** | Planning & Orchestration | gather_context, analyze, create_plan, validate, execute, verify, archive | Feature lifecycle management |\n| **coderef-docs** | Documentation | generate_foundation_docs, quickref, record_changes, establish_standards, audit, check_consistency | Generate all project docs |\n| **coderef-personas** | Expert Agents | use_persona, list_personas, create_custom_persona | 9 domain experts (Lloyd, Ava, Marcus, Quinn, Taylor, Devon, + 3 more) |\n\n### How They Work Together\n\n**1. Planning Phase** (coderef-workflow)\n```\n/create-workorder \u2192 Gathers context + Analyzes project + Creates plan\n                 \u2193 Uses coderef-context for code intelligence\n                 \u2192 Outputs: plan.json (10-section structure)\n```\n\n**2. Intelligence Phase** (coderef-context)\n```\nAgents query: \"What will break if I change this?\"\n             \u2193\ncoderef-context wraps @coderef/core CLI\n             \u2193\nReturns: Dependencies, impact radius, affected files, risk level\n```\n\n**3. Implementation Phase** (Agent + Personas)\n```\nAgent executes plan tasks\n    \u251c\u2500 Uses Ava for frontend work (CSS, React, accessibility)\n    \u251c\u2500 Uses Marcus for backend work (API, database, auth)\n    \u251c\u2500 Uses Quinn for testing (test generation, coverage)\n    \u2514\u2500 Calls coderef-context for code context\n```\n\n**4. Documentation Phase** (coderef-docs)\n```\nAfter implementation:\n    \u251c\u2500 /record-changes \u2192 Auto-detects git diffs \u2192 Updates CHANGELOG\n    \u251c\u2500 /generate-docs \u2192 Creates README, ARCHITECTURE, SCHEMA\n    \u2514\u2500 /archive-feature \u2192 Moves to coderef/archived/ for reference\n```\n\n---\n\n## Complete Feature Lifecycle\n\n```\nPLAN (5-10 min)\n\u251c\u2500 /create-workorder\n\u251c\u2500 Gathers requirements\n\u251c\u2500 Analyzes project structure\n\u251c\u2500 Creates implementation plan\n\u2514\u2500 Output: coderef/workorder/{feature}/plan.json\n\nEXECUTE (varies)\n\u251c\u2500 /execute-plan \u2192 TodoWrite task list\n\u251c\u2500 Agent works through tasks using personas + code context\n\u251c\u2500 Updates task status as progress\n\u2514\u2500 Output: Code implementation + DELIVERABLES.md\n\nDOCUMENT (2-5 min)\n\u251c\u2500 /update-deliverables \u2192 Captures git metrics (LOC, commits, time)\n\u251c\u2500 /record-changes \u2192 Smart changelog recording\n\u251c\u2500 /update-docs \u2192 Bumps version, updates README/CHANGELOG\n\u2514\u2500 Output: Updated documentation\n\nARCHIVE (1 min)\n\u251c\u2500 /archive-feature\n\u251c\u2500 Move to coderef/archived/\n\u2514\u2500 Update archive index\n\nTotal: Feature from idea \u2192 documented & archived in ~1-2 hours\n```\n\n---\n\n## Key Concepts\n\n### Workorder System\n**Format:** `WO-{FEATURE}-{CATEGORY}-###`\n\nExample: `WO-AUTH-SYSTEM-001`\n- Tracked in `coderef/workorder-log.txt` (audit trail)\n- Stored in plan.json META_DOCUMENTATION\n- Enables multi-agent work with unique IDs per agent\n\n### Plan.json Structure\n**10 sections** covering everything from discovery to success criteria:\n\n1. META_DOCUMENTATION (project info, version, workorder_id)\n2. 0_PREPARATION (discovery, analysis, existing patterns)\n3. 1_EXECUTIVE_SUMMARY (what & why)\n4. 2_RISK_ASSESSMENT (breaking changes, security, performance)\n5. 3_CURRENT_STATE_ANALYSIS (existing code, architecture)\n6. 4_KEY_FEATURES (requirements)\n7. 5_TASK_ID_SYSTEM (task naming conventions)\n8. 6_IMPLEMENTATION_PHASES (phased breakdown)\n9. 7_TESTING_STRATEGY (test plan)\n10. 8_SUCCESS_CRITERIA (completion verification)\n\n### POWER Framework\nAll documentation follows **POWER** for consistency:\n- **P**urpose - Why this exists\n- **O**verview - What it covers\n- **W**hat/Why/When - Detailed content\n- **E**xamples - Concrete illustrations\n- **R**eferences - Related docs\n\n---\n\n## Getting Started\n\n### Installation\n```bash\n# All 4 MCP servers pre-installed in .mcp-servers/\n# Verify configuration in ~/.mcp.json\n\n# Test connection (in any project)\n/stub                          # Quick idea capture\n/create-workorder              # Full planning workflow\n/generate-docs                 # Generate project docs\n```\n\n### Common Workflows\n\n**Capture an idea:**\n```\n/stub\n\u2192 Feature name: \"dark-mode-toggle\"\n\u2192 Description: \"Add dark mode theme toggle to UI\"\n\u2192 stub.json saved to: C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\{feature}/\n```\n\n**Plan a feature:**\n```\n/create-workorder\n\u2192 Gathers context (interactive)\n\u2192 Analyzes project (with code intelligence)\n\u2192 Creates & validates plan\n\u2192 Output: coderef/workorder/{feature}/plan.json\n```\n\n**Implement with help:**\n```\n/execute-plan\n\u2192 Generate TodoWrite task list\n\u2192 Agent works through tasks\n\u2192 Uses personas for domain expertise\n\u2192 Calls coderef-context for code context\n```\n\n**Record completion:**\n```\n/record-changes\n\u2192 Auto-detects git changes\n\u2192 Suggests change_type (feature/fix/breaking)\n\u2192 Updates CHANGELOG.json + README version\n```\n\n---\n\n## Directory Structure\n\n```\n.mcp-servers/                                # All MCP servers\n\u251c\u2500\u2500 coderef-context/                        # Code intelligence (Python)\n\u2502   \u251c\u2500\u2500 server.py                           # Wraps @coderef/core CLI\n\u2502   \u2514\u2500\u2500 README.md                           # Details\n\u251c\u2500\u2500 coderef-workflow/                       # Planning (Python)\n\u2502   \u251c\u2500\u2500 generators/                         # plan.json, analysis generation\n\u2502   \u251c\u2500\u2500 .claude/commands/                   # 26 slash commands\n\u2502   \u2514\u2500\u2500 CLAUDE.md                           # Architecture\n\u251c\u2500\u2500 coderef-docs/                           # Documentation (Python)\n\u2502   \u251c\u2500\u2500 generators/                         # doc generation\n\u2502   \u251c\u2500\u2500 templates/power/                    # POWER framework templates\n\u2502   \u2514\u2500\u2500 .claude/commands/                   # 26 slash commands\n\u251c\u2500\u2500 coderef-personas/                       # Expert personas (Python)\n\u2502   \u251c\u2500\u2500 personas/base/                      # 9 personas\n\u2502   \u2514\u2500\u2500 .claude/commands/                   # Persona activation\n\u251c\u2500\u2500 CLAUDEMD-TEMPLATE.json                  # Universal doc template\n\u251c\u2500\u2500 coderef/                                # Global artifacts\n\u2502   \u251c\u2500\u2500 workorder/                          # Active features\n\u2502   \u251c\u2500\u2500 archived/                           # Completed features\n\u2502   \u2514\u2500\u2500 workorder-log.txt                   # Audit trail\n\u2514\u2500\u2500 README.md                               # This file\n```\n\n---\n\n## Design Philosophy\n\n**1. Separation of Concerns**\n- coderef-context = Code intelligence ONLY\n- coderef-workflow = Planning & orchestration ONLY\n- coderef-docs = Documentation ONLY\n- coderef-personas = Expertise & behavior ONLY\n\n**2. Agent-First Design**\n- Tools designed for AI-to-AI communication\n- No manual interactive forms\n- Structured JSON throughout\n- Complete context provided upfront\n\n**3. Safety & Confidence**\n- Full dependency context before implementation\n- Impact analysis before refactoring\n- Validation at each stage (plan scoring, agent verification)\n- Complete audit trails\n\n**4. Lean & Efficient**\n- 530-600 line CLAUDE.md per server (using CLAUDEMD-TEMPLATE.json)\n- No repetition (link instead)\n- Version history trimmed to last 2 versions\n- One source of truth per concern\n\n---\n\n## Resources\n\n- **[coderef-context/README.md](coderef-context/README.md)** - Code intelligence details\n- **[coderef-workflow/CLAUDE.md](coderef-workflow/CLAUDE.md)** - Planning architecture\n- **[coderef-docs/CLAUDE.md](coderef-docs/CLAUDE.md)** - Documentation system\n- **[coderef-personas/CLAUDE.md](coderef-personas/CLAUDE.md)** - Persona system\n- **[CLAUDEMD-TEMPLATE.json](CLAUDEMD-TEMPLATE.json)** - Documentation template\n- **[coderef-system](../Desktop/projects/coderef-system/)** - TypeScript @coderef/core\n\n---\n\n**Maintained by:** willh, Claude Code AI\n\n**System Status:** \u2705 Production Ready - All 4 servers operational, full feature lifecycle tested and working",
+      "word_count": 1123
+    }
+  },
+  "coderef": {
+    "available": false,
+    "element_count": 0,
+    "has_graph": false,
+    "auto_scan_attempted": true,
+    "auto_scan_performed": false,
+    "auto_scan_success": false
+  },
+  "_metadata": {
+    "generated_at": "2025-12-31T02:19:16.648219",
+    "generator": "coderef_foundation_generator",
+    "version": "2.0.0"
+  }
+}

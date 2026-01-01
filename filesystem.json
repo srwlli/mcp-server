@@ -3,7 +3,7 @@
   "args": [
     "C:\\\\Users\\\\willh\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\\\\@modelcontextprotocol\\\\server-filesystem\\\\dist\\\\index.js",
     "--root",
-    "C:\\\\Users\\\\willh\\\\CascadeProjects"
+    "C:\\\\Users\\\\willh"
   ],
   "transport": "stdio"
 }

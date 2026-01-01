@@ -1,7 +1,7 @@
 # Components Reference - coderef-workflow
 
-**Generated:** 2025-12-28
-**Version:** 1.1.0
+**Generated:** 2025-12-31
+**Version:** 1.2.0
 
 ---
 
@@ -342,19 +342,19 @@ def validate_plan_schema(plan: dict) -> list[str]:
 
 ```
 1. MCP Request arrives at server.py
-   “
+   ï¿½
 2. server.py routes to tool_handlers.py via TOOL_HANDLERS dict
-   “
+   ï¿½
 3. Handler validates input via src/validators.py
-   “
+   ï¿½
 4. Handler calls generator (e.g., plan_generator.py)
-   “
+   ï¿½
 5. Generator may call coderef-context via src/mcp_client.py
-   “
+   ï¿½
 6. Generator returns result
-   “
+   ï¿½
 7. Handler formats as TextContent
-   “
+   ï¿½
 8. Response returned to MCP client
 ```
 
@@ -362,23 +362,23 @@ def validate_plan_schema(plan: dict) -> list[str]:
 
 ```
 1. handle_create_plan() called
-   “
+   ï¿½
 2. Load context.json and analysis.json
-   “
+   ï¿½
 3. Call PlanGenerator.generate_plan()
-   “
+   ï¿½
 4. PlanGenerator builds LLM prompt
-   “
+   ï¿½
 5. Call Claude API for plan generation
-   “
+   ï¿½
 6. Parse response into 10 sections
-   “
+   ï¿½
 7. Validate schema via validators.py
-   “
+   ï¿½
 8. Add workorder_id to META_DOCUMENTATION
-   “
+   ï¿½
 9. Save plan.json
-   “
+   ï¿½
 10. Return success response
 ```
 

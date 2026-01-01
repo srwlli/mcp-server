@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(CODEREF_CLI_PATH=\"C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\cli\" pytest tests/ -v --tb=short)",
+      "Bash(tee:*)",
+      "Bash(export CODEREF_CLI_PATH=\"/c/Users/willh/Desktop/projects/coderef-system/packages/cli\")",
+      "Bash(pytest:*)",
+      "Bash(node:*)",
+      "Bash(CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\" python -m pytest:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(export CODEREF_CLI_PATH=\"C:/Users/willh/Desktop/projects/coderef-system/packages/cli\")",
+      "Bash(where coderef:*)",
+      "Bash(timeout 3 python:*)",
+      "Bash(coderef scan:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "mcp__coderef-docs__generate_foundation_docs",
+      "mcp__coderef-docs__generate_individual_doc",
+      "Bash(cat:*)",
+      "mcp__coderef-personas__use_persona",
+      "mcp__coderef-workflow__update_task_status",
+      "Bash(coderef --version:*)",
+      "Bash(echo:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(\".coderef/index.json\")",
+      "Bash(find:*)",
+      "Bash(.coderef/index.json)",
+      "Bash(/dev/null -exec ls -lh {})",
+      "Bash(coderef export:*)",
+      "Bash(test:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "coderef-personas",
+    "coderef-context",
+    "coderef-docs",
+    "coderef-workflow",
+    "coeref-testing"
+  ]
+}

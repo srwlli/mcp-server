@@ -20,3 +20,20 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated code intelligence data
+.coderef/
+coderef/intelligence/
+
+# IDE local settings
+.claude/settings.local.json
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Temporary files
+*.bak
+*.tmp
+nul
+emoji-scan-all.json

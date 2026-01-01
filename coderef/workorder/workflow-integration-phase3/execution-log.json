@@ -264,5 +264,271 @@
         "status": "pending"
       }
     ]
+  },
+  {
+    "timestamp": "2025-12-31T15:51:45.819549",
+    "workorder_id": "WO-WORKFLOW-INTEGRATION-PHASE3-001",
+    "feature_name": "workflow-integration-phase3",
+    "task_count": 25,
+    "tasks": [
+      {
+        "content": "PREPARAT-001: Verify .coderef/ structure exists on all 5+ MCP servers",
+        "activeForm": "PREPARAT-001: Verifying .coderef/ structure exists on all 5+ MCP servers",
+        "status": "completed"
+      },
+      {
+        "content": "PREPARAT-002: Confirm scan-all.py has populated all required files",
+        "activeForm": "PREPARAT-002: Confirming scan-all.py has populated all required files",
+        "status": "completed"
+      },
+      {
+        "content": "Review proof-of-concept: coderef-context/.coderef/generate_docs.py",
+        "activeForm": "Review proof-of-concept: coderef-context/.coderef/generate_docs.pying",
+        "status": "completed"
+      },
+      {
+        "content": "EXISTING SCRIPTS VALIDATED: packages/parse_coderef_data.py (149 lines) tested with 275K elements",
+        "activeForm": "EXISTING SCRIPTS VALIDATED: packages/parse_coderef_data.pying (149 lines) tested with 275K elements",
+        "status": "completed"
+      },
+      {
+        "content": "EXISTING SCRIPTS VALIDATED: scripts/parse_coderef_data.py (492 lines) generated 8 docs successfully",
+        "activeForm": "EXISTING SCRIPTS VALIDATED: scripts/parse_coderef_data.pying (492 lines) generated 8 docs successfully",
+        "status": "completed"
+      },
+      {
+        "content": "ADAPT-001: Create wrapper utilities in coderef/utils/ to call existing parse_coderef_data.py scripts",
+        "activeForm": "ADAPT-001: Creating wrapper utilities in coderef/utils/ to call existing parse_coderef_data.py scripts",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-001: Update analysis_generator.py to call packages/parse_coderef_data.py",
+        "activeForm": "INTEGRATE-001: Updating analysis_generator.py to call packages/parse_coderef_data.py",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-002: Update foundation_generator.py to call scripts/parse_coderef_data.py (USE EXISTING)",
+        "activeForm": "INTEGRATE-002: Updating foundation_generator.py to call scripts/parse_coderef_data.py (USE EXISTING)",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-003: Update personas to load .coderef/patterns.json",
+        "activeForm": "INTEGRATE-003: Updating personas to load .coderef/patterns.json",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-004: Update pytest_runner.py to use coderef_impact tool",
+        "activeForm": "INTEGRATE-004: Updating pytest_runner.py to use coderef_impact tool",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-001: Integration tests for analysis_generator.py",
+        "activeForm": "TEST-001: Integrationing tests for analysis_generator.py",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-002: Integration tests for foundation_generator.py",
+        "activeForm": "TEST-002: Integrationing tests for foundation_generator.py",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-003: Integration tests for persona pattern loading",
+        "activeForm": "TEST-003: Integrationing tests for persona pattern loading",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-004: Integration tests for selective testing",
+        "activeForm": "TEST-004: Integrationing tests for selective testing",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-005: End-to-end test (scan \u2192 organize \u2192 query \u2192 verify 80%+ utilization)",
+        "activeForm": "TEST-005: End-to-ending test (scan \u2192 organize \u2192 query \u2192 verify 80%+ utilization)",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update coderef-workflow/CLAUDE.md",
+        "activeForm": "DOC-001: Updating coderef-workflow/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: Update coderef-docs/CLAUDE.md",
+        "activeForm": "DOC-002: Updating coderef-docs/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-003: Update coderef-personas/CLAUDE.md",
+        "activeForm": "DOC-003: Updating coderef-personas/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-004: Update coderef-testing/CLAUDE.md",
+        "activeForm": "DOC-004: Updating coderef-testing/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-005: Create CODEREF-INTEGRATION-GUIDE.md",
+        "activeForm": "DOC-005: Creating CODEREF-INTEGRATION-GUIDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (>80% coverage)",
+        "activeForm": "FINALIZA-001: Alling tests passing (>80% coverage)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Verify 80%+ utilization target met (12+/15 output types actively used)",
+        "activeForm": "FINALIZA-002: Verifying 80%+ utilization target met (12+/15 output types actively used)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: Documentation complete and accurate",
+        "activeForm": "FINALIZA-003: Documentationing complete and accurate",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: Performance targets verified (<5s planning, <10s docs, etc.)",
+        "activeForm": "FINALIZA-004: Performanceing targets verified (<5s planning, <10s docs, etc.)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: Update workorder-log.txt with WO-WORKFLOW-INTEGRATION-PHASE3-001 completion",
+        "activeForm": "FINALIZA-005: Updating workorder-log.txt with WO-WORKFLOW-INTEGRATION-PHASE3-001 completion",
+        "status": "pending"
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-31T16:28:34.851231",
+    "workorder_id": "WO-WORKFLOW-INTEGRATION-PHASE3-001",
+    "feature_name": "workflow-integration-phase3",
+    "task_count": 25,
+    "tasks": [
+      {
+        "content": "PREPARAT-001: Verify .coderef/ structure exists on all 5+ MCP servers",
+        "activeForm": "PREPARAT-001: Verifying .coderef/ structure exists on all 5+ MCP servers",
+        "status": "completed"
+      },
+      {
+        "content": "PREPARAT-002: Confirm scan-all.py has populated all required files",
+        "activeForm": "PREPARAT-002: Confirming scan-all.py has populated all required files",
+        "status": "completed"
+      },
+      {
+        "content": "Review proof-of-concept: coderef-context/.coderef/generate_docs.py",
+        "activeForm": "Review proof-of-concept: coderef-context/.coderef/generate_docs.pying",
+        "status": "completed"
+      },
+      {
+        "content": "EXISTING SCRIPTS VALIDATED: packages/parse_coderef_data.py (149 lines) tested with 275K elements",
+        "activeForm": "EXISTING SCRIPTS VALIDATED: packages/parse_coderef_data.pying (149 lines) tested with 275K elements",
+        "status": "completed"
+      },
+      {
+        "content": "EXISTING SCRIPTS VALIDATED: scripts/parse_coderef_data.py (492 lines) generated 8 docs successfully",
+        "activeForm": "EXISTING SCRIPTS VALIDATED: scripts/parse_coderef_data.pying (492 lines) generated 8 docs successfully",
+        "status": "completed"
+      },
+      {
+        "content": "ADAPT-001: Create wrapper utilities in coderef/utils/ to call existing parse_coderef_data.py scripts",
+        "activeForm": "ADAPT-001: Creating wrapper utilities in coderef/utils/ to call existing parse_coderef_data.py scripts",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-001: Update analysis_generator.py to call packages/parse_coderef_data.py",
+        "activeForm": "INTEGRATE-001: Updating analysis_generator.py to call packages/parse_coderef_data.py",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-002: Update foundation_generator.py to call scripts/parse_coderef_data.py (USE EXISTING)",
+        "activeForm": "INTEGRATE-002: Updating foundation_generator.py to call scripts/parse_coderef_data.py (USE EXISTING)",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-003: Update personas to load .coderef/patterns.json",
+        "activeForm": "INTEGRATE-003: Updating personas to load .coderef/patterns.json",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-004: Update pytest_runner.py to use coderef_impact tool",
+        "activeForm": "INTEGRATE-004: Updating pytest_runner.py to use coderef_impact tool",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-001: Integration tests for analysis_generator.py",
+        "activeForm": "TEST-001: Integrationing tests for analysis_generator.py",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-002: Integration tests for foundation_generator.py",
+        "activeForm": "TEST-002: Integrationing tests for foundation_generator.py",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-003: Integration tests for persona pattern loading",
+        "activeForm": "TEST-003: Integrationing tests for persona pattern loading",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-004: Integration tests for selective testing",
+        "activeForm": "TEST-004: Integrationing tests for selective testing",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-005: End-to-end test (scan \u2192 organize \u2192 query \u2192 verify 80%+ utilization)",
+        "activeForm": "TEST-005: End-to-ending test (scan \u2192 organize \u2192 query \u2192 verify 80%+ utilization)",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update coderef-workflow/CLAUDE.md",
+        "activeForm": "DOC-001: Updating coderef-workflow/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: Update coderef-docs/CLAUDE.md",
+        "activeForm": "DOC-002: Updating coderef-docs/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-003: Update coderef-personas/CLAUDE.md",
+        "activeForm": "DOC-003: Updating coderef-personas/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-004: Update coderef-testing/CLAUDE.md",
+        "activeForm": "DOC-004: Updating coderef-testing/CLAUDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-005: Create CODEREF-INTEGRATION-GUIDE.md",
+        "activeForm": "DOC-005: Creating CODEREF-INTEGRATION-GUIDE.md",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (>80% coverage)",
+        "activeForm": "FINALIZA-001: Alling tests passing (>80% coverage)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Verify 80%+ utilization target met (12+/15 output types actively used)",
+        "activeForm": "FINALIZA-002: Verifying 80%+ utilization target met (12+/15 output types actively used)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: Documentation complete and accurate",
+        "activeForm": "FINALIZA-003: Documentationing complete and accurate",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: Performance targets verified (<5s planning, <10s docs, etc.)",
+        "activeForm": "FINALIZA-004: Performanceing targets verified (<5s planning, <10s docs, etc.)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: Update workorder-log.txt with WO-WORKFLOW-INTEGRATION-PHASE3-001 completion",
+        "activeForm": "FINALIZA-005: Updating workorder-log.txt with WO-WORKFLOW-INTEGRATION-PHASE3-001 completion",
+        "status": "pending"
+      }
+    ]
   }
 ]

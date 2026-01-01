@@ -63,14 +63,15 @@ def extract_apis(project_path: str) -> Dict[str, Any]:
 
         # Phase 2 (INTEGRATE-001): Call coderef-context CLI to scan for API patterns
         # Use 'scan' command to find all code elements, then filter for API patterns
+        # FIXED: Use positional argument instead of --project flag
         cli_result = run_coderef_command(
             "scan",
-            args=["--project", project_path, "--output", "json"],
+            args=[project_path, "--lang", "py", "--json"],
             timeout=120
         )
 
         # Check for errors
-        if "error" in cli_result:
+        if isinstance(cli_result, dict) and "error" in cli_result:
             logger.warning(f"CLI scan failed: {cli_result['error']}")
             return {
                 "endpoints": [],
@@ -80,8 +81,9 @@ def extract_apis(project_path: str) -> Dict[str, Any]:
             }
 
         # Transform CLI output to standard API endpoint format
+        # CLI returns a list of elements directly (not wrapped in {"elements": [...]})
         endpoints = []
-        elements = cli_result.get("elements", [])
+        elements = cli_result if isinstance(cli_result, list) else cli_result.get("elements", [])
 
         # Parse elements looking for API route patterns
         for element in elements:
@@ -191,14 +193,15 @@ def extract_schemas(project_path: str) -> Dict[str, Any]:
 
         # Phase 2 (INTEGRATE-002): Call coderef-context CLI to scan for schema/model patterns
         # Use 'scan' command to find all code elements, then filter for models/schemas
+        # FIXED: Use positional argument instead of --project flag
         cli_result = run_coderef_command(
             "scan",
-            args=["--project", project_path, "--output", "json"],
+            args=[project_path, "--lang", "py", "--json"],
             timeout=120
         )
 
         # Check for errors
-        if "error" in cli_result:
+        if isinstance(cli_result, dict) and "error" in cli_result:
             logger.warning(f"CLI scan failed: {cli_result['error']}")
             return {
                 "entities": [],
@@ -208,8 +211,9 @@ def extract_schemas(project_path: str) -> Dict[str, Any]:
             }
 
         # Transform CLI output to standard schema/entity format
+        # CLI returns a list of elements directly
         entities = []
-        elements = cli_result.get("elements", [])
+        elements = cli_result if isinstance(cli_result, list) else cli_result.get("elements", [])
 
         # Parse elements looking for model/schema patterns
         for element in elements:
@@ -328,14 +332,15 @@ def extract_components(project_path: str) -> Dict[str, Any]:
 
         # Phase 2 (INTEGRATE-003): Call coderef-context CLI to scan for component patterns
         # Use 'scan' command to find all code elements, then filter for components
+        # FIXED: Use positional argument instead of --project flag
         cli_result = run_coderef_command(
             "scan",
-            args=["--project", project_path, "--output", "json"],
+            args=[project_path, "--lang", "py", "--json"],
             timeout=120
         )
 
         # Check for errors
-        if "error" in cli_result:
+        if isinstance(cli_result, dict) and "error" in cli_result:
             logger.warning(f"CLI scan failed: {cli_result['error']}")
             return {
                 "components": [],
@@ -345,8 +350,9 @@ def extract_components(project_path: str) -> Dict[str, Any]:
             }
 
         # Transform CLI output to standard component format
+        # CLI returns a list of elements directly
         components = []
-        elements = cli_result.get("elements", [])
+        elements = cli_result if isinstance(cli_result, list) else cli_result.get("elements", [])
 
         # Parse elements looking for component patterns
         for element in elements:

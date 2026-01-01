@@ -258,7 +258,8 @@ async def handle_use_persona(arguments: dict) -> list[TextContent]:
 
     try:
         # Activate persona
-        persona = persona_manager.activate_persona(persona_name)
+        result = persona_manager.activate_persona(persona_name)
+        persona = result['persona']
 
         # Build response with system prompt and metadata
         response = f"""# Persona Activated: {persona.name}

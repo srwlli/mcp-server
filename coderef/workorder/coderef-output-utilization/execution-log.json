@@ -274,5 +274,143 @@
         "status": "pending"
       }
     ]
+  },
+  {
+    "timestamp": "2025-12-31T16:54:27.002600",
+    "workorder_id": "WO-CODEREF-OUTPUT-UTILIZATION-001",
+    "feature_name": "coderef-output-utilization",
+    "task_count": 26,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Review complete plan for gaps",
+        "activeForm": "PRE-IMPL-001: Reviewing complete plan for gaps",
+        "status": "completed"
+      },
+      {
+        "content": "PRE-IMPL-002: Verify coderef CLI is functional (test `coderef --version`)",
+        "activeForm": "PRE-IMPL-002: Verifying coderef CLI is functional (test `coderef --version`)",
+        "status": "completed"
+      },
+      {
+        "content": "PRE-IMPL-003: Confirm CODEREF_CLI_PATH environment variable is set",
+        "activeForm": "PRE-IMPL-003: Confirming CODEREF_CLI_PATH environment variable is set",
+        "status": "completed"
+      },
+      {
+        "content": "SETUP-001: Create universal .coderef/ structure with exports/ subdirectory",
+        "activeForm": "SETUP-001: Creating universal .coderef/ structure with exports/ subdirectory",
+        "status": "completed"
+      },
+      {
+        "content": "SETUP-002: Create processors/ and utils/ directories in coderef-context",
+        "activeForm": "SETUP-002: Creating processors/ and utils/ directories in coderef-context",
+        "status": "completed"
+      },
+      {
+        "content": "EXPORT-001: Implement export_processor.py with CLI wrapper logic",
+        "activeForm": "EXPORT-001: Implementing export_processor.py with CLI wrapper logic",
+        "status": "completed"
+      },
+      {
+        "content": "EXPORT-002: Add coderef_export tool to coderef-context/server.py",
+        "activeForm": "EXPORT-002: Adding coderef_export tool to coderef-context/server.py",
+        "status": "completed"
+      },
+      {
+        "content": "EXPORT-003: Test coderef_export with all 4 formats (json, jsonld, mermaid, dot)",
+        "activeForm": "EXPORT-003: Testing coderef_export with all 4 formats (json, jsonld, mermaid, dot)",
+        "status": "completed"
+      },
+      {
+        "content": "SCAN-001: Run coderef scan on all 5 MCP servers",
+        "activeForm": "SCAN-001: Running coderef scan on all 5 MCP servers",
+        "status": "completed"
+      },
+      {
+        "content": "SCAN-002: Organize scan results into .coderef/ directories",
+        "activeForm": "SCAN-002: Organizeing scan results into .coderef/ directories",
+        "status": "completed"
+      },
+      {
+        "content": "SCAN-003: Copy to centralized coderef/intelligence/ hub",
+        "activeForm": "SCAN-003: Copying to centralized coderef/intelligence/ hub",
+        "status": "completed"
+      },
+      {
+        "content": "INTEGRATE-001: Update analysis_generator.py to call coderef_scan",
+        "activeForm": "INTEGRATE-001: Updating analysis_generator.py to call coderef_scan",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-002: Update foundation_generator.py to use scan results",
+        "activeForm": "INTEGRATE-002: Updating foundation_generator.py to use scan results",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-003: Update personas to load project patterns from scans",
+        "activeForm": "INTEGRATE-003: Updating personas to load project patterns from scans",
+        "status": "pending"
+      },
+      {
+        "content": "INTEGRATE-004: Update testing to use impact-based test selection",
+        "activeForm": "INTEGRATE-004: Updating testing to use impact-based test selection",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-001: Unit tests for export_processor.py",
+        "activeForm": "TEST-001: Uniting tests for export_processor.py",
+        "status": "completed"
+      },
+      {
+        "content": "TEST-002: Integration tests for coderef_export tool",
+        "activeForm": "TEST-002: Integrationing tests for coderef_export tool",
+        "status": "pending"
+      },
+      {
+        "content": "TEST-003: End-to-end test (scan \u2192 organize \u2192 query)",
+        "activeForm": "TEST-003: End-to-ending test (scan \u2192 organize \u2192 query)",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-001: Update CODEREF-OUTPUT-CAPABILITIES.md with implementation details",
+        "activeForm": "DOC-001: Updating CODEREF-OUTPUT-CAPABILITIES.md with implementation details",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-002: Create usage guide for .coderef/ structure",
+        "activeForm": "DOC-002: Creating usage guide for .coderef/ structure",
+        "status": "pending"
+      },
+      {
+        "content": "DOC-003: Update server CLAUDE.md files with new capabilities",
+        "activeForm": "DOC-003: Updating server CLAUDE.md files with new capabilities",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-001: All tests passing (>80% coverage)",
+        "activeForm": "FINALIZA-001: Alling tests passing (>80% coverage)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Verify 80%+ utilization target met (12+/15 output types)",
+        "activeForm": "FINALIZA-002: Verifying 80%+ utilization target met (12+/15 output types)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: All 5 servers have populated .coderef/ directories",
+        "activeForm": "FINALIZA-003: Alling 5 servers have populated .coderef/ directories",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: Documentation complete and accurate",
+        "activeForm": "FINALIZA-004: Documentationing complete and accurate",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: Update workorder-log.txt with completion",
+        "activeForm": "FINALIZA-005: Updating workorder-log.txt with completion",
+        "status": "pending"
+      }
+    ]
   }
 ]

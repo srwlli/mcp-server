@@ -29,6 +29,9 @@
 - **Integrable:** Optional hooks to other MCP servers when available
 - **Reusable:** Works with CodeRef ecosystem (4 servers), next-scraper, any user project
 
+**Core Constraint:**
+- ⚠️ **TEST AND REPORT ONLY** - Do not fix code, refactor tests, or implement missing functionality. Only discover, execute, analyze, and report findings.
+
 Together they form a complete testing ecosystem: Discovery → Execution → Aggregation → Analysis → Reporting.
 
 ---

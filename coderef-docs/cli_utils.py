@@ -67,23 +67,17 @@ def get_cli_path() -> str:
         else:
             logger.warning(f"CODEREF_CLI_PATH set but invalid: {env_path}")
 
-    # Priority 2: Check PATH for global install
-    global_cli = shutil.which("coderef")
-    if global_cli:
-        logger.info(f"Using global CLI from PATH: {global_cli}")
-        return global_cli
-
-    # Priority 3: Fallback to hardcoded path (deprecated)
+    # Priority 2: Fallback to hardcoded path first (most reliable)
     default_path = Path(DEFAULT_CLI_PATH)
     if default_path.exists():
-        logger.warning(
-            f"Using hardcoded CLI path (deprecated): {DEFAULT_CLI_PATH}\n"
-            "  → Recommendation: Set CODEREF_CLI_PATH environment variable\n"
-            "  → Example (Windows): set CODEREF_CLI_PATH=C:\\path\\to\\cli.js\n"
-            "  → Example (Linux/Mac): export CODEREF_CLI_PATH=/path/to/cli.js\n"
-            "  → Or install globally: npm install -g @coderef/cli"
-        )
+        logger.info(f"Using hardcoded CLI path: {DEFAULT_CLI_PATH}")
         return DEFAULT_CLI_PATH
+
+    # Priority 3: Check PATH for global install (may be broken)
+    global_cli = shutil.which("coderef")
+    if global_cli:
+        logger.warning(f"Using global CLI from PATH: {global_cli} (may be broken)")
+        return global_cli
 
     # No CLI found anywhere
     raise FileNotFoundError(
@@ -184,17 +178,30 @@ def run_coderef_command(command: str, args: Optional[List[str]] = None, timeout:
 
     cli_path = get_cli_path()
 
-    # Build full command: node <cli_path> <command> <args>
-    full_command = ["node", cli_path, command] + args
+    # Build full command based on CLI type
+    # If CLI is a .CMD/.BAT file (Windows npm wrapper), run directly
+    # If CLI is a .js file, run with node
+    if cli_path.lower().endswith(('.cmd', '.bat')):
+        # Windows batch wrapper - run directly
+        full_command = [cli_path, command] + args
+    elif cli_path.lower().endswith('.js'):
+        # Node.js file - run with node
+        full_command = ["node", cli_path, command] + args
+    else:
+        # Assume executable (global install or direct path)
+        full_command = [cli_path, command] + args
 
-    logger.info(f"Running CLI command: {command} with {len(args)} args")
+    logger.info(f"Running CLI command: {command} with {len(args)} args (cli_type: {Path(cli_path).suffix})")
 
     try:
         # Execute command with timeout
+        # Use utf-8 encoding to handle emoji and non-ASCII characters
         result = subprocess.run(
             full_command,
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='replace',  # Replace invalid chars instead of crashing
             timeout=timeout,
             check=False  # Don't raise on non-zero exit codes
         )
@@ -209,8 +216,18 @@ def run_coderef_command(command: str, args: Optional[List[str]] = None, timeout:
             return {"error": "Empty output from CLI"}
 
         # Parse JSON output
+        # Strip progress indicators (lines starting with emoji or "🔍")
+        output_lines = result.stdout.strip().split('\n')
+        json_start = 0
+        for i, line in enumerate(output_lines):
+            if line.strip().startswith('[') or line.strip().startswith('{'):
+                json_start = i
+                break
+
+        json_output = '\n'.join(output_lines[json_start:])
+
         try:
-            data = json.loads(result.stdout)
+            data = json.loads(json_output)
             logger.info(f"CLI command '{command}' completed successfully")
             return data
         except json.JSONDecodeError as e:

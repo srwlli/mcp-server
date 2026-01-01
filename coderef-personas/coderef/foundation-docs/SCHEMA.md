@@ -1,41 +1,19 @@
-# Schema Documentation
+# Schema Reference
 
-## Database Tables
+**Total Types:** 0
 
-### PersonaBehavior
+## Interfaces
 
-*File: `src\models.py`*
+_No interfaces found_
 
+## Type Definitions
 
-### PersonaDefinition
+_No type definitions found_
 
-*File: `src\models.py`*
+## Enums
 
+_No enums found_
 
-### PersonaState
-
-*File: `src\models.py`*
-
-
-### TaskExecutionStatus
-
-*File: `src\models.py`*
-
-
-### TaskProgress
-
-*File: `src\models.py`*
-
-
-### TodoMetadata
-
-*File: `src\models.py`*
-
-
-### CustomPersonaInput
-
-*File: `src\models.py`*
-
-
-
-*Generated: 2025-12-20T04:17:11.398355*
+---
+**Generated from:** `.coderef/index.json`
+**Date:** 2025-12-31

@@ -1,0 +1,202 @@
+{
+  "feature_name": "deliverables-enhancement",
+  "workorder_id": "WO-DELIVERABLES-ENHANCEMENT-001",
+  "description": "Integrate Papertrail template engine into coderef-workflow to generate enhanced DELIVERABLES.md with comprehensive metrics, validation scores, and git/coderef/plan data",
+  "goal": "Replace current DELIVERABLES.md generation with Papertrail-powered enhanced template that provides complete feature completion summaries with workorder traceability and health scoring",
+  "created_at": "2026-01-02T18:30:00Z",
+  "status": "pending",
+  "requirements": [
+    "Create enhanced DELIVERABLES.md Jinja2 template with sections for validation, health, files changed, components added, phase breakdown, priority checklist, and git commits",
+    "Integrate Papertrail template engine into generate_deliverables tool handler",
+    "Update tool to collect data from git, coderef, and plan sources using Papertrail extensions",
+    "Implement baseline snapshot mechanism (.coderef/index-baseline.json) saved at feature start",
+    "Add UDS header/footer injection via Papertrail",
+    "Add validation and health scoring to deliverables generation",
+    "End-to-end testing with real feature workorder",
+    "Backward compatibility with existing DELIVERABLES.md format (feature flag)"
+  ],
+  "constraints": [
+    "Must depend on WO-PAPERTRAIL-EXTENSIONS-001 completion (needs real data extensions)",
+    "Must maintain backward compatibility (ENHANCED_DELIVERABLES_ENABLED=false falls back to current format)",
+    "Must handle missing data sources gracefully (git, .coderef/, plan.json)",
+    "Template must render in <2 seconds for typical features",
+    "Output must validate against Papertrail deliverables schema (score ≥ 90)"
+  ],
+  "success_criteria": {
+    "functional": {
+      "template_created": "DELIVERABLES_enhanced_template.md with 8 sections (validation, health, files, components, phases, checklist, commits, metrics)",
+      "papertrail_integrated": "generate_deliverables calls Papertrail TemplateEngine.render_with_uds()",
+      "data_collection": "Collects git, coderef, plan data via Papertrail extensions",
+      "baseline_snapshot": "Saves .coderef/index-baseline.json at feature start, compares at completion",
+      "uds_injection": "Every DELIVERABLES.md has UDS headers with workorder_id, generated_by, timestamps"
+    },
+    "quality": {
+      "validation": "Generated DELIVERABLES.md validates against schema (score ≥ 90)",
+      "health_score": "Health score ≥ 80 (traceability 40%, completeness 30%, freshness 20%, validation 10%)",
+      "backward_compatible": "Existing workorders still work with ENHANCED_DELIVERABLES_ENABLED=false",
+      "end_to_end_test": "Complete test: feature start → baseline snapshot → implementation → enhanced deliverables generation → validation"
+    },
+    "performance": {
+      "generation_time": "< 2 seconds for typical feature (50 commits, 100 files, 50 tasks)",
+      "baseline_snapshot": "< 500ms to save index-baseline.json"
+    }
+  },
+  "dependencies": {
+    "internal": [
+      "WO-PAPERTRAIL-EXTENSIONS-001 (MUST BE COMPLETE - needs real git/coderef/workflow extensions)",
+      "Existing DELIVERABLES_template.md (use as reference)",
+      "generate_deliverables tool handler (tool_handlers.py:1449)"
+    ],
+    "external": [
+      "Papertrail package installed (pip install -e ../papertrail)",
+      "Git repository exists for git data",
+      ".coderef/index.json exists for component diff",
+      "plan.json exists for phase/task data"
+    ]
+  },
+  "implementation_phases": [
+    {
+      "phase_id": "PHASE-1",
+      "name": "Enhanced Template Creation",
+      "tasks": [
+        "Create DELIVERABLES_enhanced_template.md with 8 sections",
+        "Add Jinja2 template variables for git, coderef, plan data",
+        "Add validation & health score display section",
+        "Add files changed section with git.files_changed loop",
+        "Add components added section with coderef.components_added loop",
+        "Add phase breakdown section with plan.phases loop",
+        "Add priority checklist section with plan.tasks sorted by priority",
+        "Add git commits section with git.commits loop"
+      ],
+      "effort": "1 hour",
+      "deliverables": ["templates/tools/DELIVERABLES_enhanced_template.md"]
+    },
+    {
+      "phase_id": "PHASE-2",
+      "name": "Papertrail Integration",
+      "tasks": [
+        "Import Papertrail in tool_handlers.py (create_uds_header, create_uds_footer, TemplateEngine, validate_uds, calculate_health)",
+        "Update generate_deliverables function signature to accept workorder_id, feature_id",
+        "Create UDS header with workorder metadata",
+        "Create UDS footer with workorder metadata",
+        "Initialize Papertrail TemplateEngine",
+        "Call engine.render_with_uds() with enhanced template and context",
+        "Add feature flag ENHANCED_DELIVERABLES_ENABLED (default: true)",
+        "Fallback to current generation if flag is false"
+      ],
+      "effort": "1 hour",
+      "deliverables": ["Updated tool_handlers.py"]
+    },
+    {
+      "phase_id": "PHASE-3",
+      "name": "Data Collection",
+      "tasks": [
+        "Collect git data: engine.get_git_data(workorder_id)",
+        "Collect coderef data: engine.get_coderef_data(baseline_path, current_path)",
+        "Collect plan data: engine.get_plan_data(plan_path)",
+        "Build context dict with git, coderef, plan sections",
+        "Add validation and health results to context",
+        "Handle missing data sources (empty arrays if git/coderef/plan unavailable)"
+      ],
+      "effort": "0.5 hours",
+      "deliverables": ["Data collection logic in generate_deliverables"]
+    },
+    {
+      "phase_id": "PHASE-4",
+      "name": "Baseline Snapshot Mechanism",
+      "tasks": [
+        "Create save_baseline_snapshot(project_path, feature_name) function",
+        "Save copy of .coderef/index.json to .coderef/index-baseline-{feature_name}.json at feature start",
+        "Integrate with /gather-context or /create-workorder workflow",
+        "Add cleanup logic to delete baseline after archive",
+        "Handle missing .coderef/index.json gracefully (skip baseline if unavailable)"
+      ],
+      "effort": "0.5 hours",
+      "deliverables": ["save_baseline_snapshot function", "Integration with workorder creation"]
+    },
+    {
+      "phase_id": "PHASE-5",
+      "name": "Validation & Testing",
+      "tasks": [
+        "Validate generated DELIVERABLES.md against Papertrail schema",
+        "Calculate health score and display in output",
+        "Create end-to-end test: create feature → save baseline → implement → generate enhanced deliverables",
+        "Test backward compatibility (ENHANCED_DELIVERABLES_ENABLED=false)",
+        "Test graceful degradation (missing git, .coderef/, plan.json)",
+        "Performance test: measure generation time for typical feature",
+        "Update documentation (README, CLAUDE.md) with new workflow"
+      ],
+      "effort": "1 hour",
+      "deliverables": ["End-to-end test", "Updated documentation"]
+    }
+  ],
+  "testing_strategy": {
+    "unit_tests": {
+      "required": false,
+      "description": "Integration-level testing sufficient (template rendering)"
+    },
+    "integration_tests": {
+      "required": true,
+      "description": "End-to-end test with real feature workorder",
+      "test_scenarios": [
+        "Complete workflow: create feature → baseline → implement → generate enhanced deliverables → validate",
+        "Backward compatibility test (ENHANCED_DELIVERABLES_ENABLED=false)",
+        "Missing git repository (should not crash, return empty git data)",
+        "Missing .coderef/ (should not crash, return empty coderef data)",
+        "Missing plan.json (should not crash, return empty plan data)"
+      ]
+    },
+    "performance_tests": {
+      "required": true,
+      "benchmarks": {
+        "generation_time": "< 2 seconds for typical feature",
+        "baseline_snapshot": "< 500ms"
+      }
+    }
+  },
+  "risks": [
+    {
+      "risk": "Papertrail extensions not ready (WO-PAPERTRAIL-EXTENSIONS-001 incomplete)",
+      "probability": "medium",
+      "impact": "high",
+      "mitigation": "Coordinate with Papertrail agent, ensure WO-PAPERTRAIL-EXTENSIONS-001 completes first, test extensions before integration"
+    },
+    {
+      "risk": "Breaking existing workorders that use current DELIVERABLES.md format",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": "Feature flag ENHANCED_DELIVERABLES_ENABLED with default=true, backward compatibility mode"
+    },
+    {
+      "risk": "Template rendering failures due to missing data",
+      "probability": "medium",
+      "impact": "medium",
+      "mitigation": "Defensive template logic with default values, graceful degradation for missing data sources"
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "Use Papertrail template engine instead of manual string replacement",
+      "rationale": "Papertrail provides UDS injection, validation, health scoring, and Jinja2 extensions - all needed for enhanced deliverables",
+      "alternatives_considered": ["Manual string replacement (current approach)", "Custom Jinja2 setup"],
+      "chosen": "Papertrail template engine"
+    },
+    {
+      "decision": "Save baseline snapshot at feature start, not at generation time",
+      "rationale": "Need to compare before/after state - baseline must be captured before code changes",
+      "alternatives_considered": ["Git-based component diff", "Live scan before/after"],
+      "chosen": "Baseline snapshot at feature start"
+    },
+    {
+      "decision": "Feature flag for backward compatibility",
+      "rationale": "Allow gradual rollout, avoid breaking existing workflows, easy rollback if issues",
+      "alternatives_considered": ["Immediate switchover", "Dual output (both formats)"],
+      "chosen": "Feature flag (ENHANCED_DELIVERABLES_ENABLED)"
+    }
+  ],
+  "related_workorders": [
+    "WO-PAPERTRAIL-EXTENSIONS-001 (dependency - must complete first)",
+    "WO-ENHANCED-DELIVERABLES-REPORTING-001 (assistant project - related but separate)",
+    "WO-JSON-COMPANION-DOCS-001 (document effectiveness roadmap P2-2 - this is part of that initiative)"
+  ]
+}

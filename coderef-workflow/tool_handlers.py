@@ -11,10 +11,15 @@ import json
 import jsonschema
 import time
 from datetime import datetime
+import os
+import sys
 
 # These will be injected from server.py
 TEMPLATES_DIR = None
 TOOL_TEMPLATES_DIR = None
+
+# Feature flag for enhanced deliverables (WO-DELIVERABLES-ENHANCEMENT-001)
+ENHANCED_DELIVERABLES_ENABLED = os.getenv("ENHANCED_DELIVERABLES_ENABLED", "true").lower() == "true"
 
 # Import dependencies
 from typing import Any
@@ -1235,12 +1240,27 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
             }
         )
 
+        # Auto-generate DELIVERABLES.md template (WO-DELIVERABLES-ENHANCEMENT-001)
+        deliverables_result = None
+        try:
+            deliverables_result = await handle_generate_deliverables_template({
+                'project_path': str(project_path),
+                'feature_name': feature_name
+            })
+            logger.info(f"DELIVERABLES.md automatically generated for {feature_name}")
+        except Exception as e:
+            logger.warning(f"Failed to auto-generate DELIVERABLES.md: {e}")
+
         # Build success message
+        deliverables_status = "✅ Generated" if deliverables_result else "⚠️  Failed (see logs)"
         message = f"✅ Implementation Plan Created\n"
         message += f"=" * 60 + "\n\n"
         message += f"Feature: {feature_name}\n"
         message += f"Workorder: {workorder_id}\n"
-        message += f"Location: coderef/workorder/{feature_name}/plan.json\n\n"
+        message += f"Location: coderef/workorder/{feature_name}/\n\n"
+        message += f"📋 Files Created:\n"
+        message += f"  - plan.json {deliverables_status}\n"
+        message += f"  - DELIVERABLES.md {deliverables_status}\n\n"
         message += f"📋 Plan includes:\n"
         message += f"  - META_DOCUMENTATION (version, status, workorder tracking)\n"
         message += f"  - 0_preparation (discovery & analysis)\n"
@@ -1254,7 +1274,7 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
         message += f"  - 8_success_criteria (acceptance criteria)\n\n"
         message += f"Next Steps:\n"
         message += f"  1. Review plan at coderef/workorder/{feature_name}/plan.json\n"
-        message += f"  2. Generate DELIVERABLES.md template with /generate-deliverables\n"
+        message += f"  2. Review DELIVERABLES.md (auto-generated with enhanced template)\n"
         if multi_agent:
             message += f"  3. Generate communication.json with /generate-agent-communication\n"
             message += f"  4. Assign agents with /assign-agent-task\n"
@@ -1429,7 +1449,11 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
             'requirements_count': len(requirements)
         }
     )
-    
+
+    # PHASE 4: Save baseline snapshot for component diff (WO-DELIVERABLES-ENHANCEMENT-001)
+    baseline_saved = save_baseline_snapshot(project_path_obj, feature_name)
+    baseline_message = "\n📸 Baseline snapshot saved" if baseline_saved else "\n⚠️  Baseline snapshot skipped (.coderef/index.json not found)"
+
     # Return success response with workorder ID
     return format_success_response(
         data={
@@ -1438,9 +1462,215 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
             'workorder_id': workorder_id,
             'requirements_count': len(requirements),
             'out_of_scope_count': len(out_of_scope),
-            'constraints_count': len(constraints)
+            'constraints_count': len(constraints),
+            'baseline_snapshot_saved': baseline_saved
         },
-        message=f"✅ Context saved to {context_file.relative_to(project_path_obj)}\n📋 Workorder ID: {workorder_id}"
+        message=f"✅ Context saved to {context_file.relative_to(project_path_obj)}\n📋 Workorder ID: {workorder_id}{baseline_message}"
+    )
+
+
+def save_baseline_snapshot(project_path: Path, feature_name: str) -> bool:
+    """
+    Save .coderef/index.json baseline snapshot for component diff.
+
+    Phase 4: Baseline Snapshot Mechanism
+    (WO-DELIVERABLES-ENHANCEMENT-001)
+
+    Args:
+        project_path: Path to project root
+        feature_name: Feature name for baseline filename
+
+    Returns:
+        bool: True if baseline saved successfully, False otherwise
+    """
+    source_path = Path(project_path) / '.coderef' / 'index.json'
+    baseline_path = Path(project_path) / '.coderef' / f'index-baseline-{feature_name}.json'
+
+    if not source_path.exists():
+        logger.warning(f".coderef/index.json not found, skipping baseline snapshot")
+        return False
+
+    try:
+        # Copy index.json to baseline
+        import shutil
+        shutil.copy2(source_path, baseline_path)
+        logger.info(f"Baseline snapshot saved: {baseline_path}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to save baseline snapshot: {e}")
+        return False
+
+
+async def _generate_enhanced_deliverables(
+    project_path: Path,
+    feature_name: str,
+    feature_dir: Path,
+    plan: dict
+) -> list[TextContent]:
+    """
+    Generate enhanced DELIVERABLES.md using Papertrail template engine.
+
+    Phases 2-3: Papertrail Integration + Data Collection
+    (WO-DELIVERABLES-ENHANCEMENT-001)
+    """
+    from handler_helpers import format_success_response
+    from schema_validator import get_workorder_id
+
+    # Add papertrail to Python path if needed
+    papertrail_path = Path.home() / ".mcp-servers" / "papertrail"
+    if str(papertrail_path) not in sys.path:
+        sys.path.insert(0, str(papertrail_path))
+
+    # Import Papertrail components
+    from papertrail.engine import TemplateEngine
+    from papertrail.uds import create_uds_header, create_uds_footer
+    from papertrail.validator import validate_uds
+    from papertrail.health import calculate_health
+    from papertrail.extensions.git_integration import GitExtension
+    from papertrail.extensions.coderef_context import CodeRefContextExtension
+    from papertrail.extensions.workflow import WorkflowExtension
+
+    logger.info("Using enhanced DELIVERABLES generation with Papertrail")
+
+    # Extract metadata
+    meta = plan.get('META_DOCUMENTATION', {})
+    structure = plan.get('UNIVERSAL_PLANNING_STRUCTURE', {})
+    exec_summary = structure.get('1_executive_summary', {})
+    workorder_id = get_workorder_id(plan)
+
+    # Initialize Papertrail template engine
+    template_dir = TOOL_TEMPLATES_DIR
+    engine = TemplateEngine(template_dir=template_dir)
+
+    # Register extensions
+    engine.register_extension('git', GitExtension(repo_path=str(project_path)))
+    engine.register_extension('coderef', CodeRefContextExtension())
+    engine.register_extension('plan', WorkflowExtension())
+
+    # PHASE 3: Data Collection
+    # Collect git data
+    git_ext = engine.extensions['git']
+    git_data = {
+        'files_changed': git_ext.get_files_changed(workorder_id) or [],
+        'commits': git_ext.get_commits(workorder_id) or [],
+        'total_additions': 0,
+        'total_deletions': 0,
+        'source': f'git log --grep={workorder_id}'
+    }
+
+    # Calculate totals
+    for file in git_data['files_changed']:
+        git_data['total_additions'] += file.get('additions', 0)
+        git_data['total_deletions'] += file.get('deletions', 0)
+
+    # Collect coderef data
+    baseline_path = Path(project_path) / '.coderef' / f'index-baseline-{feature_name}.json'
+    current_path = Path(project_path) / '.coderef' / 'index.json'
+
+    coderef_ext = engine.extensions['coderef']
+    coderef_data = {
+        'components_added': [],
+        'functions_added': [],
+        'complexity_delta': 0.0,
+        'baseline': str(baseline_path) if baseline_path.exists() else None
+    }
+
+    if baseline_path.exists() and current_path.exists():
+        try:
+            coderef_data['components_added'] = coderef_ext.get_components_added(
+                str(baseline_path),
+                str(current_path)
+            ) or []
+            coderef_data['functions_added'] = coderef_ext.get_functions_added(
+                str(baseline_path),
+                str(current_path)
+            ) or []
+            coderef_data['complexity_delta'] = coderef_ext.calculate_complexity_delta(
+                str(baseline_path),
+                str(current_path)
+            )
+        except Exception as e:
+            logger.warning(f"CodeRef data collection failed: {e}")
+
+    # Collect plan data
+    plan_ext = engine.extensions['plan']
+    plan_data = {
+        'phases': plan_ext.get_plan_phases(str(feature_dir / 'plan.json')) or [],
+        'tasks': plan_ext.get_priority_checklist(str(feature_dir / 'plan.json')) or [],
+        'source': str((feature_dir / 'plan.json').relative_to(project_path))
+    }
+
+    # Build template context
+    context = {
+        'feature_name': feature_name,
+        'project_name': meta.get('project_name', Path(project_path).name),
+        'workorder_id': workorder_id,
+        'status': '🚧 In Progress',
+        'generated_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'goal': exec_summary.get('goal', exec_summary.get('purpose', 'TBD')),
+        'description': exec_summary.get('description', exec_summary.get('value_proposition', 'TBD')),
+        'implementation_status': meta.get('status', 'planning'),
+        'git': git_data,
+        'coderef': coderef_data,
+        'plan': plan_data,
+        'validation': {'status': 'Pending', 'score': 0, 'issues': []},
+        'health': {'overall_score': 0, 'traceability': 0, 'completeness': 0, 'freshness': 0, 'validation': 0},
+        'success_criteria': {'functional': [], 'quality': []}
+    }
+
+    # Create UDS header and footer
+    uds_header = create_uds_header(
+        title=f"DELIVERABLES - {feature_name}",
+        workorder_id=workorder_id,
+        feature_id=feature_name,
+        status="IN_PROGRESS",
+        doc_version="2.0"
+    )
+
+    uds_footer = create_uds_footer(
+        workorder_id=workorder_id,
+        feature_id=feature_name,
+        status="IN_PROGRESS"
+    )
+
+    # Render template with UDS injection
+    try:
+        template = engine.env.get_template('DELIVERABLES_enhanced_template.md')
+        deliverables_content = template.render(**context)
+        deliverables_content = f"{uds_header}\n\n{deliverables_content}\n\n{uds_footer}"
+    except Exception as e:
+        logger.error(f"Template rendering failed: {e}")
+        raise
+
+    # Save DELIVERABLES.md
+    deliverables_path = feature_dir / 'DELIVERABLES.md'
+    with open(deliverables_path, 'w', encoding='utf-8') as f:
+        f.write(deliverables_content)
+
+    # Validate and calculate health (add to context for reporting)
+    try:
+        validation_result = validate_uds(deliverables_content)
+        health_result = calculate_health(deliverables_content)
+
+        logger.info(f"Validation score: {validation_result.get('score', 0)}/100")
+        logger.info(f"Health score: {health_result.get('overall_score', 0)}/100")
+    except Exception as e:
+        logger.warning(f"Validation/health check failed: {e}")
+
+    logger.info(f"Enhanced DELIVERABLES.md generated successfully at: {deliverables_path}")
+
+    return format_success_response(
+        data={
+            'deliverables_path': str(deliverables_path.relative_to(project_path)),
+            'feature_name': feature_name,
+            'workorder_id': workorder_id,
+            'enhanced_mode': True,
+            'git_commits': len(git_data['commits']),
+            'files_changed': len(git_data['files_changed']),
+            'components_added': len(coderef_data['components_added']),
+            'success': True
+        },
+        message="✅ Enhanced DELIVERABLES.md generated successfully (Papertrail v2.0)"
     )
 
 
@@ -1484,7 +1714,23 @@ async def handle_generate_deliverables_template(arguments: dict) -> list[TextCon
     with open(plan_path, 'r', encoding='utf-8') as f:
         plan = json.load(f)
 
-    # Load template
+    # Enhanced mode with Papertrail (WO-DELIVERABLES-ENHANCEMENT-001)
+    if ENHANCED_DELIVERABLES_ENABLED:
+        try:
+            return await _generate_enhanced_deliverables(
+                project_path=project_path,
+                feature_name=feature_name,
+                feature_dir=feature_dir,
+                plan=plan
+            )
+        except ImportError as e:
+            logger.warning(f"Papertrail not available: {e}, falling back to standard template")
+        except Exception as e:
+            import traceback
+            logger.error(f"Enhanced deliverables generation failed: {e}\n{traceback.format_exc()}")
+            logger.info("Falling back to standard template")
+
+    # Load template (standard mode)
     template_path = TOOL_TEMPLATES_DIR / 'DELIVERABLES_template.md'
     with open(template_path, 'r', encoding='utf-8') as f:
         template = f.read()

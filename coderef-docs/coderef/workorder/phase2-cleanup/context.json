@@ -1,0 +1,39 @@
+{
+  "feature_name": "phase2-cleanup",
+  "description": "Clean up Phase 2 work-in-progress to restore Phase 1 baseline. Another agent worked on Phase 2 conditional modules in parallel, creating critical bugs (dataclass vs dict mismatch). Need to preserve their work, revert modified files, and restore production-ready state.",
+  "goal": "Restore coderef-docs to working Phase 1 baseline while preserving all Phase 2 work for future completion",
+  "requirements": [
+    "Create backup patch of 3 modified files (characteristics.py, modules/__init__.py, types.py)",
+    "Move PHASE-2-HANDOFF.md to workorder directory",
+    "Create archive of 11 untracked conditional module files",
+    "Revert 3 modified files to Phase 1 baseline",
+    "Verify tests pass (13/13)",
+    "Update plan.json to mark Phase 2 tasks as blocked",
+    "Document Phase 2 status and resumption instructions",
+    "Clean commit explaining multi-agent conflict resolution"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must not lose any Phase 2 work",
+    "Phase 1 must remain production-ready (100% tests passing)",
+    "Must be reversible (patches allow resuming Phase 2)",
+    "Single atomic commit for cleanup"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-PHASE2-CLEANUP-001",
+    "workorder_assigned_at": "2026-01-02T11:09:48.907644+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-PHASE2-CLEANUP-001",
+    "feature_id": "phase2-cleanup",
+    "last_updated": "2026-01-02",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-01"
+  }
+}

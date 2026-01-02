@@ -108,7 +108,7 @@ tool_handlers.set_coderef_context_available(CODEREF_CONTEXT_AVAILABLE)
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List available documentation tools (12 tools - minimal implementation)."""
+    """List available documentation tools (13 tools - includes resource sheet generator)."""
     return [
         Tool(
             name="list_templates",
@@ -288,6 +288,48 @@ async def list_tools() -> list[Tool]:
                     }
                 },
                 "required": ["project_path"]
+            }
+        ),
+        Tool(
+            name="generate_resource_sheet",
+            description="Generate composable module-based technical documentation for code elements. Replaces rigid templates with ~30-40 small modules that compose intelligently. Auto-detects code characteristics, selects appropriate modules, and generates markdown + JSON schema + JSDoc outputs. WO-RESOURCE-SHEET-MCP-TOOL-001",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "element_name": {
+                        "type": "string",
+                        "description": "Name of code element to document (e.g., 'AuthService', 'Button', 'useAuth')"
+                    },
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project root directory"
+                    },
+                    "element_type": {
+                        "type": "string",
+                        "description": "Optional: Manual element type override (e.g., 'component', 'hook', 'service'). If not provided, auto-detected from code."
+                    },
+                    "mode": {
+                        "type": "string",
+                        "enum": ["reverse-engineer", "template", "refresh"],
+                        "description": "Generation mode: 'reverse-engineer' (analyze existing code), 'template' (new code scaffold), 'refresh' (update existing docs)",
+                        "default": "reverse-engineer"
+                    },
+                    "auto_analyze": {
+                        "type": "boolean",
+                        "description": "Use coderef_scan for auto-fill from code analysis (default: true)",
+                        "default": true
+                    },
+                    "output_path": {
+                        "type": "string",
+                        "description": "Optional: Custom output directory path. Default: coderef/foundation-docs/"
+                    },
+                    "validate_against_code": {
+                        "type": "boolean",
+                        "description": "Compare generated docs against actual code for drift detection (default: true)",
+                        "default": true
+                    }
+                },
+                "required": ["element_name", "project_path"]
             }
         ),
         Tool(

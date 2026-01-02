@@ -26,6 +26,7 @@ from generators.plan_validator import PlanValidator
 from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
+from generators.resource_sheet_generator import ResourceSheetGenerator
 
 # Import extractors for context injection (WO-CONTEXT-DOCS-INTEGRATION-001)
 try:
@@ -1200,10 +1201,80 @@ async def handle_check_document_health(arguments: dict) -> list[TextContent]:
             }, indent=2)
         )]
 
+@log_invocation
+@mcp_error_handler
+async def handle_generate_resource_sheet(arguments: dict) -> list[TextContent]:
+    """
+    Handle generate_resource_sheet tool - composable module-based documentation.
+
+    WO-RESOURCE-SHEET-MCP-TOOL-001
+
+    Generates authoritative technical documentation using composable modules
+    instead of rigid templates. Auto-detects code characteristics and selects
+    appropriate documentation modules.
+    """
+    try:
+        # Extract and validate parameters
+        element_name = arguments.get("element_name")
+        project_path = arguments.get("project_path")
+        element_type = arguments.get("element_type")
+        mode = arguments.get("mode", "reverse-engineer")
+        auto_analyze = arguments.get("auto_analyze", True)
+        output_path = arguments.get("output_path")
+        validate_against_code = arguments.get("validate_against_code", True)
+
+        if not element_name or not project_path:
+            raise ValueError("element_name and project_path are required")
+
+        logger.info(f"Generating resource sheet for {element_name} in mode: {mode}")
+
+        # Initialize generator
+        generator = ResourceSheetGenerator()
+
+        # Generate resource sheet
+        result = await generator.generate(
+            element_name=element_name,
+            project_path=project_path,
+            element_type=element_type,
+            mode=mode,
+            auto_analyze=auto_analyze,
+            output_path=output_path,
+            validate_against_code=validate_against_code,
+        )
+
+        # Format response
+        response = {
+            "success": True,
+            "element_name": result["element_name"],
+            "mode": result["mode"],
+            "modules_selected": result["selected_modules"],
+            "module_count": result["module_count"],
+            "auto_fill_rate": f"{result['auto_fill_rate']:.1f}%",
+            "outputs": result["outputs"],
+            "characteristics_detected": len([k for k, v in result["characteristics"].items() if v]),
+            "warnings": result.get("warnings", []),
+            "generated_at": result["generated_at"],
+        }
+
+        logger.info(f"Resource sheet generated: {result['outputs']['markdown']}")
+
+        return [TextContent(type="text", text=json.dumps(response, indent=2))]
+
+    except Exception as e:
+        logger.error(f"generate_resource_sheet failed: {e}", exc_info=True)
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps({
+                    "error": str(e),
+                    "success": False
+                }, indent=2)
+            )
+        ]
 
 
 # =============================================================================
-# Tool handlers registry - MINIMAL (12 documentation tools)
+# Tool handlers registry - MINIMAL (13 documentation tools)
 # =============================================================================
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
@@ -1213,6 +1284,7 @@ TOOL_HANDLERS = {
     'add_changelog_entry': handle_add_changelog_entry,
     'record_changes': handle_record_changes,
     'generate_quickref_interactive': handle_generate_quickref_interactive,
+    'generate_resource_sheet': handle_generate_resource_sheet,  # WO-RESOURCE-SHEET-MCP-TOOL-001
     'establish_standards': handle_establish_standards,
     'audit_codebase': handle_audit_codebase,
     'check_consistency': handle_check_consistency,

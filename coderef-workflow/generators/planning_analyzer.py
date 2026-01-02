@@ -50,6 +50,39 @@ class PlanningAnalyzer:
         self.project_path = project_path
         logger.debug(f"Initialized PlanningAnalyzer for project: {project_path}")
 
+    def check_coderef_freshness(self) -> str | None:
+        """
+        Check if .coderef/ data is stale by reading drift.json.
+
+        Returns warning message if >10% drift detected, None if fresh or missing.
+        """
+        drift_file = self.project_path / '.coderef' / 'reports' / 'drift.json'
+        if not drift_file.exists():
+            return None  # No drift data, skip check
+
+        try:
+            drift_data = json.loads(drift_file.read_text(encoding='utf-8'))
+            changed_files = drift_data.get('changed_files', [])
+            total_files = drift_data.get('total_files', 0)
+
+            if total_files == 0:
+                return None
+
+            drift_percent = (len(changed_files) / total_files) * 100
+
+            if drift_percent > 10:
+                return (
+                    f"⚠️ .coderef/ data is stale ({drift_percent:.1f}% drift detected). "
+                    f"Consider re-running 'coderef scan {self.project_path}' for accurate analysis."
+                )
+            else:
+                logger.info(f"✅ .coderef/ data is fresh ({drift_percent:.1f}% drift)")
+                return None
+
+        except Exception as e:
+            logger.debug(f"Could not read drift.json: {e}")
+            return None
+
     async def analyze(self) -> PreparationSummaryDict:
         """
         Main analysis method - orchestrates all scanning operations.
@@ -63,6 +96,11 @@ class PlanningAnalyzer:
         start_time = time.time()
 
         logger.info("Starting project analysis", extra={'project_path': str(self.project_path)})
+
+        # Check .coderef/ freshness before analysis
+        drift_warning = self.check_coderef_freshness()
+        if drift_warning:
+            logger.warning(drift_warning)
 
         # Run all scanner methods with progress logging
         logger.info("Scanning foundation docs...")
@@ -462,8 +500,10 @@ class PlanningAnalyzer:
         """
         Analyzes code files to identify reusable patterns.
 
-        Uses coderef_patterns tool for AST-based pattern detection (99% accuracy).
-        Falls back to regex-based analysis if coderef unavailable.
+        Priority order:
+        1. Read .coderef/reports/patterns.json (fastest - pre-scanned)
+        2. Call coderef_patterns MCP tool (AST-based, 99% accuracy)
+        3. Fallback to regex-based analysis
 
         Looks for: error handling patterns, naming conventions,
         file organization patterns, component structure patterns.
@@ -473,8 +513,31 @@ class PlanningAnalyzer:
         """
         logger.debug("Identifying patterns...")
 
+        # Priority 1: Try .coderef/reports/patterns.json (FASTEST)
+        patterns_file = self.project_path / '.coderef' / 'reports' / 'patterns.json'
+        if patterns_file.exists():
+            try:
+                patterns_data = json.loads(patterns_file.read_text(encoding='utf-8'))
+                logger.info(f"Read .coderef/reports/patterns.json")
+
+                # Extract pattern descriptions from pre-scanned data
+                patterns = []
+                if isinstance(patterns_data, dict):
+                    for pattern_type, pattern_list in patterns_data.items():
+                        if isinstance(pattern_list, list) and pattern_list:
+                            patterns.append(f"{pattern_type}: {len(pattern_list)} instances")
+                            # Add first few examples
+                            for example in pattern_list[:3]:
+                                if isinstance(example, str):
+                                    patterns.append(f"  - {example}")
+
+                if patterns:
+                    return patterns[:15]
+            except Exception as e:
+                logger.debug(f".coderef/reports/patterns.json read failed: {str(e)}, trying coderef_patterns tool")
+
+        # Priority 2: Try coderef_patterns MCP tool
         try:
-            # Try to use coderef_patterns tool for AST-based detection
             result = await call_coderef_tool(
                 "coderef_patterns",
                 {
@@ -734,9 +797,10 @@ class PlanningAnalyzer:
         """
         Identifies missing documentation, standards, or potential risks.
 
-        Attempts to call coderef_coverage for test coverage analysis.
-        Falls back to filesystem checks for missing foundation docs, standards,
-        test directory, CI config.
+        Priority order:
+        1. Read .coderef/reports/coverage.json (fastest - pre-scanned)
+        2. Call coderef_coverage MCP tool (live analysis)
+        3. Fallback to filesystem checks
 
         Returns:
             List of gap/risk descriptions
@@ -745,23 +809,44 @@ class PlanningAnalyzer:
 
         gaps = []
 
-        # Try to use coderef_coverage for test coverage gaps
-        try:
-            result = await call_coderef_tool(
-                "coderef_coverage",
-                {
-                    "project_path": str(self.project_path),
-                    "format": "summary"
-                }
-            )
-            if result.get("success"):
-                coverage_data = result.get("data", {})
+        # Priority 1: Try .coderef/reports/coverage.json (FASTEST)
+        coverage_file = self.project_path / '.coderef' / 'reports' / 'coverage.json'
+        if coverage_file.exists():
+            try:
+                coverage_data = json.loads(coverage_file.read_text(encoding='utf-8'))
+                logger.info(f"Read .coderef/reports/coverage.json")
+
+                # Extract coverage metrics
                 coverage_percent = coverage_data.get("coverage_percent", 0)
+                untested_files = coverage_data.get("untested_files", [])
+
                 if coverage_percent < 50:
                     gaps.append(f"Low test coverage: {coverage_percent}% (target: ≥80%)")
-                    logger.info(f"Coverage analysis from coderef_coverage: {coverage_percent}%")
-        except Exception as e:
-            logger.debug(f"coderef_coverage unavailable: {str(e)}, using fallback checks")
+                if untested_files:
+                    gaps.append(f"{len(untested_files)} files have no test coverage")
+                    logger.debug(f"Untested files: {untested_files[:5]}")
+
+            except Exception as e:
+                logger.debug(f".coderef/reports/coverage.json read failed: {str(e)}, trying coderef_coverage tool")
+
+        # Priority 2: Try coderef_coverage MCP tool
+        if not gaps:  # Only if we didn't get coverage data from file
+            try:
+                result = await call_coderef_tool(
+                    "coderef_coverage",
+                    {
+                        "project_path": str(self.project_path),
+                        "format": "summary"
+                    }
+                )
+                if result.get("success"):
+                    coverage_data = result.get("data", {})
+                    coverage_percent = coverage_data.get("coverage_percent", 0)
+                    if coverage_percent < 50:
+                        gaps.append(f"Low test coverage: {coverage_percent}% (target: ≥80%)")
+                        logger.info(f"Coverage analysis from coderef_coverage: {coverage_percent}%")
+            except Exception as e:
+                logger.debug(f"coderef_coverage unavailable: {str(e)}, using fallback checks")
 
         # Check for missing foundation docs
         foundation_docs = self.scan_foundation_docs()

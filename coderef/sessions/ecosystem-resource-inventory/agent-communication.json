@@ -1,0 +1,93 @@
+{
+  "workorder_id": "WO-ECOSYSTEM-RESOURCE-INVENTORY-001",
+  "feature_name": "ecosystem-resource-inventory",
+  "created": "2026-01-02",
+  "status": "not_started",
+  "description": "Each agent creates inventory of their tools, commands, workflows, and scripts",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\agent-instructions.json",
+  "agent_instructions": "READ instructions.json at path above for complete task details",
+
+  "prerequisite": "Orchestrator must complete master index first (see orchestrator-communication.json)",
+
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "role": "Inventory orchestrator tools, stub commands, and project tracking utilities",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-assistant-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "role": "Inventory MCP tools for code analysis, complexity scoring, and pattern detection",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-context-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "role": "Inventory MCP tools for planning, execution, deliverables, and archival workflows",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-workflow-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Inventory MCP tools for documentation generation, standards, and workorder logging",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-docs-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "role": "Inventory MCP tools for persona management and role specialization",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-personas-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "role": "Inventory MCP tools for test generation, coverage analysis, and quality assurance",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-testing-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "role": "Inventory MCP tools for audit trails, version tracking, and compliance logging",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\papertrail-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "role": "Inventory CLI tools, scan scripts, and core coderef functionality",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-system-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Inventory UI components, widgets, and dashboard visualization tools",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\coderef-dashboard-inventory.md",
+      "status": "not_started",
+      "notes": ""
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 9
+  }
+}

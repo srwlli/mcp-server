@@ -2,9 +2,11 @@
 Workflow Extension - Integration with coderef-workflow
 
 Provides template tags for workflow data:
-- {% workflow.plan feature_name %} - Get plan metadata
-- {% workflow.tasks feature_name %} - Get task list
-- {% workflow.progress feature_name %} - Get progress percentage
+- {% workflow.get_plan_phases(plan_path) %} - Get plan phases
+- {% workflow.get_priority_checklist(plan_path) %} - Get priority-sorted tasks
+- {% workflow.plan(feature_name) %} - Get plan metadata (legacy)
+
+Enhanced with plan.json parsing (WO-PAPERTRAIL-EXTENSIONS-001 Phase 3)
 """
 
 from typing import Optional, Dict, Any, List
@@ -16,7 +18,7 @@ class WorkflowExtension:
     """
     Template extension for coderef-workflow integration
 
-    Provides access to plan.json data and task tracking
+    Enhanced with direct plan.json parsing for phases and priority tasks
     """
 
     def __init__(self, workorder_dir: Optional[Path] = None):
@@ -28,68 +30,153 @@ class WorkflowExtension:
         """
         self.workorder_dir = workorder_dir or Path("coderef/workorder")
 
+    def _load_plan(self, plan_path: Path) -> Dict[str, Any]:
+        """
+        Load plan.json file safely
+
+        Args:
+            plan_path: Path to plan.json
+
+        Returns:
+            dict: Plan data or empty dict if file doesn't exist
+        """
+        try:
+            if not plan_path.exists():
+                return {}
+
+            with open(plan_path, "r") as f:
+                return json.load(f)
+
+        except (json.JSONDecodeError, OSError):
+            return {}
+
+    def get_plan_phases(self, plan_path: str) -> List[Dict[str, Any]]:
+        """
+        Extract implementation phases from plan.json
+
+        Args:
+            plan_path: Path to plan.json file
+
+        Returns:
+            list: List of phases with name, status, duration, deliverables
+        """
+        plan = self._load_plan(Path(plan_path))
+
+        phases_section = plan.get("6_implementation_phases", {})
+        phases_list = phases_section.get("phases", [])
+
+        extracted_phases = []
+        for phase in phases_list:
+            extracted_phases.append({
+                "name": phase.get("name", ""),
+                "status": phase.get("status", "pending"),
+                "duration": phase.get("estimated_duration", ""),
+                "deliverables": phase.get("deliverables", [])
+            })
+
+        return extracted_phases
+
+    def get_priority_checklist(self, plan_path: str) -> List[Dict[str, Any]]:
+        """
+        Extract tasks sorted by priority from plan.json
+
+        Args:
+            plan_path: Path to plan.json file
+
+        Returns:
+            list: List of tasks sorted by priority (critical > high > medium > low)
+        """
+        plan = self._load_plan(Path(plan_path))
+
+        # Extract tasks from all phases
+        phases_section = plan.get("6_implementation_phases", {})
+        phases_list = phases_section.get("phases", [])
+
+        all_tasks = []
+        for phase in phases_list:
+            tasks = phase.get("tasks", [])
+            for task in tasks:
+                # Tasks can be strings (task IDs) or dicts (full task objects)
+                if isinstance(task, dict):
+                    all_tasks.append({
+                        "task_id": task.get("id", task.get("task_id", "")),
+                        "description": task.get("description", task.get("title", "")),
+                        "priority": task.get("priority", "medium"),
+                        "status": task.get("status", "pending")
+                    })
+                else:
+                    # Task is just an ID string
+                    all_tasks.append({
+                        "task_id": task,
+                        "description": task,
+                        "priority": "medium",
+                        "status": "pending"
+                    })
+
+        # Sort by priority
+        priority_order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+        all_tasks.sort(key=lambda t: priority_order.get(t["priority"], 2))
+
+        return all_tasks
+
+    # Legacy methods (kept for backward compatibility)
+
     def plan(self, feature_name: str) -> Dict[str, Any]:
         """
-        Get plan metadata for feature
+        Get plan metadata for feature (legacy method)
 
         Args:
             feature_name: Feature name
 
         Returns:
             dict: Plan metadata
-
-        Example:
-            {% set plan = workflow.plan("auth-system") %}
-            Workorder: {{ plan.workorder_id }}
         """
         plan_path = self.workorder_dir / feature_name / "plan.json"
 
         if plan_path.exists():
-            with open(plan_path, 'r') as f:
-                data = json.load(f)
-                return data.get("META_DOCUMENTATION", {})
+            plan_data = self._load_plan(plan_path)
+            return plan_data.get("META_DOCUMENTATION", {})
 
-        # Mock data if plan doesn't exist
         return {
             "workorder_id": f"WO-{feature_name.upper()}-001",
             "feature_name": feature_name,
             "status": "in_progress",
-            "message": "(Mock plan data - Phase 2 implementation)"
+            "message": "(Mock plan data)"
         }
 
     def tasks(self, feature_name: str) -> List[Dict[str, str]]:
         """
-        Get task list for feature
+        Get task list for feature (legacy method)
 
         Args:
             feature_name: Feature name
 
         Returns:
             list: List of tasks
-
-        Example:
-            {% for task in workflow.tasks("auth-system") %}
-            - {{ task.id }}: {{ task.title }}
-            {% endfor %}
         """
         plan_path = self.workorder_dir / feature_name / "plan.json"
 
         if plan_path.exists():
-            with open(plan_path, 'r') as f:
-                data = json.load(f)
-                # Extract tasks from phases
-                tasks = []
-                phases = data.get("6_implementation_phases", {}).get("phases", [])
-                for phase in phases:
-                    for task_id in phase.get("tasks", []):
+            plan_data = self._load_plan(plan_path)
+            phases = plan_data.get("6_implementation_phases", {}).get("phases", [])
+
+            tasks = []
+            for phase in phases:
+                for task in phase.get("tasks", []):
+                    if isinstance(task, dict):
                         tasks.append({
-                            "id": task_id,
-                            "title": task_id,  # Simplified
+                            "id": task.get("id", task.get("task_id", "")),
+                            "title": task.get("description", task.get("title", "")),
+                            "status": task.get("status", "pending")
+                        })
+                    else:
+                        tasks.append({
+                            "id": task,
+                            "title": task,
                             "status": "pending"
                         })
-                return tasks
+            return tasks
 
-        # Mock data
         return [
             {"id": "TASK-001", "title": "Setup", "status": "completed"},
             {"id": "TASK-002", "title": "Implementation", "status": "in_progress"},
@@ -98,16 +185,13 @@ class WorkflowExtension:
 
     def progress(self, feature_name: str) -> int:
         """
-        Get progress percentage for feature
+        Get progress percentage for feature (legacy method)
 
         Args:
             feature_name: Feature name
 
         Returns:
             int: Progress percentage (0-100)
-
-        Example:
-            Progress: {% workflow.progress("auth-system") %}%
         """
         tasks = self.tasks(feature_name)
 

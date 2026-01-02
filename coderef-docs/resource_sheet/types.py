@@ -29,11 +29,14 @@ class CodeCharacteristics(TypedDict, total=False):
     has_jsx: bool
     has_props: bool
     has_events: bool
+    has_event_handlers: bool
+    has_aria_attributes: bool
 
-    # Storage
+    # Storage & State
     uses_local_storage: bool
     uses_indexed_db: bool
     uses_global_state: bool
+    has_lifecycle_methods: bool
 
     # Data
     has_types: bool

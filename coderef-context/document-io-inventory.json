@@ -1,0 +1,176 @@
+{
+  "agent_id": "coderef-context",
+  "workorder_id": "WO-DOC-OUTPUT-AUDIT-001",
+  "inputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Drift detection, existing scan data"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Export processor input"
+    },
+    {
+      "file": ".coderef/exports/graph.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Export format conversion"
+    },
+    {
+      "file": ".coderef/context.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Existing context metadata"
+    },
+    {
+      "file": "package.json",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect project dependencies (npm)"
+    },
+    {
+      "file": "requirements.txt",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect project dependencies (Python)"
+    },
+    {
+      "file": ".gitignore",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Exclude patterns for scanning"
+    }
+  ],
+  "outputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "All code elements (AST analysis)"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Human-readable architecture summary"
+    },
+    {
+      "file": ".coderef/context.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Machine-readable context metadata"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Dependency graph (raw)"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Code patterns (handlers, decorators)"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Test coverage analysis"
+    },
+    {
+      "file": ".coderef/reports/validation.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "CodeRef2 reference validation"
+    },
+    {
+      "file": ".coderef/reports/drift.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Index vs code drift detection"
+    },
+    {
+      "file": ".coderef/reports/complexity/README.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Complexity metrics overview"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Mermaid dependency diagram"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.dot",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "GraphViz dependency diagram"
+    },
+    {
+      "file": ".coderef/diagrams/calls.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Mermaid call graph"
+    },
+    {
+      "file": ".coderef/diagrams/imports.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Mermaid import graph"
+    },
+    {
+      "file": ".coderef/exports/graph.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Exported dependency graph (JSON)"
+    },
+    {
+      "file": ".coderef/exports/graph.jsonld",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Exported graph (JSON-LD/RDF)"
+    },
+    {
+      "file": ".coderef/exports/diagram-wrapped.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Mermaid diagram with usage notes"
+    },
+    {
+      "file": ".coderef/generated-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated project README"
+    },
+    {
+      "file": ".coderef/generated-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated architecture doc"
+    },
+    {
+      "file": ".coderef/generated-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated API reference"
+    },
+    {
+      "file": ".coderef/generated-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated component hierarchy"
+    },
+    {
+      "file": ".coderef/doc_generation_data.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Metadata for doc generation"
+    }
+  ]
+}

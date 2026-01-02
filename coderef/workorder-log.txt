@@ -1,3 +1,11 @@
+WO-RESOURCE-SHEET-MCP-TOOL-001 | coderef-docs | resource-sheet-mcp-tool implementation plan | 2026-01-02T09:06:32.134102+00:00
+WO-PHASE-5-COMPLETION-001 | Phaser-Antigravity | Complete remaining Phase 5 roadmap (Sprints 2-7) | 2026-01-02T09:03:25.645727+00:00
+WO-DOCUMENT-EFFECTIVENESS-003 | coderef-ecosystem | Step 6: Improvement Roadmap - Create prioritized implementation plan (P0/P1/P2/P3) | 2026-01-02T08:00:00+00:00
+WO-DOCUMENT-EFFECTIVENESS-002 | coderef-ecosystem | Step 5: Cross-Project Analysis - Orchestrator synthesizes patterns from 9 value audits | 2026-01-02T07:30:00+00:00
+WO-DOCUMENT-EFFECTIVENESS-001 | coderef-ecosystem | Step 4: Value Audit - 9 agents rate document effectiveness (5/9 complete) | 2026-01-02T07:00:00+00:00
+WO-DOCUMENT-CLEANUP-001 | coderef-ecosystem | Step 3: Document Cleanup - Project organization review (7/9 complete) | 2026-01-02T06:30:00+00:00
+WO-CODEREF-IO-INVENTORY-002 | coderef-ecosystem | Step 2: Document Reports - Complete file list with source/destination tracking (9/9 complete) | 2026-01-02T06:00:00+00:00
+WO-CODEREF-IO-INVENTORY-001 | coderef-ecosystem | Step 1: I/O Inventory - Document all inputs/outputs across 9 agents (9/9 complete) | 2026-01-02T05:30:00+00:00
 WO-COMPLEXITY-SCORER-IMPROVEMENTS-001 | coderef-system | complexity-scorer-improvements implementation plan | 2026-01-02T05:10:42.169250+00:00
 WO-DASHBOARD-SCANNER-UI-001 | coderef-dashboard | Archived feature: Scanner Ui Integration | 2026-01-02T02:21:32.622499+00:00
 WO-DASHBOARD-SCANNER-UI-001 | coderef-dashboard | Scanner UI integration - mock interface for Cod... | 2026-01-02T01:40:02.297084+00:00
@@ -22,3 +30,4 @@ WO-REMOVE-UTILITY-PERSONAS-001 | coderef-personas | remove-utility-personas impl
 WO-RESTRUCTURE-MONOREPO-001 | coderef-dashboard | Restructure monorepo - remove widget system, mo... | 2025-12-25T18:23:26.228569+00:00
 WO-WORKORDER-TRACKING-001 | html-tools | Real-time workorder/stub tracking system - SSE ... | 2025-12-25T08:11:05.652666+00:00
 WO-CODEREF-OUTPUT-UTILIZATION-001 | coderef-ecosystem | COMPLETE - 100% server coverage: 59,676 elements discovered across all 5 MCP servers | 2025-12-31T12:00:00Z
+WO-ECOSYSTEM-RESOURCE-INVENTORY-001 | coderef-ecosystem | Ecosystem resource inventory session | 2026-01-02

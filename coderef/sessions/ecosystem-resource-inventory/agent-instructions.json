@@ -1,0 +1,32 @@
+{
+  "workorder_id": "WO-ECOSYSTEM-RESOURCE-INVENTORY-001",
+  "task": "Create Resource Inventory for Your Project",
+  "description": "Catalog all tools, commands, workflows, and scripts in your project. Compare against orchestrator's master index to identify missing items.",
+
+  "prerequisite": "Orchestrator must complete Phase 1 first. Check orchestrator-communication.json: aggregation.phase must be 'phase_2_agents_inventory' before starting.",
+
+  "instructions": {
+    "step_1": "IDENTIFY your role and output_file from agent-communication.json agents[] array (find your agent_id)",
+    "step_2": "SCAN your project directory (agent_path) for: MCP tools (if MCP server), slash commands (.claude/commands/), workflows (documented processes), scripts (*.py, *.js, *.sh), utilities (helper tools)",
+    "step_3": "READ orchestrator-master-index.md to see what's already documented in reference site",
+    "step_4": "CREATE inventory at your output_file path with: Resources You Have (categorized list), Missing from Master (items in your project NOT in orchestrator's master index), Notes (context about your resources)",
+    "step_5": "UPDATE agent-communication.json: Find your entry in agents[] array, set your status='complete', increment aggregation.completed by 1"
+  },
+
+  "output_format": "markdown",
+
+  "output_template": "# {Agent ID} Resource Inventory\n\n## Resources You Have\n\n### MCP Tools (if applicable)\n- **tool_name**: Description, parameters, use case\n\n### Slash Commands\n- **/command-name**: Description, when to use\n\n### Workflows\n- **workflow-name**: Description, steps, triggers\n\n### Scripts\n- **script-name.py**: Description, usage, location\n\n### Utilities\n- **utility-name**: Description, functionality\n\n---\n\n## Missing from Master Index\n(Items you have that are NOT in orchestrator-master-index.md)\n\n### Category\n- **missing_item**: Description, why it's valuable\n\n---\n\n## Notes\n- Any context about your resources\n- Dependencies between tools\n- Usage patterns\n- Future enhancements",
+
+  "quality_standards": {
+    "completeness": "All tools, commands, workflows, scripts, and utilities documented. Accurate comparison against master index.",
+    "accuracy": "Exact names, correct descriptions, valid file paths. No placeholders or guesses.",
+    "format": "Markdown with clear sections. Bulleted lists. Bold resource names. Consistent structure across all agents."
+  },
+
+  "important_notes": [
+    "DO NOT assume orchestrator role - you are an individual agent inventorying YOUR project only",
+    "READ orchestrator-master-index.md before creating your inventory to identify gaps",
+    "UPDATE agent-communication.json after completing your output",
+    "Your output_file path is specified in agent-communication.json agents[] array"
+  ]
+}

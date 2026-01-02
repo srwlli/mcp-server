@@ -1,0 +1,28 @@
+{
+  "workorder_id": "WO-ECOSYSTEM-RESOURCE-INVENTORY-001",
+  "feature_name": "ecosystem-resource-inventory",
+  "created": "2026-01-02",
+  "status": "not_started",
+  "description": "Create master inventory of all tools, commands, workflows, and scripts across coderef ecosystem",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\orchestrator-instructions.json",
+  "agent_instructions": "ORCHESTRATOR ONLY: READ instructions.json at path above for complete task details",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Creates master resource index from reference site, then synthesizes all agent inventories into unified ecosystem-wide master list",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\orchestrator-master-index.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "phase_1_instructions": "Orchestrator creates master index from C:\\Users\\willh\\Desktop\\assistant\\coderef\\user\\index.html",
+  "phase_2_instructions": "After orchestrator completes phase 1, agents use agent-communication.json for their inventory tasks",
+  "phase_3_instructions": "After all agents complete, orchestrator synthesizes final master list",
+
+  "aggregation": {
+    "phase": "phase_1_orchestrator_master_index",
+    "orchestrator_complete": false,
+    "agents_ready": false
+  }
+}

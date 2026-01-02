@@ -52,6 +52,10 @@ class CharacteristicsDetector:
         characteristics["has_events"] = any(
             event in code for event in ["onClick", "onChange", "onSubmit", "addEventListener"]
         )
+        characteristics["has_event_handlers"] = any(
+            handler in code for handler in ["onClick", "onChange", "onSubmit", "onFocus", "onBlur"]
+        )
+        characteristics["has_aria_attributes"] = "aria-" in code
 
         # State detection
         characteristics["manages_state"] = any(
@@ -59,6 +63,9 @@ class CharacteristicsDetector:
         )
         characteristics["uses_global_state"] = any(
             lib in str(imports) for lib in ["redux", "zustand", "recoil", "jotai"]
+        )
+        characteristics["has_lifecycle_methods"] = any(
+            hook in code for hook in ["useEffect", "useLayoutEffect", "componentDidMount", "componentWillUnmount"]
         )
 
         # Storage detection

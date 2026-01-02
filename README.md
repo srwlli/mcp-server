@@ -1,280 +1,778 @@
-# CodeRef Ecosystem - AI-Native Code Intelligence & Feature Lifecycle Management
+# CodeRef Ecosystem
 
-**Version:** 1.0.0 | **Status:** ✅ Production | **Last Updated:** 2025-12-25
+> **AI-Powered Code Intelligence & Documentation System**
+>
+> A comprehensive ecosystem of 9 integrated tools for AI agents to understand, plan, implement, test, and document software features with complete code context and dependency awareness.
+
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](CLAUDE.md)
+[![Status](https://img.shields.io/badge/status-production-brightgreen.svg)](CLAUDE.md)
+[![MCP Servers](https://img.shields.io/badge/mcp%20servers-6-orange.svg)](#mcp-servers)
 
 ---
 
-## What This Ecosystem Does
+## 🚀 What is CodeRef?
 
-**CodeRef** is a complete system that enables AI agents to plan, understand, implement, and document software features safely and efficiently. It solves the "agent blind coding" problem by providing code intelligence, semantic context, and structured planning throughout the entire feature lifecycle.
+**CodeRef** solves the "agent blind coding" problem by providing AI agents with deep code understanding, structured planning workflows, expert personas, automated documentation, and comprehensive testing—all working together as a unified system.
 
-### Core Problem
+**Core Innovation:** Combines static code analysis, dynamic dependency tracking, standardized planning workflows, and multi-agent coordination to enable autonomous feature development with complete context awareness.
+
+### Core Problem Solved
 
 - ❌ **Before:** Agents generate code without knowing dependencies → runtime failures, breaking changes, regressions
 - ✅ **After:** Agents get complete context (dependencies, impact, tests, risks, architecture) → safe, confident implementations
 
----
+### Key Capabilities
 
-## System Architecture
-
-The ecosystem consists of 4 specialized MCP servers that work together:
-
-```
-Input: Feature Idea
-    ↓
-coderef-workflow (Planning)
-    ├─ Gathers context (requirements, constraints)
-    ├─ Analyzes project (code intelligence from coderef-context)
-    ├─ Creates plan (10-section JSON with tasks)
-    └─ Validates plan (quality scoring)
-    ↓
-Agent + Personas (Implementation)
-    ├─ Uses expert personas for domain knowledge
-    ├─ Queries coderef-context for code intelligence
-    ├─ Implements features with dependency context
-    └─ Updates DELIVERABLES.md with progress
-    ↓
-coderef-docs (Documentation)
-    ├─ Records changes (auto-detects git diffs)
-    ├─ Generates foundation docs (README, ARCHITECTURE, etc)
-    ├─ Updates CHANGELOG (with workorder tracking)
-    └─ Archives feature (for historical reference)
-    ↓
-Output: Complete, documented, safe feature
-```
+- 🔍 **Code Intelligence** - AST-based dependency graphs, impact analysis, complexity metrics
+- 📋 **Planning & Orchestration** - 10-section implementation plans with workorder tracking
+- 📚 **Documentation Automation** - POWER framework templates, auto-generated foundation docs
+- 👥 **Expert Personas** - 9 domain specialists (frontend, backend, testing, DevOps, etc.)
+- 🧪 **Test Automation** - pytest integration, coverage tracking, impact-based test selection
+- 📝 **Audit Trail** - Complete workorder tracking with Papertrail integration
+- 🤖 **Multi-Agent Coordination** - Parallel task execution with conflict detection
 
 ---
 
-## The 4 MCP Servers
+## 📦 System Components
 
-| Server | Purpose | Key Tools | Location |
-|--------|---------|-----------|----------|
-| **coderef-context** | Code Intelligence | scan, query, impact, complexity, patterns, coverage, drift | Python wrapper for @coderef/core |
-| **coderef-workflow** | Planning & Orchestration | gather_context, analyze, create_plan, validate, execute, verify, archive | Feature lifecycle management |
-| **coderef-docs** | Documentation | generate_foundation_docs, quickref, record_changes, establish_standards, audit, check_consistency | Generate all project docs |
-| **coderef-personas** | Expert Agents | use_persona, list_personas, create_custom_persona | 9 domain experts (Lloyd, Ava, Marcus, Quinn, Taylor, Devon, + 3 more) |
+The CodeRef Ecosystem consists of 9 integrated components:
 
-### How They Work Together
+### MCP Servers (6)
 
-**1. Planning Phase** (coderef-workflow)
+| Server | Purpose | Tools | Status |
+|--------|---------|-------|--------|
+| **[coderef-mcp](#coderef-mcp)** | Master orchestrator & unified interface | 71+ aggregated tools | ✅ Production |
+| **[coderef-context](#coderef-context)** | Code intelligence & analysis | scan, query, impact, complexity, patterns | ✅ Production |
+| **[coderef-workflow](#coderef-workflow)** | Planning & orchestration | gather_context, create_plan, execute_plan | ✅ Production |
+| **[coderef-docs](#coderef-docs)** | Documentation generation | generate_docs, record_changes, establish_standards | ✅ Production |
+| **[coderef-personas](#coderef-personas)** | Expert agent system | use_persona, create_custom_persona | ✅ Production |
+| **[coderef-testing](#coderef-testing)** | Test automation | run_tests, test_coverage, test_health | ✅ Production |
+
+### Core Libraries (2)
+
+| Component | Purpose | Technology | Status |
+|-----------|---------|------------|--------|
+| **[coderef-core](#coderef-core)** | TypeScript analysis engine | AST parsing, dependency graphs | ✅ Production |
+| **[cli-scanner](#cli-scanner)** | Command-line interface | coderef CLI tool | ✅ Production |
+
+### Supporting Systems (1)
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| **[papertrail](#papertrail)** | Workorder audit trail | ✅ Production |
+
+---
+
+## 🏗️ Architecture
+
 ```
-/create-workorder → Gathers context + Analyzes project + Creates plan
-                 ↓ Uses coderef-context for code intelligence
-                 → Outputs: plan.json (10-section structure)
+┌─────────────────────────────────────────────────────────────┐
+│                        CodeRef MCP                          │
+│                  (Unified Orchestrator)                     │
+└─────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   coderef-    │    │   coderef-    │    │   coderef-    │
+│   context     │    │   workflow    │    │    docs       │
+│               │    │               │    │               │
+│ • scan        │    │ • plan        │    │ • generate    │
+│ • query       │    │ • execute     │    │ • record      │
+│ • impact      │    │ • track       │    │ • validate    │
+└───────────────┘    └───────────────┘    └───────────────┘
+        │                     │                     │
+        └─────────────────────┼─────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   coderef-    │    │   coderef-    │    │  papertrail   │
+│   personas    │    │   testing     │    │               │
+│               │    │               │    │ • audit       │
+│ • Ava         │    │ • pytest      │    │ • track       │
+│ • Marcus      │    │ • coverage    │    │ • report      │
+│ • Quinn       │    │ • health      │    │               │
+└───────────────┘    └───────────────┘    └───────────────┘
+        │                     │
+        └─────────────────────┘
+                    │
+                    ▼
+        ┌───────────────────────┐
+        │     coderef-core      │
+        │   (TypeScript CLI)    │
+        │                       │
+        │ • AST parsing         │
+        │ • Dependency graphs   │
+        │ • Export formats      │
+        └───────────────────────┘
 ```
 
-**2. Intelligence Phase** (coderef-context)
-```
-Agents query: "What will break if I change this?"
-             ↓
-coderef-context wraps @coderef/core CLI
-             ↓
-Returns: Dependencies, impact radius, affected files, risk level
-```
+### How It Works
 
-**3. Implementation Phase** (Agent + Personas)
 ```
-Agent executes plan tasks
-    ├─ Uses Ava for frontend work (CSS, React, accessibility)
-    ├─ Uses Marcus for backend work (API, database, auth)
-    ├─ Uses Quinn for testing (test generation, coverage)
-    └─ Calls coderef-context for code context
-```
-
-**4. Documentation Phase** (coderef-docs)
-```
-After implementation:
-    ├─ /record-changes → Auto-detects git diffs → Updates CHANGELOG
-    ├─ /generate-docs → Creates README, ARCHITECTURE, SCHEMA
-    └─ /archive-feature → Moves to coderef/archived/ for reference
+Feature Idea
+    ↓
+coderef-workflow (/create-workorder)
+├─ Gathers requirements & constraints
+├─ Analyzes project (code intelligence from coderef-context)
+├─ Creates 10-section implementation plan
+└─ Validates quality (0-100 score)
+    ↓
+Agent + Personas (/execute-plan)
+├─ Activates domain expert (Ava for frontend, Marcus for backend, etc)
+├─ Implements tasks with code context
+├─ Calls coderef-context for dependencies & impact
+└─ Updates DELIVERABLES.md with progress
+    ↓
+coderef-testing (/run-tests)
+├─ Runs impact-based test selection
+├─ Executes pytest with coverage
+└─ Generates test health report
+    ↓
+coderef-docs (/record-changes)
+├─ Auto-detects git changes
+├─ Updates CHANGELOG.json with workorder tracking
+├─ Generates foundation docs (README, ARCHITECTURE, SCHEMA)
+└─ Archives completed features
+    ↓
+Complete, documented, tested feature
 ```
 
 ---
 
-## Complete Feature Lifecycle
+## 🎯 Complete Feature Lifecycle
 
+CodeRef provides an end-to-end workflow for autonomous feature development:
+
+### 1️⃣ PLAN (5-10 min)
+
+```bash
+/create-workorder
 ```
-PLAN (5-10 min)
-├─ /create-workorder
-├─ Gathers requirements
-├─ Analyzes project structure
-├─ Creates implementation plan
-└─ Output: coderef/workorder/{feature}/plan.json
 
-EXECUTE (varies)
-├─ /execute-plan → TodoWrite task list
-├─ Agent works through tasks using personas + code context
-├─ Updates task status as progress
-└─ Output: Code implementation + DELIVERABLES.md
+**What happens:**
+- Interactive Q&A gathers requirements
+- `coderef-context` scans project for patterns
+- `coderef-workflow` generates 10-section plan.json
+- Validates plan quality (0-100 score)
 
-DOCUMENT (2-5 min)
-├─ /update-deliverables → Captures git metrics (LOC, commits, time)
-├─ /record-changes → Smart changelog recording
-├─ /update-docs → Bumps version, updates README/CHANGELOG
-└─ Output: Updated documentation
+**Output:** `coderef/workorder/{feature}/plan.json`
 
-ARCHIVE (1 min)
-├─ /archive-feature
-├─ Move to coderef/archived/
-└─ Update archive index
+### 2️⃣ EXECUTE (1-8 hours)
 
-Total: Feature from idea → documented & archived in ~1-2 hours
+```bash
+/execute-plan
 ```
+
+**What happens:**
+- Converts plan to TodoWrite task list
+- Activates expert persona (Ava, Marcus, Quinn, etc.)
+- Implements tasks with full code context
+- Updates task status in real-time
+- Tracks metrics in DELIVERABLES.md
+
+**Output:** Implemented feature + progress tracking
+
+### 3️⃣ TEST (2-10 min)
+
+```bash
+/run-tests --impact
+```
+
+**What happens:**
+- `coderef-testing` runs impact-based test selection
+- Executes pytest with coverage tracking
+- Generates test health report
+- Captures test metrics
+
+**Output:** Test results + coverage report
+
+### 4️⃣ DOCUMENT (2-5 min)
+
+```bash
+/update-deliverables
+/record-changes
+/update-docs
+```
+
+**What happens:**
+- Captures git metrics (LOC, commits, time)
+- Auto-detects changes, updates CHANGELOG
+- Bumps version, updates README
+- Generates foundation docs if needed
+
+**Output:** Updated CHANGELOG.json, README, CLAUDE.md
+
+### 5️⃣ ARCHIVE (1 min)
+
+```bash
+/archive-feature
+```
+
+**What happens:**
+- Moves feature to `coderef/archived/`
+- Updates archive index
+- Feature available for reference/recovery
+
+**Output:** Completed feature in historical archive
 
 ---
 
-## Key Concepts
+## 📖 Component Details
 
-### Workorder System
-**Format:** `WO-{FEATURE}-{CATEGORY}-###`
+### CodeRef MCP
 
-Example: `WO-AUTH-SYSTEM-001`
-- Tracked in `coderef/workorder-log.txt` (audit trail)
-- Stored in plan.json META_DOCUMENTATION
-- Enables multi-agent work with unique IDs per agent
+**Master orchestrator** that provides a unified interface to all 5 specialized servers.
 
-### Plan.json Structure
-**10 sections** covering everything from discovery to success criteria:
+**Features:**
+- Aggregates 71+ MCP tools from all servers
+- Simplifies command discovery (single `/` autocomplete)
+- Coordinates cross-server workflows
+- Manages global configuration
 
-1. META_DOCUMENTATION (project info, version, workorder_id)
-2. 0_PREPARATION (discovery, analysis, existing patterns)
-3. 1_EXECUTIVE_SUMMARY (what & why)
-4. 2_RISK_ASSESSMENT (breaking changes, security, performance)
-5. 3_CURRENT_STATE_ANALYSIS (existing code, architecture)
-6. 4_KEY_FEATURES (requirements)
-7. 5_TASK_ID_SYSTEM (task naming conventions)
-8. 6_IMPLEMENTATION_PHASES (phased breakdown)
-9. 7_TESTING_STRATEGY (test plan)
-10. 8_SUCCESS_CRITERIA (completion verification)
+**Location:** `C:\Users\willh\.mcp-servers\coderef-mcp\`
 
-### POWER Framework
-All documentation follows **POWER** for consistency:
+---
+
+### CodeRef Context
+
+**Code intelligence engine** powered by TypeScript AST analysis.
+
+**Capabilities:**
+- **Scan:** Discover all code elements (functions, classes, components)
+- **Query:** Explore relationships (calls, imports, dependencies)
+- **Impact:** Analyze ripple effects of changes
+- **Complexity:** Calculate cyclomatic complexity metrics
+- **Patterns:** Detect code patterns and conventions
+- **Drift:** Identify stale code references
+- **Export:** Generate graphs in JSON, JSON-LD, Mermaid, DOT formats
+
+**Key Tools:**
+- `coderef_scan` - Full codebase analysis
+- `coderef_query` - Relationship exploration
+- `coderef_impact` - Change impact analysis
+- `coderef_patterns` - Pattern detection
+- `coderef_tag` - Add CodeRef2 tags to source
+
+**Location:** `C:\Users\willh\.mcp-servers\coderef-context\`
+
+**Output:** `.coderef/` directory with 16 artifact types
+
+---
+
+### CodeRef Workflow
+
+**Planning & orchestration system** for structured feature development.
+
+**Capabilities:**
+- **Gather Context:** Interactive requirements collection
+- **Analyze Project:** Auto-discover foundation docs, patterns, components
+- **Create Plan:** Generate 10-section implementation plan
+- **Validate Plan:** Score plan quality (0-100) against standards
+- **Execute Plan:** Convert to TodoWrite tasks, track progress
+- **Multi-Agent:** Coordinate parallel agent execution
+- **Archive:** Move completed features to historical archive
+
+**Key Workflows:**
+1. Single-agent feature development
+2. Multi-agent parallel execution
+3. Workorder tracking & audit trail
+4. Risk assessment & comparison
+5. Plan health monitoring
+
+**Location:** `C:\Users\willh\.mcp-servers\coderef-workflow\`
+
+**Output:** `coderef/workorder/{feature}/plan.json`, `DELIVERABLES.md`
+
+---
+
+### CodeRef Docs
+
+**Documentation automation system** using the POWER framework.
+
+**POWER Framework:**
 - **P**urpose - Why this exists
 - **O**verview - What it covers
 - **W**hat/Why/When - Detailed content
 - **E**xamples - Concrete illustrations
 - **R**eferences - Related docs
 
+**Capabilities:**
+- **Foundation Docs:** Auto-generate README, ARCHITECTURE, API, SCHEMA
+- **Changelog:** Auto-detect changes, update CHANGELOG.json
+- **Standards:** Establish UI/UX/behavior patterns from codebase
+- **Audit:** Check codebase compliance against standards
+- **Quickref:** Interactive guide generation for any app type
+
+**Key Tools:**
+- `generate_foundation_docs` - Create all foundation docs
+- `record_changes` - Smart changelog recording
+- `establish_standards` - Scan & document patterns
+- `audit_codebase` - Check compliance
+- `check_consistency` - Pre-commit quality gate
+
+**Location:** `C:\Users\willh\.mcp-servers\coderef-docs\`
+
+**Templates:** `templates/power/` directory
+
 ---
 
-## Getting Started
+### CodeRef Personas
+
+**Expert agent system** with 9 domain specialists.
+
+**Available Personas:**
+- **Ava** - Frontend Specialist (React, UI/UX)
+- **Marcus** - Backend Specialist (APIs, databases)
+- **Quinn** - Testing Specialist (pytest, coverage)
+- **Taylor** - General Purpose Agent
+- **Lloyd** - Orchestrator & Coordinator
+- **DevOps Expert** - CI/CD, deployment
+- **Security Expert** - Security audits
+- **Performance Expert** - Optimization
+- **Documentation Expert** - Technical writing
+
+**Capabilities:**
+- Activate persona with domain expertise
+- Auto-load relevant patterns from `.coderef/`
+- Custom persona creation
+- Context-aware recommendations
+
+**Key Tools:**
+- `use_persona` - Activate expert
+- `create_custom_persona` - Build new specialist
+- `get_active_persona` - Check current persona
+- `list_personas` - Browse all experts
+
+**Location:** `C:\Users\willh\.mcp-servers\coderef-personas\`
+
+---
+
+### CodeRef Testing
+
+**Test automation system** with pytest integration.
+
+**Capabilities:**
+- **Run Tests:** Execute pytest with coverage tracking
+- **Impact Selection:** Run only tests affected by changes
+- **Test Discovery:** Auto-detect test files & patterns
+- **Coverage Analysis:** Track test coverage metrics
+- **Health Scoring:** Calculate test suite health (0-100)
+- **Reporting:** Generate comprehensive test reports
+
+**Key Tools:**
+- `run_tests` - Execute test suite
+- `test_coverage` - Coverage analysis
+- `test_health` - Health score calculation
+- `discover_tests` - Find test files
+- `impact_test_selection` - Smart test selection
+
+**Location:** `C:\Users\willh\.mcp-servers\coderef-testing\`
+
+**Integration:** Works with `.coderef/` for impact analysis
+
+---
+
+### CodeRef Core
+
+**TypeScript analysis engine** that powers coderef-context.
+
+**Technology:**
+- TypeScript AST parsing
+- Dependency graph generation
+- 99% accuracy (AST-based vs 85% regex)
+- Export processor (4 formats)
+
+**Capabilities:**
+- Parse TypeScript/JavaScript files
+- Extract functions, classes, components, hooks
+- Build dependency relationships
+- Calculate complexity metrics
+- Generate exports (JSON, JSON-LD, Mermaid, DOT)
+
+**Location:** `C:/Users/willh/Desktop/projects/coderef-system/packages/core`
+
+**Usage:** Wrapped by coderef-context MCP server
+
+---
+
+### CLI Scanner
+
+**Command-line interface** for coderef-core.
+
+**Usage:**
+```bash
+# Scan project
+coderef scan /path/to/project
+
+# Query relationships
+coderef query calls AuthService
+
+# Impact analysis
+coderef impact AuthService
+
+# Export graph
+coderef export /path/to/project --format mermaid
+```
+
+**Location:** `C:/Users/willh/Desktop/projects/coderef-system/packages/cli`
+
+---
+
+### Papertrail
+
+**Workorder audit trail system** for tracking feature development.
+
+**Capabilities:**
+- Log workorder entries
+- Query by project, workorder ID, date
+- Global audit trail across projects
+- Thread-safe concurrent access
+
+**Format:** `WO-{FEATURE}-{CATEGORY}-###`
+
+**Example:** `WO-AUTH-SYSTEM-001`
+
+**Location:** `C:\Users\willh\.mcp-servers\papertrail\`
+
+**Output:** `coderef/workorder-log.txt`
+
+---
+
+## 🚦 Getting Started
+
+### Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- Claude Code or MCP-compatible AI client
+- Git repository
 
 ### Installation
+
+1. **Clone the repository:**
+   ```bash
+   cd C:\Users\willh\.mcp-servers
+   git pull
+   ```
+
+2. **Configure MCP servers:**
+   ```bash
+   # Verify configuration
+   cat ~/.mcp.json
+   ```
+
+3. **Test servers:**
+   ```bash
+   # Start each server
+   python -m coderef-context.server
+   python -m coderef-workflow.server
+   python -m coderef-docs.server
+   python -m coderef-personas.server
+   python -m coderef-testing.server
+   ```
+
+4. **Generate code intelligence:**
+   ```bash
+   # Scan your project
+   python scripts/populate-coderef.py /path/to/your/project
+   ```
+
+### Quick Start Guide
+
+**Step 1: Create your first workorder**
 ```bash
-# All 4 MCP servers pre-installed in .mcp-servers/
-# Verify configuration in ~/.mcp.json
-
-# Test connection (in any project)
-/stub                          # Quick idea capture
-/create-workorder              # Full planning workflow
-/generate-docs                 # Generate project docs
-```
-
-### Common Workflows
-
-**Capture an idea:**
-```
-/stub
-→ Feature name: "dark-mode-toggle"
-→ Description: "Add dark mode theme toggle to UI"
-→ stub.json saved to: C:\Users\willh\Desktop\assistant\coderef\working\{feature}/
-```
-
-**Plan a feature:**
-```
 /create-workorder
-→ Gathers context (interactive)
-→ Analyzes project (with code intelligence)
-→ Creates & validates plan
-→ Output: coderef/workorder/{feature}/plan.json
 ```
 
-**Implement with help:**
-```
+**Step 2: Execute the plan**
+```bash
 /execute-plan
-→ Generate TodoWrite task list
-→ Agent works through tasks
-→ Uses personas for domain expertise
-→ Calls coderef-context for code context
 ```
 
-**Record completion:**
+**Step 3: Run tests**
+```bash
+/run-tests --impact
 ```
+
+**Step 4: Document changes**
+```bash
 /record-changes
-→ Auto-detects git changes
-→ Suggests change_type (feature/fix/breaking)
-→ Updates CHANGELOG.json + README version
+```
+
+**Step 5: Archive when complete**
+```bash
+/archive-feature
 ```
 
 ---
 
-## Directory Structure
+## 📚 Documentation
 
-```
-.mcp-servers/                                # All MCP servers
-├── coderef-context/                        # Code intelligence (Python)
-│   ├── server.py                           # Wraps @coderef/core CLI
-│   └── README.md                           # Details
-├── coderef-workflow/                       # Planning (Python)
-│   ├── generators/                         # plan.json, analysis generation
-│   ├── .claude/commands/                   # 26 slash commands
-│   └── CLAUDE.md                           # Architecture
-├── coderef-docs/                           # Documentation (Python)
-│   ├── generators/                         # doc generation
-│   ├── templates/power/                    # POWER framework templates
-│   └── .claude/commands/                   # 26 slash commands
-├── coderef-personas/                       # Expert personas (Python)
-│   ├── personas/base/                      # 9 personas
-│   └── .claude/commands/                   # Persona activation
-├── CLAUDEMD-TEMPLATE.json                  # Universal doc template
-├── coderef/                                # Global artifacts
-│   ├── workorder/                          # Active features
-│   ├── archived/                           # Completed features
-│   └── workorder-log.txt                   # Audit trail
-└── README.md                               # This file
-```
+### User Guides
 
----
+- **[Setup Workflow](file:///C:/Users/willh/Desktop/assistant/coderef/user/coderef-setup.html)** - Complete setup guide
+- **[Commands Reference](file:///C:/Users/willh/Desktop/assistant/coderef/user/coderef-commands.html)** - 68 slash commands
+- **[Workflows Guide](file:///C:/Users/willh/Desktop/assistant/coderef/user/coderef-workflows.html)** - 14 core workflows
+- **[MCP Tools Reference](file:///C:/Users/willh/Desktop/assistant/coderef/user/coderef-tools.html)** - 71+ MCP tools
+- **[Scripts Reference](file:///C:/Users/willh/Desktop/assistant/coderef/user/coderef-scripts.html)** - 50+ scripts
 
-## Design Philosophy
+### Technical Documentation
 
-**1. Separation of Concerns**
-- coderef-context = Code intelligence ONLY
-- coderef-workflow = Planning & orchestration ONLY
-- coderef-docs = Documentation ONLY
-- coderef-personas = Expertise & behavior ONLY
+- **[CLAUDE.md](CLAUDE.md)** - Ecosystem architecture & design decisions
+- **[CLAUDEMD-TEMPLATE.json](CLAUDEMD-TEMPLATE.json)** - Universal doc template
+- **[HOW-TO-USE-CODEREF-STRUCTURE.md](coderef/user/HOW-TO-USE-CODEREF-STRUCTURE.md)** - .coderef/ usage guide
 
-**2. Agent-First Design**
-- Tools designed for AI-to-AI communication
-- No manual interactive forms
-- Structured JSON throughout
-- Complete context provided upfront
+### Component Documentation
 
-**3. Safety & Confidence**
-- Full dependency context before implementation
-- Impact analysis before refactoring
-- Validation at each stage (plan scoring, agent verification)
-- Complete audit trails
-
-**4. Lean & Efficient**
-- 530-600 line CLAUDE.md per server (using CLAUDEMD-TEMPLATE.json)
-- No repetition (link instead)
-- Version history trimmed to last 2 versions
-- One source of truth per concern
-
----
-
-## Resources
-
-- **[coderef-context/README.md](coderef-context/README.md)** - Code intelligence details
-- **[coderef-workflow/CLAUDE.md](coderef-workflow/CLAUDE.md)** - Planning architecture
+- **[coderef-context/README.md](coderef-context/README.md)** - Code intelligence
+- **[coderef-workflow/CLAUDE.md](coderef-workflow/CLAUDE.md)** - Planning system
 - **[coderef-docs/CLAUDE.md](coderef-docs/CLAUDE.md)** - Documentation system
 - **[coderef-personas/CLAUDE.md](coderef-personas/CLAUDE.md)** - Persona system
-- **[CLAUDEMD-TEMPLATE.json](CLAUDEMD-TEMPLATE.json)** - Documentation template
-- **[coderef-system](../Desktop/projects/coderef-system/)** - TypeScript @coderef/core
+- **[coderef-testing/CLAUDE.md](coderef-testing/CLAUDE.md)** - Testing system
 
 ---
 
-**Maintained by:** willh, Claude Code AI
+## 🎓 Common Use Cases
 
-**System Status:** ✅ Production Ready - All 4 servers operational, full feature lifecycle tested and working
+### Use Case 1: Plan & Implement a Feature
+
+```bash
+# 1. Create workorder (5-10 min)
+/create-workorder
+> Feature: "dark-mode-toggle"
+> [Interactive Q&A for requirements]
+
+# 2. Execute plan (1-8 hours)
+/execute-plan
+> [Agent implements with Ava persona]
+> [Uses coderef-context for patterns]
+
+# 3. Run tests
+/run-tests --impact
+
+# 4. Document & archive (2-5 min)
+/update-deliverables
+/record-changes
+/archive-feature
+```
+
+### Use Case 2: Multi-Agent Feature
+
+```bash
+# 1. Create plan with parallel phases
+/create-workorder
+
+# 2. Generate agent communication
+/generate-agent-communication
+
+# 3. Assign tasks to agents
+/assign-agent-task agent=1 phase=frontend
+/assign-agent-task agent=2 phase=backend
+/assign-agent-task agent=3 phase=tests
+
+# 4. Verify completion
+/verify-agent-completion agent=1
+/verify-agent-completion agent=2
+/verify-agent-completion agent=3
+
+# 5. Aggregate & archive
+/aggregate-agent-deliverables
+/archive-feature
+```
+
+### Use Case 3: Refactor with Impact Analysis
+
+```bash
+# 1. Analyze impact
+coderef-context: coderef_impact
+> Element: "AuthService"
+> Operation: "refactor"
+> Returns: "12 files depend on this"
+
+# 2. Plan refactor with full context
+/create-workorder
+
+# 3. Execute safely
+/execute-plan
+> [Agent refactors with dependency awareness]
+
+# 4. Run impact-based tests
+/run-tests --impact
+
+# 5. Document & archive
+/record-changes
+/archive-feature
+```
+
+---
+
+## 🗂️ File Structure
+
+```
+C:\Users\willh\.mcp-servers/
+├── coderef-mcp/                        # Master orchestrator
+│   ├── server.py                       # MCP server
+│   └── README.md
+├── coderef-context/                    # Code intelligence
+│   ├── server.py                       # MCP server
+│   ├── src/                            # Wraps @coderef/core CLI
+│   ├── processors/                     # Export processor
+│   └── tests/                          # 24 unit tests
+├── coderef-workflow/                   # Planning & orchestration
+│   ├── server.py                       # MCP server
+│   ├── generators/                     # Plan generation
+│   └── .claude/commands/               # 26 slash commands
+├── coderef-docs/                       # Documentation
+│   ├── server.py                       # MCP server
+│   ├── generators/                     # Doc generation
+│   └── templates/power/                # POWER framework
+├── coderef-personas/                   # Expert agents
+│   ├── server.py                       # MCP server
+│   └── personas/base/                  # 9 domain experts
+├── coderef-testing/                    # Test automation
+│   ├── server.py                       # MCP server
+│   ├── src/test_runner.py              # pytest integration
+│   └── tests/                          # 6 end-to-end tests
+├── papertrail/                         # Audit trail
+│   ├── server.py                       # MCP server
+│   └── README.md
+├── coderef/                            # Global artifacts
+│   ├── workorder/                      # Active features
+│   ├── archived/                       # Completed features
+│   ├── intelligence/                   # Centralized intelligence
+│   ├── foundation-docs/                # Generated docs
+│   ├── standards/                      # Code standards
+│   └── workorder-log.txt               # Audit trail
+├── CLAUDE.md                           # Ecosystem overview
+├── README.md                           # Main README
+└── .mcp.json                           # MCP configuration
+```
+
+---
+
+## 🔧 Configuration
+
+### MCP Configuration
+
+The `.mcp.json` file at `~/.mcp.json` configures all 6 MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "coderef-mcp": {
+      "command": "python",
+      "args": ["-m", "coderef-mcp.server"],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-mcp"
+    },
+    "coderef-context": {
+      "command": "python",
+      "args": ["-m", "coderef-context.server"],
+      "cwd": "C:\\Users\\willh\\.mcp-servers\\coderef-context"
+    }
+    // ... other servers
+  }
+}
+```
+
+### Global Commands
+
+All slash commands are stored in `~/.claude/commands/`:
+
+```
+C:\Users\willh\.claude\commands/
+├── create-workorder.md
+├── execute-plan.md
+├── record-changes.md
+├── archive-feature.md
+├── run-tests.md
+└── ... (68 total commands)
+```
+
+---
+
+## 🧪 Testing
+
+### Run Tests for All Components
+
+```bash
+# coderef-context tests (24 tests)
+cd coderef-context
+pytest tests/ -v --cov
+
+# coderef-workflow tests
+cd coderef-workflow
+pytest tests/ -v
+
+# coderef-docs tests
+cd coderef-docs
+pytest tests/ -v
+
+# coderef-testing tests (6 tests)
+cd coderef-testing
+pytest tests/comprehensive/ -v
+```
+
+---
+
+## 📊 Metrics & Status
+
+### Current Status (v1.2.0)
+
+- ✅ **All 6 MCP servers operational**
+- ✅ **59,676 code elements discovered across ecosystem**
+- ✅ **90% .coderef/ output utilization** (12/15 types)
+- ✅ **30/30 tests passing** (98% coverage)
+- ✅ **68 slash commands** across all servers
+- ✅ **71+ MCP tools** available
+
+---
+
+## 🛠️ Troubleshooting
+
+### MCP Cache Issues
+
+**Problem:** Duplicate commands in autocomplete
+
+**Solution:**
+```bash
+# Delete MCP cache
+rm "C:\Users\willh\.cursor\projects\{PROJECT_ID}\mcp-cache.json"
+
+# Restart Claude Code
+```
+
+### Missing .coderef/ Directory
+
+**Problem:** `.coderef/` directory not found
+
+**Solution:**
+```bash
+# Generate structure
+python scripts/populate-coderef.py /path/to/project
+```
+
+---
+
+## 📄 License
+
+Proprietary - All Rights Reserved
+
+---
+
+## 👤 Author
+
+**Will H.** - System Design & Architecture
+
+**With assistance from Claude Code AI**
+
+---
+
+**Version:** 1.2.0
+**Last Updated:** 2025-12-31
+**Status:** ✅ Production Ready
+
+*Built with ❤️ using Claude Code and the CodeRef Ecosystem*

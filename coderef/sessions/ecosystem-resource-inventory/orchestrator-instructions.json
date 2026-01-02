@@ -1,0 +1,45 @@
+{
+  "workorder_id": "WO-ECOSYSTEM-RESOURCE-INVENTORY-001",
+  "task": "Create Master Resource Index & Synthesize Agent Inventories",
+  "description": "You are the orchestrator for this 3-phase session. Create initial master index from reference site, then synthesize all agent inventories into unified ecosystem master list.",
+
+  "phase_1_instructions": {
+    "step_1": "READ C:\\Users\\willh\\Desktop\\assistant\\coderef\\user\\index.html",
+    "step_2": "EXTRACT all documented resources by category: MCP Tools, Slash Commands, Workflows, Scripts, Utilities",
+    "step_3": "CREATE orchestrator-master-index.md with comprehensive categorized list",
+    "step_4": "UPDATE orchestrator-communication.json: set status='complete', aggregation.orchestrator_complete=true, aggregation.phase='phase_2_agents_inventory'"
+  },
+
+  "phase_2_instructions": {
+    "note": "Wait for all 9 agents to complete their inventories using agent-communication.json",
+    "monitoring": "Check agent-communication.json aggregation.completed count until it reaches 9"
+  },
+
+  "phase_3_instructions": {
+    "step_1": "READ all 9 agent inventory files (coderef-assistant-inventory.md, coderef-context-inventory.md, etc.)",
+    "step_2": "READ orchestrator-master-index.md (your phase 1 output)",
+    "step_3": "COMPARE each agent inventory against master index",
+    "step_4": "IDENTIFY missing items (resources in agent inventories NOT in master index)",
+    "step_5": "CREATE ecosystem-index.md documenting all resources that exist in ecosystem but were missing from reference site",
+    "step_6": "CREATE final-master-index.md synthesizing orchestrator-master-index.md + all agent inventories into single comprehensive list",
+    "step_7": "UPDATE orchestrator-communication.json: set aggregation.phase='complete'"
+  },
+
+  "output_format": "markdown",
+
+  "output_files": {
+    "phase_1": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\orchestrator-master-index.md",
+    "phase_3_gaps": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\ecosystem-index.md",
+    "phase_3_final": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\ecosystem-resource-inventory\\final-master-index.md"
+  },
+
+  "master_index_template": "# Master Resource Index\n\n## MCP Tools\n### coderef-context\n- tool_name: Description\n\n### coderef-workflow\n- tool_name: Description\n\n## Slash Commands\n- /command: Description\n\n## Workflows\n- workflow-name: Description\n\n## Scripts\n- script-name.py: Description\n\n## Utilities\n- utility-name: Description",
+
+  "ecosystem_index_template": "# Ecosystem Resources Not in Reference Site\n\n## Missing from Index\n\n### MCP Tools\n**Agent:** coderef-context\n- missing_tool: Description (found in agent inventory, not in master index)\n\n### Scripts\n**Agent:** coderef-system\n- missing_script.py: Description\n\n## Summary\n- Total missing items: X\n- By category: MCP Tools (X), Scripts (X), Workflows (X), etc.",
+
+  "quality_standards": {
+    "completeness": "All resources from index.html captured in phase 1. All 9 agent inventories reviewed in phase 3. All gaps documented in ecosystem-index.md.",
+    "accuracy": "Exact tool names, command syntax, and descriptions. No duplicates. Consistent categorization.",
+    "format": "Markdown with clear headings. Bulleted lists. Agent attribution for missing items. Summary statistics."
+  }
+}

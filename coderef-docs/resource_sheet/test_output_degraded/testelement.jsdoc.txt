@@ -1,0 +1,11 @@
+/**
+ * TestElement
+ * @see coderef/foundation-docs/TESTELEMENT.md
+ *
+ * /** @module TestElement */
+ * /** @category {{type}} */
+ * /** @file {{file_path}} */
+ * /** @emits {{event_name}} - {{description}} */
+ * /** @listens {{event_name}} */
+ * /** @requires {{dependency}} */
+ */

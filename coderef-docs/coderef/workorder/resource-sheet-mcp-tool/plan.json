@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "status": "planning",
     "generated_by": "PlanningGenerator",
-    "has_context": false,
+    "has_context": true,
     "has_analysis": false,
     "uds": {
       "generated_by": "coderef-workflow v2.0.0",
@@ -18,205 +18,336 @@
   "UNIVERSAL_PLANNING_STRUCTURE": {
     "0_preparation": {
       "foundation_docs": {
-        "available": [],
-        "missing": [
-          "Run /analyze-for-planning to discover docs"
-        ]
+        "available": [
+          "workorder-context.md - Complete source of truth with module architecture",
+          "MODULE-CATEGORIES-GUIDE.md - User-friendly category explanations"
+        ],
+        "missing": []
       },
       "coding_standards": {
-        "available": [],
-        "missing": [
-          "Run /analyze-for-planning to discover standards"
-        ]
+        "available": [
+          "Follow existing coderef-docs patterns (tool_handlers.py, generators/)",
+          "TypeScript for module definitions",
+          "Python for MCP tool implementation"
+        ],
+        "missing": []
       },
       "reference_components": {
-        "primary": "Unknown",
-        "secondary": []
+        "primary": "generators/foundation_generator.py - Generator pattern to follow",
+        "secondary": [
+          "tool_handlers.py - MCP tool registration pattern",
+          "Papertrail integration - UDS header/footer pattern"
+        ]
       },
       "key_patterns_identified": [
-        "Run /analyze-for-planning to identify patterns"
+          "Module composition over rigid templates",
+          "User-friendly categories (tools/, ui/, services/, state/, etc.)",
+          "Leverage .coderef/ for code analysis",
+          "3-step workflow: Detect → Select → Assemble",
+          "3-output format: Markdown + JSON Schema + JSDoc"
       ],
       "technology_stack": {
-        "languages": [],
-        "frameworks": [],
-        "key_libraries": []
+        "languages": ["Python", "TypeScript"],
+        "frameworks": ["MCP (Model Context Protocol)"],
+        "key_libraries": [
+          "coderef_scan - Code analysis",
+          "papertrail - UDS headers/footers",
+          "jinja2 - Template rendering"
+        ]
       },
       "gaps_and_risks": [
-        "Missing project analysis - run /analyze-for-planning first"
+        "Module system is novel - no existing implementation to reference",
+        "Need to create ~30-40 modules from scratch",
+        "Auto-detection accuracy unknown (target 90%+)"
       ]
     },
     "1_executive_summary": {
-      "purpose": "Implement Resource Sheet Mcp Tool feature to extend system capabilities",
-      "value_proposition": "Enables users to resource sheet mcp tool functionality",
-      "real_world_analogy": "Building Resource Sheet Mcp Tool from scratch following established patterns",
-      "use_case": "User triggers resource-sheet-mcp-tool \u2192 System processes request \u2192 Feature delivers result",
-      "output": "Resource Sheet Mcp Tool implementation with tests and documentation"
+      "purpose": "Migrate resource sheet system from assistant slash commands to universal MCP tool with composable module architecture",
+      "value_proposition": "Reduces documentation time from 3-4 hours to 30-45 minutes with 60-70% auto-fill from code analysis",
+      "real_world_analogy": "Like LEGO blocks - instead of 20 pre-built structures, provide 30-40 blocks that snap together based on what you're building",
+      "use_case": "Developer documents AuthService → Tool detects (API service with auth) → Auto-selects modules (endpoints, auth, errors, retry) → Generates 3 docs (markdown, schema, JSDoc) → 68% pre-filled",
+      "output": "MCP tool `generate_resource_sheet` that creates comprehensive documentation for any code element across all projects"
     },
     "2_risk_assessment": {
-      "overall_risk": "low",
-      "complexity": "low (estimated 3-5 files, <200 lines)",
-      "scope": "Estimated 0 requirements affecting multiple components",
-      "file_system_risk": "low (standard code changes only)",
+      "overall_risk": "medium",
+      "complexity": "medium-high (~15-20 files, ~2000 lines TypeScript + Python)",
+      "scope": "8 user-friendly categories, 15 core modules (Phase 1), expand to 30-40 later",
+      "file_system_risk": "low (new modules/ directory, no changes to existing code)",
       "dependencies": [
-        "None identified - may require discovery during implementation"
+        "coderef_scan - Existing, stable",
+        "papertrail - Existing, Phase 4 complete",
+        ".coderef/ structure - Requires coderef_scan to be run first"
       ],
       "performance_concerns": [
-        "No significant performance concerns identified - monitor during implementation"
+        "Module composition performance (target <10 seconds)",
+        "Auto-detection accuracy (target 90%+ correct category)",
+        "Auto-fill rate (target 60%+ from code analysis)"
       ],
       "security_considerations": [
-        "Follow existing security patterns - review during implementation"
+        "No security concerns - documentation generation only",
+        "No sensitive data processing"
       ],
-      "breaking_changes": "none (extending existing functionality)"
+      "breaking_changes": "none (new tool, backward compatible with slash commands)"
     },
     "3_current_state_analysis": {
       "affected_files": [
-        "Identify during implementation based on feature scope"
+        "NEW: modules/resource-sheet/ directory (module templates: _universal/ + conditional/)",
+        "NEW: detection/analyzer.ts (code analysis)",
+        "NEW: detection/classifier.ts (category mapping)",
+        "NEW: detection/selector.ts (module selection)",
+        "NEW: composition/composer.ts (module assembly)",
+        "MODIFY: tool_handlers.py (register new tool)",
+        "MODIFY: server.py (MCP server registration)"
       ],
       "dependencies": {
         "existing_internal": [
-          "Existing modules and components - identify during implementation"
+          "coderef_scan - Code analysis (from coderef-context MCP)",
+          "Papertrail - UDS headers/footers",
+          "BaseGenerator - Generator base class"
         ],
         "existing_external": [
-          "Standard project dependencies"
+          "jinja2 - Template rendering",
+          "jsonschema - Schema validation"
         ],
         "new_external": [],
-        "new_internal": []
+        "new_internal": [
+          "Module system (TypeScript)",
+          "Detection engine",
+          "Composition engine"
+        ]
       },
-      "architecture_context": "Standard implementation following existing project architecture and patterns"
+      "architecture_context": "New modular documentation system alongside existing foundation docs generator. Uses composable modules instead of rigid templates."
     },
     "4_key_features": {
       "primary_features": [
-        "Implement core functionality",
-        "Add error handling",
-        "Integrate with existing system"
+        "User-friendly module categories (8 categories: tools/, ui/, services/, state/, data/, generators/, infrastructure/, testing/)",
+        "15 core modules in Phase 1 (architecture, integration, testing, performance + 11 conditional)",
+        "Auto-detection from .coderef/index.json (classify element → select modules)",
+        "3-output generation (Markdown + JSON Schema + JSDoc)",
+        "MCP tool interface with 3 modes (reverse-engineer, template, refresh)",
+        "Papertrail UDS integration (workorder tracking, health scoring)"
       ],
       "secondary_features": [
-        "Add logging and monitoring",
-        "Optimize performance"
+        "Module composition engine (assemble selected modules)",
+        "Template rendering with auto-fill",
+        "Validation against element type",
+        "Health scoring for generated docs"
       ],
       "edge_case_handling": [
-        "Empty or null input validation",
-        "Invalid input error handling",
-        "Boundary conditions and limits"
+        "Element not found in .coderef/index.json → graceful error",
+        "Hybrid elements (e.g., component + API client) → select multiple category modules",
+        "Missing .coderef/ directory → fallback to manual template mode",
+        "Low auto-fill rate (<40%) → flag for human review"
       ],
       "configuration_options": [
-        "None"
+        "mode: 'reverse-engineer' | 'template' | 'refresh'",
+        "auto_analyze: boolean (use coderef_scan)",
+        "output_path: string (where to save docs)",
+        "validate_against_code: boolean (compare docs to code)"
       ]
     },
     "5_task_id_system": {
       "tasks": [
-        "SETUP-001: Create initial project structure and setup development environment with required dependencies",
-        "LOGIC-001: Implement core feature functionality following existing project patterns and architecture",
-        "TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
-        "TEST-002: Write integration tests to verify end-to-end functionality and component interactions",
-        "DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-001: Create modules/resource-sheet/ directory structure with _universal/ and conditional/ folders",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-002: Move RESOURCE-SHEET-SYSTEM.md and MODULE-CATEGORIES-GUIDE.md to modules/resource-sheet/",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-003: Create TypeScript types for module system (DocumentationModule, CharacteristicCheck, ModuleData)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-001: Implement 4 universal modules (architecture, integration, testing, performance)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-002: Implement 11 conditional modules for Phase 1 (endpoints, auth, errors, state, props, events, lifecycle, side_effects, persistence, retry, accessibility)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-001: Implement detection engine - read .coderef/index.json and classify elements",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-002: Implement category classifier - map element characteristics to user-friendly categories (tools/cli-commands/, ui/components/, services/api-endpoints/, etc.)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/SELECT-001: Implement module selector - given category + characteristics, select required modules",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/COMPOSE-001: Implement composition engine - assemble selected modules into cohesive documentation",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-001: Implement markdown generator - compose modules into markdown with UDS headers",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-002: Implement JSON schema generator - extract type definitions from modules",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-003: Implement JSDoc generator - create inline comment suggestions",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-001: Add generate_resource_sheet tool to tool_handlers.py",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-002: Implement 3 modes (reverse-engineer, template, refresh)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/PAPER-001: Integrate Papertrail - auto-inject UDS headers/footers for resource-sheet doc type",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-001: Write unit tests for detection engine (90%+ accuracy target)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-002: Write unit tests for module selection (all 15 modules)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-003: Write integration test - generate resource sheet for sample API service",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-004: Write integration test - generate resource sheet for sample React component",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-005: Validate auto-fill rate on 10 sample elements (target 60%+)",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-001: Update MODULE-CATEGORIES-GUIDE.md with final module list",
+        "WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-002: Create examples/ directory with sample output for each category"
       ]
     },
     "6_implementation_phases": {
       "phases": [
         {
           "phase": 1,
-          "name": "Phase 1: Foundation",
-          "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
+          "name": "Phase 1: Module Foundation (Week 1)",
+          "description": "Create module system structure and implement 15 core modules",
           "tasks": [
-            "SETUP-001"
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-002",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-003",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-002"
           ],
           "deliverables": [
-            "All files exist",
-            "Dependencies installed",
-            "Environment configured"
+            "modules/resource-sheet/_universal/ with 4 modules (architecture.md, integration.md, testing.md, performance.md)",
+            "modules/resource-sheet/conditional/ with 11 modules (state.md, props.md, lifecycle.md, events.md, endpoints.md, auth.md, errors.md, validation.md, persistence.md, routing.md, accessibility.md)",
+            "TypeScript module definition types",
+            "Each module has markdown/schema/JSDoc templates",
+            "RESOURCE-SHEET-SYSTEM.md and MODULE-CATEGORIES-GUIDE.md moved to modules/resource-sheet/"
           ]
         },
         {
           "phase": 2,
-          "name": "Phase 2: Core Implementation",
-          "description": "Implement primary features and business logic following existing patterns",
+          "name": "Phase 2: Detection & Selection (Week 2)",
+          "description": "Implement code analysis, classification, and module selection",
           "tasks": [
-            "LOGIC-001"
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-002",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/SELECT-001"
           ],
           "deliverables": [
-            "Happy path works end-to-end",
-            "Core functionality complete"
+            "Detection engine reads .coderef/index.json",
+            "Classifier maps elements to user-friendly categories",
+            "Selector picks modules based on category + characteristics",
+            "90%+ accuracy on category classification"
           ]
         },
         {
           "phase": 3,
-          "name": "Phase 3: Testing",
-          "description": "Comprehensive testing at unit, integration, and end-to-end levels",
+          "name": "Phase 3: Composition & Output (Week 3)",
+          "description": "Implement module assembly and 3-format output generation",
           "tasks": [
-            "TEST-001"
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/COMPOSE-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-002",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-003"
           ],
           "deliverables": [
-            "All tests passing",
-            "Coverage meets requirements"
+            "Composition engine assembles selected modules",
+            "Markdown generator with UDS headers",
+            "JSON Schema generator",
+            "JSDoc generator",
+            "All 3 outputs in sync"
           ]
         },
         {
           "phase": 4,
-          "name": "Phase 4: Documentation",
-          "description": "Complete documentation for users and developers",
+          "name": "Phase 4: MCP Tool Integration (Week 4)",
+          "description": "Expose as MCP tool with Papertrail integration",
           "tasks": [
-            "DOC-001"
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-002",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/PAPER-001"
           ],
           "deliverables": [
-            "All documentation complete",
-            "Examples provided"
+            "generate_resource_sheet tool in tool_handlers.py",
+            "3 modes working (reverse-engineer, template, refresh)",
+            "Papertrail UDS integration complete",
+            "Tool callable from any project"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Phase 5: Testing & Validation (Week 5)",
+          "description": "Comprehensive testing and validation against targets",
+          "tasks": [
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-002",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-003",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-004",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-005",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-001",
+            "WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-002"
+          ],
+          "deliverables": [
+            "Unit tests for detection (90%+ accuracy)",
+            "Unit tests for all 15 modules",
+            "Integration tests (API service + React component)",
+            "Auto-fill rate validated (60%+ target)",
+            "Documentation updated with examples"
           ]
         }
       ]
     },
     "7_testing_strategy": {
       "unit_tests": [
-        "Test individual functions and methods in isolation",
-        "Verify input validation and error handling",
-        "Test edge cases and boundary conditions",
-        "Achieve minimum 80% code coverage"
+        "Detection engine - Test category classification for 15 element types (target 90%+ accuracy)",
+        "Module selector - Verify correct modules selected for each category",
+        "Composition engine - Test module assembly logic",
+        "Each module - Verify markdown/schema/JSDoc generation",
+        "Edge cases - Element not in .coderef/, hybrid elements, missing data"
       ],
       "integration_tests": [
-        "Test component interactions and data flow",
-        "Verify end-to-end functionality",
-        "Test integration with existing systems"
+        "End-to-end: AuthService (services/api-endpoints) → generates 3 docs with 60%+ auto-fill",
+        "End-to-end: Button (ui/components) → generates 3 docs with props/events/accessibility",
+        "End-to-end: useLocalStorage (state/hooks) → generates 3 docs with side-effects/cleanup",
+        "Papertrail integration - Verify UDS headers/footers in output",
+        "Mode switching - Test reverse-engineer, template, refresh modes"
       ],
       "end_to_end_tests": [
-        "Not applicable"
+        "Generate resource sheet for real coderef-docs function (e.g., log_workorder)",
+        "Generate resource sheet for real React component (e.g., FileTree from dashboard)",
+        "Validate against actual .coderef/ data from target project"
       ],
       "edge_case_scenarios": [
         {
-          "scenario": "Empty or null input provided",
-          "setup": "Call function with None or empty string",
-          "expected_behavior": "Function validates input and returns appropriate error",
-          "verification": "Assert error message and status code",
-          "error_handling": "ValueError or ValidationError"
+          "scenario": "Element not found in .coderef/index.json",
+          "setup": "Call tool with non-existent element name",
+          "expected_behavior": "Tool returns error with suggestion to run coderef_scan",
+          "verification": "Assert error message includes 'run coderef scan'",
+          "error_handling": "ElementNotFoundError with actionable message"
         },
         {
-          "scenario": "Invalid input format provided",
-          "setup": "Call function with malformed or incorrect data type",
-          "expected_behavior": "Function validates input type and returns error",
-          "verification": "Assert error message indicates invalid format",
-          "error_handling": "TypeError or ValidationError"
+          "scenario": "Hybrid element (component + API client)",
+          "setup": "Component that makes fetch calls internally",
+          "expected_behavior": "Classifier selects modules from both ui/ and services/ categories",
+          "verification": "Assert modules include props, events, endpoints, errors",
+          "error_handling": "No error - supports multi-category elements"
         },
         {
-          "scenario": "Boundary conditions at limits",
-          "setup": "Test with minimum and maximum allowed values",
-          "expected_behavior": "Function handles boundary values correctly",
-          "verification": "Assert results are within expected range",
-          "error_handling": "No error expected for valid boundaries"
+          "scenario": "Missing .coderef/ directory",
+          "setup": "Project without .coderef/index.json",
+          "expected_behavior": "Tool falls back to template mode (no auto-fill)",
+          "verification": "Assert mode switches to 'template' with 0% auto-fill",
+          "error_handling": "Warning logged, template mode activated"
+        },
+        {
+          "scenario": "Low auto-fill rate (<40%)",
+          "setup": "Element with minimal metadata in .coderef/",
+          "expected_behavior": "Tool flags document for human review",
+          "verification": "Assert warning in output + sections marked ⚠️",
+          "error_handling": "No error - generates with warnings"
         }
       ]
     },
     "8_success_criteria": {
       "functional_requirements": [
         {
-          "requirement": "Feature implementation complete",
-          "metric": "All requirements implemented",
-          "target": "100% of specified requirements",
-          "validation": "Manual verification against requirements list"
+          "requirement": "Module system complete",
+          "metric": "15 modules implemented",
+          "target": "4 universal + 11 conditional modules",
+          "validation": "Code review - verify all modules have markdown/schema/JSDoc templates"
         },
         {
-          "requirement": "Integration successful",
-          "metric": "Feature works with existing system",
-          "target": "No breaking changes to existing functionality",
-          "validation": "Run full test suite"
+          "requirement": "Category classification accuracy",
+          "metric": "Correct category for element type",
+          "target": "90%+ accuracy on common elements",
+          "validation": "Test with 15 sample elements (1 per category combo)"
+        },
+        {
+          "requirement": "Auto-fill rate",
+          "metric": "% of doc auto-filled from code",
+          "target": "60%+ for existing code",
+          "validation": "Test with 10 real code elements, measure auto-fill %"
+        },
+        {
+          "requirement": "3-output generation",
+          "metric": "All 3 formats generated",
+          "target": "Markdown + JSON Schema + JSDoc for every invocation",
+          "validation": "Integration test - verify 3 files created"
+        },
+        {
+          "requirement": "MCP tool accessible",
+          "metric": "Tool callable from any project",
+          "target": "Works in coderef-docs, coderef-dashboard, target projects",
+          "validation": "Test from 3 different projects"
         }
       ],
       "quality_requirements": [
@@ -224,63 +355,97 @@
           "requirement": "Code coverage",
           "metric": "Line coverage",
           "target": ">80%",
-          "validation": "Run coverage tool"
-        },
-        {
-          "requirement": "Code quality",
-          "metric": "Linter passes",
-          "target": "Zero linting errors",
-          "validation": "Run linter"
+          "validation": "Run pytest --cov"
         },
         {
           "requirement": "Type safety",
-          "metric": "Type checker passes",
-          "target": "Zero type errors",
-          "validation": "Run type checker"
+          "metric": "TypeScript compilation",
+          "target": "Zero type errors in modules/",
+          "validation": "Run tsc --noEmit"
+        },
+        {
+          "requirement": "Module consistency",
+          "metric": "All modules follow same schema",
+          "target": "100% conformance to DocumentationModule type",
+          "validation": "TypeScript validation"
         }
       ],
       "performance_requirements": [
         {
-          "requirement": "Response time",
-          "metric": "Execution time",
-          "target": "< 1 second for typical operations",
-          "validation": "Performance tests"
+          "requirement": "Detection time",
+          "metric": "Time to analyze + classify element",
+          "target": "< 5 seconds",
+          "validation": "Time 10 runs, average < 5s"
+        },
+        {
+          "requirement": "Generation time",
+          "metric": "Time to compose + write 3 files",
+          "target": "< 10 seconds",
+          "validation": "Time end-to-end generation"
+        },
+        {
+          "requirement": "Module composition",
+          "metric": "Time to assemble modules",
+          "target": "< 2 seconds for 15 modules",
+          "validation": "Profile composition engine"
         }
       ],
       "security_requirements": [
         {
-          "requirement": "Input validation",
-          "metric": "All inputs validated",
-          "target": "100% validation coverage",
-          "validation": "Security review"
+          "requirement": "No sensitive data exposure",
+          "metric": "Generated docs contain no secrets",
+          "target": "100% - no env vars, tokens, passwords",
+          "validation": "Manual review of sample outputs"
         }
       ]
     },
     "9_implementation_checklist": {
       "pre_implementation": [
-        "\u2610 Review complete plan for gaps or ambiguities",
-        "\u2610 Verify all requirements are clear and testable",
-        "\u2610 Set up development environment with required dependencies"
+        "☐ Review workorder-context.md for complete requirements",
+        "☐ Review MODULE-CATEGORIES-GUIDE.md for category explanations",
+        "☐ Verify .coderef/ structure in sample project",
+        "☐ Test coderef_scan output format"
       ],
       "phase_1": [
-        "\u2610 SETUP-001: Create initial project structure and setup development environment with required dependencies"
+        "✅ WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-001: Create modules/resource-sheet/ directory structure",
+        "✅ WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-002: Move guides to modules/resource-sheet/",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/SETUP-003: Create TypeScript types",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-001: Implement 4 universal modules",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/MODULE-002: Implement 11 conditional modules"
       ],
       "phase_2": [
-        "\u2610 LOGIC-001: Implement core feature functionality following existing project patterns and architecture"
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-001: Implement detection engine",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/DETECT-002: Implement category classifier",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/SELECT-001: Implement module selector"
       ],
       "phase_3": [
-        "\u2610 TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
-        "\u2610 TEST-002: Write integration tests to verify end-to-end functionality and component interactions"
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/COMPOSE-001: Implement composition engine",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-001: Implement markdown generator",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-002: Implement JSON schema generator",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/OUTPUT-003: Implement JSDoc generator"
       ],
       "phase_4": [
-        "\u2610 DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-001: Add tool to tool_handlers.py",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/MCP-002: Implement 3 modes",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/PAPER-001: Integrate Papertrail"
+      ],
+      "phase_5": [
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-001: Test detection engine",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-002: Test module selection",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-003: Integration test (API service)",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-004: Integration test (React component)",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/TEST-005: Validate auto-fill rate",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-001: Update category guide",
+        "☐ WO-RESOURCE-SHEET-MCP-TOOL-001/DOC-002: Create examples"
       ],
       "finalization": [
-        "\u2610 All tests passing (unit + integration)",
-        "\u2610 Code review completed and approved",
-        "\u2610 Documentation updated and complete",
-        "\u2610 Changelog entry created with version bump",
-        "\u2610 Final verification against success criteria"
+        "☐ All tests passing (unit + integration + e2e)",
+        "☐ Category classification 90%+ accurate",
+        "☐ Auto-fill rate 60%+ validated",
+        "☐ Tool works in 3 different projects",
+        "☐ Documentation complete with examples",
+        "☐ Code review completed",
+        "☐ Ready for production use"
       ]
     }
   }

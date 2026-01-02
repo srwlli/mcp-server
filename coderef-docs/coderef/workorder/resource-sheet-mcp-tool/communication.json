@@ -1,0 +1,89 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-MCP-001",
+  "feature_name": "resource-sheet-mcp-tool",
+  "status": "pending_plan",
+  "created": "2026-01-02",
+  "last_updated": "2026-01-02",
+  "handoff": {
+    "from": "assistant-orchestrator",
+    "to": "coderef-docs-agent",
+    "status": "pending_plan",
+    "instructions": "Review context.json and create implementation plan using /create-plan workflow. Update this communication.json when plan is ready for review."
+  },
+  "workflow_phases": {
+    "phase_1_planning": {
+      "status": "pending",
+      "tasks": [
+        "Review context.json requirements",
+        "Run /create-plan workflow",
+        "Generate plan.json with 4-phase implementation",
+        "Update communication.json status to 'plan_submitted'"
+      ]
+    },
+    "phase_2_approval": {
+      "status": "pending",
+      "tasks": [
+        "Orchestrator reviews plan.json",
+        "Provides feedback or approval",
+        "Agent addresses feedback if needed",
+        "Status updated to 'approved'"
+      ]
+    },
+    "phase_3_implementation": {
+      "status": "pending",
+      "tasks": [
+        "Implement generate_resource_sheet tool",
+        "Create templates/ directory structure",
+        "Migrate templates from assistant",
+        "Add element type detection logic",
+        "Integrate with coderef_scan (optional auto-fill)",
+        "Write tests",
+        "Run /update-deliverables",
+        "Update communication.json status to 'complete'"
+      ]
+    },
+    "phase_4_verification": {
+      "status": "pending",
+      "tasks": [
+        "Orchestrator verifies DELIVERABLES.md",
+        "Tests tool in target project (not coderef-docs)",
+        "Validates backward compatibility with slash commands",
+        "Updates assistant CLAUDE.md",
+        "Status updated to 'verified' then 'closed'"
+      ]
+    }
+  },
+  "communication_log": [
+    {
+      "timestamp": "2026-01-02T00:00:00Z",
+      "from": "assistant-orchestrator",
+      "to": "coderef-docs-agent",
+      "message": "Workorder created. Resource sheet system currently implemented as slash commands in assistant project. Need to migrate to MCP tool for universal cross-project access.",
+      "action_required": "Run /create-plan to generate implementation plan"
+    }
+  ],
+  "success_criteria": {
+    "must_have": [
+      "Tool callable from any project",
+      "All 20 element types supported",
+      "Generated sheets pass UDS validation",
+      "Backward compatibility maintained"
+    ],
+    "nice_to_have": [
+      "Auto-detection of element type (90%+ accuracy)",
+      "coderef_scan integration for auto-filling (60%+ sections)",
+      "Bulk generation support for entire codebases"
+    ]
+  },
+  "forbidden_changes": [
+    "Do not modify template structure (breaks existing usage)",
+    "Do not remove slash commands from assistant (backward compatibility)",
+    "Do not change element type taxonomy (20 types are canonical)"
+  ],
+  "notes": [
+    "Templates are ~1800 lines total - heavy migration but high value",
+    "Element type detection can use file extension + content heuristics",
+    "Auto-fill with coderef_scan is optional feature, not blocker",
+    "Consider versioning templates (v1.0.0) for future migrations"
+  ]
+}

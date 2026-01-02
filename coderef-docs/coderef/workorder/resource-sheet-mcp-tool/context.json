@@ -1,0 +1,162 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-MCP-001",
+  "feature_name": "resource-sheet-mcp-tool",
+  "created": "2026-01-02",
+  "status": "planning",
+  "target_project": "coderef-docs",
+  "description": "Migrate resource sheet system from assistant slash commands to coderef-docs MCP tool for universal cross-project access",
+  "requirements": [
+    "New MCP tool: generate_resource_sheet",
+    "Accept element_name, element_type, project_path parameters",
+    "Load templates from coderef-docs/templates/resource-sheets/",
+    "Auto-detect element type from file analysis (optional)",
+    "Integration with coderef_scan for automated context extraction",
+    "Return markdown resource sheet following template",
+    "Support all 20 element types from catalog",
+    "Maintain refactor-safety checklist validation"
+  ],
+  "constraints": [
+    "Must maintain compatibility with existing slash command usage",
+    "Templates must be version-controlled in MCP server repo",
+    "No breaking changes to template structure",
+    "Tool must work without coderef_scan (manual mode)",
+    "Generated sheets must validate against UDS standards"
+  ],
+  "goal": "Enable any project to generate authoritative resource sheets via MCP tool, not just assistant project via slash commands",
+  "migration_strategy": {
+    "phase_1_preparation": [
+      "Create templates/ directory in coderef-docs",
+      "Copy base template + catalog from assistant to coderef-docs/templates/",
+      "Version templates (v1.0.0)",
+      "Define tool schema in coderef-docs/src/tools/"
+    ],
+    "phase_2_implementation": [
+      "Implement generate_resource_sheet tool handler",
+      "Add template loading logic",
+      "Add element type detection from file extension/content",
+      "Add validation against element-specific checklist",
+      "Add optional coderef_scan integration for auto-filling"
+    ],
+    "phase_3_testing": [
+      "Test with all 20 element types",
+      "Test in target project (not coderef-docs itself)",
+      "Compare output to manual slash command results",
+      "Validate refactor-safety checklist coverage"
+    ],
+    "phase_4_migration": [
+      "Update assistant CLAUDE.md to reference MCP tool",
+      "Keep slash commands for backward compatibility",
+      "Update coderef-docs user-guide.md with new tool",
+      "Create migration guide for existing users"
+    ]
+  },
+  "technical_context": {
+    "current_state": {
+      "location": "assistant/.claude/commands/",
+      "access": "Assistant project only",
+      "format": "Markdown agent instruction templates",
+      "total_templates": 20,
+      "total_lines": "~1800"
+    },
+    "target_state": {
+      "location": "coderef-docs MCP server",
+      "access": "All projects via MCP protocol",
+      "format": "MCP tool returning markdown",
+      "invocation": "mcp__coderef-docs__generate_resource_sheet",
+      "parameters": {
+        "element_name": "Name of code element (e.g., ProjectSelector, useLocalStorage)",
+        "element_type": "Optional: One of 20 types. Auto-detected if omitted.",
+        "project_path": "Absolute path to project containing element",
+        "auto_analyze": "Optional: Use coderef_scan to auto-fill sections (default: false)",
+        "output_path": "Optional: Save to file (default: return as string)"
+      }
+    },
+    "integration_points": [
+      "coderef_scan - Extract code structure for auto-filling",
+      "validate_document - Validate generated sheet against UDS",
+      "check_document_health - Score resource sheet completeness",
+      "get_template - Load base template + element-specific template"
+    ],
+    "file_structure": {
+      "coderef-docs/": [
+        "templates/",
+        "  resource-sheets/",
+        "    base-template.md",
+        "    element-catalog.md",
+        "    types/",
+        "      01-top-level-widgets.md",
+        "      02-stateful-containers.md",
+        "      03-global-state.md",
+        "      ...",
+        "      20-testing-harness.md"
+      ]
+    }
+  },
+  "use_cases": [
+    {
+      "scenario": "Developer in Scrapper project wants to document AuthService",
+      "workflow": [
+        "Open Claude Code in Scrapper project",
+        "Call mcp__coderef-docs__generate_resource_sheet",
+        "Parameters: { element_name: 'AuthService', element_type: 'api-client', project_path: '/path/to/scrapper' }",
+        "Tool returns complete resource sheet",
+        "Save to coderef/foundation-docs/AUTH-SERVICE.md"
+      ]
+    },
+    {
+      "scenario": "Agent documenting new component with auto-analysis",
+      "workflow": [
+        "Agent implements ProjectSelector component",
+        "Calls generate_resource_sheet with auto_analyze: true",
+        "Tool runs coderef_scan to extract props, state, events",
+        "Auto-fills State Ownership Table, Props Reference",
+        "Returns partially-complete resource sheet",
+        "Agent reviews and fills manual sections (rationale, pitfalls)"
+      ]
+    },
+    {
+      "scenario": "Bulk documentation generation for MCP server",
+      "workflow": [
+        "Script iterates all exported functions in coderef-docs",
+        "For each function, calls generate_resource_sheet",
+        "Auto-detects element_type from function signature",
+        "Saves to coderef/foundation-docs/{function-name}.md",
+        "Creates index of all resource sheets"
+      ]
+    }
+  ],
+  "success_criteria": [
+    "Tool callable from any project with coderef-docs MCP server",
+    "Generates valid resource sheets for all 20 element types",
+    "Auto-detection works for 90%+ of common element types",
+    "Integration with coderef_scan auto-fills 60%+ of sections",
+    "Generated sheets pass UDS validation",
+    "Backward compatibility: slash commands still work in assistant",
+    "Documentation updated with migration guide"
+  ],
+  "related_work": {
+    "depends_on": [
+      "coderef_scan - Code analysis for auto-filling",
+      "validate_document - UDS validation",
+      "get_template - Template loading pattern"
+    ],
+    "blocks": [
+      "Automated documentation generation for target projects",
+      "MCP server self-documentation initiative",
+      "Cross-project documentation standards enforcement"
+    ]
+  },
+  "estimated_scope": {
+    "new_files": [
+      "src/tools/generate-resource-sheet.ts",
+      "templates/resource-sheets/ (21 files)",
+      "tests/generate-resource-sheet.test.ts"
+    ],
+    "modified_files": [
+      "src/index.ts (register new tool)",
+      "user-guide.md (document new tool)",
+      "assistant/CLAUDE.md (reference MCP tool)"
+    ],
+    "estimated_loc": "~500 LoC (tool logic + tests)"
+  }
+}

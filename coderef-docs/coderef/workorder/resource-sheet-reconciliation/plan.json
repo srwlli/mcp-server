@@ -1,0 +1,370 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "resource-sheet-reconciliation",
+    "workorder_id": "WO-RESOURCE-SHEET-RECONCILIATION-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": false,
+    "has_analysis": false,
+    "uds": {
+      "generated_by": "coderef-workflow v2.0.0",
+      "document_type": "Implementation Plan",
+      "last_updated": "2026-01-02",
+      "ai_assistance": true,
+      "next_review": "2026-02-01"
+    }
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "foundation_docs": {
+        "available": [],
+        "missing": [
+          "Run /analyze-for-planning to discover docs"
+        ]
+      },
+      "coding_standards": {
+        "available": [],
+        "missing": [
+          "Run /analyze-for-planning to discover standards"
+        ]
+      },
+      "reference_components": {
+        "primary": "Unknown",
+        "secondary": []
+      },
+      "key_patterns_identified": [
+        "Run /analyze-for-planning to identify patterns"
+      ],
+      "technology_stack": {
+        "languages": [],
+        "frameworks": [],
+        "key_libraries": []
+      },
+      "gaps_and_risks": [
+        "Missing project analysis - run /analyze-for-planning first"
+      ]
+    },
+    "1_executive_summary": {
+      "purpose": "Reconcile two parallel implementations of resource sheet system created by accident - merge TypeScript documentation system with working Python MCP tool",
+      "value_proposition": "Salvages 5,416 lines of valuable TypeScript documentation and module templates by porting them to Python, completing Phase 2 without rewriting from scratch",
+      "real_world_analogy": "Like having two teams accidentally build the same bridge from opposite sides - one built the blueprint (TypeScript specs), the other built the foundation (Python Phase 1). Now we need to use the blueprint to finish the bridge.",
+      "use_case": "Developer needs resource sheet for AuthService → Python tool uses ported TypeScript modules → Generates complete docs with 60%+ auto-fill using all 15 modules (not just 4)",
+      "output": "Complete Python MCP tool with 15 modules (4 universal + 11 conditional) by porting TypeScript templates to Jinja2, enhancing detection engine, and integrating 3-output generators"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "complexity": "medium-high (porting 1,527 lines of TypeScript templates + 921 lines of detection logic to Python)",
+      "scope": "11 new conditional modules + enhanced detection system + 3-output generators",
+      "file_system_risk": "low (adding new modules, minimal changes to existing Phase 1 code)",
+      "dependencies": [
+        "Existing Phase 1 Python implementation (resource_sheet/) - already stable",
+        "TypeScript module templates (modules/resource-sheet/) - source material",
+        "Jinja2 templating - existing dependency",
+        "coderef-context MCP - for .coderef/index.json reading"
+      ],
+      "performance_concerns": [
+        "Module selection complexity increases from 4 to 15 modules - monitor performance",
+        "Template rendering with 11+ modules - should stay under 10 second target",
+        "Detection engine needs to check 20+ characteristics - optimize if needed"
+      ],
+      "security_considerations": [
+        "No new security concerns - documentation generation only",
+        "Existing input validation in Phase 1 applies"
+      ],
+      "breaking_changes": "none (backward compatible - Phase 1 modules remain unchanged)"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "MODIFY: resource_sheet/modules/__init__.py - Add 11 conditional module imports",
+        "MODIFY: resource_sheet/detection/characteristics.py - Add 3 new characteristics (has_event_handlers, has_aria_attributes, has_lifecycle_methods)",
+        "MODIFY: resource_sheet/types.py - Add 3 new fields to CodeCharacteristics",
+        "NEW: resource_sheet/modules/conditional/ui/*.py - 3 UI modules (props, events, accessibility)",
+        "NEW: resource_sheet/modules/conditional/state/*.py - 2 state modules (state_management, lifecycle)",
+        "NEW: resource_sheet/modules/conditional/network/*.py - 4 network modules (endpoints, auth, retry, errors)",
+        "NEW: resource_sheet/modules/conditional/hooks/*.py - 2 hook modules (signature, side_effects)",
+        "REFERENCE: modules/resource-sheet/ - TypeScript source for porting (7,380 lines)"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "resource_sheet/modules/universal/ - 4 existing modules (architecture, integration, testing, performance)",
+          "resource_sheet/detection/analyzer.py - CodeAnalyzer class",
+          "resource_sheet/composition/composer.py - DocumentComposer class",
+          "generators/resource_sheet_generator.py - Main orchestrator"
+        ],
+        "existing_external": [
+          "Jinja2 - Template rendering",
+          "coderef-context MCP - .coderef/index.json access"
+        ],
+        "new_external": [],
+        "new_internal": [
+          "11 conditional modules in Python",
+          "Enhanced characteristics detection"
+        ]
+      },
+      "architecture_context": "Phase 1 created working Python MCP tool with 4 modules (50% auto-fill). Agent 2 accidentally created complete TypeScript specs with 15 modules in parallel. Now porting Agent 2's work to complete Phase 2 in Python."
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Port 11 conditional modules from TypeScript Markdown to Python dataclasses (ui, state, network, hooks categories)",
+        "Enhance detection engine with 3 new characteristics (event handlers, ARIA attributes, lifecycle methods)",
+        "Integrate conditional modules into ModuleRegistry with proper triggers",
+        "Fix type consistency issue (Phase 2 handoff bug: dict vs dataclass)",
+        "Achieve 60%+ auto-fill rate (up from 50% in Phase 1)"
+      ],
+      "secondary_features": [
+        "Add comprehensive examples for all 11 new modules",
+        "Update PROGRESS.md to reflect Phase 2 completion",
+        "Enhance MODULE-CATEGORIES-GUIDE.md with Python examples",
+        "Keep TypeScript docs as reference (don't delete)"
+      ],
+      "edge_case_handling": [
+        "Hybrid elements (e.g., React component that makes API calls) - select modules from multiple categories",
+        "Missing .coderef/index.json - graceful fallback to template mode",
+        "Low auto-fill rate (<40%) - flag sections for human review",
+        "Ambiguous element type - use confidence scoring from TypeScript classifier logic"
+      ],
+      "configuration_options": [
+        "module_selection_mode: 'auto' (default) | 'manual' (user picks modules)",
+        "auto_fill_threshold: 40 (minimum % to avoid warnings)",
+        "enable_conditional_modules: true (default - new in Phase 2)"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/AUDIT-001: Audit TypeScript system and identify salvageable components (templates, detection logic, docs)",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-001: Port 3 UI conditional modules (props.py, events.py, accessibility.py) from TypeScript markdown to Python dataclasses",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-002: Port 2 state conditional modules (state_management.py, lifecycle.py) from TypeScript markdown to Python dataclasses",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-003: Port 4 network conditional modules (endpoints.py, auth.py, retry.py, errors.py) from TypeScript markdown to Python dataclasses",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-004: Port 2 hook conditional modules (signature.py, side_effects.py) from TypeScript markdown to Python dataclasses",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-001: Add 3 new characteristics to detection/characteristics.py (has_event_handlers, has_aria_attributes, has_lifecycle_methods)",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-002: Update types.py to add new CodeCharacteristics fields",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-001: Fix ModuleRegistry to handle dataclasses correctly (fix Phase 2 handoff bug: dict access on dataclass)",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-002: Register all 11 conditional modules in modules/__init__.py with correct triggers",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-001: Write unit tests for 11 new conditional modules (structure, triggers, content generation)",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-002: Integration test - generate resource sheet for React component with 8+ modules selected",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-003: Integration test - generate resource sheet for API service with network modules",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/VERIFY-001: Validate auto-fill rate achieves 60%+ target on 5 sample elements",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-001: Update PHASE-1-COMPLETION-SUMMARY.md to PHASE-2-COMPLETION-SUMMARY.md with reconciliation notes",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-002: Update README.md to reflect 15 modules available (not 4)",
+        "WO-RESOURCE-SHEET-RECONCILIATION-001/CLEANUP-001: Archive or document TypeScript system (keep as reference, don't delete)"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Phase 1: Audit & Preparation",
+          "description": "Audit TypeScript system to identify salvageable components and create porting strategy",
+          "tasks": [
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/AUDIT-001"
+          ],
+          "deliverables": [
+            "Salvage plan created (which TypeScript files map to which Python modules)",
+            "Module porting template established",
+            "Identified 11 conditional modules + 3 new characteristics needed"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Phase 2: Port Conditional Modules",
+          "description": "Port 11 conditional modules from TypeScript markdown to Python dataclasses",
+          "tasks": [
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-001",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-002",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-003",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-004"
+          ],
+          "deliverables": [
+            "resource_sheet/modules/conditional/ui/ with 3 modules",
+            "resource_sheet/modules/conditional/state/ with 2 modules",
+            "resource_sheet/modules/conditional/network/ with 4 modules",
+            "resource_sheet/modules/conditional/hooks/ with 2 modules",
+            "All 11 modules follow DocumentationModule dataclass pattern"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Phase 3: Enhance Detection & Registry",
+          "description": "Add new characteristics to detection engine and integrate conditional modules into registry",
+          "tasks": [
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-001",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-002",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-001",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-002"
+          ],
+          "deliverables": [
+            "characteristics.py detects 20+ characteristics (added 3 new)",
+            "types.py updated with new CodeCharacteristics fields",
+            "ModuleRegistry fixed (dataclass access, not dict)",
+            "All 15 modules registered and selectable"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Phase 4: Testing & Validation",
+          "description": "Comprehensive testing with focus on module selection and auto-fill rate validation",
+          "tasks": [
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-001",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-002",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-003",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/VERIFY-001"
+          ],
+          "deliverables": [
+            "13 existing tests still passing + 11 new module tests",
+            "React component test passes (8+ modules selected)",
+            "API service test passes (network modules working)",
+            "Auto-fill rate 60%+ validated on 5 samples"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Phase 5: Documentation & Cleanup",
+          "description": "Update documentation and archive/document TypeScript system",
+          "tasks": [
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-001",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-002",
+            "WO-RESOURCE-SHEET-RECONCILIATION-001/CLEANUP-001"
+          ],
+          "deliverables": [
+            "PHASE-2-COMPLETION-SUMMARY.md created",
+            "README.md reflects 15 modules",
+            "TypeScript system archived with reconciliation notes"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test individual functions and methods in isolation",
+        "Verify input validation and error handling",
+        "Test edge cases and boundary conditions",
+        "Achieve minimum 80% code coverage"
+      ],
+      "integration_tests": [
+        "Test component interactions and data flow",
+        "Verify end-to-end functionality",
+        "Test integration with existing systems"
+      ],
+      "end_to_end_tests": [
+        "Not applicable"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Empty or null input provided",
+          "setup": "Call function with None or empty string",
+          "expected_behavior": "Function validates input and returns appropriate error",
+          "verification": "Assert error message and status code",
+          "error_handling": "ValueError or ValidationError"
+        },
+        {
+          "scenario": "Invalid input format provided",
+          "setup": "Call function with malformed or incorrect data type",
+          "expected_behavior": "Function validates input type and returns error",
+          "verification": "Assert error message indicates invalid format",
+          "error_handling": "TypeError or ValidationError"
+        },
+        {
+          "scenario": "Boundary conditions at limits",
+          "setup": "Test with minimum and maximum allowed values",
+          "expected_behavior": "Function handles boundary values correctly",
+          "verification": "Assert results are within expected range",
+          "error_handling": "No error expected for valid boundaries"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Feature implementation complete",
+          "metric": "All requirements implemented",
+          "target": "100% of specified requirements",
+          "validation": "Manual verification against requirements list"
+        },
+        {
+          "requirement": "Integration successful",
+          "metric": "Feature works with existing system",
+          "target": "No breaking changes to existing functionality",
+          "validation": "Run full test suite"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run coverage tool"
+        },
+        {
+          "requirement": "Code quality",
+          "metric": "Linter passes",
+          "target": "Zero linting errors",
+          "validation": "Run linter"
+        },
+        {
+          "requirement": "Type safety",
+          "metric": "Type checker passes",
+          "target": "Zero type errors",
+          "validation": "Run type checker"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Response time",
+          "metric": "Execution time",
+          "target": "< 1 second for typical operations",
+          "validation": "Performance tests"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Input validation",
+          "metric": "All inputs validated",
+          "target": "100% validation coverage",
+          "validation": "Security review"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "\u2610 Review deep dive analysis of dual-agent collision",
+        "\u2610 Understand Phase 2 handoff bug (dict vs dataclass)",
+        "\u2610 Review TypeScript module templates as porting reference"
+      ],
+      "phase_1": [
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/AUDIT-001: Audit TypeScript system and identify salvageable components"
+      ],
+      "phase_2": [
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-001: Port 3 UI conditional modules",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-002: Port 2 state conditional modules",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-003: Port 4 network conditional modules",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-004: Port 2 hook conditional modules"
+      ],
+      "phase_3": [
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-001: Add 3 new characteristics to detection engine",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-002: Update types.py with new fields",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-001: Fix ModuleRegistry dataclass handling",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-002: Register all 11 conditional modules"
+      ],
+      "phase_4": [
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-001: Write unit tests for 11 new modules",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-002: Integration test - React component",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-003: Integration test - API service",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/VERIFY-001: Validate 60%+ auto-fill rate"
+      ],
+      "phase_5": [
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-001: Create PHASE-2-COMPLETION-SUMMARY.md",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-002: Update README.md with 15 modules",
+        "\u2610 WO-RESOURCE-SHEET-RECONCILIATION-001/CLEANUP-001: Archive TypeScript system with notes"
+      ],
+      "finalization": [
+        "\u2610 All tests passing (24 total: 13 existing + 11 new)",
+        "\u2610 Auto-fill rate 60%+ validated",
+        "\u2610 All 15 modules registered and selectable",
+        "\u2610 TypeScript system archived (not deleted)",
+        "\u2610 Documentation updated with reconciliation story",
+        "\u2610 CHANGELOG entry: feat(v3.5.0) Complete Phase 2 via TypeScript reconciliation"
+      ]
+    }
+  }
+}

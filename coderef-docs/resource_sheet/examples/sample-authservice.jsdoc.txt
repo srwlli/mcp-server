@@ -1,0 +1,14 @@
+/**
+ * AuthService
+ * @see coderef/foundation-docs/AUTHSERVICE.md
+ *
+ * @module AuthService
+ * @category Class
+ * @file src/services/AuthService.ts
+ * @emits auth:login - Fired when user logs in
+ * @emits auth:logout - Fired when user logs out
+ * @emits auth:refresh - Fired when token refreshes
+ * @listens app:init
+ * @requires axios
+ * @requires jwt-decode
+ */

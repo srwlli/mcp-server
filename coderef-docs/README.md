@@ -1,6 +1,6 @@
 # coderef-docs
 
-**Version:** 3.2.0
+**Version:** 3.3.0
 **Status:** ✅ Production Ready
 **Protocol:** Model Context Protocol (MCP)
 
@@ -8,9 +8,9 @@
 
 ## Purpose
 
-**coderef-docs** is an MCP server providing 10 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
+**coderef-docs** is an MCP server providing 13 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
 
-**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection.
+**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection + composable module-based resource sheets (WO-RESOURCE-SHEET-MCP-TOOL-001).
 
 ---
 
@@ -115,7 +115,50 @@ Generate 5 comprehensive docs with real code intelligence:
 
 **Output:** All files saved to `coderef/user/`
 
-### 5. Universal Document Standard (UDS)
+### 5. Resource Sheet Generator (NEW in v3.3.0)
+
+**Tool:** `generate_resource_sheet`
+
+**Purpose:** Generate composable module-based technical documentation for code elements using intelligent auto-detection and assembly.
+
+**Core Innovation:** Replaces 20 rigid templates with ~30-40 composable modules that intelligently combine based on code characteristics.
+
+**3-Step Workflow:**
+1. **DETECT** - Analyze code to detect 20+ characteristics (state, network calls, JSX, auth, etc.)
+2. **SELECT** - Choose appropriate modules based on detected traits
+3. **ASSEMBLE** - Compose modules into comprehensive documentation
+
+**Output Formats:**
+- **Markdown** - Human-readable documentation with YAML frontmatter
+- **JSON Schema** - Machine-readable type definitions
+- **JSDoc** - Inline comment suggestions for IDE integration
+
+**Generation Modes:**
+- `reverse-engineer` - Analyze existing code and auto-fill documentation
+- `template` - Generate empty template for new code
+- `refresh` - Update existing docs with latest code changes
+
+**Key Features:**
+- ✅ Auto-detection from coderef_scan output
+- ✅ 4 universal modules (architecture, integration, testing, performance)
+- ✅ Smart module selection based on code traits
+- ✅ 50%+ auto-fill rate from code analysis
+- ✅ Graceful degradation when coderef_scan unavailable
+
+**Example Usage:**
+```python
+# Generate resource sheet for AuthService
+mcp__coderef-docs__generate_resource_sheet({
+  "element_name": "AuthService",
+  "project_path": "/path/to/project",
+  "mode": "reverse-engineer",
+  "auto_analyze": true
+})
+```
+
+**Implementation:** WO-RESOURCE-SHEET-MCP-TOOL-001 (Phase 1 Complete)
+
+### 6. Universal Document Standard (UDS)
 
 **NEW in v3.2.0** - Structured metadata for workorder documents
 

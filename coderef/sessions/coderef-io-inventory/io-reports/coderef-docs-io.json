@@ -1,0 +1,286 @@
+{
+  "agent_id": "coderef-docs",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T12:00:00Z",
+  "inputs": [
+    {
+      "file": "CLAUDE.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Architecture context for doc generation"
+    },
+    {
+      "file": "coderef/foundation-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Check existing content before regeneration"
+    },
+    {
+      "file": "coderef/foundation-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Check existing content before regeneration"
+    },
+    {
+      "file": "coderef/foundation-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Check existing content before regeneration"
+    },
+    {
+      "file": "coderef/foundation-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Check existing content before regeneration"
+    },
+    {
+      "file": "coderef/foundation-docs/SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Check existing content before regeneration"
+    },
+    {
+      "file": "coderef/standards/ui-patterns.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Read for audit/consistency checks"
+    },
+    {
+      "file": "coderef/standards/behavior-patterns.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Read for audit/consistency checks"
+    },
+    {
+      "file": "coderef/standards/ux-patterns.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Read for audit/consistency checks"
+    },
+    {
+      "file": "coderef/standards/standards-overview.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Read for audit/consistency checks"
+    },
+    {
+      "file": "coderef/workorder/{feature-name}/context.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Read feature context for changelog"
+    },
+    {
+      "file": "coderef/workorder/{feature-name}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Read plan details for changelog"
+    },
+    {
+      "file": "coderef/CHANGELOG.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Read existing changelog entries"
+    },
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Extract APIs/schemas/components"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Read codebase overview"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Dependency graph analysis"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Read code patterns for standards"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Test coverage analysis"
+    },
+    {
+      "file": ".coderef/reports/complexity.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Complexity metrics"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.mmd",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Dependency diagrams for docs"
+    },
+    {
+      "file": "templates/power/readme.md",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/architecture.md",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/api.md",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/components.md",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/schema.md",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/user-guide.md",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/power/my-guide.md",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "POWER framework template"
+    },
+    {
+      "file": "templates/quickref/{app_type}-template.md",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Quickref generation templates"
+    },
+    {
+      "file": "package.json",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Read project metadata"
+    },
+    {
+      "file": "pyproject.toml",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Read Python project metadata"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "coderef/foundation-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate project README"
+    },
+    {
+      "file": "coderef/foundation-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate architecture docs"
+    },
+    {
+      "file": "coderef/foundation-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate API documentation"
+    },
+    {
+      "file": "coderef/foundation-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate component inventory"
+    },
+    {
+      "file": "coderef/foundation-docs/SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate schema documentation"
+    },
+    {
+      "file": "coderef/user/my-guide.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate tool guide"
+    },
+    {
+      "file": "coderef/user/USER-GUIDE.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate user guide"
+    },
+    {
+      "file": "coderef/user/FEATURES.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate features list"
+    },
+    {
+      "file": "coderef/user/quickref.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate quick reference guide"
+    },
+    {
+      "file": "coderef/standards/ui-patterns.md",
+      "type": "standard_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate UI pattern standards"
+    },
+    {
+      "file": "coderef/standards/behavior-patterns.md",
+      "type": "standard_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate behavior pattern standards"
+    },
+    {
+      "file": "coderef/standards/ux-patterns.md",
+      "type": "standard_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate UX pattern standards"
+    },
+    {
+      "file": "coderef/standards/standards-overview.md",
+      "type": "standard_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate standards summary"
+    },
+    {
+      "file": "coderef/standards/audit-report-{timestamp}.md",
+      "type": "standard_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate audit reports"
+    },
+    {
+      "file": "coderef/CHANGELOG.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Update changelog with new entries"
+    },
+    {
+      "file": "README.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Update root README version"
+    }
+  ]
+}

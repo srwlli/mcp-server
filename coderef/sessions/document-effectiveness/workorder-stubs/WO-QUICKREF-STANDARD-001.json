@@ -1,0 +1,195 @@
+{
+  "workorder_id": "WO-QUICKREF-STANDARD-001",
+  "title": "Create Universal QUICKREF.md Standard",
+  "description": "Design and deploy scannable 1-2 page reference guide (QUICKREF.md) to all 8 projects, reducing human onboarding time by 50% (30 min → 15 min) and agent context gathering by 50% (10 min → 5 min).",
+  "goal": "Eliminate documentation discovery friction by providing instant access to essential commands, project structure, common tasks, and quick troubleshooting fixes.",
+  "priority": "P0",
+  "status": "pending_plan",
+  "created_at": "2026-01-02T16:45:00Z",
+  "estimated_effort": "17 hours",
+  "impact_score": "9/10",
+  "effort_score": "4/10",
+  "roi": 2.25,
+  "timeline": {
+    "start": "Week 1",
+    "duration": "2 weeks",
+    "completion_target": "2026-01-15"
+  },
+  "requirements": [
+    "Template must be 150-250 lines (scannable in 2-3 minutes)",
+    "Sections: Essential Commands, Project Structure, Common Tasks, Troubleshooting Quick-Fixes",
+    "Copy-paste ready code examples",
+    "Linked from README.md 'Quick Start' section",
+    "Generated for all 8 projects (coderef-docs, assistant, coderef-system, coderef-dashboard, papertrail, coderef-testing, coderef-personas, coderef-context)"
+  ],
+  "constraints": [
+    "Must not duplicate README.md content (complement, not replace)",
+    "Must be auto-updatable (track essential commands from code)",
+    "Must follow consistent format across all projects"
+  ],
+  "success_criteria": {
+    "quantitative": {
+      "projects_with_quickref": "8/8",
+      "human_onboarding_time": "< 15 minutes",
+      "agent_context_gathering_time": "< 5 minutes",
+      "user_satisfaction": "≥ 4/5"
+    },
+    "qualitative": {
+      "scannable": "Users can find any command in < 30 seconds",
+      "comprehensive": "Covers 90% of common use cases",
+      "actionable": "All examples are copy-paste ready"
+    }
+  },
+  "deliverables": [
+    {
+      "name": "QUICKREF-TEMPLATE.md",
+      "description": "Universal template with placeholders for project-specific content",
+      "size": "150-250 lines",
+      "format": "Markdown with sections and code blocks"
+    },
+    {
+      "name": "8 Project-Specific QUICKREF.md Files",
+      "description": "Customized QUICKREF for each project",
+      "projects": [
+        "coderef-docs",
+        "assistant",
+        "coderef-system",
+        "coderef-dashboard",
+        "papertrail",
+        "coderef-testing",
+        "coderef-personas",
+        "coderef-context"
+      ]
+    },
+    {
+      "name": "CI/CD Validation Script",
+      "description": "Check QUICKREF.md exists and has required sections",
+      "implementation": "Pre-commit hook or GitHub Actions"
+    },
+    {
+      "name": "User Onboarding Time Measurement Report",
+      "description": "Before/after comparison with 3+ test users",
+      "metrics": ["time_to_first_command", "time_to_understand_structure", "satisfaction_score"]
+    }
+  ],
+  "implementation_phases": [
+    {
+      "phase_id": "SETUP-001",
+      "name": "Template Creation",
+      "tasks": [
+        "TASK-001: Research existing QUICKREF examples (GitHub, open source projects)",
+        "TASK-002: Design 4-section structure (Commands, Structure, Tasks, Troubleshooting)",
+        "TASK-003: Create QUICKREF-TEMPLATE.md with placeholders",
+        "TASK-004: Review template with 2+ team members"
+      ],
+      "effort": "2 hours",
+      "dependencies": []
+    },
+    {
+      "phase_id": "IMPL-001",
+      "name": "Reference Implementation",
+      "tasks": [
+        "TASK-005: Generate QUICKREF.md for papertrail (reference project)",
+        "TASK-006: Test with 1 new user, measure onboarding time",
+        "TASK-007: Iterate template based on feedback"
+      ],
+      "effort": "2.5 hours",
+      "dependencies": ["SETUP-001"]
+    },
+    {
+      "phase_id": "IMPL-002",
+      "name": "Rollout to All Projects",
+      "tasks": [
+        "TASK-008: Generate QUICKREF.md for coderef-docs",
+        "TASK-009: Generate QUICKREF.md for assistant",
+        "TASK-010: Generate QUICKREF.md for coderef-system",
+        "TASK-011: Generate QUICKREF.md for coderef-dashboard",
+        "TASK-012: Generate QUICKREF.md for coderef-testing",
+        "TASK-013: Generate QUICKREF.md for coderef-personas",
+        "TASK-014: Generate QUICKREF.md for coderef-context"
+      ],
+      "effort": "10.5 hours (1.5 hours per project)",
+      "dependencies": ["IMPL-001"]
+    },
+    {
+      "phase_id": "TEST-001",
+      "name": "Validation & Measurement",
+      "tasks": [
+        "TASK-015: Create CI/CD validation script (check sections present)",
+        "TASK-016: Test with 3 new users across 3 projects",
+        "TASK-017: Measure onboarding time (baseline vs new)",
+        "TASK-018: Collect satisfaction feedback (survey)"
+      ],
+      "effort": "2 hours",
+      "dependencies": ["IMPL-002"]
+    }
+  ],
+  "testing_strategy": {
+    "unit": {
+      "required": false,
+      "description": "N/A - documentation project"
+    },
+    "integration": {
+      "required": true,
+      "description": "Validate QUICKREF.md links from README.md work correctly"
+    },
+    "user_acceptance": {
+      "required": true,
+      "description": "3 new users test onboarding with QUICKREF, measure time and satisfaction"
+    }
+  },
+  "risks": [
+    {
+      "risk": "Template too generic, doesn't fit all project types",
+      "probability": "medium",
+      "impact": "medium",
+      "mitigation": "Create reference implementations for different project types (MCP server, CLI tool, library) before full rollout"
+    },
+    {
+      "risk": "Content becomes stale as projects evolve",
+      "probability": "high",
+      "impact": "medium",
+      "mitigation": "Add CI/CD check that fails if QUICKREF.md not updated in >90 days with code changes"
+    },
+    {
+      "risk": "Users prefer README.md over QUICKREF.md",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": "Clearly differentiate: README = comprehensive guide, QUICKREF = 5-minute reference. Promote QUICKREF as fast entry point."
+    }
+  ],
+  "evidence": {
+    "requested_by": [
+      "coderef-docs: 'Need quick command reference - no 1-2 page scannable guide'",
+      "coderef-dashboard: 'Developers have to read 732-line CLAUDE.md to find commands'",
+      "coderef-system: 'No quick-start tutorial - jumps straight to deep content'",
+      "coderef-testing: 'README explains project but no your first test in 60 seconds tutorial'",
+      "coderef-personas: 'No quick-start examples for persona activation'",
+      "assistant: 'No QUICKREF - no quick reference'",
+      "papertrail: 'No Common Use Cases quick reference in README'"
+    ],
+    "current_state": {
+      "projects_with_quickref": "0/8",
+      "avg_onboarding_time": "30 minutes",
+      "avg_context_gathering": "10 minutes",
+      "user_satisfaction": "3.0/5"
+    },
+    "target_state": {
+      "projects_with_quickref": "8/8",
+      "avg_onboarding_time": "15 minutes",
+      "avg_context_gathering": "5 minutes",
+      "user_satisfaction": "4.5/5"
+    }
+  },
+  "dependencies": {
+    "internal": [],
+    "external": [
+      "README.md must exist and link to QUICKREF.md",
+      "Essential commands must be documented somewhere (code comments, CLAUDE.md)"
+    ]
+  },
+  "related_workorders": [
+    "WO-README-EXPANSION-001 (README must link to QUICKREF)",
+    "WO-CLAUDEMD-STANDARDIZATION-001 (CLAUDE.md provides deep dive, QUICKREF provides quick reference)"
+  ]
+}

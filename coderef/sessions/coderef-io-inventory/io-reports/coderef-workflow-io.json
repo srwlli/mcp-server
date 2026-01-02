@@ -1,0 +1,22 @@
+{
+  "agent_id": "coderef-workflow",
+  "agent_path": "C:\Users\willh\.mcp-servers\coderef-workflow",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T16:05:00Z",
+  "inputs": [
+    {"file": ".coderef/index.json", "type": "coderef_output", "frequency": "always", "purpose": "Element inventory"},
+    {"file": ".coderef/graph.json", "type": "coderef_output", "frequency": "often", "purpose": "Dependencies"},
+    {"file": ".coderef/reports/patterns.json", "type": "coderef_output", "frequency": "often", "purpose": "Patterns"},
+    {"file": "README.md", "type": "foundation_doc", "frequency": "always", "purpose": "Overview"},
+    {"file": "ARCHITECTURE.md", "type": "foundation_doc", "frequency": "often", "purpose": "Architecture"},
+    {"file": "coderef/standards/BEHAVIOR-STANDARDS.md", "type": "standard_doc", "frequency": "often", "purpose": "Standards"},
+    {"file": "coderef/workorder/{feature}/plan.json", "type": "workflow_doc", "frequency": "always", "purpose": "Plans"}
+  ],
+  "outputs": [
+    {"file": "coderef/workorder/{feature}/context.json", "type": "workflow_doc", "frequency": "always", "purpose": "Requirements"},
+    {"file": "coderef/workorder/{feature}/plan.json", "type": "workflow_doc", "frequency": "always", "purpose": "Generated plan"},
+    {"file": "coderef/workorder/{feature}/DELIVERABLES.md", "type": "workflow_doc", "frequency": "always", "purpose": "Metrics"},
+    {"file": "coderef/foundation-docs/ARCHITECTURE.md", "type": "foundation_doc", "frequency": "often", "purpose": "Generated doc"}
+  ],
+  "summary": {"total_inputs": 7, "total_outputs": 4, "role": "Orchestrator"}
+}

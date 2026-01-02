@@ -1,0 +1,148 @@
+{
+  "agent_id": "coderef-context",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T16:00:00Z",
+  "inputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Read for drift detection (coderef_drift tool)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Self-documentation reference"
+    }
+  ],
+  "outputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated code elements inventory"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated architecture overview"
+    },
+    {
+      "file": ".coderef/context.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated structured context data"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated dependency graph"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated code patterns"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated test coverage analysis"
+    },
+    {
+      "file": ".coderef/reports/validation.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated CodeRef2 validation results"
+    },
+    {
+      "file": ".coderef/reports/drift.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated drift detection results"
+    },
+    {
+      "file": ".coderef/reports/complexity.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated complexity metrics"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated Mermaid dependency diagram"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.dot",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated GraphViz dependency diagram"
+    },
+    {
+      "file": ".coderef/diagrams/calls.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated function call graph (Mermaid)"
+    },
+    {
+      "file": ".coderef/diagrams/imports.mmd",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated import graph (Mermaid)"
+    },
+    {
+      "file": ".coderef/exports/graph.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Exported graph data (JSON format)"
+    },
+    {
+      "file": ".coderef/exports/graph.jsonld",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Exported graph (JSON-LD semantic format)"
+    },
+    {
+      "file": ".coderef/exports/diagram-wrapped.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Generated markdown-wrapped diagrams"
+    },
+    {
+      "file": ".coderef/generated-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated README"
+    },
+    {
+      "file": ".coderef/generated-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated architecture documentation"
+    },
+    {
+      "file": ".coderef/generated-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated API reference"
+    },
+    {
+      "file": ".coderef/generated-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Auto-generated component list"
+    }
+  ],
+  "summary": {
+    "total_inputs": 2,
+    "total_outputs": 20,
+    "role": "Code intelligence producer - generates .coderef/ outputs for ecosystem",
+    "key_outputs": "All 16 .coderef/ output types + 4 foundation docs"
+  }
+}

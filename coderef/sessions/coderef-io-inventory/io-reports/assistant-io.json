@@ -1,0 +1,160 @@
+{
+  "agent_id": "assistant",
+  "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T18:00:00Z",
+  "inputs": [
+    {
+      "file": "CLAUDE.md",
+      "type": "foundation_doc",
+      "frequency": "always",
+      "purpose": "Primary context document for orchestrator behavior"
+    },
+    {
+      "file": "projects.md",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Master project list and stub inventory"
+    },
+    {
+      "file": "workorders.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Centralized workorder tracking"
+    },
+    {
+      "file": "terminal-profiles.md",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Windows Terminal configuration reference"
+    },
+    {
+      "file": "stub-schema.json",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "Canonical stub validation schema"
+    },
+    {
+      "file": "coderef/working/{feature-name}/stub.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Read stub data for promotion to workorders"
+    },
+    {
+      "file": "coderef/workflows/*.md",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Read workflow documentation for guidance"
+    },
+    {
+      "file": "coderef/workflows/*.json",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Read workflow schemas for agent coordination"
+    },
+    {
+      "file": "coderef/workflows/prompts/*.json",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Read prompt templates for agent tasks"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/context.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Read workorder context for delegation"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/communication.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Read agent status and progress updates"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Read implementation plans for verification"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/DELIVERABLES.md",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Read completion metrics for verification"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "coderef/working/{feature-name}/stub.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Create stub metadata for new ideas"
+    },
+    {
+      "file": "projects.md",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Update stub ID counter and inventory"
+    },
+    {
+      "file": "workorders.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Track active and completed workorders"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/context.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Create workorder context for delegation"
+    },
+    {
+      "file": "{target-project}/coderef/workorder/{feature}/communication.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Create coordination files for multi-agent workflows"
+    },
+    {
+      "file": "index.html",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Update visual workorder dashboard"
+    },
+    {
+      "file": "terminal-profiles.md",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Update Windows Terminal profile documentation"
+    },
+    {
+      "file": "coderef/workflows/*.md",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Create workflow documentation (human-readable)"
+    },
+    {
+      "file": "coderef/workflows/*.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Create workflow schemas (machine-readable)"
+    },
+    {
+      "file": "coderef/workflows/prompts/*.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Create standardized prompt templates"
+    },
+    {
+      "file": ".mcp/coderef/sessions/inventory-docs/*.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Create session coordination files"
+    },
+    {
+      "file": "coderef/sessions/inventory-docs/*.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Create inventory coordination files"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "workorder_id": "WO-DOCUMENT-EFFECTIVENESS-001",
+  "task": "Document Value Audit - Evaluate Usefulness of Each Document Type",
+  "step": 1,
+  "description": "Agents evaluate each document type they interact with for actual usefulness to agents and humans",
+
+  "instructions": {
+    "step_1": "READ this entire instructions.json file",
+    "step_2": "REVIEW your I/O inventory from sessions/inventory-docs/{agent}-io.json",
+    "step_3": "For EACH document type you interact with, evaluate its usefulness",
+    "step_4": "GO to communication.json and find your agent entry",
+    "step_5": "UPDATE your status in communication.json from 'not_started' to 'pending'",
+    "step_6": "CREATE your value audit at output_file path in communication.json",
+    "step_7": "FILL with ratings and insights for each document type",
+    "step_8": "UPDATE your status in communication.json to 'complete'",
+    "step_9": "SAVE communication.json with your updates"
+  },
+
+  "evaluation_criteria": {
+    "agent_value": {
+      "description": "How valuable is this document for AI agent context?",
+      "rating_scale": "1-5 (1=useless, 5=critical)",
+      "questions": [
+        "Does it give me enough context to work effectively?",
+        "Is the information accurate and up-to-date?",
+        "Can I find what I need quickly?",
+        "Does it reduce my need to search elsewhere?"
+      ]
+    },
+    "human_value": {
+      "description": "How valuable is this document for human understanding?",
+      "rating_scale": "1-5 (1=useless, 5=critical)",
+      "questions": [
+        "Can humans onboard from this document?",
+        "Is it scannable (not walls of text)?",
+        "Does it answer common questions?",
+        "Is it maintained and current?"
+      ]
+    },
+    "clarity": {
+      "description": "How clear and well-structured is the content?",
+      "rating_scale": "1-5 (1=confusing, 5=crystal clear)",
+      "questions": [
+        "Is the structure logical?",
+        "Are sections clearly labeled?",
+        "Is jargon explained?",
+        "Are examples provided?"
+      ]
+    },
+    "completeness": {
+      "description": "Does it cover everything it should?",
+      "rating_scale": "1-5 (1=major gaps, 5=comprehensive)",
+      "questions": [
+        "Are all expected sections present?",
+        "Is critical information missing?",
+        "Are there TODOs or placeholders?",
+        "Does it reference related docs?"
+      ]
+    },
+    "freshness": {
+      "description": "How current and accurate is the information?",
+      "rating_scale": "1-5 (1=very stale, 5=always current)",
+      "questions": [
+        "When was it last updated?",
+        "Does it reflect current codebase?",
+        "Are examples working?",
+        "Is deprecated info removed?"
+      ]
+    }
+  },
+
+  "document_types_to_evaluate": [
+    "CLAUDE.md",
+    "README.md",
+    "ARCHITECTURE.md",
+    "API.md",
+    "COMPONENTS.md",
+    "SCHEMA.md",
+    "plan.json",
+    "context.json",
+    "communication.json",
+    "DELIVERABLES.md",
+    "ui-patterns.md",
+    "behavior-patterns.md",
+    "ux-patterns.md",
+    ".coderef/index.json",
+    ".coderef/context.md",
+    "package.json",
+    "Other (specify)"
+  ],
+
+  "output_template": "# Document Value Audit: {agent_id}\n\n**Workorder:** WO-DOCUMENT-EFFECTIVENESS-001\n**Project:** {agent_path}\n**Timestamp:** {current_timestamp}\n**Documents Evaluated:** {count}\n\n---\n\n## Executive Summary\n\n**Most Valuable Documents:**\n1. CLAUDE.md (5/5 agent, 4/5 human) - Primary context source\n2. .coderef/index.json (5/5 agent, 2/5 human) - Complete code inventory\n\n**Least Valuable Documents:**\n1. README.md (2/5 agent, 2/5 human) - Too minimal, outdated\n2. TRACKING.md (1/5 agent, 1/5 human) - Deprecated\n\n**Key Findings:**\n- Agent docs (CLAUDE.md, .coderef/) are excellent\n- Human docs (README, QUICKREF) are weak\n- Standards docs (patterns.md) underutilized\n- Workflow docs (plan.json) well-structured\n\n---\n\n## Document Ratings\n\n### CLAUDE.md\n\n| Criterion | Agent Score | Human Score | Notes |\n|-----------|-------------|-------------|-------|\n| Value | 5/5 | 4/5 | Critical for agent context |\n| Clarity | 5/5 | 4/5 | Well-structured sections |\n| Completeness | 4/5 | 4/5 | Missing quick-start examples |\n| Freshness | 5/5 | 5/5 | Updated regularly |\n| **Overall** | **4.8/5** | **4.3/5** | **Keep, enhance examples** |\n\n**What Works:**\n- Comprehensive overview of agent role\n- Clear workflow documentation\n- Design decisions captured\n- Recent changes tracked\n\n**What's Missing:**\n- Quick-start examples for new agents\n- Troubleshooting section\n- Cross-references to related tools\n\n**Improvement Ideas:**\n- Add \"Common Tasks\" section with examples\n- Include decision tree for workflow selection\n- Link to .coderef/ outputs for code context\n\n---\n\n### README.md\n\n| Criterion | Agent Score | Human Score | Notes |\n|-----------|-------------|-------------|-------|\n| Value | 2/5 | 2/5 | Too minimal for onboarding |\n| Clarity | 3/5 | 3/5 | Basic structure |\n| Completeness | 1/5 | 1/5 | Major gaps |\n| Freshness | 2/5 | 2/5 | Last updated 6 months ago |\n| **Overall** | **2.0/5** | **2.0/5** | **Needs major expansion** |\n\n**What Works:**\n- Project name and basic description present\n\n**What's Missing:**\n- Installation instructions\n- Usage examples\n- Architecture overview\n- Contributing guidelines\n- API reference\n\n**Improvement Ideas:**\n- Expand to full README template\n- Add badges (build status, version)\n- Include quick-start tutorial\n- Link to ARCHITECTURE.md for deep dive\n\n---\n\n## Pattern Analysis\n\n### What Works Universally\n\n**Agent Context Documents (CLAUDE.md, .coderef/):**\n- ✅ Structured format (predictable sections)\n- ✅ Comprehensive coverage (role, workflows, decisions)\n- ✅ Regularly updated (stays fresh)\n- ✅ Machine-readable sections (agents can parse)\n\n**Workflow Documents (plan.json, context.json):**\n- ✅ Standardized schema (JSON format)\n- ✅ Clear task breakdown (agents know what to do)\n- ✅ Progress tracking (status fields)\n- ✅ Metadata (workorder_id, timestamps)\n\n### What Doesn't Work\n\n**Human Onboarding Documents (README, QUICKREF):**\n- ❌ Too minimal or missing entirely\n- ❌ Stale (not updated with code changes)\n- ❌ No examples (just descriptions)\n- ❌ Poor navigation (walls of text)\n\n**Standards Documents (patterns.md):**\n- ❌ Underutilized (agents don't reference)\n- ❌ No enforcement (just guidelines)\n- ❌ Disconnected from workflows (not integrated)\n\n---\n\n## Recommendations by Priority\n\n### Critical (Must Fix)\n\n1. **Expand README.md** - Add installation, usage, examples (current: 2/5, target: 4/5)\n2. **Create QUICKREF.md** - 1-page scannable reference for humans (missing)\n3. **Archive deprecated docs** - Remove TRACKING.md, old README variants (noise)\n\n### High (Should Fix)\n\n4. **Enhance CLAUDE.md** - Add quick-start examples, troubleshooting (current: 4.8/5, target: 5/5)\n5. **Integrate standards docs** - Link patterns.md to workflows, add enforcement (current: 3/5, target: 4/5)\n6. **Add CHANGELOG.md** - Track version history (missing)\n\n### Medium (Nice to Have)\n\n7. **Create CONTRIBUTING.md** - Guidelines for contributors (missing)\n8. **Add architecture diagrams** - Visual flow in ARCHITECTURE.md (missing)\n9. **Cross-link documents** - Add \"See also\" sections (low connectivity)\n\n### Low (Future)\n\n10. **Auto-generate docs** - Use .coderef/ to populate templates (automation)\n11. **Add search functionality** - Make docs searchable (tooling)\n\n---\n\n## Document Health Score\n\n**Overall Project Score: 3.2/5**\n\n**By Category:**\n- Agent Context Docs: 4.8/5 ✅ (Excellent)\n- Workflow Docs: 4.5/5 ✅ (Very Good)\n- Foundation Docs: 2.5/5 ⚠️ (Needs Work)\n- Standards Docs: 3.0/5 ⚠️ (Underutilized)\n- Human Onboarding: 2.0/5 ❌ (Critical Gap)\n\n**Verdict:** Agent-facing documentation is excellent. Human-facing documentation needs major improvement.\n\n---\n\n**Next Steps:**\n1. Review these findings with orchestrator\n2. Prioritize improvements based on impact\n3. Create workorders for critical/high priority items\n4. Establish doc maintenance schedule\n\n**Risk Assessment:** Low - Improvements are additive, no deletions of critical files",
+
+  "quality_standards": {
+    "honesty": "Rate documents objectively, not aspirationally",
+    "specificity": "Cite examples (good and bad)",
+    "actionability": "Recommendations must be implementable",
+    "balance": "Consider both agent and human perspectives"
+  }
+}

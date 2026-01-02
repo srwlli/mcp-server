@@ -1,0 +1,38 @@
+{
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-002",
+  "task": "Document Report - Complete File List with Source/Destination Tracking",
+  "step": 2,
+  "previous_step": "WO-CODEREF-IO-INVENTORY-001 (I/O inventory complete)",
+  "instructions": {
+    "step_1": "READ this entire instructions.json file",
+    "step_2": "READ the reference paths document: C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\REFERENCE-PATHS.md",
+    "step_3": "GO to communication.json and find your agent entry",
+    "step_4": "UPDATE your status in communication.json from not_started to pending",
+    "step_5": "READ your I/O inventory from Step 1 (see step1_file path in communication.json)",
+    "step_6": "CREATE your document report at output_file path in communication.json",
+    "step_7": "FILL your output with the document list (see prompt below)",
+    "step_8": "UPDATE your status in communication.json to complete",
+    "step_9": "SAVE communication.json with your updates"
+  },
+  "prompt": {
+    "task": "Create a complete list of ALL documents you interact with, organized by filename",
+    "output_format": "markdown_table",
+    "sections": [
+      "Complete Document List (table)",
+      "Cross-Agent Dependencies",
+      "External Sources"
+    ],
+    "table_columns": ["Filename", "Type", "I/O", "Source/Destination", "Notes"],
+    "io_values": ["input", "output", "both"],
+    "format_rules": [
+      "One row per unique filename",
+      "I/O column: input | output | both",
+      "Source/Destination: Be specific - name the agent/tool/project",
+      "Notes: Brief description (10-50 chars)",
+      "Save to EXACT path in communication.json output_file field",
+      "Use markdown format (not JSON)",
+      "Include cross-agent dependencies section",
+      "Reference REFERENCE-PATHS.md for agent locations"
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-002",
+  "feature_name": "coderef-document-reports",
+  "created": "2026-01-02",
+  "status": "complete",
+  "description": "Step 2: Compile complete document lists by filename with source/destination tracking",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\instructions.json",
+  "reference_paths": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\REFERENCE-PATHS.md",
+  "agent_instructions": "READ instructions.json at path above for complete task details and prompt",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinates all sessions, synthesizes reports, creates roadmaps"
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\assistant-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\assistant-document-report.md",
+      "status": "complete",
+      "notes": "16 unique documents (13 inputs, 12 outputs, 9 both). Orchestrator - central hub for workorder coordination."
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-context-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-context-document-report.md",
+      "status": "complete",
+      "notes": "21 unique documents (2 inputs, 20 outputs, 1 both). Pure producer - generates .coderef/ intelligence layer for all MCP servers. No external dependencies."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-workflow-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-workflow-document-report.md",
+      "status": "complete",
+      "notes": "42 unique documents (28 inputs, 19 outputs, 9 both). 3-tier priority system, dual-location foundation docs, cross-agent dependencies documented."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-docs-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-docs-document-report.md",
+      "status": "complete",
+      "notes": "Documentation generator - reads standards/foundation docs, generates POWER framework docs, changelog, standards"
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-personas-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-personas-document-report.md",
+      "status": "complete",
+      "notes": "21 unique documents (19 inputs, 0 outputs-only, 2 both). Consumer profile (95% input). Cross-agent: reads .coderef/patterns.json + plan.json, writes plan.json updates."
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-testing-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-testing-document-report.md",
+      "status": "complete",
+      "notes": "21 unique documents (20 inputs, 4 outputs, 3 both). Cross-agent dependencies: consumes from coderef-workflow + coderef-context, produces for coderef-workflow."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\papertrail-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\papertrail-document-report.md",
+      "status": "complete",
+      "notes": "UDS validator - reads workflow/foundation docs for validation, generates UDS templates"
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-system-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-system-document-report.md",
+      "status": "complete",
+      "notes": "36 unique file patterns (17 inputs, 30 outputs, 11 both). Pure producer - generates all .coderef/ outputs consumed by other MCP servers. No upstream dependencies."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "step1_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-dashboard-io.json",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-io-inventory\\document-reports\\coderef-dashboard-document-report.md",
+      "status": "complete",
+      "notes": "29 unique documents: 24 inputs (5 foundation, 6 workflow, 8 coderef, 5 config), 5 outputs (2 workflow, 3 build)"
+    }
+  ],
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 9,
+    "pending": 0,
+    "not_started": 0,
+    "completion_timestamp": "2026-01-02T00:15:00Z"
+  }
+}

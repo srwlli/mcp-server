@@ -1,0 +1,128 @@
+# Document Report - coderef-personas
+
+**Workorder:** WO-CODEREF-IO-INVENTORY-002
+**Agent:** coderef-personas
+**Agent Path:** C:\Users\willh\.mcp-servers\coderef-personas
+**Generated:** 2026-01-02
+**Source:** C:\Users\willh\.mcp-servers\coderef\sessions\coderef-io-inventory\io-reports\coderef-personas-io.json
+
+---
+
+## Complete Document List
+
+| Filename | Type | I/O | Source/Destination | Notes |
+|----------|------|-----|-------------------|-------|
+| **personas/custom/*.json** | other | both | Self (coderef-personas) | Input: Load custom personas; Output: create_custom_persona |
+| lloyd.json | other | input | Self | Lloyd coordinator persona definition |
+| ava.json | other | input | Self | Ava frontend specialist persona |
+| marcus.json | other | input | Self | Marcus backend specialist persona |
+| quinn.json | other | input | Self | Quinn testing specialist persona |
+| taylor.json | other | input | Self | Taylor general purpose agent persona |
+| research-scout.json | other | input | Self | Research specialist persona |
+| **personas/coderef-personas/*.json** | other | input | Self (coderef-personas) | Ecosystem server agent personas |
+| coderef-mcp-lead.json | other | input | Self | Lead system architect persona |
+| coderef-context-agent.json | other | input | Self | Code intelligence specialist persona |
+| coderef-docs-agent.json | other | input | Self | Documentation specialist persona |
+| coderef-testing-agent.json | other | input | Self | Test automation specialist persona |
+| **personas/base/*.json** | other | input | Self (coderef-personas) | Archived base personas (deprecated) |
+| **templates/persona_template.txt** | other | input | Self (coderef-personas) | System prompt template for custom personas |
+| **.coderef/patterns.json** | coderef_output | input | coderef-context (via coderef scan) | Code pattern analysis for persona context |
+| **coderef/workorder/{feature}/plan.json** | workflow_doc | both | coderef-workflow (generator) | Input: Lloyd tools; Output: track_plan_execution |
+| **CLAUDE.md** | foundation_doc | input | Self (coderef-personas) | Primary context doc (embedded in personas) |
+| **docs/MCP-ECOSYSTEM-REFERENCE.md** | other | input | Self (coderef-personas) | Ecosystem reference (extracted from Lloyd) |
+| **docs/LLOYD-REFERENCE.md** | other | input | Self (coderef-personas) | Lloyd workflow reference (extracted v1.4.1) |
+| **.claude/commands/*.md** | other | input | Self (coderef-personas) | Slash command definitions |
+| **coderef/utils/__init__.py** | other | input | coderef (shared utility) | Wrapper functions for .coderef/ access |
+
+---
+
+## Cross-Agent Dependencies
+
+### Documents READ from Other Agents
+
+| Document | Producer Agent | Usage |
+|----------|---------------|-------|
+| .coderef/patterns.json | coderef-context | Optional pattern loading for persona context enhancement |
+| coderef/workorder/{feature}/plan.json | coderef-workflow | Lloyd integration tools (todo generation, tracking) |
+| coderef/utils/__init__.py | coderef (shared) | Wrapper functions for safe .coderef/ access |
+
+### Documents WRITTEN for Other Agents
+
+| Document | Consumer Agent | Usage |
+|----------|---------------|-------|
+| coderef/workorder/{feature}/plan.json | coderef-workflow | Updated execution status via track_plan_execution |
+| personas/custom/{name}.json | Self + All agents via MCP | Generated personas available for activation |
+
+---
+
+## External Sources
+
+### Input Documents from External Tools
+
+| Document | External Source | Purpose |
+|----------|----------------|---------|
+| .coderef/patterns.json | coderef CLI (`coderef scan --patterns`) | Code pattern analysis |
+| CLAUDE.md | Manual authoring | AI context documentation |
+| docs/MCP-ECOSYSTEM-REFERENCE.md | Extracted from lloyd.json | Centralized ecosystem reference |
+| docs/LLOYD-REFERENCE.md | Extracted from lloyd.json | Lloyd workflow reference |
+
+### Output Documents to External Tools
+
+| Document | External Consumer | Purpose |
+|----------|------------------|---------|
+| personas/custom/{name}.json | MCP clients (Claude Code, etc.) | Custom persona activation |
+| coderef/workorder/{feature}/plan.json | coderef-workflow tools | Plan execution tracking |
+
+---
+
+## Summary Statistics
+
+- **Total Unique Files:** 21
+- **Input Only:** 19
+- **Output Only:** 0
+- **Both (Read + Write):** 2
+  - personas/custom/*.json
+  - coderef/workorder/{feature}/plan.json
+
+**I/O Profile:** CONSUMER (95% input, 5% output)
+
+**Primary Role:** Persona management and Lloyd workorder orchestration
+
+**Key Integrations:**
+- Lloyd Phase 1 tools → plan.json (read/write)
+- Optional .coderef/patterns.json (read)
+- Custom persona generation → personas/custom/ (write)
+
+---
+
+## Notes
+
+### Producer vs Consumer
+coderef-personas is primarily a **CONSUMER**. Main outputs:
+1. Custom persona JSON files (create_custom_persona tool)
+2. Updated plan.json (track_plan_execution tool)
+
+All .coderef/ outputs are generated by external `coderef scan` commands, not by this MCP server.
+
+### Embedded Documentation
+Persona system prompts contain EMBEDDED copies of ecosystem documentation (CLAUDE.md, workflow guides) totaling 500-1500 lines per persona. These are BAKED INTO persona JSON files during creation, not read dynamically at runtime.
+
+### Lloyd Integration
+Lloyd persona and Phase 1 tools (generate_todo_list, track_plan_execution, execute_plan_interactive) are the primary workflow doc consumers. They read/write plan.json for workorder orchestration.
+
+### Pattern Loading
+PersonaManager.load_coderef_patterns() is an OPTIONAL feature that reads .coderef/patterns.json to enrich persona context with project-specific code patterns. Silently skips if unavailable.
+
+### File Operation Locations
+Main file I/O happens in:
+1. src/persona_manager.py (load persona JSON)
+2. src/persona_generator.py (template read, persona write)
+3. src/generators/todo_list_generator.py (plan.json read)
+4. src/trackers/plan_execution_tracker.py (plan.json read/write)
+5. src/executors/interactive_plan_executor.py (plan.json read)
+
+---
+
+**Report Generated:** 2026-01-02
+**Methodology:** Comprehensive grep + manual source code review
+**Confidence:** High

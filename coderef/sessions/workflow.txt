@@ -1,0 +1,40 @@
+CodeRef Sessions Workflow
+================================
+
+Orchestrator: coderef agent (C:\Users\willh\.mcp-servers\coderef)
+Role: Coordinates all sessions, synthesizes cross-project analysis, creates roadmaps
+
+Agents: 9 project agents (assistant, coderef-context, coderef-workflow, coderef-docs,
+        coderef-personas, coderef-testing, papertrail, coderef-system, coderef-dashboard)
+Role: Execute tasks in their own projects, report findings to orchestrator
+
+================================
+
+1. I/O Inventory (Step 1)
+   Prompt: C:\Users\willh\.mcp-servers\coderef\sessions\inventory-docs\communication.json
+   Status: Complete (9/9 agents)
+
+2. Document Reports (Step 2)
+   Instructions: C:\Users\willh\.mcp-servers\coderef\sessions\coderef-io-inventory\document-reports\instructions.json
+   Communication: C:\Users\willh\.mcp-servers\coderef\sessions\coderef-io-inventory\document-reports\communication.json
+   Status: Complete (9/9 agents) - Completed 2026-01-02
+
+3. Document Cleanup - Project Organization Review
+   Instructions: C:\Users\willh\.mcp-servers\coderef\sessions\document-cleanup\project-report\instructions.json
+   Communication: C:\Users\willh\.mcp-servers\coderef\sessions\document-cleanup\project-report\communication.json
+   Status: In Progress (7/9 agents) - Pending: coderef-docs, papertrail
+
+4. Document Effectiveness - Value Audit
+   Instructions: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\value-audit\instructions.json
+   Communication: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\value-audit\communication.json
+   Status: Not Started (0/9 agents)
+
+5. Document Effectiveness - Cross-Project Analysis
+   Instructions: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\cross-project-analysis\instructions.json
+   Output: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\cross-project-analysis\synthesis-report.md
+   Status: Waiting for Step 4 completion
+
+6. Document Effectiveness - Improvement Roadmap
+   Instructions: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\improvement-roadmap\instructions.json
+   Output: C:\Users\willh\.mcp-servers\coderef\sessions\document-effectiveness\improvement-roadmap\implementation-plan.md
+   Status: Waiting for Step 5 completion

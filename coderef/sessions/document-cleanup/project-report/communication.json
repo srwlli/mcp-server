@@ -1,0 +1,87 @@
+{
+  "workorder_id": "WO-DOCUMENT-CLEANUP-001",
+  "feature_name": "document-cleanup-project-report",
+  "created": "2026-01-02",
+  "status": "in_progress",
+  "description": "Agents review all documents in their root directories, create index, and propose organization improvements",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\instructions.json",
+  "agent_instructions": "READ instructions.json at path above for complete task details and prompt",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinates all sessions, synthesizes reports, creates roadmaps"
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\assistant-organization-review.md",
+      "status": "complete",
+      "notes": "14 documents analyzed. Key issues: minimal README, deprecated TRACKING.md, 88KB cache file, missing CHANGELOG. Proposed: expand README, archive deprecated files, create docs/ structure."
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-context-organization-review.md",
+      "status": "complete",
+      "notes": "15 documents indexed. Key issues: 5 duplicate test docs (49KB), 3 workorder artifacts in root, bug tracking in markdown. Proposed: consolidate tests, create docs/ + archive/, add CHANGELOG. Risk: LOW-MEDIUM."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-workflow-organization-review.md",
+      "status": "complete",
+      "notes": "9 documents indexed. 4 orphaned workorder outputs found. Recommendations: move to sessions/, create CHANGELOG.md, archive bug reports. Risk: LOW."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-docs-organization-review.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-personas-organization-review.md",
+      "status": "complete",
+      "notes": "9 documents indexed. Key issues: CHANGELOG 4 versions behind (v1.1.0→v1.5.0), 3 workorder files in root, enhancement doc misplaced. Proposed: 55% root reduction (9→4 files), move workorders to coderef/workorder/, update CHANGELOG. Risk: LOW."
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-testing-organization-review.md",
+      "status": "complete",
+      "notes": "18 documents found. Critical: 7 obsolete phase docs (92KB), duplicate READMEs, 286KB temp file. Proposed: 67% reduction (18→6 files), archive structure, CHANGELOG.md. Risk: LOW."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\papertrail-organization-review.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-system-organization-review.md",
+      "status": "complete",
+      "notes": "18 documents found. 5 critical issues identified. 50% root reduction proposed (18\u00e2\u2020\u20199 files). 3-phase cleanup plan with low risk."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-cleanup\\project-report\\coderef-dashboard-organization-review.md",
+      "status": "complete",
+      "notes": "14 root documents: 11 .md (2 README duplicates, 6 old planning docs), 3 .json config. Proposed cleanup: move 8 files to docs/, create CHANGELOG.md"
+    }
+  ],
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 6,
+    "pending": 0,
+    "not_started": 3
+  }
+}

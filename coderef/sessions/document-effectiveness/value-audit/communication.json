@@ -1,0 +1,85 @@
+{
+  "workorder_id": "WO-DOCUMENT-EFFECTIVENESS-001",
+  "feature_name": "document-effectiveness-value-audit",
+  "created": "2026-01-02",
+  "status": "not_started",
+  "description": "Step 1: Agents evaluate each document type for actual usefulness to agents and humans",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\instructions.json",
+  "agent_instructions": "READ instructions.json at path above for complete task details and evaluation criteria",
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinates all sessions, synthesizes reports, creates roadmaps"
+  },
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\assistant-value-audit.md",
+      "status": "complete",
+      "notes": "16 documents evaluated. Orchestration docs: 5/5, Human onboarding: 1.5/5. Overall: 3.7/5. Critical gaps: README expansion, QUICKREF creation, deprecated file cleanup."
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-context-value-audit.md",
+      "status": "complete",
+      "notes": "22 documents evaluated (2 inputs, 20 outputs). Agent docs: 5.0/5, Code intelligence: 4.8/5, Human docs: 3.0/5, Metadata: 1.0/5. Overall: 4.2/5. Critical gaps: scan metadata, index summaries, enhanced README."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-workflow-value-audit.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-docs-value-audit.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-personas-value-audit.md",
+      "status": "complete",
+      "notes": "13 documents evaluated (11 inputs, 2 outputs). Score: 4.1/5 (5/5 agent docs, 3/5 human docs). Critical: Update CHANGELOG (4 versions behind), expand .coderef/ integration (only patterns.json used), create QUICKREF.md. Agent context exceptional, human onboarding needs work."
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-testing-value-audit.md",
+      "status": "complete",
+      "notes": "24 documents evaluated. Best: drift.json (4.8/5), CLAUDE.md (5.0/5). Worst: conftest.py (1/5), mocharc (1/5). Overall: 3.4/5. Critical: increase .coderef/ utilization (12.5%\u00e2\u2020\u201960%), add DELIVERABLES metrics, parse configs."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\papertrail-value-audit.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-system-value-audit.md",
+      "status": "complete",
+      "notes": "15 documents evaluated. Top: CLAUDE.md (4.65/5), .coderef/index.json (4.25/5), current-capabilities.json (4.40/5). Bottom: context.json (1.0/5), test-output.json (1.0/5). Overall: 3.8/5. Agent docs excellent (4.8/5), human onboarding needs work (2.5/5)."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\value-audit\\coderef-dashboard-value-audit.md",
+      "status": "complete",
+      "notes": "10 documents evaluated. Best: CLAUDE.md (5.0/5), plan.json (5.0/5), config.json (5.0/5). Worst: Standards docs (0.0/5 MISSING), COMPONENTS.md (2.0/5). Overall: 3.7/5. Critical: Create standards docs, add timestamps to foundation docs, update COMPONENTS.md from code."
+    }
+  ],
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 6,
+    "pending": 0,
+    "not_started": 3
+  }
+}

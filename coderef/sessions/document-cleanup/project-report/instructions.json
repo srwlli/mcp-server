@@ -1,0 +1,76 @@
+{
+  "workorder_id": "WO-DOCUMENT-CLEANUP-001",
+  "task": "Project Document Organization Review",
+  "step": 1,
+  "description": "Agents review all documents in their root directories, create an index, and propose organization improvements",
+
+  "instructions": {
+    "step_1": "READ this entire instructions.json file",
+    "step_2": "SCAN your project root directory for ALL documents (.md, .json, .txt files)",
+    "step_3": "INDEX all found documents with metadata (filename, type, size, last modified)",
+    "step_4": "READ each document to understand its purpose and content",
+    "step_5": "GO to communication.json and find your agent entry",
+    "step_6": "UPDATE your status in communication.json from 'not_started' to 'pending'",
+    "step_7": "CREATE your project report at output_file path in communication.json",
+    "step_8": "FILL your report with document index and organization recommendations",
+    "step_9": "UPDATE your status in communication.json to 'complete'",
+    "step_10": "SAVE communication.json with your updates"
+  },
+
+  "prompt": {
+    "task": "Review all documents in your project root and propose better organization",
+    "scope": "Root directory only (not subdirectories)",
+    "file_types": [".md", ".json", ".txt", ".yaml", ".yml", ".toml"],
+
+    "deliverables": {
+      "document_index": "Complete list of all documents found",
+      "content_analysis": "Summary of what each document contains",
+      "organization_issues": "Problems with current structure",
+      "recommendations": "Proposed organization improvements"
+    },
+
+    "output_format": "markdown",
+
+    "sections_required": [
+      "Document Index (table)",
+      "Content Analysis (by document type)",
+      "Organization Issues",
+      "Recommendations",
+      "Proposed Structure"
+    ]
+  },
+
+  "output_template": "# Project Document Organization Review: {agent_id}\n\n**Workorder:** WO-DOCUMENT-CLEANUP-001\n**Project:** {agent_path}\n**Timestamp:** {current_timestamp}\n**Total Documents Found:** {count}\n\n---\n\n## Document Index\n\n| Filename | Type | Size | Last Modified | Purpose |\n|----------|------|------|---------------|----------|\n| README.md | markdown | 5.2 KB | 2025-12-20 | Project overview |\n| package.json | config | 1.8 KB | 2025-12-15 | Dependencies |\n\n---\n\n## Content Analysis\n\n### Documentation Files (.md)\n- **README.md**: Project overview, installation, usage\n- **CLAUDE.md**: AI agent context document\n- **CHANGELOG.md**: Version history (missing)\n\n### Configuration Files (.json)\n- **package.json**: NPM dependencies\n- **tsconfig.json**: TypeScript config\n\n### Other Files\n- **LICENSE.txt**: MIT license\n\n---\n\n## Organization Issues\n\n**Problems Found:**\n1. No clear separation between docs and config\n2. Multiple README files (README.md, README-old.md, README.backup.md)\n3. Orphaned files (test.txt, notes.md, TODO.md)\n4. Missing expected files (CHANGELOG.md, CONTRIBUTING.md)\n5. Config files mixed with documentation\n\n**Severity:**\n- Critical: Duplicate/conflicting READMEs\n- Major: No changelog tracking\n- Minor: Orphaned test files\n\n---\n\n## Recommendations\n\n### Immediate Actions\n1. **Consolidate READMEs**: Keep only README.md, archive others\n2. **Create CHANGELOG.md**: Track version history\n3. **Delete orphans**: Remove test.txt, notes.md if obsolete\n4. **Create docs/ folder**: Move non-essential .md files\n\n### Organizational Structure\n```\nproject-root/\n├── README.md (keep)\n├── CLAUDE.md (keep)\n├── CHANGELOG.md (create)\n├── LICENSE.txt (keep)\n├── package.json (keep)\n├── tsconfig.json (keep)\n├── docs/ (create)\n│   ├── CONTRIBUTING.md\n│   └── ARCHITECTURE.md\n└── archive/ (create)\n    ├── README-old.md (move)\n    └── notes.md (move)\n```\n\n### Long-term Improvements\n- Adopt conventional file naming (lowercase, hyphens)\n- Use .gitignore for temp files\n- Add doc generation automation\n- Regular cleanup audits (quarterly)\n\n---\n\n## Proposed Actions (Priority Order)\n\n1. [ ] Delete test.txt (orphaned)\n2. [ ] Rename README-old.md → archive/README-2025-11.md\n3. [ ] Create CHANGELOG.md\n4. [ ] Create docs/ directory\n5. [ ] Move CONTRIBUTING.md → docs/\n6. [ ] Update .gitignore to exclude *.backup.md\n\n---\n\n**Next Steps:** Review recommendations with orchestrator before implementing changes.\n**Risk Level:** Low (mostly moves and renames, no deletions of active files)",
+
+  "analysis_guidelines": {
+    "document_index": [
+      "List ALL files (no filtering)",
+      "Include metadata (size, modified date)",
+      "Categorize by type (docs, config, other)"
+    ],
+    "content_analysis": [
+      "Read first 20 lines of each file",
+      "Identify purpose and audience",
+      "Note duplicates or conflicts"
+    ],
+    "organization_issues": [
+      "Flag duplicates (README.md, README-old.md)",
+      "Identify orphaned files (test.txt, notes.md)",
+      "Note missing expected files (CHANGELOG.md)",
+      "Check for proper separation (docs vs config)"
+    ],
+    "recommendations": [
+      "Be specific (not 'organize better', but 'move X to Y')",
+      "Prioritize (critical, major, minor)",
+      "Provide rationale (why this change helps)",
+      "Include risk assessment (low, medium, high)"
+    ]
+  },
+
+  "quality_standards": {
+    "completeness": "All root-level documents must be indexed",
+    "accuracy": "File metadata must be correct (size, dates)",
+    "actionability": "Recommendations must be specific and implementable",
+    "safety": "No recommendations to delete active/critical files"
+  }
+}

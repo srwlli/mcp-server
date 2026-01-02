@@ -1,0 +1,89 @@
+{
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "feature_name": "coderef-io-inventory",
+  "created": "2026-01-01",
+  "status": "complete",
+  "description": "Complete inventory of all document inputs and outputs for each MCP server and orchestrator",
+  "instructions_for_agents": {
+    "step_1": "READ this entire communication.json file",
+    "step_2": "FIND your agent entry in the 'agents' array below",
+    "step_3": "UPDATE your 'status' field from 'not_started' to 'pending'",
+    "step_4": "CREATE your own file at the path specified in your 'output_file' field",
+    "step_5": "FILL your output file with the I/O inventory (see prompt below)",
+    "step_6": "UPDATE your 'status' field to 'complete' when done",
+    "step_7": "SAVE this communication.json with your updates"
+  },
+  "prompt": "## DOCUMENT I/O INVENTORY\n\n**Your Task:** Create a complete inventory of ALL documents you read (inputs) and ALL documents you write/generate (outputs).\n\n**Instructions:**\n1. Search your entire source code for file operations (read, write, open, save)\n2. List EVERY file path you interact with\n3. Include files you read for context AND files you generate as output\n4. Use relative paths from your project root\n5. Be exhaustive - include rarely-used files\n\n**Output Format (JSON):**\n\n```json\n{\n  \"agent_id\": \"your-agent-id\",\n  \"agent_path\": \"your-full-path\",\n  \"workorder_id\": \"WO-CODEREF-IO-INVENTORY-001\",\n  \"scan_timestamp\": \"2026-01-01T12:00:00Z\",\n  \"inputs\": [\n    {\n      \"file\": \"coderef/foundation-docs/README.md\",\n      \"type\": \"foundation_doc\",\n      \"frequency\": \"always\",\n      \"purpose\": \"Read for project context\"\n    }\n  ],\n  \"outputs\": [\n    {\n      \"file\": \".coderef/index.json\",\n      \"type\": \"coderef_output\",\n      \"frequency\": \"always\",\n      \"purpose\": \"Generated code element index\"\n    }\n  ]\n}\n```\n\n**Valid Types:**\n- foundation_doc (README, ARCHITECTURE, API, COMPONENTS, SCHEMA, CLAUDE.md)\n- standard_doc (ui-patterns, behavior-patterns, ux-patterns)\n- workflow_doc (context.json, plan.json, communication.json, DELIVERABLES.md)\n- coderef_output (.coderef/index.json, context.md, patterns.json, etc.)\n- config (package.json, tsconfig.json, .env, etc.)\n- other (anything else)\n\n**Valid Frequencies:**\n- always (every execution)\n- often (most workflows)\n- sometimes (specific workflows)\n- rarely (edge cases)\n\n**CRITICAL:** Save your output to the EXACT path in your 'output_file' field below.",
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\assistant-io.json",
+      "status": "complete",
+      "notes": "Orchestrator - tracks workorders, delegates tasks, aggregates results"
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-context-io.json",
+      "status": "complete",
+      "notes": "Code intelligence producer - 2 inputs, 20 outputs (all .coderef/ types)"
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-workflow-io.json",
+      "status": "complete",
+      "notes": "Orchestration hub - 7 inputs (coderef outputs, foundation docs, standards, workflow docs), 4 outputs"
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-docs-io.json",
+      "status": "complete",
+      "notes": "Documentation generator - 8 inputs, 15 outputs (foundation docs, standards, changelog)"
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-personas-io.json",
+      "status": "complete",
+      "notes": "Persona system - 11 inputs (persona JSONs, templates, .coderef/patterns.json, plan.json), 2 outputs (custom personas, plan updates)"
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-testing-io.json",
+      "status": "complete",
+      "notes": "Framework-agnostic test orchestration - 20 inputs, 4 outputs"
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\papertrail-io.json",
+      "status": "complete",
+      "notes": "UDS validator - 4 inputs (workflow docs, foundation docs), 1 output (UDS templates)"
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-system-io.json",
+      "status": "complete",
+      "notes": "Core TypeScript CLI - 31 inputs (configs, manifests, source files), 16 outputs (all .coderef/ types)"
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\inventory-docs\\coderef-dashboard-io.json",
+      "status": "complete",
+      "notes": "Dashboard UI - 24 inputs (5 foundation, 6 workflow, 5 coderef, 5 config, 3 other), 6 outputs"
+    }
+  ],
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 9,
+    "pending": 0,
+    "not_started": 0,
+    "completion_timestamp": "2026-01-01T23:45:00Z"
+  }
+}

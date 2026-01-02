@@ -1,0 +1,88 @@
+{
+  "agent_id": "papertrail",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T14:30:00Z",
+  "inputs": [
+    {
+      "file": "papertrail/schemas/plan.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "Plan.json validation schema"
+    },
+    {
+      "file": "papertrail/schemas/deliverables.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "DELIVERABLES.md validation schema"
+    },
+    {
+      "file": "papertrail/schemas/architecture.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "ARCHITECTURE.md validation schema"
+    },
+    {
+      "file": "papertrail/schemas/readme.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "README.md validation schema"
+    },
+    {
+      "file": "papertrail/schemas/api.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "API.md validation schema"
+    },
+    {
+      "file": "coderef/workorder/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Workflow extension reads plan metadata"
+    },
+    {
+      "file": "coderef/context/{feature}-{type}-health.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Load previously stored health scores"
+    },
+    {
+      "file": "{any_document_path}.md",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Documents to validate (any type)"
+    },
+    {
+      "file": "{any_document_path}.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "JSON documents to validate"
+    },
+    {
+      "file": "{template_dir}/*.md",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Template files for Jinja2 engine"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "coderef/context/{feature}-{type}-health.json",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Store document health scores"
+    },
+    {
+      "file": "{output_path}.md",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Generated docs with UDS headers/footers"
+    },
+    {
+      "file": "DEMO_OUTPUT.md",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Demo script output (testing only)"
+    }
+  ]
+}

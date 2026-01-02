@@ -1,0 +1,54 @@
+{
+  "workorder_id": "WO-DOCUMENT-EFFECTIVENESS-003",
+  "task": "Document Improvement Roadmap - Concrete Implementation Plan",
+  "step": 3,
+  "description": "CodeRef orchestrator agent creates prioritized, actionable plan to improve documentation across all projects",
+  "assigned_to": "coderef agent (C:\\Users\\willh\\.mcp-servers\\coderef)",
+  "depends_on": [
+    "WO-DOCUMENT-EFFECTIVENESS-001 (value audits)",
+    "WO-DOCUMENT-EFFECTIVENESS-002 (cross-project analysis)"
+  ],
+
+  "instructions": {
+    "step_1": "READ cross-project synthesis report",
+    "step_2": "READ all individual value audits for context",
+    "step_3": "IDENTIFY concrete actions (create, update, delete, standardize)",
+    "step_4": "PRIORITIZE by impact and effort",
+    "step_5": "CREATE implementation timeline",
+    "step_6": "DEFINE success metrics",
+    "step_7": "GENERATE workorder stubs for each major initiative",
+    "step_8": "CREATE roadmap report at output path below"
+  },
+
+  "prioritization_framework": {
+    "impact_dimensions": {
+      "agent_productivity": "Does it help agents work faster/better?",
+      "human_onboarding": "Does it help humans understand faster?",
+      "consistency": "Does it reduce variation across projects?",
+      "automation_potential": "Can it be automated?"
+    },
+    "effort_dimensions": {
+      "template_creation": "How long to create template?",
+      "content_generation": "Manual vs automated?",
+      "rollout_complexity": "Easy to apply everywhere?",
+      "maintenance_burden": "Ongoing cost?"
+    },
+    "priority_matrix": {
+      "p0_critical": "High impact, low effort - Do immediately",
+      "p1_high": "High impact, high effort - Schedule next sprint",
+      "p2_medium": "Medium impact, low effort - Quick wins",
+      "p3_low": "Low impact or very high effort - Backlog"
+    }
+  },
+
+  "output_template": "# Document Improvement Roadmap\n\n**Workorder:** WO-DOCUMENT-EFFECTIVENESS-003\n**Based On:** 9 value audits + cross-project analysis\n**Timestamp:** {current_timestamp}\n\n---\n\n## Executive Summary\n\n**Total Initiatives:** 15\n**P0 (Critical):** 4 initiatives - Start immediately\n**P1 (High):** 5 initiatives - Next 2-4 weeks\n**P2 (Medium):** 4 initiatives - Next 1-2 months\n**P3 (Low):** 2 initiatives - Backlog\n\n**Estimated Impact:**\n- Agent productivity: +30% (faster context discovery)\n- Human onboarding: +60% (better docs)\n- Doc quality score: 3.2/5 → 4.5/5\n\n**Total Effort:** ~80 hours (spread across initiatives)\n\n---\n\n## P0 - Critical (Start Immediately)\n\n### 1. Create QUICKREF.md Standard Template\n\n**Priority:** P0\n**Impact:** High (agent + human)\n**Effort:** Low (4 hours)\n**Owner:** coderef-docs\n\n**Description:**\nCreate standardized 1-2 page scannable reference template for all projects.\n\n**Acceptance Criteria:**\n- Template exists in coderef-docs/templates/QUICKREF.md\n- Contains sections: Commands, Workflows, Key Concepts, Troubleshooting\n- 150-250 lines max\n- Scannable in 2-3 minutes\n- Auto-generates from .coderef/ where possible\n\n**Implementation Steps:**\n1. Design template structure (1 hour)\n2. Create initial content for coderef-workflow (1 hour)\n3. Test with 3 agents for feedback (1 hour)\n4. Finalize and document template (1 hour)\n\n**Success Metrics:**\n- 9/9 projects have QUICKREF.md within 2 weeks\n- Agent rating >= 4.5/5\n- Human rating >= 4.0/5\n\n**Workorder:** WO-QUICKREF-STANDARD-001\n\n---\n\n### 2. Expand README.md Template\n\n**Priority:** P0\n**Impact:** High (human onboarding)\n**Effort:** Medium (8 hours)\n**Owner:** coderef-docs\n\n**Description:**\nCreate comprehensive README template with all standard sections.\n\n**Acceptance Criteria:**\n- Template includes: Overview, Features, Installation, Usage, API Reference, Contributing, License\n- Examples for common use cases\n- Badges (build status, version, coverage)\n- Links to deeper docs (ARCHITECTURE, API)\n- Auto-populates from package.json and .coderef/\n\n**Implementation Steps:**\n1. Research README best practices (1 hour)\n2. Design template with required sections (2 hours)\n3. Build auto-generator using .coderef/ (3 hours)\n4. Test on 3 projects (1 hour)\n5. Document and finalize (1 hour)\n\n**Success Metrics:**\n- README rating improves from 2.1/5 to 4.0/5\n- All sections present in 9/9 projects\n- Fresh within 30 days\n\n**Workorder:** WO-README-EXPANSION-001\n\n---\n\n### 3. Standardize CLAUDE.md Template\n\n**Priority:** P0\n**Impact:** High (agent context)\n**Effort:** Low (3 hours)\n**Owner:** coderef-docs\n\n**Description:**\nFormalize existing CLAUDE.md pattern as enforced template.\n\n**Acceptance Criteria:**\n- Template schema defined (required sections, optional sections)\n- Validation tool checks compliance\n- Quick-start examples section added\n- Cross-references to .coderef/ outputs\n\n**Implementation Steps:**\n1. Extract common structure from existing CLAUDE.md files (1 hour)\n2. Create schema with required/optional sections (1 hour)\n3. Build validator tool (1 hour)\n\n**Success Metrics:**\n- 9/9 CLAUDE.md files pass validation\n- Rating improves from 4.7/5 to 5.0/5 (agents)\n- \"Missing examples\" complaint drops to 0\n\n**Workorder:** WO-CLAUDE-STANDARDIZATION-001\n\n---\n\n### 4. Create CHANGELOG.md Template\n\n**Priority:** P0\n**Impact:** Medium (version tracking)\n**Effort:** Low (4 hours)\n**Owner:** coderef-docs\n\n**Description:**\nStandardized changelog format following Keep a Changelog spec.\n\n**Acceptance Criteria:**\n- Template follows Keep a Changelog format\n- Sections: Added, Changed, Deprecated, Removed, Fixed, Security\n- Automated from git commits (conventional commits)\n- Links to workorders\n\n**Implementation Steps:**\n1. Create template based on Keep a Changelog (1 hour)\n2. Build git commit parser (2 hours)\n3. Test auto-generation (1 hour)\n\n**Success Metrics:**\n- 9/9 projects have CHANGELOG.md\n- Auto-generated from commits\n- Updated with each release\n\n**Workorder:** WO-CHANGELOG-STANDARD-001\n\n---\n\n## P1 - High Priority (Next 2-4 Weeks)\n\n### 5. Integrate Standards Docs with Workflows\n\n**Priority:** P1\n**Impact:** Medium (consistency)\n**Effort:** Medium (10 hours)\n**Owner:** coderef-workflow + coderef-docs\n\n**Description:**\nConnect patterns.md standards to planning workflows for enforcement.\n\n**Implementation Steps:**\n1. Extract patterns from standards docs (2 hours)\n2. Add standards validation to planning (4 hours)\n3. Link plan.json tasks to applicable standards (2 hours)\n4. Create violation reporting (2 hours)\n\n**Success Metrics:**\n- Standards doc rating improves from 3.0/5 to 4.0/5\n- 50% of planning sessions reference standards\n\n**Workorder:** WO-STANDARDS-INTEGRATION-001\n\n---\n\n### 6. Add Architecture Diagrams\n\n**Priority:** P1\n**Impact:** High (human understanding)\n**Effort:** High (15 hours)\n**Owner:** coderef-docs\n\n**Description:**\nAuto-generate architecture diagrams from .coderef/ outputs.\n\n**Implementation Steps:**\n1. Design diagram types (system, component, data flow) (3 hours)\n2. Build Mermaid generator from .coderef/graph.json (8 hours)\n3. Integrate into ARCHITECTURE.md (2 hours)\n4. Add to auto-doc workflow (2 hours)\n\n**Success Metrics:**\n- All ARCHITECTURE.md files have diagrams\n- Visual learners rate docs higher\n- Onboarding time reduced 30%\n\n**Workorder:** WO-ARCHITECTURE-DIAGRAMS-001\n\n---\n\n## Implementation Timeline\n\n```\nWeek 1-2: P0 Initiatives (QUICKREF, README, CLAUDE, CHANGELOG)\n├── Week 1: Template creation + validation\n└── Week 2: Rollout to all 9 projects\n\nWeek 3-6: P1 Initiatives (Standards, Diagrams, Troubleshooting)\n├── Week 3-4: Standards integration\n├── Week 5: Architecture diagrams\n└── Week 6: Troubleshooting docs\n\nWeek 7-12: P2 Initiatives (Contributing, API docs, Freshness)\n├── Week 7-8: CONTRIBUTING.md\n├── Week 9-10: API doc auto-generation\n└── Week 11-12: Freshness automation\n\nBacklog: P3 Initiatives (Advanced features)\n```\n\n---\n\n## Success Metrics (3-Month Targets)\n\n**Overall Document Quality:**\n- Baseline: 3.2/5\n- Target: 4.5/5\n- Measurement: Re-run value audits\n\n**Agent Productivity:**\n- Baseline: 20 min average context gathering\n- Target: 14 min average\n- Measurement: Agent time tracking\n\n**Human Onboarding:**\n- Baseline: 2 hours to understand project\n- Target: 45 minutes\n- Measurement: New contributor surveys\n\n**Documentation Coverage:**\n- Baseline: 5/10 standard docs present\n- Target: 9/10 standard docs present\n- Measurement: Doc inventory audit\n\n**Freshness:**\n- Baseline: Docs updated every 60 days\n- Target: Docs updated every 14 days\n- Measurement: Git last-modified tracking\n\n---\n\n## Risk Assessment\n\n**Low Risk:**\n- Template creation (additive, no breaking changes)\n- Auto-generation from .coderef/ (reliable data source)\n\n**Medium Risk:**\n- Rollout coordination (9 projects simultaneously)\n- Maintenance burden (more docs to keep fresh)\n\n**Mitigation:**\n- Automation reduces manual maintenance\n- Phased rollout (P0 first, validate, then P1)\n- Pre-commit hooks enforce standards automatically\n\n---\n\n## Workorder Stubs Created\n\n1. WO-QUICKREF-STANDARD-001 (P0)\n2. WO-README-EXPANSION-001 (P0)\n3. WO-CLAUDE-STANDARDIZATION-001 (P0)\n4. WO-CHANGELOG-STANDARD-001 (P0)\n5. WO-STANDARDS-INTEGRATION-001 (P1)\n6. WO-ARCHITECTURE-DIAGRAMS-001 (P1)\n7. WO-TROUBLESHOOTING-DOCS-001 (P1)\n8. WO-CONTRIBUTING-TEMPLATE-001 (P2)\n9. WO-API-DOC-AUTOMATION-001 (P2)\n10. WO-DOC-FRESHNESS-AUTOMATION-001 (P2)\n\n---\n\n**Next Step:** Review roadmap with user, prioritize workorders, begin P0 implementation.",
+
+  "quality_standards": {
+    "specificity": "Every initiative has clear acceptance criteria",
+    "measurability": "Success metrics are quantitative",
+    "feasibility": "Effort estimates are realistic",
+    "impact": "All initiatives directly address audit findings"
+  },
+
+  "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\document-effectiveness\\improvement-roadmap\\implementation-plan.md"
+}

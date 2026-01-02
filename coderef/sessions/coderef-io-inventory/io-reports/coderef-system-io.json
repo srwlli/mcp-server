@@ -1,0 +1,302 @@
+{
+  "agent_id": "coderef-system",
+  "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+  "workorder_id": "WO-CODEREF-IO-INVENTORY-001",
+  "scan_timestamp": "2026-01-01T00:00:00Z",
+  "inputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Element inventory for analysis/export"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Human-readable context for generators"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Dependency graph for queries/diagrams"
+    },
+    {
+      "file": ".coderef/exports/graph.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Exported graph data for external tools"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Code pattern analysis for standards"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Test coverage metrics"
+    },
+    {
+      "file": ".coderef/reports/complexity.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Complexity metrics for risk analysis"
+    },
+    {
+      "file": ".coderef/config.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "User preferences and scan settings"
+    },
+    {
+      "file": ".coderef/rag/state.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Incremental RAG indexer state"
+    },
+    {
+      "file": ".coderef/vector-store.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "SQLite vector embeddings storage"
+    },
+    {
+      "file": "src/**/*.{ts,tsx,js,jsx,py}",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Source code for scanning/analysis"
+    },
+    {
+      "file": "tests/**/*.{ts,tsx,js,jsx,py}",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Test files for coverage analysis"
+    },
+    {
+      "file": "package.json",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Dependency checks in tests"
+    },
+    {
+      "file": "tsconfig.json",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "TypeScript configuration reference"
+    },
+    {
+      "file": "packages/cli/src/dashboard/index.html",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Dashboard template for HTML generation"
+    },
+    {
+      "file": "packages/cli/src/dashboard/styles.css",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Dashboard styles for HTML generation"
+    },
+    {
+      "file": "packages/cli/src/dashboard/dashboard.js",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Dashboard script for HTML generation"
+    }
+  ],
+  "outputs": [
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Complete element inventory from scan"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Human-readable comprehensive analysis"
+    },
+    {
+      "file": ".coderef/context.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Machine-readable context data"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Complete dependency graph"
+    },
+    {
+      "file": ".coderef/config.json",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Saved configuration from init/config"
+    },
+    {
+      "file": ".coderef/.gitignore",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Ignore .coderef/ from git"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Detected code patterns"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Test coverage analysis results"
+    },
+    {
+      "file": ".coderef/reports/complexity.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Complexity metrics by element"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.mmd",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Mermaid dependency diagram"
+    },
+    {
+      "file": ".coderef/diagrams/dependencies.dot",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Graphviz dependency diagram"
+    },
+    {
+      "file": ".coderef/exports/graph.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Exported graph in JSON format"
+    },
+    {
+      "file": ".coderef/exports/graph.graphql",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Exported graph in GraphQL schema"
+    },
+    {
+      "file": ".coderef/exports/graph.jsonld",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Exported graph in JSON-LD format"
+    },
+    {
+      "file": ".coderef/rag/state.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "RAG indexer incremental state"
+    },
+    {
+      "file": ".coderef/vector-store.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Vector embeddings for RAG"
+    },
+    {
+      "file": "coderef/foundation-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated project overview"
+    },
+    {
+      "file": "coderef/foundation-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated architecture docs"
+    },
+    {
+      "file": "coderef/foundation-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated API reference"
+    },
+    {
+      "file": "coderef/foundation-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated component hierarchy"
+    },
+    {
+      "file": "coderef/foundation-docs/SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Auto-generated data schema docs"
+    },
+    {
+      "file": "coderef/foundation-docs/JS-AST-ANALYSIS.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "AST analysis insights"
+    },
+    {
+      "file": "coderef/foundation-docs/PERFORMANCE-GUIDE.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "Performance recommendations"
+    },
+    {
+      "file": "coderef/foundation-docs/USER-GUIDE.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "User documentation"
+    },
+    {
+      "file": "src/**/*.{ts,tsx,js,jsx,py}",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Source files with injected CodeRef tags"
+    },
+    {
+      "file": "{custom-output-path}",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "User-specified output via --output flag"
+    },
+    {
+      "file": "dashboard.html",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Interactive dashboard visualization"
+    },
+    {
+      "file": "breaking-changes-report.{json,md,html}",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Breaking change detection report"
+    },
+    {
+      "file": "drift-report.{json,md}",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Stale reference detection report"
+    },
+    {
+      "file": "validation-report.{json,md}",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "CodeRef tag validation report"
+    }
+  ],
+  "notes": {
+    "primary_role": "Producer of .coderef/ analysis outputs consumed by other MCP servers",
+    "main_input_source": "Source code files scanned for elements, imports, calls, dependencies",
+    "main_output_destination": ".coderef/ directory with structured JSON/markdown files",
+    "foundation_doc_generation": "Python scripts in scripts/ read .coderef/ outputs and generate coderef/foundation-docs/*.md",
+    "custom_outputs": "Many commands support --output flag for custom file paths",
+    "in_place_modification": "tagger and ref-tools commands modify source files directly to add/update CodeRef tags",
+    "total_inputs": 17,
+    "total_outputs": 30
+  }
+}

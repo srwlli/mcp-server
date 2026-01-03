@@ -1,0 +1,614 @@
+# JSDoc Suggestions for tool_handlers.py
+
+## Purpose
+Copy-paste JSDoc comments to enhance inline documentation in tool_handlers.py
+
+## Usage Instructions
+1. Copy the relevant JSDoc block below
+2. Paste above the corresponding function/class in tool_handlers.py
+3. Adjust parameter names/types if implementation differs
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Tool Handler Functions for MCP Server
+
+Implements 35 async handler functions for coderef-workflow MCP tools.
+Each handler follows a standard pattern with decorator chains for logging,
+error handling, and response formatting.
+
+**Architecture:**
+- Registry pattern (TOOL_HANDLERS dict maps tool names to handlers)
+- Decorator-based cross-cutting concerns (@log_invocation, @mcp_error_handler)
+- Global state injection (TEMPLATES_DIR, TOOL_TEMPLATES_DIR)
+- Stateless handlers (no instance variables)
+
+**Handler Categories:**
+- Template Management: 2 handlers (list_templates, get_template)
+- Documentation Generation: 2 handlers (generate_foundation_docs, generate_individual_doc)
+- Changelog Management: 3 handlers (get_changelog, add_changelog_entry, update_changelog)
+- Standards & Quality: 3 handlers (establish_standards, audit_codebase, check_consistency)
+- Planning Workflow: 7 handlers (get_planning_template, analyze_project, gather_context, etc.)
+- Execution & Tracking: 6 handlers (execute_plan, update_task_status, track_agent_status, etc.)
+- Multi-Agent Coordination: 5 handlers (generate_agent_communication, assign_agent_task, etc.)
+- Feature Management: 3 handlers (archive_feature, update_all_documentation, etc.)
+- Workorder Tracking: 2 handlers (log_workorder, get_workorder_log)
+- Risk Assessment: 1 handler (assess_risk)
+- Foundation Docs: 1 handler (coderef_foundation_docs)
+
+**Lifecycle:**
+1. Module import → globals initialized (TEMPLATES_DIR = None)
+2. server.py calls set_templates_dir() → injection
+3. MCP tool call → server.py dispatches to TOOL_HANDLERS[name]
+4. Handler executes → returns list[TextContent]
+
+**Performance:** <50ms per handler (excluding I/O operations like git/file operations)
+
+**Version:** 1.3.0 (aligned with server.py v2.0.0)
+
+**See:** TOOL-HANDLERS.md for complete architectural documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Global State Injection Functions
+
+```python
+def set_templates_dir(templates_dir: Path) -> None:
+    """
+    Inject TEMPLATES_DIR global for handler use.
+
+    Called once during server.py module initialization.
+    All handlers that need template access will use this global.
+
+    **Lifecycle:** Called in server.py after Path(__file__).parent / "templates/power"
+
+    **Args:**
+        templates_dir (Path): Absolute path to templates/power/ directory
+
+    **Side Effects:**
+        Sets global TEMPLATES_DIR variable (module-level state)
+
+    **Example:**
+        >>> from pathlib import Path
+        >>> tool_handlers.set_templates_dir(Path("/path/to/templates/power"))
+        >>> # Now all handlers can access TEMPLATES_DIR
+
+    **See:** server.py line 54 for invocation context
+    """
+```
+
+```python
+def set_tool_templates_dir(tool_templates_dir: Path) -> None:
+    """
+    Inject TOOL_TEMPLATES_DIR global for handler use.
+
+    Called once during server.py module initialization.
+    Handlers that need tool-specific templates will use this global.
+
+    **Lifecycle:** Called in server.py after Path(__file__).parent / "templates/tools"
+
+    **Args:**
+        tool_templates_dir (Path): Absolute path to templates/tools/ directory
+
+    **Side Effects:**
+        Sets global TOOL_TEMPLATES_DIR variable (module-level state)
+
+    **Example:**
+        >>> from pathlib import Path
+        >>> tool_handlers.set_tool_templates_dir(Path("/path/to/templates/tools"))
+
+    **See:** server.py line 56 for invocation context
+    """
+```
+
+---
+
+## Decorator Chain Pattern (applies to all handlers)
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_X(arguments: dict) -> list[TextContent]:
+    """
+    Handle X tool call.
+
+    **Decorator Chain Execution Order:**
+    1. @log_invocation (outer) - Logs tool name + argument keys
+    2. @mcp_error_handler (inner) - Catches exceptions, returns ErrorResponse
+
+    **IMPORTANT:** Order matters! @log_invocation must be BEFORE @mcp_error_handler.
+    If reversed, errors won't be logged properly.
+
+    **Args:**
+        arguments (dict): Tool-specific arguments (validated by MCP SDK against inputSchema)
+
+    **Returns:**
+        list[TextContent]: Single-item list with TextContent(type="text", text=result)
+
+    **Raises:**
+        ValueError: If validation fails (caught by @mcp_error_handler)
+        FileNotFoundError: If required files missing (caught by @mcp_error_handler)
+
+    **Performance:** ~XYZ ms (excluding I/O)
+
+    **Example:**
+        >>> result = await handle_X({"arg1": "value1"})
+        >>> result[0].text
+        '{"status": "success", "data": {...}}'
+
+    **See:**
+        - handler_decorators.py for decorator implementations
+        - TOOL-HANDLERS.md Section 3 for decorator chain details
+    """
+```
+
+---
+
+## Template Management Handlers
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_list_templates(arguments: dict) -> list[TextContent]:
+    """
+    List available POWER framework templates.
+
+    Scans TEMPLATES_DIR for *.txt files and returns sorted list.
+    No arguments required (empty dict).
+
+    **Performance:** ~5ms (filesystem glob operation)
+
+    **Args:**
+        arguments (dict): Empty dict (no arguments)
+
+    **Returns:**
+        list[TextContent]: Formatted list of template names
+
+    **Example:**
+        >>> result = await handle_list_templates({})
+        >>> result[0].text
+        'Available POWER Framework Templates:\n\n1. readme\n2. architecture\n...'
+
+    **Failure Modes:**
+        - TEMPLATES_DIR not injected → AttributeError (caught by @mcp_error_handler)
+        - No templates found → Returns "No templates found" message (not an error)
+
+    **See:** TOOL-HANDLERS.md Section 7.1
+    """
+```
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_get_template(arguments: dict) -> list[TextContent]:
+    """
+    Retrieve specific POWER framework template content.
+
+    Reads template file from TEMPLATES_DIR and returns raw content.
+
+    **Performance:** ~10ms (single file read)
+
+    **Args:**
+        arguments (dict):
+            - template_name (str): Template name (validated enum)
+
+    **Returns:**
+        list[TextContent]: Template file content
+
+    **Raises:**
+        ValueError: If template_name invalid (caught by @mcp_error_handler)
+        FileNotFoundError: If template file missing (caught by @mcp_error_handler)
+
+    **Example:**
+        >>> result = await handle_get_template({"template_name": "readme"})
+        >>> result[0].text
+        '# Purpose\n\nThis is the README template...'
+
+    **See:** validation.py:validate_template_name_input for validation logic
+    """
+```
+
+---
+
+## Documentation Generation Handlers
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
+    """
+    Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA).
+
+    Delegates to FoundationGenerator which orchestrates template rendering
+    for all 5 foundation doc types.
+
+    **Performance:** ~2-5 seconds (generates 5 files, ~500-1000 lines each)
+
+    **Args:**
+        arguments (dict):
+            - project_path (str): Absolute path to project directory
+
+    **Returns:**
+        list[TextContent]: Success response with file paths and generation summary
+
+    **Side Effects:**
+        - Creates/overwrites files in coderef/foundation-docs/
+        - Logs generation progress
+
+    **Failure Modes:**
+        - Invalid project_path → ValueError
+        - Insufficient permissions → PermissionError
+        - Template missing → FileNotFoundError
+
+    **Example:**
+        >>> result = await handle_generate_foundation_docs({
+        ...     "project_path": "/path/to/project"
+        ... })
+        >>> json.loads(result[0].text)
+        {'status': 'success', 'data': {'files_created': 5, ...}}
+
+    **See:**
+        - generators/FoundationGenerator for implementation
+        - TOOL-HANDLERS.md Section 7.2
+    """
+```
+
+---
+
+## Planning Workflow Handlers
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_gather_context(arguments: dict) -> list[TextContent]:
+    """
+    Gather feature requirements and save to context.json.
+
+    Validates and structures user-provided requirements into canonical format.
+    Creates feature directory in coderef/workorder/{feature_name}/.
+
+    **Performance:** ~50ms (validates inputs + writes 1 file)
+
+    **Args:**
+        arguments (dict):
+            - project_path (str): Absolute path to project
+            - feature_name (str): Feature name (alphanumeric, hyphens, underscores)
+            - description (str): What the user wants to build
+            - goal (str): Why they want this feature
+            - requirements (list[str]): Must-have requirements
+            - constraints (list[str], optional): Technical/business constraints
+
+    **Returns:**
+        list[TextContent]: Success response with context file path
+
+    **Side Effects:**
+        - Creates coderef/workorder/{feature_name}/ directory
+        - Writes context.json with structured requirements
+
+    **Validation:**
+        - feature_name: Must match ^[a-zA-Z0-9_-]+$ (max 100 chars)
+        - requirements: Array must have at least 1 item
+        - description, goal: Must be non-empty strings
+
+    **Example:**
+        >>> result = await handle_gather_context({
+        ...     "project_path": "/path/to/project",
+        ...     "feature_name": "dark-mode-toggle",
+        ...     "description": "Add dark mode support",
+        ...     "goal": "Improve user experience",
+        ...     "requirements": ["Toggle button in settings", "Persist preference"]
+        ... })
+        >>> json.loads(result[0].text)
+        {'status': 'success', 'data': {'context_path': 'coderef/workorder/dark-mode-toggle/context.json'}}
+
+    **See:**
+        - validation.py:validate_feature_name_input
+        - TOOL-HANDLERS.md Section 7.5
+    """
+```
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_create_plan(arguments: dict) -> list[TextContent]:
+    """
+    Create 10-section implementation plan from context and analysis.
+
+    Synthesizes context.json and analysis.json into complete plan.json
+    following feature-implementation-planning-standard.json structure.
+
+    **Performance:** ~2-5 seconds (generates 10-section plan, ~500-1000 lines)
+
+    **Args:**
+        arguments (dict):
+            - project_path (str): Absolute path to project
+            - feature_name (str): Feature name (must have context.json)
+            - workorder_id (str, optional): Manual workorder ID override
+            - multi_agent (bool, optional): Enable multi-agent mode (default: False)
+
+    **Returns:**
+        list[TextContent]: Success response with plan path and workorder ID
+
+    **Side Effects:**
+        - Writes plan.json to coderef/workorder/{feature_name}/
+        - If multi_agent=True, also generates communication.json
+        - Logs workorder ID to coderef/workorder-log.txt
+
+    **Dependencies:**
+        - context.json must exist (from gather_context)
+        - analysis.json should exist (from analyze_project_for_planning)
+
+    **Failure Modes:**
+        - context.json missing → FileNotFoundError
+        - Invalid workorder_id format → ValueError
+        - Plan generation failure → Returns partial plan with TODOs
+
+    **Example:**
+        >>> result = await handle_create_plan({
+        ...     "project_path": "/path/to/project",
+        ...     "feature_name": "dark-mode-toggle"
+        ... })
+        >>> json.loads(result[0].text)
+        {'status': 'success', 'data': {'plan_path': '...', 'workorder_id': 'WO-DARK-MODE-TOGGLE-001'}}
+
+    **See:**
+        - generators/PlanningGenerator for implementation
+        - TOOL-HANDLERS.md Section 7.5
+    """
+```
+
+---
+
+## Multi-Agent Coordination Handlers
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_assign_agent_task(arguments: dict) -> list[TextContent]:
+    """
+    Assign specific task to agent with workorder scoping.
+
+    Updates communication.json with agent assignment and generates
+    agent-scoped workorder ID (e.g., WO-FEATURE-001-A2 for Agent 2).
+
+    **Performance:** ~100ms (reads plan.json, updates communication.json)
+
+    **Args:**
+        arguments (dict):
+            - project_path (str): Absolute path to project
+            - feature_name (str): Feature name
+            - agent_number (int): Agent number (1-10)
+            - phase_id (str, optional): Specific phase to assign
+
+    **Returns:**
+        list[TextContent]: Success response with agent assignment details
+
+    **Side Effects:**
+        - Updates communication.json agent status
+        - Creates agent-scoped workorder ID
+        - Detects task conflicts (if agent already assigned elsewhere)
+
+    **Validation:**
+        - agent_number: Must be 1-10
+        - phase_id: Must exist in plan.json if provided
+        - communication.json: Must exist
+
+    **Conflict Detection:**
+        - Warns if agent already has incomplete tasks
+        - Shows current agent workload
+
+    **Example:**
+        >>> result = await handle_assign_agent_task({
+        ...     "project_path": "/path/to/project",
+        ...     "feature_name": "dark-mode-toggle",
+        ...     "agent_number": 2
+        ... })
+        >>> json.loads(result[0].text)
+        {'status': 'success', 'data': {'agent_workorder_id': 'WO-DARK-MODE-TOGGLE-001-A2', ...}}
+
+    **See:**
+        - communication.json schema
+        - TOOL-HANDLERS.md Section 7.7
+    """
+```
+
+---
+
+## Risk Assessment Handler
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_assess_risk(arguments: dict) -> list[TextContent]:
+    """
+    AI-powered risk assessment for proposed code changes.
+
+    Evaluates changes across 5 dimensions (breaking changes, security,
+    performance, maintainability, reversibility) with 0-100 scoring.
+
+    **Performance:** ~3-5 seconds (AI analysis + optional coderef-context integration)
+
+    **Args:**
+        arguments (dict):
+            - project_path (str): Absolute path to project
+            - proposed_change (dict):
+                - description (str): What's being changed
+                - change_type (str): create|modify|delete|refactor|migrate
+                - files_affected (list[str]): File paths
+            - threshold (float, optional): Risk score threshold (0-100, default: 50)
+            - options (list[dict], optional): Alternative options for comparison
+
+    **Returns:**
+        list[TextContent]: Risk assessment with scores, go/no-go recommendation
+
+    **Risk Dimensions:**
+        1. Breaking Changes (0-100): API compatibility impact
+        2. Security (0-100): Vulnerability introduction risk
+        3. Performance (0-100): Runtime/memory degradation risk
+        4. Maintainability (0-100): Code complexity increase
+        5. Reversibility (0-100): Rollback difficulty
+
+    **Go/No-Go Decision:**
+        - Score < threshold → GO (safe to proceed)
+        - Score >= threshold → NO-GO (requires mitigation)
+
+    **Example:**
+        >>> result = await handle_assess_risk({
+        ...     "project_path": "/path/to/project",
+        ...     "proposed_change": {
+        ...         "description": "Rename getUserById to fetchUser",
+        ...         "change_type": "refactor",
+        ...         "files_affected": ["src/user.py"]
+        ...     }
+        ... })
+        >>> json.loads(result[0].text)
+        {'status': 'success', 'data': {'overall_score': 35, 'recommendation': 'GO', ...}}
+
+    **See:**
+        - generators/RiskGenerator for scoring algorithm
+        - TOOL-HANDLERS.md Section 7.10
+    """
+```
+
+---
+
+## Error Handling Pattern (all handlers)
+
+```python
+# All handlers use this pattern via @mcp_error_handler decorator:
+"""
+**Error Handling:**
+All exceptions are caught by @mcp_error_handler and converted to ErrorResponse:
+
+```python
+{
+    "status": "error",
+    "error": "ValueError",  # Exception class name
+    "message": "Human-readable error message",
+    "details": {  # Optional additional context
+        "argument": "feature_name",
+        "value": "invalid-name!",
+        "expected": "^[a-zA-Z0-9_-]+$"
+    }
+}
+```
+
+**Common Errors:**
+- ValueError: Validation failure (invalid inputs)
+- FileNotFoundError: Missing required files (context.json, plan.json)
+- PermissionError: Insufficient file system permissions
+- JSONDecodeError: Malformed JSON in config files
+
+**See:**
+- handler_decorators.py:mcp_error_handler for implementation
+- error_responses.py:ErrorResponse for response formatting
+"""
+```
+
+---
+
+## Registry Pattern
+
+```python
+# TOOL_HANDLERS dictionary (end of file, line ~4356)
+TOOL_HANDLERS = {
+    'list_templates': handle_list_templates,
+    'get_template': handle_get_template,
+    # ... 33 more handlers
+}
+"""
+Tool Handlers Registry
+
+**Purpose:** Maps tool names to handler functions for dispatch in server.py
+
+**Structure:**
+- Key: Tool name (string, lowercase, underscores)
+- Value: Handler function reference (async callable)
+
+**Lifecycle:**
+1. Module import → TOOL_HANDLERS dict initialized
+2. server.py imports TOOL_HANDLERS
+3. call_tool() dispatches: TOOL_HANDLERS[name](arguments)
+
+**Validation:**
+- MCP SDK validates tool names exist before dispatch
+- Missing handler → ValueError in server.py
+
+**Performance:** O(1) lookup, ~1ms dispatch overhead
+
+**Example:**
+```python
+# server.py call_tool() function
+handler = TOOL_HANDLERS.get(name)
+if not handler:
+    raise ValueError(f"Unknown tool: {name}")
+result = await handler(arguments)
+```
+
+**Common Mistakes:**
+- Forgetting to register new handler → ValueError at runtime
+- Typo in handler name → KeyError
+- Handler signature mismatch → TypeError when called
+
+**See:**
+- server.py:call_tool() for dispatch logic
+- TOOL-HANDLERS.md Section 4 (State Ownership Table)
+"""
+```
+
+---
+
+## Configuration Best Practices
+
+**Adding New Handlers:**
+1. Create handler function with canonical signature:
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_new_tool(arguments: dict) -> list[TextContent]:
+    """Handler docstring following JSDoc pattern."""
+    # Implementation
+    return format_success_response(data={...}, message="...")
+```
+
+2. Add to TOOL_HANDLERS registry:
+```python
+TOOL_HANDLERS = {
+    # ... existing handlers
+    'new_tool': handle_new_tool,
+}
+```
+
+3. Add corresponding Tool() definition in server.py list_tools()
+
+4. Add validation logic if needed (validation.py)
+
+**Common Mistakes:**
+- Wrong decorator order (@mcp_error_handler before @log_invocation)
+- Missing return statement → None instead of list[TextContent]
+- Forgetting to call format_success_response() → inconsistent response format
+- Not registering in TOOL_HANDLERS dict → ValueError at runtime
+
+**Testing:**
+```python
+# Unit test example
+async def test_handle_new_tool():
+    result = await handle_new_tool({"arg": "value"})
+    assert len(result) == 1
+    assert result[0].type == "text"
+    data = json.loads(result[0].text)
+    assert data["status"] == "success"
+```
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P0-001
+**Task:** SHEET-002
+**Timestamp:** 2026-01-02

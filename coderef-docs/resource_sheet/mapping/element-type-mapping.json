@@ -1,0 +1,539 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Mapping of 20 element types from Tool 2 to conditional modules and detection patterns for unified resource sheet system",
+  "total_element_types": 20,
+  "last_updated": "2026-01-03",
+  "workorder": "WO-RESOURCE-SHEET-CONSOLIDATION-001",
+
+  "element_types": [
+    {
+      "rank": 1,
+      "element_type": "top_level_widgets",
+      "display_name": "Top-Level Widgets/Pages",
+      "description": "Entry components that orchestrate user workflows",
+      "detection_patterns": {
+        "filename_patterns": ["Page$", "Widget$", "Dashboard$", "View$"],
+        "path_patterns": ["pages/", "views/", "screens/"],
+        "code_patterns": ["route target", "top-level component", "renders multiple children"]
+      },
+      "conditional_modules": ["ui/composition", "ui/events", "ui/accessibility"],
+      "additional_sections": ["composition_hierarchy", "user_workflows", "layout_contracts", "performance_budget"],
+      "checklist_items": [
+        "Composition hierarchy - Which subcomponents, what order, why",
+        "User workflows - Primary task flows this widget enables",
+        "State orchestration - What state this widget owns vs delegates",
+        "Integration points - External systems/contexts consumed",
+        "Layout contracts - Fixed dimensions, responsive behavior",
+        "Lifecycle events - Mount/unmount side effects",
+        "Performance budget - Target render times, bundle size",
+        "Accessibility root - Focus management, keyboard navigation"
+      ],
+      "required_sections": ["Role in UX", "Component Hierarchy", "State Ownership Table", "Layout Contracts", "Event Flow Diagram", "Performance Characteristics", "Accessibility Guarantees", "Common Integration Pitfalls"],
+      "maintenance_impact": "critical"
+    },
+    {
+      "rank": 2,
+      "element_type": "stateful_containers",
+      "display_name": "Stateful Containers/Controllers",
+      "description": "Components that manage and coordinate state",
+      "detection_patterns": {
+        "filename_patterns": ["Provider$", "Controller$", "Manager$", "Container$"],
+        "path_patterns": ["providers/", "containers/", "controllers/"],
+        "code_patterns": ["useState", "useReducer", "manages children state", "coordinates multiple sources"]
+      },
+      "conditional_modules": ["state/management", "state/lifecycle"],
+      "additional_sections": ["state_authority_table", "lifecycle_diagram", "persistence_contract", "event_subscriptions"],
+      "checklist_items": [
+        "State ownership rules - What state lives here vs elsewhere",
+        "Coordination logic - How child state is reconciled",
+        "Persistence strategy - What persists, when, where",
+        "Cache invalidation - Staleness detection, refresh triggers",
+        "Error boundaries - What errors are caught, how recovered",
+        "Subscription management - Event listeners, cleanup guarantees",
+        "Initialization sequence - Hydration, validation, migration",
+        "Testing isolation - How to mock dependencies"
+      ],
+      "required_sections": ["State Authority Table", "Lifecycle Diagram", "Persistence Contract", "Event Subscriptions", "Error Handling", "Testing Strategy", "Performance Considerations", "Migration Playbook"],
+      "maintenance_impact": "critical"
+    },
+    {
+      "rank": 3,
+      "element_type": "global_state_layer",
+      "display_name": "Global State Layer (Redux/Zustand/Context)",
+      "description": "Application-wide state management",
+      "detection_patterns": {
+        "filename_patterns": ["store\\.ts$", "store\\.js$", "Context$", "GlobalState"],
+        "path_patterns": ["store/", "state/", "context/"],
+        "code_patterns": ["createStore", "configureStore", "createContext", "Redux", "Zustand"]
+      },
+      "conditional_modules": ["state/management", "state/persistence"],
+      "additional_sections": ["store_schema", "actions_reference", "selectors_catalog", "middleware_order"],
+      "checklist_items": [
+        "Store shape - Full TypeScript schema",
+        "Actions catalog - All actions, payloads, side effects",
+        "Selectors library - Derived state, memoization strategy",
+        "Persistence mapping - What slices persist, where",
+        "Middleware stack - Logger, thunk, persistence, order matters",
+        "Devtools integration - Time travel, action replay",
+        "Hydration strategy - Server/client reconciliation",
+        "Testing approach - Store mocking, action testing"
+      ],
+      "required_sections": ["Store Schema", "Actions Reference", "Selectors Catalog", "Persistence Contract", "Middleware Order", "State Migration Playbook", "Performance Constraints", "Testing Patterns"],
+      "maintenance_impact": "critical"
+    },
+    {
+      "rank": 4,
+      "element_type": "custom_hooks",
+      "display_name": "Custom Hooks Library",
+      "description": "Reusable hooks with side effects and cleanup",
+      "detection_patterns": {
+        "filename_patterns": ["^use[A-Z]"],
+        "path_patterns": ["hooks/", "composables/"],
+        "code_patterns": ["useEffect", "cleanup function", "dependency array"]
+      },
+      "conditional_modules": ["hooks/signature", "hooks/side_effects"],
+      "additional_sections": ["hook_signature", "side_effects_catalog", "dependency_rules", "return_contract"],
+      "checklist_items": [
+        "Side effects - Network, storage, subscriptions, timers",
+        "Cleanup guarantees - What happens on unmount",
+        "Dependency array - What triggers re-run, common mistakes",
+        "Return contract - Shape, loading states, error states",
+        "Stale closure bugs - Known pitfalls with captured values",
+        "Composition patterns - How hooks combine",
+        "Testing approach - renderHook patterns",
+        "Performance gotchas - Infinite loops, memory leaks"
+      ],
+      "required_sections": ["Hook Signature", "Side Effects Catalog", "Dependency Rules", "Return Contract", "Common Pitfalls", "Composition Examples", "Testing Patterns", "Performance Notes"],
+      "maintenance_impact": "high"
+    },
+    {
+      "rank": 5,
+      "element_type": "api_client",
+      "display_name": "API Client Layer",
+      "description": "HTTP clients and API interaction layer",
+      "detection_patterns": {
+        "filename_patterns": ["client\\.ts$", "api\\.ts$", "sdk\\.ts$", "Client$"],
+        "path_patterns": ["api/", "clients/", "sdk/"],
+        "code_patterns": ["fetch", "axios", "http request", "endpoint definitions"]
+      },
+      "conditional_modules": ["network/endpoints", "network/auth", "network/retry", "network/errors"],
+      "additional_sections": ["endpoint_reference", "auth_flow", "error_taxonomy", "retry_strategy"],
+      "checklist_items": [
+        "Endpoint catalog - All endpoints, methods, payloads",
+        "Auth strategy - Token management, refresh flow",
+        "Retry logic - Exponential backoff, max attempts",
+        "Error taxonomy - Network, auth, validation, server errors",
+        "Response normalization - Data transformation pipeline",
+        "Caching strategy - What caches, TTL, invalidation",
+        "Rate limiting - Client-side throttling",
+        "Testing mocks - MSW patterns, fixture data"
+      ],
+      "required_sections": ["Endpoint Reference", "Auth Flow Diagram", "Error Taxonomy", "Retry Strategy", "Response Normalization", "Cache Contract", "Rate Limiting", "Testing Approach"],
+      "maintenance_impact": "high"
+    },
+    {
+      "rank": 6,
+      "element_type": "data_models",
+      "display_name": "Data Model & Schemas",
+      "description": "Type definitions, schemas, and validators",
+      "detection_patterns": {
+        "filename_patterns": ["types\\.ts$", "schema\\.ts$", "models\\.ts$", "validator"],
+        "path_patterns": ["types/", "models/", "schemas/"],
+        "code_patterns": ["interface", "type", "schema", "zod", "io-ts"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["schema_definition", "validation_rules", "versioning_strategy", "migration_playbook"],
+      "checklist_items": [
+        "Canonical TypeScript types - Full schema",
+        "Validation rules - Runtime checks (zod/io-ts)",
+        "Versioning strategy - Schema evolution, migrations",
+        "JSON Schema - For tooling/docs",
+        "Default values - Required vs optional, sensible defaults",
+        "Discriminated unions - Type narrowing patterns",
+        "Serialization - JSON, FormData, query params",
+        "Testing validation - Edge cases, malformed data"
+      ],
+      "required_sections": ["Schema Definition", "Validation Rules", "Versioning Strategy", "Default Values Table", "Type Narrowing", "Serialization Formats", "Migration Playbook", "Testing Patterns"],
+      "maintenance_impact": "high"
+    },
+    {
+      "rank": 7,
+      "element_type": "persistence_subsystem",
+      "display_name": "Persistence Subsystem",
+      "description": "Storage, caching, and data persistence layer",
+      "detection_patterns": {
+        "filename_patterns": ["storage\\.ts$", "cache\\.ts$", "indexedDB", "persistence"],
+        "path_patterns": ["storage/", "cache/", "persistence/"],
+        "code_patterns": ["localStorage", "sessionStorage", "indexedDB", "cache"]
+      },
+      "conditional_modules": ["state/persistence"],
+      "additional_sections": ["keys_catalog", "hydration_lifecycle", "conflict_resolution", "quota_management"],
+      "checklist_items": [
+        "Storage keys catalog - All keys, formats, ownership",
+        "Hydration sequence - Read → validate → migrate → init",
+        "Conflict resolution - Cross-tab, server sync",
+        "Quota behavior - Full disk, eviction policy",
+        "Versioning - Schema migrations, rollback",
+        "Serialization - JSON, binary, compression",
+        "Security - What's sensitive, encryption needs",
+        "Testing approach - Mock storage, quota simulation"
+      ],
+      "required_sections": ["Keys Catalog", "Hydration Lifecycle", "Conflict Resolution", "Quota Management", "Versioning Contract", "Serialization Format", "Security Considerations", "Testing Strategy"],
+      "maintenance_impact": "high"
+    },
+    {
+      "rank": 8,
+      "element_type": "eventing_messaging",
+      "display_name": "Eventing/Messaging",
+      "description": "Event bus and cross-component messaging",
+      "detection_patterns": {
+        "filename_patterns": ["eventBus", "messageHub", "events\\.ts$", "emitter"],
+        "path_patterns": ["events/", "messaging/"],
+        "code_patterns": ["EventEmitter", "BroadcastChannel", "addEventListener", "pubsub"]
+      },
+      "conditional_modules": ["ui/events"],
+      "additional_sections": ["event_catalog", "ordering_guarantees", "cross_tab_sync", "subscription_management"],
+      "checklist_items": [
+        "Event catalog - All event types, payloads",
+        "Ordering guarantees - FIFO, causality, batching",
+        "Cross-tab sync - Storage events, BroadcastChannel",
+        "Debouncing/throttling - Rate limiting, coalescing",
+        "Subscription lifecycle - Subscribe, unsubscribe, leaks",
+        "Error handling - Handler failures, dead letters",
+        "Testing approach - Event simulation, timing",
+        "Performance - Handler execution budgets"
+      ],
+      "required_sections": ["Event Catalog", "Ordering Guarantees", "Cross-Tab Sync", "Debounce/Throttle Strategy", "Subscription Management", "Error Handling", "Performance Budgets", "Testing Patterns"],
+      "maintenance_impact": "high"
+    },
+    {
+      "rank": 9,
+      "element_type": "routing_navigation",
+      "display_name": "Routing & Navigation",
+      "description": "Router configuration and navigation logic",
+      "detection_patterns": {
+        "filename_patterns": ["router\\.ts$", "routes\\.ts$", "navigation"],
+        "path_patterns": ["routing/", "router/"],
+        "code_patterns": ["useRouter", "useNavigate", "Route", "router.push"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["route_map", "route_guards", "deep_link_schema", "transition_lifecycle"],
+      "checklist_items": [
+        "Route map - All routes, params, query contracts",
+        "Route guards - Auth, permissions, redirects",
+        "Deep linking - URL structure, shareable links",
+        "Query param contracts - Expected params, types",
+        "Transition lifecycle - Before/after hooks",
+        "History management - Back/forward, replace vs push",
+        "Testing approach - Route rendering, guards",
+        "Performance - Code splitting, lazy loading"
+      ],
+      "required_sections": ["Route Map", "Route Guards", "Deep Link Schema", "Transition Lifecycle", "History Management", "Code Splitting", "Testing Patterns", "SEO Considerations"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 10,
+      "element_type": "file_tree_primitives",
+      "display_name": "File/Tree Domain Primitives",
+      "description": "Tree data structures and path utilities",
+      "detection_patterns": {
+        "filename_patterns": ["TreeNode", "PathUtils", "FileIndex", "Tree$"],
+        "path_patterns": ["tree/", "filesystem/"],
+        "code_patterns": ["tree structure", "path manipulation", "node traversal"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["tree_schema", "path_utilities", "indexing_strategy", "selection_semantics"],
+      "checklist_items": [
+        "Data structures - Tree shape, node schema",
+        "Path utilities - Normalization, joining, resolution",
+        "Indexing strategy - Map/Set structures, lookup perf",
+        "Selection semantics - Single, multi, range",
+        "Favorites/bookmarks - Storage, sync, limits",
+        "Sorting/filtering - Algorithms, custom comparators",
+        "Testing approach - Edge cases, deep trees",
+        "Performance - Tree depth limits, node counts"
+      ],
+      "required_sections": ["Tree Schema", "Path Utilities Reference", "Indexing Strategy", "Selection Semantics", "Favorites Contract", "Sort/Filter Algorithms", "Performance Limits", "Testing Patterns"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 11,
+      "element_type": "context_menu_commands",
+      "display_name": "Context Menu/Command System",
+      "description": "Context menus and command registries",
+      "detection_patterns": {
+        "filename_patterns": ["contextMenu", "commandRegistry", "actions\\.ts$", "commands"],
+        "path_patterns": ["commands/", "menus/"],
+        "code_patterns": ["context menu", "command registry", "action handlers"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["actions_catalog", "permissions_model", "keyboard_shortcuts"],
+      "checklist_items": [
+        "Actions catalog - All actions, handlers, shortcuts",
+        "Permissions - Who can see/trigger actions",
+        "Enable/disable logic - Dynamic availability",
+        "Analytics hooks - Tracking action usage",
+        "Positioning - Menu placement, overflow handling",
+        "Keyboard shortcuts - Key bindings, conflicts",
+        "Testing approach - Action execution, permissions",
+        "Accessibility - Focus trap, screen reader announcements"
+      ],
+      "required_sections": ["Actions Catalog", "Permissions Model", "Enable/Disable Logic", "Analytics Integration", "Positioning Strategy", "Keyboard Shortcuts", "Testing Patterns", "Accessibility"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 12,
+      "element_type": "permission_authz",
+      "display_name": "Permission & AuthZ Layer",
+      "description": "Authorization and permission management",
+      "detection_patterns": {
+        "filename_patterns": ["permissions", "authz", "rbac", "authorization"],
+        "path_patterns": ["permissions/", "auth/", "rbac/"],
+        "code_patterns": ["roles", "permissions", "capabilities", "can()"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["roles_catalog", "capabilities_reference", "policy_language"],
+      "checklist_items": [
+        "Roles catalog - All roles, inheritance",
+        "Capabilities - Granular permissions",
+        "UI gating - Component visibility rules",
+        "Server enforcement - API-level checks",
+        "Policy language - How rules are expressed",
+        "Testing approach - Role simulation, edge cases",
+        "Performance - Permission check frequency",
+        "Audit logging - Access attempts, denials"
+      ],
+      "required_sections": ["Roles Catalog", "Capabilities Reference", "UI Gating Strategy", "Server Enforcement", "Policy Language", "Testing Patterns", "Performance Considerations", "Audit Logging"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 13,
+      "element_type": "error_handling",
+      "display_name": "Error Handling System",
+      "description": "Error boundaries and error handling",
+      "detection_patterns": {
+        "filename_patterns": ["ErrorBoundary", "errorHandler", "errors\\.ts$", "toast"],
+        "path_patterns": ["errors/", "error-handling/"],
+        "code_patterns": ["ErrorBoundary", "try-catch", "error handling", "toast"]
+      },
+      "conditional_modules": ["network/errors"],
+      "additional_sections": ["error_taxonomy", "user_messaging", "recovery_flows"],
+      "checklist_items": [
+        "Error categories - Network, validation, auth, server",
+        "User-facing messages - Copy, tone, actionability",
+        "Recovery flows - Retry, reset, fallback",
+        "Error boundaries - Scope, fallback UI",
+        "Logging integration - Sentry, console, analytics",
+        "Testing approach - Error simulation, boundary rendering",
+        "Performance - Toast limits, memory leaks",
+        "Accessibility - Screen reader announcements, focus"
+      ],
+      "required_sections": ["Error Taxonomy", "User Messaging", "Recovery Flows", "Error Boundaries", "Logging Integration", "Testing Patterns", "Performance Constraints", "Accessibility"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 14,
+      "element_type": "logging_telemetry",
+      "display_name": "Logging/Telemetry/Analytics",
+      "description": "Analytics and telemetry systems",
+      "detection_patterns": {
+        "filename_patterns": ["analytics", "telemetry", "logger", "tracking"],
+        "path_patterns": ["analytics/", "telemetry/", "logging/"],
+        "code_patterns": ["track(", "log(", "analytics", "telemetry"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["event_taxonomy", "payload_schemas", "privacy_constraints"],
+      "checklist_items": [
+        "Event naming - Conventions, taxonomy",
+        "Payload schemas - Required/optional fields",
+        "Privacy constraints - PII scrubbing, consent",
+        "Sampling strategy - Rate limiting, quotas",
+        "Provider integration - GA, Mixpanel, Sentry",
+        "Testing approach - Event verification, mocks",
+        "Performance - Async batching, quota limits",
+        "Debugging - Console logging, debug mode"
+      ],
+      "required_sections": ["Event Taxonomy", "Payload Schemas", "Privacy Constraints", "Sampling Strategy", "Provider Integration", "Testing Patterns", "Performance Considerations", "Debugging Tools"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 15,
+      "element_type": "performance_critical_ui",
+      "display_name": "Performance-Critical UI Components",
+      "description": "High-performance UI requiring optimization",
+      "detection_patterns": {
+        "filename_patterns": ["^Virtual", "Canvas$", "List$", "Grid$"],
+        "path_patterns": ["virtualized/", "performance/"],
+        "code_patterns": ["virtualization", "memo", "useMemo", "performance optimization"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["performance_budgets", "profiling_guide", "virtualization_strategy", "optimization_history"],
+      "checklist_items": [
+        "Performance budgets - Target FPS, render time",
+        "Profiling setup - React DevTools, Chrome profiling",
+        "Virtualization - Window size, overscan, scroll perf",
+        "Memoization - useMemo, React.memo, when to use",
+        "Bottleneck analysis - Known slow paths",
+        "Testing approach - Performance regression tests",
+        "Optimization history - What was tried, what worked",
+        "Monitoring - Production perf metrics"
+      ],
+      "required_sections": ["Performance Budgets", "Profiling Guide", "Virtualization Strategy", "Memoization Rules", "Bottleneck Catalog", "Testing Approach", "Optimization History", "Monitoring"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 16,
+      "element_type": "design_system_components",
+      "display_name": "Design System Components",
+      "description": "Reusable UI components from design system",
+      "detection_patterns": {
+        "filename_patterns": ["^Button$", "^Modal$", "^Input$", "^Select$", "^Card$"],
+        "path_patterns": ["design-system/", "components/ui/", "primitives/"],
+        "code_patterns": ["variants", "design tokens", "component library"]
+      },
+      "conditional_modules": ["ui/props", "ui/events", "ui/accessibility"],
+      "additional_sections": ["props_reference", "variants_catalog", "theming_tokens"],
+      "checklist_items": [
+        "Props API - All props, types, defaults",
+        "Variants catalog - Primary, secondary, sizes",
+        "Accessibility guarantees - Roles, labels, keyboard",
+        "Theming tokens - Colors, spacing, typography",
+        "Composition patterns - How components combine",
+        "Testing approach - Visual regression, a11y audits",
+        "Performance - Re-render frequency",
+        "Migration notes - Breaking changes from old versions"
+      ],
+      "required_sections": ["Props Reference", "Variants Catalog", "Accessibility Guarantees", "Theming Tokens", "Composition Examples", "Testing Patterns", "Performance Notes", "Migration Guide"],
+      "maintenance_impact": "medium"
+    },
+    {
+      "rank": 17,
+      "element_type": "theming_styling",
+      "display_name": "Theming & Styling System",
+      "description": "Theme configuration and styling systems",
+      "detection_patterns": {
+        "filename_patterns": ["theme", "tokens", "styles", "tailwind.config"],
+        "path_patterns": ["theme/", "styles/", "styling/"],
+        "code_patterns": ["theme", "CSS variables", "design tokens", "styled"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["token_map", "dark_mode_strategy", "customization_api"],
+      "checklist_items": [
+        "Token map - All tokens, values, semantic meaning",
+        "Dark mode - Toggle mechanism, token overrides",
+        "Customization points - What users can override",
+        "Anti-patterns - Avoid magic numbers, inline styles",
+        "Responsive strategy - Breakpoints, mobile-first",
+        "Testing approach - Visual regression, theme switching",
+        "Performance - CSS bundle size, runtime overhead",
+        "Migration - From old theme system"
+      ],
+      "required_sections": ["Token Map", "Dark Mode Strategy", "Customization API", "Anti-Patterns", "Responsive Strategy", "Testing Patterns", "Performance Considerations", "Migration Guide"],
+      "maintenance_impact": "low"
+    },
+    {
+      "rank": 18,
+      "element_type": "build_tooling",
+      "display_name": "Build & Tooling Scripts",
+      "description": "Build scripts and developer tooling",
+      "detection_patterns": {
+        "filename_patterns": ["build\\.js$", "codegen", "scripts/"],
+        "path_patterns": ["scripts/", "tools/", "build/"],
+        "code_patterns": ["build script", "codegen", "automation"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["script_purpose", "inputs_outputs", "ci_integration"],
+      "checklist_items": [
+        "Purpose - What the script does, why it exists",
+        "Inputs/outputs - Files, env vars, CLI args",
+        "Safe usage - Dry-run mode, validation",
+        "CI integration - When it runs, dependencies",
+        "Error handling - Failure modes, rollback",
+        "Testing approach - Unit tests, integration tests",
+        "Performance - Execution time, parallelization",
+        "Debugging - Verbose mode, logs"
+      ],
+      "required_sections": ["Script Purpose", "Inputs/Outputs", "Usage Examples", "CI Integration", "Error Handling", "Testing Strategy", "Performance Notes", "Debugging Guide"],
+      "maintenance_impact": "low"
+    },
+    {
+      "rank": 19,
+      "element_type": "ci_cd_pipelines",
+      "display_name": "CI/CD Pipelines",
+      "description": "CI/CD configuration and deployment pipelines",
+      "detection_patterns": {
+        "filename_patterns": ["\\.github/workflows", "deploy\\.yml$", "\\.gitlab-ci"],
+        "path_patterns": [".github/workflows/", ".gitlab/", "pipelines/"],
+        "code_patterns": ["CI/CD", "pipeline", "deployment", "workflow"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["pipeline_overview", "artifacts_catalog", "rollback_playbook"],
+      "checklist_items": [
+        "Pipeline stages - Build, test, deploy sequence",
+        "Artifacts - What's produced, where stored",
+        "Environment variables - Secrets, config",
+        "Rollback strategy - How to revert deployments",
+        "Debugging failures - Logs, re-run, local repro",
+        "Testing integration - Test suites, coverage gates",
+        "Performance - Build times, caching",
+        "Security - Secret management, permissions"
+      ],
+      "required_sections": ["Pipeline Overview", "Artifacts Catalog", "Environment Variables", "Rollback Playbook", "Debugging Guide", "Testing Integration", "Performance Optimization", "Security Practices"],
+      "maintenance_impact": "low"
+    },
+    {
+      "rank": 20,
+      "element_type": "testing_harness",
+      "display_name": "Testing Harness & Utilities",
+      "description": "Test utilities, mocks, and fixtures",
+      "detection_patterns": {
+        "filename_patterns": ["test-utils", "mocks/", "fixtures/", "__tests__/"],
+        "path_patterns": ["test/", "testing/", "__tests__/"],
+        "code_patterns": ["test utilities", "mock", "fixture", "test helpers"]
+      },
+      "conditional_modules": [],
+      "additional_sections": ["standard_patterns", "mock_boundaries", "fixture_catalog"],
+      "checklist_items": [
+        "Standard patterns - Setup, teardown, assertions",
+        "Mock boundaries - What to mock, what to test real",
+        "Fixture management - Realistic test data, generators",
+        "Golden-path suites - Critical user flows",
+        "Async testing - waitFor, act, timing issues",
+        "Coverage targets - Line, branch, statement goals",
+        "Performance - Test execution time, parallelization",
+        "Debugging - Isolated runs, verbose output"
+      ],
+      "required_sections": ["Standard Patterns", "Mock Boundaries", "Fixture Catalog", "Golden-Path Suites", "Async Testing", "Coverage Targets", "Performance Optimization", "Debugging Guide"],
+      "maintenance_impact": "low"
+    }
+  ],
+
+  "detection_algorithm": {
+    "description": "3-stage element type detection algorithm",
+    "stage_1": {
+      "name": "Filename Pattern Matching",
+      "confidence_range": "80-95%",
+      "implementation": "Regex matching against filename_patterns for all 20 element types",
+      "example": "useLocalStorage.ts → matches ^use[A-Z] → custom_hooks (90% confidence)"
+    },
+    "stage_2": {
+      "name": "Code Analysis Refinement",
+      "confidence_boost": "+10-20%",
+      "implementation": "Scan code for patterns in code_patterns, boost confidence if matches found",
+      "example": "useLocalStorage.ts → detects 'useEffect.*return.*cleanup' → boosts custom_hooks confidence to 100%"
+    },
+    "stage_3": {
+      "name": "Fallback with Manual Review",
+      "trigger": "confidence < 50%",
+      "default": "top_level_widgets",
+      "action": "Flag for manual element type selection with list of 20 types"
+    }
+  },
+
+  "usage_notes": {
+    "module_selection": "Use conditional_modules array to determine which modules to load for each element type",
+    "checklist_injection": "Inject checklist_items into relevant sections as H4 '#### Checklist' with bullet points",
+    "section_generation": "Combine base template (13 sections) + additional_sections for complete document structure",
+    "maintenance_priority": "Use maintenance_impact (critical/high/medium/low) to prioritize documentation updates"
+  }
+}

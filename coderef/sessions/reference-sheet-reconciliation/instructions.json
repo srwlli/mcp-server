@@ -1,0 +1,334 @@
+{
+  "workorder_id": "WO-REFERENCE-SHEET-RECONCILIATION-001",
+  "feature_name": "reference-sheet-reconciliation",
+  "created": "2026-01-02",
+  "status": "not_started",
+  "description": "CONSOLIDATE two separate resource sheet systems (create-resource-sheet.md + resource-sheet-catalog.md) into ONE unified system that combines Tool 1's execution framework with Tool 2's 20 element type specializations",
+
+  "primary_goal": "Merge Tool 1 (HOW - agent execution framework) with Tool 2 (WHAT - 20 element type templates) into a single unified system accessible via /create-resource-sheet command",
+
+  "session_guide": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\WILL-READ-THIS-YOU-IDIOT.md",
+
+  "tools_to_consolidate": {
+    "tool_1": "C:\\Users\\willh\\Desktop\\assistant\\.claude\\commands\\create-resource-sheet.md",
+    "tool_2": "C:\\Users\\willh\\Desktop\\assistant\\.claude\\commands\\resource-sheet-catalog.md"
+  },
+
+  "example_usage": {
+    "command": "/create-resource-sheet schema.ts",
+    "note": "Example of how to invoke the resource sheet tool - this is what we're consolidating into MCP tool"
+  },
+
+  "communication": {
+    "orchestrator": {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "role": "Coordinate plan review process, collect agent outputs, and facilitate synthesis workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\orchestrator-output.json",
+      "markdown_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\orchestrator-output.md",
+      "status": "not_started",
+      "notes": ""
+    },
+
+    "agents": [
+      {
+        "agent_id": "coderef",
+        "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+        "assigned_task": "Review all three plans and synthesize best approach aligned with coderef ecosystem standards",
+        "plans_to_review": [
+          "C:\\Users\\willh\\Desktop\\assistant\\coderef\\workorder\\resource-sheet-system\\plan.json",
+          "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\resource-sheet-reconciliation\\plan.json",
+          "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\workorder\\resource-sheet-graph-integration\\plan.json"
+        ],
+        "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-output.json",
+        "markdown_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-output.md",
+        "status": "not_started",
+        "notes": ""
+      },
+      {
+        "agent_id": "coderef-docs",
+        "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+        "assigned_task": "Generate documentation workflow templates and standards for resource sheet system",
+        "reference_plan": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\resource-sheet-reconciliation\\plan.json",
+        "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-docs-output.json",
+        "markdown_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-docs-output.md",
+        "status": "not_started",
+        "notes": "Use your own plan as reference for documentation workflow patterns"
+      },
+      {
+        "agent_id": "papertrail",
+        "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+        "assigned_task": "Create generated template for resource sheet documentation and tracking",
+        "reference_plans": [
+          "C:\\Users\\willh\\Desktop\\assistant\\coderef\\workorder\\resource-sheet-system\\plan.json",
+          "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\resource-sheet-reconciliation\\plan.json",
+          "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\workorder\\resource-sheet-graph-integration\\plan.json"
+        ],
+        "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\papertrail-output.json",
+        "markdown_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\papertrail-output.md",
+        "status": "not_started",
+        "notes": "Review all three plans to understand template requirements"
+      },
+      {
+        "agent_id": "coderef-system",
+        "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+        "assigned_task": "Update graph integration documentation to support unified resource sheet system",
+        "reference_plan": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\workorder\\resource-sheet-graph-integration\\plan.json",
+        "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-system-output.json",
+        "markdown_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-system-output.md",
+        "status": "not_started",
+        "notes": "Document how graph queries enable resource sheet auto-population"
+      }
+    ],
+
+    "aggregation": {
+      "total_agents": 4,
+      "completed": 0,
+      "pending": 0,
+      "not_started": 4
+    }
+  },
+
+  "orchestrator_instructions": {
+    "role": "Coordinate plan review process, collect agent outputs, and facilitate synthesis workflow",
+    "context": "You are the orchestrator coordinating a multi-agent session. Three agents (coderef, coderef-docs, papertrail) will complete their assigned tasks. Your job is to collect their outputs, verify completeness, and prepare handoff for final workorder creation.",
+    "steps": {
+      "step_1": {
+        "action": "MONITOR agent progress",
+        "details": "Track status in communication.agents[] as agents complete their tasks"
+      },
+      "step_2": {
+        "action": "COLLECT agent outputs when complete",
+        "details": "Read coderef-output.json, coderef-docs-output.json, and papertrail-output.json from session directory"
+      },
+      "step_3": {
+        "action": "VERIFY output completeness",
+        "details": "Ensure all agents provided required outputs per quality_standards"
+      },
+      "step_4": {
+        "action": "COMPILE coordination summary",
+        "details": "Document which agents participated, what they delivered, and overall session status"
+      },
+      "step_5": {
+        "action": "PREPARE handoff package",
+        "details": "Gather all agent outputs for user review and final workorder creation"
+      },
+      "step_6": {
+        "action": "CREATE orchestrator outputs",
+        "details": "Generate orchestrator-output.json (session metadata) and orchestrator-output.md (coordination summary)"
+      }
+    },
+    "output_requirements": {
+      "json_file": "orchestrator-output.json - Session metadata and agent completion tracking",
+      "markdown_file": "orchestrator-output.md - Coordination summary and handoff package overview",
+      "must_include": [
+        "List of participating agents and their tasks",
+        "Completion status for each agent",
+        "Links to all agent output files",
+        "Next steps for workorder creation"
+      ]
+    }
+  },
+
+  "agent_instructions": {
+    "coderef": {
+      "role": "Synthesize how to merge Tool 1 (create-resource-sheet.md) and Tool 2 (resource-sheet-catalog.md) into ONE unified system",
+      "context": "GOAL: Consolidate two separate .md files into single unified resource sheet system. Tool 1 has execution framework (HOW). Tool 2 has 20 element types (WHAT). Must answer: How do we structurally merge these files? The /create-resource-sheet command must continue working.",
+      "steps": {
+        "step_1": {
+          "action": "READ Tool 1 and Tool 2",
+          "details": "Read .claude/commands/create-resource-sheet.md (240 lines - agent framework) and .claude/commands/resource-sheet-catalog.md (634 lines - 20 element types)"
+        },
+        "step_2": {
+          "action": "REVIEW all three plans for consolidation approaches",
+          "details": "Plan 1: How does coderef-assistant propose merging? Plan 2: How does coderef-docs approach it? Plan 3: How does graph integration fit?"
+        },
+        "step_3": {
+          "action": "ANSWER KEY QUESTIONS",
+          "details": "1) How to merge files structurally? 2) Keep all 20 element types or simplify? 3) Single template with conditionals OR modular approach? 4) How does element type detection work? 5) What's the migration path?"
+        },
+        "step_4": {
+          "action": "DESIGN unified file structure",
+          "details": "Create structural design for merged file: sections, ordering, how element types integrate with agent framework, how /create-resource-sheet command invokes it"
+        },
+        "step_5": {
+          "action": "VALIDATE consolidation design",
+          "details": "Ensures: Tool 1's quality controls preserved, all 20 element types accessible, /create-resource-sheet command works, no functionality lost"
+        },
+        "step_6": {
+          "action": "CREATE outputs",
+          "details": "Generate coderef-output.json (consolidation design data) and coderef-output.md (merge strategy report with structural blueprint)"
+        }
+      },
+      "required_outputs": {
+        "must_answer": [
+          "How to structurally merge the two .md files?",
+          "Where do 20 element types fit in merged structure?",
+          "How does element detection/selection work?",
+          "How does /create-resource-sheet command route to element types?",
+          "What's the migration path from old to new?"
+        ]
+      }
+    },
+    "coderef-docs": {
+      "role": "Define documentation standards for the UNIFIED resource sheet system (merged Tool 1 + Tool 2)",
+      "context": "After consolidation, the unified system needs clear documentation standards. Focus: How do users invoke it? How is it documented? What are the quality gates? How does it integrate with coderef-workflow?",
+      "steps": {
+        "step_1": {
+          "action": "READ your own plan (WO-RESOURCE-SHEET-RECONCILIATION-001)",
+          "details": "Review your reconciliation approach - what documentation patterns did you identify?"
+        },
+        "step_2": {
+          "action": "DEFINE user documentation structure",
+          "details": "What docs does unified system need? Usage guide for /create-resource-sheet? Element type reference? Examples per type?"
+        },
+        "step_3": {
+          "action": "CREATE quality gate templates",
+          "details": "How to validate generated resource sheets? Checklists per element type? Refactor-safety validation?"
+        },
+        "step_4": {
+          "action": "DESIGN maintenance workflow",
+          "details": "How to update unified system? Add new element types? Deprecate old sections? Version management?"
+        },
+        "step_5": {
+          "action": "SPECIFY coderef-workflow integration",
+          "details": "How does /create-resource-sheet fit into planning workflows? When should agents use it? Output format expectations?"
+        },
+        "step_6": {
+          "action": "CREATE outputs",
+          "details": "Generate coderef-docs-output.json (documentation templates) and coderef-docs-output.md (standards guide for unified system)"
+        }
+      },
+      "required_outputs": {
+        "must_define": [
+          "User documentation structure for unified system",
+          "Quality validation templates (per element type)",
+          "Maintenance workflow for updates",
+          "Integration with coderef-workflow"
+        ]
+      }
+    },
+    "papertrail": {
+      "role": "Design auto-generation system for UNIFIED resource sheet templates (Tool 1 quality framework + Tool 2 element types)",
+      "context": "The unified system must auto-generate consistent resource sheets. Design the template generation engine that applies Tool 1's quality controls to Tool 2's 20 element types.",
+      "steps": {
+        "step_1": {
+          "action": "REVIEW all three plans for generation patterns",
+          "details": "How does each plan propose template generation? What auto-fill strategies? What validation?"
+        },
+        "step_2": {
+          "action": "DESIGN unified template schema",
+          "details": "Define JSON schema for unified resource sheets: base sections (from Tool 1) + element-specific sections (from Tool 2)"
+        },
+        "step_3": {
+          "action": "CREATE element type detection logic",
+          "details": "How to auto-detect element type from target name? (e.g., 'schema.ts' → 'Data Model', 'Button.tsx' → 'Design System Component')"
+        },
+        "step_4": {
+          "action": "BUILD template generation rules",
+          "details": "For each of 20 element types: which sections required? Which checklists apply? How to combine with Tool 1's base framework?"
+        },
+        "step_5": {
+          "action": "DEFINE validation pipeline",
+          "details": "Quality checks from Tool 1 (refactor-safety, exhaustiveness) + element-specific validation (all required sections present)"
+        },
+        "step_6": {
+          "action": "CREATE outputs",
+          "details": "Generate papertrail-output.json (template schema + generation rules) and papertrail-output.md (auto-generation guide with examples)"
+        }
+      },
+      "required_outputs": {
+        "must_include": [
+          "Unified template JSON schema (base + 20 element variants)",
+          "Element type detection algorithm",
+          "Generation rules per element type",
+          "Validation pipeline (quality gates)"
+        ]
+      }
+    },
+    "coderef-system": {
+      "role": "Document how graph queries enable auto-population of resource sheets",
+      "context": "Your plan (WO-RESOURCE-SHEET-GRAPH-INTEGRATION-001) shows how DependencyGraph provides imports/exports/relationships. Explain how this data auto-fills resource sheet fields, achieving 60-80% completion.",
+      "steps": {
+        "step_1": {
+          "action": "READ your plan (WO-RESOURCE-SHEET-GRAPH-INTEGRATION-001)",
+          "details": "Review the graph integration approach - consumer-side solution using DependencyGraph queries"
+        },
+        "step_2": {
+          "action": "MAP graph data to resource sheet sections",
+          "details": "Which graph queries populate which sections? (e.g., imports → Dependencies, exports → Public API, consumers → Usage)"
+        },
+        "step_3": {
+          "action": "DOCUMENT auto-fill capabilities",
+          "details": "Which fields can be auto-filled from graph? Which require manual input? What's the expected completion rate per element type?"
+        },
+        "step_4": {
+          "action": "DEFINE graph query patterns",
+          "details": "Document the specific queries: getImportsForElement(), getExportsForElement(), getConsumersForElement(), getDependenciesForElement()"
+        },
+        "step_5": {
+          "action": "SPECIFY integration with unified system",
+          "details": "How does graph integration fit into consolidated resource sheet workflow? When is it invoked? What's the data flow?"
+        },
+        "step_6": {
+          "action": "CREATE outputs",
+          "details": "Generate coderef-system-output.json (graph mapping data) and coderef-system-output.md (integration guide)"
+        }
+      },
+      "required_outputs": {
+        "must_document": [
+          "Graph query → resource sheet section mapping",
+          "Auto-fill completion rates per element type",
+          "Integration points with unified system",
+          "Data flow from graph to generated docs"
+        ]
+      }
+    }
+  },
+
+  "output_format": "both",
+
+  "output_template_json": {
+    "agent_id": "agent-name",
+    "timestamp": "YYYY-MM-DD",
+    "plan_reviewed": "path/to/plan/file",
+    "review": {
+      "strengths": [
+        "Specific strength with evidence from plan"
+      ],
+      "weaknesses": [
+        "Specific gap or concern with rationale"
+      ],
+      "ecosystem_alignment": {
+        "mcp_tool_patterns": "evaluation of MCP tool design alignment",
+        "documentation_standards": "evaluation of documentation approach",
+        "workflow_integration": "evaluation of coderef-workflow integration",
+        "score": "1-10"
+      },
+      "key_features": [
+        "Feature or approach worth preserving"
+      ],
+      "concerns": [
+        "Risk or issue that needs addressing"
+      ]
+    },
+    "recommendations": [
+      "Specific recommendation for synthesis phase"
+    ]
+  },
+
+  "output_template_markdown": "# Plan Review - [Agent Name]\n\n## Plan Reviewed\n[Path to plan file]\n\n## Timestamp\n[Date]\n\n## Strengths\n- Strength 1\n- Strength 2\n\n## Weaknesses\n- Weakness 1\n- Weakness 2\n\n## Ecosystem Alignment\n### MCP Tool Patterns\n[Evaluation]\n\n### Documentation Standards\n[Evaluation]\n\n### Workflow Integration\n[Evaluation]\n\n### Alignment Score\n[1-10]/10\n\n## Key Features to Preserve\n- Feature 1\n- Feature 2\n\n## Concerns\n- Concern 1\n- Concern 2\n\n## Recommendations\n- Recommendation 1\n- Recommendation 2\n",
+
+  "quality_standards": {
+    "completeness": "Thorough review of assigned plan, all sections analyzed (strengths, weaknesses, ecosystem alignment), specific evidence cited, actionable recommendations provided",
+    "accuracy": "Precise evaluation against coderef ecosystem standards, accurate assessment of technical feasibility, validated alignment scores",
+    "format": "Both JSON (structured review data) and Markdown (detailed narrative review) required. JSON must validate against output_template_json structure.",
+    "actionability": "Recommendations must be specific, implementable, and directly tied to synthesis goals"
+  },
+
+  "execution_notes": {
+    "agent_workflow": "1. Agent reads instructions.json → 2. Finds their entry in communication.agents[] → 3. Follows agent_instructions.steps → 4. Creates output at output_file and markdown_file paths → 5. Updates status to 'complete' in communication.agents[]",
+    "orchestrator_workflow": "1. Orchestrator reads instructions.json → 2. Checks communication.orchestrator → 3. Follows orchestrator_instructions.steps → 4. Creates output at orchestrator output paths → 5. Updates status to 'complete' in communication.orchestrator",
+    "status_updates": "Agents must update their status in communication.agents[].status as they progress: not_started → in_progress → complete"
+  }
+}

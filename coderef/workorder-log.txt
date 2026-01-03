@@ -1,3 +1,7 @@
+WO-RESOURCE-SHEET-GRAPH-INTEGRATION-001 | coderef-system | Resource sheet graph integration (Plan 3) | 2026-01-03T00:07:49.015433+00:00
+WO-RESOURCE-SHEET-SYSTEM-001 | coderef-assistant | Resource sheet system consolidation (Plan 1) | 2026-01-03T00:07:40.809955+00:00
+WO-REFERENCE-SHEET-RECONCILIATION-001 | coderef-ecosystem | Plan review and synthesis for resource sheet co... | 2026-01-02T22:03:31.838382+00:00
+WO-RESOURCE-SHEET-RECONCILIATION-001 | coderef-docs | Reconcile dual-agent resource sheet systems - p... | 2026-01-02T20:12:31.763657+00:00
 WO-RESOURCE-SHEET-MCP-TOOL-001 | coderef-docs | resource-sheet-mcp-tool implementation plan | 2026-01-02T09:06:32.134102+00:00
 WO-PHASE-5-COMPLETION-001 | Phaser-Antigravity | Complete remaining Phase 5 roadmap (Sprints 2-7) | 2026-01-02T09:03:25.645727+00:00
 WO-DOCUMENT-EFFECTIVENESS-003 | coderef-ecosystem | Step 6: Improvement Roadmap - Create prioritized implementation plan (P0/P1/P2/P3) | 2026-01-02T08:00:00+00:00

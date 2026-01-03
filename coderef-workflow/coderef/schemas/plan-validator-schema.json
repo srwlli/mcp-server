@@ -1,0 +1,302 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "plan_validator.py Schema",
+  "description": "Type definitions and validation contracts for PlanValidator class",
+  "definitions": {
+    "ValidationResultDict": {
+      "type": "object",
+      "description": "Complete validation results with score, issues, and approval",
+      "properties": {
+        "validation_result": {
+          "type": "string",
+          "enum": ["excellent", "good", "needs work", "poor"],
+          "description": "Result category based on score"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "0-100 quality score"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValidationIssueDict"
+          },
+          "description": "List of validation issues"
+        },
+        "checklist_results": {
+          "$ref": "#/definitions/ChecklistResults"
+        },
+        "approved": {
+          "type": "boolean",
+          "description": "True if score >= 90"
+        }
+      },
+      "required": ["validation_result", "score", "issues", "checklist_results", "approved"]
+    },
+    "ValidationIssueDict": {
+      "type": "object",
+      "description": "Individual validation issue",
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor"],
+          "description": "Issue severity (critical=-20pts, major=-10pts, minor=-5pts)"
+        },
+        "section": {
+          "type": "string",
+          "enum": ["structure", "completeness", "quality", "autonomy"],
+          "description": "Validation category"
+        },
+        "issue": {
+          "type": "string",
+          "description": "Human-readable issue description"
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Actionable fix suggestion"
+        }
+      },
+      "required": ["severity", "section", "issue", "suggestion"]
+    },
+    "ChecklistResults": {
+      "type": "object",
+      "description": "Detailed breakdown by validation category",
+      "properties": {
+        "structure": {
+          "$ref": "#/definitions/CategoryScore"
+        },
+        "completeness": {
+          "$ref": "#/definitions/CategoryScore"
+        },
+        "quality": {
+          "$ref": "#/definitions/CategoryScore"
+        },
+        "autonomy": {
+          "$ref": "#/definitions/CategoryScore"
+        }
+      },
+      "required": ["structure", "completeness", "quality", "autonomy"]
+    },
+    "CategoryScore": {
+      "type": "object",
+      "properties": {
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of checks passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of checks failed"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Category score (passed / total) * 100"
+        }
+      },
+      "required": ["passed", "failed", "score"]
+    },
+    "ValidatorConstructorArgs": {
+      "type": "object",
+      "properties": {
+        "plan_path": {
+          "type": "string",
+          "description": "Absolute path to plan.json file"
+        }
+      },
+      "required": ["plan_path"]
+    },
+    "RequiredSections": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "0_preparation",
+          "1_executive_summary",
+          "2_risk_assessment",
+          "3_current_state_analysis",
+          "4_key_features",
+          "5_task_id_system",
+          "6_implementation_phases",
+          "7_testing_strategy",
+          "8_success_criteria",
+          "9_implementation_checklist"
+        ]
+      },
+      "minItems": 10,
+      "maxItems": 10,
+      "description": "All 10 required plan sections"
+    },
+    "ScoringFormula": {
+      "type": "object",
+      "description": "Score calculation algorithm",
+      "properties": {
+        "base_score": {
+          "type": "integer",
+          "const": 100
+        },
+        "critical_deduction": {
+          "type": "integer",
+          "const": 20,
+          "description": "Points deducted per critical issue"
+        },
+        "major_deduction": {
+          "type": "integer",
+          "const": 10,
+          "description": "Points deducted per major issue"
+        },
+        "minor_deduction": {
+          "type": "integer",
+          "const": 5,
+          "description": "Points deducted per minor issue"
+        },
+        "formula": {
+          "type": "string",
+          "const": "score = max(0, 100 - critical*20 - major*10 - minor*5)"
+        }
+      }
+    },
+    "ResultThresholds": {
+      "type": "object",
+      "description": "Score to result category mapping",
+      "properties": {
+        "excellent": {
+          "type": "object",
+          "properties": {
+            "min_score": {"type": "integer", "const": 90},
+            "max_score": {"type": "integer", "const": 100},
+            "approved": {"type": "boolean", "const": true}
+          }
+        },
+        "good": {
+          "type": "object",
+          "properties": {
+            "min_score": {"type": "integer", "const": 75},
+            "max_score": {"type": "integer", "const": 89},
+            "approved": {"type": "boolean", "const": false}
+          }
+        },
+        "needs_work": {
+          "type": "object",
+          "properties": {
+            "min_score": {"type": "integer", "const": 50},
+            "max_score": {"type": "integer", "const": 74},
+            "approved": {"type": "boolean", "const": false}
+          }
+        },
+        "poor": {
+          "type": "object",
+          "properties": {
+            "min_score": {"type": "integer", "const": 0},
+            "max_score": {"type": "integer", "const": 49},
+            "approved": {"type": "boolean", "const": false}
+          }
+        }
+      }
+    },
+    "PlaceholderPatterns": {
+      "type": "object",
+      "description": "Regex patterns for placeholder detection",
+      "properties": {
+        "regex": {
+          "type": "string",
+          "const": "\\b(TBD|TODO|\\[placeholder\\]|Coming soon|Fill this in|to be determined)\\b"
+        },
+        "flags": {
+          "type": "string",
+          "const": "IGNORECASE"
+        },
+        "examples": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": ["TBD", "TODO", "[placeholder]", "Coming soon", "Fill this in", "to be determined"]
+        }
+      }
+    },
+    "CircularDependencyDetection": {
+      "type": "object",
+      "description": "DFS-based cycle detection algorithm",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "Depth-First Search with recursion stack"
+        },
+        "time_complexity": {
+          "type": "string",
+          "const": "O(V + E) where V=tasks, E=dependencies"
+        },
+        "example_cycle": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": ["Task A → Task B → Task C → Task A"]
+        }
+      }
+    },
+    "PerformanceMetrics": {
+      "type": "object",
+      "properties": {
+        "load_plan_ms": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "load_schema_ms_first": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "load_schema_ms_cached": {
+          "type": "number",
+          "maximum": 1
+        },
+        "validate_structure_ms": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "validate_completeness_ms": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 20
+        },
+        "total_validation_ms": {
+          "type": "number",
+          "minimum": 100,
+          "maximum": 200
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "planning/quality-assurance",
+    "file": "generators/plan_validator.py",
+    "lines": 622,
+    "class": "PlanValidator",
+    "methods": 14,
+    "version": "1.2.0",
+    "key_features": [
+      "0-100 scoring system",
+      "Severity-based deductions (critical=-20, major=-10, minor=-5)",
+      "Circular dependency detection (DFS)",
+      "Schema validation (plan.schema.json)",
+      "Placeholder detection (regex)",
+      "Approval threshold (score >= 90)"
+    ],
+    "validation_categories": [
+      "structure (30% weight)",
+      "completeness (25% weight)",
+      "quality (25% weight)",
+      "autonomy (20% weight)"
+    ],
+    "input_file": "plan.json",
+    "schema_file": "coderef/schemas/plan.schema.json",
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P0-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

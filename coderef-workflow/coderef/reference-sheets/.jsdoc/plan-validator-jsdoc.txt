@@ -1,0 +1,746 @@
+# JSDoc Suggestions for plan_validator.py
+
+## Purpose
+Copy-paste JSDoc comments to enhance inline documentation in plan_validator.py
+
+## Usage Instructions
+1. Copy the relevant JSDoc block below
+2. Paste above the corresponding function/class in plan_validator.py
+3. Adjust parameter names/types if implementation differs
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Plan Validation for Implementation Plans (QUA-001)
+
+Validates implementation plans against:
+1. plan.schema.json - Single source of truth for plan structure
+2. Quality checklist - Completeness, quality, and autonomy checks
+
+**Scoring System:**
+- Base score: 100 points
+- Critical issue: -20 points each
+- Major issue: -10 points each
+- Minor issue: -5 points each
+- Approval threshold: >= 90 points
+
+**Validation Categories:**
+- Structure (30% weight): All 10 required sections present
+- Completeness (25% weight): No placeholders, valid task IDs
+- Quality (25% weight): Detailed content, examples, specificity
+- Autonomy (20% weight): Actionable steps, clear dependencies
+
+**Enables Iterative Review Loop:**
+AI agent → validate plan → refine based on issues → re-validate
+→ repeat until score >= 90 → approved for execution
+
+**Performance:** ~100-200ms per validation
+
+**Version:** 1.2.0
+**See:** PLAN-VALIDATOR.md for complete documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Class Definition
+
+```python
+class PlanValidator:
+    """
+    Validates implementation plans against schema and quality checklist.
+
+    **State Ownership:**
+    - Owns: plan_path (constructor arg)
+    - Loads: plan_data (from plan.json)
+    - Accumulates: issues list (during validation)
+    - Caches: _schema (plan.schema.json)
+
+    **Stateful for One Validation:**
+    Create new instance for each plan. Reusing instance causes issue accumulation.
+
+    **Required Sections (Class Constants):**
+    REQUIRED_SECTIONS = [
+        "0_preparation",
+        "1_executive_summary",
+        "2_risk_assessment",
+        "3_current_state_analysis",
+        "4_key_features",
+        "5_task_id_system",
+        "6_implementation_phases",
+        "7_testing_strategy",
+        "8_success_criteria",
+        "9_implementation_checklist"
+    ]
+
+    **Scoring Formula:**
+    score = max(0, 100 - critical*20 - major*10 - minor*5)
+
+    **Result Categories:**
+    - 90-100: "excellent" (approved)
+    - 75-89: "good" (near approval)
+    - 50-74: "needs work" (significant issues)
+    - 0-49: "poor" (major rework needed)
+
+    **Performance:** ~100-200ms per validation
+
+    **Example:**
+        >>> validator = PlanValidator(Path("plan.json"))
+        >>> result = validator.validate()
+        >>> result['score']
+        95
+        >>> result['validation_result']
+        'excellent'
+        >>> result['approved']
+        True
+
+    **See:** PLAN-VALIDATOR.md Section 3 for architecture
+    """
+```
+
+---
+
+## Constructor
+
+```python
+def __init__(self, plan_path: Path):
+    """
+    Initialize validator with path to plan file.
+
+    **Args:**
+        plan_path (Path): Absolute path to plan.json file
+
+    **Side Effects:**
+        - Sets self.plan_path
+        - Initializes self.plan_data = None
+        - Initializes self.issues = []
+        - Initializes self._schema = None
+
+    **Performance:** <1ms
+
+    **Example:**
+        >>> from pathlib import Path
+        >>> validator = PlanValidator(Path("coderef/workorder/feature/plan.json"))
+        >>> validator.plan_path
+        PosixPath('coderef/workorder/feature/plan.json')
+
+    **See:** PLAN-VALIDATOR.md Section 4.1
+    """
+```
+
+---
+
+## Main Validation Method
+
+```python
+def validate(self) -> ValidationResultDict:
+    """
+    Validate plan and return results.
+
+    **Main entry point** for plan validation. Orchestrates loading, validating,
+    scoring, and returning comprehensive results.
+
+    **Workflow:**
+    1. Load plan.json file (_load_plan())
+    2. Load plan.schema.json (_load_schema(), cached)
+    3. Run 5 validators (structure, completeness, quality, workorder, autonomy)
+    4. Check circular dependencies
+    5. Calculate score (0-100)
+    6. Determine result ("excellent"/"good"/"needs work"/"poor")
+    7. Build checklist results
+    8. Return ValidationResultDict
+
+    **Returns:**
+        ValidationResultDict with:
+        - validation_result: "excellent"/"good"/"needs work"/"poor"
+        - score: 0-100
+        - issues: List of ValidationIssueDict
+        - checklist_results: Breakdown by category
+        - approved: True if score >= 90
+
+    **Performance:** ~100-200ms (for typical plan)
+
+    **Example:**
+        >>> validator = PlanValidator(plan_path)
+        >>> result = validator.validate()
+        >>> print(f"Score: {result['score']}/100")
+        Score: 95/100
+        >>> print(f"Result: {result['validation_result']}")
+        Result: excellent
+        >>> print(f"Issues: {len(result['issues'])}")
+        Issues: 2
+
+    **See:**
+        - PLAN-VALIDATOR.md Section 4.2
+        - type_defs.py:ValidationResultDict for return type
+    """
+```
+
+---
+
+## Plan Loader
+
+```python
+def _load_plan(self):
+    """
+    Load and parse plan JSON file.
+
+    **Side Effects:**
+        Sets self.plan_data with parsed JSON
+
+    **Raises:**
+        ValueError: If JSON is malformed
+        FileNotFoundError: If plan file doesn't exist
+
+    **Performance:** ~10-20ms (single file read)
+
+    **Example:**
+        >>> validator._load_plan()
+        >>> validator.plan_data.keys()
+        dict_keys(['META_DOCUMENTATION', 'UNIVERSAL_PLANNING_STRUCTURE'])
+
+    **See:** PLAN-VALIDATOR.md Section 4.3
+    """
+```
+
+---
+
+## Schema Loader (Cached)
+
+```python
+def _load_schema(self) -> Optional[Dict[str, Any]]:
+    """
+    Load plan schema from coderef/schemas/plan.schema.json.
+
+    **Caching:** Loads once, stores in self._schema, returns cached on subsequent calls
+
+    **File Path:** {project_root}/coderef/schemas/plan.schema.json
+
+    **Returns:**
+        Optional[Dict]: Schema data dict or None if not found
+
+    **Graceful Degradation:**
+        If schema missing or malformed → Logs warning, returns None
+        Validation continues without schema (no exception raised)
+
+    **Performance:**
+        - First call: ~10ms (file read)
+        - Subsequent calls: <1ms (cached)
+
+    **Example:**
+        >>> schema = validator._load_schema()
+        >>> schema['version']
+        '1.0.0'
+        >>> schema2 = validator._load_schema()  # Returns cached
+        >>> schema is schema2
+        True
+
+    **See:** PLAN-VALIDATOR.md Section 4.4
+    """
+```
+
+---
+
+## Structure Validator
+
+```python
+def validate_structure(self):
+    """
+    Validate plan has all required sections.
+
+    **Checks:**
+    1. META_DOCUMENTATION section exists
+    2. UNIVERSAL_PLANNING_STRUCTURE section exists
+    3. All 10 required sections (0-9) exist within UNIVERSAL_PLANNING_STRUCTURE
+
+    **Issues Generated:**
+        - Missing META_DOCUMENTATION → Critical
+        - Missing UNIVERSAL_PLANNING_STRUCTURE → Critical
+        - Missing any section (0-9) → Critical
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~1-5ms (dict traversal)
+
+    **Example:**
+        >>> validator.validate_structure()
+        >>> [i for i in validator.issues if i['section'] == 'structure']
+        [{'severity': 'critical', 'section': 'structure',
+          'issue': 'Missing section 0_preparation',
+          'suggestion': 'Add section 0_preparation to UNIVERSAL_PLANNING_STRUCTURE'}]
+
+    **See:**
+        - PLAN-VALIDATOR.md Section 4.5
+        - Class constant REQUIRED_SECTIONS for section list
+    """
+```
+
+---
+
+## Completeness Validator
+
+```python
+def validate_completeness(self):
+    """
+    Validate no placeholders, all task IDs valid.
+
+    **Checks:**
+    1. No placeholder text (regex pattern)
+    2. All task IDs are unique (_validate_task_ids)
+    3. All task dependencies reference existing tasks
+    4. No circular dependencies (_validate_no_circular_dependencies)
+
+    **Placeholder Detection:**
+        Regex: r'\b(TBD|TODO|\[placeholder\]|Coming soon|Fill this in|to be determined)\b'
+        Flags: IGNORECASE
+
+    **Issues Generated:**
+        - Placeholder text found → Major
+        - Duplicate task ID → Critical
+        - Invalid dependency (non-existent task) → Critical
+        - Circular dependency → Critical
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~10-20ms (regex scan + dependency graph analysis)
+
+    **Example:**
+        >>> validator.validate_completeness()
+        >>> [i for i in validator.issues if 'Placeholder' in i['issue']]
+        [{'severity': 'major', 'section': 'completeness',
+          'issue': 'Placeholder text found: "TBD"',
+          'suggestion': 'Replace placeholder with actual content'}]
+
+    **See:**
+        - PLAN-VALIDATOR.md Section 4.6
+        - _validate_task_ids() for ID uniqueness checks
+        - _validate_no_circular_dependencies() for cycle detection
+    """
+```
+
+---
+
+## Task ID Validator (Helper)
+
+```python
+def _validate_task_ids(self, phases_data):
+    """
+    Validate task IDs are unique and dependencies are valid.
+
+    **Algorithm:**
+    1. Extract all task IDs from all phases
+    2. Check for duplicates (same ID in multiple tasks)
+    3. Extract all dependencies (depends_on fields)
+    4. Verify each dependency references an existing task ID
+
+    **Args:**
+        phases_data: Dict of phases from plan['UNIVERSAL_PLANNING_STRUCTURE']['6_implementation_phases']
+
+    **Issues Generated:**
+        - Duplicate task ID → Critical
+        - Dependency on non-existent task → Critical
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~5-10ms (traverses all tasks)
+
+    **Example:**
+        >>> phases = plan['UNIVERSAL_PLANNING_STRUCTURE']['6_implementation_phases']
+        >>> validator._validate_task_ids(phases)
+        # Checks all task IDs and dependencies in phases
+
+    **See:** PLAN-VALIDATOR.md Section 4.7
+    """
+```
+
+---
+
+## Circular Dependency Detector
+
+```python
+def _validate_no_circular_dependencies(self, phases_data):
+    """
+    Detect circular dependencies using DFS.
+
+    **Algorithm:**
+    1. Build adjacency list (graph) from task dependencies
+    2. Run DFS on each task
+    3. Track visited nodes and recursion stack
+    4. If node already in recursion stack → cycle detected
+
+    **Time Complexity:** O(V + E) where V=tasks, E=dependencies
+
+    **Example Circular Dependency:**
+        Task A depends on Task B
+        Task B depends on Task C
+        Task C depends on Task A  # ← Circular!
+
+    **Args:**
+        phases_data: Dict of phases from plan
+
+    **Issues Generated:**
+        - Circular dependency detected → Critical (with cycle path)
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~10-20ms (graph traversal)
+
+    **Example:**
+        >>> validator._validate_no_circular_dependencies(phases)
+        >>> [i for i in validator.issues if 'Circular' in i['issue']]
+        [{'severity': 'critical', 'section': 'completeness',
+          'issue': 'Circular dependency: Task A → Task B → Task C → Task A',
+          'suggestion': 'Break circular dependency by removing one link'}]
+
+    **See:** PLAN-VALIDATOR.md Section 4.8
+    """
+```
+
+---
+
+## Quality Validator
+
+```python
+def validate_quality(self):
+    """
+    Validate content quality (detailed descriptions, examples).
+
+    **Checks:**
+    1. Executive summary has required fields (goal, description, scope)
+    2. Risk assessment sections are non-empty
+    3. Tasks have detailed descriptions (>20 chars)
+    4. Success criteria are specific (not vague)
+    5. Testing strategy covers all test levels (unit, integration, e2e)
+
+    **Issues Generated:**
+        - Missing required field in executive summary → Major
+        - Empty risk assessment section → Major
+        - Task description too short (<20 chars) → Minor
+        - Vague success criteria → Minor
+        - Missing test level → Minor
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~10-20ms (content checks)
+
+    **Example:**
+        >>> validator.validate_quality()
+        >>> [i for i in validator.issues if i['section'] == 'quality']
+        [{'severity': 'minor', 'section': 'quality',
+          'issue': 'Task IMPL-001 description too short',
+          'suggestion': 'Expand description to at least 20 characters'}]
+
+    **See:** PLAN-VALIDATOR.md Section 4.9
+    """
+```
+
+---
+
+## Workorder Validator (Optional)
+
+```python
+def validate_workorder(self):
+    """
+    Validate workorder_id format (if present).
+
+    **Optional:** Only runs if META_DOCUMENTATION.workorder_id exists
+
+    **Format:** WO-{FEATURE}-{CATEGORY}-{SEQUENCE}
+        - Example: WO-AUTH-SYSTEM-001
+        - Regex: ^WO-[A-Z0-9-]+-\\d{3}$
+
+    **Issues Generated:**
+        - Invalid workorder_id format → Minor (doesn't block approval)
+
+    **Side Effects:**
+        Appends issues to self.issues list if format invalid
+
+    **Performance:** ~1ms (regex match)
+
+    **Example:**
+        >>> plan['META_DOCUMENTATION']['workorder_id'] = "WO-INVALID"
+        >>> validator.validate_workorder()
+        >>> [i for i in validator.issues if 'workorder' in i['issue'].lower()]
+        [{'severity': 'minor', 'section': 'structure',
+          'issue': 'Invalid workorder_id format: WO-INVALID',
+          'suggestion': 'Use format WO-{FEATURE}-{CATEGORY}-###'}]
+
+    **See:** PLAN-VALIDATOR.md Section 4.10
+    """
+```
+
+---
+
+## Autonomy Validator
+
+```python
+def validate_autonomy(self):
+    """
+    Validate plan provides enough detail for autonomous implementation.
+
+    **Checks:**
+    1. Tasks have clear, actionable steps (not vague like "implement feature")
+    2. Dependencies are explicit (no missing dependencies)
+    3. Phase structure is logical (setup → implementation → testing → deployment)
+    4. Implementation checklist has all 3 phases (pre/during/post)
+
+    **Issues Generated:**
+        - Vague task description → Minor
+        - Missing dependency (task references others but no depends_on) → Major
+        - Illogical phase order → Major
+        - Missing checklist phase → Minor
+
+    **Side Effects:**
+        Appends issues to self.issues list
+
+    **Performance:** ~10-20ms (content analysis)
+
+    **Example:**
+        >>> validator.validate_autonomy()
+        >>> [i for i in validator.issues if i['section'] == 'autonomy']
+        [{'severity': 'minor', 'section': 'autonomy',
+          'issue': 'Task IMPL-001 has vague description: "implement feature"',
+          'suggestion': 'Provide specific, actionable steps'}]
+
+    **See:** PLAN-VALIDATOR.md Section 4.11
+    """
+```
+
+---
+
+## Score Calculator
+
+```python
+def calculate_score(self) -> int:
+    """
+    Calculate 0-100 score based on issues.
+
+    **Scoring Formula:**
+        score = max(0, 100 - critical*20 - major*10 - minor*5)
+
+    **Deductions:**
+        - Critical issue: -20 points each
+        - Major issue: -10 points each
+        - Minor issue: -5 points each
+
+    **Examples:**
+        - 0 issues → 100 (perfect)
+        - 1 critical → 80
+        - 2 major → 80
+        - 3 minor → 85
+        - 1 critical + 2 major + 3 minor → 45 (needs work)
+
+    **Returns:**
+        int: Score clamped to 0-100 range
+
+    **Performance:** <1ms (simple arithmetic)
+
+    **Example:**
+        >>> validator.issues = [
+        ...     {'severity': 'critical', ...},
+        ...     {'severity': 'major', ...},
+        ...     {'severity': 'minor', ...}
+        ... ]
+        >>> validator.calculate_score()
+        65  # 100 - 20 - 10 - 5 = 65
+
+    **See:** PLAN-VALIDATOR.md Section 4.12
+    """
+```
+
+---
+
+## Result Determiner
+
+```python
+def determine_result(self, score: int) -> str:
+    """
+    Map score to result category.
+
+    **Thresholds:**
+        - 90-100 → "excellent" (approved)
+        - 75-89 → "good" (near approval)
+        - 50-74 → "needs work" (significant issues)
+        - 0-49 → "poor" (major rework needed)
+
+    **Args:**
+        score (int): 0-100 score from calculate_score()
+
+    **Returns:**
+        str: Result category
+
+    **Performance:** <1ms (conditional logic)
+
+    **Example:**
+        >>> validator.determine_result(95)
+        'excellent'
+        >>> validator.determine_result(80)
+        'good'
+        >>> validator.determine_result(60)
+        'needs work'
+        >>> validator.determine_result(30)
+        'poor'
+
+    **See:** PLAN-VALIDATOR.md Section 4.13
+    """
+```
+
+---
+
+## Checklist Results Builder
+
+```python
+def _build_checklist_results(self) -> Dict[str, Dict[str, int]]:
+    """
+    Build detailed breakdown of checks by category.
+
+    **Returns:**
+        Dict with category scores:
+        {
+            "structure": {"passed": 9, "failed": 1, "score": 90},
+            "completeness": {"passed": 8, "failed": 2, "score": 80},
+            "quality": {"passed": 10, "failed": 0, "score": 100},
+            "autonomy": {"passed": 7, "failed": 3, "score": 70}
+        }
+
+    **Calculation:**
+        - Count issues by section (structure/completeness/quality/autonomy)
+        - Calculate score per section: (passed / (passed + failed)) * 100
+
+    **Performance:** ~1-5ms (issue aggregation)
+
+    **Example:**
+        >>> results = validator._build_checklist_results()
+        >>> results['structure']['score']
+        90
+        >>> results['completeness']['failed']
+        2
+
+    **See:** PLAN-VALIDATOR.md Section 4.14
+    """
+```
+
+---
+
+## Configuration Best Practices
+
+**Using PlanValidator:**
+```python
+# 1. Always create new instance per plan (stateful)
+validator1 = PlanValidator(plan1_path)
+result1 = validator1.validate()
+
+validator2 = PlanValidator(plan2_path)
+result2 = validator2.validate()
+
+# ❌ Don't reuse - issues accumulate
+validator = PlanValidator(plan_path)
+result1 = validator.validate()
+result2 = validator.validate()  # ← Issues from result1 included!
+```
+
+**Iterative Review Loop (AI Agent Workflow):**
+```python
+score = 0
+attempts = 0
+
+while score < 90 and attempts < 3:
+    # Validate
+    validator = PlanValidator(plan_path)
+    result = validator.validate()
+    score = result['score']
+
+    if score < 90:
+        # Refine based on issues
+        for issue in result['issues']:
+            if issue['severity'] == 'critical':
+                # Fix critical issues first
+                print(f"🔴 [{issue['severity']}] {issue['issue']}")
+                print(f"   Fix: {issue['suggestion']}")
+
+        # AI refines plan.json based on suggestions...
+        # (modify plan, save to disk)
+        attempts += 1
+
+if score >= 90:
+    print(f"✅ Plan approved! (score: {score}/100)")
+else:
+    print(f"⚠️ Plan needs more work (score: {score}/100, attempts: {attempts})")
+```
+
+**Generating Review Report:**
+```python
+from generators.review_formatter import ReviewFormatter
+
+# Validate
+validator = PlanValidator(plan_path)
+result = validator.validate()
+
+# Format as markdown review
+formatter = ReviewFormatter()
+review_md = formatter.format_review(result)
+
+# Save review
+review_path = plan_path.parent / f"review-{plan_path.stem}.md"
+review_path.write_text(review_md)
+
+print(f"Review saved to: {review_path}")
+```
+
+**Custom Approval Threshold:**
+```python
+# Default threshold is 90, but you can override
+validator = PlanValidator(plan_path)
+result = validator.validate()
+
+# Custom threshold (e.g., 85 for MVP, 95 for production)
+custom_threshold = 85
+approved = result['score'] >= custom_threshold
+
+if approved:
+    print(f"✅ Approved with custom threshold {custom_threshold}")
+else:
+    print(f"❌ Not approved (score {result['score']} < {custom_threshold})")
+```
+
+**Debugging Failed Validation:**
+```python
+validator = PlanValidator(plan_path)
+result = validator.validate()
+
+if not result['approved']:
+    print(f"Score: {result['score']}/100")
+    print(f"Result: {result['validation_result']}")
+    print("\nIssues by severity:")
+
+    # Group by severity
+    critical = [i for i in result['issues'] if i['severity'] == 'critical']
+    major = [i for i in result['issues'] if i['severity'] == 'major']
+    minor = [i for i in result['issues'] if i['severity'] == 'minor']
+
+    print(f"  Critical ({len(critical)}): -{len(critical)*20} points")
+    for issue in critical:
+        print(f"    • {issue['issue']}")
+
+    print(f"  Major ({len(major)}): -{ len(major)*10} points")
+    for issue in major:
+        print(f"    • {issue['issue']}")
+
+    print(f"  Minor ({len(minor)}): -{len(minor)*5} points")
+```
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P0-001
+**Task:** SHEET-005
+**Timestamp:** 2026-01-02

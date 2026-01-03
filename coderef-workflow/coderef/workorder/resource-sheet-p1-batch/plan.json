@@ -1,0 +1,127 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "resource-sheet-p1-batch",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "status": "planning",
+    "generated_by": "Claude Code AI",
+    "has_context": true,
+    "has_analysis": true,
+    "version": "1.0",
+    "created_at": "2026-01-02T00:00:00Z",
+    "updated_at": "2026-01-02T00:00:00Z"
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Generate authoritative resource sheet documentation for the next 5 P1 files in coderef-workflow",
+    "why": "Continue systematic documentation of critical infrastructure files to enable safe refactoring, faster onboarding, and reduced maintenance burden",
+    "how": "Use established resource sheet pattern (markdown + JSON schema + JSDoc) for each of the 5 P1 files",
+    "key_features": [
+      "mcp_client.py - Async MCP tool client for coderef-context integration",
+      "type_defs.py - TypedDict definitions (90 types, single source of truth)",
+      "constants.py - Constants & enums (18 enums, centralized config)",
+      "validation.py - Input validation functions (15+ validators, security boundary)",
+      "error_responses.py - ErrorResponse factory (standardized error handling)"
+    ]
+  },
+  "4_KEY_FEATURES": [
+    "Complete resource sheets for 5 P1 files",
+    "All 3 output formats per file (15 files total: 5 .md + 5 .json + 5 .txt)",
+    "State ownership tables for each file",
+    "Failure modes and recovery paths documented",
+    "Integration points with P0 files documented"
+  ],
+  "5_TASK_ID_SYSTEM": {
+    "format": "CATEGORY-NNN",
+    "categories": {
+      "SHEET": "Resource sheet generation tasks"
+    }
+  },
+  "6_IMPLEMENTATION_PHASES": [
+    {
+      "phase_id": "phase_1",
+      "name": "Generate P1 Resource Sheets",
+      "tasks": [
+        {
+          "task_id": "SHEET-006",
+          "description": "Generate resource sheet for mcp_client.py (async MCP tool client)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-007",
+          "description": "Generate resource sheet for type_defs.py (90 TypedDict definitions)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "very high"
+        },
+        {
+          "task_id": "SHEET-008",
+          "description": "Generate resource sheet for constants.py (18 enums, centralized config)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "medium"
+        },
+        {
+          "task_id": "SHEET-009",
+          "description": "Generate resource sheet for validation.py (15+ validation functions)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-010",
+          "description": "Generate resource sheet for error_responses.py (ErrorResponse factory)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "low"
+        }
+      ],
+      "dependencies": [],
+      "parallel_capable": true
+    }
+  ],
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      "Verify all 15 output files created (5 .md + 5 .json + 5 .txt)",
+      "Validate markdown renders correctly",
+      "Validate JSON schemas are valid Draft-07",
+      "Check JSDoc suggestions are syntactically correct"
+    ],
+    "integration_tests": [
+      "Verify resource sheets integrate with P0 sheets (cross-references)",
+      "Check integration points documented correctly"
+    ]
+  },
+  "8_SUCCESS_CRITERIA": {
+    "functional": [
+      "All 5 resource sheets created (15 files total)",
+      "Each sheet has complete state ownership table",
+      "Each sheet documents integration with P0 files",
+      "Each sheet has performance characteristics"
+    ],
+    "non_functional": {
+      "quality": "All sheets score >= 85 on refactor-safety checklist",
+      "completeness": "No TODO placeholders in any sheet",
+      "consistency": "All sheets follow RESOURCE-SHEET-SYSTEM.md template"
+    }
+  },
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "pre_implementation": [
+      "Read RESOURCE-SHEET-SYSTEM.md template",
+      "Review LIST-FOR-SHEET.md for P1 file details",
+      "Understand 3-output requirement (md + json + txt)"
+    ],
+    "during_implementation": [
+      "Generate markdown documentation with all required sections",
+      "Generate JSON schema from TypedDicts and function signatures",
+      "Generate JSDoc suggestions for inline documentation",
+      "Document integration points with P0 files (server.py, tool_handlers.py, etc.)"
+    ],
+    "post_implementation": [
+      "Verify all 15 files created",
+      "Run refactor-safety checklist on each sheet",
+      "Update LIST-FOR-SHEET.md completion tracking",
+      "Commit and push after each sheet completion"
+    ]
+  }
+}

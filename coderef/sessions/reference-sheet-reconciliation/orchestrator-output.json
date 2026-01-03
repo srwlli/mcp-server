@@ -1,0 +1,239 @@
+{
+  "session_id": "WO-REFERENCE-SHEET-RECONCILIATION-001",
+  "orchestrator_id": "coderef-assistant",
+  "timestamp": "2026-01-02",
+  "status": "complete",
+
+  "session_summary": {
+    "goal": "Consolidate two separate resource sheet systems (Tool 1: create-resource-sheet.md + Tool 2: resource-sheet-catalog.md) into ONE unified system",
+    "approach": "Multi-agent synthesis with 4 specialized agents reviewing 3 implementation plans",
+    "outcome": "CRITICAL DISCOVERY: coderef-docs v3.4.0 already has working MCP tool. Recommendation: Deprecate .md files, route to MCP tool, enhance with missing features."
+  },
+
+  "agent_completion_status": {
+    "total_agents": 4,
+    "completed": 4,
+    "completion_rate": "100%",
+    "agents": [
+      {
+        "agent_id": "coderef",
+        "role": "Synthesizer - merge strategy",
+        "status": "complete",
+        "completion_date": "2026-01-02",
+        "key_deliverable": "Consolidation design with 3-phase migration (Deprecate → Route → Enhance)",
+        "critical_finding": "coderef-docs v3.4.0 already has generate_resource_sheet MCP tool with 17/22 tasks complete"
+      },
+      {
+        "agent_id": "coderef-docs",
+        "role": "Documenter - standards & quality gates",
+        "status": "complete",
+        "completion_date": "2026-01-02",
+        "key_deliverable": "4-tier documentation hierarchy with 5-category validation pipeline (20+ quality gates)",
+        "critical_finding": "Modular approach (4 universal + 11 conditional modules) superior to monolithic templates"
+      },
+      {
+        "agent_id": "papertrail",
+        "role": "Generator - template system design",
+        "status": "complete",
+        "completion_date": "2026-01-02",
+        "key_deliverable": "Unified template schema (13 base + 20 element overlays) with 3-stage detection algorithm",
+        "critical_finding": "60-80% auto-fill achievable via graph integration"
+      },
+      {
+        "agent_id": "coderef-system",
+        "role": "Graph integrator - auto-fill capabilities",
+        "status": "complete",
+        "completion_date": "2026-01-02",
+        "key_deliverable": "Graph query mappings for 4 operations (imports/exports/consumers/dependencies)",
+        "critical_finding": "150-300x speedup with graph data vs manual documentation"
+      }
+    ]
+  },
+
+  "synthesis_results": {
+    "unified_recommendation": {
+      "approach": "RECONCILIATION (not rebuild)",
+      "strategy": "Deprecate slash commands → Route to existing MCP tool → Enhance MCP tool with Tool 1 + Tool 2 features",
+      "rationale": "coderef-docs v3.4.0 already has working generate_resource_sheet tool. No need to rebuild from scratch.",
+      "implementation": "3-phase migration over short/medium/long term"
+    },
+
+    "key_findings": {
+      "finding_1": {
+        "source": "coderef agent",
+        "discovery": "Working MCP tool already exists in coderef-docs v3.4.0",
+        "location": "coderef-docs/generators/resource_sheet_generator.py",
+        "status": "Phase 1 complete (17/22 tasks, 100% test coverage)",
+        "features": "Composable modules (4 universal + 11 conditional planned), 3-step workflow (Detect → Select → Assemble), 3 output formats (MD/JSON/JSDoc)",
+        "implication": "We reconcile existing tool with slash commands, not build new system"
+      },
+      "finding_2": {
+        "source": "papertrail agent",
+        "discovery": "Template generation is 3-layer system: BASE + CONDITIONAL + VALIDATION",
+        "base_layer": "Tool 1's 13 sections (45-60% avg auto-fill)",
+        "conditional_layer": "Tool 2's 20 element overlays (4-8 sections each)",
+        "validation_layer": "4-gate quality pipeline",
+        "implication": "Systematic template generation, not ad-hoc merging"
+      },
+      "finding_3": {
+        "source": "coderef-system agent",
+        "discovery": "Graph queries enable 60-80% auto-fill",
+        "queries": "4 operations (imports/exports/consumers/dependencies)",
+        "performance": "150-300x speedup vs manual documentation",
+        "implementation": "Consumer-side approach (resource-sheet reads graph.json)",
+        "implication": "Auto-fill target is achievable with existing coderef-context integration"
+      },
+      "finding_4": {
+        "source": "coderef-docs agent",
+        "discovery": "4-tier documentation hierarchy supports different audiences",
+        "tiers": "User Guide → Reference → Catalog → Quick Ref",
+        "validation": "5-category pipeline (structural/content/element-specific/refactor-safety/auto-fill)",
+        "quality_gates": "20+ checks with critical/major/minor severity",
+        "implication": "Comprehensive documentation system, not just templates"
+      }
+    },
+
+    "consolidated_approach": {
+      "phase_1_immediate": {
+        "timeline": "Immediate (15 min)",
+        "tasks": [
+          "Add deprecation notices to both .md files (create-resource-sheet.md + resource-sheet-catalog.md)",
+          "Point users to MCP tool generate_resource_sheet",
+          "Update coderef/core references"
+        ],
+        "deliverable": "Users see deprecation warnings, directed to MCP tool"
+      },
+      "phase_2_short_term": {
+        "timeline": "1-2 hours",
+        "tasks": [
+          "Update /create-resource-sheet command to route to MCP tool generate_resource_sheet",
+          "Pass element_type parameter if user specifies, otherwise auto-detect",
+          "Maintain backward compatibility"
+        ],
+        "deliverable": "Slash command works via MCP tool backend"
+      },
+      "phase_3_medium_term": {
+        "timeline": "Deferred to MCP tool Phase 2 work",
+        "tasks": [
+          "Port Tool 1's writing guidelines to MCP tool post-processing",
+          "Map Tool 2's 20 element types to conditional modules",
+          "Integrate Tool 1's refactor-safety validation",
+          "Enhance detection with Tool 2's classification logic"
+        ],
+        "deliverable": "MCP tool has full feature parity with both tools"
+      }
+    }
+  },
+
+  "output_files": {
+    "agent_outputs": [
+      {
+        "agent": "coderef",
+        "json": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-output.json",
+        "markdown": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-output.md",
+        "key_sections": ["tools_analyzed", "critical_discovery", "consolidation_design", "key_questions_answered", "structural_design"]
+      },
+      {
+        "agent": "coderef-docs",
+        "json": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-docs-output.json",
+        "markdown": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-docs-output.md",
+        "key_sections": ["user_documentation_structure", "quality_gate_templates", "maintenance_workflow", "coderef_workflow_integration"]
+      },
+      {
+        "agent": "papertrail",
+        "json": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\papertrail-output.json",
+        "markdown": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\papertrail-output.md",
+        "key_sections": ["unified_template_schema", "element_type_detection", "template_generation_rules", "validation_pipeline"]
+      },
+      {
+        "agent": "coderef-system",
+        "json": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-system-output.json",
+        "markdown": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-system-output.md",
+        "key_sections": ["graph_integration_mapping", "auto_fill_completion_rates_by_element_type", "graph_query_patterns", "performance_characteristics"]
+      }
+    ],
+    "session_files": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\instructions.json",
+      "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\WILL-READ-THIS-YOU-IDIOT.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\TESTING-COMMUNICATION.md"
+    ]
+  },
+
+  "verification": {
+    "completeness": {
+      "all_agents_completed": true,
+      "all_outputs_created": true,
+      "json_and_markdown": true,
+      "quality_standards_met": true
+    },
+    "alignment": {
+      "agents_aligned": true,
+      "synthesis_coherent": true,
+      "recommendations_actionable": true,
+      "no_conflicts": true
+    },
+    "readiness": {
+      "ready_for_user_review": true,
+      "ready_for_workorder_creation": true,
+      "ready_for_implementation": true
+    }
+  },
+
+  "next_steps": {
+    "user_actions": [
+      "Review orchestrator-output.md (this synthesis)",
+      "Read coderef-output.md (critical finding about existing MCP tool)",
+      "Review 3-phase migration approach",
+      "Decide: Approve phased approach OR request alternative",
+      "If approved: Create workorder for Phase 1-2 implementation"
+    ],
+    "implementation_sequence": [
+      "Phase 1: Add deprecation notices (15 min)",
+      "Phase 2: Route slash command to MCP tool (1-2 hours)",
+      "Phase 3: Enhance MCP tool with Tool 1+2 features (deferred to existing MCP tool Phase 2 workorder)"
+    ],
+    "workorder_creation": {
+      "required": true,
+      "approach": "Use coderef-workflow gather_context + create_plan",
+      "inputs": "Orchestrator synthesis + agent outputs",
+      "focus": "Phase 1-2 implementation (deprecation + routing)",
+      "defer": "Phase 3 enhancements to MCP tool Phase 2 workorder"
+    }
+  },
+
+  "recommendations": [
+    "IMMEDIATE: Add deprecation notices to both .md files pointing to MCP tool",
+    "SHORT-TERM: Update /create-resource-sheet command to call MCP tool generate_resource_sheet",
+    "MEDIUM-TERM: Create element type mapping (Tool 2's 20 types → MCP conditional modules)",
+    "LONG-TERM: Port Tool 1's writing guidelines and Tool 2's checklists into MCP tool Phase 2",
+    "INTEGRATION: Leverage graph integration for 60-80% auto-fill (consumer-side approach)",
+    "VALIDATION: Implement 4-gate quality pipeline (structural/content/element-specific/refactor-safety/auto-fill)",
+    "DOCUMENTATION: Create 4-tier docs hierarchy (user guide/reference/catalog/quick ref)",
+    "TESTING: Validate with 15 P1 batch reference sheets as baseline examples"
+  ],
+
+  "critical_decisions": {
+    "decision_1": {
+      "question": "Deprecate .md files entirely OR keep with warnings?",
+      "coderef_recommendation": "Keep with deprecation warnings for backward compatibility",
+      "rationale": "Users may have scripts/workflows referencing old commands"
+    },
+    "decision_2": {
+      "question": "Implement all 20 element types immediately OR phase in gradually?",
+      "papertrail_recommendation": "Implement detection for all 20, but prioritize high-impact types (Templates 1-6) for MCP tool enhancements",
+      "rationale": "Detection is cheap, enhancement is expensive - prioritize by usage frequency"
+    },
+    "decision_3": {
+      "question": "Build new MCP tool OR enhance existing one?",
+      "coderef_recommendation": "ENHANCE existing coderef-docs v3.4.0 tool",
+      "rationale": "17/22 tasks already complete with 100% test coverage - building new would duplicate effort"
+    }
+  },
+
+  "success_criteria": {
+    "phase_1_success": "Deprecation notices visible, users directed to MCP tool, zero broken workflows",
+    "phase_2_success": "/create-resource-sheet command routes to MCP tool, maintains backward compatibility, 60-80% auto-fill achieved",
+    "phase_3_success": "MCP tool has full feature parity with Tool 1 + Tool 2, all 20 element types supported, 4-gate validation working",
+    "overall_success": "ONE unified system, Tool 1's quality + Tool 2's specialization, 60-80% auto-fill, 150-300x speedup"
+  }
+}

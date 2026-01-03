@@ -1,0 +1,172 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-MCP-TOOL-001",
+  "phase": "3C",
+  "phase_name": "Writing Guidelines & Documentation Hierarchy (Coderef-Docs Agent)",
+  "assigned_to": "coderef-docs-agent",
+  "status": "pending",
+  "created": "2026-01-03",
+  "priority": "medium",
+
+  "context": {
+    "current_state": "Resource sheets generate with basic markdown structure but lack post-processing for writing standards and documentation hierarchy integration.",
+    "goal": "Port writing guidelines from legacy Tool 1 template into post-processor and establish 4-tier documentation hierarchy for resource sheets.",
+    "dependencies": [
+      ".claude/commands/create-resource-sheet.md (legacy writing guidelines)",
+      "coderef/foundation-docs/ structure (for hierarchy reference)"
+    ],
+    "files_affected": [
+      "resource_sheet/composition/composer.py",
+      "resource_sheet/processing/post_processor.py (create new)",
+      "README.md (update documentation hierarchy section)"
+    ]
+  },
+
+  "tasks": [
+    {
+      "task_id": "PORT-001",
+      "title": "Port Tool 1 writing guidelines to post-processor",
+      "description": "Extract writing standards from .claude/commands/create-resource-sheet.md and implement as automated post-processing rules",
+      "writing_guidelines_to_port": [
+        {
+          "guideline": "Voice & Tone - Imperative, not conversational",
+          "implementation": "Post-processor scans for conversational phrases ('We persist', 'You can') and suggests imperative rewrites ('Component persists', 'Clients can')"
+        },
+        {
+          "guideline": "Precision over politeness - No hedging",
+          "implementation": "Detect hedge words ('should probably', 'might', 'could') and flag for removal"
+        },
+        {
+          "guideline": "Active voice required",
+          "implementation": "Detect passive voice patterns ('is managed by', 'was created by') and suggest active alternatives"
+        },
+        {
+          "guideline": "Tables over prose for structured data",
+          "implementation": "Detect list patterns that should be tables (e.g., state ownership, event contracts)"
+        },
+        {
+          "guideline": "No ambiguous 'should' statements",
+          "implementation": "Flag 'should' usage and require 'must' or 'may' depending on context"
+        }
+      ],
+      "create_file": "resource_sheet/processing/post_processor.py",
+      "implementation_pattern": {
+        "class": "DocumentPostProcessor",
+        "methods": [
+          "check_voice_tone(markdown: str) -> List[Violation]",
+          "check_precision(markdown: str) -> List[Violation]",
+          "check_active_voice(markdown: str) -> List[Violation]",
+          "check_table_usage(markdown: str) -> List[Violation]",
+          "check_ambiguity(markdown: str) -> List[Violation]",
+          "apply_fixes(markdown: str, violations: List[Violation]) -> str"
+        ]
+      },
+      "success_criteria": [
+        "Post-processor detects 5 writing guideline categories",
+        "Violations returned as structured warnings",
+        "Optional auto-fix mode for common issues"
+      ]
+    },
+    {
+      "task_id": "DOCS-001",
+      "title": "Create 4-tier documentation hierarchy",
+      "description": "Establish where resource sheets fit in project documentation structure and create navigation/indexing system",
+      "hierarchy_tiers": [
+        {
+          "tier": 1,
+          "name": "Foundation Docs",
+          "location": "coderef/foundation-docs/",
+          "contents": "ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md",
+          "purpose": "High-level project context",
+          "authority": "Source of truth for project-wide patterns"
+        },
+        {
+          "tier": 2,
+          "name": "Reference Sheets",
+          "location": "coderef/reference-sheets/{element}/",
+          "contents": "{element}.md, {element}.schema.json, {element}.jsdoc.txt",
+          "purpose": "Detailed element-specific documentation",
+          "authority": "Source of truth for individual code elements"
+        },
+        {
+          "tier": 3,
+          "name": "Inline Documentation",
+          "location": "Source files (JSDoc comments)",
+          "contents": "/** @see coderef/reference-sheets/{element} */",
+          "purpose": "IDE tooltips and inline reference",
+          "authority": "Links to Tier 2 reference sheets"
+        },
+        {
+          "tier": 4,
+          "name": "Generated API Docs",
+          "location": "docs/api/ (optional)",
+          "contents": "HTML/Markdown generated from JSDoc",
+          "purpose": "Public-facing API documentation",
+          "authority": "Derived from Tiers 2 and 3"
+        }
+      ],
+      "create_file": "coderef/reference-sheets/INDEX.md",
+      "index_structure": {
+        "sections": [
+          "Navigation - How to find documentation for any element",
+          "Hierarchy - Where resource sheets fit in overall docs",
+          "Authority - What takes precedence when docs conflict",
+          "Maintenance - How to keep docs synchronized"
+        ]
+      },
+      "success_criteria": [
+        "INDEX.md created with navigation guidance",
+        "README.md updated with hierarchy diagram",
+        "Cross-references between tiers documented"
+      ]
+    }
+  ],
+
+  "testing_requirements": [
+    {
+      "test_id": "PORT-TEST-001",
+      "description": "Test post-processor writing guideline detection",
+      "steps": [
+        "Create markdown with intentional violations (passive voice, hedging, etc.)",
+        "Run post_processor.check_all(markdown)",
+        "Verify violations detected with correct categories"
+      ]
+    },
+    {
+      "test_id": "DOCS-TEST-001",
+      "description": "Validate documentation hierarchy",
+      "steps": [
+        "Generate reference sheet for test element",
+        "Verify INDEX.md provides navigation to it",
+        "Check cross-references to foundation docs work"
+      ]
+    }
+  ],
+
+  "acceptance_criteria": {
+    "functional": [
+      "Post-processor detects 5+ writing guideline violations",
+      "INDEX.md provides clear navigation across all 4 tiers",
+      "README.md includes hierarchy diagram"
+    ],
+    "non_functional": [
+      "Post-processing adds < 1 second to generation time",
+      "Violations are actionable (include fix suggestions)",
+      "Documentation hierarchy is intuitive for new developers"
+    ]
+  },
+
+  "handoff_prompt": "NEW WORKORDER DELEGATION: WO-RESOURCE-SHEET-MCP-TOOL-001 Phase 3C\n\nYou are the coderef-docs agent. Your task is to add writing standards enforcement and establish documentation hierarchy.\n\nREAD:\n1. This file (fix-instructions-phase3c.json)\n2. .claude/commands/create-resource-sheet.md (legacy writing guidelines - extract these)\n3. resource_sheet/composition/composer.py (where to integrate post-processor)\n\nYOUR TASKS:\n1. Create resource_sheet/processing/post_processor.py with 5 writing guideline checks (PORT-001)\n2. Create coderef/reference-sheets/INDEX.md with 4-tier hierarchy documentation (DOCS-001)\n3. Update README.md with hierarchy diagram\n\nSUCCESS CRITERIA:\n- Post-processor detects voice/tone, precision, active voice, table usage, ambiguity issues\n- INDEX.md clearly explains where to find documentation\n- Hierarchy integrates with existing foundation-docs structure\n\nWhen complete, update communication.json with status='phase_3c_complete'",
+
+  "notes": [
+    "This is Phase 3C of the resource-sheet-consolidation workorder",
+    "Writing guidelines ensure consistency across all generated resource sheets",
+    "Documentation hierarchy prevents confusion about source of truth",
+    "Post-processor is OPTIONAL in Phase 1 - can warn without blocking generation"
+  ],
+
+  "reference_files": [
+    ".claude/commands/create-resource-sheet.md (lines 105-145 contain writing guidelines)",
+    "coderef/foundation-docs/ARCHITECTURE.md (example of Tier 1 documentation)",
+    "resource_sheet/examples/sample-authservice.md (example output to validate against)"
+  ]
+}

@@ -14,15 +14,28 @@ def auto_fill_architecture(data: dict) -> str:
     """
     Auto-fill architecture section from extracted data.
 
+    GRAPH-002: Now uses graph query results for dependencies.
+
     Args:
-        data: Extracted element data from coderef_scan
+        data: Extracted element data from coderef_scan + graph queries
 
     Returns:
         Formatted markdown content
     """
     element_type = data.get("type", "Unknown")
-    dependencies = data.get("dependencies", [])
+    dependencies_raw = data.get("dependencies", [])
     exports = data.get("exports", [])
+
+    # GRAPH-002: Extract dependency names from graph query results
+    # Graph queries return [{name: "...", file: "...", ...}, ...]
+    dependencies = []
+    for dep in dependencies_raw:
+        if isinstance(dep, dict):
+            # From graph query - extract name
+            dependencies.append(dep.get("name", str(dep)))
+        else:
+            # Fallback for string format
+            dependencies.append(str(dep))
 
     content = f"**Type:** {element_type}\n\n"
 

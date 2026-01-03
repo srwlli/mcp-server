@@ -124,7 +124,7 @@ class DocumentComposer:
         jsdoc_lines = [
             "/**",
             f" * {element_name}",
-            f" * @see coderef/foundation-docs/{element_name.upper()}.md",
+            f" * @see coderef/reference-sheets/{element_name.lower()}/{element_name.lower()}.md",
             " *",
         ]
 
@@ -238,18 +238,19 @@ version: 1.0.0
         output_dir = Path(output_path)
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        # Use lowercase element name for all files
+        file_base = element_name.lower()
+
         # Markdown
-        md_path = output_dir / f"{element_name.upper()}.md"
+        md_path = output_dir / f"{file_base}.md"
         md_path.write_text(markdown, encoding="utf-8")
 
-        # Schema
-        schema_dir = output_dir.parent / "schemas"
-        schema_dir.mkdir(parents=True, exist_ok=True)
-        schema_path = schema_dir / f"{element_name.lower()}.schema.json"
+        # Schema (save in same directory as markdown)
+        schema_path = output_dir / f"{file_base}.schema.json"
         schema_path.write_text(json.dumps(schema, indent=2), encoding="utf-8")
 
         # JSDoc (as snippet)
-        jsdoc_path = output_dir / f"{element_name.lower()}.jsdoc.txt"
+        jsdoc_path = output_dir / f"{file_base}.jsdoc.txt"
         jsdoc_path.write_text("\n".join(jsdoc), encoding="utf-8")
 
         return {

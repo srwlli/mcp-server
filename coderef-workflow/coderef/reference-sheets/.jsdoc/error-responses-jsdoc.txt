@@ -1,0 +1,702 @@
+# JSDoc Suggestions for error_responses.py
+
+## Purpose
+Usage examples and best practices for error response factory - consistent error formatting across all 40+ MCP tools
+
+## Important Note
+These are static factory methods that convert Python exceptions into user-friendly MCP TextContent responses. All examples show proper exception handling patterns with specific error methods first, generic_error as catch-all last.
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Centralized Error Response Factory for coderef-workflow MCP Server
+
+Provides static methods for creating standardized error responses across all MCP tools.
+Converts Python exceptions into user-friendly TextContent with optional hints.
+
+**Key Features:**
+- 8 error response methods for all exception types
+- Consistent ❌ + 💡 format across all 40+ tools
+- Optional hints with sensible defaults
+- jsonschema.ValidationError path formatting
+- Static factory pattern (no instantiation)
+- Returns list[TextContent] compatible with MCP protocol
+
+**Design Philosophy:**
+Single source of truth for error formatting. All tool handlers use ErrorResponse.* methods
+instead of creating their own error messages.
+
+**Method Catalog:**
+1. invalid_input (ValueError) - Validation failures
+2. not_found (FileNotFoundError) - Missing resources
+3. permission_denied (PermissionError) - File permission errors
+4. validation_failed (jsonschema.ValidationError) - JSON schema failures
+5. malformed_json (json.JSONDecodeError) - JSON syntax errors
+6. encoding_error (UnicodeDecodeError) - File encoding issues
+7. io_error (IOError) - File I/O errors
+8. generic_error (Exception) - Catch-all for unexpected errors
+
+**Exception Handling Pattern:**
+try:
+    # Business logic
+except ValueError as e:           # Most specific
+    return ErrorResponse.invalid_input(str(e), hint="...")
+except FileNotFoundError as e:
+    return ErrorResponse.not_found(str(e), hint="...")
+except Exception as e:            # Catch-all (last resort)
+    return ErrorResponse.generic_error(str(e))
+
+**Version:** 1.3.0
+**Architecture Decision:** ARCH-001 - Centralized error factory
+**See:** ERROR-RESPONSES.md for complete reference
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Usage Pattern 1: Tool Handler with Complete Error Handling
+
+```python
+from mcp.types import TextContent
+from error_responses import ErrorResponse
+from validation import validate_project_path_input, validate_feature_name_input
+from pathlib import Path
+
+async def gather_context_handler(args: dict) -> list[TextContent]:
+    """
+    MCP tool handler with comprehensive error handling.
+
+    **Error Handling Strategy:**
+        - Validate inputs first (fail-fast)
+        - Catch specific exceptions before generic
+        - Always include helpful hints
+        - Return formatted TextContent for MCP protocol
+
+    **Example:**
+        >>> result = await gather_context_handler({
+        ...     "project_path": "/invalid/path",
+        ...     "feature_name": "../../../etc/passwd"
+        ... })
+        >>> result[0].text
+        '❌ Invalid input: Feature name contains invalid characters...'
+
+    **Error Flow:**
+        ValueError → ErrorResponse.invalid_input
+        FileNotFoundError → ErrorResponse.not_found
+        PermissionError → ErrorResponse.permission_denied
+        Exception → ErrorResponse.generic_error (catch-all)
+    """
+    try:
+        # Step 1: Validate all inputs (may raise ValueError)
+        project_path = validate_project_path_input(args["project_path"])
+        feature_name = validate_feature_name_input(args["feature_name"])
+
+        # Step 2: Check existence (may raise FileNotFoundError)
+        path = Path(project_path)
+        if not path.exists():
+            return ErrorResponse.not_found(
+                f"Project directory at {project_path}",
+                hint="Verify the project path is correct"
+            )
+
+        # Step 3: Execute business logic (may raise various errors)
+        result = gather_context(path, feature_name)
+
+        # Step 4: Return success response
+        return [TextContent(type="text", text=result)]
+
+    # Catch specific exceptions first
+    except ValueError as e:
+        return ErrorResponse.invalid_input(
+            str(e),
+            hint="Use only alphanumeric characters, hyphens, and underscores"
+        )
+    except FileNotFoundError as e:
+        return ErrorResponse.not_found(
+            str(e),
+            hint="Ensure the file exists before running this command"
+        )
+    except PermissionError as e:
+        return ErrorResponse.permission_denied(
+            str(e),
+            hint="Check file permissions or run as administrator"
+        )
+    except json.JSONDecodeError as e:
+        return ErrorResponse.malformed_json(
+            str(e),
+            hint="Check for missing commas, quotes, or brackets"
+        )
+    except IOError as e:
+        return ErrorResponse.io_error(
+            str(e),
+            hint="Check disk space and file permissions"
+        )
+    # Catch-all for unexpected errors (last resort)
+    except Exception as e:
+        return ErrorResponse.generic_error(
+            str(e),
+            hint="Please report this issue if it persists"
+        )
+
+# ✅ GOOD: Specific exceptions first, generic last, always include hints
+# ❌ BAD: Only catch Exception (loses specificity)
+# ❌ BAD: No hints (user doesn't know how to fix)
+```
+
+---
+
+## Usage Pattern 2: Invalid Input Errors (Validation Failures)
+
+```python
+from validation import validate_workorder_id_input, validate_task_id_input
+
+def assign_task_handler(args: dict) -> list[TextContent]:
+    """
+    Handle task assignment with validation error handling.
+
+    **Error Example:**
+        >>> assign_task_handler({"workorder_id": "WO-feature-001"})
+        [TextContent(text='❌ Invalid input: Workorder ID format invalid...')]
+
+    **Common Validation Errors:**
+        - Feature name format invalid
+        - Workorder ID format mismatch
+        - Version format invalid
+        - Enum value not in valid set
+    """
+    try:
+        workorder_id = validate_workorder_id_input(args["workorder_id"])
+        task_id = validate_task_id_input(args["task_id"])
+
+        # Business logic
+        return [TextContent(type="text", text="Task assigned")]
+
+    except ValueError as e:
+        return ErrorResponse.invalid_input(
+            str(e),
+            hint="Workorder ID format: WO-{FEATURE}-{CATEGORY}-{SEQUENCE}"
+        )
+
+# ✅ GOOD: Clear hint showing expected format
+def good_validation_error():
+    return ErrorResponse.invalid_input(
+        "Feature name contains invalid characters",
+        hint="Use only alphanumeric characters, hyphens, and underscores (a-zA-Z0-9_-)"
+    )
+
+# ❌ BAD: No hint for user
+def bad_validation_error():
+    return ErrorResponse.invalid_input("Feature name invalid")
+```
+
+---
+
+## Usage Pattern 3: Not Found Errors (Missing Resources)
+
+```python
+from pathlib import Path
+
+def get_plan_handler(feature_name: str) -> list[TextContent]:
+    """
+    Retrieve plan with clear not-found error.
+
+    **Error Example:**
+        >>> get_plan_handler("nonexistent-feature")
+        [TextContent(text='❌ Plan for feature "nonexistent-feature" not found\n\n💡 Run /create-plan first...')]
+
+    **Common Not-Found Errors:**
+        - Plan.json missing
+        - Feature directory missing
+        - Template file missing
+        - Archived feature not found
+    """
+    plan_path = Path(f"coderef/workorder/{feature_name}/plan.json")
+
+    if not plan_path.exists():
+        return ErrorResponse.not_found(
+            f"Plan for feature '{feature_name}'",
+            hint="Run /create-plan first to generate implementation plan"
+        )
+
+    # Read plan
+    return [TextContent(type="text", text=plan_path.read_text())]
+
+# ✅ GOOD: Clear resource description + actionable hint
+def good_not_found():
+    return ErrorResponse.not_found(
+        "DELIVERABLES.md for feature 'auth-system'",
+        hint="Run /generate-deliverables to create the template"
+    )
+
+# ❌ BAD: Vague resource description
+def bad_not_found():
+    return ErrorResponse.not_found("File not found")  # Which file?
+```
+
+---
+
+## Usage Pattern 4: Permission Denied Errors
+
+```python
+from pathlib import Path
+
+def create_directory_handler(path: str) -> list[TextContent]:
+    """
+    Create directory with permission error handling.
+
+    **Error Example:**
+        >>> create_directory_handler("/protected/path")
+        [TextContent(text='❌ Permission denied: Cannot create directory...\n\n💡 Run as administrator...')]
+
+    **Common Permission Errors:**
+        - Cannot write to directory
+        - Cannot create directory
+        - Cannot delete file
+        - File locked by another process
+    """
+    try:
+        Path(path).mkdir(parents=True, exist_ok=True)
+        return [TextContent(type="text", text="Directory created")]
+
+    except PermissionError as e:
+        return ErrorResponse.permission_denied(
+            f"Cannot create directory at {path}",
+            hint="Check file permissions or run as administrator"
+        )
+
+# ✅ GOOD: Specific hint for fixing permission issue
+def good_permission_error():
+    return ErrorResponse.permission_denied(
+        "Cannot write to DELIVERABLES.md",
+        hint="Close the file if it's open in another program, then try again"
+    )
+
+# ❌ BAD: Generic unhelpful hint
+def bad_permission_error():
+    return ErrorResponse.permission_denied(
+        "Cannot write file",
+        hint="Fix permissions"  # Too vague
+    )
+```
+
+---
+
+## Usage Pattern 5: JSON Schema Validation Failures
+
+```python
+import jsonschema
+import json
+from pathlib import Path
+
+def validate_changelog_handler(changelog_path: str) -> list[TextContent]:
+    """
+    Validate CHANGELOG.json with schema error formatting.
+
+    **Error Example:**
+        >>> validate_changelog_handler("CHANGELOG.json")
+        [TextContent(text='❌ Changelog validation failed\n\nError: "bugfix" is not one of ["feature", "enhancement"]...\nPath: changes → 0 → type')]
+
+    **Special Features:**
+        - Automatically formats error path as breadcrumb
+        - Shows exact field that failed validation
+        - Includes schema location in hint
+    """
+    try:
+        # Load CHANGELOG.json
+        data = json.loads(Path(changelog_path).read_text())
+
+        # Load schema
+        schema = json.loads(Path("coderef/changelog/schema.json").read_text())
+
+        # Validate (raises jsonschema.ValidationError)
+        jsonschema.validate(data, schema)
+
+        return [TextContent(type="text", text="Validation passed")]
+
+    except jsonschema.ValidationError as e:
+        # ErrorResponse.validation_failed automatically formats path
+        return ErrorResponse.validation_failed(e)
+        # Output: ❌ Changelog validation failed
+        #         Error: 'bugfix' is not one of ['feature', 'enhancement']
+        #         Path: changes → 0 → type
+        #         💡 Check CHANGELOG.json against schema at coderef/changelog/schema.json
+
+# Path formatting example:
+# error.path = ['changes', 0, 'type']
+# Formatted as: "changes → 0 → type"
+
+# Root-level error:
+# error.path = []
+# Formatted as: "(root)"
+```
+
+---
+
+## Usage Pattern 6: Malformed JSON Errors
+
+```python
+import json
+from pathlib import Path
+
+def read_plan_handler(feature_name: str) -> list[TextContent]:
+    """
+    Read plan.json with JSON syntax error handling.
+
+    **Error Example:**
+        >>> read_plan_handler("broken-feature")
+        [TextContent(text='❌ Malformed JSON: plan.json: Expecting "," delimiter: line 12 column 5...\n\n💡 Check for missing commas, quotes, or brackets')]
+
+    **Common JSON Errors:**
+        - Missing comma
+        - Missing closing bracket
+        - Trailing comma
+        - Unquoted keys
+    """
+    plan_path = Path(f"coderef/workorder/{feature_name}/plan.json")
+
+    try:
+        data = json.loads(plan_path.read_text())
+        return [TextContent(type="text", text=str(data))]
+
+    except json.JSONDecodeError as e:
+        return ErrorResponse.malformed_json(
+            f"{plan_path.name}: {str(e)}",
+            hint="Check for missing commas, quotes, or brackets"
+        )
+
+# ✅ GOOD: Custom hint for common issues
+def good_json_error():
+    return ErrorResponse.malformed_json(
+        "plan.json: Expecting property name enclosed in double quotes: line 5 column 3",
+        hint="Use double quotes for all keys and string values"
+    )
+
+# ✅ GOOD: Use default hint when no custom hint needed
+def good_json_error_default():
+    return ErrorResponse.malformed_json("plan.json: Invalid syntax")
+    # Hint automatically set to "Validate JSON syntax"
+```
+
+---
+
+## Usage Pattern 7: Encoding Errors
+
+```python
+from pathlib import Path
+
+def read_file_handler(file_path: str) -> list[TextContent]:
+    """
+    Read file with encoding error handling.
+
+    **Error Example:**
+        >>> read_file_handler("corrupted.txt")
+        [TextContent(text='❌ Encoding error: File contains invalid UTF-8 characters...\n\n💡 File may be corrupted or not UTF-8 encoded')]
+
+    **Common Encoding Errors:**
+        - Non-UTF-8 files
+        - Binary files mistaken for text
+        - Corrupted files
+    """
+    try:
+        content = Path(file_path).read_text(encoding='utf-8')
+        return [TextContent(type="text", text=content)]
+
+    except UnicodeDecodeError as e:
+        return ErrorResponse.encoding_error(
+            f"{file_path} contains invalid UTF-8 characters",
+            hint="Try opening with different encoding (latin-1, cp1252) or check for binary data"
+        )
+
+# ✅ GOOD: Use default hint when appropriate
+def good_encoding_error_default():
+    return ErrorResponse.encoding_error("File encoding invalid")
+    # Hint automatically set to "File may be corrupted or not UTF-8 encoded"
+```
+
+---
+
+## Usage Pattern 8: I/O Errors
+
+```python
+from pathlib import Path
+import shutil
+
+def copy_file_handler(src: str, dst: str) -> list[TextContent]:
+    """
+    Copy file with I/O error handling.
+
+    **Error Example:**
+        >>> copy_file_handler("large-file.bin", "/full-disk/")
+        [TextContent(text='❌ File operation failed: No space left on device...\n\n💡 Check disk space and file permissions')]
+
+    **Common I/O Errors:**
+        - Disk full
+        - Network drive disconnected
+        - File locked by another process
+    """
+    try:
+        shutil.copy(src, dst)
+        return [TextContent(type="text", text="File copied")]
+
+    except IOError as e:
+        return ErrorResponse.io_error(
+            f"Failed to copy {src} to {dst}: {str(e)}",
+            hint="Check disk space, network connection, and file permissions"
+        )
+
+# ✅ GOOD: Contextual hint based on operation
+def good_io_error():
+    return ErrorResponse.io_error(
+        "Failed to write DELIVERABLES.md: Disk quota exceeded",
+        hint="Free up disk space or use a different location"
+    )
+```
+
+---
+
+## Usage Pattern 9: Generic Errors (Catch-All)
+
+```python
+def complex_operation_handler() -> list[TextContent]:
+    """
+    Complex operation with catch-all error handling.
+
+    **Best Practice:** Use specific error methods first, generic_error as final fallback.
+
+    **Example:**
+        try:
+            # Complex operation
+            pass
+        except ValueError as e:
+            return ErrorResponse.invalid_input(str(e))  # Specific
+        except FileNotFoundError as e:
+            return ErrorResponse.not_found(str(e))      # Specific
+        except Exception as e:
+            return ErrorResponse.generic_error(str(e))  # Catch-all
+    """
+    try:
+        # Complex multi-step operation
+        result = risky_operation()
+        return [TextContent(type="text", text=result)]
+
+    # Catch specific exceptions first
+    except ValueError as e:
+        return ErrorResponse.invalid_input(str(e))
+    except FileNotFoundError as e:
+        return ErrorResponse.not_found(str(e))
+    except PermissionError as e:
+        return ErrorResponse.permission_denied(str(e))
+
+    # Catch-all for unexpected errors (last resort)
+    except Exception as e:
+        return ErrorResponse.generic_error(
+            str(e),
+            hint="Please report this issue if it persists"
+        )
+
+# ✅ GOOD: Generic error as final catch-all
+def good_generic_usage():
+    try:
+        # ... specific handlers ...
+        pass
+    except Exception as e:
+        return ErrorResponse.generic_error(str(e))
+
+# ❌ BAD: Using generic_error for known error types
+def bad_generic_usage():
+    try:
+        validate_feature_name(name)
+    except ValueError as e:
+        return ErrorResponse.generic_error(str(e))  # Should use invalid_input
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ Anti-Pattern 1: No Error Handling
+
+```python
+# BAD: No error handling (crashes on invalid input)
+def bad_no_error_handling(feature_name: str):
+    validated = validate_feature_name_input(feature_name)  # Crashes on ValueError
+    return [TextContent(type="text", text=validated)]
+
+# GOOD: Proper error handling
+def good_error_handling(feature_name: str):
+    try:
+        validated = validate_feature_name_input(feature_name)
+        return [TextContent(type="text", text=validated)]
+    except ValueError as e:
+        return ErrorResponse.invalid_input(str(e), hint="...")
+```
+
+---
+
+### ❌ Anti-Pattern 2: Generic Exception Handler Only
+
+```python
+# BAD: Only catching generic Exception (loses error specificity)
+def bad_generic_only():
+    try:
+        # Operation
+        pass
+    except Exception as e:
+        return ErrorResponse.generic_error(str(e))  # All errors look the same
+
+# GOOD: Specific handlers + generic fallback
+def good_specific_handlers():
+    try:
+        # Operation
+        pass
+    except ValueError as e:
+        return ErrorResponse.invalid_input(str(e))  # Specific
+    except FileNotFoundError as e:
+        return ErrorResponse.not_found(str(e))      # Specific
+    except Exception as e:
+        return ErrorResponse.generic_error(str(e))  # Fallback
+```
+
+---
+
+### ❌ Anti-Pattern 3: No Hints Provided
+
+```python
+# BAD: No hints for user (not helpful)
+def bad_no_hints():
+    return ErrorResponse.not_found("Plan file")  # No hint
+    return ErrorResponse.invalid_input("Invalid name")  # No hint
+
+# GOOD: Always include hints
+def good_with_hints():
+    return ErrorResponse.not_found(
+        "Plan file",
+        hint="Run /create-plan first to generate implementation plan"
+    )
+    return ErrorResponse.invalid_input(
+        "Invalid name",
+        hint="Use only alphanumeric characters, hyphens, and underscores"
+    )
+```
+
+---
+
+### ❌ Anti-Pattern 4: Creating Custom Error Messages
+
+```python
+# BAD: Creating custom error messages (inconsistent format)
+def bad_custom_messages():
+    return [TextContent(type="text", text=f"ERROR: {e}")]  # No ❌ emoji
+    return [TextContent(type="text", text=f"Failed: {e}")]  # Different format
+
+# GOOD: Use ErrorResponse methods (consistent format)
+def good_error_response():
+    return ErrorResponse.invalid_input(str(e), hint="...")  # ❌ + 💡 format
+    return ErrorResponse.not_found(str(e), hint="...")      # Consistent
+```
+
+---
+
+### ❌ Anti-Pattern 5: Catching Exceptions in Wrong Order
+
+```python
+# BAD: Generic exception before specific (specific handlers unreachable)
+def bad_exception_order():
+    try:
+        # Operation
+        pass
+    except Exception as e:           # Catches everything!
+        return ErrorResponse.generic_error(str(e))
+    except ValueError as e:          # Never reached!
+        return ErrorResponse.invalid_input(str(e))
+
+# GOOD: Specific exceptions first, generic last
+def good_exception_order():
+    try:
+        # Operation
+        pass
+    except ValueError as e:           # Specific
+        return ErrorResponse.invalid_input(str(e))
+    except FileNotFoundError as e:    # Specific
+        return ErrorResponse.not_found(str(e))
+    except Exception as e:            # Generic (last resort)
+        return ErrorResponse.generic_error(str(e))
+```
+
+---
+
+## Best Practices Summary
+
+### 1. Always Use ErrorResponse Methods
+
+```python
+# ✅ DO: Use ErrorResponse factory
+return ErrorResponse.invalid_input(str(e), hint="...")
+
+# ❌ DON'T: Create custom error messages
+return [TextContent(type="text", text=f"Error: {e}")]
+```
+
+### 2. Catch Specific Exceptions First
+
+```python
+# ✅ DO: Specific → Generic
+except ValueError: ...
+except FileNotFoundError: ...
+except Exception: ...  # Last resort
+
+# ❌ DON'T: Generic first
+except Exception: ...  # Catches everything!
+```
+
+### 3. Always Include Hints
+
+```python
+# ✅ DO: Provide actionable hints
+return ErrorResponse.not_found(
+    "Plan file",
+    hint="Run /create-plan first"
+)
+
+# ❌ DON'T: No hints
+return ErrorResponse.not_found("Plan file")
+```
+
+### 4. Format Resource Names Clearly
+
+```python
+# ✅ DO: Clear resource description
+return ErrorResponse.not_found(
+    f"Plan for feature '{feature_name}'",  # Clear
+    hint="..."
+)
+
+# ❌ DON'T: Vague description
+return ErrorResponse.not_found(f"{feature_name}")  # Unclear
+```
+
+---
+
+## Quick Reference: Exception → Method Mapping
+
+| Python Exception | ErrorResponse Method | Usage |
+|-----------------|---------------------|-------|
+| `ValueError` | `invalid_input(detail, hint)` | Validation failures |
+| `FileNotFoundError` | `not_found(resource, hint)` | Missing files/features |
+| `PermissionError` | `permission_denied(detail, hint)` | File permissions |
+| `jsonschema.ValidationError` | `validation_failed(error)` | Schema validation |
+| `json.JSONDecodeError` | `malformed_json(detail, hint)` | JSON syntax errors |
+| `UnicodeDecodeError` | `encoding_error(detail, hint)` | File encoding issues |
+| `IOError` | `io_error(detail, hint)` | File I/O errors |
+| `Exception` | `generic_error(detail, hint)` | Catch-all (last resort) |
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P1-001
+**Task:** SHEET-010
+**Timestamp:** 2026-01-02

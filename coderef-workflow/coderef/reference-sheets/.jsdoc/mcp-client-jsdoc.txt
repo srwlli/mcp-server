@@ -1,0 +1,533 @@
+# JSDoc Suggestions for mcp_client.py
+
+## Purpose
+Copy-paste JSDoc comments to enhance inline documentation in mcp_client.py
+
+## Usage Instructions
+1. Copy the relevant JSDoc block below
+2. Paste above the corresponding function/class in mcp_client.py
+3. Adjust parameter names/types if implementation differs
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+MCP-to-MCP Client for Inter-Server Communication
+
+Enables coderef-workflow MCP to call tools from coderef-context MCP using
+JSON-RPC 2.0 protocol over stdio transport.
+
+**Core Innovation:**
+Singleton pattern with thread-safe async initialization, retry logic, and
+graceful error handling for reliable cross-server tool invocation.
+
+**Protocol:**
+- JSON-RPC 2.0 over stdio subprocess pipes
+- Request/response pairs with auto-incrementing message IDs
+- Timeout: 120s (5x safety margin for large AST scans)
+- Retries: Up to 3 attempts for transient errors
+
+**Workflow:**
+1. get_instance() → Singleton with async lock (spawns subprocess if needed)
+2. call_tool() → Build JSON-RPC request, send to stdin, read from stdout
+3. Parse response, handle errors, retry on transient failures
+4. Return {"success": True, "data": {...}, "tool_name": "..."}
+5. disconnect() → Graceful shutdown (or kill after 5s timeout)
+
+**Performance:**
+- First call: ~500ms (subprocess spawn) + tool execution time
+- Subsequent calls: ~50-100ms (IPC) + tool execution time
+- Timeout: 120s maximum per call
+
+**Version:** 1.2.0
+**See:** MCP-CLIENT.md for complete documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Class Definition
+
+```python
+class MCPToolClient:
+    """
+    Lightweight MCP client for calling coderef-context tools from coderef-workflow.
+
+    Uses JSON-RPC 2.0 protocol over stdio subprocess communication.
+    Supports retries, timeouts, and graceful error handling.
+
+    **Singleton Pattern:**
+    Only one instance per Python process. Thread-safe via async lock.
+
+    **State Ownership:**
+    - Owns: server_script_path, process, message_id, timeout_seconds, max_retries
+    - Stateless: No caching, generates fresh requests on each call
+
+    **Lifecycle:**
+    1. get_instance() → Creates singleton (spawns subprocess if needed)
+    2. call_tool() → JSON-RPC request/response pair
+    3. disconnect() → Graceful shutdown
+
+    **Example:**
+        >>> client = await MCPToolClient.get_instance()
+        >>> result = await client.call_tool("coderef_scan", {
+        ...     "project_path": "/path/to/project",
+        ...     "languages": ["py"]
+        ... })
+        >>> result["success"]
+        True
+        >>> len(result["data"]["elements"])
+        42
+
+    **Thread Safety:**
+    Uses asyncio.Lock for singleton initialization. Safe for concurrent usage.
+
+    **Performance:**
+    - Connection: ~500ms (subprocess spawn)
+    - Call overhead: ~50-100ms (IPC)
+    - Timeout: 120s (configurable)
+
+    **See:** MCP-CLIENT.md Section 3 for architecture
+    """
+```
+
+---
+
+## Constructor
+
+```python
+def __init__(self, server_script_path: Optional[str] = None):
+    """
+    Initialize MCP client.
+
+    **Args:**
+        server_script_path (Optional[str]): Path to coderef-context server.py.
+            If None, uses default location (../coderef-context/server.py).
+
+    **Side Effects:**
+        - Sets self.server_script_path
+        - Initializes self.process = None
+        - Sets self.message_id = 0
+        - Sets self.timeout_seconds = 120
+        - Sets self.max_retries = 3
+        - Logs initialization
+
+    **Default Path Logic:**
+        If server_script_path is None:
+        - Uses Path(__file__).parent.parent / "coderef-context" / "server.py"
+        - Assumes sibling directory structure
+
+    **Performance:** <1ms
+
+    **Example:**
+        >>> # Default path (sibling directory)
+        >>> client = MCPToolClient()
+        >>> client.server_script_path
+        '../coderef-context/server.py'
+
+        >>> # Custom path
+        >>> client = MCPToolClient("/custom/path/server.py")
+        >>> client.server_script_path
+        '/custom/path/server.py'
+
+    **See:** MCP-CLIENT.md Section 4.1
+    """
+```
+
+---
+
+## Connection Manager
+
+```python
+async def connect(self) -> bool:
+    """
+    Start the MCP server subprocess.
+
+    **Returns:**
+        bool: True if connection successful, False otherwise.
+
+    **Side Effects:**
+        - Spawns subprocess with Popen(["python", server_script_path])
+        - Sets self.process to subprocess.Popen instance
+        - Waits 500ms for server startup
+        - Logs PID on success
+
+    **Idempotent:**
+        If process already running (poll() == None), returns True immediately.
+
+    **Error Handling:**
+        Returns False on any exception (logs error).
+
+    **Performance:**
+        - First call: ~500ms (subprocess spawn + startup delay)
+        - Subsequent calls: <1ms (process check)
+
+    **Example:**
+        >>> client = MCPToolClient()
+        >>> connected = await client.connect()
+        >>> if connected:
+        ...     print("Server ready")
+        Server ready
+
+    **Subprocess Config:**
+        - Command: ["python", server_script_path]
+        - stdin: PIPE, stdout: PIPE, stderr: PIPE
+        - text=True (not binary), bufsize=1 (line buffered)
+
+    **See:** MCP-CLIENT.md Section 4.2
+    """
+```
+
+---
+
+## Tool Invocation (Core API)
+
+```python
+async def call_tool(
+    self,
+    tool_name: str,
+    tool_args: Dict[str, Any],
+    retry_count: int = 0
+) -> Dict[str, Any]:
+    """
+    Call an MCP tool in coderef-context server.
+
+    **Main API for tool invocation.** Builds JSON-RPC request, sends to stdin,
+    reads from stdout, parses response, handles errors with retry logic.
+
+    **Args:**
+        tool_name (str): Name of tool to call (e.g., "coderef_scan")
+        tool_args (Dict[str, Any]): Arguments to pass to tool
+        retry_count (int): Internal retry counter (0-max_retries)
+
+    **Returns:**
+        Dict[str, Any]: Response dict with structure:
+            {
+                "success": True,
+                "data": {...},  # Tool-specific response
+                "tool_name": "coderef_scan"
+            }
+
+    **Raises:**
+        ConnectionError: If unable to connect to server
+        TimeoutError: If tool call exceeds timeout_seconds (120s)
+        RuntimeError: If tool execution fails
+
+    **Retry Logic:**
+        - Retries up to max_retries (3) times for transient errors
+        - Backoff: 500ms fixed delay between retries
+        - Retryable patterns: timeout, temporary, busy, try again, connection reset
+
+    **JSON-RPC Protocol:**
+        Request format:
+        {
+            "jsonrpc": "2.0",
+            "id": <auto-increment>,
+            "method": "tools/call",
+            "params": {
+                "name": tool_name,
+                "arguments": tool_args
+            }
+        }
+
+    **Performance:**
+        - First call: ~500ms (connection) + tool execution time
+        - Subsequent calls: ~50-100ms (IPC) + tool execution time
+        - Timeout: 120s maximum
+
+    **Example:**
+        >>> client = await MCPToolClient.get_instance()
+        >>> result = await client.call_tool("coderef_scan", {
+        ...     "project_path": "/path/to/project",
+        ...     "languages": ["py"]
+        ... })
+        >>> result["success"]
+        True
+        >>> len(result["data"]["elements"])
+        42
+
+    **Error Handling:**
+        - ConnectionError: Subprocess spawn failed
+        - TimeoutError: Tool execution exceeded 120s
+        - RuntimeError: Tool failed or invalid JSON response
+
+    **Security:**
+        No input sanitization - assumes trusted tool names/args.
+        Trust boundary at caller level (planning_analyzer validates inputs).
+
+    **See:**
+        - MCP-CLIENT.md Section 4.3
+        - _is_retryable() for retry pattern detection
+    """
+```
+
+---
+
+## Error Detection
+
+```python
+def _is_retryable(self, error_msg: str) -> bool:
+    """
+    Check if error is likely transient and worth retrying.
+
+    **Purpose:** Distinguishes transient errors (timeout, busy) from
+    permanent errors (invalid argument, not found).
+
+    **Args:**
+        error_msg (str): Error message from server
+
+    **Returns:**
+        bool: True if error matches retryable patterns
+
+    **Algorithm:**
+        Checks if error_msg (case-insensitive) contains any of:
+        - "timeout"
+        - "temporary"
+        - "busy"
+        - "try again"
+        - "connection reset"
+
+    **Performance:** <1ms (substring search)
+
+    **Example:**
+        >>> client = MCPToolClient()
+        >>> client._is_retryable("Connection timeout")
+        True
+        >>> client._is_retryable("Invalid argument")
+        False
+        >>> client._is_retryable("Server busy, try again")
+        True
+
+    **Use Case:**
+        Called by call_tool() to decide if retry is worthwhile:
+        if retry_count < max_retries and _is_retryable(error_msg):
+            await asyncio.sleep(0.5)
+            return await call_tool(tool_name, tool_args, retry_count + 1)
+
+    **See:** MCP-CLIENT.md Section 4.4
+    """
+```
+
+---
+
+## Cleanup
+
+```python
+async def disconnect(self):
+    """
+    Gracefully shutdown MCP server subprocess.
+
+    **Side Effects:**
+        - Closes stdin pipe
+        - Waits up to 5 seconds for graceful exit
+        - Kills process if timeout expires
+        - Logs disconnect event
+
+    **Error Handling:**
+        Catches all exceptions, logs warnings.
+        Always attempts process.kill() as fallback.
+
+    **Performance:**
+        - Graceful shutdown: ~5-10ms
+        - Timeout + kill: ~5s
+
+    **Example:**
+        >>> client = await MCPToolClient.get_instance()
+        >>> # ... use client ...
+        >>> await client.disconnect()
+        # Logs: "MCP server disconnected"
+
+    **Cleanup Steps:**
+        1. Close stdin (signals server to exit)
+        2. Wait up to 5s for process.wait()
+        3. If timeout, call process.kill()
+        4. Log result
+
+    **Note:**
+        Idempotent - safe to call multiple times.
+        If process already dead (poll() != None), no-op.
+
+    **See:** MCP-CLIENT.md Section 4.5
+    """
+```
+
+---
+
+## Singleton Accessor (Recommended API)
+
+```python
+@classmethod
+async def get_instance(cls, server_path: Optional[str] = None) -> 'MCPToolClient':
+    """
+    Get singleton instance of MCP client (thread-safe).
+
+    **Recommended API for accessing MCPToolClient.**
+
+    **Args:**
+        server_path (Optional[str]): Optional custom path to server.py
+            (only used on first call, ignored on subsequent calls)
+
+    **Returns:**
+        MCPToolClient: Singleton instance
+
+    **Thread Safety:**
+        Uses async lock to prevent race conditions during initialization.
+
+    **Side Effects:**
+        - First call: Creates _instance, spawns subprocess
+        - Subsequent calls: Returns existing _instance
+
+    **Performance:**
+        - First call: ~500ms (singleton creation + subprocess)
+        - Subsequent calls: <1ms (lock + return)
+
+    **Example:**
+        >>> # Recommended usage pattern
+        >>> client = await MCPToolClient.get_instance()
+        >>> result = await client.call_tool("coderef_scan", {...})
+
+        >>> # Custom server path (only on first call)
+        >>> client = await MCPToolClient.get_instance("/custom/server.py")
+
+    **Implementation:**
+        if cls._instance is None:
+            async with cls._lock:
+                if cls._instance is None:
+                    cls._instance = cls(server_path)
+                    await cls._instance.connect()
+        return cls._instance
+
+    **Double-Checked Locking:**
+        Checks _instance before acquiring lock (fast path).
+        Checks again inside lock (prevents race condition).
+
+    **See:** MCP-CLIENT.md Section 4.6
+    """
+```
+
+---
+
+## Convenience Function
+
+```python
+async def call_coderef_tool(
+    tool_name: str,
+    tool_args: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Convenience function to call a coderef tool.
+
+    **High-level API for calling coderef tools without managing client lifecycle.**
+
+    **Args:**
+        tool_name (str): Name of tool to call
+        tool_args (Dict[str, Any]): Arguments to pass to tool
+
+    **Returns:**
+        Dict[str, Any]: Same as MCPToolClient.call_tool()
+
+    **Raises:**
+        ConnectionError, TimeoutError, RuntimeError on failure
+
+    **Implementation:**
+        client = await MCPToolClient.get_instance()
+        return await client.call_tool(tool_name, tool_args)
+
+    **Performance:**
+        Identical to call_tool() (no overhead).
+
+    **Example:**
+        >>> # Simplest usage pattern
+        >>> result = await call_coderef_tool("coderef_scan", {
+        ...     "project_path": "/path/to/project",
+        ...     "languages": ["py"]
+        ... })
+        >>> result["success"]
+        True
+
+    **Recommended For:**
+        Quick one-off tool calls without managing client lifecycle.
+
+    **Alternative:**
+        For multiple calls, prefer:
+        client = await MCPToolClient.get_instance()
+        result1 = await client.call_tool(...)
+        result2 = await client.call_tool(...)
+
+    **See:** MCP-CLIENT.md Section 4.7
+    """
+```
+
+---
+
+## Integration Best Practices
+
+**Using MCPToolClient in planning_analyzer.py:**
+```python
+# Recommended pattern with fallback
+from mcp_client import call_coderef_tool
+import logging
+
+logger = logging.getLogger(__name__)
+
+async def analyze_code_patterns(project_path: Path):
+    """Analyze code with coderef-context, fallback to regex on failure."""
+    try:
+        # Priority 1: Use MCP tool for accurate analysis
+        result = await call_coderef_tool("coderef_patterns", {
+            "project_path": str(project_path)
+        })
+        patterns = result["data"]["patterns"]
+        logger.info(f"Found {len(patterns)} patterns via coderef-context")
+        return patterns
+
+    except (ConnectionError, TimeoutError, RuntimeError) as e:
+        # Fallback to regex-based analysis
+        logger.warning(f"coderef-context unavailable: {e}. Using fallback analysis.")
+        return analyze_patterns_regex(project_path)
+```
+
+**Error Handling with Retries:**
+```python
+# Client automatically retries transient errors
+result = await call_coderef_tool("coderef_scan", {
+    "project_path": str(project_path),
+    "languages": ["py"]
+})
+# No manual retry needed - client handles it internally
+```
+
+**Adjusting Timeout for Large Repos:**
+```python
+# For large codebases (>100K LOC)
+client = await MCPToolClient.get_instance()
+client.timeout_seconds = 300  # 5 minutes
+
+result = await client.call_tool("coderef_scan", {
+    "project_path": "/path/to/huge/repo",
+    "languages": ["py", "js", "ts"]
+})
+```
+
+**Debugging Failed Tool Calls:**
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Enables detailed logging:
+# - Request JSON (first 100 chars)
+# - Response parsing
+# - Error messages
+
+result = await call_coderef_tool("coderef_scan", {...})
+```
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P1-001
+**Task:** SHEET-006
+**Timestamp:** 2026-01-02

@@ -1,0 +1,610 @@
+# JSDoc Suggestions for validation.py
+
+## Purpose
+Usage examples and best practices for input validation - security boundary for all MCP tool parameters
+
+## Important Note
+These are stateless validation functions designed for fail-fast error handling at tool boundaries. Every example shows ValueError raising on invalid input (no silent failures).
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Input Validation for coderef-workflow MCP Server
+
+Security boundary that validates all tool parameters before business logic execution.
+Prevents path traversal, null byte injection, and invalid enum values.
+
+**Key Features:**
+- 24 validation functions across 8 categories
+- Path traversal prevention (regex + is_relative_to)
+- Null byte injection prevention
+- Enum-based type safety (18 enums validated)
+- Fail-fast error handling (ValueError on invalid input)
+- Zero state (100% stateless functions)
+
+**Categories:**
+1. Project Path (2 functions) - validate_project_path_input, validate_project_path_exists
+2. Documentation (4 functions) - template_name, version, change_type, severity
+3. Standards & Audit (4 functions) - scan_depth, focus_areas, audit_severity, audit_scope
+4. Consistency (2 functions) - severity_threshold, files_input
+5. Planning (2 functions) - validation_severity, plan_status
+6. Workorder (4 functions) - workorder_id, task_id, task_status, feature_name
+7. Risk Assessment (3 functions) - risk_threshold, proposed_change, change_type_enum
+8. Context Expert (1 function) - expert_id
+
+**Security Design:**
+- Defense in depth (multiple validation layers)
+- Fail-fast on invalid input (no partial validation)
+- Single responsibility (one function per input type)
+- Explicit is better than implicit (no default coercion)
+
+**Version:** 1.3.0
+**See:** VALIDATION.md for complete reference
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Usage Pattern 1: Project Path Validation (Most Common)
+
+```python
+from pathlib import Path
+from validation import validate_project_path_input, validate_project_path_exists
+
+def my_tool_handler(project_path: str) -> dict:
+    """
+    MCP tool handler with proper project path validation.
+
+    **Security:** Validates at tool boundary to prevent path traversal attacks.
+
+    **Example:**
+        >>> result = my_tool_handler("/path/to/project")
+        >>> result["success"]
+        True
+
+    **Raises:**
+        ValueError: If project_path invalid, too long, contains null bytes, or doesn't exist
+
+    **Best Practice:** Always validate in this exact order:
+        1. validate_project_path_input (format, length, security)
+        2. validate_project_path_exists (filesystem check)
+        3. Convert to Path object for internal use
+    """
+    # Step 1: Validate format and security constraints
+    validated_str = validate_project_path_input(project_path)
+
+    # Step 2: Verify directory exists
+    validated_path = validate_project_path_exists(validated_str)
+
+    # Step 3: Use validated Path object safely
+    return process_project(validated_path)
+
+# ✅ GOOD: Two-step validation
+def good_handler(project_path: str):
+    validated = validate_project_path_input(project_path)  # Step 1: Format
+    path = validate_project_path_exists(validated)          # Step 2: Exists
+    return path
+
+# ❌ BAD: Skipping validation
+def bad_handler(project_path: str):
+    path = Path(project_path)  # No validation!
+    return path  # Vulnerable to path traversal
+```
+
+---
+
+## Usage Pattern 2: Feature Name Validation (Path Traversal Prevention)
+
+```python
+from validation import validate_feature_name_input
+from pathlib import Path
+
+def create_feature_directory(project_path: Path, feature_name: str) -> Path:
+    """
+    Create feature directory with path traversal prevention.
+
+    **Security:** Prevents '../../../etc/passwd' attacks.
+
+    **Example:**
+        >>> path = create_feature_directory(Path("/project"), "my-feature")
+        >>> path
+        PosixPath('/project/coderef/workorder/my-feature')
+
+    **Raises:**
+        ValueError: If feature_name contains path traversal sequences
+
+    **Attack Prevention:**
+        ❌ "../../../etc/passwd"  → ValueError (contains '..')
+        ❌ "/absolute/path"       → ValueError (starts with '/')
+        ❌ "my feature"           → ValueError (contains space)
+        ❌ "my/nested/feature"    → ValueError (contains '/')
+        ✅ "my-feature"           → Valid
+        ✅ "my_feature_123"       → Valid
+    """
+    # Validate feature name (prevents path traversal)
+    validated_name = validate_feature_name_input(feature_name)
+
+    # Safe to construct path (no traversal possible)
+    feature_dir = project_path / "coderef" / "workorder" / validated_name
+    feature_dir.mkdir(parents=True, exist_ok=True)
+
+    return feature_dir
+
+# Real-world attack example
+def demonstrate_attack_prevention():
+    """Show how validation prevents attacks."""
+
+    # ✅ Valid feature names
+    validate_feature_name_input("dark-mode-toggle")  # OK
+    validate_feature_name_input("auth_system_v2")    # OK
+
+    # ❌ Attack attempts (all raise ValueError)
+    try:
+        validate_feature_name_input("../../../etc/passwd")
+    except ValueError as e:
+        print(f"Blocked: {e}")  # "Only alphanumeric..."
+
+    try:
+        validate_feature_name_input("/absolute/path")
+    except ValueError as e:
+        print(f"Blocked: {e}")  # "Only alphanumeric..."
+```
+
+---
+
+## Usage Pattern 3: Enum Validation (Type Safety)
+
+```python
+from validation import (
+    validate_change_type_input,
+    validate_severity_input,
+    validate_plan_status_input
+)
+
+def create_changelog_entry(
+    change_type: str,
+    severity: str,
+    title: str
+) -> dict:
+    """
+    Create changelog entry with enum validation.
+
+    **Type Safety:** Validates against ChangeType and Severity enums.
+
+    **Example:**
+        >>> entry = create_changelog_entry("feature", "major", "Add dark mode")
+        >>> entry["type"]
+        'feature'
+
+    **Raises:**
+        ValueError: If change_type or severity not in enum
+
+    **Valid Values:**
+        change_type: 'bugfix', 'enhancement', 'feature', 'breaking_change', 'deprecation', 'security'
+        severity: 'critical', 'major', 'minor', 'patch'
+    """
+    # Validate enums (fail-fast if invalid)
+    validated_type = validate_change_type_input(change_type)
+    validated_severity = validate_severity_input(severity)
+
+    return {
+        "type": validated_type,
+        "severity": validated_severity,
+        "title": title
+    }
+
+# ✅ GOOD: Explicit enum validation
+def good_enum_usage(status: str):
+    validated = validate_plan_status_input(status)
+    # Now guaranteed to be one of: draft, reviewing, approved, rejected, implemented
+    return validated
+
+# ❌ BAD: No validation (typos possible)
+def bad_enum_usage(status: str):
+    if status == "aproved":  # Typo! Should be "approved"
+        return True  # Bug introduced
+```
+
+---
+
+## Usage Pattern 4: Workorder ID Validation (Format Enforcement)
+
+```python
+from validation import validate_workorder_id_input, validate_task_id_input
+
+def assign_task_to_workorder(workorder_id: str, task_id: str) -> dict:
+    """
+    Assign task to workorder with format validation.
+
+    **Format Enforcement:**
+        Workorder ID: WO-{FEATURE}-{CATEGORY}-{SEQUENCE}
+        Task ID: {PHASE}-{NUMBER}
+
+    **Example:**
+        >>> result = assign_task_to_workorder(
+        ...     "WO-AUTH-SYSTEM-001",
+        ...     "IMPL-002"
+        ... )
+        >>> result["valid"]
+        True
+
+    **Raises:**
+        ValueError: If workorder_id or task_id format invalid
+
+    **Valid Examples:**
+        ✅ workorder_id: "WO-AUTH-SYSTEM-001", "WO-API-DESIGN-042"
+        ✅ task_id: "SETUP-001", "IMPL-005", "TEST-010"
+
+    **Invalid Examples:**
+        ❌ "WO-auth-system-001"  → Lowercase not allowed
+        ❌ "WO-FEATURE-1"        → Must be 3 digits (001, not 1)
+        ❌ "TASK-1"              → Must be 3 digits (001, not 1)
+    """
+    # Validate formats
+    validated_wo = validate_workorder_id_input(workorder_id)
+    validated_task = validate_task_id_input(task_id)
+
+    return {
+        "workorder": validated_wo,
+        "task": validated_task,
+        "valid": True
+    }
+```
+
+---
+
+## Usage Pattern 5: Multi-Field Validation (Risk Assessment)
+
+```python
+from validation import validate_proposed_change_input
+
+def assess_risk(proposed_change: dict, threshold: float) -> dict:
+    """
+    Assess risk for proposed code change.
+
+    **Multi-Field Validation:** Validates all required fields in proposed_change dict.
+
+    **Example:**
+        >>> change = {
+        ...     "description": "Refactor auth system",
+        ...     "change_type": "refactor",
+        ...     "files_affected": ["src/auth.py", "tests/test_auth.py"]
+        ... }
+        >>> result = assess_risk(change, 50.0)
+        >>> result["validated"]
+        True
+
+    **Raises:**
+        ValueError: If required fields missing or invalid
+
+    **Required Fields:**
+        - description (str, non-empty)
+        - change_type (str, one of: create, modify, delete, refactor, migrate)
+        - files_affected (list[str], non-empty)
+    """
+    # Validate all required fields atomically
+    validated_change = validate_proposed_change_input(proposed_change)
+
+    # Now safe to use (all fields guaranteed present and valid)
+    return {
+        "description": validated_change["description"],
+        "type": validated_change["change_type"],
+        "files": validated_change["files_affected"],
+        "validated": True
+    }
+
+# ✅ GOOD: Validate entire dict at once
+def good_multi_field(change: dict):
+    validated = validate_proposed_change_input(change)
+    # All fields guaranteed valid
+    return validated
+
+# ❌ BAD: Manual field checking (error-prone)
+def bad_multi_field(change: dict):
+    if "description" in change and "change_type" in change:
+        # Forgot to check files_affected!
+        return change  # Partial validation
+```
+
+---
+
+## Usage Pattern 6: Files Input Validation (Relative Path Enforcement)
+
+```python
+from validation import validate_files_input
+from pathlib import Path
+
+def check_consistency(project_path: Path, files: list[str]) -> dict:
+    """
+    Check code consistency for specific files.
+
+    **Security:** Prevents absolute paths and path traversal in file list.
+
+    **Example:**
+        >>> files = ["src/auth.py", "tests/test_auth.py"]
+        >>> result = check_consistency(Path("/project"), files)
+        >>> result["validated_count"]
+        2
+
+    **Raises:**
+        ValueError: If any file path is absolute or contains '..'
+
+    **Valid Examples:**
+        ✅ ["src/auth.py", "tests/test_auth.py"]
+        ✅ ["components/Button.tsx"]
+
+    **Invalid Examples:**
+        ❌ ["/absolute/path/file.py"]       → Absolute path
+        ❌ ["../../../etc/passwd"]          → Path traversal
+        ❌ ["src/../../../etc/passwd"]      → Disguised traversal
+    """
+    # Validate all file paths (enforces relative paths)
+    validated_files = validate_files_input(files)
+
+    # Now safe to check files (no path traversal possible)
+    results = []
+    for file_path in validated_files:
+        full_path = project_path / file_path
+        if full_path.exists():
+            results.append({"file": file_path, "exists": True})
+
+    return {
+        "validated_count": len(validated_files),
+        "results": results
+    }
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ Anti-Pattern 1: Skipping Validation at Tool Boundary
+
+```python
+# BAD: No validation before business logic
+def bad_tool_handler(project_path: str, feature_name: str):
+    path = Path(project_path) / "coderef" / "workorder" / feature_name
+    # Vulnerable to:
+    # - Path traversal: feature_name = "../../../etc/passwd"
+    # - Non-existent paths: project_path doesn't exist
+    # - Null byte injection: project_path contains \x00
+    return path
+
+# GOOD: Validate at boundary
+def good_tool_handler(project_path: str, feature_name: str):
+    validated_project = validate_project_path_input(project_path)
+    existing_path = validate_project_path_exists(validated_project)
+    validated_feature = validate_feature_name_input(feature_name)
+
+    path = existing_path / "coderef" / "workorder" / validated_feature
+    return path  # Safe
+```
+
+---
+
+### ❌ Anti-Pattern 2: Partial Validation (Checking Some But Not All)
+
+```python
+# BAD: Only checking length, not format
+def bad_partial_validation(feature_name: str):
+    if len(feature_name) > 100:
+        raise ValueError("Feature name too long")
+    # Missing: regex check, path traversal prevention
+    return feature_name  # Still vulnerable
+
+# GOOD: Complete validation
+def good_complete_validation(feature_name: str):
+    return validate_feature_name_input(feature_name)
+    # Checks: length, regex pattern, no path traversal
+```
+
+---
+
+### ❌ Anti-Pattern 3: Silent Coercion Instead of Fail-Fast
+
+```python
+# BAD: Silently coerce invalid input
+def bad_coercion(severity: str):
+    if severity not in ["critical", "major", "minor", "patch"]:
+        return "minor"  # Silent fallback (hides bugs)
+    return severity
+
+# GOOD: Fail-fast on invalid input
+def good_fail_fast(severity: str):
+    return validate_severity_input(severity)
+    # Raises ValueError immediately (exposes bugs early)
+```
+
+---
+
+### ❌ Anti-Pattern 4: Manual Enum Checking (Duplicate Logic)
+
+```python
+# BAD: Manually checking enum values
+def bad_manual_enum(change_type: str):
+    valid_types = ["bugfix", "enhancement", "feature", "breaking_change"]
+    if change_type not in valid_types:
+        raise ValueError(f"Invalid: {change_type}")
+    return change_type  # Can get out of sync with constants.py
+
+# GOOD: Use validation function (single source of truth)
+def good_enum_validation(change_type: str):
+    return validate_change_type_input(change_type)
+    # Uses constants.ChangeType enum (stays in sync)
+```
+
+---
+
+## Best Practices
+
+### 1. Always Validate at Tool Boundary
+
+```python
+def tool_handler(project_path: str, feature_name: str, version: str):
+    """
+    MCP tool handler with complete validation.
+
+    **Validation Order:**
+        1. Validate all inputs first (fail-fast)
+        2. Execute business logic with validated data
+        3. Return results
+    """
+    # Step 1: Validate all inputs (fail-fast zone)
+    validated_project = validate_project_path_input(project_path)
+    existing_project = validate_project_path_exists(validated_project)
+    validated_feature = validate_feature_name_input(feature_name)
+    validated_version = validate_version_input(version)
+
+    # Step 2: Business logic (all inputs safe)
+    result = process_feature(existing_project, validated_feature, validated_version)
+
+    # Step 3: Return results
+    return result
+```
+
+---
+
+### 2. Chain Validations for Dependent Checks
+
+```python
+def create_workorder_directory(project_path: str, workorder_id: str):
+    """
+    Create workorder directory with chained validation.
+
+    **Validation Chain:**
+        project_path → exists check → workorder_id → directory creation
+    """
+    # Chain: input → exists → format → creation
+    validated_path = validate_project_path_input(project_path)
+    existing_path = validate_project_path_exists(validated_path)
+    validated_wo = validate_workorder_id_input(workorder_id)
+
+    workorder_dir = existing_path / "coderef" / "workorder" / validated_wo
+    workorder_dir.mkdir(parents=True, exist_ok=True)
+    return workorder_dir
+```
+
+---
+
+### 3. Use Type Hints + Validation for Double Safety
+
+```python
+from typing import Literal
+
+def update_plan_status(
+    project_path: str,
+    feature_name: str,
+    status: Literal["draft", "reviewing", "approved", "rejected", "implemented"]
+) -> dict:
+    """
+    Update plan status with type hints + runtime validation.
+
+    **Defense in Depth:**
+        - Type hints catch errors at development time (mypy)
+        - Runtime validation catches errors at execution time (ValueError)
+    """
+    # Runtime validation (defense in depth)
+    validated_path = validate_project_path_input(project_path)
+    existing_path = validate_project_path_exists(validated_path)
+    validated_feature = validate_feature_name_input(feature_name)
+    validated_status = validate_plan_status_input(status)
+
+    # Now doubly safe (type hints + validation)
+    return {"status": validated_status, "path": str(existing_path / validated_feature)}
+```
+
+---
+
+## Testing Validation Functions
+
+```python
+import pytest
+from validation import (
+    validate_feature_name_input,
+    validate_workorder_id_input,
+    validate_version_input
+)
+
+def test_feature_name_validation():
+    """Test feature name validation with valid/invalid inputs."""
+
+    # ✅ Valid inputs
+    assert validate_feature_name_input("my-feature") == "my-feature"
+    assert validate_feature_name_input("auth_system_v2") == "auth_system_v2"
+
+    # ❌ Invalid inputs (all raise ValueError)
+    with pytest.raises(ValueError, match="alphanumeric"):
+        validate_feature_name_input("../../../etc/passwd")
+
+    with pytest.raises(ValueError, match="alphanumeric"):
+        validate_feature_name_input("my feature")  # Space
+
+    with pytest.raises(ValueError, match="alphanumeric"):
+        validate_feature_name_input("/absolute/path")
+
+def test_workorder_id_validation():
+    """Test workorder ID format enforcement."""
+
+    # ✅ Valid format
+    assert validate_workorder_id_input("WO-AUTH-SYSTEM-001") == "WO-AUTH-SYSTEM-001"
+
+    # ❌ Invalid format
+    with pytest.raises(ValueError, match="WO-[A-Z0-9-]+-\\d{3}"):
+        validate_workorder_id_input("WO-auth-system-001")  # Lowercase
+
+    with pytest.raises(ValueError):
+        validate_workorder_id_input("WO-FEATURE-1")  # Not 3 digits
+
+def test_version_validation():
+    """Test semantic version validation."""
+
+    # ✅ Valid versions
+    assert validate_version_input("1.0.0") == "1.0.0"
+    assert validate_version_input("2.15.99") == "2.15.99"
+
+    # ❌ Invalid versions
+    with pytest.raises(ValueError, match="X.Y.Z"):
+        validate_version_input("1.0")  # Missing patch
+
+    with pytest.raises(ValueError):
+        validate_version_input("v1.0.0")  # Prefix not allowed
+```
+
+---
+
+## Quick Reference: When to Use Which Function
+
+**Need to validate project path?**
+→ `validate_project_path_input()` then `validate_project_path_exists()`
+
+**Need to validate feature/workorder names?**
+→ `validate_feature_name_input()` or `validate_workorder_id_input()`
+
+**Need to validate changelog parameters?**
+→ `validate_change_type_input()`, `validate_severity_input()`, `validate_version_input()`
+
+**Need to validate standards/audit parameters?**
+→ `validate_scan_depth_input()`, `validate_focus_areas_input()`, `validate_audit_severity_input()`
+
+**Need to validate plan parameters?**
+→ `validate_plan_status_input()`, `validate_validation_severity_input()`
+
+**Need to validate task parameters?**
+→ `validate_task_id_input()`, `validate_task_status_input()`
+
+**Need to validate risk assessment?**
+→ `validate_proposed_change_input()`, `validate_risk_threshold_input()`
+
+**Need to validate file paths list?**
+→ `validate_files_input()`
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P1-001
+**Task:** SHEET-009
+**Timestamp:** 2026-01-02

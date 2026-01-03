@@ -1,0 +1,669 @@
+# JSDoc Suggestions for type_defs.py
+
+## Purpose
+Documentation and usage examples for TypedDict definitions in type_defs.py
+
+## Important Note
+TypedDicts are type definitions, not runtime code. These suggestions focus on:
+- Proper usage in function signatures
+- Runtime validation patterns
+- Type composition examples
+- Common pitfalls to avoid
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Type Definitions for coderef-workflow MCP Server
+
+Provides 71 TypedDict definitions and type aliases for better type safety and IDE support.
+
+**Single Source of Truth:**
+All structured data formats - tool return types, intermediate data structures,
+and MCP tool responses - are defined here.
+
+**Categories (14 domains):**
+- Generator types (4)
+- Changelog types (2)
+- Standards types (6)
+- Audit types (5)
+- Consistency types (2)
+- Planning workflow types (6)
+- Inventory types (4)
+- Dependency inventory (6)
+- API inventory (4)
+- Database inventory (8)
+- Configuration inventory (4)
+- Test inventory (4)
+- Documentation inventory (3)
+- Risk assessment (9)
+
+**Type Safety Features:**
+- Structural typing (duck typing with type hints)
+- IDE autocomplete on field names
+- mypy type checking
+- Optional runtime validation with type guards
+
+**Zero Runtime Overhead:**
+TypedDicts are erased at runtime. No performance impact.
+
+**Version:** 1.2.0
+**See:** TYPE-DEFS.md for complete documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Usage Pattern 1: Function Return Types
+
+```python
+from type_defs import PlanResultDict
+
+def create_plan(
+    feature_name: str,
+    workorder_id: str
+) -> PlanResultDict:
+    """
+    Create implementation plan.
+
+    **Returns:**
+        PlanResultDict with structure:
+        {
+            "plan_path": str,
+            "feature_name": str,
+            "workorder_id": str (WO-FORMAT),
+            "score": int (0-100),
+            "approved": bool,
+            "success": bool
+        }
+
+    **Example:**
+        >>> result = create_plan("dark-mode-toggle", "WO-DARK-MODE-001")
+        >>> result["success"]
+        True
+        >>> result["approved"]
+        True
+        >>> result["score"]
+        95
+
+    **Type Safety:**
+        mypy validates all required fields present at compile time.
+        IDE provides autocomplete on result["..."] fields.
+    """
+    plan_path = save_plan(feature_name, ...)
+
+    return {
+        "plan_path": str(plan_path),
+        "feature_name": feature_name,
+        "workorder_id": workorder_id,
+        "score": 95,
+        "approved": True,
+        "success": True
+    }
+```
+
+---
+
+## Usage Pattern 2: Nested TypedDicts
+
+```python
+from type_defs import AuditResultDict, ComplianceScoreDict, ViolationStatsDict, AuditViolationDict
+
+def audit_codebase() -> AuditResultDict:
+    """
+    Audit codebase against standards.
+
+    **Returns:**
+        AuditResultDict with nested TypedDicts:
+        - compliance_details: ComplianceScoreDict
+        - violation_stats: ViolationStatsDict
+        - violations: List[AuditViolationDict]
+
+    **Type Composition:**
+        Nested types provide structure and autocomplete at all levels.
+
+    **Example:**
+        >>> result = audit_codebase()
+        >>> result["compliance_details"]["overall_score"]
+        85
+        >>> result["compliance_details"]["grade"]
+        'B'
+        >>> result["violation_stats"]["total_violations"]
+        12
+    """
+    # Build compliance score (nested TypedDict)
+    compliance: ComplianceScoreDict = {
+        "overall_score": 85,
+        "ui_compliance": 90,
+        "behavior_compliance": 85,
+        "ux_compliance": 80,
+        "grade": "B",
+        "passing": True
+    }
+
+    # Build violation stats (nested TypedDict)
+    stats: ViolationStatsDict = {
+        "total_violations": 12,
+        "critical_count": 0,
+        "major_count": 5,
+        "minor_count": 7,
+        "violations_by_file": {...},
+        "violations_by_type": {...},
+        "most_violated_file": "src/components/Button.tsx",
+        "most_common_violation": "non_standard_button_size"
+    }
+
+    # Build violations list (list of nested TypedDicts)
+    violations: List[AuditViolationDict] = [
+        {
+            "id": "V-001",
+            "type": "non_standard_button_size",
+            "severity": "major",
+            "category": "ui_patterns",
+            "file_path": "src/components/Button.tsx",
+            "line_number": 42,
+            "column": 10,
+            "message": "Button uses non-standard size 'xl'",
+            "actual_value": "size='xl'",
+            "expected_value": "size='sm' | 'md' | 'lg'",
+            "fix_suggestion": "Change 'xl' to 'lg'",
+            "code_snippet": "..."
+        },
+        # ... more violations
+    ]
+
+    return {
+        "report_path": "coderef/standards/audit-report.md",
+        "compliance_score": 85,
+        "compliance_details": compliance,
+        "violation_stats": stats,
+        "violations": violations,
+        "scan_metadata": {"timestamp": "...", "duration": 5.2},
+        "success": True
+    }
+```
+
+---
+
+## Usage Pattern 3: Optional Fields (total=False)
+
+```python
+from type_defs import ChangeDict
+
+def create_changelog_entry(
+    change_id: str,
+    is_breaking: bool
+) -> ChangeDict:
+    """
+    Create changelog entry.
+
+    **Optional Fields:**
+        ChangeDict uses total=False, so 'migration' field is optional.
+        Only include migration guide for breaking changes.
+
+    **Example (Non-Breaking):**
+        >>> entry = create_changelog_entry("CHANGE-001", False)
+        >>> "migration" in entry
+        False
+
+    **Example (Breaking):**
+        >>> entry = create_changelog_entry("CHANGE-002", True)
+        >>> "migration" in entry
+        True
+        >>> entry["migration"]
+        'Run migration script: python scripts/migrate_v2.py'
+    """
+    entry: ChangeDict = {
+        "id": change_id,
+        "type": "feature",
+        "severity": "minor",
+        "title": "Add dark mode support",
+        "description": "Implemented dark mode toggle in settings",
+        "files": ["src/components/Settings.tsx", "src/theme.ts"],
+        "reason": "User request for dark mode",
+        "impact": "No breaking changes, backward compatible",
+        "breaking": is_breaking
+    }
+
+    # Conditionally add optional field
+    if is_breaking:
+        entry["migration"] = "Run migration script: python scripts/migrate_v2.py"
+
+    return entry
+```
+
+---
+
+## Usage Pattern 4: Runtime Validation with Type Guards
+
+```python
+from typing import TypeGuard
+from type_defs import PlanResultDict
+
+def is_plan_result(data: dict) -> TypeGuard[PlanResultDict]:
+    """
+    Runtime check for PlanResultDict.
+
+    **Purpose:**
+        TypedDict is structural (compile-time only). This provides runtime validation.
+
+    **Type Guard:**
+        After this check, mypy knows data is PlanResultDict.
+
+    **Example:**
+        >>> raw_data = load_json("plan-result.json")
+        >>> if is_plan_result(raw_data):
+        ...     print(raw_data["plan_path"])  # Type-safe access
+        ... else:
+        ...     raise ValueError("Invalid plan result format")
+    """
+    required_keys = {"plan_path", "feature_name", "success"}
+
+    return (
+        isinstance(data, dict) and
+        required_keys.issubset(data.keys()) and
+        isinstance(data["plan_path"], str) and
+        isinstance(data["feature_name"], str) and
+        isinstance(data["success"], bool)
+    )
+
+# Usage in function
+def load_plan_result(path: str) -> PlanResultDict:
+    """Load and validate plan result from JSON."""
+    raw_data = json.loads(Path(path).read_text())
+
+    if not is_plan_result(raw_data):
+        raise ValueError(f"Invalid plan result format: {path}")
+
+    # mypy knows raw_data is PlanResultDict here
+    return raw_data
+```
+
+---
+
+## Usage Pattern 5: Type Composition
+
+```python
+from type_defs import VersionEntryDict, ChangeDict
+
+def create_version_entry(
+    version: str,
+    changes: List[ChangeDict]
+) -> VersionEntryDict:
+    """
+    Create version entry from list of changes.
+
+    **Type Composition:**
+        VersionEntryDict contains List[ChangeDict].
+        Type checking ensures all changes are valid ChangeDict structures.
+
+    **Example:**
+        >>> changes = [
+        ...     create_changelog_entry("CHANGE-001", False),
+        ...     create_changelog_entry("CHANGE-002", True)
+        ... ]
+        >>> version = create_version_entry("1.2.0", changes)
+        >>> version["version"]
+        '1.2.0'
+        >>> len(version["changes"])
+        2
+    """
+    return {
+        "version": version,
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "summary": f"Version {version} release",
+        "changes": changes,
+        "contributors": ["willh", "Claude Code AI"]
+    }
+```
+
+---
+
+## Common Patterns by Domain
+
+### Generator Types
+
+```python
+from type_defs import PathsDict, TemplateDict
+
+def prepare_generation(project_path: Path) -> PathsDict:
+    """Prepare paths for template generation."""
+    return {
+        "project_path": project_path,
+        "output_dir": project_path / "coderef" / "foundation-docs"
+    }
+
+def load_template(name: str) -> TemplateDict:
+    """Load template with error handling."""
+    try:
+        content = (templates_dir / f"{name}.md").read_text()
+        return {
+            "template_name": name,
+            "template_content": content,
+            "status": "success"
+        }
+    except FileNotFoundError:
+        return {
+            "template_name": name,
+            "template_content": "",
+            "status": "error",
+            "error": f"Template '{name}' not found"
+        }
+```
+
+---
+
+### Standards & Audit Types
+
+```python
+from type_defs import StandardsResultDict, AuditViolationDict
+
+def establish_standards() -> StandardsResultDict:
+    """Scan codebase and establish UI/UX/behavior standards."""
+    files_created = [
+        "coderef/standards/ui-patterns.md",
+        "coderef/standards/behavior-patterns.md",
+        "coderef/standards/ux-patterns.md",
+        "coderef/standards/component-inventory.md"
+    ]
+
+    return {
+        "files": files_created,
+        "patterns_count": 42,
+        "success": True,
+        "ui_patterns_count": 15,
+        "behavior_patterns_count": 12,
+        "ux_patterns_count": 8,
+        "components_count": 7
+    }
+
+def detect_violation(file: str, line: int) -> AuditViolationDict:
+    """Detect and report standards violation."""
+    return {
+        "id": f"V-{file.replace('/', '-')}-{line}",
+        "type": "non_standard_button_size",
+        "severity": "major",
+        "category": "ui_patterns",
+        "file_path": file,
+        "line_number": line,
+        "column": 10,
+        "message": "Button uses non-standard size",
+        "actual_value": "size='xl'",
+        "expected_value": "size='sm' | 'md' | 'lg'",
+        "fix_suggestion": "Change 'xl' to 'lg'",
+        "code_snippet": "..."
+    }
+```
+
+---
+
+### Planning Workflow Types
+
+```python
+from type_defs import ValidationResultDict, ValidationIssueDict
+
+def validate_plan(plan: dict) -> ValidationResultDict:
+    """Validate plan quality (0-100 score)."""
+    issues: List[ValidationIssueDict] = []
+
+    # Check for missing sections
+    if "0_preparation" not in plan.get("UNIVERSAL_PLANNING_STRUCTURE", {}):
+        issues.append({
+            "severity": "critical",
+            "section": "structure",
+            "issue": "Missing section: 0_preparation",
+            "suggestion": "Add preparation section with foundation docs"
+        })
+
+    score = max(0, 100 - len(issues) * 10)
+
+    return {
+        "validation_result": "excellent" if score >= 90 else "good",
+        "score": score,
+        "issues": issues,
+        "checklist_results": {
+            "structure": {"passed": 10, "failed": 0, "score": 100},
+            "completeness": {"passed": 8, "failed": 0, "score": 100},
+            "quality": {"passed": 5, "failed": 0, "score": 100},
+            "autonomy": {"passed": 3, "failed": 0, "score": 100}
+        },
+        "approved": score >= 90
+    }
+```
+
+---
+
+### Risk Assessment Types
+
+```python
+from type_defs import (
+    RiskAssessmentResultDict,
+    RiskDimensionDict,
+    CompositeScoreDict,
+    RecommendationDict
+)
+
+def assess_risk(change: dict) -> RiskAssessmentResultDict:
+    """AI-powered risk assessment (0-100 score)."""
+    # Evaluate 5 dimensions
+    dimensions: Dict[str, RiskDimensionDict] = {
+        "breaking_changes": {
+            "severity": "low",
+            "likelihood": 10.0,
+            "score": 5.0,
+            "findings": ["No breaking changes detected"],
+            "evidence": ["All changes backward compatible"],
+            "mitigation_available": True
+        },
+        # ... 4 more dimensions
+    }
+
+    # Calculate composite score
+    composite: CompositeScoreDict = {
+        "score": 15.0,  # Low risk
+        "level": "low",
+        "explanation": "Average of 5 dimensions",
+        "confidence": 0.85
+    }
+
+    # Generate recommendation
+    recommendation: RecommendationDict = {
+        "decision": "go",
+        "rationale": "Low risk across all dimensions",
+        "conditions": ["Run full test suite before deployment"]
+    }
+
+    return {
+        "assessment_path": "coderef/assessments/RA-20260102-001.json",
+        "assessment_id": "RA-20260102-001",
+        "composite_score": 15.0,
+        "risk_level": "low",
+        "decision": "go",
+        "options_analyzed": 1,
+        "recommended_option": "option_1",
+        "duration_ms": 3500.0,
+        "success": True
+    }
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ Anti-Pattern 1: Returning Untyped dict
+
+```python
+# BAD: No type safety
+def create_plan(...) -> dict:
+    return {"plan_path": "...", "success": True}
+
+# GOOD: Use TypedDict
+def create_plan(...) -> PlanResultDict:
+    return {"plan_path": "...", "success": True}
+```
+
+---
+
+### ❌ Anti-Pattern 2: Missing Required Fields
+
+```python
+# BAD: Missing required fields (mypy error)
+def create_plan(...) -> PlanResultDict:
+    return {
+        "plan_path": "...",
+        # Missing: feature_name, success
+    }
+
+# GOOD: All required fields present
+def create_plan(...) -> PlanResultDict:
+    return {
+        "plan_path": "...",
+        "feature_name": "test",
+        "success": True
+    }
+```
+
+---
+
+### ❌ Anti-Pattern 3: Type Mismatch
+
+```python
+# BAD: Wrong field type (mypy error)
+def create_plan(...) -> PlanResultDict:
+    return {
+        "plan_path": "...",
+        "feature_name": "test",
+        "success": "true"  # Should be bool, not str
+    }
+
+# GOOD: Correct types
+def create_plan(...) -> PlanResultDict:
+    return {
+        "plan_path": "...",
+        "feature_name": "test",
+        "success": True  # ✅ bool
+    }
+```
+
+---
+
+### ❌ Anti-Pattern 4: Duplicating Structure
+
+```python
+# BAD: Inline dict instead of reusing TypedDict
+def audit() -> dict:
+    return {
+        "compliance_details": {
+            "overall_score": 85,
+            "grade": "B",
+            # ... duplicating ComplianceScoreDict structure
+        }
+    }
+
+# GOOD: Reuse nested TypedDict
+def audit() -> AuditResultDict:
+    compliance: ComplianceScoreDict = {
+        "overall_score": 85,
+        "ui_compliance": 90,
+        "behavior_compliance": 85,
+        "ux_compliance": 80,
+        "grade": "B",
+        "passing": True
+    }
+
+    return {
+        "compliance_details": compliance,  # ✅ Reuse
+        # ...
+    }
+```
+
+---
+
+## Testing TypedDicts
+
+```python
+import pytest
+from type_defs import PlanResultDict, ValidationResultDict
+
+def test_plan_result_structure():
+    """Verify PlanResultDict structure compiles."""
+    result: PlanResultDict = {
+        "plan_path": "coderef/workorder/test/plan.json",
+        "feature_name": "test-feature",
+        "workorder_id": "WO-TEST-001",
+        "score": 95,
+        "approved": True,
+        "success": True
+    }
+
+    # mypy validates structure at type-check time
+    assert result["success"] is True
+    assert result["score"] == 95
+
+def test_runtime_validation():
+    """Test type guard for runtime validation."""
+    valid_data = {
+        "plan_path": "path/to/plan.json",
+        "feature_name": "test",
+        "success": True
+    }
+    assert is_plan_result(valid_data)
+
+    invalid_data = {"plan_path": "..."}  # Missing required fields
+    assert not is_plan_result(invalid_data)
+
+def test_nested_typedicts():
+    """Test nested TypedDict composition."""
+    compliance: ComplianceScoreDict = {
+        "overall_score": 85,
+        "ui_compliance": 90,
+        "behavior_compliance": 85,
+        "ux_compliance": 80,
+        "grade": "B",
+        "passing": True
+    }
+
+    audit_result: AuditResultDict = {
+        "report_path": "...",
+        "compliance_score": 85,
+        "compliance_details": compliance,  # Nested TypedDict
+        "violation_stats": {...},
+        "violations": [],
+        "scan_metadata": {},
+        "success": True
+    }
+
+    assert audit_result["compliance_details"]["grade"] == "B"
+```
+
+---
+
+## Quick Reference: Type Selection Guide
+
+**Need tool return type?**
+→ Use `*ResultDict` (e.g., PlanResultDict, AuditResultDict, DependencyResultDict)
+
+**Need complete inventory manifest?**
+→ Use `*ManifestDict` (e.g., DependencyManifestDict, APIManifestDict)
+
+**Need aggregated metrics?**
+→ Use `*MetricsDict` (e.g., ProjectMetricsDict, DependencyMetricsDict)
+
+**Need single entity metadata?**
+→ Use `*Dict` (e.g., DependencyDict, APIEndpointDict, ChangeDict)
+
+**Need validation/compliance results?**
+→ Use ValidationResultDict, ComplianceScoreDict, AuditResultDict
+
+**Need risk assessment?**
+→ Use RiskAssessmentResultDict, RiskDimensionDict, CompositeScoreDict
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P1-001
+**Task:** SHEET-007
+**Timestamp:** 2026-01-02

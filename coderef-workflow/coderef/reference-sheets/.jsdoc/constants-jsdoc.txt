@@ -1,0 +1,502 @@
+# JSDoc Suggestions for constants.py
+
+## Purpose
+Documentation and usage examples for constants - paths, files, enums, and validation rules
+
+## Important Note
+Constants are static definitions. These suggestions focus on:
+- Proper usage in code
+- Enum pattern best practices
+- Path construction patterns
+- Common pitfalls to avoid
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Constants for coderef-workflow MCP Server
+
+Centralizes all hardcoded paths, file names, and magic strings for easier configuration
+and maintenance. Provides typed enums for workflow validation.
+
+**Key Features:**
+- 5 path/config classes with 28 path constants
+- 18 enums across 14 domains (100+ enum values)
+- 7 validation/security constants with regex patterns
+- Zero runtime overhead (compile-time constants)
+
+**Categories:**
+- Path & File Constants (Paths, PlanningPaths, Files)
+- Workflow Enums (Template/Changelog/Standards/Audit/Planning/Inventory types)
+- Context Expert System (Expert paths, status, capabilities, domains)
+- Security & Validation (Path limits, regex patterns, exclusions)
+
+**Design Principle:**
+Single source of truth for all configuration values. Import constants instead of
+hardcoding strings to prevent typos and enable easy configuration updates.
+
+**Version:** 1.2.0
+**See:** CONSTANTS.md for complete documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Usage Pattern 1: Path Construction
+
+```python
+from pathlib import Path
+from constants import Paths, Files
+
+def get_foundation_docs_path(project_root: Path) -> Path:
+    """
+    Get path to foundation docs directory.
+
+    **Best Practice:** Use path constants instead of hardcoding.
+
+    **Example:**
+        >>> project = Path("/path/to/project")
+        >>> docs_path = get_foundation_docs_path(project)
+        >>> docs_path
+        PosixPath('/path/to/project/coderef/foundation-docs')
+
+    **DO:**
+        ✅ Use Paths constants for directory construction
+        ✅ Use Files constants for file names
+        ✅ Combine with pathlib.Path for type safety
+
+    **DON'T:**
+        ❌ Hardcode paths: project / "coderef" / "foundation-docs"
+        ❌ String concatenation: project_str + "/coderef/foundation-docs"
+    """
+    # ✅ GOOD: Use constant
+    return project_root / Paths.FOUNDATION_DOCS
+
+def get_readme_path(project_root: Path) -> Path:
+    """Get path to README.md file."""
+    # ✅ GOOD: Combine path + file constants
+    return project_root / Paths.FOUNDATION_DOCS / Files.README
+```
+
+---
+
+## Usage Pattern 2: Enum Validation
+
+```python
+from constants import ChangeType, Severity
+
+def create_changelog_entry(
+    change_type: str,
+    severity: str,
+    title: str
+) -> dict:
+    """
+    Create changelog entry with enum validation.
+
+    **Validation Strategy:**
+        1. Check if value exists in enum
+        2. Raise ValueError if invalid
+        3. Use enum.value for storage
+
+    **Example:**
+        >>> entry = create_changelog_entry(
+        ...     ChangeType.FEATURE,
+        ...     Severity.MAJOR,
+        ...     "Add dark mode"
+        ... )
+        >>> entry["type"]
+        'feature'
+
+    **Raises:**
+        ValueError: If change_type or severity invalid
+    """
+    # Validate change_type
+    valid_types = [e.value for e in ChangeType]
+    if change_type not in valid_types:
+        raise ValueError(
+            f"Invalid change_type: {change_type}. "
+            f"Must be one of: {valid_types}"
+        )
+
+    # Validate severity
+    valid_severities = [e.value for e in Severity]
+    if severity not in valid_severities:
+        raise ValueError(
+            f"Invalid severity: {severity}. "
+            f"Must be one of: {valid_severities}"
+        )
+
+    return {
+        "type": change_type,
+        "severity": severity,
+        "title": title
+    }
+
+# Usage
+entry = create_changelog_entry(
+    ChangeType.FEATURE.value,  # ✅ Use enum.value
+    Severity.MAJOR.value,
+    "Add dark mode toggle"
+)
+```
+
+---
+
+## Usage Pattern 3: Enum Iteration
+
+```python
+from constants import HTTPMethod, PackageManager
+
+def get_all_http_methods() -> list[str]:
+    """
+    Get list of all HTTP methods.
+
+    **Example:**
+        >>> methods = get_all_http_methods()
+        >>> methods
+        ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']
+    """
+    return [method.value for method in HTTPMethod]
+
+def detect_package_managers(project_root: Path) -> list[str]:
+    """
+    Detect package managers in project.
+
+    **Example:**
+        >>> managers = detect_package_managers(Path("/path/to/project"))
+        >>> managers
+        ['npm', 'pip']
+    """
+    detected = []
+
+    # Check for each package manager
+    for manager in PackageManager:
+        if manager == PackageManager.NPM:
+            if (project_root / "package.json").exists():
+                detected.append(manager.value)
+        elif manager == PackageManager.PIP:
+            if (project_root / "requirements.txt").exists():
+                detected.append(manager.value)
+        elif manager == PackageManager.CARGO:
+            if (project_root / "Cargo.toml").exists():
+                detected.append(manager.value)
+        elif manager == PackageManager.COMPOSER:
+            if (project_root / "composer.json").exists():
+                detected.append(manager.value)
+
+    return detected
+```
+
+---
+
+## Usage Pattern 4: Enum Comparison
+
+```python
+from constants import PlanStatus, AuditSeverity
+
+def can_implement_plan(plan_status: str) -> bool:
+    """
+    Check if plan is approved for implementation.
+
+    **Example:**
+        >>> can_implement_plan(PlanStatus.APPROVED)
+        True
+        >>> can_implement_plan(PlanStatus.DRAFT)
+        False
+    """
+    # ✅ GOOD: Compare enum values
+    return plan_status == PlanStatus.APPROVED.value
+
+def should_fail_on_violation(severity: str, threshold: str) -> bool:
+    """
+    Check if violation should cause failure.
+
+    **Example:**
+        >>> should_fail_on_violation('critical', 'major')
+        True  # Critical always fails
+        >>> should_fail_on_violation('minor', 'critical')
+        False  # Minor doesn't fail on critical threshold
+    """
+    severity_order = ['minor', 'major', 'critical']
+    return severity_order.index(severity) >= severity_order.index(threshold)
+```
+
+---
+
+## Usage Pattern 5: Security Validation
+
+```python
+from constants import (
+    MAX_PATH_LENGTH,
+    TEMPLATE_NAME_PATTERN,
+    VERSION_PATTERN,
+    EXCLUDE_DIRS,
+    MAX_FILE_SIZE
+)
+import re
+
+def validate_path(path: str) -> bool:
+    """
+    Validate path against security constraints.
+
+    **Security Checks:**
+        1. Length limit (1000 chars)
+        2. No excluded directories (node_modules, .git, etc.)
+
+    **Example:**
+        >>> validate_path("coderef/foundation-docs/README.md")
+        True
+        >>> validate_path("node_modules/some-package/index.js")
+        False  # Excluded directory
+    """
+    # Check length
+    if len(path) > MAX_PATH_LENGTH:
+        return False
+
+    # Check for excluded directories
+    path_parts = path.split('/')
+    if any(part in EXCLUDE_DIRS for part in path_parts):
+        return False
+
+    return True
+
+def validate_template_name(name: str) -> bool:
+    """
+    Validate template name format.
+
+    **Rules:**
+        - Only alphanumeric, hyphens, underscores
+        - Matches: ^[a-zA-Z0-9_-]+$
+
+    **Example:**
+        >>> validate_template_name("my-template")
+        True
+        >>> validate_template_name("my template")
+        False  # Space not allowed
+    """
+    return bool(re.match(TEMPLATE_NAME_PATTERN, name))
+
+def validate_version(version: str) -> bool:
+    """
+    Validate semantic version format.
+
+    **Format:** X.Y.Z (e.g., 1.2.3)
+
+    **Example:**
+        >>> validate_version("1.2.3")
+        True
+        >>> validate_version("1.2")
+        False  # Missing patch number
+    """
+    return bool(re.match(VERSION_PATTERN, version))
+```
+
+---
+
+## Usage Pattern 6: Template String Formatting
+
+```python
+from datetime import datetime
+from constants import Files
+
+def generate_audit_report_filename() -> str:
+    """
+    Generate timestamped audit report filename.
+
+    **Template:** AUDIT-REPORT-{timestamp}.md
+
+    **Example:**
+        >>> filename = generate_audit_report_filename()
+        >>> filename
+        'AUDIT-REPORT-20260102-153045.md'
+    """
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    return Files.AUDIT_REPORT.format(timestamp=timestamp)
+```
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ Anti-Pattern 1: Hardcoding Paths
+
+```python
+# BAD: Hardcoded path strings
+def get_changelog_path(project_root: Path) -> Path:
+    return project_root / "coderef" / "changelog" / "CHANGELOG.json"
+
+# GOOD: Use constants
+from constants import Paths, Files
+
+def get_changelog_path(project_root: Path) -> Path:
+    return project_root / Paths.CHANGELOG_DIR / Files.CHANGELOG
+```
+
+---
+
+### ❌ Anti-Pattern 2: String Comparison Instead of Enum
+
+```python
+# BAD: Magic strings everywhere
+def is_breaking_change(change_type: str) -> bool:
+    return change_type == "breaking_change"  # Typo-prone
+
+# GOOD: Use enum
+from constants import ChangeType
+
+def is_breaking_change(change_type: str) -> bool:
+    return change_type == ChangeType.BREAKING_CHANGE.value
+```
+
+---
+
+### ❌ Anti-Pattern 3: Recreating Validation Logic
+
+```python
+# BAD: Duplicate regex patterns
+def validate_version(version: str) -> bool:
+    return bool(re.match(r'^\d+\.\d+\.\d+$', version))  # Duplicate
+
+# GOOD: Use constant
+from constants import VERSION_PATTERN
+
+def validate_version(version: str) -> bool:
+    return bool(re.match(VERSION_PATTERN, version))
+```
+
+---
+
+### ❌ Anti-Pattern 4: Manual Enum List Construction
+
+```python
+# BAD: Manually list enum values
+def get_valid_severities() -> list[str]:
+    return ["critical", "major", "minor", "patch"]  # Can get out of sync
+
+# GOOD: Iterate enum
+from constants import Severity
+
+def get_valid_severities() -> list[str]:
+    return [s.value for s in Severity]
+```
+
+---
+
+## Configuration Best Practices
+
+### Changing Paths Centrally
+
+```python
+# When you need to change a path, update constants.py only:
+
+class Paths:
+    FOUNDATION_DOCS = 'coderef/foundation-docs'  # Before
+    # ↓ Update to new location
+    FOUNDATION_DOCS = 'docs/foundation'  # After
+
+# All code using Paths.FOUNDATION_DOCS automatically updates
+```
+
+---
+
+### Adding New Enums
+
+```python
+# Step 1: Add new enum
+class Deployment Environment(str, Enum):
+    """Valid deployment environments."""
+    DEV = 'development'
+    STAGING = 'staging'
+    PROD = 'production'
+
+# Step 2: Add to __all__
+__all__ = [
+    # ... existing exports
+    'DeploymentEnvironment',
+]
+
+# Step 3: Use in code
+from constants import DeploymentEnvironment
+
+def deploy(env: str):
+    if env not in [e.value for e in DeploymentEnvironment]:
+        raise ValueError(f"Invalid environment: {env}")
+```
+
+---
+
+## Testing Constants
+
+```python
+import pytest
+from constants import (
+    Paths,
+    ChangeType,
+    MAX_PATH_LENGTH,
+    TEMPLATE_NAME_PATTERN
+)
+import re
+
+def test_paths_exist():
+    """Verify path constants are defined."""
+    assert Paths.CODEREF == 'coderef'
+    assert Paths.FOUNDATION_DOCS == 'coderef/foundation-docs'
+
+def test_enum_values():
+    """Verify enum values."""
+    assert ChangeType.FEATURE.value == 'feature'
+    assert len([e for e in ChangeType]) == 6  # 6 change types
+
+def test_validation_constants():
+    """Verify validation constants."""
+    assert MAX_PATH_LENGTH == 1000
+    assert re.match(TEMPLATE_NAME_PATTERN, "my-template")
+    assert not re.match(TEMPLATE_NAME_PATTERN, "my template")  # Space invalid
+```
+
+---
+
+## Quick Reference: Constant Selection Guide
+
+**Need directory path?**
+→ Use `Paths` (e.g., Paths.FOUNDATION_DOCS, Paths.STANDARDS_DIR)
+
+**Need file name?**
+→ Use `Files` (e.g., Files.README, Files.CHANGELOG)
+
+**Need planning path?**
+→ Use `PlanningPaths` (e.g., PlanningPaths.WORKING_DIR)
+
+**Need changelog type/severity?**
+→ Use `ChangeType`, `Severity`
+
+**Need audit severity/scope?**
+→ Use `AuditSeverity`, `AuditScope`, `SeverityThreshold`
+
+**Need plan status?**
+→ Use `PlanStatus`, `ValidationSeverity`
+
+**Need inventory classification?**
+→ Use `FileCategory`, `RiskLevel`, `AnalysisDepth`
+
+**Need dependency analysis?**
+→ Use `PackageManager`, `DependencyType`, `VulnerabilitySeverity`
+
+**Need API/database types?**
+→ Use `APIFramework`, `HTTPMethod`, `DatabaseSystem`, `ORMFramework`
+
+**Need validation pattern?**
+→ Use `TEMPLATE_NAME_PATTERN`, `VERSION_PATTERN`, `EXPERT_ID_PATTERN`
+
+**Need security exclusion?**
+→ Use `EXCLUDE_DIRS`, `MAX_FILE_SIZE`, `ALLOWED_FILE_EXTENSIONS`
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P1-001
+**Task:** SHEET-008
+**Timestamp:** 2026-01-02

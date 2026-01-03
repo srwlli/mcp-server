@@ -1,0 +1,605 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "validation.py Schema",
+  "description": "JSON Schema definitions for validation functions - security boundary for all tool inputs",
+  "definitions": {
+    "ProjectPathValidation": {
+      "type": "object",
+      "description": "Project path validation at tool boundary",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw project path from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "description": "Validated absolute path (security checked)"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "max_length": {"type": "integer", "const": 1000},
+            "no_null_bytes": {"type": "boolean", "const": true},
+            "must_exist": {"type": "boolean", "const": true},
+            "must_be_directory": {"type": "boolean", "const": true}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "FeatureNameValidation": {
+      "type": "object",
+      "description": "Feature name validation to prevent path traversal",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw feature name from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Validated feature name (alphanumeric, hyphens, underscores only)"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "pattern": {"type": "string", "const": "^[a-zA-Z0-9_-]+$"},
+            "max_length": {"type": "integer", "const": 100},
+            "no_path_traversal": {"type": "boolean", "const": true}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "TemplateNameValidation": {
+      "type": "object",
+      "description": "Template name validation for documentation generation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw template name from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"],
+          "description": "Validated template name (must match enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "VersionValidation": {
+      "type": "object",
+      "description": "Semantic version validation (X.Y.Z format)",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw version string from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Validated semantic version (e.g., 1.2.3)"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "major": {"type": "integer", "minimum": 0},
+            "minor": {"type": "integer", "minimum": 0},
+            "patch": {"type": "integer", "minimum": 0}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "ChangeTypeValidation": {
+      "type": "object",
+      "description": "Changelog change type validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw change type from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["bugfix", "enhancement", "feature", "breaking_change", "deprecation", "security"],
+          "description": "Validated change type (must match ChangeType enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "SeverityValidation": {
+      "type": "object",
+      "description": "Changelog severity validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw severity from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "patch"],
+          "description": "Validated severity (must match Severity enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "ScanDepthValidation": {
+      "type": "object",
+      "description": "Standards scan depth validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw scan depth from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["quick", "standard", "deep"],
+          "description": "Validated scan depth (must match ScanDepth enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "FocusAreasValidation": {
+      "type": "object",
+      "description": "Standards focus areas validation",
+      "properties": {
+        "input": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Raw focus areas from tool parameter"
+        },
+        "validated": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ui_components", "behavior_patterns", "ux_flows", "all"]
+          },
+          "description": "Validated focus areas (must match FocusArea enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "AuditSeverityValidation": {
+      "type": "object",
+      "description": "Audit severity filter validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw severity filter from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "all"],
+          "description": "Validated audit severity (must match AuditSeverity enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "AuditScopeValidation": {
+      "type": "object",
+      "description": "Audit scope validation",
+      "properties": {
+        "input": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Raw audit scope from tool parameter"
+        },
+        "validated": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["ui_patterns", "behavior_patterns", "ux_patterns", "all"]
+          },
+          "description": "Validated audit scope (must match AuditScope enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "SeverityThresholdValidation": {
+      "type": "object",
+      "description": "Consistency check severity threshold validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw severity threshold from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["critical", "major", "minor"],
+          "description": "Validated severity threshold (must match SeverityThreshold enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "FilesInputValidation": {
+      "type": "object",
+      "description": "File paths validation for consistency checks",
+      "properties": {
+        "input": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Raw file paths from tool parameter"
+        },
+        "validated": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Validated relative file paths (no path traversal)"
+          },
+          "description": "Validated file paths (security checked)"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "no_absolute_paths": {"type": "boolean", "const": true},
+            "no_path_traversal": {"type": "boolean", "const": true},
+            "relative_to_project": {"type": "boolean", "const": true}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "ValidationSeverityValidation": {
+      "type": "object",
+      "description": "Plan validation severity validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw validation severity from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["critical", "major", "minor"],
+          "description": "Validated severity (must match ValidationSeverity enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "PlanStatusValidation": {
+      "type": "object",
+      "description": "Plan status validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw plan status from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["draft", "reviewing", "approved", "rejected", "implemented"],
+          "description": "Validated plan status (must match PlanStatus enum)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "WorkorderIdValidation": {
+      "type": "object",
+      "description": "Workorder ID format validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw workorder ID from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "description": "Validated workorder ID (e.g., WO-AUTH-SYSTEM-001)"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "prefix": {"type": "string", "const": "WO"},
+            "feature": {"type": "string", "pattern": "^[A-Z0-9-]+$"},
+            "sequence": {"type": "string", "pattern": "^\\d{3}$"}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "TaskIdValidation": {
+      "type": "object",
+      "description": "Task ID format validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw task ID from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "pattern": "^[A-Z]+-\\d{3}$",
+          "description": "Validated task ID (e.g., SETUP-001, IMPL-002)"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "phase": {"type": "string", "pattern": "^[A-Z]+$"},
+            "number": {"type": "string", "pattern": "^\\d{3}$"}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "TaskStatusValidation": {
+      "type": "object",
+      "description": "Task status validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw task status from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "blocked"],
+          "description": "Validated task status (must be one of 4 valid states)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "RiskThresholdValidation": {
+      "type": "object",
+      "description": "Risk assessment threshold validation",
+      "properties": {
+        "input": {
+          "type": "number",
+          "description": "Raw risk threshold from tool parameter"
+        },
+        "validated": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Validated risk threshold (0-100)"
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "ProposedChangeValidation": {
+      "type": "object",
+      "description": "Risk assessment proposed change validation",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required description of proposed change"
+        },
+        "change_type": {
+          "type": "string",
+          "enum": ["create", "modify", "delete", "refactor", "migrate"],
+          "description": "Required change type"
+        },
+        "files_affected": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1,
+          "description": "Required list of affected files"
+        }
+      },
+      "required": ["description", "change_type", "files_affected"]
+    },
+    "ExpertIdValidation": {
+      "type": "object",
+      "description": "Context expert ID format validation",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Raw expert ID from tool parameter"
+        },
+        "validated": {
+          "type": "string",
+          "pattern": "^CE-[a-zA-Z0-9_-]+-\\d{3}$",
+          "description": "Validated expert ID (e.g., CE-AUTH-EXPERT-001)"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "prefix": {"type": "string", "const": "CE"},
+            "domain": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$"},
+            "sequence": {"type": "string", "pattern": "^\\d{3}$"}
+          }
+        }
+      },
+      "required": ["input", "validated"]
+    },
+    "ValidationCategories": {
+      "type": "object",
+      "description": "8 validation categories with function counts",
+      "properties": {
+        "project_path": {
+          "type": "object",
+          "description": "Project path validation (2 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": ["validate_project_path_input", "validate_project_path_exists"]
+            },
+            "count": {"type": "integer", "const": 2}
+          }
+        },
+        "documentation": {
+          "type": "object",
+          "description": "Documentation validation (4 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_template_name_input",
+                "validate_version_input",
+                "validate_change_type_input",
+                "validate_severity_input"
+              ]
+            },
+            "count": {"type": "integer", "const": 4}
+          }
+        },
+        "standards_and_audit": {
+          "type": "object",
+          "description": "Standards and audit validation (4 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_scan_depth_input",
+                "validate_focus_areas_input",
+                "validate_audit_severity_input",
+                "validate_audit_scope_input"
+              ]
+            },
+            "count": {"type": "integer", "const": 4}
+          }
+        },
+        "consistency": {
+          "type": "object",
+          "description": "Consistency check validation (2 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_severity_threshold_input",
+                "validate_files_input"
+              ]
+            },
+            "count": {"type": "integer", "const": 2}
+          }
+        },
+        "planning": {
+          "type": "object",
+          "description": "Planning validation (2 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_validation_severity_input",
+                "validate_plan_status_input"
+              ]
+            },
+            "count": {"type": "integer", "const": 2}
+          }
+        },
+        "workorder": {
+          "type": "object",
+          "description": "Workorder validation (4 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_workorder_id_input",
+                "validate_task_id_input",
+                "validate_task_status_input",
+                "validate_feature_name_input"
+              ]
+            },
+            "count": {"type": "integer", "const": 4}
+          }
+        },
+        "risk_assessment": {
+          "type": "object",
+          "description": "Risk assessment validation (3 functions)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "validate_risk_threshold_input",
+                "validate_proposed_change_input",
+                "validate_change_type_enum"
+              ]
+            },
+            "count": {"type": "integer", "const": 3}
+          }
+        },
+        "context_expert": {
+          "type": "object",
+          "description": "Context expert validation (1 function)",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": ["validate_expert_id_input"]
+            },
+            "count": {"type": "integer", "const": 1}
+          }
+        }
+      }
+    },
+    "SecurityConstraints": {
+      "type": "object",
+      "description": "Security constraints enforced by validation layer",
+      "properties": {
+        "path_traversal_prevention": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean", "const": true},
+            "techniques": {
+              "type": "array",
+              "items": {"type": "string"},
+              "const": [
+                "Regex pattern matching (^[a-zA-Z0-9_-]+$)",
+                "is_relative_to() checks",
+                "resolve() normalization",
+                "No '..' or absolute paths allowed"
+              ]
+            }
+          }
+        },
+        "null_byte_injection_prevention": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean", "const": true},
+            "check": {"type": "string", "const": "if '\\x00' in path: raise ValueError"}
+          }
+        },
+        "length_limits": {
+          "type": "object",
+          "properties": {
+            "project_path": {"type": "integer", "const": 1000},
+            "feature_name": {"type": "integer", "const": 100},
+            "task_id": {"type": "integer", "const": 50},
+            "workorder_id": {"type": "integer", "const": 100}
+          }
+        },
+        "enum_enforcement": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean", "const": true},
+            "enums_validated": {"type": "integer", "const": 18},
+            "method": {"type": "string", "const": "if value not in [e.value for e in EnumClass]: raise ValueError"}
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "security/input-validation",
+    "file": "validation.py",
+    "lines": 775,
+    "functions": 24,
+    "categories": 8,
+    "version": "1.3.0",
+    "key_features": [
+      "24 validation functions across 8 categories",
+      "Path traversal prevention (regex + is_relative_to)",
+      "Null byte injection prevention",
+      "Enum-based type safety (18 enums validated)",
+      "Fail-fast error handling (ValueError on invalid input)",
+      "Zero state (100% stateless functions)",
+      "Security boundary at MCP tool entry points"
+    ],
+    "security_principles": [
+      "Defense in depth (multiple validation layers)",
+      "Fail-fast on invalid input (no partial validation)",
+      "Single responsibility (one function per input type)",
+      "Explicit is better than implicit (no default coercion)",
+      "Type safety (enum validation, pattern matching)"
+    ],
+    "usage_pattern": "Validate at tool boundary → Fail fast on error → Use validated data internally",
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

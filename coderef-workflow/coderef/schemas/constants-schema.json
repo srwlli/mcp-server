@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "constants.py Schema",
+  "description": "JSON Schema definitions for centralized constants - paths, files, enums, and validation rules",
+  "definitions": {
+    "PathsClass": {
+      "type": "object",
+      "description": "Standard directory locations",
+      "properties": {
+        "CODEREF": {"type": "string", "const": "coderef"},
+        "FOUNDATION_DOCS": {"type": "string", "const": "coderef/foundation-docs"},
+        "CHANGELOG_DIR": {"type": "string", "const": "coderef/changelog"},
+        "TEMPLATES_DIR": {"type": "string", "const": "templates/power"},
+        "TOOL_TEMPLATES_DIR": {"type": "string", "const": "templates/tools"},
+        "STANDARDS_DIR": {"type": "string", "const": "coderef/standards"},
+        "AUDITS_DIR": {"type": "string", "const": "coderef/audits"},
+        "CONTEXT_DIR": {"type": "string", "const": "coderef"},
+        "INVENTORY_DIR": {"type": "string", "const": "coderef/inventory"},
+        "RISK_ASSESSMENTS_DIR": {"type": "string", "const": "coderef/risk-assessments"}
+      }
+    },
+    "FilesClass": {
+      "type": "object",
+      "description": "File name constants",
+      "properties": {
+        "README": {"type": "string", "const": "README.md"},
+        "ARCHITECTURE": {"type": "string", "const": "ARCHITECTURE.md"},
+        "API": {"type": "string", "const": "API.md"},
+        "COMPONENTS": {"type": "string", "const": "COMPONENTS.md"},
+        "SCHEMA": {"type": "string", "const": "SCHEMA.md"},
+        "USER_GUIDE": {"type": "string", "const": "USER-GUIDE.md"},
+        "CHANGELOG": {"type": "string", "const": "CHANGELOG.json"},
+        "WORKORDER_LOG": {"type": "string", "const": "workorder-log.txt"}
+      }
+    },
+    "TemplateNamesEnum": {
+      "type": "string",
+      "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"],
+      "description": "Valid template names for documentation generation"
+    },
+    "ChangeTypeEnum": {
+      "type": "string",
+      "enum": ["bugfix", "enhancement", "feature", "breaking_change", "deprecation", "security"],
+      "description": "Valid changelog entry types"
+    },
+    "SeverityEnum": {
+      "type": "string",
+      "enum": ["critical", "major", "minor", "patch"],
+      "description": "Valid changelog severity levels"
+    },
+    "ScanDepthEnum": {
+      "type": "string",
+      "enum": ["quick", "standard", "deep"],
+      "description": "Valid scan depth options for establish_standards tool"
+    },
+    "AuditSeverityEnum": {
+      "type": "string",
+      "enum": ["critical", "major", "minor", "all"],
+      "description": "Valid severity levels for audit violations"
+    },
+    "SeverityThresholdEnum": {
+      "type": "string",
+      "enum": ["critical", "major", "minor"],
+      "description": "Valid severity threshold options for check_consistency tool"
+    },
+    "ValidationSeverityEnum": {
+      "type": "string",
+      "enum": ["critical", "major", "minor"],
+      "description": "Validation issue severity levels (-10, -5, -1 points)"
+    },
+    "PlanStatusEnum": {
+      "type": "string",
+      "enum": ["draft", "reviewing", "approved", "rejected", "implemented"],
+      "description": "Implementation plan status"
+    },
+    "FileCategoryEnum": {
+      "type": "string",
+      "enum": ["core", "source", "template", "config", "test", "docs", "unknown"],
+      "description": "Valid file categories for inventory classification"
+    },
+    "RiskLevelEnum": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Valid risk levels for file inventory"
+    },
+    "PackageManagerEnum": {
+      "type": "string",
+      "enum": ["npm", "pip", "cargo", "composer"],
+      "description": "Valid package manager types for dependency analysis"
+    },
+    "DependencyTypeEnum": {
+      "type": "string",
+      "enum": ["direct", "dev", "peer", "transitive"],
+      "description": "Valid dependency types for package analysis"
+    },
+    "VulnerabilitySeverityEnum": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Valid vulnerability severity levels"
+    },
+    "APIFrameworkEnum": {
+      "type": "string",
+      "enum": ["fastapi", "flask", "express", "graphql"],
+      "description": "Valid API framework types for endpoint discovery"
+    },
+    "HTTPMethodEnum": {
+      "type": "string",
+      "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+      "description": "Valid HTTP methods for REST endpoints"
+    },
+    "DatabaseSystemEnum": {
+      "type": "string",
+      "enum": ["postgresql", "mysql", "mongodb", "sqlite"],
+      "description": "Valid database systems for schema discovery"
+    },
+    "ConfigFormatEnum": {
+      "type": "string",
+      "enum": ["json", "yaml", "toml", "ini", "env"],
+      "description": "Valid configuration file formats"
+    },
+    "TestFrameworkEnum": {
+      "type": "string",
+      "enum": ["pytest", "unittest", "jest", "mocha", "vitest"],
+      "description": "Valid test framework types for test discovery"
+    },
+    "DocumentationTypeEnum": {
+      "type": "string",
+      "enum": ["markdown", "restructured_text", "asciidoc", "html", "orgmode", "plaintext"],
+      "description": "Valid documentation format types"
+    },
+    "ContextExpertStatusEnum": {
+      "type": "string",
+      "enum": ["active", "stale", "archived"],
+      "description": "Status of a context expert"
+    },
+    "ResourceTypeEnum": {
+      "type": "string",
+      "enum": ["file", "directory"],
+      "description": "Type of resource a context expert is assigned to"
+    },
+    "ExpertDomainEnum": {
+      "type": "string",
+      "enum": ["ui", "db", "script", "docs", "api", "core", "test", "infra"],
+      "description": "Domain specialization for context experts"
+    },
+    "ValidationConstants": {
+      "type": "object",
+      "description": "Validation constants and patterns",
+      "properties": {
+        "MAX_PATH_LENGTH": {"type": "integer", "const": 1000},
+        "TEMPLATE_NAME_PATTERN": {"type": "string", "const": "^[a-zA-Z0-9_-]+$"},
+        "VERSION_PATTERN": {"type": "string", "const": "^\\d+\\.\\d+\\.\\d+$"},
+        "EXPERT_ID_PATTERN": {"type": "string", "const": "^CE-[a-zA-Z0-9_-]+-\\d{3}$"}
+      }
+    },
+    "SecurityConstants": {
+      "type": "object",
+      "description": "Security-related constants",
+      "properties": {
+        "EXCLUDE_DIRS": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": ["node_modules", ".git", "dist", "build", ".next", "out", "coverage", "__pycache__", ".venv", "venv", "vendor"]
+        },
+        "MAX_FILE_SIZE": {"type": "integer", "const": 10485760, "description": "10 MB in bytes"},
+        "ALLOWED_FILE_EXTENSIONS": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [".tsx", ".jsx", ".ts", ".js", ".css", ".scss", ".less"]
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "configuration/centralized-constants",
+    "file": "constants.py",
+    "lines": 382,
+    "enums": 18,
+    "path_classes": 5,
+    "version": "1.2.0",
+    "key_features": [
+      "18 enums across 14 domains (100+ enum values)",
+      "5 path/config classes with 28 path constants",
+      "7 validation/security constants with regex patterns",
+      "Single source of truth for all magic strings",
+      "Zero runtime overhead (compile-time constants)"
+    ],
+    "enum_categories": {
+      "documentation": ["TemplateNames"],
+      "changelog": ["ChangeType", "Severity"],
+      "standards": ["ScanDepth", "FocusArea", "AuditSeverity", "AuditScope", "SeverityThreshold"],
+      "planning": ["ValidationSeverity", "PlanStatus"],
+      "inventory": ["FileCategory", "RiskLevel", "AnalysisDepth"],
+      "dependency": ["PackageManager", "DependencyType", "VulnerabilitySeverity"],
+      "api": ["APIFramework", "HTTPMethod"],
+      "database": ["DatabaseSystem", "DatabaseType", "ORMFramework"],
+      "configuration": ["ConfigFormat"],
+      "test": ["TestFramework"],
+      "documentation": ["DocumentationType"],
+      "context_expert": ["ContextExpertStatus", "ContextExpertCapability", "ResourceType", "ExpertDomain"]
+    },
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

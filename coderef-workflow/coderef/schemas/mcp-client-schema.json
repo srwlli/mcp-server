@@ -1,0 +1,386 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "mcp_client.py Schema",
+  "description": "Type definitions and validation contracts for MCP inter-server communication client",
+  "definitions": {
+    "ToolResponseDict": {
+      "type": "object",
+      "description": "Successful tool call response structure",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "const": true,
+          "description": "Always true for successful responses"
+        },
+        "data": {
+          "type": "object",
+          "description": "Tool-specific response data (structure varies by tool)"
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Name of tool that was called",
+          "examples": ["coderef_scan", "coderef_query", "coderef_patterns"]
+        }
+      },
+      "required": ["success", "data", "tool_name"]
+    },
+    "JsonRpcRequest": {
+      "type": "object",
+      "description": "JSON-RPC 2.0 request message format",
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "const": "2.0",
+          "description": "JSON-RPC protocol version"
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Unique request ID (auto-incremented)"
+        },
+        "method": {
+          "type": "string",
+          "const": "tools/call",
+          "description": "MCP method to invoke"
+        },
+        "params": {
+          "$ref": "#/definitions/JsonRpcParams"
+        }
+      },
+      "required": ["jsonrpc", "id", "method", "params"]
+    },
+    "JsonRpcParams": {
+      "type": "object",
+      "description": "Parameters for tools/call method",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Tool name to call",
+          "examples": ["coderef_scan", "coderef_query", "coderef_impact"]
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Tool-specific arguments (varies by tool)"
+        }
+      },
+      "required": ["name", "arguments"]
+    },
+    "JsonRpcSuccessResponse": {
+      "type": "object",
+      "description": "JSON-RPC 2.0 success response format",
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "const": "2.0"
+        },
+        "id": {
+          "type": "integer",
+          "description": "Matches request ID"
+        },
+        "result": {
+          "type": "object",
+          "description": "Tool execution result"
+        }
+      },
+      "required": ["jsonrpc", "id", "result"]
+    },
+    "JsonRpcErrorResponse": {
+      "type": "object",
+      "description": "JSON-RPC 2.0 error response format",
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "const": "2.0"
+        },
+        "id": {
+          "type": "integer",
+          "description": "Matches request ID"
+        },
+        "error": {
+          "$ref": "#/definitions/JsonRpcError"
+        }
+      },
+      "required": ["jsonrpc", "id", "error"]
+    },
+    "JsonRpcError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "JSON-RPC error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "data": {
+          "type": "object",
+          "description": "Optional additional error context"
+        }
+      },
+      "required": ["code", "message"]
+    },
+    "MCPToolClientConstructorArgs": {
+      "type": "object",
+      "description": "Constructor arguments for MCPToolClient",
+      "properties": {
+        "server_script_path": {
+          "type": ["string", "null"],
+          "description": "Path to coderef-context server.py (null = default sibling directory)",
+          "default": null,
+          "examples": [
+            "../coderef-context/server.py",
+            "/custom/path/coderef-context/server.py"
+          ]
+        }
+      }
+    },
+    "CallToolArgs": {
+      "type": "object",
+      "description": "Arguments for call_tool method",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "Name of MCP tool to call",
+          "examples": ["coderef_scan", "coderef_query", "coderef_impact"]
+        },
+        "tool_args": {
+          "type": "object",
+          "description": "Tool-specific arguments (varies by tool)"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "default": 0,
+          "description": "Internal retry counter (0-max_retries)"
+        }
+      },
+      "required": ["tool_name", "tool_args"]
+    },
+    "RetryablePatterns": {
+      "type": "array",
+      "description": "Error message patterns that trigger retry logic",
+      "items": {
+        "type": "string",
+        "enum": [
+          "timeout",
+          "temporary",
+          "busy",
+          "try again",
+          "connection reset"
+        ]
+      },
+      "const": ["timeout", "temporary", "busy", "try again", "connection reset"]
+    },
+    "SubprocessConfig": {
+      "type": "object",
+      "description": "Subprocess spawn configuration",
+      "properties": {
+        "command": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": ["python", "{server_script_path}"],
+          "description": "Command to spawn subprocess"
+        },
+        "stdin": {
+          "type": "string",
+          "const": "PIPE",
+          "description": "Subprocess stdin pipe"
+        },
+        "stdout": {
+          "type": "string",
+          "const": "PIPE",
+          "description": "Subprocess stdout pipe"
+        },
+        "stderr": {
+          "type": "string",
+          "const": "PIPE",
+          "description": "Subprocess stderr pipe"
+        },
+        "text": {
+          "type": "boolean",
+          "const": true,
+          "description": "Use text mode (not binary)"
+        },
+        "bufsize": {
+          "type": "integer",
+          "const": 1,
+          "description": "Line buffered (flush after each line)"
+        }
+      }
+    },
+    "TimeoutConfig": {
+      "type": "object",
+      "description": "Timeout configuration constants",
+      "properties": {
+        "timeout_seconds": {
+          "type": "integer",
+          "const": 120,
+          "description": "Max time to wait for tool response (5x safety margin)"
+        },
+        "connection_startup_ms": {
+          "type": "integer",
+          "const": 500,
+          "description": "Time to wait after spawning subprocess"
+        },
+        "disconnect_timeout_s": {
+          "type": "integer",
+          "const": 5,
+          "description": "Max time to wait for graceful shutdown"
+        },
+        "retry_backoff_ms": {
+          "type": "integer",
+          "const": 500,
+          "description": "Delay between retry attempts"
+        }
+      }
+    },
+    "RetryConfig": {
+      "type": "object",
+      "description": "Retry logic configuration",
+      "properties": {
+        "max_retries": {
+          "type": "integer",
+          "const": 3,
+          "description": "Maximum retry attempts for transient errors"
+        },
+        "backoff_ms": {
+          "type": "integer",
+          "const": 500,
+          "description": "Fixed backoff delay between retries"
+        },
+        "retryable_patterns": {
+          "$ref": "#/definitions/RetryablePatterns"
+        }
+      }
+    },
+    "SingletonState": {
+      "type": "object",
+      "description": "Class-level singleton state",
+      "properties": {
+        "_instance": {
+          "type": ["object", "null"],
+          "description": "Singleton instance (None if not initialized)"
+        },
+        "_lock": {
+          "type": "object",
+          "description": "Async lock for thread-safe initialization"
+        }
+      }
+    },
+    "InstanceState": {
+      "type": "object",
+      "description": "Per-instance state",
+      "properties": {
+        "server_script_path": {
+          "type": "string",
+          "description": "Path to coderef-context server.py"
+        },
+        "process": {
+          "type": ["object", "null"],
+          "description": "subprocess.Popen instance (None if not connected)"
+        },
+        "message_id": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Auto-incrementing request ID counter"
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "const": 120,
+          "description": "Tool call timeout"
+        },
+        "max_retries": {
+          "type": "integer",
+          "const": 3,
+          "description": "Max retry attempts"
+        }
+      },
+      "required": [
+        "server_script_path",
+        "process",
+        "message_id",
+        "timeout_seconds",
+        "max_retries"
+      ]
+    },
+    "PerformanceMetrics": {
+      "type": "object",
+      "description": "Expected performance characteristics",
+      "properties": {
+        "connect_cold_start_ms": {
+          "type": "number",
+          "minimum": 400,
+          "maximum": 600,
+          "description": "Time to spawn subprocess (first connection)"
+        },
+        "connect_warm_ms": {
+          "type": "number",
+          "maximum": 1,
+          "description": "Time to check existing connection"
+        },
+        "call_tool_overhead_ms": {
+          "type": "number",
+          "minimum": 50,
+          "maximum": 100,
+          "description": "IPC overhead per tool call (excluding tool execution)"
+        },
+        "disconnect_graceful_ms": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 10,
+          "description": "Graceful shutdown time"
+        },
+        "disconnect_timeout_ms": {
+          "type": "number",
+          "const": 5000,
+          "description": "Max time to wait before kill"
+        }
+      }
+    },
+    "ErrorTypes": {
+      "type": "object",
+      "description": "Exception types raised by MCPToolClient",
+      "properties": {
+        "ConnectionError": {
+          "type": "string",
+          "const": "Failed to connect to MCP server",
+          "description": "Raised when subprocess spawn fails"
+        },
+        "TimeoutError": {
+          "type": "string",
+          "const": "Tool call exceeded timeout",
+          "description": "Raised when tool call exceeds timeout_seconds"
+        },
+        "RuntimeError": {
+          "type": "string",
+          "description": "Raised on tool execution failure or invalid response"
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "infrastructure/inter-server-communication",
+    "file": "mcp_client.py",
+    "lines": 243,
+    "class": "MCPToolClient",
+    "methods": 6,
+    "version": "1.2.0",
+    "key_features": [
+      "Singleton pattern with thread-safe async initialization",
+      "JSON-RPC 2.0 protocol over stdio subprocess",
+      "120s timeout (5x safety margin for large AST scans)",
+      "Retry logic with transient error detection (max 3 retries)",
+      "Graceful subprocess lifecycle (connect, call, disconnect)"
+    ],
+    "protocol": "JSON-RPC 2.0",
+    "transport": "stdio (subprocess pipes)",
+    "target_server": "coderef-context/server.py",
+    "timeout_default": 120,
+    "max_retries_default": 3,
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

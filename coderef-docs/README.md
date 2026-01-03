@@ -213,6 +213,55 @@ server.py (MCP entry point)
 
 See [ARCHITECTURE.md](coderef/foundation-docs/ARCHITECTURE.md) for details.
 
+### Documentation Hierarchy
+
+**NEW in v3.4.0** - 4-Tier documentation system (WO-RESOURCE-SHEET-MCP-TOOL-001 Phase 3C)
+
+```
+Project Documentation
+│
+├── Tier 1: Foundation Docs (Project-Wide)
+│   ├── README.md
+│   ├── ARCHITECTURE.md
+│   ├── SCHEMA.md
+│   ├── API.md
+│   └── COMPONENTS.md
+│   └── Location: coderef/foundation-docs/
+│   └── Authority: Canonical for project patterns
+│
+├── Tier 2: Reference Sheets (Element-Specific)
+│   ├── {element}.md
+│   ├── {element}.schema.json
+│   └── {element}.jsdoc.txt
+│   └── Location: coderef/reference-sheets/{category}/
+│   └── Authority: Canonical for element behavior
+│
+├── Tier 3: Inline Documentation (Code-Level)
+│   ├── JSDoc comments in source files
+│   ├── TypeScript type definitions
+│   └── Links to Tier 2 reference sheets
+│   └── Location: Source files (*.ts, *.tsx, *.js)
+│   └── Authority: Links to Tier 2
+│
+└── Tier 4: Generated API Docs (Optional)
+    ├── HTML/Markdown from JSDoc
+    ├── TypeDoc or similar output
+    └── Location: docs/api/ (if generated)
+    └── Authority: Derived from Tiers 2 & 3
+```
+
+**Authority Precedence (when docs conflict):**
+1. **Code** (runtime truth)
+2. **Reference Sheets** (Tier 2 - behavioral contracts)
+3. **Foundation Docs** (Tier 1 - architectural patterns)
+4. **Inline JSDoc** (Tier 3 - quick reference)
+5. **Generated Docs** (Tier 4 - derived documentation)
+
+**Navigation:**
+- **Find element docs:** See [coderef/reference-sheets/INDEX.md](coderef/reference-sheets/INDEX.md)
+- **Understand hierarchy:** INDEX.md has complete navigation guide
+- **Update workflow:** Code change → Re-run `generate_resource_sheet()` → Commit all files
+
 ---
 
 ## Tools Catalog

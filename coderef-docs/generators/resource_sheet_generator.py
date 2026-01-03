@@ -28,6 +28,21 @@ from resource_sheet.modules.universal import (
     performance_module,
 )
 
+# Import conditional modules
+from resource_sheet.modules.conditional import (
+    props_module,
+    events_module,
+    accessibility_module,
+    state_module,
+    lifecycle_module,
+    endpoints_module,
+    auth_module,
+    retry_module,
+    error_handling_module,
+    hook_signature_module,
+    hook_side_effects_module,
+)
+
 
 class ResourceSheetGenerator:
     """
@@ -56,11 +71,25 @@ class ResourceSheetGenerator:
         self.registry.register(testing_module)
         self.registry.register(performance_module)
 
-        # TODO: Register conditional modules when implemented
-        # - UI modules (props, events, accessibility, etc.)
-        # - State modules (state, lifecycle, etc.)
-        # - Network modules (endpoints, auth, retry, etc.)
-        # - Hook modules (signature, side_effects, etc.)
+        # Conditional modules (triggered by code characteristics)
+        # UI modules
+        self.registry.register(props_module)
+        self.registry.register(events_module)
+        self.registry.register(accessibility_module)
+
+        # State modules
+        self.registry.register(state_module)
+        self.registry.register(lifecycle_module)
+
+        # Network modules
+        self.registry.register(endpoints_module)
+        self.registry.register(auth_module)
+        self.registry.register(retry_module)
+        self.registry.register(error_handling_module)
+
+        # Hook modules
+        self.registry.register(hook_signature_module)
+        self.registry.register(hook_side_effects_module)
 
     async def generate(
         self,
@@ -81,7 +110,7 @@ class ResourceSheetGenerator:
             element_type: Optional manual element type override
             mode: Generation mode (reverse-engineer, template, refresh)
             auto_analyze: Use coderef_scan for auto-fill (default: True)
-            output_path: Where to save output (default: coderef/foundation-docs/)
+            output_path: Where to save output (default: coderef/reference-sheets/{element_name}/)
             validate_against_code: Compare docs to code (default: True)
 
         Returns:
@@ -101,7 +130,7 @@ class ResourceSheetGenerator:
             modules,
             analysis,
             mode,
-            output_path or f"{project_path}/coderef/foundation-docs",
+            output_path or f"{project_path}/coderef/reference-sheets/{element_name.lower()}",
         )
 
         # Build result

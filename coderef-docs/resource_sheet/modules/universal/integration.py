@@ -10,10 +10,35 @@ from ...types import DocumentationModule, ModuleTriggers, ModuleTemplates, Modul
 
 
 def auto_fill_integration(data: dict) -> str:
-    """Auto-fill integration section from extracted data."""
-    used_by = data.get("used_by", [])
-    uses = data.get("uses", [])
+    """
+    Auto-fill integration section from extracted data.
+
+    GRAPH-002: Now uses graph query results for consumers and dependencies.
+    """
+    used_by_raw = data.get("used_by", [])
+    uses_raw = data.get("uses", [])
     events = data.get("events", {})
+
+    # GRAPH-002: Extract names from graph query results
+    used_by = []
+    for consumer in used_by_raw:
+        if isinstance(consumer, dict):
+            # From graph query - include file path for context
+            name = consumer.get("name", "")
+            file = consumer.get("file", "")
+            used_by.append(f"{name} ({file})" if file else name)
+        else:
+            used_by.append(str(consumer))
+
+    uses = []
+    for dependency in uses_raw:
+        if isinstance(dependency, dict):
+            # From graph query - include file path for context
+            name = dependency.get("name", "")
+            file = dependency.get("file", "")
+            uses.append(f"{name} ({file})" if file else name)
+        else:
+            uses.append(str(dependency))
 
     content = ""
 

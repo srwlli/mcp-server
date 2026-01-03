@@ -1,0 +1,366 @@
+{
+  "META_DOCUMENTATION": {
+    "plan_version": "1.0.0",
+    "workorder_id": "WO-RSMS-METADATA-001",
+    "feature_id": "resource-sheet-metadata",
+    "created": "2026-01-03T00:00:00Z",
+    "status": "APPROVED",
+    "generated_by": "Claude Sonnet 4.5"
+  },
+  "0_PREPARATION": {
+    "discovery": {
+      "existing_docs": [
+        "CLAUDE.md - Project documentation",
+        "README.md - User documentation",
+        "docs/RESOURCE-SHEET-UDS-SYSTEM.md - Existing resource sheet with ad-hoc header"
+      ],
+      "existing_standards": [
+        "UDS (Universal Documentation Standards) - For workorder-based docs",
+        "Standard markdown - For general docs"
+      ],
+      "gap_identified": "Resource sheets lack standardized metadata - currently use ad-hoc header (Agent/Date/Task) that doesn't track versioning, relationships, or project context"
+    },
+    "analysis": {
+      "current_state": "Resource sheets created via /create-resource-sheet use minimal header with Agent, Date, Task fields. No schema validation, no relationship tracking, no version control.",
+      "requirements": [
+        "Define RSMS (Resource Sheet Metadata Standard) v1.0",
+        "Create JSON schema for validation",
+        "Update /create-resource-sheet template to use RSMS headers",
+        "Ensure RSMS is distinct from UDS (no workorder_id, different purpose)"
+      ],
+      "constraints": [
+        "Must not conflict with existing UDS standard",
+        "Must be YAML frontmatter compatible",
+        "Must support file/doc linking for relationship tracking",
+        "No footer (all metadata in header)"
+      ]
+    },
+    "reference_components": {
+      "papertrail/uds.py": "UDSHeader implementation - use as reference for YAML generation",
+      "papertrail/validator.py": "Validation logic - extend for RSMS validation",
+      "schemas/": "Schema storage - add resource-sheet.json here"
+    }
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Implement Resource Sheet Metadata Standard (RSMS) v1.0 - a lightweight, trackable metadata system for architectural documentation",
+    "why": "Resource sheets are critical technical reference docs but lack standardized metadata for versioning, relationship tracking, and project scoping",
+    "how": "Create RSMS schema, validator, and update /create-resource-sheet template to auto-inject standardized headers",
+    "impact": "All future resource sheets will have consistent, validatable metadata enabling version tracking, cross-document linking, and automated catalog generation",
+    "scope": "Schema definition + template update + validation logic (no new MCP tools, extends existing validator)"
+  },
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": {
+      "severity": "LOW",
+      "details": "Existing resource sheet (RESOURCE-SHEET-UDS-SYSTEM.md) uses ad-hoc header - will need manual migration to RSMS",
+      "mitigation": "Migration script or manual update of existing resource sheet"
+    },
+    "security": {
+      "severity": "NONE",
+      "details": "No security impact - metadata is declarative, no executable code"
+    },
+    "performance": {
+      "severity": "NONE",
+      "details": "YAML parsing overhead negligible (<1ms per document)"
+    },
+    "dependencies": {
+      "added": [],
+      "modified": ["papertrail/validator.py - extend with RSMS validation"],
+      "removed": []
+    },
+    "reversibility": {
+      "score": "HIGH",
+      "details": "Changes are additive - can rollback by reverting template and schema files"
+    }
+  },
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_patterns": {
+      "uds_headers": "UDS uses workorder_id, generated_by, feature_id, timestamp - for feature implementation docs",
+      "ad_hoc_headers": "Current resource sheet uses Agent, Date, Task - minimal, no versioning",
+      "yaml_frontmatter": "Standard pattern across ecosystem - regex extraction in validator.py:150"
+    },
+    "file_locations": {
+      "schemas": "papertrail/schemas/ - stores JSON schemas",
+      "validators": "papertrail/validator.py - UDSValidator class",
+      "templates": "~/.claude/commands/create-resource-sheet.md - template for resource sheet generation",
+      "existing_resource_sheets": "docs/RESOURCE-SHEET-UDS-SYSTEM.md"
+    },
+    "integration_points": {
+      "/create-resource-sheet": "Slash command that generates resource sheets - needs template update",
+      "validator.py": "Validation engine - needs RSMS schema support",
+      "health.py": "Health scoring - may need RSMS-specific scoring (future enhancement)"
+    }
+  },
+  "4_KEY_FEATURES": {
+    "must_have": [
+      {
+        "id": "RSMS-F01",
+        "name": "RSMS Header Specification",
+        "description": "Define 10-field YAML header: parent_project, doc_type, subject, category, author, created, last_updated, version, related_files, related_docs",
+        "acceptance_criteria": [
+          "All 10 fields documented",
+          "Field order matches specification",
+          "YAML format matches UDS pattern (--- delimited)"
+        ]
+      },
+      {
+        "id": "RSMS-F02",
+        "name": "JSON Schema for RSMS",
+        "description": "Create schemas/resource-sheet.json with required fields, patterns, and validation rules",
+        "acceptance_criteria": [
+          "Required fields: parent_project, doc_type, subject, category, author, created, last_updated, version",
+          "Optional fields: related_files (array), related_docs (array)",
+          "Pattern validation for doc_type (must be 'resource_sheet')",
+          "Pattern validation for version (semver format)"
+        ]
+      },
+      {
+        "id": "RSMS-F03",
+        "name": "Update /create-resource-sheet Template",
+        "description": "Replace ad-hoc header (Agent/Date/Task) with RSMS header in template",
+        "acceptance_criteria": [
+          "Template outputs RSMS-compliant header",
+          "All 10 fields included with examples",
+          "Instructions updated to explain RSMS fields"
+        ]
+      },
+      {
+        "id": "RSMS-F04",
+        "name": "Extend Validator for RSMS",
+        "description": "Update validator.py to recognize and validate resource_sheet doc_type",
+        "acceptance_criteria": [
+          "UDSValidator loads resource-sheet.json schema",
+          "validate_uds() accepts doc_type='resource_sheet'",
+          "Validation errors returned for missing/invalid fields"
+        ]
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "RSMS-F05",
+        "name": "Migration Script for Existing Resource Sheets",
+        "description": "Script to convert ad-hoc headers to RSMS format",
+        "acceptance_criteria": [
+          "Script reads old header format",
+          "Generates RSMS header with user prompts for missing fields",
+          "Preserves document content"
+        ]
+      }
+    ]
+  },
+  "5_TASK_ID_SYSTEM": {
+    "prefix": "RSMS",
+    "categories": {
+      "SCHEMA": "Schema definition and documentation",
+      "VALID": "Validation logic",
+      "TMPL": "Template updates",
+      "TEST": "Testing and verification",
+      "DOCS": "Documentation updates"
+    },
+    "format": "RSMS-{CATEGORY}-{###}",
+    "examples": [
+      "RSMS-SCHEMA-001: Create resource-sheet.json schema",
+      "RSMS-VALID-001: Extend validator with RSMS support",
+      "RSMS-TMPL-001: Update /create-resource-sheet template",
+      "RSMS-TEST-001: Validate RSMS header parsing"
+    ]
+  },
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1": {
+      "name": "Schema Definition",
+      "duration_estimate": "30 minutes",
+      "tasks": [
+        {
+          "id": "RSMS-SCHEMA-001",
+          "description": "Create schemas/resource-sheet.json with RSMS field definitions",
+          "deliverables": ["schemas/resource-sheet.json"],
+          "dependencies": [],
+          "testing": "Validate JSON schema syntax"
+        },
+        {
+          "id": "RSMS-SCHEMA-002",
+          "description": "Document RSMS v1.0 specification in docs/RSMS-SPECIFICATION.md",
+          "deliverables": ["docs/RSMS-SPECIFICATION.md"],
+          "dependencies": ["RSMS-SCHEMA-001"],
+          "testing": "Review specification completeness"
+        }
+      ]
+    },
+    "phase_2": {
+      "name": "Validation Integration",
+      "duration_estimate": "45 minutes",
+      "tasks": [
+        {
+          "id": "RSMS-VALID-001",
+          "description": "Update validator.py schema_files dict to include resource-sheet.json",
+          "deliverables": ["papertrail/validator.py (modified)"],
+          "dependencies": ["RSMS-SCHEMA-001"],
+          "testing": "Unit test: validator loads resource_sheet schema"
+        },
+        {
+          "id": "RSMS-VALID-002",
+          "description": "Add test case for RSMS validation in tests/test_validator.py",
+          "deliverables": ["tests/test_validator.py (modified)"],
+          "dependencies": ["RSMS-VALID-001"],
+          "testing": "Pytest passes for resource_sheet validation"
+        }
+      ]
+    },
+    "phase_3": {
+      "name": "Template Update",
+      "duration_estimate": "30 minutes",
+      "tasks": [
+        {
+          "id": "RSMS-TMPL-001",
+          "description": "Replace Section 1 header in ~/.claude/commands/create-resource-sheet.md with RSMS header template",
+          "deliverables": ["~/.claude/commands/create-resource-sheet.md (modified)"],
+          "dependencies": ["RSMS-SCHEMA-002"],
+          "testing": "Generate test resource sheet, validate RSMS header"
+        },
+        {
+          "id": "RSMS-TMPL-002",
+          "description": "Update template instructions to explain RSMS fields (subject, category, related_files, etc.)",
+          "deliverables": ["~/.claude/commands/create-resource-sheet.md (modified)"],
+          "dependencies": ["RSMS-TMPL-001"],
+          "testing": "Review clarity of field explanations"
+        }
+      ]
+    },
+    "phase_4": {
+      "name": "Migration & Documentation",
+      "duration_estimate": "45 minutes",
+      "tasks": [
+        {
+          "id": "RSMS-DOCS-001",
+          "description": "Update RESOURCE-SHEET-UDS-SYSTEM.md header to RSMS format",
+          "deliverables": ["docs/RESOURCE-SHEET-UDS-SYSTEM.md (modified)"],
+          "dependencies": ["RSMS-TMPL-001"],
+          "testing": "Validate updated header with validator.py"
+        },
+        {
+          "id": "RSMS-DOCS-002",
+          "description": "Update CLAUDE.md to document RSMS as third metadata standard (alongside UDS and standard markdown)",
+          "deliverables": ["CLAUDE.md (modified)"],
+          "dependencies": ["RSMS-SCHEMA-002"],
+          "testing": "Review documentation completeness"
+        }
+      ]
+    }
+  },
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      {
+        "test_id": "RSMS-TEST-001",
+        "description": "Validate RSMS header parsing from YAML frontmatter",
+        "file": "tests/test_validator.py",
+        "assertions": [
+          "Header extracted correctly",
+          "All 10 fields parsed",
+          "related_files array handled"
+        ]
+      },
+      {
+        "test_id": "RSMS-TEST-002",
+        "description": "Validate resource_sheet schema validation",
+        "file": "tests/test_validator.py",
+        "assertions": [
+          "Valid RSMS header passes validation",
+          "Missing required field triggers error",
+          "Invalid doc_type triggers error"
+        ]
+      }
+    ],
+    "integration_tests": [
+      {
+        "test_id": "RSMS-TEST-003",
+        "description": "End-to-end resource sheet generation with RSMS header",
+        "steps": [
+          "Run /create-resource-sheet test-component library",
+          "Verify RSMS header present",
+          "Validate with validator.py",
+          "Check all 10 fields populated"
+        ]
+      }
+    ],
+    "manual_tests": [
+      {
+        "test_id": "RSMS-TEST-004",
+        "description": "Verify existing resource sheet migration",
+        "steps": [
+          "Update RESOURCE-SHEET-UDS-SYSTEM.md header",
+          "Run validation",
+          "Confirm no errors",
+          "Verify related_files links are correct"
+        ]
+      }
+    ]
+  },
+  "8_SUCCESS_CRITERIA": {
+    "functional": [
+      "schemas/resource-sheet.json exists and validates",
+      "validator.py recognizes doc_type='resource_sheet'",
+      "/create-resource-sheet generates RSMS-compliant headers",
+      "Existing resource sheet migrated to RSMS format",
+      "All tests pass (unit + integration)"
+    ],
+    "quality": [
+      "RSMS specification documented in docs/",
+      "Template instructions clear and complete",
+      "No breaking changes to UDS validation",
+      "CLAUDE.md updated with RSMS documentation"
+    ],
+    "performance": [
+      "RSMS validation completes in <10ms per document",
+      "No regression in UDS validation performance"
+    ],
+    "documentation": [
+      "RSMS-SPECIFICATION.md complete",
+      "Template includes field explanations",
+      "CLAUDE.md documents RSMS alongside UDS"
+    ]
+  },
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "pre_implementation": [
+      "Review UDS implementation in uds.py and validator.py",
+      "Confirm RSMS field list finalized (10 fields)",
+      "Verify no conflicts with existing schemas"
+    ],
+    "during_implementation": [
+      "Create schema file first (RSMS-SCHEMA-001)",
+      "Test schema validation before extending validator",
+      "Update template incrementally, test after each change",
+      "Run validation tests after each phase"
+    ],
+    "post_implementation": [
+      "Validate all test cases pass",
+      "Update existing resource sheet",
+      "Update CLAUDE.md with RSMS documentation",
+      "Commit with workorder reference in message"
+    ]
+  },
+  "10_QUALITY_CHECKLIST": {
+    "code_quality": [
+      "Schema follows JSON Schema Draft 7 spec",
+      "Validator changes follow existing UDS pattern",
+      "No hardcoded values (use schema definitions)",
+      "Error messages clear and actionable"
+    ],
+    "testing": [
+      "Unit tests cover all required fields",
+      "Integration test covers end-to-end flow",
+      "Manual migration test documented",
+      "Edge cases tested (empty arrays, missing optional fields)"
+    ],
+    "documentation": [
+      "RSMS specification complete and accurate",
+      "Template instructions updated",
+      "CLAUDE.md includes RSMS in architecture section",
+      "Inline code comments added for RSMS-specific logic"
+    ],
+    "autonomy": [
+      "No placeholder TODOs in plan",
+      "All task dependencies explicit",
+      "Testing steps actionable",
+      "Success criteria measurable"
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-MCP-TOOL-001",
+  "phase": "3B",
+  "phase_name": "Graph Integration (Coderef-System Agent)",
+  "assigned_to": "coderef-system-agent",
+  "status": "pending",
+  "created": "2026-01-03",
+  "priority": "high",
+
+  "context": {
+    "current_state": "CodeAnalyzer exists but doesn't fully utilize coderef_scan. Auto-fill functions in 11 conditional modules are partially stubbed - they use regex extraction from code strings instead of querying the dependency graph.",
+    "goal": "Integrate coderef-context MCP queries into auto-fill functions to achieve 60-80% auto-fill rate from dependency graph analysis.",
+    "dependencies": [
+      "mcp__coderef-context__coderef_scan (must run first to generate .coderef/index.json)",
+      "mcp__coderef-context__coderef_query (for dependency/call/import queries)"
+    ],
+    "files_affected": [
+      "resource_sheet/detection/analyzer.py",
+      "resource_sheet/modules/universal/architecture.py",
+      "resource_sheet/modules/universal/integration.py",
+      "resource_sheet/modules/conditional/*/auto_fill_* functions (11 modules)"
+    ]
+  },
+
+  "tasks": [
+    {
+      "task_id": "GRAPH-001",
+      "title": "Enhance CodeAnalyzer to fully utilize coderef_scan",
+      "description": "Update detection/analyzer.py to call coderef_query MCP tools for dependency/call/import analysis instead of just reading .coderef/index.json",
+      "current_implementation": "Reads .coderef/index.json as flat JSON, extracts basic metadata",
+      "required_changes": [
+        "Import mcp__coderef-context tools (coderef_query, coderef_impact, coderef_complexity)",
+        "Add query_dependencies() method that calls coderef_query with query_type='depends-on'",
+        "Add query_callers() method that calls coderef_query with query_type='calls-me'",
+        "Add query_imports() method that calls coderef_query with query_type='imports-me'",
+        "Update analyze_element() to populate scan_data with graph query results"
+      ],
+      "success_criteria": [
+        "scan_data includes 'dependencies', 'callers', 'imports' keys with graph query results",
+        "Falls back gracefully if .coderef/index.json doesn't exist",
+        "Query time < 500ms for typical elements"
+      ]
+    },
+    {
+      "task_id": "GRAPH-002",
+      "title": "Integrate graph queries into auto-fill functions",
+      "description": "Update all auto_fill_* functions in modules to use graph data instead of regex parsing",
+      "files_to_update": [
+        {
+          "file": "resource_sheet/modules/universal/architecture.py",
+          "function": "auto_fill_architecture()",
+          "current": "Uses regex to extract dependencies from code string",
+          "new": "Use scan_data['dependencies'] from graph query"
+        },
+        {
+          "file": "resource_sheet/modules/universal/integration.py",
+          "function": "auto_fill_integration()",
+          "current": "Uses regex to extract imports/exports",
+          "new": "Use scan_data['imports'] and scan_data['exports'] from graph"
+        },
+        {
+          "file": "resource_sheet/modules/conditional/network/endpoints.py",
+          "function": "auto_fill_endpoints()",
+          "current": "Regex searches for @app.route or app.get patterns",
+          "new": "Use graph to find route definitions and their dependencies"
+        },
+        {
+          "file": "resource_sheet/modules/conditional/hooks/signature.py",
+          "function": "auto_fill_hook_signature()",
+          "current": "Regex extracts function signature from code string",
+          "new": "Use scan_data['signature'] and scan_data['params'] from graph"
+        }
+      ],
+      "pattern_to_follow": {
+        "before": "def auto_fill_architecture(scan_data):\n    code = scan_data.get('code', '')\n    import re\n    deps = re.findall(r'import (\\w+)', code)",
+        "after": "def auto_fill_architecture(scan_data):\n    dependencies = scan_data.get('dependencies', [])\n    imports = scan_data.get('imports', [])\n    # Use structured graph data instead of regex"
+      },
+      "success_criteria": [
+        "All 11 conditional modules use graph data",
+        "Auto-fill rate increases from 50% to 60-80%",
+        "No regex parsing of code strings for structural analysis"
+      ]
+    }
+  ],
+
+  "testing_requirements": [
+    {
+      "test_id": "GRAPH-TEST-001",
+      "description": "Test CodeAnalyzer with real .coderef/index.json",
+      "steps": [
+        "Run coderef_scan on coderef-docs project",
+        "Call analyzer.analyze_element('ResourceSheetGenerator', project_path)",
+        "Verify scan_data includes dependencies, callers, imports"
+      ]
+    },
+    {
+      "test_id": "GRAPH-TEST-002",
+      "description": "Test auto-fill improvement",
+      "steps": [
+        "Generate resource sheet for AuthService (or similar element)",
+        "Measure auto-fill rate (should be 60-80%)",
+        "Verify graph data appears in documentation output"
+      ]
+    }
+  ],
+
+  "acceptance_criteria": {
+    "functional": [
+      "CodeAnalyzer calls coderef_query MCP tools",
+      "Auto-fill functions use graph data instead of regex",
+      "Auto-fill rate >= 60% (measured on 5 test elements)"
+    ],
+    "non_functional": [
+      "Graph query time < 500ms per element",
+      "Graceful degradation if coderef_scan not run",
+      "No breaking changes to existing API"
+    ]
+  },
+
+  "handoff_prompt": "NEW WORKORDER DELEGATION: WO-RESOURCE-SHEET-MCP-TOOL-001 Phase 3B\n\nYou are the coderef-system agent. Your task is to integrate coderef-context graph queries into the resource sheet generator.\n\nREAD:\n1. This file (fix-instructions-phase3b.json)\n2. resource_sheet/detection/analyzer.py (current implementation)\n3. resource_sheet/modules/universal/architecture.py (example auto-fill function)\n\nYOUR TASKS:\n1. Enhance CodeAnalyzer to call coderef_query MCP tools (GRAPH-001)\n2. Update all auto-fill functions to use graph data (GRAPH-002)\n3. Test auto-fill rate improvement (should reach 60-80%)\n\nSUCCESS CRITERIA:\n- Auto-fill rate >= 60% on 5 test elements\n- Graph queries complete in < 500ms\n- No regex parsing for structural analysis\n\nWhen complete, update communication.json with status='phase_3b_complete'",
+
+  "notes": [
+    "This is Phase 3B of the resource-sheet-consolidation workorder",
+    "Phase 3A (conditional modules) is now complete after registering modules",
+    "Phase 3C (writing guidelines) is separate delegation",
+    "Graph integration is the key to achieving 60-80% auto-fill target"
+  ]
+}

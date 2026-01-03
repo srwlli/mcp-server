@@ -1,0 +1,125 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "resource-sheet-p0-batch",
+    "workorder_id": "WO-RESOURCE-SHEET-P0-001",
+    "status": "planning",
+    "generated_by": "Claude Code AI",
+    "has_context": false,
+    "has_analysis": false,
+    "version": "1.0",
+    "created_at": "2026-01-02T00:00:00Z",
+    "updated_at": "2026-01-02T00:00:00Z"
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Generate authoritative resource sheet documentation for the top 5 P0 critical files in coderef-workflow",
+    "why": "Enable safe refactoring, faster onboarding, and reduce maintenance burden by documenting core orchestration files",
+    "how": "Use /create-resource-sheet command for each of the 5 P0 files, generating 3 outputs per file (markdown + JSON schema + JSDoc)",
+    "key_features": [
+      "server.py - MCP server entry point and tool registry",
+      "tool_handlers.py - All 24 tool implementation handlers",
+      "planning_analyzer.py - Project analysis engine with .coderef/ integration",
+      "planning_generator.py - 10-section plan synthesis engine",
+      "plan_validator.py - Plan quality scoring (0-100)"
+    ]
+  },
+  "4_KEY_FEATURES": [
+    "Complete resource sheets for 5 P0 critical files",
+    "All 3 output formats per file (15 files total: 5 .md + 5 .json + 5 .txt)",
+    "State ownership tables for each file",
+    "Failure modes and recovery paths documented",
+    "Performance characteristics and bottlenecks identified"
+  ],
+  "5_TASK_ID_SYSTEM": {
+    "format": "CATEGORY-NNN",
+    "categories": {
+      "SHEET": "Resource sheet generation tasks"
+    }
+  },
+  "6_IMPLEMENTATION_PHASES": [
+    {
+      "phase_id": "phase_1",
+      "name": "Generate Resource Sheets",
+      "tasks": [
+        {
+          "task_id": "SHEET-001",
+          "description": "Generate resource sheet for server.py (MCP server entry point)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-002",
+          "description": "Generate resource sheet for tool_handlers.py (24 tool handlers)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-003",
+          "description": "Generate resource sheet for planning_analyzer.py (analysis engine)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-004",
+          "description": "Generate resource sheet for planning_generator.py (plan synthesis)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "high"
+        },
+        {
+          "task_id": "SHEET-005",
+          "description": "Generate resource sheet for plan_validator.py (quality scoring)",
+          "status": "pending",
+          "dependencies": [],
+          "estimated_effort": "medium"
+        }
+      ],
+      "dependencies": [],
+      "parallel_capable": true
+    }
+  ],
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      "Verify all 15 output files created (5 .md + 5 .json + 5 .txt)",
+      "Validate markdown renders correctly",
+      "Validate JSON schemas are valid Draft-07",
+      "Check JSDoc suggestions are syntactically correct"
+    ],
+    "integration_tests": [
+      "Verify resource sheets integrate with existing CLAUDE.md",
+      "Check cross-references between sheets work"
+    ]
+  },
+  "8_SUCCESS_CRITERIA": {
+    "functional": [
+      "All 5 resource sheets created (15 files total)",
+      "Each sheet has complete state ownership table",
+      "Each sheet documents failure modes and recovery",
+      "Each sheet has performance characteristics"
+    ],
+    "non_functional": {
+      "quality": "All sheets score >= 85 on refactor-safety checklist",
+      "completeness": "No TODO placeholders in any sheet",
+      "consistency": "All sheets follow RESOURCE-SHEET-SYSTEM.md template"
+    }
+  },
+  "9_IMPLEMENTATION_CHECKLIST": {
+    "pre_implementation": [
+      "Read RESOURCE-SHEET-SYSTEM.md template",
+      "Review LIST-FOR-SHEET.md for P0 file details",
+      "Understand 3-output requirement (md + json + txt)"
+    ],
+    "during_implementation": [
+      "Generate markdown documentation with all required sections",
+      "Generate JSON schema from TypedDicts and function signatures",
+      "Generate JSDoc suggestions for inline documentation"
+    ],
+    "post_implementation": [
+      "Verify all 15 files created",
+      "Run refactor-safety checklist on each sheet",
+      "Update LIST-FOR-SHEET.md completion tracking"
+    ]
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "server.py Schema",
+  "description": "Type definitions and validation contracts for coderef-workflow MCP server",
+  "definitions": {
+    "ServerMetadata": {
+      "type": "object",
+      "properties": {
+        "__version__": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Server version (semver format)"
+        },
+        "__schema_version__": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Tool schema version"
+        },
+        "__mcp_version__": {
+          "type": "string",
+          "description": "MCP protocol version"
+        }
+      },
+      "required": ["__version__", "__schema_version__", "__mcp_version__"]
+    },
+    "ToolDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique tool identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable tool description"
+        },
+        "inputSchema": {
+          "type": "object",
+          "description": "JSON Schema Draft-07 for tool inputs"
+        }
+      },
+      "required": ["name", "description", "inputSchema"]
+    },
+    "ToolCallRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Tool name to invoke"
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Tool-specific arguments"
+        }
+      },
+      "required": ["name", "arguments"]
+    },
+    "ToolCallResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TextContent"
+      },
+      "description": "List of text content blocks returned by tool"
+    },
+    "TextContent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["text"],
+          "description": "Content type discriminator"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text content"
+        }
+      },
+      "required": ["type", "text"]
+    },
+    "ServerPaths": {
+      "type": "object",
+      "properties": {
+        "SERVER_DIR": {
+          "type": "string",
+          "description": "Absolute path to server.py directory"
+        },
+        "TEMPLATES_DIR": {
+          "type": "string",
+          "description": "Absolute path to POWER framework templates"
+        },
+        "TOOL_TEMPLATES_DIR": {
+          "type": "string",
+          "description": "Absolute path to tool-specific templates"
+        }
+      },
+      "required": ["SERVER_DIR", "TEMPLATES_DIR", "TOOL_TEMPLATES_DIR"]
+    },
+    "HandlerRegistry": {
+      "type": "object",
+      "description": "Mapping of tool names to handler functions",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "string",
+          "description": "Handler function name"
+        }
+      }
+    },
+    "LogEntry": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Tool name"
+        },
+        "args_keys": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Argument keys (not values, for privacy)"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp"
+        }
+      },
+      "required": ["name", "args_keys"]
+    }
+  },
+  "metadata": {
+    "category": "infrastructure/core",
+    "file": "server.py",
+    "lines": 1123,
+    "tools": 35,
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P0-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

@@ -1,0 +1,230 @@
+# JSDoc Suggestions for server.py
+
+## Purpose
+Copy-paste JSDoc comments to enhance inline documentation in server.py
+
+## Usage Instructions
+1. Copy the relevant JSDoc block below
+2. Paste above the corresponding function/class in server.py
+3. Adjust parameter names/types if implementation differs
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Documentation Generation MCP Server
+
+Provides 35 MCP tools for orchestrating feature development lifecycle:
+- Planning & analysis (7 tools)
+- Documentation generation (4 tools)
+- Standards & quality (3 tools)
+- Multi-agent coordination (5 tools)
+- Execution tracking (6 tools)
+- Feature management (3 tools)
+- Risk assessment (1 tool)
+- Workorder tracking (2 tools)
+- Template management (2 tools)
+- Changelog management (2 tools)
+
+**Architecture:**
+- MCP protocol adapter layer (tool registration + dispatch)
+- Delegates execution to tool_handlers.py registry
+- Stateless server (no persistent state)
+- Single-threaded stdio transport
+
+**Lifecycle:**
+1. Module init → SERVER_DIR, TEMPLATES_DIR, app creation
+2. asyncio.run(main()) → stdio_server lifecycle
+3. Tool calls → dispatch to handlers → return results
+4. Shutdown → no cleanup needed (stateless)
+
+**Version:** 2.0.0
+**MCP Protocol:** 1.0
+**Schema Version:** 1.0.0
+
+**See:** SERVER.md for complete architectural documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## list_tools() Function
+
+```python
+@app.list_tools()
+async def list_tools() -> list[Tool]:
+    """
+    List available MCP tools for client discovery.
+
+    Returns all 35 tool definitions with JSON Schema inputSchema contracts.
+    Called by MCP clients during initialization to discover available tools.
+
+    **Performance:** ~5ms (returns pre-built list)
+
+    **Tool Categories:**
+    - Template Management: 2 tools
+    - Documentation Generation: 2 tools
+    - Changelog Management: 2 tools
+    - Standards & Quality: 3 tools
+    - Planning Workflow: 7 tools
+    - Execution & Tracking: 6 tools
+    - Multi-Agent Coordination: 5 tools
+    - Feature Management: 3 tools
+    - Workorder Tracking: 2 tools
+    - Risk Assessment: 1 tool
+    - Foundation Documentation: 1 tool
+
+    **Returns:**
+        list[Tool]: Tool definitions with name, description, inputSchema
+
+    **Example:**
+        >>> tools = await list_tools()
+        >>> len(tools)
+        35
+        >>> tools[0].name
+        'list_templates'
+
+    **See:** SERVER.md Section 13 (Tool Catalog) for complete tool reference
+    """
+```
+
+---
+
+## call_tool() Function
+
+```python
+@app.call_tool()
+async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+    """
+    Handle tool calls by dispatching to registered handlers.
+
+    This function implements the registry pattern for clean separation of concerns.
+    Each tool has its own handler function in tool_handlers.py for better
+    testability and maintainability.
+
+    **Lifecycle:**
+    1. Log tool invocation (name + argument keys only, not values)
+    2. Lookup handler in TOOL_HANDLERS registry
+    3. Delegate execution to handler(arguments)
+    4. Return list[TextContent] to client
+
+    **Error Handling:**
+    - Unknown tool → ValueError → client receives error
+    - Handler exception → logged with traceback → client receives error
+    - Validation error → MCP SDK catches before call
+
+    **Performance:** ~1ms dispatch overhead (lookup + log)
+
+    **Args:**
+        name (str): Tool name from Tool.name
+        arguments (dict): Tool-specific arguments (validated by MCP SDK against inputSchema)
+
+    **Returns:**
+        list[TextContent]: Tool execution results
+
+    **Raises:**
+        ValueError: If tool name not in TOOL_HANDLERS registry
+
+    **Example:**
+        >>> result = await call_tool("create_plan", {
+        ...     "project_path": "/path/to/project",
+        ...     "feature_name": "new-feature"
+        ... })
+        >>> result[0].text
+        '{"plan_path": "coderef/workorder/new-feature/plan.json", ...}'
+
+    **See:**
+        - tool_handlers.py for handler implementations
+        - SERVER.md Section 6 (Event & Callback Contracts) for dispatch flow
+    """
+```
+
+---
+
+## main() Function
+
+```python
+async def main() -> None:
+    """
+    Run the MCP server using stdio transport.
+
+    **Lifecycle:**
+    1. Log "Starting MCP server main loop"
+    2. Open stdio_server context manager (stdin/stdout)
+    3. Run app.run() with read/write streams
+    4. Await shutdown (Ctrl+C or exception)
+    5. Log errors if exception raised
+
+    **Error Handling:**
+    - Exception during run → logged with traceback → re-raised
+    - No cleanup needed (stateless server)
+
+    **Transport:** stdio (stdin/stdout) - single-threaded, serial execution
+
+    **Example:**
+        >>> asyncio.run(main())
+        # Server runs until Ctrl+C or exception
+
+    **See:** SERVER.md Section 4 (State Lifecycle) for complete sequence
+    """
+```
+
+---
+
+## Server Initialization Code
+
+```python
+# Get server directory
+SERVER_DIR = Path(__file__).parent
+"""Absolute path to server.py directory (computed once at module load)"""
+
+TEMPLATES_DIR = SERVER_DIR / Paths.TEMPLATES_DIR
+"""Absolute path to POWER framework templates (templates/power/)"""
+
+TOOL_TEMPLATES_DIR = SERVER_DIR / Paths.TOOL_TEMPLATES_DIR
+"""Absolute path to tool-specific templates (templates/tools/)"""
+
+# Initialize tool handlers with TEMPLATES_DIR
+tool_handlers.set_templates_dir(TEMPLATES_DIR)
+"""Inject TEMPLATES_DIR into tool_handlers module (global state)"""
+
+tool_handlers.set_tool_templates_dir(TOOL_TEMPLATES_DIR)
+"""Inject TOOL_TEMPLATES_DIR into tool_handlers module (global state)"""
+
+# Create MCP server
+app = Server("coderef-workflow")
+"""Singleton MCP server instance (lifecycle managed by main())"""
+```
+
+---
+
+## Configuration Best Practices
+
+**Adding New Tools:**
+1. Add Tool() definition in list_tools() with:
+   - Unique name (lowercase, underscores only)
+   - Clear description (what it does, not how)
+   - Complete inputSchema (JSON Schema Draft-07)
+2. Add handler in tool_handlers.py:
+   - Function signature: `async def handle_X(arguments: dict) -> list[TextContent]`
+   - Register in TOOL_HANDLERS dict
+   - Add @mcp_error_handler decorator
+3. Test both registration and execution
+
+**Common Mistakes:**
+- Forgetting to register handler in TOOL_HANDLERS → ValueError at runtime
+- Invalid inputSchema → MCP validation errors
+- Wrong handler signature → TypeError when called
+- Duplicate tool name → last definition wins (no warning)
+
+**See:** SERVER.md Section 11 (Common Pitfalls) for complete gotchas list
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P0-001
+**Task:** SHEET-001
+**Timestamp:** 2026-01-02

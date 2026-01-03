@@ -1,0 +1,494 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ResourceSheetGenerationSystem",
+  "description": "Composable, module-based documentation generator with 50% auto-fill rate in Phase 1",
+  "type": "object",
+  "properties": {
+    "architecture": {
+      "type": "object",
+      "description": "Architecture module - always included (universal)",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "Primary responsibility of the system"
+        },
+        "component_hierarchy": {
+          "type": "object",
+          "description": "Component structure and relationships",
+          "properties": {
+            "orchestrator": {
+              "type": "string",
+              "description": "Main entry point class",
+              "const": "ResourceSheetGenerator"
+            },
+            "analyzer": {
+              "type": "string",
+              "description": "Code analysis component",
+              "const": "CodeAnalyzer"
+            },
+            "detector": {
+              "type": "string",
+              "description": "Characteristics detection component",
+              "const": "CharacteristicsDetector"
+            },
+            "composer": {
+              "type": "string",
+              "description": "Documentation composition component",
+              "const": "DocumentComposer"
+            },
+            "registry": {
+              "type": "string",
+              "description": "Module registry component",
+              "const": "ModuleRegistry"
+            }
+          },
+          "required": ["orchestrator", "analyzer", "detector", "composer", "registry"]
+        },
+        "integration_points": {
+          "type": "array",
+          "description": "External systems this component integrates with",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "enum": ["coderef-context", "coderef-workflow", "MCP Server"]
+              },
+              "interface": {
+                "type": "string",
+                "description": "Integration mechanism"
+              }
+            }
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Elements this system depends on",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "file": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["file", "module", "class", "function"]
+              }
+            }
+          }
+        },
+        "consumers": {
+          "type": "array",
+          "description": "Elements that use this system",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "file": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": ["role", "component_hierarchy"]
+    },
+    "integration": {
+      "type": "object",
+      "description": "Integration module - data flow and external dependencies",
+      "properties": {
+        "imports": {
+          "type": "array",
+          "description": "External modules imported by this system",
+          "items": {
+            "type": "object",
+            "properties": {
+              "module": {
+                "type": "string"
+              },
+              "symbols": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "exports": {
+          "type": "object",
+          "description": "Public API exported by this system",
+          "properties": {
+            "is_exported": {
+              "type": "boolean"
+            },
+            "export_type": {
+              "type": "string",
+              "enum": ["default", "named", "namespace"]
+            },
+            "public_members": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "integration_points": {
+          "type": "array",
+          "description": "External system integration points",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string"
+              },
+              "direction": {
+                "type": "string",
+                "enum": ["inbound", "outbound", "bidirectional"]
+              },
+              "protocol": {
+                "type": "string"
+              },
+              "data_flow": {
+                "type": "string"
+              }
+            },
+            "required": ["system", "direction"]
+          }
+        }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "description": "Testing module - test coverage and strategy",
+      "properties": {
+        "test_coverage": {
+          "type": "object",
+          "properties": {
+            "unit_tests": {
+              "type": "integer",
+              "description": "Number of unit tests"
+            },
+            "integration_tests": {
+              "type": "integer",
+              "description": "Number of integration tests"
+            },
+            "coverage_percentage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Overall test coverage percentage"
+            }
+          }
+        },
+        "critical_paths": {
+          "type": "array",
+          "description": "Must-test scenarios",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario": {
+                "type": "string"
+              },
+              "test_file": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["passing", "failing", "pending"]
+              }
+            }
+          }
+        },
+        "not_tested": {
+          "type": "array",
+          "description": "Explicitly excluded from testing",
+          "items": {
+            "type": "object",
+            "properties": {
+              "feature": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "description": "Performance module - benchmarks and limits",
+      "properties": {
+        "known_limits": {
+          "type": "object",
+          "description": "Tested performance thresholds",
+          "properties": {
+            "max_elements": {
+              "type": "integer",
+              "description": "Maximum elements tested"
+            },
+            "max_file_size_bytes": {
+              "type": "integer",
+              "description": "Maximum file size tested"
+            },
+            "generation_time_seconds": {
+              "type": "number",
+              "description": "Average generation time"
+            }
+          }
+        },
+        "bottlenecks": {
+          "type": "array",
+          "description": "Known performance bottlenecks",
+          "items": {
+            "type": "object",
+            "properties": {
+              "component": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              },
+              "mitigation": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "optimization_opportunities": {
+          "type": "array",
+          "description": "Potential performance improvements",
+          "items": {
+            "type": "object",
+            "properties": {
+              "impact": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "description": {
+                "type": "string"
+              },
+              "effort": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "description": "State ownership and lifecycle",
+      "properties": {
+        "state_table": {
+          "type": "array",
+          "description": "Canonical state ownership table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "state_name": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "state_type": {
+                "type": "string",
+                "enum": ["Domain", "Configuration", "Analysis Result", "Generated Artifact", "System State"]
+              },
+              "persistence": {
+                "type": "string",
+                "enum": ["In-memory", "File", "None"]
+              },
+              "source_of_truth": {
+                "type": "string"
+              }
+            },
+            "required": ["state_name", "owner", "state_type", "persistence", "source_of_truth"]
+          }
+        },
+        "lifecycle_stages": {
+          "type": "array",
+          "description": "State lifecycle stages",
+          "items": {
+            "type": "string",
+            "enum": ["IDLE", "ANALYZING", "SELECTING", "EXTRACTING", "COMPOSING", "SAVING", "COMPLETE"]
+          }
+        }
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "API and callback contracts",
+      "properties": {
+        "primary_api": {
+          "type": "object",
+          "description": "ResourceSheetGenerator.generate() contract",
+          "properties": {
+            "method": {
+              "type": "string",
+              "const": "generate"
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "default": {
+                    "type": ["string", "boolean", "null"]
+                  }
+                }
+              }
+            },
+            "returns": {
+              "type": "object",
+              "description": "Return value schema",
+              "properties": {
+                "element_name": {
+                  "type": "string"
+                },
+                "mode": {
+                  "type": "string"
+                },
+                "characteristics": {
+                  "type": "object"
+                },
+                "selected_modules": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "module_count": {
+                  "type": "integer"
+                },
+                "auto_fill_rate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "outputs": {
+                  "type": "object",
+                  "properties": {
+                    "markdown": {
+                      "type": "string",
+                      "description": "Absolute file path to .md file"
+                    },
+                    "schema": {
+                      "type": "string",
+                      "description": "Absolute file path to .schema.json file"
+                    },
+                    "jsdoc": {
+                      "type": "string",
+                      "description": "Absolute file path to .jsdoc.txt file"
+                    }
+                  },
+                  "required": ["markdown", "schema", "jsdoc"]
+                },
+                "warnings": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "generated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": ["element_name", "mode", "selected_modules", "auto_fill_rate", "outputs"]
+            }
+          }
+        },
+        "module_extraction_contract": {
+          "type": "object",
+          "description": "Module extraction function contract",
+          "properties": {
+            "function_signature": {
+              "type": "string",
+              "const": "extract_from_coderef_scan(scan_data: Dict[str, Any]) -> Dict[str, Any]"
+            },
+            "must_return_keys": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "must_not": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "examples": [
+                "Raise exceptions",
+                "Modify scan_data parameter",
+                "Perform I/O operations"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Document metadata and versioning",
+      "properties": {
+        "generated_by": {
+          "type": "string",
+          "description": "Agent that generated this documentation"
+        },
+        "workorder": {
+          "type": "string",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "IN_REVIEW", "APPROVED", "ARCHIVED"]
+        },
+        "phase": {
+          "type": "object",
+          "properties": {
+            "current": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "total": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "status": {
+              "type": "string",
+              "enum": ["COMPLETE", "IN_PROGRESS", "DEFERRED", "BLOCKED"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["architecture", "integration", "testing", "performance", "metadata"]
+}

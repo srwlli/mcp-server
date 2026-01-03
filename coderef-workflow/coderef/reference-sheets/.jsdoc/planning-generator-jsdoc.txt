@@ -1,0 +1,621 @@
+# JSDoc Suggestions for planning_generator.py
+
+## Purpose
+Copy-paste JSDoc comments to enhance inline documentation in planning_generator.py
+
+## Usage Instructions
+1. Copy the relevant JSDoc block below
+2. Paste above the corresponding function/class in planning_generator.py
+3. Adjust parameter names/types if implementation differs
+
+---
+
+## Module-Level Documentation
+
+```python
+"""
+Planning Generator for Creating Implementation Plans
+
+Generates implementation plans by synthesizing context, analysis, and template
+into complete 10-section plan.json files.
+
+**Core Innovation:**
+Batch mode plan generation - synthesizes all 10 sections in a single operation
+instead of step-by-step prompting. Saves partial plans with TODOs if generation fails.
+
+**Workflow:**
+1. Load context.json (feature requirements) - optional
+2. Load analysis.json (project structure/patterns) - optional
+3. Load planning-template-for-ai.json (structure) - required
+4. Generate complete plan (10 sections) via _generate_plan_internal with retry
+5. Save to coderef/workorder/{feature}/plan.json
+
+**Plan Structure:**
+- META_DOCUMENTATION: feature_name, workorder_id, status, version
+- UNIVERSAL_PLANNING_STRUCTURE (10 sections):
+  0. Preparation (from analysis)
+  1. Executive Summary (from context)
+  2. Risk Assessment (combined)
+  3. Current State Analysis (from analysis)
+  4. Key Features (from context)
+  5. Task ID System (generated)
+  6. Implementation Phases (generated)
+  7. Testing Strategy (generated)
+  8. Success Criteria (from context)
+  9. Implementation Checklist (generated)
+
+**Performance:** ~2-5 seconds per feature
+
+**Version:** 1.2.0
+**See:** PLANNING-GENERATOR.md for complete documentation
+**Maintained by:** willh, Claude Code AI
+"""
+```
+
+---
+
+## Class Definition
+
+```python
+class PlanningGenerator:
+    """
+    Generates implementation plans by synthesizing context, analysis, and template.
+
+    **State Ownership:**
+    - Owns: project_path, context_dir, template_file (paths only)
+    - Returns: Plan dict (ephemeral, not cached)
+    - Stateless: No persistent state, generates fresh on each call
+
+    **Lifecycle:**
+    1. __init__(project_path) → Sets paths
+    2. generate_plan() → Orchestrates synthesis with retry
+    3. Returns complete plan dict → Saved to plan.json
+
+    **Key Methods:**
+    - generate_plan() - Main entry point (public API)
+    - _generate_plan_internal() - Internal synthesis logic
+    - _generate_*_section() - 10 section generators
+    - save_plan() - Writes plan.json to disk
+
+    **Performance:** ~2-5 seconds per feature
+
+    **Example:**
+        >>> generator = PlanningGenerator(Path("/path/to/project"))
+        >>> plan = generator.generate_plan("dark-mode-toggle")
+        >>> len(plan['UNIVERSAL_PLANNING_STRUCTURE'])
+        10
+
+    **See:** PLANNING-GENERATOR.md Section 3 for architecture
+    """
+```
+
+---
+
+## Constructor
+
+```python
+def __init__(self, project_path: Path):
+    """
+    Initialize planning generator.
+
+    **Args:**
+        project_path (Path): Validated project root directory
+
+    **Side Effects:**
+        - Sets self.project_path
+        - Computes self.context_dir (MCP server directory, NOT user project)
+        - Computes self.template_file (planning-template-for-ai.json path)
+        - Logs initialization
+
+    **Important:**
+        Template path is in MCP server directory, not user's project.
+        This ensures template consistency across all projects.
+
+    **Computed Paths:**
+        - context_dir: {MCP_server_root}/coderef/context
+        - template_file: {context_dir}/planning-template-for-ai.json
+
+    **Performance:** <1ms
+
+    **Example:**
+        >>> from pathlib import Path
+        >>> generator = PlanningGenerator(Path("/path/to/my-project"))
+        >>> generator.project_path
+        PosixPath('/path/to/my-project')
+        >>> generator.template_file
+        PosixPath('.../coderef/context/planning-template-for-ai.json')
+
+    **See:** PLANNING-GENERATOR.md Section 4.1
+    """
+```
+
+---
+
+## Feature Name Validator
+
+```python
+def validate_feature_name(self, feature_name: str) -> str:
+    """
+    Validate and sanitize feature name to prevent path traversal.
+
+    **Security Critical:** Prevents path traversal attacks
+
+    **Validation Rules:**
+        - Must be non-empty
+        - Only alphanumeric, hyphens, underscores allowed
+        - No path separators (/, \\)
+        - Matches regex: ^[a-zA-Z0-9_-]+$
+
+    **Args:**
+        feature_name (str): Feature name provided by user
+
+    **Returns:**
+        str: Sanitized feature name (same as input if valid)
+
+    **Raises:**
+        ValueError: If feature name contains invalid characters
+
+    **Side Effects:**
+        Logs security event if invalid input detected
+
+    **Examples:**
+        >>> validate_feature_name("dark-mode-toggle")
+        'dark-mode-toggle'  # ✅ Valid
+
+        >>> validate_feature_name("../../../etc")
+        ValueError: Invalid feature name  # ❌ Path traversal
+
+        >>> validate_feature_name("my feature")
+        ValueError: Invalid feature name  # ❌ Space not allowed
+
+    **Performance:** <1ms (regex match)
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.2
+        - logger_config.py:log_security_event
+    """
+```
+
+---
+
+## Context Loader
+
+```python
+def load_context(self, feature_name: str) -> Optional[Dict[str, Any]]:
+    """
+    Load context.json for the feature (if exists).
+
+    **File Path:** {project_path}/coderef/working/{feature_name}/context.json
+
+    **Args:**
+        feature_name (str): Name of feature
+
+    **Returns:**
+        Optional[Dict]: Context data dict or None if file doesn't exist
+
+    **Raises:**
+        ValueError: If context file exists but is malformed JSON
+
+    **Logs:**
+        - WARNING: If file not found
+        - INFO: If file loaded successfully
+        - ERROR: If JSON decode fails
+
+    **Example:**
+        >>> context = generator.load_context("dark-mode-toggle")
+        >>> context
+        {
+            'description': 'Add dark mode support',
+            'goal': 'Improve user experience',
+            'requirements': ['Toggle button', 'Persist preference'],
+            'constraints': ['Must work with existing theme system']
+        }
+
+    **Performance:** ~10-20ms (single file read)
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.3
+        - gather_context tool for context.json generation
+    """
+```
+
+---
+
+## Main Plan Generator
+
+```python
+def generate_plan(
+    self,
+    feature_name: str,
+    context: Optional[Dict[str, Any]] = None,
+    analysis: Optional[Dict[str, Any]] = None,
+    workorder_id: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Generate complete implementation plan.
+
+    **Main entry point** for plan synthesis. Orchestrates loading inputs,
+    generating plan via _generate_plan_internal with retry, and returning
+    complete 10-section plan dict.
+
+    **Workflow:**
+    1. Validate feature_name (sanitize input)
+    2. Load context.json if not provided (optional)
+    3. Load analysis.json if not provided (optional)
+    4. Load planning-template-for-ai.json (required)
+    5. Generate plan via _generate_plan_internal() with retry
+    6. Return complete plan dict
+
+    **Retry Logic:**
+    - First attempt fails → Log warning, retry once
+    - Second attempt fails → Create partial plan with TODOs, save, raise error
+
+    **Args:**
+        feature_name (str): Name of feature to plan
+        context (Optional[Dict]): Context data from gather-context (optional)
+        analysis (Optional[Dict]): Analysis data from analyze-for-planning (optional)
+        workorder_id (Optional[str]): Optional workorder ID for tracking
+
+    **Returns:**
+        Dict[str, Any]: Complete plan dict with META_DOCUMENTATION + 10 sections
+
+    **Raises:**
+        ValueError: If both generation attempts fail (partial plan saved)
+
+    **Performance:** ~2-5 seconds (plan synthesis)
+
+    **Example:**
+        >>> generator = PlanningGenerator(project_path)
+        >>> plan = generator.generate_plan(
+        ...     feature_name="dark-mode-toggle",
+        ...     workorder_id="WO-DARK-MODE-001"
+        ... )
+        >>> plan['META_DOCUMENTATION']['feature_name']
+        'dark-mode-toggle'
+        >>> len(plan['UNIVERSAL_PLANNING_STRUCTURE'])
+        10
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.6
+        - _generate_plan_internal() for synthesis logic
+        - _create_partial_plan() for fallback behavior
+    """
+```
+
+---
+
+## Internal Plan Generator
+
+```python
+def _generate_plan_internal(
+    self,
+    feature_name: str,
+    context: Optional[Dict[str, Any]],
+    analysis: Optional[Dict[str, Any]],
+    template: Dict[str, Any],
+    workorder_id: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Internal plan generation logic.
+
+    **NOTE:** Simplified implementation. In production, this would use
+    an AI model (like Claude) to actually synthesize the inputs into a
+    complete plan. For now, it creates a skeleton plan structure.
+
+    **Implementation:**
+    Creates plan dict with:
+    - META_DOCUMENTATION section (from inputs)
+    - UNIVERSAL_PLANNING_STRUCTURE (calls 10 section generators)
+
+    **Args:**
+        feature_name (str): Feature name
+        context (Optional[Dict]): Context data
+        analysis (Optional[Dict]): Analysis data
+        template (Dict): Template data
+        workorder_id (Optional[str]): Optional workorder ID for tracking
+
+    **Returns:**
+        Dict[str, Any]: Plan dict with all 10 sections
+
+    **Performance:** ~1-2 seconds (calls 10 section generators)
+
+    **Example:**
+        >>> plan = generator._generate_plan_internal(
+        ...     "dark-mode-toggle", context, analysis, template
+        ... )
+        >>> plan['META_DOCUMENTATION']['status']
+        'planning'
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.7
+        - _generate_*_section() methods for individual section logic
+    """
+```
+
+---
+
+## Section Generator: Preparation (Section 0)
+
+```python
+def _generate_preparation_section(
+    self,
+    context: Optional[Dict[str, Any]],
+    analysis: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
+    """
+    Generate Section 0: Preparation.
+
+    **Data Source:** Primarily from analysis.json (PlanningAnalyzer output)
+
+    **Returns:**
+        Dict with:
+        - foundation_docs: {'available': [...], 'missing': [...]}
+        - coding_standards: {'available': [...], 'missing': [...]}
+        - reference_components: {'primary': '...', 'secondary': [...]}
+        - key_patterns_identified: ['Pattern 1', ...]
+        - technology_stack: {'languages': [...], 'frameworks': [...], ...}
+        - gaps_and_risks: ['Gap 1', ...]
+
+    **Fallback:**
+        If no analysis → Returns placeholders with "Run /analyze-for-planning" messages
+
+    **Example:**
+        >>> section = generator._generate_preparation_section(context, analysis)
+        >>> section['foundation_docs']['available']
+        ['README.md (root)', 'ARCHITECTURE.md (coderef/foundation-docs)']
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.8.1
+        - planning_analyzer.py for analysis.json generation
+    """
+```
+
+---
+
+## Section Generator: Executive Summary (Section 1)
+
+```python
+def _generate_executive_summary(
+    self,
+    feature_name: str,
+    context: Optional[Dict[str, Any]]
+) -> Dict[str, Any]:
+    """
+    Generate Section 1: Executive Summary.
+
+    **Data Source:** Primarily from context.json (gather_context output)
+
+    **Returns:**
+        Dict with:
+        - purpose: From context.description
+        - value_proposition: From context.goal
+        - real_world_analogy: Generated from feature_name
+        - use_case: Generated from context.requirements
+        - output: Summary of requirements
+
+    **Fallback:**
+        If no context → Generates minimal structure from feature_name
+
+    **Example:**
+        >>> section = generator._generate_executive_summary("dark-mode-toggle", context)
+        >>> section['purpose']
+        'Add dark mode support'
+        >>> section['value_proposition']
+        'Improve user experience'
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.8.2
+        - gather_context tool for context.json generation
+    """
+```
+
+---
+
+## Section Generator: Implementation Phases (Section 6)
+
+```python
+def _generate_phases(self) -> List[Dict[str, Any]]:
+    """
+    Generate Section 6: Implementation Phases.
+
+    **Returns:**
+        List of phase objects with tasks
+
+    **Structure:**
+        [
+            {
+                'phase_id': 'phase_1',
+                'name': 'Setup & Preparation',
+                'tasks': [
+                    {
+                        'task_id': 'SETUP-001',
+                        'description': '...',
+                        'status': 'pending',
+                        'dependencies': [],
+                        'estimated_effort': 'medium'
+                    },
+                    ...
+                ],
+                'dependencies': [],
+                'parallel_capable': true
+            },
+            ...
+        ]
+
+    **Task ID Format:** CATEGORY-NNN (e.g., SETUP-001, IMPL-002)
+
+    **Example:**
+        >>> phases = generator._generate_phases()
+        >>> phases[0]['phase_id']
+        'phase_1'
+        >>> phases[0]['tasks'][0]['task_id']
+        'SETUP-001'
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.8.7
+        - execute_plan tool for task list generation from phases
+    """
+```
+
+---
+
+## Partial Plan Creator (Fallback)
+
+```python
+def _create_partial_plan(self, feature_name: str, error_msg: str) -> Dict[str, Any]:
+    """
+    Creates partial plan with TODOs when generation fails.
+
+    **Purpose:** Fallback behavior to save progress when plan generation fails
+
+    **Args:**
+        feature_name (str): Feature name
+        error_msg (str): Error message to include in plan
+
+    **Returns:**
+        Dict: Minimal plan structure with error message in TODOs
+
+    **Structure:**
+        {
+            'META_DOCUMENTATION': {
+                'feature_name': 'dark-mode-toggle',
+                'status': 'incomplete',
+                'error': 'Plan generation failed: ...'
+            },
+            'UNIVERSAL_PLANNING_STRUCTURE': {
+                '0_preparation': {'TODO': 'Plan generation failed. Complete manually.'},
+                '1_executive_summary': {'TODO': 'Plan generation failed. Complete manually.'},
+                ...
+            }
+        }
+
+    **Performance:** <1ms (creates skeleton)
+
+    **Example:**
+        >>> partial_plan = generator._create_partial_plan("dark-mode-toggle", "AI timeout")
+        >>> partial_plan['META_DOCUMENTATION']['status']
+        'incomplete'
+        >>> partial_plan['UNIVERSAL_PLANNING_STRUCTURE']['0_preparation']
+        {'TODO': 'Plan generation failed. Complete manually.'}
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.9
+        - generate_plan() for retry logic that calls this method
+    """
+```
+
+---
+
+## Plan Saver
+
+```python
+def save_plan(self, feature_name: str, plan: Dict[str, Any]) -> Path:
+    """
+    Writes plan.json to coderef/workorder/{feature}/.
+
+    **File Path:** {project_path}/coderef/workorder/{feature_name}/plan.json
+
+    **Args:**
+        feature_name (str): Feature name
+        plan (Dict): Complete or partial plan dict
+
+    **Returns:**
+        Path: Path to saved plan.json file
+
+    **Side Effects:**
+        - Creates directory tree if missing
+        - Writes JSON with 2-space indentation
+        - Logs save location
+
+    **Example:**
+        >>> plan_path = generator.save_plan("dark-mode-toggle", plan)
+        >>> plan_path
+        PosixPath('coderef/workorder/dark-mode-toggle/plan.json')
+
+    **Performance:** ~50ms (creates dir + writes file)
+
+    **See:**
+        - PLANNING-GENERATOR.md Section 4.10
+        - generate_plan() which calls this method
+    """
+```
+
+---
+
+## Configuration Best Practices
+
+**Using PlanningGenerator:**
+```python
+# 1. Always run gather_context and analyze_project_for_planning first
+from generators.planning_analyzer import PlanningAnalyzer
+
+analyzer = PlanningAnalyzer(project_path)
+analysis = await analyzer.analyze()
+
+# Save analysis for generator
+analysis_file = project_path / 'coderef' / 'workorder' / feature_name / 'analysis.json'
+analysis_file.parent.mkdir(parents=True, exist_ok=True)
+analysis_file.write_text(json.dumps(analysis, indent=2))
+
+# 2. Generate plan with both context and analysis
+generator = PlanningGenerator(project_path)
+plan = generator.generate_plan(
+    feature_name="dark-mode-toggle",
+    context=context,  # From gather_context
+    analysis=analysis,  # From planning_analyzer
+    workorder_id="WO-DARK-MODE-001"
+)
+
+# 3. Save plan to disk
+plan_path = generator.save_plan(feature_name, plan)
+
+# 4. Validate plan quality
+from generators.plan_validator import PlanValidator
+validator = PlanValidator(project_path)
+score = validator.validate_plan(plan)
+
+if score < 85:
+    print(f"⚠️ Plan quality score: {score}/100 - Consider refining")
+```
+
+**Error Handling:**
+```python
+try:
+    plan = generator.generate_plan("dark-mode-toggle")
+except ValueError as e:
+    # Plan generation failed after retry
+    # Partial plan already saved to disk
+    print(f"Error: {e}")
+
+    # Load partial plan and complete manually
+    partial_plan_path = project_path / 'coderef' / 'workorder' / 'dark-mode-toggle' / 'plan.json'
+    partial_plan = json.loads(partial_plan_path.read_text())
+
+    # Check status
+    if partial_plan['META_DOCUMENTATION']['status'] == 'incomplete':
+        print("Partial plan needs manual completion")
+```
+
+**Debugging Failed Plans:**
+```python
+# Check plan status
+plan_file = project_path / 'coderef' / 'workorder' / feature_name / 'plan.json'
+if plan_file.exists():
+    plan = json.loads(plan_file.read_text())
+
+    # Check for incomplete status
+    if plan['META_DOCUMENTATION']['status'] == 'incomplete':
+        print(f"Error: {plan['META_DOCUMENTATION'].get('error')}")
+
+        # Check which sections have TODOs
+        for section_name, section_data in plan['UNIVERSAL_PLANNING_STRUCTURE'].items():
+            if 'TODO' in str(section_data):
+                print(f"Section {section_name} incomplete")
+```
+
+---
+
+**Generated by:** Resource Sheet MCP Tool v1.0
+**Workorder:** WO-RESOURCE-SHEET-P0-001
+**Task:** SHEET-004
+**Timestamp:** 2026-01-02

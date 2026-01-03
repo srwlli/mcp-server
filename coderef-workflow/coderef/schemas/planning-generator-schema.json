@@ -1,0 +1,380 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "planning_generator.py Schema",
+  "description": "Type definitions and validation contracts for PlanningGenerator class",
+  "definitions": {
+    "PlanResultDict": {
+      "type": "object",
+      "description": "Complete implementation plan with META + 10 sections",
+      "properties": {
+        "META_DOCUMENTATION": {
+          "$ref": "#/definitions/MetaDocumentation"
+        },
+        "UNIVERSAL_PLANNING_STRUCTURE": {
+          "$ref": "#/definitions/UniversalPlanningStructure"
+        }
+      },
+      "required": ["META_DOCUMENTATION", "UNIVERSAL_PLANNING_STRUCTURE"]
+    },
+    "MetaDocumentation": {
+      "type": "object",
+      "properties": {
+        "feature_name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Feature name (validated, sanitized)"
+        },
+        "workorder_id": {
+          "type": ["string", "null"],
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "description": "Workorder ID for tracking (optional)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Plan version (from template)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planning", "incomplete"],
+          "description": "Plan status (planning=complete, incomplete=partial)"
+        },
+        "generated_by": {
+          "type": "string",
+          "const": "PlanningGenerator"
+        },
+        "has_context": {
+          "type": "boolean",
+          "description": "Whether context.json was available"
+        },
+        "has_analysis": {
+          "type": "boolean",
+          "description": "Whether analysis.json was available"
+        }
+      },
+      "required": ["feature_name", "version", "status", "generated_by", "has_context", "has_analysis"]
+    },
+    "UniversalPlanningStructure": {
+      "type": "object",
+      "description": "10-section plan structure",
+      "properties": {
+        "0_preparation": {
+          "$ref": "#/definitions/PreparationSection"
+        },
+        "1_executive_summary": {
+          "$ref": "#/definitions/ExecutiveSummary"
+        },
+        "2_risk_assessment": {
+          "$ref": "#/definitions/RiskAssessment"
+        },
+        "3_current_state_analysis": {
+          "$ref": "#/definitions/CurrentStateAnalysis"
+        },
+        "4_key_features": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "5_task_id_system": {
+          "$ref": "#/definitions/TaskIdSystem"
+        },
+        "6_implementation_phases": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/Phase"}
+        },
+        "7_testing_strategy": {
+          "$ref": "#/definitions/TestingStrategy"
+        },
+        "8_success_criteria": {
+          "$ref": "#/definitions/SuccessCriteria"
+        },
+        "9_implementation_checklist": {
+          "$ref": "#/definitions/ImplementationChecklist"
+        }
+      },
+      "required": [
+        "0_preparation",
+        "1_executive_summary",
+        "2_risk_assessment",
+        "3_current_state_analysis",
+        "4_key_features",
+        "5_task_id_system",
+        "6_implementation_phases",
+        "7_testing_strategy",
+        "8_success_criteria",
+        "9_implementation_checklist"
+      ]
+    },
+    "PreparationSection": {
+      "type": "object",
+      "description": "Section 0 - From analysis.json",
+      "properties": {
+        "foundation_docs": {
+          "type": "object",
+          "properties": {
+            "available": {"type": "array", "items": {"type": "string"}},
+            "missing": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "coding_standards": {
+          "type": "object",
+          "properties": {
+            "available": {"type": "array", "items": {"type": "string"}},
+            "missing": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "reference_components": {
+          "type": "object"
+        },
+        "key_patterns_identified": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "technology_stack": {
+          "type": "object"
+        },
+        "gaps_and_risks": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "ExecutiveSummary": {
+      "type": "object",
+      "description": "Section 1 - From context.json",
+      "properties": {
+        "purpose": {"type": "string"},
+        "value_proposition": {"type": "string"},
+        "real_world_analogy": {"type": "string"},
+        "use_case": {"type": "string"},
+        "output": {"type": "string"}
+      },
+      "required": ["purpose", "value_proposition", "real_world_analogy", "use_case", "output"]
+    },
+    "RiskAssessment": {
+      "type": "object",
+      "description": "Section 2 - Combined from context + analysis",
+      "properties": {
+        "breaking_changes": {"type": "string"},
+        "security": {"type": "string"},
+        "performance": {"type": "string"},
+        "data_migration": {"type": "string"},
+        "rollback_strategy": {"type": "string"}
+      }
+    },
+    "CurrentStateAnalysis": {
+      "type": "object",
+      "description": "Section 3 - From analysis.json",
+      "properties": {
+        "existing_architecture": {"type": "string"},
+        "existing_patterns": {"type": "array", "items": {"type": "string"}},
+        "constraints": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "TaskIdSystem": {
+      "type": "object",
+      "description": "Section 5 - Generated",
+      "properties": {
+        "format": {
+          "type": "string",
+          "const": "CATEGORY-NNN"
+        },
+        "categories": {
+          "type": "object",
+          "description": "Category name to description mapping"
+        }
+      }
+    },
+    "Phase": {
+      "type": "object",
+      "description": "Implementation phase in Section 6",
+      "properties": {
+        "phase_id": {
+          "type": "string",
+          "pattern": "^phase_\\d+$"
+        },
+        "name": {"type": "string"},
+        "tasks": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/Task"}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "parallel_capable": {"type": "boolean"}
+      },
+      "required": ["phase_id", "name", "tasks"]
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "pattern": "^[A-Z]+-\\d{3}$",
+          "description": "Task ID following CATEGORY-NNN format"
+        },
+        "description": {"type": "string"},
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "blocked"]
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "estimated_effort": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        }
+      },
+      "required": ["task_id", "description", "status"]
+    },
+    "TestingStrategy": {
+      "type": "object",
+      "description": "Section 7 - Generated",
+      "properties": {
+        "unit_tests": {"type": "array", "items": {"type": "string"}},
+        "integration_tests": {"type": "array", "items": {"type": "string"}},
+        "e2e_tests": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "SuccessCriteria": {
+      "type": "object",
+      "description": "Section 8 - From context.requirements",
+      "properties": {
+        "functional": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "non_functional": {
+          "type": "object",
+          "properties": {
+            "performance": {"type": "string"},
+            "security": {"type": "string"},
+            "usability": {"type": "string"}
+          }
+        }
+      }
+    },
+    "ImplementationChecklist": {
+      "type": "object",
+      "description": "Section 9 - Generated",
+      "properties": {
+        "pre_implementation": {"type": "array", "items": {"type": "string"}},
+        "during_implementation": {"type": "array", "items": {"type": "string"}},
+        "post_implementation": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "GeneratorConstructorArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path to project directory"
+        }
+      },
+      "required": ["project_path"]
+    },
+    "GeneratePlanArgs": {
+      "type": "object",
+      "properties": {
+        "feature_name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Validated feature name"
+        },
+        "context": {
+          "type": ["object", "null"],
+          "description": "Context data from gather_context (optional)"
+        },
+        "analysis": {
+          "type": ["object", "null"],
+          "description": "Analysis data from planning_analyzer (optional)"
+        },
+        "workorder_id": {
+          "type": ["string", "null"],
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "description": "Optional workorder ID for tracking"
+        }
+      },
+      "required": ["feature_name"]
+    },
+    "PartialPlan": {
+      "type": "object",
+      "description": "Partial plan created when generation fails",
+      "properties": {
+        "META_DOCUMENTATION": {
+          "type": "object",
+          "properties": {
+            "feature_name": {"type": "string"},
+            "status": {"type": "string", "const": "incomplete"},
+            "error": {"type": "string"}
+          }
+        },
+        "UNIVERSAL_PLANNING_STRUCTURE": {
+          "type": "object",
+          "description": "All sections have TODO placeholders"
+        }
+      }
+    },
+    "RetryLogic": {
+      "type": "object",
+      "description": "Retry mechanism for plan generation",
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "const": 2,
+          "description": "Maximum generation attempts (original + 1 retry)"
+        },
+        "on_failure": {
+          "type": "string",
+          "const": "Create partial plan with TODOs, save to disk, raise ValueError"
+        }
+      }
+    },
+    "PerformanceMetrics": {
+      "type": "object",
+      "properties": {
+        "plan_generation_seconds": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 5
+        },
+        "file_io_milliseconds": {
+          "type": "number",
+          "minimum": 50,
+          "maximum": 100
+        },
+        "total_seconds": {
+          "type": "number",
+          "minimum": 3,
+          "maximum": 6
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "planning/synthesis",
+    "file": "generators/planning_generator.py",
+    "lines": 699,
+    "class": "PlanningGenerator",
+    "methods": 16,
+    "version": "1.2.0",
+    "key_features": [
+      "10-section plan synthesis",
+      "Batch mode generation (all sections at once)",
+      "Retry logic with partial plan fallback",
+      "Feature name validation (path traversal protection)",
+      "Workorder ID tracking"
+    ],
+    "input_files": [
+      "context.json (from gather_context)",
+      "analysis.json (from planning_analyzer)",
+      "planning-template-for-ai.json (MCP server)"
+    ],
+    "output_file": "plan.json (coderef/workorder/{feature}/)",
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P0-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

@@ -1,10 +1,10 @@
 # coderef-workflow - AI Context Documentation
 
 **Project:** coderef-workflow (MCP Server)
-**Version:** 1.3.0
+**Version:** 1.4.0
 **Status:** ✅ Production - Feature lifecycle management orchestration
 **Created:** 2024-12-24
-**Last Updated:** 2025-01-02 (v1.3.0 - .coderef/ integration complete)
+**Last Updated:** 2025-01-04 (v1.4.0 - Simplified workflow)
 
 ---
 
@@ -14,7 +14,15 @@
 
 **Core Innovation:** Works in tandem with **coderef-context** (code intelligence) and **coderef-docs** (documentation generation) to provide AI agents with the tools to manage complex, multi-phase feature implementations. **NEW:** Workorder ID tracking for complete audit trail and feature lifecycle management.
 
-**Latest Update (v1.3.0 - 2025-01-02):**
+**Latest Update (v1.4.0 - 2025-01-04):**
+- ✅ Simplified /create-workorder workflow (11 steps → 9 steps)
+- ✅ Step 2: User provides context directly (no interactive Q&A)
+- ✅ Step 3: Uses .coderef/ exclusively (no fallbacks, errors if missing)
+- ✅ Step 4: Creates plan.json only (DELIVERABLES.md removed)
+- ✅ Removed Step 5 (Multi-Agent Decision) - single-agent workflow only
+- ✅ Kept TodoWrite alignment (Step 8) and Git commit (Step 9)
+
+**Previous (v1.3.0 - 2025-01-02):**
 - ✅ Integrated .coderef/ structure into planning workflow (replaces foundation doc generation)
 - ✅ Planning analyzer now reads patterns.json, coverage.json, index.json (5-10x faster)
 - ✅ Automatic drift detection warns if .coderef/ is >10% stale

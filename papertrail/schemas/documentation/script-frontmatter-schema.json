@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/script-frontmatter-schema.json",
+  "title": "Script/Test YAML Frontmatter Schema",
+  "description": "Validates YAML frontmatter in script and test files for triangular bidirectional references",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["resource_sheet"],
+  "properties": {
+    "resource_sheet": {
+      "type": "string",
+      "description": "Required: Relative path to the resource sheet documenting this script/test",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[a-zA-Z0-9/_.-]+\\.md$",
+      "examples": [
+        "docs/UDS-Validation-RESOURCE-SHEET.md",
+        "coderef/foundation-docs/API-RESOURCE-SHEET.md"
+      ]
+    },
+    "related_test": {
+      "type": "string",
+      "description": "For scripts: Relative path to the test file that tests this script",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[a-zA-Z0-9/_.-]+\\.(py|ts|js)$",
+      "examples": [
+        "tests/test_validator.py",
+        "src/__tests__/validator.test.ts"
+      ]
+    },
+    "related_script": {
+      "type": "string",
+      "description": "For tests: Relative path to the script that this test validates",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[a-zA-Z0-9/_.-]+\\.(py|sh|ps1|ts|js)$",
+      "examples": [
+        "src/papertrail/validator.py",
+        "scripts/setup.sh"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "description": "Script file must have related_test",
+      "required": ["resource_sheet", "related_test"]
+    },
+    {
+      "description": "Test file must have related_script",
+      "required": ["resource_sheet", "related_script"]
+    }
+  ],
+  "examples": [
+    {
+      "description": "Script YAML frontmatter",
+      "resource_sheet": "docs/UDS-Validation-RESOURCE-SHEET.md",
+      "related_test": "tests/test_validator.py"
+    },
+    {
+      "description": "Test YAML frontmatter",
+      "resource_sheet": "docs/UDS-Validation-RESOURCE-SHEET.md",
+      "related_script": "src/papertrail/validator.py"
+    }
+  ]
+}

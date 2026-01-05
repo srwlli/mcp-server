@@ -1,0 +1,531 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "error_responses.py Schema",
+  "description": "JSON Schema definitions for error response factory - consistent error formatting across all MCP tools",
+  "definitions": {
+    "TextContent": {
+      "type": "object",
+      "description": "MCP TextContent type for responses",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "text"
+        },
+        "text": {
+          "type": "string",
+          "description": "Formatted error message with ❌ prefix and optional 💡 hint"
+        }
+      },
+      "required": ["type", "text"]
+    },
+    "ErrorResponseList": {
+      "type": "array",
+      "description": "Return type for all ErrorResponse methods",
+      "items": {
+        "$ref": "#/definitions/TextContent"
+      },
+      "minItems": 1,
+      "maxItems": 1
+    },
+    "InvalidInputError": {
+      "type": "object",
+      "description": "Error response for validation failures (ValueError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "invalid_input"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail message from exception"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint for fixing the error"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Invalid input: {detail}\n\n💡 {hint}"
+        },
+        "common_causes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "Feature name validation failure",
+            "Workorder ID format mismatch",
+            "Version format invalid",
+            "Enum value not in valid set",
+            "Regex pattern mismatch"
+          ]
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "NotFoundError": {
+      "type": "object",
+      "description": "Error response for missing resources (FileNotFoundError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "not_found"
+        },
+        "resource": {
+          "type": "string",
+          "description": "Description of what was not found"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint for fixing the error"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ {resource} not found\n\n💡 {hint}"
+        },
+        "common_resources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "Plan for feature '{feature_name}'",
+            "Project directory",
+            "Template file",
+            "Archived feature",
+            "DELIVERABLES.md"
+          ]
+        }
+      },
+      "required": ["error_type", "resource"]
+    },
+    "PermissionDeniedError": {
+      "type": "object",
+      "description": "Error response for permission errors (PermissionError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "permission_denied"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail message"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint for fixing the error"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Permission denied: {detail}\n\n💡 {hint}"
+        },
+        "common_causes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "Write permission missing",
+            "Directory creation blocked",
+            "File locked by another process",
+            "Insufficient privileges"
+          ]
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "ValidationFailedError": {
+      "type": "object",
+      "description": "Error response for JSON schema validation failures",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "validation_failed"
+        },
+        "error_message": {
+          "type": "string",
+          "description": "Message from jsonschema.ValidationError"
+        },
+        "path": {
+          "type": "array",
+          "items": {"type": ["string", "integer"]},
+          "description": "Path to failing field in JSON (e.g., ['changes', 0, 'type'])"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Changelog validation failed\n\nError: {error.message}\nPath: {path → breadcrumb}\n\n💡 Check CHANGELOG.json against schema"
+        },
+        "default_hint": {
+          "type": "string",
+          "const": "Check CHANGELOG.json against schema at coderef/changelog/schema.json"
+        }
+      },
+      "required": ["error_type", "error_message"]
+    },
+    "MalformedJsonError": {
+      "type": "object",
+      "description": "Error response for JSON syntax errors (json.JSONDecodeError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "malformed_json"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail from json.JSONDecodeError"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint (defaults to 'Validate JSON syntax')"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Malformed JSON: {detail}\n\n💡 {hint or 'Validate JSON syntax'}"
+        },
+        "default_hint": {
+          "type": "string",
+          "const": "Validate JSON syntax"
+        },
+        "common_files": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "plan.json",
+            "context.json",
+            "CHANGELOG.json",
+            "analysis.json",
+            "communication.json"
+          ]
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "EncodingError": {
+      "type": "object",
+      "description": "Error response for encoding errors (UnicodeDecodeError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "encoding_error"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail from UnicodeDecodeError"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint (defaults to 'File may be corrupted or not UTF-8 encoded')"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Encoding error: {detail}\n\n💡 {hint or default}"
+        },
+        "default_hint": {
+          "type": "string",
+          "const": "File may be corrupted or not UTF-8 encoded"
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "IOError": {
+      "type": "object",
+      "description": "Error response for file I/O errors (IOError)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "io_error"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail from IOError"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint for fixing the error"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ File operation failed: {detail}\n\n💡 {hint}"
+        },
+        "common_causes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "Disk full",
+            "Network drive disconnected",
+            "File locked by another process",
+            "Read-only filesystem"
+          ]
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "GenericError": {
+      "type": "object",
+      "description": "Error response for unexpected errors (Exception)",
+      "properties": {
+        "error_type": {
+          "type": "string",
+          "const": "generic_error"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Error detail from Exception"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Optional hint for fixing the error"
+        },
+        "format": {
+          "type": "string",
+          "const": "❌ Error: {detail}\n\n💡 {hint}"
+        },
+        "usage": {
+          "type": "string",
+          "const": "Use as catch-all after specific error handlers"
+        }
+      },
+      "required": ["error_type", "detail"]
+    },
+    "ErrorMethodSignatures": {
+      "type": "object",
+      "description": "Method signatures for all ErrorResponse methods",
+      "properties": {
+        "invalid_input": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "not_found": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "resource": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["resource"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "permission_denied": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "validation_failed": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "error": {"type": "object", "description": "jsonschema.ValidationError"}
+              },
+              "required": ["error"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "malformed_json": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "encoding_error": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "io_error": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        },
+        "generic_error": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "detail": {"type": "string"},
+                "hint": {"type": "string", "nullable": true}
+              },
+              "required": ["detail"]
+            },
+            "returns": {
+              "$ref": "#/definitions/ErrorResponseList"
+            }
+          }
+        }
+      }
+    },
+    "ExceptionMapping": {
+      "type": "object",
+      "description": "Maps Python exceptions to ErrorResponse methods",
+      "properties": {
+        "ValueError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "invalid_input"},
+            "usage": {"type": "string", "const": "ErrorResponse.invalid_input(str(e), hint=...)"}
+          }
+        },
+        "FileNotFoundError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "not_found"},
+            "usage": {"type": "string", "const": "ErrorResponse.not_found(resource, hint=...)"}
+          }
+        },
+        "PermissionError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "permission_denied"},
+            "usage": {"type": "string", "const": "ErrorResponse.permission_denied(str(e), hint=...)"}
+          }
+        },
+        "jsonschema.ValidationError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "validation_failed"},
+            "usage": {"type": "string", "const": "ErrorResponse.validation_failed(e)"}
+          }
+        },
+        "json.JSONDecodeError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "malformed_json"},
+            "usage": {"type": "string", "const": "ErrorResponse.malformed_json(str(e), hint=...)"}
+          }
+        },
+        "UnicodeDecodeError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "encoding_error"},
+            "usage": {"type": "string", "const": "ErrorResponse.encoding_error(str(e), hint=...)"}
+          }
+        },
+        "IOError": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "io_error"},
+            "usage": {"type": "string", "const": "ErrorResponse.io_error(str(e), hint=...)"}
+          }
+        },
+        "Exception": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string", "const": "generic_error"},
+            "usage": {"type": "string", "const": "ErrorResponse.generic_error(str(e), hint=...)"}
+          }
+        }
+      }
+    },
+    "ToolHandlerPattern": {
+      "type": "object",
+      "description": "Standard pattern for tool handler error handling",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "const": "try-except with specific exceptions first, generic last"
+        },
+        "example": {
+          "type": "string",
+          "const": "try: ... except ValueError: ErrorResponse.invalid_input() except FileNotFoundError: ErrorResponse.not_found() except Exception: ErrorResponse.generic_error()"
+        },
+        "order": {
+          "type": "array",
+          "items": {"type": "string"},
+          "const": [
+            "ValueError → invalid_input",
+            "FileNotFoundError → not_found",
+            "PermissionError → permission_denied",
+            "json.JSONDecodeError → malformed_json",
+            "IOError → io_error",
+            "Exception → generic_error (catch-all)"
+          ]
+        }
+      }
+    }
+  },
+  "metadata": {
+    "category": "error-handling/user-feedback",
+    "file": "error_responses.py",
+    "lines": 158,
+    "methods": 8,
+    "version": "1.3.0",
+    "key_features": [
+      "8 error response methods for all exception types",
+      "Consistent ❌ + 💡 format across all 40+ tools",
+      "Optional hints with sensible defaults",
+      "jsonschema.ValidationError path formatting",
+      "Static factory pattern (no instantiation)",
+      "Returns list[TextContent] compatible with MCP protocol"
+    ],
+    "design_principles": [
+      "Single source of truth for error formatting",
+      "User-friendly messages with actionable hints",
+      "Consistent UX across all tools",
+      "Fail-fast with clear error descriptions"
+    ],
+    "usage_pattern": "Catch Python exception → Call ErrorResponse.{method}() → Return formatted TextContent",
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

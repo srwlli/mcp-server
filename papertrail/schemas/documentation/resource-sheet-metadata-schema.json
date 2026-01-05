@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/resource-sheet-metadata-schema.json",
+  "title": "Resource Sheet YAML Front Matter Schema (RSMS)",
+  "description": "Validates YAML front matter in resource/reference sheets for UDS and RSMS compliance",
+  "version": "2.0.0",
+  "type": "object",
+  "required": ["agent", "date", "task", "subject", "parent_project", "category"],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "description": "UDS Required: Name of the agent or contributor who created/updated the resource sheet",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["coderef-assistant", "Taylor", "Ava", "Lloyd"]
+    },
+    "date": {
+      "type": "string",
+      "description": "UDS Required: Date of creation or last update in YYYY-MM-DD format",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-01-04", "2025-12-25"]
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Optional: ISO 8601 timestamp of creation or last update with timezone (supports EST -05:00 or UTC)",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2}|Z)$",
+      "examples": ["2026-01-04T18:45:00-05:00", "2026-01-04T23:45:00Z", "2026-01-04T13:30:00-05:00"]
+    },
+    "task": {
+      "type": "string",
+      "description": "UDS Required: Type of work performed on the resource sheet",
+      "enum": ["REVIEW", "CONSOLIDATE", "DOCUMENT", "UPDATE", "CREATE"],
+      "examples": ["REVIEW", "CONSOLIDATE"]
+    },
+    "subject": {
+      "type": "string",
+      "description": "RSMS Required: Primary component, service, or topic being documented",
+      "minLength": 1,
+      "maxLength": 200,
+      "examples": ["AuthService", "UserController", "DatabaseMigration", "API-Gateway"]
+    },
+    "parent_project": {
+      "type": "string",
+      "description": "RSMS Required: Parent project or codebase this resource belongs to",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["coderef-workflow", "papertrail", "backend-api", "coderef-testing"]
+    },
+    "category": {
+      "type": "string",
+      "description": "RSMS Required: Classification of the resource type",
+      "enum": ["service", "controller", "model", "utility", "integration", "component", "middleware", "validator", "schema", "config", "other"],
+      "examples": ["service", "controller", "utility"]
+    },
+    "version": {
+      "type": "string",
+      "description": "RSMS Recommended: Semantic version of the resource sheet",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "2.1.3"]
+    },
+    "related_files": {
+      "type": "array",
+      "description": "RSMS Optional: Source code files related to this resource (enables code navigation)",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500,
+        "pattern": "^[a-zA-Z0-9/_.-]+\\.[a-zA-Z0-9]+$"
+      },
+      "uniqueItems": true,
+      "examples": [["src/auth/auth.service.ts", "src/auth/token.service.ts", "tests/auth.test.ts"]]
+    },
+    "related_docs": {
+      "type": "array",
+      "description": "RSMS Optional: Related documentation files (builds documentation graph)",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300,
+        "pattern": "^[a-zA-Z0-9/_.-]+\\.md$"
+      },
+      "uniqueItems": true,
+      "examples": [["UserController-RESOURCE-SHEET.md", "API-Authentication-Guide.md", "Security-Standards.md"]]
+    },
+    "component": {
+      "type": "string",
+      "description": "Legacy: Use 'subject' instead. Kept for backward compatibility.",
+      "minLength": 1,
+      "maxLength": 200,
+      "deprecated": true,
+      "examples": ["AuthService"]
+    },
+    "workorder": {
+      "type": "string",
+      "description": "Optional: Associated workorder ID for tracking implementation",
+      "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+      "examples": ["WO-AUTH-SYSTEM-001", "WO-API-REFACTOR-002"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional: Tags for categorization and search",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "uniqueItems": true,
+      "examples": [["authentication", "security", "api"]]
+    },
+    "status": {
+      "type": "string",
+      "description": "Optional: Documentation status lifecycle",
+      "enum": ["DRAFT", "REVIEW", "APPROVED", "ARCHIVED"],
+      "examples": ["DRAFT", "APPROVED"]
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "agent": "coderef-assistant",
+      "date": "2026-01-04",
+      "timestamp": "2026-01-04T18:45:00-05:00",
+      "task": "CONSOLIDATE",
+      "subject": "AuthService",
+      "parent_project": "backend-api",
+      "category": "service",
+      "version": "1.0.0",
+      "related_files": [
+        "src/auth/auth.service.ts",
+        "src/auth/token.service.ts",
+        "src/auth/session.service.ts"
+      ],
+      "related_docs": [
+        "UserController-RESOURCE-SHEET.md",
+        "API-Authentication-Guide.md"
+      ],
+      "workorder": "WO-AUTH-SYSTEM-001",
+      "tags": ["authentication", "security", "jwt"],
+      "status": "APPROVED"
+    },
+    {
+      "agent": "Taylor",
+      "date": "2026-01-03",
+      "task": "REVIEW",
+      "subject": "DatabaseMigration",
+      "parent_project": "backend-api",
+      "category": "utility",
+      "version": "1.0.0"
+    },
+    {
+      "agent": "Ava",
+      "date": "2026-01-04",
+      "task": "CREATE",
+      "subject": "API-Gateway",
+      "parent_project": "coderef-workflow",
+      "category": "integration",
+      "version": "1.0.0",
+      "related_files": ["src/gateway/gateway.py"],
+      "related_docs": ["MCP-Server-Standards.md"]
+    }
+  ]
+}

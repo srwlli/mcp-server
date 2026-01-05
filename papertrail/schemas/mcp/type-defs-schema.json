@@ -1,0 +1,396 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "type_defs.py Schema",
+  "description": "JSON Schema definitions for all 71 TypedDicts in type_defs.py - the canonical type system for coderef-workflow MCP server",
+  "definitions": {
+    "PathsDict": {
+      "type": "object",
+      "description": "Return type for prepare_generation() method",
+      "properties": {
+        "project_path": {"type": "string", "description": "Path object converted to string"},
+        "output_dir": {"type": "string", "description": "Output directory path"}
+      },
+      "required": ["project_path", "output_dir"]
+    },
+    "TemplateInfoDict": {
+      "type": "object",
+      "description": "Template metadata extracted from template files (all fields optional)",
+      "properties": {
+        "framework": {"type": "string", "description": "Template framework (e.g., POWER)"},
+        "purpose": {"type": "string", "description": "Template purpose description"},
+        "save_as": {"type": "string", "description": "Suggested filename when saving"},
+        "store_as": {"type": "string", "description": "Storage location hint"}
+      }
+    },
+    "TemplateDict": {
+      "type": "object",
+      "description": "Template information from get_templates_for_generation()",
+      "properties": {
+        "template_name": {"type": "string", "description": "Template identifier"},
+        "template_content": {"type": "string", "description": "Full template text"},
+        "status": {"type": "string", "enum": ["success", "error"]},
+        "error": {"type": "string", "description": "Error message (only if status=error)"}
+      },
+      "required": ["template_name", "template_content", "status"]
+    },
+    "WorkflowStepDict": {
+      "type": "object",
+      "description": "Workflow step from get_workflow_info()",
+      "properties": {
+        "template_name": {"type": "string"},
+        "framework": {"type": "string"},
+        "purpose": {"type": "string"},
+        "save_as": {"type": "string"},
+        "store_as": {"type": "string"},
+        "error": {"type": "string", "description": "Error message if loading failed"}
+      },
+      "required": ["template_name"]
+    },
+    "ChangeDict": {
+      "type": "object",
+      "description": "Single changelog entry",
+      "properties": {
+        "id": {"type": "string", "description": "Change ID (e.g., CHANGE-001)"},
+        "type": {"type": "string", "enum": ["feature", "enhancement", "bugfix", "breaking_change", "deprecation", "security"]},
+        "severity": {"type": "string", "enum": ["critical", "major", "minor", "patch"]},
+        "title": {"type": "string", "description": "Short change title"},
+        "description": {"type": "string", "description": "Detailed change description"},
+        "files": {"type": "array", "items": {"type": "string"}, "description": "List of affected files"},
+        "reason": {"type": "string", "description": "Why this change was made"},
+        "impact": {"type": "string", "description": "Impact on users/system"},
+        "breaking": {"type": "boolean", "description": "Whether change is breaking"},
+        "migration": {"type": "string", "description": "Migration guide (for breaking changes)"}
+      },
+      "required": ["id", "type", "severity", "title", "description", "files", "reason", "impact", "breaking"]
+    },
+    "VersionEntryDict": {
+      "type": "object",
+      "description": "Complete version entry in changelog",
+      "properties": {
+        "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "Semantic version"},
+        "date": {"type": "string", "format": "date", "description": "Release date (YYYY-MM-DD)"},
+        "summary": {"type": "string", "description": "Version summary"},
+        "changes": {"type": "array", "items": {"$ref": "#/definitions/ChangeDict"}},
+        "contributors": {"type": "array", "items": {"type": "string"}, "description": "List of contributors"}
+      },
+      "required": ["version", "date", "summary", "changes"]
+    },
+    "StandardsResultDict": {
+      "type": "object",
+      "description": "Result from save_standards operation",
+      "properties": {
+        "files": {"type": "array", "items": {"type": "string"}, "description": "List of created file paths"},
+        "patterns_count": {"type": "integer", "minimum": 0, "description": "Total patterns discovered"},
+        "success": {"type": "boolean"},
+        "ui_patterns_count": {"type": "integer", "minimum": 0},
+        "behavior_patterns_count": {"type": "integer", "minimum": 0},
+        "ux_patterns_count": {"type": "integer", "minimum": 0},
+        "components_count": {"type": "integer", "minimum": 0}
+      },
+      "required": ["files", "patterns_count", "success", "ui_patterns_count", "behavior_patterns_count", "ux_patterns_count", "components_count"]
+    },
+    "AuditViolationDict": {
+      "type": "object",
+      "description": "Single violation detected during audit",
+      "properties": {
+        "id": {"type": "string", "description": "Unique violation ID (e.g., V-001)"},
+        "type": {"type": "string", "description": "Violation type"},
+        "severity": {"type": "string", "enum": ["critical", "major", "minor"]},
+        "category": {"type": "string", "enum": ["ui_patterns", "behavior_patterns", "ux_patterns"]},
+        "file_path": {"type": "string", "description": "Relative path to file"},
+        "line_number": {"type": "integer", "minimum": 1},
+        "column": {"type": "integer", "minimum": 0},
+        "message": {"type": "string", "description": "Human-readable violation description"},
+        "actual_value": {"type": "string", "description": "What was found in code"},
+        "expected_value": {"type": "string", "description": "What standards specify"},
+        "fix_suggestion": {"type": "string", "description": "Actionable fix instruction"},
+        "code_snippet": {"type": "string", "description": "3-5 lines of context"}
+      },
+      "required": ["id", "type", "severity", "category", "file_path", "line_number", "message", "actual_value", "expected_value", "fix_suggestion"]
+    },
+    "ComplianceScoreDict": {
+      "type": "object",
+      "description": "Compliance metrics by category",
+      "properties": {
+        "overall_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "ui_compliance": {"type": "integer", "minimum": 0, "maximum": 100},
+        "behavior_compliance": {"type": "integer", "minimum": 0, "maximum": 100},
+        "ux_compliance": {"type": "integer", "minimum": 0, "maximum": 100},
+        "grade": {"type": "string", "enum": ["A", "B", "C", "D", "F"]},
+        "passing": {"type": "boolean", "description": "True if score >= 80"}
+      },
+      "required": ["overall_score", "ui_compliance", "behavior_compliance", "ux_compliance", "grade", "passing"]
+    },
+    "ViolationStatsDict": {
+      "type": "object",
+      "description": "Statistics about violations found",
+      "properties": {
+        "total_violations": {"type": "integer", "minimum": 0},
+        "critical_count": {"type": "integer", "minimum": 0},
+        "major_count": {"type": "integer", "minimum": 0},
+        "minor_count": {"type": "integer", "minimum": 0},
+        "violations_by_file": {"type": "object", "description": "Mapping file paths to counts"},
+        "violations_by_type": {"type": "object", "description": "Mapping violation types to counts"},
+        "most_violated_file": {"type": "string"},
+        "most_common_violation": {"type": "string"}
+      },
+      "required": ["total_violations", "critical_count", "major_count", "minor_count", "violations_by_file", "violations_by_type", "most_violated_file", "most_common_violation"]
+    },
+    "AuditResultDict": {
+      "type": "object",
+      "description": "Complete audit results",
+      "properties": {
+        "report_path": {"type": "string"},
+        "compliance_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "compliance_details": {"$ref": "#/definitions/ComplianceScoreDict"},
+        "violation_stats": {"$ref": "#/definitions/ViolationStatsDict"},
+        "violations": {"type": "array", "items": {"$ref": "#/definitions/AuditViolationDict"}},
+        "scan_metadata": {"type": "object"},
+        "success": {"type": "boolean"}
+      },
+      "required": ["compliance_score", "success"]
+    },
+    "ConsistencyResultDict": {
+      "type": "object",
+      "description": "Result from consistency check operation",
+      "properties": {
+        "status": {"type": "string", "enum": ["pass", "fail"]},
+        "violations_found": {"type": "integer", "minimum": 0},
+        "violations": {"type": "array", "items": {"$ref": "#/definitions/AuditViolationDict"}},
+        "files_checked": {"type": "integer", "minimum": 0},
+        "files_list": {"type": "array", "items": {"type": "string"}},
+        "duration": {"type": "number", "description": "Seconds"},
+        "severity_threshold": {"type": "string", "enum": ["critical", "major", "minor"]},
+        "exit_code": {"type": "integer", "enum": [0, 1]}
+      },
+      "required": ["status"]
+    },
+    "ValidationIssueDict": {
+      "type": "object",
+      "description": "Plan validation issue",
+      "properties": {
+        "severity": {"type": "string", "enum": ["critical", "major", "minor"]},
+        "section": {"type": "string", "enum": ["structure", "completeness", "quality", "autonomy"]},
+        "issue": {"type": "string", "description": "Human-readable issue description"},
+        "suggestion": {"type": "string", "description": "Actionable fix suggestion"}
+      },
+      "required": ["severity", "section", "issue", "suggestion"]
+    },
+    "ValidationResultDict": {
+      "type": "object",
+      "description": "Validation results from plan validator",
+      "properties": {
+        "validation_result": {"type": "string", "enum": ["excellent", "good", "needs work", "poor"]},
+        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "issues": {"type": "array", "items": {"$ref": "#/definitions/ValidationIssueDict"}},
+        "checklist_results": {"type": "object"},
+        "approved": {"type": "boolean", "description": "True if score >= 90"}
+      },
+      "required": ["validation_result", "score", "issues", "checklist_results", "approved"]
+    },
+    "PlanResultDict": {
+      "type": "object",
+      "description": "Plan generation result",
+      "properties": {
+        "plan_path": {"type": "string"},
+        "feature_name": {"type": "string"},
+        "workorder_id": {"type": "string", "pattern": "^WO-[A-Z0-9-]+-\\d{3}$"},
+        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "approved": {"type": "boolean"},
+        "success": {"type": "boolean"}
+      },
+      "required": ["plan_path", "feature_name", "success"]
+    },
+    "DependencyDict": {
+      "type": "object",
+      "description": "Individual dependency metadata",
+      "properties": {
+        "name": {"type": "string", "description": "Package name"},
+        "version": {"type": "string", "description": "Current version installed"},
+        "type": {"type": "string", "enum": ["direct", "dev", "peer", "transitive"]},
+        "ecosystem": {"type": "string", "enum": ["npm", "pip", "cargo", "composer"]},
+        "latest_version": {"type": "string"},
+        "outdated": {"type": "boolean"},
+        "license": {"type": "string"},
+        "vulnerabilities": {"type": "array", "items": {"type": "string"}},
+        "vulnerability_count": {"type": "integer", "minimum": 0},
+        "severity": {"type": "string", "enum": ["critical", "high", "medium", "low"]},
+        "description": {"type": "string"},
+        "homepage": {"type": "string", "format": "uri"}
+      }
+    },
+    "VulnerabilityDict": {
+      "type": "object",
+      "description": "Security vulnerability metadata",
+      "properties": {
+        "id": {"type": "string", "description": "CVE ID or vulnerability identifier"},
+        "package_name": {"type": "string"},
+        "ecosystem": {"type": "string", "enum": ["npm", "pip", "cargo", "composer"]},
+        "severity": {"type": "string", "enum": ["critical", "high", "medium", "low"]},
+        "summary": {"type": "string"},
+        "details": {"type": "string"},
+        "affected_versions": {"type": "string"},
+        "fixed_version": {"type": "string"},
+        "published": {"type": "string", "format": "date-time"},
+        "modified": {"type": "string", "format": "date-time"},
+        "references": {"type": "array", "items": {"type": "string", "format": "uri"}},
+        "cvss_score": {"type": "number", "minimum": 0, "maximum": 10}
+      }
+    },
+    "DependencyMetricsDict": {
+      "type": "object",
+      "description": "Dependency analysis metrics",
+      "properties": {
+        "total_dependencies": {"type": "integer", "minimum": 0},
+        "direct_count": {"type": "integer", "minimum": 0},
+        "dev_count": {"type": "integer", "minimum": 0},
+        "peer_count": {"type": "integer", "minimum": 0},
+        "transitive_count": {"type": "integer", "minimum": 0},
+        "outdated_count": {"type": "integer", "minimum": 0},
+        "vulnerable_count": {"type": "integer", "minimum": 0},
+        "critical_vulnerabilities": {"type": "integer", "minimum": 0},
+        "high_vulnerabilities": {"type": "integer", "minimum": 0},
+        "medium_vulnerabilities": {"type": "integer", "minimum": 0},
+        "low_vulnerabilities": {"type": "integer", "minimum": 0},
+        "license_breakdown": {"type": "object"},
+        "ecosystem_breakdown": {"type": "object"}
+      }
+    },
+    "DependencyResultDict": {
+      "type": "object",
+      "description": "Return type for dependency_inventory tool",
+      "properties": {
+        "manifest_path": {"type": "string"},
+        "package_managers": {"type": "array", "items": {"type": "string"}},
+        "total_dependencies": {"type": "integer", "minimum": 0},
+        "vulnerable_count": {"type": "integer", "minimum": 0},
+        "outdated_count": {"type": "integer", "minimum": 0},
+        "metrics": {"$ref": "#/definitions/DependencyMetricsDict"},
+        "success": {"type": "boolean"}
+      },
+      "required": ["manifest_path", "package_managers", "total_dependencies", "success"]
+    },
+    "APIEndpointDict": {
+      "type": "object",
+      "description": "Individual API endpoint metadata",
+      "properties": {
+        "path": {"type": "string", "description": "Endpoint path (e.g., /api/users/{id})"},
+        "method": {"type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"]},
+        "framework": {"type": "string", "enum": ["fastapi", "flask", "express", "graphql"]},
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1},
+        "function": {"type": "string"},
+        "parameters": {"type": "array", "items": {"type": "string"}},
+        "documented": {"type": "boolean"},
+        "doc_coverage": {"type": "integer", "minimum": 0, "maximum": 100},
+        "description": {"type": "string"},
+        "summary": {"type": "string"},
+        "tags": {"type": "array", "items": {"type": "string"}},
+        "deprecated": {"type": "boolean"}
+      }
+    },
+    "RiskDimensionDict": {
+      "type": "object",
+      "description": "Risk evaluation for single dimension",
+      "properties": {
+        "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+        "likelihood": {"type": "number", "minimum": 0, "maximum": 100},
+        "score": {"type": "number", "minimum": 0, "maximum": 100},
+        "findings": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "mitigation_available": {"type": "boolean"}
+      }
+    },
+    "CompositeScoreDict": {
+      "type": "object",
+      "description": "Overall risk assessment composite score",
+      "properties": {
+        "score": {"type": "number", "minimum": 0, "maximum": 100},
+        "level": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+        "explanation": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "required": ["score", "level", "explanation", "confidence"]
+    },
+    "RecommendationDict": {
+      "type": "object",
+      "description": "Overall recommendation and decision guidance",
+      "properties": {
+        "decision": {"type": "string", "enum": ["go", "no-go", "proceed-with-caution", "needs-review"]},
+        "rationale": {"type": "string"},
+        "conditions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "ProposedChangeDict": {
+      "type": "object",
+      "description": "Details of proposed code change",
+      "properties": {
+        "description": {"type": "string"},
+        "change_type": {"type": "string", "enum": ["create", "modify", "delete", "refactor", "migrate"]},
+        "files_affected": {"type": "array", "items": {"type": "string"}},
+        "context": {"type": "object"}
+      },
+      "required": ["description", "change_type", "files_affected"]
+    },
+    "RiskAssessmentResultDict": {
+      "type": "object",
+      "description": "Return type for assess_risk tool",
+      "properties": {
+        "assessment_path": {"type": "string"},
+        "assessment_id": {"type": "string"},
+        "composite_score": {"type": "number", "minimum": 0, "maximum": 100},
+        "risk_level": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+        "decision": {"type": "string", "enum": ["go", "no-go", "proceed-with-caution", "needs-review"]},
+        "options_analyzed": {"type": "integer", "minimum": 1},
+        "recommended_option": {"type": "string"},
+        "duration_ms": {"type": "number", "minimum": 0},
+        "success": {"type": "boolean"}
+      },
+      "required": ["assessment_path", "assessment_id", "composite_score", "risk_level", "decision", "success"]
+    }
+  },
+  "metadata": {
+    "category": "type-system/single-source-of-truth",
+    "file": "type_defs.py",
+    "lines": 829,
+    "typeddict_count": 71,
+    "version": "1.2.0",
+    "key_features": [
+      "71 TypedDict definitions across 14 domains",
+      "Single source of truth for all tool return types",
+      "Structural typing with optional runtime validation",
+      "Comprehensive coverage: generators, inventory, planning, risk assessment",
+      "IDE autocomplete and mypy type checking support"
+    ],
+    "type_categories": [
+      "Generator types (4)",
+      "Changelog types (2)",
+      "Standards types (6)",
+      "Audit types (5)",
+      "Consistency types (2)",
+      "Planning workflow types (6)",
+      "Inventory types (4)",
+      "Dependency inventory (6)",
+      "API inventory (4)",
+      "Database inventory (8)",
+      "Configuration inventory (4)",
+      "Test inventory (4)",
+      "Documentation inventory (3)",
+      "Risk assessment (9)"
+    ],
+    "runtime_behavior": "Zero runtime overhead - types erased at runtime",
+    "validation_strategy": "Static type checking (mypy) + optional runtime type guards",
+    "versioning": {
+      "current": "1.2.0",
+      "scheme": "semver (major.minor.patch)",
+      "rules": {
+        "major": "Breaking changes to existing TypedDicts",
+        "minor": "New TypedDicts or optional fields added",
+        "patch": "Documentation updates only"
+      }
+    },
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

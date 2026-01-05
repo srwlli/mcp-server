@@ -1,0 +1,338 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "tool_handlers.py Schema",
+  "description": "Type definitions and validation contracts for coderef-workflow MCP tool handlers",
+  "definitions": {
+    "HandlerSignature": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^handle_[a-z_]+$",
+          "description": "Handler function name (must start with handle_)"
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Tool-specific arguments validated by MCP SDK"
+        },
+        "returns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TextContent"
+          },
+          "description": "List of text content blocks"
+        }
+      },
+      "required": ["name", "arguments", "returns"]
+    },
+    "TextContent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["text"],
+          "description": "Content type discriminator"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text content (often JSON-serialized data)"
+        }
+      },
+      "required": ["type", "text"]
+    },
+    "GlobalState": {
+      "type": "object",
+      "properties": {
+        "TEMPLATES_DIR": {
+          "type": "string",
+          "description": "Absolute path to POWER framework templates (injected by server.py)"
+        },
+        "TOOL_TEMPLATES_DIR": {
+          "type": "string",
+          "description": "Absolute path to tool-specific templates (injected by server.py)"
+        },
+        "ENHANCED_DELIVERABLES_ENABLED": {
+          "type": "boolean",
+          "description": "Feature flag for enhanced deliverables (env var)"
+        }
+      },
+      "required": ["TEMPLATES_DIR", "TOOL_TEMPLATES_DIR"]
+    },
+    "ToolHandlersRegistry": {
+      "type": "object",
+      "description": "Mapping of tool names to handler functions",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "string",
+          "pattern": "^handle_[a-z_]+$",
+          "description": "Handler function name"
+        }
+      },
+      "minProperties": 35,
+      "additionalProperties": false
+    },
+    "DecoratorChain": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["@log_invocation", "@mcp_error_handler"]
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Execution order: @log_invocation BEFORE @mcp_error_handler"
+        }
+      },
+      "required": ["order"]
+    },
+    "HandlerCategory": {
+      "type": "string",
+      "enum": [
+        "template_management",
+        "documentation_generation",
+        "changelog_management",
+        "standards_quality",
+        "planning_workflow",
+        "execution_tracking",
+        "multi_agent_coordination",
+        "feature_management",
+        "workorder_tracking",
+        "risk_assessment",
+        "foundation_docs"
+      ],
+      "description": "Handler functional category"
+    },
+    "TemplateManagementArgs": {
+      "type": "object",
+      "description": "Arguments for template management handlers",
+      "oneOf": [
+        {
+          "properties": {
+            "template_name": {
+              "type": "string",
+              "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"]
+            }
+          },
+          "required": ["template_name"]
+        },
+        {
+          "properties": {},
+          "description": "No arguments (for list_templates)"
+        }
+      ]
+    },
+    "DocumentationGenerationArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path to project directory"
+        },
+        "template_name": {
+          "type": "string",
+          "description": "Optional template name for individual doc generation"
+        }
+      },
+      "required": ["project_path"]
+    },
+    "ChangelogArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path to project directory"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Semantic version number"
+        },
+        "change_type": {
+          "type": "string",
+          "enum": ["bugfix", "enhancement", "feature", "breaking_change", "deprecation", "security"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "major", "minor", "patch"]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "files": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        },
+        "reason": {
+          "type": "string"
+        },
+        "impact": {
+          "type": "string"
+        }
+      },
+      "required": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact"]
+    },
+    "PlanningArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string",
+          "description": "Absolute path to project directory"
+        },
+        "feature_name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Feature name (alphanumeric, hyphens, underscores)"
+        },
+        "workorder_id": {
+          "type": "string",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "description": "Workorder ID (e.g., WO-AUTH-001)"
+        },
+        "multi_agent": {
+          "type": "boolean",
+          "description": "Enable multi-agent coordination mode"
+        }
+      },
+      "required": ["project_path", "feature_name"]
+    },
+    "AgentCoordinationArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$"
+        },
+        "agent_number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "phase_id": {
+          "type": "string",
+          "description": "Optional phase ID to assign"
+        }
+      },
+      "required": ["project_path", "feature_name"]
+    },
+    "RiskAssessmentArgs": {
+      "type": "object",
+      "properties": {
+        "project_path": {
+          "type": "string"
+        },
+        "proposed_change": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "change_type": {
+              "type": "string",
+              "enum": ["create", "modify", "delete", "refactor", "migrate"]
+            },
+            "files_affected": {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 1
+            }
+          },
+          "required": ["description", "change_type", "files_affected"]
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Risk score threshold for go/no-go decision"
+        }
+      },
+      "required": ["project_path", "proposed_change"]
+    },
+    "HandlerResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable status message"
+        },
+        "data": {
+          "type": "object",
+          "description": "Tool-specific response data"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp"
+        }
+      },
+      "required": ["status", "message"]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["error"]
+        },
+        "error": {
+          "type": "string",
+          "description": "Error type/category"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional error context"
+        }
+      },
+      "required": ["status", "error", "message"]
+    },
+    "InjectionContract": {
+      "type": "object",
+      "description": "Contract for global state injection from server.py",
+      "properties": {
+        "function": {
+          "type": "string",
+          "enum": ["set_templates_dir", "set_tool_templates_dir"]
+        },
+        "parameter": {
+          "type": "string",
+          "description": "Path object to inject"
+        },
+        "side_effect": {
+          "type": "string",
+          "description": "Global variable modified"
+        }
+      },
+      "required": ["function", "parameter", "side_effect"]
+    }
+  },
+  "metadata": {
+    "category": "infrastructure/handlers",
+    "file": "tool_handlers.py",
+    "lines": 4404,
+    "handlers": 35,
+    "decorators": ["@log_invocation", "@mcp_error_handler"],
+    "globals": ["TEMPLATES_DIR", "TOOL_TEMPLATES_DIR", "ENHANCED_DELIVERABLES_ENABLED"],
+    "generated_by": "Resource Sheet MCP Tool",
+    "workorder_id": "WO-RESOURCE-SHEET-P0-001",
+    "timestamp": "2026-01-02T00:00:00Z"
+  }
+}

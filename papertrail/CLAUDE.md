@@ -76,6 +76,87 @@ Papertrail provides **three metadata standards**:
 
 ---
 
+## Validator Organization
+
+**Standard:** Each validator type has its own dedicated folder
+
+**Structure:**
+```
+validators/
+├── resource-sheets/     # RSMS v2.0 compliance validation
+│   └── validate.ps1
+├── scripts/             # Script/test frontmatter validation
+│   └── validate.py
+├── plans/               # plan.json schema validation
+│   ├── validate.py
+│   ├── format_validator.py
+│   └── schema_validator.py
+└── typescript/          # TypeScript-specific validators
+    └── (6 files)
+```
+
+### Resource Sheet Validation
+
+**Script:** `validators/resource-sheets/validate.ps1`
+
+**Purpose:** RSMS v2.0 compliance validation (snake_case fields, required metadata)
+
+**Usage:**
+```powershell
+.\validators\resource-sheets\validate.ps1 -Path "docs/"
+```
+
+**Current Validation Checks:**
+1. ✅ YAML front matter presence (must start with `---`)
+2. ✅ Required UDS fields: `agent`, `date`, `task` (snake_case)
+3. ✅ Date format validation (`YYYY-MM-DD`)
+4. ✅ Task enum validation (`REVIEW`, `CONSOLIDATE`, `DOCUMENT`, `UPDATE`, `CREATE`)
+5. ✅ Naming convention (`{ComponentName}-RESOURCE-SHEET.md`)
+6. ✅ UDS section headers (`Executive Summary`, `Audience & Intent`, `Quick Reference`)
+
+**RSMS v2.0 Validation (COMPLETE):**
+- ✅ **subject** field validation (required)
+- ✅ **parent_project** field validation (required)
+- ✅ **category** field validation (required, enum check)
+- ✅ **version** field validation (semver format)
+- ✅ **related_files** validation (file path format)
+- ✅ **related_docs** validation (`.md` file format)
+
+**Integration Points:**
+- Run manually after creating/updating resource sheets: `.\validators\documentation\validate-resource-sheets.ps1 -Path "docs/"`
+- Can be integrated into pre-commit hooks
+- Should be run before archiving workorders
+
+**Example Output:**
+```
+✅ YAML Front Matter
+✅ Naming Convention
+✅ PASSED
+```
+
+### Script/Test Frontmatter Validation
+
+**Script:** `validators/scripts/validate.py`
+
+**Purpose:** Triangular bidirectional reference validation (resource sheet ↔ script ↔ test)
+
+**Usage:**
+```bash
+python validators/scripts/validate.py /path/to/project
+python validators/scripts/validate.py /path/to/project --path src/
+```
+
+**Validation Checks:**
+1. ✅ YAML frontmatter presence in scripts/tests
+2. ✅ Required field: `resource_sheet`
+3. ✅ Script has `related_test`, test has `related_script`
+4. ✅ Resource sheet exists and lists file in `related_files`
+5. ✅ Bidirectional consistency (script ↔ test references match)
+
+**Supported Languages:** Python (.py), Bash (.sh), PowerShell (.ps1), TypeScript (.ts), JavaScript (.js)
+
+---
+
 ## File Structure
 
 ```
@@ -91,9 +172,15 @@ papertrail/
 │       ├── templates.py        # Jinja2 engine
 │       └── logger.py           # Workorder logging
 ├── schemas/
+│   ├── documentation/
+│   │   ├── resource-sheet-metadata-schema.json  # RSMS v2.0 schema
+│   │   └── script-frontmatter-schema.json       # Script/test frontmatter schema
 │   ├── uds-document.json       # UDS schema (workorder-based docs)
-│   ├── resource-sheet.json     # RSMS schema (architectural docs)
 │   └── workorder-log.json      # Workorder log schema
+├── standards/
+│   └── documentation/
+│       ├── resource-sheet-standards.md      # RSMS v2.0 standards
+│       └── script-frontmatter-standards.md  # Script/test frontmatter standards
 ├── docs/
 │   ├── RSMS-SPECIFICATION.md   # RSMS v1.0 specification
 │   └── RESOURCE-SHEET-*.md     # Resource sheets (using RSMS)

@@ -160,6 +160,192 @@ coderef/
 - **Status updates:** Agents must explicitly write status changes to communication.json
 - **File locking:** Not currently implemented (potential race condition if concurrent writes)
 
+## 3A. Schema Creation Guide
+
+This section provides step-by-step instructions for creating valid session schemas. Follow these steps to ensure compliance with the validation schema.
+
+### Creating communication.json
+
+**Step 1: Initialize Required Fields**
+
+```json
+{
+  "workorder_id": "WO-{CATEGORY}-{ID}",
+  "feature_name": "{session-name}",
+  "created": "YYYY-MM-DD",
+  "status": "not_started",
+  "description": "{brief description}",
+  "instructions_file": "sessions/{session-name}/instructions.json"
+}
+```
+
+**Required field formats:**
+- `workorder_id`: Must match pattern `WO-[A-Z0-9-]+-\d{3}` (e.g., WO-SCANNER-001)
+- `feature_name`: Alphanumeric, hyphens, underscores only (matches session directory name)
+- `created`: YYYY-MM-DD format
+- `status`: Must be one of: `not_started`, `in_progress`, `complete`
+- `instructions_file`: Relative path from coderef root
+
+**Step 2: Add Orchestrator Section**
+
+```json
+"orchestrator": {
+  "agent_id": "coderef",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+  "role": "{orchestrator role description}",
+  "output_file": "sessions/{session-name}/orchestrator-{name}.json",
+  "status": "not_started",
+  "notes": ""
+}
+```
+
+**Step 3: Add Agents Array**
+
+```json
+"agents": [
+  {
+    "agent_id": "{agent-name}",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\{agent-project}",
+    "output_file": "sessions/{session-name}/{agent-id}-output.json",
+    "status": "not_started",
+    "notes": ""
+  }
+]
+```
+
+**Valid agent_id values:** coderef, coderef-assistant, coderef-context, coderef-workflow, coderef-docs, coderef-personas, coderef-testing, papertrail, coderef-system, coderef-dashboard
+
+**Step 4: Add Aggregation Section**
+
+```json
+"aggregation": {
+  "total_agents": 3,
+  "completed": 0,
+  "pending": 0,
+  "not_started": 3
+}
+```
+
+**Calculation rules:**
+- `total_agents` = length of agents array
+- `completed` = count of agents where status == "complete"
+- `not_started` = count of agents where status == "not_started"
+- `pending` = total_agents - completed - not_started
+
+### Creating instructions.json
+
+**Step 1: Initialize Metadata**
+
+```json
+{
+  "workorder_id": "WO-{CATEGORY}-{ID}",
+  "task": "{high-level task description}",
+  "description": "{detailed description}"
+}
+```
+
+**Step 2: Add Orchestrator Instructions**
+
+```json
+"orchestrator_instructions": {
+  "role": "{what orchestrator does}",
+  "steps": {
+    "step_1": "{action to take}",
+    "step_2": "{action to take}"
+  }
+}
+```
+
+**Step 3: Add Agent Instructions**
+
+```json
+"agent_instructions": {
+  "role": "{what agents do}",
+  "steps": {
+    "step_1": "{action to take}",
+    "step_2": "{action to take}"
+  }
+}
+```
+
+**Step 4: Add Context and Standards**
+
+```json
+"context": {
+  "background": "{relevant context}",
+  "constraints": "{limitations or requirements}"
+},
+"output_format": "json",
+"output_template": {
+  "example_field": "expected structure"
+},
+"quality_standards": {
+  "completeness": "{what makes output complete}",
+  "accuracy": "{what makes output accurate}"
+}
+```
+
+### Validation Checklist
+
+Before committing session files, verify:
+
+**communication.json:**
+- [ ] All required fields present (workorder_id, feature_name, created, status, description, instructions_file)
+- [ ] Status values are valid enums (not_started, in_progress, complete)
+- [ ] Workorder ID matches pattern WO-{CATEGORY}-{ID}
+- [ ] Date format is YYYY-MM-DD
+- [ ] Agent paths use Windows format with escaped backslashes
+- [ ] Aggregation totals match agents array length
+- [ ] All file paths are relative to coderef root
+
+**instructions.json:**
+- [ ] Workorder ID matches communication.json
+- [ ] Both orchestrator_instructions and agent_instructions present
+- [ ] Steps are numbered sequentially
+- [ ] Output format specified (json, markdown, or text)
+- [ ] Output template matches expected structure
+
+**Run validation:**
+```powershell
+cd C:\Users\willh\.mcp-servers\coderef\sessions
+.\validate-sessions.ps1
+```
+
+**Expected output:**
+```
+[PASS] {session-name}/communication.json
+All sessions valid!
+```
+
+### Common Mistakes
+
+| Mistake | Error | Fix |
+|---------|-------|-----|
+| Status typo | "completed" instead of "complete" | Run `.\validate-sessions.ps1 -FixTypos` |
+| Wrong date format | "01-04-2026" | Use YYYY-MM-DD: "2026-01-04" |
+| Missing aggregation | Schema validation fails | Add aggregation object with totals |
+| Unescaped backslashes | "C:\Users\..." | Use double backslashes: "C:\\\\Users\\\\..." |
+| Wrong workorder pattern | "WO-SCANNER-1" | Use 3 digits: "WO-SCANNER-001" |
+| Missing instructions_file | Schema validation fails | Add path to instructions.json |
+
+### Schema Reference
+
+**JSON Schema Location:** `sessions/communication-schema.json`
+
+**Validator:** `sessions/validate-sessions.ps1`
+
+**Usage:**
+```powershell
+# Validate all sessions
+.\validate-sessions.ps1
+
+# Auto-fix common typos
+.\validate-sessions.ps1 -FixTypos
+
+# Verbose output
+.\validate-sessions.ps1 -Verbose
+```
+
 ## 4. State Lifecycle
 
 ### Canonical Sequence

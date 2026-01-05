@@ -46,6 +46,11 @@ Papertrail provides **three metadata standards**:
 - No metadata requirements
 - Used for README, guides, tutorials
 
+**4. Global Documentation Standards** - Cross-cutting rules for all documents
+- Headers: YAML front matter (agent, date, task)
+- Footers: Document metadata (Last Updated, Version, Maintained by)
+- No Emojis: Use text markers ([PASS], [FAIL], [WARN], [INFO])
+
 ---
 
 ## Architecture
@@ -113,6 +118,7 @@ validators/
 4. ✅ Task enum validation (`REVIEW`, `CONSOLIDATE`, `DOCUMENT`, `UPDATE`, `CREATE`)
 5. ✅ Naming convention (`{ComponentName}-RESOURCE-SHEET.md`)
 6. ✅ UDS section headers (`Executive Summary`, `Audience & Intent`, `Quick Reference`)
+7. ✅ No Emojis (detects and reports emoji characters)
 
 **RSMS v2.0 Validation (COMPLETE):**
 - ✅ **subject** field validation (required)
@@ -179,8 +185,11 @@ papertrail/
 │   └── workorder-log.json      # Workorder log schema
 ├── standards/
 │   └── documentation/
-│       ├── resource-sheet-standards.md      # RSMS v2.0 standards
-│       └── script-frontmatter-standards.md  # Script/test frontmatter standards
+│       ├── global-documentation-standards.md    # Global standards (headers, footers, no emojis)
+│       ├── resource-sheet-standards.md          # RSMS v2.0 standards
+│       └── script-frontmatter-standards.md      # Script/test frontmatter standards
+├── scripts/
+│   └── remove-emojis.py         # Emoji removal utility
 ├── docs/
 │   ├── RSMS-SPECIFICATION.md   # RSMS v1.0 specification
 │   └── RESOURCE-SHEET-*.md     # Resource sheets (using RSMS)

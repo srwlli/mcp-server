@@ -214,6 +214,7 @@ Every resource sheet MUST include these sections:
 - **Concise**: Resource sheets are quick references, not comprehensive guides
 - **Actionable**: Focus on "how to use" over "why it exists"
 - **Current**: Update dates when content changes
+- **Professional**: No emojis - use text markers like [WARN], [INFO], [DEPRECATED]
 
 ### Length
 
@@ -237,7 +238,7 @@ Every resource sheet MUST include these sections:
 - Use bullet lists for step-by-step instructions
 - Use blockquotes for important warnings:
   ```markdown
-  > ⚠️ **Warning:** Changing this setting requires server restart
+  > [WARN] Changing this setting requires server restart
   ```
 
 ---
@@ -265,18 +266,22 @@ The validator checks:
 
 1. **YAML Front Matter**
    - Starts with `---`
-   - Contains required fields: `Agent`, `Date`, `Task`
+   - Contains required fields: `agent`, `date`, `task`, `subject`, `parent_project`, `category`
    - Date format: `YYYY-MM-DD`
    - Task is valid enum value
 
 2. **Naming Convention**
    - Filename matches pattern: `{Component}-RESOURCE-SHEET.md`
-   - Component name in filename matches YAML `Component` field (if present)
+   - Component name in filename matches YAML `subject` field
 
 3. **UDS Headers**
    - Contains `Executive Summary` section
    - Contains `Audience & Intent` section
    - Contains `Quick Reference` section
+
+4. **No Emojis**
+   - Document must not contain any emoji characters
+   - Use text markers instead: [WARN], [INFO], [DEPRECATED], [PASS], [FAIL]
 
 ### Exit Codes
 

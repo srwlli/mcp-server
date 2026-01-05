@@ -57,62 +57,62 @@ The UDS system consists of 4 primary modules:
 
 ```
 UDS System
-├── UDS Header/Footer (uds.py)
-│   ├── UDSHeader: YAML frontmatter metadata
-│   ├── UDSFooter: YAML footer attribution
-│   ├── DocumentType: Enum of doc types
-│   └── DocumentStatus: Lifecycle status enum
-│
-├── Validator (validator.py)
-│   ├── UDSValidator: Schema-based validation
-│   ├── ValidationResult: Validation output
-│   ├── ValidationError: Error details
-│   └── ValidationSeverity: Error severity levels
-│
-├── Health Scorer (health.py)
-│   ├── HealthScorer: 4-factor scoring engine
-│   ├── HealthScore: Score breakdown
-│   └── Health storage/loading functions
-│
-└── Template Engine (engine.py)
-    ├── TemplateEngine: Jinja2 rendering
-    ├── UDS injection: Header/footer injection
-    ├── Extensions: CodeRef integrations
-    └── Template filters: Formatting helpers
+ UDS Header/Footer (uds.py)
+    UDSHeader: YAML frontmatter metadata
+    UDSFooter: YAML footer attribution
+    DocumentType: Enum of doc types
+    DocumentStatus: Lifecycle status enum
+
+ Validator (validator.py)
+    UDSValidator: Schema-based validation
+    ValidationResult: Validation output
+    ValidationError: Error details
+    ValidationSeverity: Error severity levels
+
+ Health Scorer (health.py)
+    HealthScorer: 4-factor scoring engine
+    HealthScore: Score breakdown
+    Health storage/loading functions
+
+ Template Engine (engine.py)
+     TemplateEngine: Jinja2 rendering
+     UDS injection: Header/footer injection
+     Extensions: CodeRef integrations
+     Template filters: Formatting helpers
 ```
 
 ### Component Hierarchy
 
 ```
-┌─────────────────────────────────────────┐
-│   External Consumers                    │
-│   (coderef-docs, coderef-workflow, etc) │
-└─────────────────┬───────────────────────┘
-                  │
-                  ▼
-┌─────────────────────────────────────────┐
-│   Template Engine (engine.py)           │
-│   - Render templates                    │
-│   - Inject UDS headers/footers          │
-│   - Provide CodeRef extensions          │
-└─────────────────┬───────────────────────┘
-                  │
-        ┌─────────┴─────────┐
-        ▼                   ▼
-┌──────────────────┐  ┌──────────────────┐
-│  UDS Header      │  │  Validator       │
-│  (uds.py)        │  │  (validator.py)  │
-│  - Metadata      │  │  - Schema check  │
-│  - YAML gen      │  │  - Error report  │
-└──────────────────┘  └─────────┬────────┘
-                                │
-                                ▼
-                      ┌──────────────────┐
-                      │  Health Scorer   │
-                      │  (health.py)     │
-                      │  - 4-factor calc │
-                      │  - Score storage │
-                      └──────────────────┘
+
+   External Consumers                    
+   (coderef-docs, coderef-workflow, etc) 
+
+                  
+                  
+
+   Template Engine (engine.py)           
+   - Render templates                    
+   - Inject UDS headers/footers          
+   - Provide CodeRef extensions          
+
+                  
+        
+                           
+  
+  UDS Header          Validator       
+  (uds.py)            (validator.py)  
+  - Metadata          - Schema check  
+  - YAML gen          - Error report  
+  
+                                
+                                
+                      
+                        Health Scorer   
+                        (health.py)     
+                        - 4-factor calc 
+                        - Score storage 
+                      
 ```
 
 ### Key Integration Points
@@ -889,7 +889,7 @@ self.env.filters['capitalize_first'] = self._capitalize_first
 ### When Updating This Resource Sheet
 
 **Step 1: Mark Deprecated Sections**
-- Add `⚠️ DEPRECATED` header to outdated sections
+- Add ` DEPRECATED` header to outdated sections
 - Explain why deprecated and what replaces it
 
 **Step 2: Add Migration Notes for Breaking Changes**
@@ -906,7 +906,7 @@ self.env.filters['capitalize_first'] = self._capitalize_first
 
 **Example:**
 ```markdown
-## ⚠️ DEPRECATED: Old Health Scoring Algorithm
+##  DEPRECATED: Old Health Scoring Algorithm
 
 **Deprecated in:** v2.0.0 (2026-01-15)
 **Reason:** New 4-factor algorithm provides more accurate health scores

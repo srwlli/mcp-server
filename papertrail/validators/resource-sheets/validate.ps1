@@ -17,7 +17,7 @@ $Yellow = "Yellow"
 $Red = "Red"
 $Cyan = "Cyan"
 
-Write-Host "`n🔍 Resource Sheet Validation" -ForegroundColor $Cyan
+Write-Host "`nResource Sheet Validation" -ForegroundColor $Cyan
 Write-Host ("=" * 60) -ForegroundColor $Cyan
 
 # Find all resource sheets (REFERENCE-SHEET is deprecated)
@@ -26,7 +26,7 @@ $deprecatedSheets = @(Get-ChildItem -Path $Path -Recurse -Filter "*-REFERENCE-SH
 
 # Warn about deprecated REFERENCE-SHEET files
 if ($deprecatedSheets.Count -gt 0) {
-    Write-Host "⚠️  Found $($deprecatedSheets.Count) deprecated REFERENCE-SHEET file(s):" -ForegroundColor $Yellow
+    Write-Host "[WARN] Found $($deprecatedSheets.Count) deprecated REFERENCE-SHEET file(s):" -ForegroundColor $Yellow
     foreach ($sheet in $deprecatedSheets) {
         Write-Host "   - $($sheet.Name) (should be renamed to use -RESOURCE-SHEET)" -ForegroundColor $Yellow
     }
@@ -262,6 +262,51 @@ function Test-UDSHeaders {
     return @{ Valid = $true }
 }
 
+function Test-NoEmojis {
+    param($FilePath)
+
+    $content = Get-Content $FilePath -Raw -Encoding UTF8
+
+    # Check for common emoji patterns using byte-level detection
+    # Most emojis are in the range U+1F300 to U+1F9FF and U+2600 to U+27BF
+    $foundEmoji = $false
+    $emojiPosition = -1
+    $emojiContext = ""
+
+    for ($i = 0; $i -lt $content.Length; $i++) {
+        $char = $content[$i]
+        $codePoint = [int][char]$char
+
+        # Check for common emoji ranges
+        if (($codePoint -ge 0x1F300 -and $codePoint -le 0x1F9FF) -or  # Emoticons, symbols, pictographs
+            ($codePoint -ge 0x2600 -and $codePoint -le 0x27BF) -or    # Misc symbols, dingbats
+            ($codePoint -ge 0x2700 -and $codePoint -le 0x27BF) -or    # Dingbats
+            ($codePoint -eq 0x2713) -or ($codePoint -eq 0x2714) -or   # Check marks
+            ($codePoint -eq 0x2717) -or ($codePoint -eq 0x2718) -or   # X marks
+            ($codePoint -eq 0x274C) -or ($codePoint -eq 0x274E) -or   # X marks
+            ($codePoint -eq 0x26A0) -or ($codePoint -eq 0x26A1)) {    # Warning signs
+
+            $foundEmoji = $true
+            $emojiPosition = $i
+
+            # Get context (20 chars before and after)
+            $contextStart = [Math]::Max(0, $i - 20)
+            $contextEnd = [Math]::Min($content.Length, $i + 20)
+            $emojiContext = $content.Substring($contextStart, $contextEnd - $contextStart)
+            break
+        }
+    }
+
+    if ($foundEmoji) {
+        return @{
+            Valid = $false
+            Error = "Document contains emoji at position $emojiPosition (context: '$emojiContext')"
+        }
+    }
+
+    return @{ Valid = $true }
+}
+
 # Validate each sheet
 foreach ($sheet in $allSheets) {
     $sheetName = $sheet.Name
@@ -275,9 +320,9 @@ foreach ($sheet in $allSheets) {
     if (-not $yamlResult.Valid) {
         $passed = $false
         $issues += "  [YAML] $($yamlResult.Error)"
-        Write-Host "  ❌ YAML Front Matter: $($yamlResult.Error)" -ForegroundColor $Red
+        Write-Host "  [FAIL] YAML Front Matter: $($yamlResult.Error)" -ForegroundColor $Red
     } else {
-        Write-Host "  ✅ YAML Front Matter" -ForegroundColor $Green
+        Write-Host "  [PASS] YAML Front Matter" -ForegroundColor $Green
     }
 
     # Test 2: Naming convention
@@ -285,13 +330,13 @@ foreach ($sheet in $allSheets) {
     if (-not $namingResult.Valid) {
         $passed = $false
         $issues += "  [NAMING] $($namingResult.Error)"
-        Write-Host "  ❌ Naming Convention: $($namingResult.Error)" -ForegroundColor $Red
+        Write-Host "  [FAIL] Naming Convention: $($namingResult.Error)" -ForegroundColor $Red
 
         if ($namingResult.Suggestion) {
-            Write-Host "     💡 Suggestion: $($namingResult.Suggestion)" -ForegroundColor $Yellow
+            Write-Host "     [INFO] Suggestion: $($namingResult.Suggestion)" -ForegroundColor $Yellow
         }
     } else {
-        Write-Host "  ✅ Naming Convention" -ForegroundColor $Green
+        Write-Host "  [PASS] Naming Convention" -ForegroundColor $Green
     }
 
     # Test 3: UDS headers
@@ -299,39 +344,49 @@ foreach ($sheet in $allSheets) {
     if (-not $udsResult.Valid) {
         $validationLog.Warnings++
         $issues += "  [UDS] $($udsResult.Error)"
-        Write-Host "  ⚠️  UDS Headers: $($udsResult.Error)" -ForegroundColor $Yellow
+        Write-Host "  [WARN] UDS Headers: $($udsResult.Error)" -ForegroundColor $Yellow
     } else {
-        Write-Host "  ✅ UDS Headers" -ForegroundColor $Green
+        Write-Host "  [PASS] UDS Headers" -ForegroundColor $Green
+    }
+
+    # Test 4: No emojis
+    $emojiResult = Test-NoEmojis -FilePath $sheet.FullName
+    if (-not $emojiResult.Valid) {
+        $passed = $false
+        $issues += "  [EMOJI] $($emojiResult.Error)"
+        Write-Host "  [FAIL] No Emojis: $($emojiResult.Error)" -ForegroundColor $Red
+    } else {
+        Write-Host "  [PASS] No Emojis" -ForegroundColor $Green
     }
 
     # Update totals
     if ($passed) {
         $validationLog.Passed++
-        Write-Host "  ✅ PASSED`n" -ForegroundColor $Green
+        Write-Host "  [PASS] PASSED`n" -ForegroundColor $Green
     } else {
         $validationLog.Failed++
         $validationLog.Errors += @{
             File = $sheetName
             Issues = $issues
         }
-        Write-Host "  ❌ FAILED`n" -ForegroundColor $Red
+        Write-Host "  [FAIL] FAILED`n" -ForegroundColor $Red
     }
 }
 
 # Summary
 Write-Host ("=" * 60) -ForegroundColor $Cyan
-Write-Host "📊 Validation Summary" -ForegroundColor $Cyan
+Write-Host "Validation Summary" -ForegroundColor $Cyan
 Write-Host ("=" * 60) -ForegroundColor $Cyan
 Write-Host "   Total Sheets: $($validationLog.TotalSheets)" -ForegroundColor $Cyan
-Write-Host "   ✅ Passed: $($validationLog.Passed)" -ForegroundColor $Green
-Write-Host "   ❌ Failed: $($validationLog.Failed)" -ForegroundColor $Red
-Write-Host "   ⚠️  Warnings: $($validationLog.Warnings)" -ForegroundColor $Yellow
+Write-Host "   [PASS] Passed: $($validationLog.Passed)" -ForegroundColor $Green
+Write-Host "   [FAIL] Failed: $($validationLog.Failed)" -ForegroundColor $Red
+Write-Host "   [WARN] Warnings: $($validationLog.Warnings)" -ForegroundColor $Yellow
 
 if ($validationLog.Failed -gt 0) {
-    Write-Host "`n❌ Validation failed for $($validationLog.Failed) file(s)" -ForegroundColor $Red
+    Write-Host "`n[FAIL] Validation failed for $($validationLog.Failed) file(s)" -ForegroundColor $Red
     Write-Host "Fix errors and re-run validation" -ForegroundColor $Red
     exit 1
 } else {
-    Write-Host "`n✅ All resource sheets valid!" -ForegroundColor $Green
+    Write-Host "`n[PASS] All resource sheets valid!" -ForegroundColor $Green
     exit 0
 }

@@ -1,0 +1,186 @@
+coderef-docs/
+├── Root Files
+│   ├── server.py                          # MCP server entry point
+│   ├── tool_handlers.py                   # 13 tool handlers
+│   ├── extractors.py                      # Context injection via @coderef/core
+│   ├── constants.py                       # Constants
+│   ├── logger_config.py                   # Logging configuration
+│   ├── handler_decorators.py              # Decorators for handlers
+│   ├── handler_helpers.py                 # Helper utilities
+│   ├── error_responses.py                 # Error response utilities
+│   ├── schema_validator.py                # JSON schema validation
+│   ├── http_server.py                     # HTTP server (future)
+│   ├── CLAUDE.md                          # AI context documentation
+│   ├── README.md                          # User-facing guide
+│   ├── pyproject.toml                     # Python project config
+│   ├── requirements.txt                   # Dependencies
+│   └── LICENSE
+│
+├── generators/                            # Core generation logic
+│   ├── base_generator.py                  # Base generator class
+│   ├── foundation_generator.py            # Foundation docs generation
+│   ├── coderef_foundation_generator.py    # CodeRef-integrated foundation docs
+│   ├── changelog_generator.py             # CHANGELOG operations
+│   ├── standards_generator.py             # Standards extraction
+│   ├── audit_generator.py                 # Compliance auditing
+│   ├── consistency_checker.py             # Pre-commit consistency checks
+│   ├── quickref_generator.py              # Quickref generation
+│   ├── resource_sheet_generator.py        # Resource sheet generation (NEW v3.4.0)
+│   ├── planning_analyzer.py               # Project analysis for planning
+│   ├── planning_generator.py              # Plan.json generation
+│   ├── handoff_generator.py               # Agent handoff context
+│   ├── risk_generator.py                  # Risk assessment
+│   ├── review_formatter.py                # Review report formatting
+│   ├── plan_validator.py                  # Plan validation
+│   ├── features_inventory_generator.py    # Features inventory
+│   ├── detection_module.py                # Code detection module
+│   ├── validation_pipeline.py             # Validation pipeline
+│   └── mermaid_formatter.py               # Mermaid diagram formatting
+│
+├── resource_sheet/                        # NEW Resource Sheet System (v3.4.0)
+│   ├── detection/
+│   │   ├── analyzer.py                    # CodeRef integration & analysis
+│   │   └── characteristics.py             # Characteristic detection (20+ flags)
+│   ├── composition/
+│   │   └── composer.py                    # Document assembly (3 formats)
+│   ├── modules/
+│   │   ├── universal/                     # 4 universal modules
+│   │   │   ├── architecture.py            # Architecture & Design (100% auto-fill)
+│   │   │   ├── integration.py             # Integration Points (100% auto-fill)
+│   │   │   ├── testing.py                 # Testing stub (manual completion)
+│   │   │   └── performance.py             # Performance stub (manual completion)
+│   │   └── conditional/                   # 11 conditional modules (Phase 2)
+│   │       ├── hooks/
+│   │       ├── network/
+│   │       ├── state/
+│   │       └── ui/
+│   ├── processing/
+│   │   ├── post_processor.py              # Validation & quality checks
+│   │   └── writing_standards.py           # Documentation standards
+│   ├── module_registry.py                 # Module selection logic
+│   ├── types.py                           # Type definitions
+│   ├── mapping/
+│   │   └── element-type-mapping.json      # Element type mappings
+│   ├── schemas/                           # JSON schemas
+│   ├── examples/                          # Example outputs
+│   └── PHASE-1-COMPLETION-SUMMARY.md      # Phase 1 status
+│
+├── templates/                             # Documentation templates
+│   ├── power/                             # POWER framework templates
+│   │   ├── readme.txt
+│   │   ├── architecture.txt
+│   │   ├── schema.txt
+│   │   ├── api.txt
+│   │   ├── components.txt
+│   │   ├── user-guide.txt
+│   │   ├── my-guide.txt
+│   │   └── features.txt
+│   ├── handoff/                           # Agent handoff templates
+│   │   ├── claude-full.txt
+│   │   └── claude-minimal.txt
+│   ├── uds/                               # Universal Document Standard
+│   │   ├── header.yaml
+│   │   └── footer.yaml
+│   ├── risk/                              # Risk assessment
+│   │   └── assessment-schema.json
+│   ├── tools/                             # Tool templates
+│   │   ├── communication_template.json
+│   │   └── DELIVERABLES_template.md
+│   └── prompts/                           # AI prompts
+│       ├── architecture.json
+│       ├── implementation.json
+│       ├── refactor.json
+│       ├── security-audit.json
+│       └── code-review.json
+│
+├── tests/                                 # Test suite
+│   ├── integration/                       # Integration tests
+│   │   ├── test_planning_workflow.py
+│   │   ├── test_agent_coordination.py
+│   │   ├── test_archive_workflow.py
+│   │   ├── test_coderef_foundation_docs.py
+│   │   ├── test_extractors_integration.py
+│   │   └── test_mcp_workflows.py
+│   ├── performance/                       # Performance tests
+│   │   └── test_large_projects.py
+│   ├── security/                          # Security tests
+│   │   └── test_security_fixes.py
+│   ├── smoke/                             # Smoke tests
+│   │   └── test_analyze_project_basic.py
+│   ├── proof tests (30 total)
+│   │   ├── test_extractors.py
+│   │   ├── proof_test_cli_returns_real_data.py
+│   │   ├── proof_test_extraction_used_in_docs.py
+│   │   └── proof_test_end_to_end.py
+│   └── unit tests (resource sheet)
+│       ├── test_resource_sheet_generator.py
+│       ├── test_characteristics_detector.py
+│       ├── test_module_selector.py
+│       └── test_post_processor.py
+│
+├── coderef/                               # Global artifacts
+│   ├── workorder/                         # Active features
+│   │   ├── resource-sheet-mcp-tool/       # Current work (v3.4.0)
+│   │   ├── bug-fixes-testing/
+│   │   ├── phase2-cleanup/
+│   │   └── uds-integration/
+│   ├── archived/                          # Completed features (50+)
+│   ├── foundation-docs/                   # Technical docs
+│   │   ├── README.md
+│   │   ├── ARCHITECTURE.md
+│   │   ├── SCHEMA.md
+│   │   ├── API.md
+│   │   ├── COMPONENTS.md
+│   │   └── project-context.json
+│   ├── user/                              # User-facing docs
+│   │   ├── my-guide.md
+│   │   ├── USER-GUIDE.md
+│   │   ├── FEATURES.md
+│   │   └── quickref.md
+│   ├── reference-sheets/                  # Resource sheets
+│   │   └── resource-sheet-generation-system/
+│   ├── standards/                         # Coding standards
+│   │   ├── UI-STANDARDS.md
+│   │   ├── BEHAVIOR-STANDARDS.md
+│   │   ├── UX-PATTERNS.md
+│   │   └── COMPONENT-INDEX.md
+│   ├── changelog/
+│   │   ├── CHANGELOG.json
+│   │   └── schema.json
+│   ├── inventory/                         # Project inventories
+│   ├── schemas/                           # JSON schemas
+│   └── workorder-log.txt                  # Global audit trail
+│
+├── .coderef/                              # CodeRef intelligence outputs
+│   ├── index.json                         # Element index (145 elements)
+│   ├── graph.json                         # Dependency graph
+│   ├── context.md                         # Human-readable context
+│   ├── diagrams/
+│   │   ├── dependencies.mmd
+│   │   ├── calls.mmd
+│   │   └── imports.mmd
+│   ├── reports/
+│   │   ├── patterns.json
+│   │   ├── coverage.json
+│   │   ├── drift.json
+│   │   └── validation.json
+│   └── exports/
+│       ├── graph.json
+│       ├── graph.jsonld
+│       └── diagram-wrapped.md
+│
+├── archived/                              # Archived specifications
+│   └── specifications/
+│       └── resource-sheet-typescript-spec/  # Original TypeScript design
+│
+└── .claude/                               # Claude Code configuration
+    ├── commands.json                      # Command registry
+    └── settings.local.json                # Local settings
+
+KEY STATS:
+- 13 MCP tools (5 generators, 4 analyzers, 4 validators)
+- 20+ generators & utilities
+- 30+ test files (integration, unit, proof, performance)
+- 50+ archived workorders
+- 145 code elements indexed (.coderef/)
+- 4 universal modules + 11 conditional modules (resource sheet system)

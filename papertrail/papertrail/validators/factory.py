@@ -39,7 +39,8 @@ class ValidatorFactory:
 
         # Workorder docs
         r".*/coderef/workorder/.*/context\.json$": "workorder",
-        r".*/coderef/workorder/.*/analysis\.json$": "workorder",
+        r".*/coderef/workorder/.*/analysis\.json$": "analysis",  # New: AnalysisValidator
+        r".*/coderef/workorder/.*/execution-log\.json$": "execution_log",  # New: ExecutionLogValidator
         r".*/coderef/workorder/.*/plan\.json$": "plan",  # Special: uses existing plan validator
         r".*/coderef/workorder/.*/DELIVERABLES\.md$": "workorder",
 
@@ -160,7 +161,7 @@ class ValidatorFactory:
     def _create_validator(cls, validator_type: str, schemas_dir: Optional[Path] = None) -> BaseUDSValidator:
         """Create validator instance based on type"""
         # Import validators dynamically to avoid circular imports
-        from . import foundation, workorder, system, standards, session, infrastructure, migration, user_facing, general
+        from . import foundation, workorder, system, standards, session, infrastructure, migration, user_facing, general, execution_log, analysis
 
         validator_map = {
             "foundation": foundation.FoundationDocValidator,
@@ -172,6 +173,8 @@ class ValidatorFactory:
             "migration": migration.MigrationDocValidator,
             "user_facing": user_facing.UserFacingDocValidator,
             "general": general.GeneralMarkdownValidator,
+            "execution_log": execution_log.ExecutionLogValidator,  # New: execution-log.json
+            "analysis": None,  # Coming next (Phase 3)
             "resource_sheet": None,  # Will use existing resource-sheets/validate.ps1 for now
             "plan": None,  # Will use existing plans/validate.py for now
         }

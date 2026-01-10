@@ -976,6 +976,23 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
             with open(analysis_file, 'w', encoding='utf-8') as f:
                 json.dump(result, f, indent=2)
 
+            # GAP-003: Validate analysis.json after generation (UDS compliance)
+            try:
+                from papertrail.validators.analysis import AnalysisValidator
+                validator = AnalysisValidator()
+                validation_result = validator.validate_file(str(analysis_file))
+
+                if not validation_result['valid']:
+                    logger.warning(f"analysis.json validation failed (score: {validation_result.get('score', 0)})")
+                    for error in validation_result.get('errors', []):
+                        logger.warning(f"  - {error}")
+                else:
+                    logger.info(f"analysis.json validated successfully (score: {validation_result.get('score', 100)})")
+            except ImportError:
+                logger.warning("AnalysisValidator not available - skipping validation")
+            except Exception as e:
+                logger.warning(f"Analysis validation error: {e} - continuing without validation")
+
             # Add metadata to response with workorder
             result['_metadata'] = {
                 'saved_to': str(analysis_file.relative_to(project_path_obj)),
@@ -3378,6 +3395,24 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
         log_file.parent.mkdir(parents=True, exist_ok=True)
         with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(execution_log, f, indent=2)
+
+        # GAP-007: Validate execution-log.json after save (UDS compliance)
+        try:
+            from papertrail.validators.execution_log import ExecutionLogValidator
+            validator = ExecutionLogValidator()
+            result = validator.validate_file(str(log_file))
+
+            if not result['valid']:
+                logger.warning(f"execution-log.json validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                logger.info(f"execution-log.json validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            logger.warning("ExecutionLogValidator not available - skipping validation")
+        except Exception as val_error:
+            logger.warning(f"Execution log validation error: {val_error} - continuing")
+
         logger.info(f"Execution logged to: {log_file}")
     except Exception as e:
         # Non-fatal: log warning and continue

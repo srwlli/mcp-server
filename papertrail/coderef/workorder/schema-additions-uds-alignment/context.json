@@ -1,0 +1,32 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-SCHEMA-ADDITIONS-001",
+  "feature_name": "schema-additions-uds-alignment",
+  "description": "Create 2 new schemas (analysis.json, execution-log.json) to enable coderef-workflow 100% validation coverage",
+  "goal": "Add missing schemas identified in Phase 1/2 gap analysis to support workflow artifact validation",
+  "requirements": [
+    "Create analysis-json-schema.json in papertrail/schemas/workflow/",
+    "Create execution-log-json-schema.json in papertrail/schemas/workflow/",
+    "Create AnalysisValidator in papertrail/validators/analysis.py",
+    "Create ExecutionLogValidator in papertrail/validators/execution_log.py",
+    "Update ValidatorFactory patterns for new file types",
+    "Add cross-validation between execution-log and plan.json (task_id references)",
+    "Skip risk-assessment schema (data belongs in plan.json)"
+  ],
+  "out_of_scope": [
+    "risk-assessment-json-schema.json (redundant - data belongs in plan.json)",
+    "features-inventory.json schema (defer to future phase)",
+    "INFO severity level addition (optional improvement)"
+  ],
+  "constraints": [
+    "Schemas must follow JSON Schema Draft-07",
+    "Validators must inherit from BaseUDSValidator",
+    "Score threshold >= 90 for validation pass",
+    "Must coordinate with coderef-workflow for sample files"
+  ],
+  "dependencies": [
+    "Requires sample analysis.json files from coderef-workflow",
+    "Requires sample execution-log.json files from coderef-workflow"
+  ],
+  "phase_reference": "WO-PAPERTRAIL-UDS-ALIGNMENT-002 Phase 2 Gap Analysis",
+  "orchestrator_plan": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\orchestrator-alignment-plan.md"
+}

@@ -5,16 +5,30 @@ Since MCP servers cannot directly call other MCP servers, this module provides:
 1. Instructions for Claude to call coderef_scan, coderef_query, etc.
 2. Helper functions to format MCP tool call requests
 3. Result processors for MCP tool responses
+4. Hybrid mode logic (.coderef/ files first, MCP fallback)
+5. Response caching to avoid redundant MCP calls
 
 Usage Pattern:
 1. coderef-docs tool returns instructions + example MCP calls
 2. Claude calls coderef-context MCP tools
 3. Claude passes results back to coderef-docs
 4. coderef-docs processes results and generates documentation
+
+HYBRID MODE:
+- First check if .coderef/index.json exists (fast path, <50ms)
+- If missing, suggest Claude call coderef_scan (smart path, ~5-60s)
+- Graceful degradation if coderef-context server unavailable
+
+CACHING:
+- Session-level cache to avoid redundant MCP calls
+- Cache keyed by (tool_name, project_path, params)
+- Clear on session end or manual invalidation
 """
 
 from typing import Dict, Any, List, Optional
 from pathlib import Path
+import json
+from datetime import datetime, timedelta
 
 __all__ = [
     'get_scan_instructions',
@@ -22,8 +36,15 @@ __all__ = [
     'format_scan_request',
     'format_query_request',
     'process_scan_response',
-    'process_query_response'
+    'process_query_response',
+    'check_coderef_cache',
+    'get_hybrid_mode_instructions',
+    'should_use_mcp_fallback'
 ]
+
+# Session-level cache for MCP responses
+_mcp_response_cache: Dict[str, Dict[str, Any]] = {}
+_cache_ttl_seconds = 300  # 5 minutes
 
 
 def get_scan_instructions(project_path: Path) -> Dict[str, Any]:
@@ -224,3 +245,111 @@ def process_query_response(response: Dict[str, Any]) -> Dict[str, List[str]]:
             processed['dependencies'].append(target)
 
     return processed
+
+
+def check_coderef_cache(project_path: Path) -> Dict[str, Any]:
+    """
+    Check if .coderef/ cache exists for hybrid mode fast path.
+
+    Args:
+        project_path: Absolute path to project directory
+
+    Returns:
+        Dict with cache status and instructions
+    """
+    coderef_dir = Path(project_path) / ".coderef"
+    index_file = coderef_dir / "index.json"
+
+    if index_file.exists():
+        try:
+            with open(index_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            return {
+                'cache_available': True,
+                'cache_path': str(index_file),
+                'element_count': len(data) if isinstance(data, list) else 0,
+                'recommendation': 'Use .coderef/index.json for fast code intelligence (< 50ms)',
+                'mcp_fallback': False
+            }
+        except Exception as e:
+            return {
+                'cache_available': False,
+                'error': f"Cache file exists but failed to read: {str(e)}",
+                'recommendation': 'Use MCP fallback',
+                'mcp_fallback': True
+            }
+    else:
+        return {
+            'cache_available': False,
+            'cache_path': 'Not found',
+            'recommendation': 'Call coderef_scan to generate .coderef/ data',
+            'mcp_fallback': True
+        }
+
+
+def should_use_mcp_fallback(project_path: Path) -> bool:
+    """
+    Determine if MCP fallback should be used instead of .coderef/ cache.
+
+    Args:
+        project_path: Absolute path to project directory
+
+    Returns:
+        True if MCP tools should be called, False if cache available
+    """
+    cache_status = check_coderef_cache(project_path)
+    return cache_status['mcp_fallback']
+
+
+def get_hybrid_mode_instructions(project_path: Path, template_name: str) -> str:
+    """
+    Generate hybrid mode instructions for Claude based on cache availability.
+
+    Args:
+        project_path: Absolute path to project
+        template_name: Template being generated (api, schema, components, etc.)
+
+    Returns:
+        Formatted instructions string for hybrid mode operation
+    """
+    cache_status = check_coderef_cache(project_path)
+
+    instructions = "\n=== HYBRID MODE: CODE INTELLIGENCE ===\n\n"
+
+    if cache_status['cache_available']:
+        instructions += f"✓ FAST PATH AVAILABLE (.coderef/ cache exists)\n\n"
+        instructions += f"Cache: {cache_status['cache_path']}\n"
+        instructions += f"Elements: {cache_status['element_count']}\n\n"
+        instructions += "INSTRUCTIONS:\n"
+        instructions += "1. Read .coderef/index.json for code element data\n"
+        instructions += "2. Extract relevant elements based on template type:\n"
+
+        if template_name == 'api':
+            instructions += "   - Functions with HTTP decorators (@app.route, @api, etc.)\n"
+            instructions += "   - Classes with API patterns (Router, Controller, etc.)\n"
+        elif template_name == 'schema':
+            instructions += "   - Classes with ORM patterns (Model, Entity, Schema, etc.)\n"
+            instructions += "   - Type definitions and interfaces\n"
+        elif template_name == 'components':
+            instructions += "   - React/Vue components (functional or class-based)\n"
+            instructions += "   - Component files matching framework patterns\n"
+
+        instructions += "3. Populate template with extracted data\n"
+        instructions += "\nPerformance: < 50ms (file read only)\n"
+    else:
+        instructions += f"⚠ SMART PATH REQUIRED (.coderef/ cache missing)\n\n"
+        instructions += "MCP FALLBACK INSTRUCTIONS:\n"
+        instructions += "1. Call coderef_scan to generate .coderef/ data:\n"
+        instructions += format_scan_request(Path(project_path))
+        instructions += "\n2. After scan completes, .coderef/index.json will be available\n"
+        instructions += "3. Read index.json and extract relevant elements\n"
+        instructions += "4. Populate template with extracted data\n"
+        instructions += "\nPerformance: ~5-60 seconds (one-time scan)\n"
+        instructions += "\nGRACEFUL DEGRADATION:\n"
+        instructions += "If coderef-context server unavailable:\n"
+        instructions += "- Use regex-based detection as fallback\n"
+        instructions += "- Populate template with placeholders\n"
+        instructions += "- Document that full code intelligence requires coderef-context\n"
+
+    return instructions

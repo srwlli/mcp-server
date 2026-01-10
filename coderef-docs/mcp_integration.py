@@ -1,50 +1,48 @@
 """
-MCP Integration Helper - Provides guidance for Claude to call coderef-context MCP tools.
+.coderef/ Integration Helper - Leverages pre-generated code intelligence files.
 
-Since MCP servers cannot directly call other MCP servers, this module provides:
-1. Instructions for Claude to call coderef_scan, coderef_query, etc.
-2. Helper functions to format MCP tool call requests
-3. Result processors for MCP tool responses
-4. Hybrid mode logic (.coderef/ files first, MCP fallback)
-5. Response caching to avoid redundant MCP calls
+NO SCANNING during doc generation - all .coderef/ files must already exist.
+If files are missing, warn the user to run scanning first.
 
-Usage Pattern:
-1. coderef-docs tool returns instructions + example MCP calls
-2. Claude calls coderef-context MCP tools
-3. Claude passes results back to coderef-docs
-4. coderef-docs processes results and generates documentation
+Available .coderef/ Resources:
+- index.json - All code elements (functions, classes, components)
+- context.json - Structured project overview
+- context.md - Human-readable project summary
+- graph.json - Full dependency graph
+- reports/patterns.json - Code patterns and conventions
+- reports/coverage.json - Test coverage data
+- reports/drift.json - Index drift detection
+- reports/validation.json - CodeRef validation results
+- diagrams/ - Dependency, call, import diagrams
+- exports/ - Various export formats
 
-HYBRID MODE:
-- First check if .coderef/index.json exists (fast path, <50ms)
-- If missing, suggest Claude call coderef_scan (smart path, ~5-60s)
-- Graceful degradation if coderef-context server unavailable
+Template-Specific Context Mapping:
+- README: context.md, patterns.json (project overview + conventions)
+- ARCHITECTURE: context.json, graph.json, diagrams/ (structure + dependencies)
+- API: index.json (filter for endpoints/routes), patterns.json
+- SCHEMA: index.json (filter for models/entities), context.json
+- COMPONENTS: index.json (filter for UI components), patterns.json
 
-CACHING:
-- Session-level cache to avoid redundant MCP calls
-- Cache keyed by (tool_name, project_path, params)
-- Clear on session end or manual invalidation
+Performance: < 50ms per file read (no MCP calls, no scanning)
 """
 
 from typing import Dict, Any, List, Optional
 from pathlib import Path
 import json
-from datetime import datetime, timedelta
 
 __all__ = [
+    'check_coderef_resources',
+    'get_template_context_files',
+    'get_context_instructions',
+    'format_missing_resources_warning',
+    # Legacy exports (kept for backward compatibility)
     'get_scan_instructions',
     'get_query_instructions',
     'format_scan_request',
     'format_query_request',
     'process_scan_response',
-    'process_query_response',
-    'check_coderef_cache',
-    'get_hybrid_mode_instructions',
-    'should_use_mcp_fallback'
+    'process_query_response'
 ]
-
-# Session-level cache for MCP responses
-_mcp_response_cache: Dict[str, Dict[str, Any]] = {}
-_cache_ttl_seconds = 300  # 5 minutes
 
 
 def get_scan_instructions(project_path: Path) -> Dict[str, Any]:
@@ -247,109 +245,187 @@ def process_query_response(response: Dict[str, Any]) -> Dict[str, List[str]]:
     return processed
 
 
-def check_coderef_cache(project_path: Path) -> Dict[str, Any]:
+def check_coderef_resources(project_path: Path) -> Dict[str, Any]:
     """
-    Check if .coderef/ cache exists for hybrid mode fast path.
+    Check if .coderef/ resources exist (NO scanning fallback).
 
     Args:
         project_path: Absolute path to project directory
 
     Returns:
-        Dict with cache status and instructions
+        Dict with resource status and available files
     """
     coderef_dir = Path(project_path) / ".coderef"
-    index_file = coderef_dir / "index.json"
 
-    if index_file.exists():
-        try:
-            with open(index_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-
-            return {
-                'cache_available': True,
-                'cache_path': str(index_file),
-                'element_count': len(data) if isinstance(data, list) else 0,
-                'recommendation': 'Use .coderef/index.json for fast code intelligence (< 50ms)',
-                'mcp_fallback': False
-            }
-        except Exception as e:
-            return {
-                'cache_available': False,
-                'error': f"Cache file exists but failed to read: {str(e)}",
-                'recommendation': 'Use MCP fallback',
-                'mcp_fallback': True
-            }
-    else:
+    if not coderef_dir.exists():
         return {
-            'cache_available': False,
-            'cache_path': 'Not found',
-            'recommendation': 'Call coderef_scan to generate .coderef/ data',
-            'mcp_fallback': True
+            'resources_available': False,
+            'missing': ['.coderef/ directory'],
+            'warning': 'Run coderef_scan to generate code intelligence files first'
         }
 
+    # Check for key files
+    key_files = {
+        'index.json': coderef_dir / "index.json",
+        'context.md': coderef_dir / "context.md",
+        'context.json': coderef_dir / "context.json",
+        'graph.json': coderef_dir / "graph.json",
+        'patterns.json': coderef_dir / "reports" / "patterns.json"
+    }
 
-def should_use_mcp_fallback(project_path: Path) -> bool:
+    available = {}
+    missing = []
+
+    for name, path in key_files.items():
+        if path.exists():
+            try:
+                if path.suffix == '.json':
+                    with open(path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    available[name] = {
+                        'path': str(path),
+                        'size': len(data) if isinstance(data, list) else 'N/A'
+                    }
+                else:
+                    available[name] = {'path': str(path)}
+            except Exception as e:
+                missing.append(f"{name} (corrupted: {str(e)})")
+        else:
+            missing.append(name)
+
+    return {
+        'resources_available': len(available) > 0,
+        'available': available,
+        'missing': missing,
+        'coderef_dir': str(coderef_dir)
+    }
+
+
+def get_template_context_files(template_name: str) -> List[str]:
     """
-    Determine if MCP fallback should be used instead of .coderef/ cache.
+    Get list of .coderef/ files needed for specific template.
 
     Args:
-        project_path: Absolute path to project directory
+        template_name: Template being generated
 
     Returns:
-        True if MCP tools should be called, False if cache available
+        List of .coderef/ filenames to read
     """
-    cache_status = check_coderef_cache(project_path)
-    return cache_status['mcp_fallback']
+    mapping = {
+        'readme': ['context.md', 'patterns.json'],
+        'architecture': ['context.json', 'graph.json', 'diagrams/'],
+        'api': ['index.json', 'patterns.json'],
+        'schema': ['index.json', 'context.json'],
+        'components': ['index.json', 'patterns.json']
+    }
+
+    return mapping.get(template_name, ['index.json'])
 
 
-def get_hybrid_mode_instructions(project_path: Path, template_name: str) -> str:
+def get_context_instructions(project_path: Path, template_name: str) -> str:
     """
-    Generate hybrid mode instructions for Claude based on cache availability.
+    Generate instructions for using .coderef/ files to populate template.
+
+    NO scanning fallback - files must exist or user gets warning.
 
     Args:
         project_path: Absolute path to project
-        template_name: Template being generated (api, schema, components, etc.)
+        template_name: Template being generated
 
     Returns:
-        Formatted instructions string for hybrid mode operation
+        Formatted instructions string
     """
-    cache_status = check_coderef_cache(project_path)
+    resources = check_coderef_resources(project_path)
+    context_files = get_template_context_files(template_name)
 
-    instructions = "\n=== HYBRID MODE: CODE INTELLIGENCE ===\n\n"
+    instructions = "\n=== CODE INTELLIGENCE (.coderef/) ===\n\n"
 
-    if cache_status['cache_available']:
-        instructions += f"✓ FAST PATH AVAILABLE (.coderef/ cache exists)\n\n"
-        instructions += f"Cache: {cache_status['cache_path']}\n"
-        instructions += f"Elements: {cache_status['element_count']}\n\n"
-        instructions += "INSTRUCTIONS:\n"
-        instructions += "1. Read .coderef/index.json for code element data\n"
-        instructions += "2. Extract relevant elements based on template type:\n"
+    if not resources['resources_available']:
+        instructions += "⚠ WARNING: .coderef/ resources not found!\n\n"
+        instructions += f"Missing: {', '.join(resources['missing'])}\n\n"
+        instructions += "ACTION REQUIRED:\n"
+        instructions += "Run coderef_scan to generate code intelligence files:\n"
+        instructions += "```\n"
+        instructions += f"mcp__coderef_context__coderef_scan(\n"
+        instructions += f"    project_path=\"{project_path}\",\n"
+        instructions += f"    languages=['ts', 'tsx', 'js', 'jsx', 'py'],\n"
+        instructions += f"    use_ast=True\n"
+        instructions += f")\n"
+        instructions += "```\n\n"
+        instructions += "For now, use regex-based detection and placeholders.\n"
+        return instructions
 
-        if template_name == 'api':
-            instructions += "   - Functions with HTTP decorators (@app.route, @api, etc.)\n"
-            instructions += "   - Classes with API patterns (Router, Controller, etc.)\n"
-        elif template_name == 'schema':
-            instructions += "   - Classes with ORM patterns (Model, Entity, Schema, etc.)\n"
-            instructions += "   - Type definitions and interfaces\n"
-        elif template_name == 'components':
-            instructions += "   - React/Vue components (functional or class-based)\n"
-            instructions += "   - Component files matching framework patterns\n"
+    # Resources available
+    instructions += f"✓ .coderef/ resources available\n"
+    instructions += f"Location: {resources['coderef_dir']}\n\n"
 
-        instructions += "3. Populate template with extracted data\n"
-        instructions += "\nPerformance: < 50ms (file read only)\n"
+    instructions += f"CONTEXT FILES FOR {template_name.upper()}:\n"
+    for file in context_files:
+        if file.endswith('/'):
+            # Directory
+            instructions += f"- {file} (diagram files)\n"
+        elif file in resources['available']:
+            info = resources['available'][file]
+            instructions += f"- {file}"
+            if 'size' in info:
+                instructions += f" ({info['size']} elements)" if isinstance(info['size'], int) else f" ({info['size']})"
+            instructions += f"\n"
+        else:
+            instructions += f"- {file} (⚠ not found, optional)\n"
+
+    instructions += "\nINSTRUCTIONS:\n"
+    instructions += "1. Read the files listed above from .coderef/ directory\n"
+
+    # Template-specific guidance
+    if template_name == 'api':
+        instructions += "2. From index.json, extract:\n"
+        instructions += "   - Functions with HTTP decorators (@app.route, @api, etc.)\n"
+        instructions += "   - Classes with API patterns (Router, Controller, etc.)\n"
+        instructions += "3. From patterns.json, extract API conventions and patterns\n"
+    elif template_name == 'schema':
+        instructions += "2. From index.json, extract:\n"
+        instructions += "   - Classes with ORM patterns (Model, Entity, Schema, etc.)\n"
+        instructions += "   - Type definitions and interfaces\n"
+        instructions += "3. From context.json, extract entity relationships\n"
+    elif template_name == 'components':
+        instructions += "2. From index.json, extract:\n"
+        instructions += "   - React/Vue components (functional or class-based)\n"
+        instructions += "   - Component files matching framework patterns\n"
+        instructions += "3. From patterns.json, extract component conventions\n"
+    elif template_name == 'readme':
+        instructions += "2. From context.md, extract project overview and summary\n"
+        instructions += "3. From patterns.json, extract key conventions and standards\n"
+    elif template_name == 'architecture':
+        instructions += "2. From context.json, extract system structure\n"
+        instructions += "3. From graph.json, extract dependency relationships\n"
+        instructions += "4. Reference diagrams/ for visual representations\n"
     else:
-        instructions += f"⚠ SMART PATH REQUIRED (.coderef/ cache missing)\n\n"
-        instructions += "MCP FALLBACK INSTRUCTIONS:\n"
-        instructions += "1. Call coderef_scan to generate .coderef/ data:\n"
-        instructions += format_scan_request(Path(project_path))
-        instructions += "\n2. After scan completes, .coderef/index.json will be available\n"
-        instructions += "3. Read index.json and extract relevant elements\n"
-        instructions += "4. Populate template with extracted data\n"
-        instructions += "\nPerformance: ~5-60 seconds (one-time scan)\n"
-        instructions += "\nGRACEFUL DEGRADATION:\n"
-        instructions += "If coderef-context server unavailable:\n"
-        instructions += "- Use regex-based detection as fallback\n"
-        instructions += "- Populate template with placeholders\n"
-        instructions += "- Document that full code intelligence requires coderef-context\n"
+        instructions += "2. Extract relevant data based on template purpose\n"
+
+    instructions += "\nPerformance: < 50ms per file (no MCP calls)\n"
 
     return instructions
+
+
+def format_missing_resources_warning(missing: List[str]) -> str:
+    """
+    Format a warning message for missing .coderef/ resources.
+
+    Args:
+        missing: List of missing filenames
+
+    Returns:
+        Formatted warning string
+    """
+    warning = "\n⚠ WARNING: Missing .coderef/ Resources\n\n"
+    warning += "The following files are required but not found:\n"
+    for item in missing:
+        warning += f"  - {item}\n"
+    warning += "\nACTION REQUIRED:\n"
+    warning += "Run coderef_scan to generate these files before generating documentation.\n\n"
+    warning += "For now, documentation will use:\n"
+    warning += "- Regex-based detection (limited accuracy)\n"
+    warning += "- Placeholders for code intelligence\n"
+    warning += "\nFor full code intelligence, run scanning first.\n"
+
+    return warning

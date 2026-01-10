@@ -38,6 +38,75 @@ task: CREATE|UPDATE|REVIEW|DOCUMENT|CONSOLIDATE
 - `DOCUMENT` - Documenting existing code/features
 - `CONSOLIDATE` - Merging multiple documents
 
+
+### Universal Documentation Standards (UDS) - 3-Tier Hierarchy
+
+**Effective:** 2026-01-10
+**Implementation:** WO-UDS-SYSTEM-001
+
+All documentation follows a 3-tier metadata hierarchy:
+
+#### Tier 1: Base UDS (Required for ALL markdown)
+```yaml
+---
+agent: {agent-name}
+date: YYYY-MM-DD
+task: CREATE|UPDATE|REVIEW|DOCUMENT|CONSOLIDATE|MIGRATE|ARCHIVE
+---
+```
+
+#### Tier 2: Category Extensions (Required for specific doc types)
+
+**Foundation Docs** (README, ARCHITECTURE, API, SCHEMA, COMPONENTS):
+- `workorder_id` - Workorder tracking ID
+- `generated_by` - MCP server (must start with "coderef-docs")
+- `feature_id` - Feature identifier (kebab-case)
+- `doc_type` - Document type enum
+
+**Workorder Docs** (plan.json, DELIVERABLES.md, context.json):
+- `workorder_id` - Workorder tracking ID
+- `generated_by` - MCP server (must start with "coderef-workflow")
+- `feature_id` - Feature identifier
+- `doc_type` - Document type enum
+- `status` - Workorder status enum
+
+**System Docs** (CLAUDE.md, SESSION-INDEX.md):
+- `project` - Project name
+- `version` - System version
+- `status` - System status
+
+**Standards Docs** (global-documentation-standards.md, resource-sheet-standards.md):
+- `scope` - Scope of standards
+- `version` - Standards version
+- `enforcement` - Enforcement method
+
+#### Tier 3: Type-Specific Fields (Optional)
+- `title` - Document title
+- `version` - Document version (semver)
+- `timestamp` - ISO 8601 timestamp
+- `status` - Document status
+- Category-specific fields as defined in schemas
+
+### Timestamp Standards
+
+**Policy:** ALL timestamp generation MUST use `coderef-docs/utils/timestamp.py`
+
+**Formats:**
+- `date` field: YYYY-MM-DD format (from `get_date()`)
+- `timestamp` field: ISO 8601 with timezone (from `get_timestamp()`)
+- Plan.json timestamps: ISO 8601 UTC (from `get_iso_timestamp()`)
+
+**Example:**
+```python
+from utils.timestamp import get_date, get_timestamp
+
+# In YAML frontmatter
+date: {get_date()}          # "2026-01-10"
+timestamp: {get_timestamp()}  # "2026-01-10T14:30:45Z"
+```
+
+**Rationale:** Ensures consistency across all generated documentation and schema validation compliance.
+
 ### Optional Fields
 
 Additional fields may be included based on document type:

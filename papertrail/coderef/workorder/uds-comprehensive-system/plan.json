@@ -1,0 +1,536 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "uds-comprehensive-system",
+    "workorder_id": "WO-UDS-SYSTEM-001",
+    "version": "1.0.0",
+    "status": "draft",
+    "generated_by": "Claude Code (Manual Design)",
+    "has_context": true,
+    "has_analysis": true,
+    "created_date": "2026-01-10",
+    "description": "Comprehensive Universal Documentation Standards (UDS) system for all 30+ document types across CodeRef ecosystem with 3-tier hierarchy, schema inheritance, and Python validator framework"
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {
+      "analysis_completed": true,
+      "context_gathered": true,
+      "reference_documents": [
+        "coderef/user/DOCUMENT-TYPE-INVENTORY.md - 30+ document types identified across 9 categories",
+        "coderef/user/FRONTMATTER-STANDARDS-ANALYSIS.md - Current validation coverage analysis",
+        "standards/documentation/global-documentation-standards.md - Existing global standards",
+        "schemas/documentation/resource-sheet-metadata-schema.json - RSMS v2.0 reference",
+        "papertrail/validator.py - UDSValidator base class architecture"
+      ],
+      "key_findings": [
+        "Current validation coverage: Only 2/30+ document types validated (resource sheets, plan.json)",
+        "Foundation docs have UDS frontmatter but no validator",
+        "25+ document types have no frontmatter validation at all",
+        "Two metadata systems exist (RSMS for architectural docs, UDS for implementation docs) without clear boundaries",
+        "Validators are inconsistent (PowerShell vs Python)"
+      ]
+    },
+    "1_executive_summary": {
+      "purpose": "Create comprehensive Universal Documentation Standards (UDS) system covering all 30+ document types across CodeRef ecosystem with 3-tier hierarchy (Base UDS → Category Extensions → Type-Specific), 9 new JSON schemas with inheritance, 9 Python validators extending UDSValidator, and complete MCP server integration",
+      "value_proposition": "Increase validation coverage from 6% (2/30 types) to 100%, ensure complete traceability for all documents, eliminate inconsistent metadata systems, and provide automated quality scoring for documentation health",
+      "real_world_analogy": "Similar to establishing building codes for a city - create base safety requirements (Base UDS) that all buildings must meet, plus specialized codes (Category Extensions) for specific building types (residential, commercial, industrial), enforced by certified inspectors (validators) with standardized checklists (schemas)",
+      "use_case": "Agent generates foundation doc → coderef-docs injects UDS frontmatter → FoundationDocValidator validates against schema → Returns ValidationResult with 0-100 score → Doc archived with complete traceability",
+      "output": "9 JSON schemas + 9 Python validators + MCP integration code + 6-phase migration plan covering all 30+ document types"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "complexity": "high (9 schemas, 9 validators, 30+ document types, 6-phase migration)",
+      "scope": "Affects all 5 MCP servers (coderef-docs, coderef-workflow, coderef-context, coderef-personas, coderef-testing) + papertrail",
+      "file_system_risk": "low (new files only, no breaking changes to existing schemas)",
+      "dependencies": [
+        "Must maintain backward compatibility with RSMS v2.0 (no changes to resource-sheet-metadata-schema.json)",
+        "Must maintain backward compatibility with existing plan.json schema",
+        "Must maintain backward compatibility with communication.json schema",
+        "coderef-docs must adopt UDS validators for foundation doc generation",
+        "coderef-workflow must adopt UDS validators for workorder doc validation"
+      ],
+      "performance_concerns": [
+        "Validator execution time for large documentation sets (100+ files)",
+        "Schema validation overhead during doc generation",
+        "Mitigation: Cache compiled schemas, parallelize validation where possible"
+      ],
+      "security_considerations": [
+        "YAML frontmatter injection attacks (malicious metadata)",
+        "Path traversal in file references (related_files, related_docs)",
+        "Mitigation: Strict schema validation, path normalization, whitelist allowed fields"
+      ],
+      "breaking_changes": "NONE - All existing schemas (RSMS v2.0, plan.json, communication.json) remain unchanged. New validators extend existing base classes. Phased rollout allows gradual adoption."
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "papertrail/validators/ - Add 9 new validator modules",
+        "papertrail/schemas/documentation/ - Add 9 new schemas",
+        "papertrail/validator.py - Extend UDSValidator base class (if needed)",
+        "coderef-docs/generators/ - Integrate foundation doc validators",
+        "coderef-workflow/generators/ - Integrate workorder doc validators"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "papertrail.validator.UDSValidator - Base class for all validators",
+          "papertrail.validator.ValidationResult - Return type",
+          "papertrail.uds.UDSHeader - Data structure for UDS frontmatter",
+          "schemas/documentation/resource-sheet-metadata-schema.json - RSMS v2.0 reference"
+        ],
+        "existing_external": [
+          "jsonschema - JSON Schema validation library",
+          "pyyaml - YAML parsing for frontmatter extraction"
+        ],
+        "new_external": [],
+        "new_internal": [
+          "9 new validator classes (FoundationDocValidator, WorkorderDocValidator, etc.)",
+          "ValidatorFactory class for auto-detection",
+          "9 new JSON schemas with inheritance pattern"
+        ]
+      },
+      "architecture_context": "Follows existing Papertrail patterns: Schema-based validation, UDSValidator inheritance, ValidationResult return type, JSON Schema Draft-07 with allOf inheritance, MCP tool exposure for programmatic access"
+    },
+    "4_key_features": {
+      "primary_features": [
+        "3-tier UDS hierarchy: Base UDS (agent, date, task) → 8 Category Extensions → Type-Specific Fields",
+        "9 JSON schemas with inheritance pattern using allOf and $ref to base-frontmatter-schema.json",
+        "9 Python validator classes extending UDSValidator base class with consistent ValidationResult return type",
+        "ValidatorFactory with auto-detection based on file path patterns and frontmatter inspection",
+        "Complete coverage of all 30+ document types across 9 categories"
+      ],
+      "secondary_features": [
+        "MCP server integration code for coderef-docs and coderef-workflow",
+        "Backwards compatibility with RSMS v2.0, plan.json, communication.json schemas",
+        "Health scoring (0-100) for all validated documents",
+        "Auto-fix suggestions for common frontmatter errors",
+        "Batch validation support for entire directory trees"
+      ],
+      "edge_case_handling": [
+        "Missing frontmatter: Return ValidationResult with valid=False, clear error message",
+        "Invalid YAML syntax: Catch parsing errors, provide line number and syntax hints",
+        "Unknown doc_type: Warn but allow if base UDS fields present",
+        "Circular references: Detect in related_files/related_docs, warn if found",
+        "Legacy docs without frontmatter: Provide migration helper to inject base UDS"
+      ],
+      "configuration_options": [
+        "Validator strictness levels: strict (all errors fail), lenient (warnings only for non-critical)",
+        "Auto-fix mode: Enable/disable automatic frontmatter corrections",
+        "Schema validation depth: Base only, Category, or Full (type-specific)"
+      ]
+    },
+    "5_task_id_system": {
+      "task_naming_convention": "{CATEGORY}-{SEQUENCE}: {Description}",
+      "categories": {
+        "SCHEMA": "JSON schema creation and validation",
+        "VALIDATOR": "Python validator class implementation",
+        "INTEGRATE": "MCP server integration",
+        "MIGRATE": "Migration of existing documents",
+        "TEST": "Testing and quality assurance",
+        "DOC": "Documentation and guides"
+      },
+      "tasks": [
+        "SCHEMA-001: Create base-frontmatter-schema.json (agent, date, task)",
+        "SCHEMA-002: Create foundation-doc-frontmatter-schema.json (extends base, adds workorder_id, doc_type)",
+        "SCHEMA-003: Create workorder-doc-frontmatter-schema.json (extends base, adds workorder_id, feature_id)",
+        "SCHEMA-004: Create system-doc-frontmatter-schema.json (extends base, adds system-specific fields)",
+        "SCHEMA-005: Create standards-doc-frontmatter-schema.json (extends base, adds standards_version)",
+        "SCHEMA-006: Create user-facing-doc-frontmatter-schema.json (extends base, minimal fields)",
+        "SCHEMA-007: Create migration-doc-frontmatter-schema.json (extends base, adds workorder_id)",
+        "SCHEMA-008: Create infrastructure-doc-frontmatter-schema.json (extends base, adds generated_by)",
+        "SCHEMA-009: Create session-doc-frontmatter-schema.json (extends base, adds session_id)",
+        "VALIDATOR-001: Implement FoundationDocValidator class extending UDSValidator",
+        "VALIDATOR-002: Implement WorkorderDocValidator class extending UDSValidator",
+        "VALIDATOR-003: Implement SystemDocValidator class extending UDSValidator",
+        "VALIDATOR-004: Implement StandardsDocValidator class extending UDSValidator",
+        "VALIDATOR-005: Implement UserFacingDocValidator class extending UDSValidator",
+        "VALIDATOR-006: Implement MigrationDocValidator class extending UDSValidator",
+        "VALIDATOR-007: Implement InfrastructureDocValidator class extending UDSValidator",
+        "VALIDATOR-008: Implement SessionDocValidator class extending UDSValidator",
+        "VALIDATOR-009: Implement ValidatorFactory with auto-detection logic",
+        "INTEGRATE-001: Integrate FoundationDocValidator into coderef-docs generators",
+        "INTEGRATE-002: Integrate WorkorderDocValidator into coderef-workflow generators",
+        "INTEGRATE-003: Create MCP tools for validation (validate_document, check_all_docs)",
+        "MIGRATE-001: Add base UDS frontmatter to all foundation docs (5 types)",
+        "MIGRATE-002: Add base UDS frontmatter to all workorder docs (5 types)",
+        "MIGRATE-003: Add base UDS frontmatter to all system docs (3 types)",
+        "MIGRATE-004: Add base UDS frontmatter to all standards docs (4+ types)",
+        "MIGRATE-005: Add base UDS frontmatter to all infrastructure docs (3+ types)",
+        "TEST-001: Write unit tests for all 9 validators with minimum 90% coverage",
+        "TEST-002: Write integration tests for ValidatorFactory auto-detection",
+        "TEST-003: Write end-to-end tests for MCP tool integration",
+        "TEST-004: Test schema inheritance pattern (base → category → type-specific)",
+        "DOC-001: Update CLAUDE.md with UDS system architecture",
+        "DOC-002: Create UDS-IMPLEMENTATION-GUIDE.md for developers",
+        "DOC-003: Update global-documentation-standards.md with 3-tier hierarchy"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Phase 1: Foundation - Base Schema and Infrastructure (Week 1)",
+          "description": "Create base-frontmatter-schema.json, ValidatorFactory, and testing infrastructure",
+          "tasks": [
+            "SCHEMA-001",
+            "VALIDATOR-009",
+            "TEST-001",
+            "TEST-002"
+          ],
+          "deliverables": [
+            "base-frontmatter-schema.json validated against Draft-07",
+            "ValidatorFactory with auto-detection working",
+            "Test harness for validator development",
+            "CI/CD integration for schema validation"
+          ],
+          "success_criteria": [
+            "Base schema passes jsonschema meta-validation",
+            "ValidatorFactory correctly detects validator type from file path",
+            "All unit tests passing (90+ coverage)"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Phase 2: Foundation Docs (Week 2)",
+          "description": "Implement foundation doc schema, validator, and coderef-docs integration",
+          "tasks": [
+            "SCHEMA-002",
+            "VALIDATOR-001",
+            "INTEGRATE-001",
+            "MIGRATE-001"
+          ],
+          "deliverables": [
+            "foundation-doc-frontmatter-schema.json (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)",
+            "FoundationDocValidator class with POWER framework validation",
+            "coderef-docs integration for automatic validation",
+            "All 5 foundation doc types migrated (README.md, ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md)"
+          ],
+          "success_criteria": [
+            "All foundation docs across 5 MCP servers validated successfully",
+            "coderef-docs auto-injects UDS frontmatter during generation",
+            "Validation score >= 95 for all foundation docs"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Phase 3: Workorder Docs (Week 3)",
+          "description": "Implement workorder doc schema, validator, and coderef-workflow integration",
+          "tasks": [
+            "SCHEMA-003",
+            "VALIDATOR-002",
+            "INTEGRATE-002",
+            "MIGRATE-002"
+          ],
+          "deliverables": [
+            "workorder-doc-frontmatter-schema.json (context.json, analysis.json, DELIVERABLES.md)",
+            "WorkorderDocValidator class with workorder_id traceability",
+            "coderef-workflow integration for plan.json → DELIVERABLES.md validation",
+            "All 5 workorder doc types migrated"
+          ],
+          "success_criteria": [
+            "All active workorders validated successfully",
+            "coderef-workflow enforces UDS compliance during /create-workorder",
+            "Validation score >= 90 for all workorder docs"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Phase 4: System & Standards Docs (Week 4)",
+          "description": "Implement system doc and standards doc schemas/validators",
+          "tasks": [
+            "SCHEMA-004",
+            "SCHEMA-005",
+            "VALIDATOR-003",
+            "VALIDATOR-004",
+            "MIGRATE-003",
+            "MIGRATE-004"
+          ],
+          "deliverables": [
+            "system-doc-frontmatter-schema.json (CLAUDE.md, SESSION-INDEX.md)",
+            "standards-doc-frontmatter-schema.json (global-standards, resource-sheet-standards)",
+            "SystemDocValidator and StandardsDocValidator classes",
+            "All 3 system docs and 4+ standards docs migrated"
+          ],
+          "success_criteria": [
+            "All CLAUDE.md files across ecosystem validated",
+            "Standards docs follow their own standards (no irony)",
+            "Validation score >= 85 for system/standards docs"
+          ]
+        },
+        {
+          "phase": 5,
+          "name": "Phase 5: User-Facing, Migration, Infrastructure Docs (Week 5)",
+          "description": "Implement remaining validators for lower-priority doc types",
+          "tasks": [
+            "SCHEMA-006",
+            "SCHEMA-007",
+            "SCHEMA-008",
+            "SCHEMA-009",
+            "VALIDATOR-005",
+            "VALIDATOR-006",
+            "VALIDATOR-007",
+            "VALIDATOR-008",
+            "MIGRATE-005"
+          ],
+          "deliverables": [
+            "4 remaining schemas (user-facing, migration, infrastructure, session)",
+            "4 remaining validators",
+            "All infrastructure docs migrated (FILE-TREE, INVENTORY, INDEX)"
+          ],
+          "success_criteria": [
+            "100% document type coverage (30+ types)",
+            "All validators return consistent ValidationResult objects",
+            "Validation score >= 80 for all doc types"
+          ]
+        },
+        {
+          "phase": 6,
+          "name": "Phase 6: MCP Integration & Enforcement (Week 6)",
+          "description": "Create MCP tools, complete testing, and enable enforcement",
+          "tasks": [
+            "INTEGRATE-003",
+            "TEST-003",
+            "TEST-004",
+            "DOC-001",
+            "DOC-002",
+            "DOC-003"
+          ],
+          "deliverables": [
+            "MCP tools: validate_document, check_all_docs, inject_uds_headers",
+            "End-to-end tests for all 9 validators",
+            "Complete documentation (CLAUDE.md, UDS-IMPLEMENTATION-GUIDE.md)",
+            "Pre-commit hooks for automatic validation"
+          ],
+          "success_criteria": [
+            "All MCP tools functional in coderef-docs and coderef-workflow",
+            "100% test coverage for critical validation paths",
+            "Documentation complete and validated",
+            "Zero validation failures across ecosystem"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test each validator class in isolation with valid/invalid frontmatter samples",
+        "Test schema validation for all required fields, enums, formats",
+        "Test edge cases: missing frontmatter, invalid YAML, unknown doc_type, circular references",
+        "Test ValidatorFactory auto-detection with various file paths and frontmatter combinations",
+        "Achieve minimum 90% code coverage for all validator modules"
+      ],
+      "integration_tests": [
+        "Test schema inheritance pattern (base → category → type-specific) using allOf",
+        "Test coderef-docs integration: generate foundation doc → validate → assert score >= 95",
+        "Test coderef-workflow integration: create workorder → validate DELIVERABLES.md → assert score >= 90",
+        "Test batch validation across entire directory tree (100+ files)",
+        "Test MCP tool exposure: call validate_document via MCP → assert ValidationResult returned"
+      ],
+      "end_to_end_tests": [
+        "Full feature lifecycle: /create-workorder → implement → /update-deliverables → validate all docs → assert 100% compliance",
+        "Multi-agent session: create communication.json → validate → assign tasks → validate deliverables → assert traceability",
+        "Foundation doc generation: trigger coderef-docs → generate 5 doc types → validate all → assert POWER framework compliance"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Document with missing frontmatter",
+          "setup": "Create markdown file without YAML front matter block",
+          "expected_behavior": "Validator returns ValidationResult(valid=False, errors=['Missing YAML frontmatter'])",
+          "verification": "Assert errors list contains expected message",
+          "error_handling": "Provide migration helper suggestion in warnings"
+        },
+        {
+          "scenario": "Document with invalid YAML syntax",
+          "setup": "Create file with malformed YAML (unclosed quotes, wrong indentation)",
+          "expected_behavior": "YAML parser raises exception, validator catches and returns clear error",
+          "verification": "Assert error message includes line number and syntax hint",
+          "error_handling": "yaml.YAMLError → ValidationError with context"
+        },
+        {
+          "scenario": "Document with unknown doc_type",
+          "setup": "Foundation doc with doc_type: 'unknown'",
+          "expected_behavior": "Schema validation fails on enum constraint",
+          "verification": "Assert error indicates valid doc_type values",
+          "error_handling": "Suggest closest match from valid enum values"
+        },
+        {
+          "scenario": "Document with circular file references",
+          "setup": "Resource sheet A references B, B references A in related_docs",
+          "expected_behavior": "Validator detects cycle, issues warning but doesn't fail",
+          "verification": "Assert warnings list contains circular reference message",
+          "error_handling": "Warning only, not critical error"
+        },
+        {
+          "scenario": "Legacy document without any UDS fields",
+          "setup": "Old markdown file from before UDS system",
+          "expected_behavior": "Validator fails validation, provides migration script",
+          "verification": "Assert migration suggestion in warnings",
+          "error_handling": "ValidationResult includes suggested frontmatter template"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Complete document type coverage",
+          "metric": "Number of document types with validators",
+          "target": "30+ types (100% coverage across 9 categories)",
+          "validation": "Manual verification against DOCUMENT-TYPE-INVENTORY.md"
+        },
+        {
+          "requirement": "Schema inheritance working correctly",
+          "metric": "All category schemas extend base-frontmatter-schema.json",
+          "target": "9/9 schemas use allOf with $ref to base",
+          "validation": "Schema validation against JSON Schema meta-schema"
+        },
+        {
+          "requirement": "Validator consistency",
+          "metric": "All validators extend UDSValidator and return ValidationResult",
+          "target": "9/9 validators follow pattern",
+          "validation": "Code review + unit tests"
+        },
+        {
+          "requirement": "MCP server integration",
+          "metric": "coderef-docs and coderef-workflow use validators programmatically",
+          "target": "2/2 servers integrated",
+          "validation": "Integration tests + manual testing"
+        },
+        {
+          "requirement": "Backwards compatibility",
+          "metric": "Zero breaking changes to existing schemas",
+          "target": "RSMS v2.0, plan.json, communication.json unchanged",
+          "validation": "Diff existing schemas, assert no modifications"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage for validator modules",
+          "target": ">90%",
+          "validation": "pytest --cov=papertrail/validators"
+        },
+        {
+          "requirement": "Validation accuracy",
+          "metric": "False positive rate for valid documents",
+          "target": "<1% (all valid docs should pass)",
+          "validation": "Test against known-good document corpus"
+        },
+        {
+          "requirement": "Documentation completeness",
+          "metric": "All public classes/methods have docstrings",
+          "target": "100% docstring coverage",
+          "validation": "pydocstyle check"
+        },
+        {
+          "requirement": "Schema correctness",
+          "metric": "All schemas pass JSON Schema meta-validation",
+          "target": "9/9 schemas valid",
+          "validation": "jsonschema.Draft7Validator.check_schema()"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Validation speed",
+          "metric": "Time to validate single document",
+          "target": "<100ms per document",
+          "validation": "Benchmark tests with timeit"
+        },
+        {
+          "requirement": "Batch validation speed",
+          "metric": "Time to validate 100 documents",
+          "target": "<5 seconds total",
+          "validation": "Batch validation benchmark"
+        }
+      ],
+      "migration_requirements": [
+        {
+          "requirement": "Foundation docs migrated",
+          "metric": "Number of foundation docs with base UDS frontmatter",
+          "target": "100% (5 types × 5 MCP servers = 25 files minimum)",
+          "validation": "Run FoundationDocValidator across ecosystem, assert 0 failures"
+        },
+        {
+          "requirement": "Workorder docs migrated",
+          "metric": "Number of active workorders with UDS compliance",
+          "target": "100% of active workorders",
+          "validation": "Run WorkorderDocValidator on coderef/workorder/, assert 0 failures"
+        },
+        {
+          "requirement": "System docs migrated",
+          "metric": "Number of CLAUDE.md files with base UDS",
+          "target": "100% (6 CLAUDE.md files)",
+          "validation": "Run SystemDocValidator, assert 0 failures"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "☐ Review complete plan for gaps or ambiguities",
+        "☐ Verify all requirements are clear and testable",
+        "☐ Set up development environment with jsonschema, pyyaml, pytest",
+        "☐ Create feature branch: git checkout -b feature/uds-comprehensive-system",
+        "☐ Review existing UDSValidator base class architecture"
+      ],
+      "phase_1_foundation": [
+        "☐ SCHEMA-001: Create base-frontmatter-schema.json with agent, date, task",
+        "☐ VALIDATOR-009: Implement ValidatorFactory with auto-detection",
+        "☐ TEST-001: Unit tests for ValidatorFactory (file path patterns, frontmatter inspection)",
+        "☐ TEST-002: Integration tests for schema inheritance",
+        "☐ Verify base schema passes meta-validation",
+        "☐ Verify ValidatorFactory detects correct validator for sample files"
+      ],
+      "phase_2_foundation_docs": [
+        "☐ SCHEMA-002: Create foundation-doc-frontmatter-schema.json extending base",
+        "☐ VALIDATOR-001: Implement FoundationDocValidator class",
+        "☐ INTEGRATE-001: Integrate into coderef-docs generators/doc_generator.py",
+        "☐ MIGRATE-001: Add UDS frontmatter to all foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)",
+        "☐ Verify all foundation docs validate with score >= 95",
+        "☐ Verify coderef-docs auto-validates during generation"
+      ],
+      "phase_3_workorder_docs": [
+        "☐ SCHEMA-003: Create workorder-doc-frontmatter-schema.json extending base",
+        "☐ VALIDATOR-002: Implement WorkorderDocValidator class",
+        "☐ INTEGRATE-002: Integrate into coderef-workflow generators/deliverables_generator.py",
+        "☐ MIGRATE-002: Add UDS frontmatter to context.json, analysis.json, DELIVERABLES.md",
+        "☐ Verify all active workorders validate with score >= 90",
+        "☐ Verify coderef-workflow enforces UDS during /create-workorder"
+      ],
+      "phase_4_system_standards": [
+        "☐ SCHEMA-004: Create system-doc-frontmatter-schema.json",
+        "☐ SCHEMA-005: Create standards-doc-frontmatter-schema.json",
+        "☐ VALIDATOR-003: Implement SystemDocValidator class",
+        "☐ VALIDATOR-004: Implement StandardsDocValidator class",
+        "☐ MIGRATE-003: Add UDS to CLAUDE.md, SESSION-INDEX.md (3 types)",
+        "☐ MIGRATE-004: Add UDS to global-standards, resource-sheet-standards (4+ types)",
+        "☐ Verify all system/standards docs validate with score >= 85"
+      ],
+      "phase_5_remaining_docs": [
+        "☐ SCHEMA-006: Create user-facing-doc-frontmatter-schema.json",
+        "☐ SCHEMA-007: Create migration-doc-frontmatter-schema.json",
+        "☐ SCHEMA-008: Create infrastructure-doc-frontmatter-schema.json",
+        "☐ SCHEMA-009: Create session-doc-frontmatter-schema.json",
+        "☐ VALIDATOR-005: Implement UserFacingDocValidator",
+        "☐ VALIDATOR-006: Implement MigrationDocValidator",
+        "☐ VALIDATOR-007: Implement InfrastructureDocValidator",
+        "☐ VALIDATOR-008: Implement SessionDocValidator",
+        "☐ MIGRATE-005: Add UDS to FILE-TREE, INVENTORY, INDEX (3+ types)",
+        "☐ Verify 100% document type coverage (30+ types)"
+      ],
+      "phase_6_integration_enforcement": [
+        "☐ INTEGRATE-003: Create MCP tools (validate_document, check_all_docs, inject_uds_headers)",
+        "☐ TEST-003: End-to-end tests for MCP tool integration",
+        "☐ TEST-004: Test schema inheritance across all 9 schemas",
+        "☐ DOC-001: Update CLAUDE.md with UDS system architecture section",
+        "☐ DOC-002: Create UDS-IMPLEMENTATION-GUIDE.md for developers",
+        "☐ DOC-003: Update global-documentation-standards.md with 3-tier hierarchy",
+        "☐ Verify all MCP tools functional in coderef-docs and coderef-workflow",
+        "☐ Verify zero validation failures across entire ecosystem"
+      ],
+      "finalization": [
+        "☐ All tests passing (unit + integration + e2e) with >90% coverage",
+        "☐ Code review completed and approved",
+        "☐ Documentation updated and complete (CLAUDE.md, UDS-IMPLEMENTATION-GUIDE.md, standards)",
+        "☐ Changelog entry created with version bump (v2.0.0 - UDS Comprehensive System)",
+        "☐ Final verification: Run validators across all 30+ doc types → assert 100% compliance",
+        "☐ Create DELIVERABLES.md with metrics (schemas created, validators implemented, docs migrated, coverage achieved)",
+        "☐ Archive workorder: /archive-feature uds-comprehensive-system"
+      ]
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "feature_name": "uds-comprehensive-system",
+  "description": "Comprehensive Universal Documentation Standards (UDS) system for all 30+ document types across CodeRef ecosystem. Implements 3-tier hierarchy (Base UDS → Category Extensions → Type-Specific), 9 JSON schemas with inheritance, 9 Python validators extending UDSValidator, and complete MCP server integration for coderef-docs and coderef-workflow.",
+  "goal": "Increase validation coverage from 6% (2/30 types) to 100%, ensure complete traceability for all documents, eliminate inconsistent metadata systems, and provide automated quality scoring for documentation health.",
+  "requirements": [
+    "Create base-frontmatter-schema.json with Base UDS fields (agent, date, task) required for ALL markdown",
+    "Create 8 category-specific schemas extending base schema using JSON Schema allOf inheritance pattern",
+    "Implement 9 Python validator classes extending papertrail.validator.UDSValidator base class",
+    "Implement ValidatorFactory with auto-detection based on file path patterns and frontmatter inspection",
+    "Integrate FoundationDocValidator into coderef-docs generators for automatic UDS frontmatter injection",
+    "Integrate WorkorderDocValidator into coderef-workflow generators for DELIVERABLES.md validation",
+    "Create MCP tools (validate_document, check_all_docs, inject_uds_headers) for agent consumption",
+    "Migrate all 30+ document types to include Base UDS frontmatter minimum",
+    "Maintain 100% backward compatibility with RSMS v2.0, plan.json schema, communication.json schema"
+  ],
+  "out_of_scope": [
+    "Breaking changes to existing schemas (RSMS v2.0, plan.json, communication.json)",
+    "CLI tools for end-users (validators are library modules for MCP servers only)",
+    "Automated migration scripts (migration is manual, phased rollout)",
+    "Real-time validation during document editing (validation is post-generation)",
+    "Custom frontmatter fields beyond defined categories (strict schema enforcement)"
+  ],
+  "constraints": [
+    "Must use JSON Schema Draft-07 for all schemas",
+    "All validators must extend papertrail.validator.UDSValidator base class",
+    "All validators must return papertrail.validator.ValidationResult objects",
+    "Schema inheritance must use allOf with $ref to base-frontmatter-schema.json",
+    "No breaking changes to existing document frontmatter (additive only)",
+    "MCP server integration must be programmatic (no subprocess calls to validators)",
+    "Validation scores must be 0-100 integer range",
+    "All schemas must pass jsonschema.Draft7Validator.check_schema() meta-validation"
+  ],
+  "decisions": {
+    "metadata_hierarchy": "3-tier hierarchy: Base UDS (all docs) → Category Extensions (8 types) → Type-Specific Fields (per doc type)",
+    "schema_inheritance": "JSON Schema allOf pattern with $ref to base-frontmatter-schema.json for consistency",
+    "validator_architecture": "All validators extend UDSValidator, return ValidationResult, use factory pattern for auto-detection",
+    "backwards_compatibility": "Zero breaking changes - RSMS v2.0, plan.json, communication.json unchanged, new validators extend existing",
+    "migration_strategy": "6-phase rollout prioritizing high-value docs first (Foundation → Workorder → System → Standards → User-Facing → Migration)",
+    "mcp_integration": "Validators exposed as Python library modules imported by coderef-docs and coderef-workflow, not CLI tools",
+    "validation_strictness": "Strict schema enforcement with auto-fix suggestions for common errors, but no automatic corrections"
+  },
+  "success_criteria": {
+    "coverage": "100% document type coverage (30+ types across 9 categories)",
+    "validation_accuracy": "All valid documents pass validation (false positive rate <1%)",
+    "performance": "Single document validation <100ms, batch validation of 100 docs <5s",
+    "migration_completeness": "All foundation docs (25+ files), active workorders (100%), system docs (6 files) migrated",
+    "test_coverage": "90%+ code coverage for all validator modules",
+    "backwards_compatibility": "Zero breaking changes verified by diff on existing schemas"
+  },
+  "_metadata": {
+    "workorder_id": "WO-UDS-SYSTEM-001",
+    "workorder_assigned_at": "2026-01-10T06:00:00.000000+00:00",
+    "workorder_assigned_by": "Claude Code (Manual Design)",
+    "related_documents": [
+      "coderef/user/DOCUMENT-TYPE-INVENTORY.md",
+      "coderef/user/FRONTMATTER-STANDARDS-ANALYSIS.md",
+      "standards/documentation/global-documentation-standards.md",
+      "schemas/documentation/resource-sheet-metadata-schema.json"
+    ]
+  },
+  "_uds": {
+    "generated_by": "Claude Code (Manual Design)",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-UDS-SYSTEM-001",
+    "feature_id": "uds-comprehensive-system",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

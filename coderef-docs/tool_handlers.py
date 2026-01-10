@@ -176,6 +176,12 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     result += "2. Claude will populate templates with regex-based detection and .coderef/ data when available\n"
     result += "3. Save each document to its output location as indicated\n"
     result += "4. Each doc builds on previous ones (refs to earlier docs where needed)\n"
+    result += "\n"
+    result += "MCP INTEGRATION (coderef-context):\n"
+    result += "- For better accuracy, call mcp__coderef_context__coderef_scan before generation\n"
+    result += "- Generator will read .coderef/index.json after MCP scan completes\n"
+    result += "- No direct MCP-to-MCP calls (use Claude as orchestrator)\n"
+    result += "- Fallback to regex detection if .coderef/ data unavailable\n"
 
     logger.info(f"Successfully generated foundation docs plan with context injection for: {project_path}")
     return [TextContent(type="text", text=result)]

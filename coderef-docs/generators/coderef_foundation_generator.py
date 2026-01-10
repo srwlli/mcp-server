@@ -290,6 +290,12 @@ class CoderefFoundationGenerator:
         """
         Load .coderef/index.json and graph.json if available.
 
+        MCP Integration Pattern:
+        - This method reads existing .coderef/ data (never generates it)
+        - If data missing, Claude should call mcp__coderef_context__coderef_scan
+        - After MCP tool call, this method reads the newly generated files
+        - No direct MCP-to-MCP calls (not supported by protocol)
+
         Returns:
             Dict with 'elements' and 'graph' if .coderef/ exists, None otherwise.
             Falls back to regex detection when None is returned.
@@ -298,7 +304,11 @@ class CoderefFoundationGenerator:
         graph_path = self.project_path / '.coderef' / 'graph.json'
 
         if not index_path.exists():
-            logger.debug(f"No .coderef/index.json found at {self.project_path}, falling back to regex")
+            logger.info(
+                f"No .coderef/index.json found - using regex fallback. "
+                f"For better accuracy, use mcp__coderef_context__coderef_scan first.",
+                extra={'coderef_missing': True, 'using_fallback': 'regex'}
+            )
             return None
 
         try:

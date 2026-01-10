@@ -1063,6 +1063,28 @@ def update_readme_version(project_path: Path, old_version: str, new_version: str
                 )
 
         readme_path.write_text(content, encoding='utf-8')
+
+        # GAP-010: Validate README.md after update (UDS compliance)
+        try:
+            from papertrail.validators.foundation import FoundationDocValidator
+            validator = FoundationDocValidator()
+            result = validator.validate_file(str(readme_path))
+
+            if not result['valid']:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"README.md update validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"README.md update validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available - skip validation
+        except Exception:
+            pass  # Validation error - continue without validation
+
         return True
 
     except (IOError, UnicodeDecodeError):

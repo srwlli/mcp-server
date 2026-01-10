@@ -44,7 +44,8 @@
       "Bash(coderef patterns:*)",
       "Bash(coderef complexity:*)",
       "Bash(coderef export:*)",
-      "Bash(coderef update-ref:*)"
+      "Bash(coderef update-ref:*)",
+      "Bash(nul)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,3 +1,14 @@
+---
+agent: 'Lloyd (Planning Assistant)'
+date: '2026-01-04'
+task: UPDATE
+scope: 'All documentation across CodeRef ecosystem'
+version: '1.0.0'
+enforcement: 'Automated validators + manual review'
+category: documentation
+title: 'Global Documentation Standards'
+---
+
 # Global Documentation Standards
 
 **Version:** 1.0.0

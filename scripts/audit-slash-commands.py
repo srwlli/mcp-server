@@ -143,7 +143,7 @@ def print_summary(global_commands: Dict[str, Path], duplicates: List[Tuple]):
             for cmd in sorted(commands):
                 print(f"  - /{cmd}")
     else:
-        print("\n✅ No duplicates found - all commands are global only!")
+        print("\n[OK] No duplicates found - all commands are global only!")
 
     print("\n" + "="*80)
 
@@ -159,7 +159,7 @@ def clean_duplicates(duplicates: List[Tuple], backup: bool = False) -> int:
         Number of files removed
     """
     if not duplicates:
-        print("\n✅ No duplicates to clean")
+        print("\n[OK] No duplicates to clean")
         return 0
 
     backup_dir = None
@@ -196,10 +196,10 @@ def clean_duplicates(duplicates: List[Tuple], backup: bool = False) -> int:
             print(f"  Path: {dup_path}\n")
 
     print("="*80)
-    print(f"✅ Removed {removed_count} duplicate command(s)")
+    print(f"[SUCCESS] Removed {removed_count} duplicate command(s)")
 
     if backup and backup_dir:
-        print(f"📦 Backups saved to: {backup_dir}")
+        print(f"[BACKUP] Backups saved to: {backup_dir}")
 
     print("="*80 + "\n")
 
@@ -284,7 +284,7 @@ def main():
         report = generate_report(global_commands, duplicates)
         report_path = Path(args.report)
         report_path.write_text(report, encoding='utf-8')
-        print(f"\n📄 Report saved: {report_path}")
+        print(f"\n[REPORT] Saved to: {report_path}")
 
     # Clean if requested
     if args.clean:
@@ -293,9 +293,9 @@ def main():
             return
 
         # Confirm
-        print("\n⚠️  WARNING: This will delete duplicate command files!")
+        print("\n[WARNING] This will delete duplicate command files!")
         if args.backup:
-            print("✅ Backups will be created before deletion")
+            print("[BACKUP ENABLED] Backups will be created before deletion")
 
         confirm = input("\nProceed with cleanup? (yes/no): ").strip().lower()
 
@@ -303,13 +303,13 @@ def main():
             removed = clean_duplicates(duplicates, args.backup)
 
             if removed > 0:
-                print("\n✅ Cleanup complete!")
+                print("\n[SUCCESS] Cleanup complete!")
                 print("\nRecommendation:")
                 print("  1. Restart Claude Code to refresh command list")
                 print("  2. Verify commands work as expected")
                 print("  3. Delete backups if everything works")
         else:
-            print("\n❌ Cleanup cancelled")
+            print("\n[CANCELLED] Cleanup cancelled")
     else:
         print("\n[TIP] Run with --clean to remove duplicates")
         print("[TIP] Run with --clean --backup to keep backups")

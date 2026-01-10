@@ -57,6 +57,14 @@ from logger_config import logger
 from handler_decorators import mcp_error_handler, log_invocation
 from handler_helpers import format_success_response, generate_workorder_id, get_workorder_timestamp, add_response_timestamp
 
+# Import MCP integration helpers (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001)
+from mcp_integration import (
+    check_coderef_cache,
+    get_hybrid_mode_instructions,
+    should_use_mcp_fallback,
+    format_scan_request
+)
+
 
 @log_invocation
 @mcp_error_handler
@@ -147,11 +155,15 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
         ("readme", "Project README and overview")
     ]
 
+    # Check cache status for hybrid mode (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001)
+    cache_status = check_coderef_cache(Path(project_path))
+
     # Start building response with plan
     result = "=== FOUNDATION DOCS - SEQUENTIAL GENERATION ===\n\n"
     result += f"Project: {project_path}\n"
     result += f"Total documents: {len(templates_to_generate)}\n"
-    result += f"Context Injection: DISABLED (regex-based detection only)\n"
+    result += f"Context Injection: ENABLED (MCP + Hybrid Mode)\n"
+    result += f"Cache Status: {'✓ Available' if cache_status['cache_available'] else '⚠ Missing'}\n"
     result += "\nGeneration Plan:\n"
     result += "-" * 50 + "\n\n"
 
@@ -173,15 +185,36 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     result += "=" * 50 + "\n\n"
     result += "INSTRUCTIONS:\n"
     result += "1. Each template will generate in sequence with progress indicators\n"
-    result += "2. Claude will populate templates with regex-based detection and .coderef/ data when available\n"
+    result += "2. Use HYBRID MODE for code intelligence (see below)\n"
     result += "3. Save each document to its output location as indicated\n"
     result += "4. Each doc builds on previous ones (refs to earlier docs where needed)\n"
     result += "\n"
-    result += "MCP INTEGRATION (coderef-context):\n"
-    result += "- For better accuracy, call mcp__coderef_context__coderef_scan before generation\n"
-    result += "- Generator will read .coderef/index.json after MCP scan completes\n"
-    result += "- No direct MCP-to-MCP calls (use Claude as orchestrator)\n"
-    result += "- Fallback to regex detection if .coderef/ data unavailable\n"
+    result += "=" * 50 + "\n"
+    result += "\n=== HYBRID MODE: CODE INTELLIGENCE ===\n\n"
+
+    if cache_status['cache_available']:
+        result += f"✓ FAST PATH AVAILABLE (.coderef/ cache exists)\n\n"
+        result += f"Cache: {cache_status['cache_path']}\n"
+        result += f"Elements: {cache_status['element_count']}\n\n"
+        result += "WORKFLOW:\n"
+        result += "1. Read .coderef/index.json for each template\n"
+        result += "2. Extract relevant elements (APIs/schemas/components per template type)\n"
+        result += "3. Populate templates with real code data\n"
+        result += "4. Performance: < 50ms per doc (file read only)\n\n"
+    else:
+        result += f"⚠ SMART PATH REQUIRED (.coderef/ cache missing)\n\n"
+        result += "WORKFLOW:\n"
+        result += "1. FIRST, call coderef_scan to generate .coderef/ data:\n"
+        result += format_scan_request(Path(project_path))
+        result += "2. THEN, generate each template using .coderef/index.json\n"
+        result += "3. Performance: ~5-60s scan (one-time) + < 50ms per doc\n\n"
+        result += "GRACEFUL DEGRADATION:\n"
+        result += "If coderef-context server unavailable:\n"
+        result += "- Use regex-based detection as fallback\n"
+        result += "- Populate templates with placeholders\n"
+        result += "- Note in docs that full code intelligence requires coderef-context\n\n"
+
+    result += "=" * 50 + "\n"
 
     logger.info(f"Successfully generated foundation docs plan with context injection for: {project_path}")
     return [TextContent(type="text", text=result)]
@@ -282,13 +315,15 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     result += f"Project: {paths['project_path']}\n"
     result += f"Output: {output_path}\n\n"
 
-    # Context extraction removed - uses regex-based detection and .coderef/ data when available
+    # WO-CODEREF-CONTEXT-MCP-INTEGRATION-001: Add hybrid mode instructions
+    result += get_hybrid_mode_instructions(Path(project_path), template_name)
+    result += "\n"
 
     result += f"TEMPLATE:\n\n{template_content}\n\n"
     result += "=" * 50 + "\n\n"
     result += "INSTRUCTIONS:\n"
     result += f"Generate {template_info.get('save_as', f'{template_name.upper()}.md')} using the template above.\n"
-    result += f"Use regex-based detection and .coderef/ data when available to populate the template.\n"
+    result += f"Follow HYBRID MODE instructions above for code intelligence.\n"
     result += f"Save the document to: {output_path}\n"
 
     logger.info(f"Successfully generated plan for {template_name}")

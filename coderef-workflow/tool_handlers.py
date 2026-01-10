@@ -25,7 +25,7 @@ ENHANCED_DELIVERABLES_ENABLED = os.getenv("ENHANCED_DELIVERABLES_ENABLED", "true
 from typing import Any
 from generators import FoundationGenerator, BaseGenerator, ChangelogGenerator, StandardsGenerator, AuditGenerator
 from generators.planning_analyzer import PlanningAnalyzer
-from generators.plan_validator import PlanValidator
+from generators.plan_validator import PlanValidator as LegacyPlanValidator  # Deprecated - use Papertrail PlanValidator
 from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
@@ -1069,14 +1069,26 @@ async def handle_validate_implementation_plan(arguments: dict) -> list[TextConte
         logger.warning(f'Plan file not found: {plan_file_str}')
         raise FileNotFoundError(f'Plan file not found: {plan_file_str}')
 
-    # Create validator and validate (let decorator catch JSONDecodeError)
-    validator = PlanValidator(plan_path)
-    result = validator.validate()
+    # GAP-004: Migrate to Papertrail PlanValidator (BREAKING CHANGE)
+    try:
+        from papertrail.validators.plan import PlanValidator
+        validator = PlanValidator()
+        result = validator.validate_file(str(plan_path))
 
-    logger.info(
-        f'Validation complete: score={result["score"]}, result={result["validation_result"]}, issues={len(result["issues"])}',
-        extra={'score': result['score'], 'result': result['validation_result']}
-    )
+        logger.info(
+            f'Validation complete (Papertrail): score={result.get("score", 0)}, valid={result.get("valid", False)}',
+            extra={'score': result.get('score', 0), 'valid': result.get('valid', False)}
+        )
+    except ImportError:
+        # Fallback to legacy validator if Papertrail not available
+        logger.warning("Papertrail PlanValidator not available - using legacy validator")
+        validator = LegacyPlanValidator(plan_path)
+        result = validator.validate()
+
+        logger.info(
+            f'Validation complete (legacy): score={result["score"]}, result={result["validation_result"]}, issues={len(result["issues"])}',
+            extra={'score': result['score'], 'result': result['validation_result']}
+        )
 
     # Return result as JSON
     return [TextContent(type='text', text=json.dumps(result, indent=2))]
@@ -1106,13 +1118,24 @@ async def handle_generate_plan_review_report(arguments: dict) -> list[TextConten
         logger.warning(f'Plan file not found: {plan_file_str}')
         raise FileNotFoundError(f'Plan file not found: {plan_file_str}')
 
-    # Run validation first to get validation results (let decorator catch JSONDecodeError)
-    validator = PlanValidator(plan_path)
-    validation_result = validator.validate()
+    # GAP-004: Run validation first to get validation results (Papertrail PlanValidator)
+    try:
+        from papertrail.validators.plan import PlanValidator
+        validator = PlanValidator()
+        validation_result = validator.validate_file(str(plan_path))
 
-    logger.debug(
-        f'Validation completed: score={validation_result["score"]}, issues={len(validation_result["issues"])}'
-    )
+        logger.debug(
+            f'Validation completed (Papertrail): score={validation_result.get("score", 0)}, valid={validation_result.get("valid", False)}'
+        )
+    except ImportError:
+        # Fallback to legacy validator if Papertrail not available
+        logger.warning("Papertrail PlanValidator not available - using legacy validator for review report")
+        validator = LegacyPlanValidator(plan_path)
+        validation_result = validator.validate()
+
+        logger.debug(
+            f'Validation completed (legacy): score={validation_result["score"]}, issues={len(validation_result["issues"])}'
+        )
 
     # Extract plan name from file path
     plan_name = plan_path.stem  # e.g., "feature-auth-plan" from "feature-auth-plan.json"
@@ -1402,7 +1425,25 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
     context_file = feature_dir / 'context.json'
     with open(context_file, 'w', encoding='utf-8') as f:
         json.dump(context_data, f, indent=2)
-    
+
+    # Validate with WorkorderDocValidator (GAP-002: UDS compliance)
+    try:
+        from papertrail.validators.workorder import WorkorderDocValidator
+        validator = WorkorderDocValidator()
+        result = validator.validate_file(str(context_file))
+
+        if not result['valid']:
+            # Log validation errors but don't fail (graceful degradation)
+            logger.warning(f"context.json validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"context.json validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("WorkorderDocValidator not available - skipping validation")
+    except Exception as e:
+        logger.warning(f"Validation error: {e} - continuing without validation")
+
     logger.info(
         f"Context saved successfully for feature: {feature_name}",
         extra={
@@ -1491,6 +1532,7 @@ async def _generate_enhanced_deliverables(
     from papertrail.extensions.git_integration import GitExtension
     from papertrail.extensions.coderef_context import CodeRefContextExtension
     from papertrail.extensions.workflow import WorkflowExtension
+    from papertrail.validators.session import SessionDocValidator
 
     logger.info("Using enhanced DELIVERABLES generation with Papertrail")
 
@@ -1834,6 +1876,23 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     content = content.replace('**Last Updated**: ', f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Previous: ")
     deliverables_path.write_text(content, encoding='utf-8')
 
+    # GAP-006: Re-validate after update (UDS compliance)
+    try:
+        from papertrail.validators.workorder import WorkorderDocValidator
+        validator = WorkorderDocValidator()
+        result = validator.validate_file(str(deliverables_path))
+
+        if not result['valid']:
+            logger.warning(f"DELIVERABLES.md update validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"DELIVERABLES.md update validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("WorkorderDocValidator not available - skipping DELIVERABLES update validation")
+    except Exception as e:
+        logger.warning(f"DELIVERABLES update validation error: {e} - continuing without validation")
+
     logger.info(f"DELIVERABLES.md marked complete for feature: {feature_name}")
 
     return format_success_response(
@@ -2040,6 +2099,24 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
     # Save communication.json
     comm_path.write_text(json.dumps(communication, indent=2), encoding='utf-8')
 
+    # Validate with SessionDocValidator (GAP-001: UDS compliance)
+    try:
+        from papertrail.validators.session import SessionDocValidator
+        validator = SessionDocValidator()
+        result = validator.validate_file(str(comm_path))
+
+        if not result['valid']:
+            # Log validation errors but don't fail (graceful degradation)
+            logger.warning(f"communication.json validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"communication.json validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("SessionDocValidator not available - skipping validation")
+    except Exception as e:
+        logger.warning(f"Validation error: {e} - continuing without validation")
+
     logger.info(f"Generated communication.json for feature '{feature_name}'")
 
     return format_success_response(
@@ -2135,6 +2212,23 @@ async def handle_assign_agent_task(arguments: dict) -> list[TextContent]:
 
     # Save updated communication.json
     comm_path.write_text(json.dumps(comm_data, indent=2), encoding='utf-8')
+
+    # GAP-005: Re-validate after update (UDS compliance)
+    try:
+        from papertrail.validators.session import SessionDocValidator
+        validator = SessionDocValidator()
+        result = validator.validate_file(str(comm_path))
+
+        if not result['valid']:
+            logger.warning(f"communication.json update validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"communication.json update validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("SessionDocValidator not available - skipping update validation")
+    except Exception as e:
+        logger.warning(f"Update validation error: {e} - continuing without validation")
 
     logger.info(f"Assigned agent {agent_number} to feature '{feature_name}' with workorder {agent_workorder}")
 
@@ -2281,6 +2375,23 @@ async def handle_verify_agent_completion(arguments: dict) -> list[TextContent]:
 
     # Save updated communication.json
     comm_path.write_text(json.dumps(comm_data, indent=2), encoding='utf-8')
+
+    # GAP-005: Re-validate after verification update (UDS compliance)
+    try:
+        from papertrail.validators.session import SessionDocValidator
+        validator = SessionDocValidator()
+        result = validator.validate_file(str(comm_path))
+
+        if not result['valid']:
+            logger.warning(f"communication.json verification update validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"communication.json verification update validated (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("SessionDocValidator not available - skipping verification update validation")
+    except Exception as e:
+        logger.warning(f"Verification update validation error: {e} - continuing without validation")
 
     logger.info(f"Verified agent {agent_number} completion for feature '{feature_name}': {verification_results['overall_status']}")
 

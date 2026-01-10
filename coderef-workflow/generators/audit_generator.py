@@ -889,6 +889,23 @@ class AuditGenerator:
         # Save report
         report_path.write_text(report_content, encoding='utf-8')
 
+        # GAP-018: Validate audit report (UDS compliance)
+        try:
+            from papertrail.validators.general import GeneralValidator
+            validator = GeneralValidator()
+            result = validator.validate_file(str(report_path))
+
+            if not result['valid']:
+                logger.warning(f"Audit report validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                logger.info(f"Audit report validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available
+        except Exception:
+            pass  # Validation error - continue
+
         # Build violation stats
         violation_stats: ViolationStatsDict = {
             'total_violations': len(violations),

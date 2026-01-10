@@ -89,6 +89,23 @@ class HandoffGenerator(BaseGenerator):
         output_path.write_text(context, encoding="utf-8")
         logger.info(f"Handoff context written to: {output_path}")
 
+        # GAP-016: Validate handoff context (UDS compliance)
+        try:
+            from papertrail.validators.system import SystemDocValidator
+            validator = SystemDocValidator()
+            result = validator.validate_file(str(output_path))
+
+            if not result['valid']:
+                logger.warning(f"claude.md validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                logger.info(f"claude.md validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available
+        except Exception:
+            pass  # Validation error - continue
+
         # Calculate auto-population percentage
         auto_populated = self._calculate_auto_population(plan_data, analysis_data, git_data)
 

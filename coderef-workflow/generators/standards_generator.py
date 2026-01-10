@@ -1082,6 +1082,25 @@ This document defines the UX patterns discovered in the {project_name} codebase.
         component_path.write_text(component_doc, encoding='utf-8')
         saved_files.append(str(component_path))
 
+        # GAP-017: Validate standards outputs (UDS compliance)
+        try:
+            from papertrail.validators.general import GeneralValidator
+            validator = GeneralValidator()
+
+            for standards_file in [ui_path, behavior_path, ux_path, component_path]:
+                result = validator.validate_file(str(standards_file))
+
+                if not result['valid']:
+                    logger.warning(f"{standards_file.name} validation failed (score: {result.get('score', 0)})")
+                    for error in result.get('errors', []):
+                        logger.warning(f"  - {error}")
+                else:
+                    logger.info(f"{standards_file.name} validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available
+        except Exception:
+            pass  # Validation error - continue
+
         # Calculate totals
         ui_count = (len(ui_patterns.get('buttons', {}).get('sizes', [])) +
                     len(ui_patterns.get('modals', {}).get('sizes', [])) +

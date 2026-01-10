@@ -743,6 +743,27 @@ def update_archive_index(project_path: Path, feature_name: str, folder_name: str
     except IOError as e:
         raise IOError(f"Failed to write index.json: {e}")
 
+    # GAP-019: Validate archive index (UDS compliance)
+    try:
+        from papertrail.validators.general import GeneralValidator
+        validator = GeneralValidator()
+        result = validator.validate_file(str(index_path))
+
+        if not result['valid']:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Archive index.json validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Archive index.json validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        pass  # Papertrail not available
+    except Exception:
+        pass  # Validation error - continue
+
 
 def parse_deliverables_status(deliverables_path: Path) -> str:
     """

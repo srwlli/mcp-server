@@ -1,10 +1,10 @@
 # CodeRef Ecosystem - AI Context Documentation
 
 **Project:** CodeRef Ecosystem (5-Server MCP System)
-**Version:** 1.2.0
+**Version:** 1.3.0
 **Status:** ✅ Production
 **Created:** 2025-12-25
-**Last Updated:** 2025-12-31
+**Last Updated:** 2026-01-10
 
 ---
 
@@ -14,12 +14,16 @@
 
 **Core Innovation:** Solves the "agent blind coding" problem by combining code intelligence (coderef-context), structured planning (coderef-workflow), expert personas (coderef-personas), documentation automation (coderef-docs), and test automation (coderef-testing).
 
-**Latest Update (v1.2.0 - 2025-12-31):**
+**Latest Update (v1.3.0 - 2026-01-10):**
+- ✅ Enforced no-timeline constraint across all planning workflows
+- ✅ Complexity-based planning replaces all time estimates (hours/minutes)
+- ✅ Automatic validation rejects plans with time keywords
+- ✅ Updated ecosystem-wide documentation with agentic planning principles
+
+**Previous (v1.2.0 - 2025-12-31):**
 - ✅ Complete .coderef/ output utilization (2.6% → 90% utilization achieved)
 - ✅ All 5 MCP servers scanned (59,676 total elements discovered)
-- ✅ Centralized intelligence hub at `coderef/intelligence/`
 - ✅ 4 workflow integrations: planning, docs, personas, testing
-- ✅ Export processor with 4 formats + comprehensive test suite (30/30 tests passing)
 
 **Key Relationships:**
 - **coderef-context** = Code intelligence (dependency graph, impact analysis)
@@ -224,8 +228,8 @@ C:\Users\willh\.mcp-servers/
 
 ## Design Decisions
 
-**1. Four Separate Servers vs Monolith**
-- ✅ Chosen: 4 focused MCP servers (context, workflow, docs, personas)
+**1. Five Separate Servers vs Monolith**
+- ✅ Chosen: 5 focused MCP servers (context, workflow, docs, personas, testing)
 - ❌ Rejected: Single monolithic server
 - Reason: Separation of concerns, easier testing, independent scaling, clearer responsibilities
 
@@ -234,12 +238,18 @@ C:\Users\willh\.mcp-servers/
 - ❌ Rejected: Simple feature naming without tracking
 - Reason: Complete audit trail, multi-agent coordination, feature lifecycle tracking
 
-**3. Universal CLAUDE.md Template**
+**3. No-Timeline Planning (Agentic Constraint)**
+- ✅ Chosen: Complexity-based planning (trivial/low/medium/high/very_high)
+- ❌ Rejected: Time estimates (hours, minutes, effort percentage)
+- Reason: All coding is agentic - agents work autonomously without deadlines
+- Focus: WHAT and HOW COMPLEX, never WHEN or HOW LONG
+
+**4. Universal CLAUDE.md Template**
 - ✅ Chosen: 15-section template (530-600 lines per server)
 - ❌ Rejected: Custom formats per server
 - Reason: Consistency, easier onboarding, lean documentation (no bloat)
 
-**4. Centralized Stub Backlog**
+**5. Centralized Stub Backlog**
 - ✅ Chosen: Single C:\Users\willh\Desktop\assistant\coderef\working\ location
 - ❌ Rejected: Per-project stubs
 - Reason: Global idea backlog, easier browsing, works from any project
@@ -616,53 +626,32 @@ Agent: "Now I know what breaks. Here's my implementation plan."
 
 ## Recent Changes
 
-### v1.2.0 - .coderef/ Output Utilization Complete (2025-12-31)
+### v1.3.0 - No-Timeline Constraint (2026-01-10)
 
-**WO-CODEREF-OUTPUT-UTILIZATION-001** - ✅ **COMPLETE** (26/26 tasks, 90% utilization achieved)
+**WO-NO-TIMELINE-CONSTRAINT-001** - ✅ **COMPLETE**
 
-**Achievement:** Increased .coderef/ output utilization from 2.6% to 90% (12/15 output types, 5/5 servers)
-- ✅ All 5 MCP servers scanned (59,676 total elements discovered)
+**Achievement:** Enforced agentic planning constraint across entire ecosystem
+- ✅ Updated planning template to use `complexity` instead of `estimated_effort`
+- ✅ Added `validate_no_time_estimates()` to plan validator (rejects time keywords)
+- ✅ Updated CLAUDE.md across ecosystem with no-timeline principle
+- ✅ Enhanced resource sheet with enforcement examples
+- ✅ Automatic validation fails plans with hours/minutes/duration references
+
+**Files Updated:**
+- `coderef/context/planning-template-for-ai.json` (authority for plan generation)
+- `generators/plan_validator.py` (enforcement via validation)
+- `CLAUDE.md` (ecosystem and coderef-workflow)
+- `RESOURCE-SHEET-WORKORDER-WORKFLOW.md` (documentation)
+
+**Principle:** Plans describe WHAT and HOW COMPLEX, never WHEN or HOW LONG. All coding is agentic - agents work autonomously without deadlines.
+
+### v1.2.0 - .coderef/ Output Utilization (2025-12-31)
+
+**Achievement:** Increased .coderef/ output utilization from 2.6% to 90%
+- ✅ All 5 MCP servers scanned (59,676 total elements)
 - ✅ Centralized intelligence hub at `coderef/intelligence/`
-- ✅ 4 workflow integrations complete (planning, docs, personas, testing)
-- ✅ Export processor with 4 formats (JSON, JSON-LD, Mermaid, DOT)
-- ✅ End-to-end testing (6 test steps, 100% pass rate)
-
-**Infrastructure:**
-- Wrapper utilities in `coderef/utils/` for easy data access
-- Impact-based test selection in coderef-testing (INTEGRATE-004)
-- Foundation doc auto-generation from scans (INTEGRATE-002)
-- Persona pattern loading from .coderef/ (INTEGRATE-003)
-
-**Documentation:**
-- Updated CODEREF-OUTPUT-CAPABILITIES.md (v2.0.0)
-- Created HOW-TO-USE-CODEREF-STRUCTURE.md (500+ lines)
-- Updated ecosystem CLAUDE.md with completion status
-
-**Metrics:**
-- Before: 2 output types, 1 server (2.6% utilization)
-- After: 12 output types, 5 servers (90% utilization)
-- Server coverage: 100% (5/5 servers scanned, 59,676 total elements)
-- Test coverage: 98% (30/30 tests passing)
-
-### v1.1.0 - Enhanced Stub Command with Context Capture
-- ✅ Enhanced /stub command with smart conversation context extraction
-- ✅ Optional `context` field in stub.json (conditionally included)
-- ✅ Single /stub command (not two versions) - automatically detects context relevance
-- ✅ Complete implementation guide with examples (STUB_COMMAND_IMPLEMENTATION_GUIDE.md)
-- ✅ Integration with /create-workorder (stub.json used as seed data)
-
-### v1.0.0 - Complete Ecosystem Release
-- ✅ Universal CLAUDEMD-TEMPLATE.json (15-section template, 530-600 lines)
-- ✅ Refactored coderef-docs/CLAUDE.md (3,250 → 227 lines, 93% reduction)
-- ✅ Simplified /stub command (4 prompts → 2 prompts, centralized backlog)
-- ✅ Updated Lloyd persona (v1.4.0 aligned with workorder-centric architecture)
-- ✅ Created comprehensive ecosystem README.md
-
-### Previous: v0.9.0 - Workorder System Implementation
-- ✅ WO-WORKFLOW-REFACTOR-001 (16/16 tasks complete)
-- ✅ Implemented workorder_id tracking throughout
-- ✅ Path migration: coderef/working/ → coderef/workorder/
-- ✅ Bug fixes: deliverables type checking, plan status lifecycle
+- ✅ 4 workflow integrations complete
+- ✅ Export processor with 4 formats + test suite (30/30 tests passing)
 
 ---
 

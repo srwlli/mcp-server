@@ -6,7 +6,7 @@ and patterns. Automates section 0 (Preparation) of implementation plans.
 """
 
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 import json
 import re
 import asyncio

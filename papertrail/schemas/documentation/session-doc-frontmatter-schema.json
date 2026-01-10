@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/session-doc-frontmatter-schema.json",
+  "title": "Session Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for session documentation (communication.json, instructions.json, session summaries). Session docs coordinate multi-agent work.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "session_type",
+        "session_id"
+      ],
+      "properties": {
+        "session_type": {
+          "type": "string",
+          "description": "Type of session documentation",
+          "enum": [
+            "communication",
+            "instructions",
+            "summary",
+            "handoff",
+            "coordination"
+          ],
+          "examples": [
+            "communication",
+            "instructions"
+          ]
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Unique session identifier",
+          "pattern": "^[a-z0-9-]+$",
+          "minLength": 3,
+          "maxLength": 100,
+          "examples": [
+            "coderef-scanner-integration",
+            "papertrail-consolidation-audit"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Session title",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "CodeRef Scanner Integration Session",
+            "Papertrail Consolidation Audit"
+          ]
+        },
+        "orchestrator": {
+          "type": "string",
+          "description": "Optional: Orchestrating agent",
+          "examples": [
+            "Lloyd",
+            "Taylor"
+          ]
+        },
+        "participants": {
+          "type": "array",
+          "description": "Optional: List of participating agents",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "Ava",
+              "Marcus",
+              "Quinn"
+            ]
+          ]
+        },
+        "workorder_id": {
+          "type": "string",
+          "description": "Optional: Associated workorder",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "examples": [
+            "WO-SCANNER-INTEGRATION-001"
+          ]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Lloyd (Planning Assistant)",
+      "date": "2026-01-10",
+      "task": "CREATE",
+      "session_type": "communication",
+      "session_id": "coderef-scanner-integration",
+      "title": "CodeRef Scanner Integration Session",
+      "orchestrator": "Lloyd",
+      "participants": [
+        "Ava",
+        "Marcus"
+      ],
+      "workorder_id": "WO-SCANNER-INTEGRATION-001"
+    },
+    {
+      "agent": "Taylor (General Purpose Agent)",
+      "date": "2026-01-10",
+      "task": "UPDATE",
+      "session_type": "summary",
+      "session_id": "papertrail-audit",
+      "title": "Papertrail Consolidation Audit"
+    }
+  ]
+}

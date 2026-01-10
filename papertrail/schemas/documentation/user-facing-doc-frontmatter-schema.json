@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/user-facing-doc-frontmatter-schema.json",
+  "title": "User-Facing Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for user-facing documentation (guides, tutorials, FAQs in coderef/user/). User docs are allowed to contain emojis per EMOJI-TIMESTAMP-POLICY.md.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "audience",
+        "doc_type"
+      ],
+      "properties": {
+        "audience": {
+          "type": "string",
+          "description": "Target audience for this document",
+          "enum": [
+            "developers",
+            "end-users",
+            "administrators",
+            "contributors",
+            "all"
+          ],
+          "examples": [
+            "developers",
+            "end-users"
+          ]
+        },
+        "doc_type": {
+          "type": "string",
+          "description": "Type of user-facing document",
+          "enum": [
+            "guide",
+            "tutorial",
+            "faq",
+            "quickstart",
+            "reference",
+            "troubleshooting"
+          ],
+          "examples": [
+            "guide",
+            "tutorial"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Document title",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "Getting Started with CodeRef",
+            "How to Create Resource Sheets"
+          ]
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Optional: Difficulty level",
+          "enum": [
+            "beginner",
+            "intermediate",
+            "advanced"
+          ],
+          "examples": [
+            "beginner",
+            "intermediate"
+          ]
+        },
+        "estimated_time": {
+          "type": "string",
+          "description": "Optional: Estimated time to complete (for tutorials)",
+          "pattern": "^\\d+\\s*(min|mins|minutes|hour|hours|hr|hrs)$",
+          "examples": [
+            "10 minutes",
+            "1 hour",
+            "30 mins"
+          ]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2026-01-10",
+      "task": "CREATE",
+      "audience": "developers",
+      "doc_type": "guide",
+      "title": "Getting Started with CodeRef",
+      "difficulty": "beginner",
+      "estimated_time": "15 minutes"
+    },
+    {
+      "agent": "Ava (Frontend Specialist)",
+      "date": "2026-01-10",
+      "task": "UPDATE",
+      "audience": "end-users",
+      "doc_type": "tutorial",
+      "title": "How to Use the Dashboard"
+    }
+  ]
+}

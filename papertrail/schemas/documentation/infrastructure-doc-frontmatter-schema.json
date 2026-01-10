@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/infrastructure-doc-frontmatter-schema.json",
+  "title": "Infrastructure Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for infrastructure documentation (deployment guides, CI/CD, monitoring, configuration). Infrastructure docs describe system setup, deployment, and operations.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "infra_type",
+        "environment"
+      ],
+      "properties": {
+        "infra_type": {
+          "type": "string",
+          "description": "Type of infrastructure documentation",
+          "enum": [
+            "deployment",
+            "cicd",
+            "monitoring",
+            "configuration",
+            "networking",
+            "security",
+            "backup"
+          ],
+          "examples": [
+            "deployment",
+            "cicd"
+          ]
+        },
+        "environment": {
+          "type": "string",
+          "description": "Target environment(s)",
+          "enum": [
+            "development",
+            "staging",
+            "production",
+            "all"
+          ],
+          "examples": [
+            "production",
+            "all"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Document title",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "Production Deployment Guide",
+            "CI/CD Pipeline Configuration"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "description": "Optional: Target platform",
+          "examples": [
+            "AWS",
+            "Azure",
+            "Docker",
+            "Kubernetes"
+          ]
+        },
+        "prerequisites": {
+          "type": "array",
+          "description": "Optional: Prerequisites for this infrastructure",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "Docker installed",
+              "AWS credentials configured"
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Marcus (Backend Specialist)",
+      "date": "2026-01-10",
+      "task": "CREATE",
+      "infra_type": "deployment",
+      "environment": "production",
+      "title": "Production Deployment Guide",
+      "platform": "AWS",
+      "prerequisites": [
+        "AWS CLI installed",
+        "IAM credentials configured"
+      ]
+    },
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2026-01-10",
+      "task": "UPDATE",
+      "infra_type": "cicd",
+      "environment": "all",
+      "title": "GitHub Actions Workflow"
+    }
+  ]
+}

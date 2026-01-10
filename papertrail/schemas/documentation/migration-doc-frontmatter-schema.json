@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/migration-doc-frontmatter-schema.json",
+  "title": "Migration Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for migration documentation (migration guides, deprecation notices, upgrade paths). Migration docs describe how to transition from old to new systems.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "migration_type",
+        "from_version",
+        "to_version"
+      ],
+      "properties": {
+        "migration_type": {
+          "type": "string",
+          "description": "Type of migration",
+          "enum": [
+            "upgrade",
+            "deprecation",
+            "refactor",
+            "consolidation",
+            "breaking-change"
+          ],
+          "examples": [
+            "upgrade",
+            "deprecation"
+          ]
+        },
+        "from_version": {
+          "type": "string",
+          "description": "Source version (semver or label)",
+          "minLength": 1,
+          "maxLength": 50,
+          "examples": [
+            "1.0.0",
+            "v1.x",
+            "legacy"
+          ]
+        },
+        "to_version": {
+          "type": "string",
+          "description": "Target version (semver or label)",
+          "minLength": 1,
+          "maxLength": 50,
+          "examples": [
+            "2.0.0",
+            "v2.x",
+            "current"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Document title",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "Migrating to UDS v2.0",
+            "RSMS v1.0 to v2.0 Upgrade Guide"
+          ]
+        },
+        "breaking_changes": {
+          "type": "boolean",
+          "description": "Optional: Does this migration include breaking changes?",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "automated": {
+          "type": "boolean",
+          "description": "Optional: Is there an automated migration tool?",
+          "examples": [
+            true,
+            false
+          ]
+        },
+        "estimated_effort": {
+          "type": "string",
+          "description": "Optional: Estimated effort to complete migration",
+          "examples": [
+            "Low (< 1 hour)",
+            "Medium (1-4 hours)",
+            "High (> 4 hours)"
+          ]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Lloyd (Planning Assistant)",
+      "date": "2026-01-10",
+      "task": "CREATE",
+      "migration_type": "upgrade",
+      "from_version": "1.0.0",
+      "to_version": "2.0.0",
+      "title": "Migrating to UDS v2.0",
+      "breaking_changes": true,
+      "automated": false,
+      "estimated_effort": "Medium (1-4 hours)"
+    },
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2025-12-30",
+      "task": "DOCUMENT",
+      "migration_type": "deprecation",
+      "from_version": "v1.x",
+      "to_version": "v2.x",
+      "title": "RSMS v1.0 Deprecation Notice"
+    }
+  ]
+}

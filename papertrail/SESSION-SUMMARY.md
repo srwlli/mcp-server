@@ -96,7 +96,7 @@ UDSValidator
 
 ## Known Issues
 
-1. **$ref Resolution**: BaseUDSValidator needs proper RefResolver
+1. ~~**$ref Resolution**: BaseUDSValidator needs proper RefResolver~~ [FIXED] - commit 7b87faf
 2. **Factory Tests**: 9/24 tests failing (path pattern issues)
 3. **Emoji Integration**: emoji_checker.py not yet integrated into base.py
 
@@ -105,7 +105,7 @@ UDSValidator
 ## Future Tasks
 
 1. Migrate plan_validator.py from coderef-workflow to Papertrail
-2. Fix $ref resolver in BaseUDSValidator
+2. ~~Fix $ref resolver in BaseUDSValidator~~ [COMPLETE] - commit 7b87faf
 3. Complete emoji integration
 4. Update generators to use timestamp utility
 
@@ -114,7 +114,7 @@ UDSValidator
 ## Next Steps
 
 **Immediate:**
-1. Fix $ref resolver
+1. ~~Fix $ref resolver~~ [COMPLETE]
 2. Complete Phase 3 (workorder docs)
 3. Start Phase 4 (system & standards)
 

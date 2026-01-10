@@ -74,20 +74,280 @@ Papertrail provides **three metadata standards**:
 2. **Health Scorer** - 4-factor scoring (traceability 40%, completeness 30%, freshness 20%, validation 10%)
 3. **Template Engine** - Jinja2 with CodeRef extensions
 4. **Workorder Logger** - Global workorder tracking
-5. **MCP Tools** - 6 tools for validation and health checking
+5. **MCP Tools** - 2 tools for validation and batch checking
+
+---
+
+## UDS System Architecture
+
+### 3-Tier Metadata Hierarchy
+
+UDS enforces a **3-tier hierarchy** for all markdown documentation:
+
+**Tier 1: Base UDS (Required for ALL markdown)**
+- `agent`: Who created/updated the document
+- `date`: When it was created/updated (YYYY-MM-DD format)
+- `task`: What action was performed (CREATE, UPDATE, REVIEW, etc.)
+
+**Tier 2: Category Extensions (Required for specific doc types)**
+- **Foundation Docs**: `workorder_id`, `generated_by`, `feature_id`, `doc_type`
+- **Workorder Docs**: Same as foundation + `status`
+- **System Docs**: `project`, `version`, `status`
+- **Standards Docs**: `scope`, `version`, `enforcement`
+- **User-Facing Docs**: `audience`, `doc_type`, `difficulty`
+- **Migration Docs**: `migration_type`, `from_version`, `to_version`
+- **Infrastructure Docs**: `infra_type`, `environment`, `platform`
+- **Session Docs**: `session_type`, `session_id`, `orchestrator`
+
+**Tier 3: Type-Specific Fields (Optional)**
+- Additional metadata specific to document subtype
+- Examples: `prerequisites`, `participants`, `breaking_changes`
+
+### Schema Inheritance Pattern
+
+All schemas use **JSON Schema Draft-07 allOf pattern** for inheritance:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": ["category_specific_field"],
+      "properties": {
+        "category_specific_field": {
+          "type": "string",
+          "description": "Category-specific metadata"
+        }
+      }
+    }
+  ]
+}
+```
+
+**Schema Resolution**: BaseUDSValidator manually merges schemas via `_resolve_allof()` method to avoid network fetch errors from Draft7Validator.
+
+### Validator Hierarchy
+
+**BaseUDSValidator (Abstract Base Class)**
+- **Location**: `papertrail/validators/base.py`
+- **Responsibilities**:
+  - Schema loading and $ref resolution
+  - YAML frontmatter extraction
+  - JSON schema validation
+  - Score calculation (0-100)
+  - Error/warning aggregation
+- **Key Methods**:
+  - `validate_file(file_path)`: Main validation entry point
+  - `_load_schema()`: Load JSON schema and resolve allOf
+  - `_resolve_allof()`: Manual schema merging
+  - `_extract_frontmatter(content)`: Parse YAML front matter
+  - `validate_specific(frontmatter, content, file_path)`: Abstract method for category-specific checks
+  - `_calculate_score(errors, warnings)`: Score calculation algorithm
+
+**10 Category-Specific Validators**
+
+All extend BaseUDSValidator and implement `validate_specific()` for custom validation:
+
+1. **FoundationDocValidator** (`papertrail/validators/foundation.py`)
+   - Schema: `foundation-doc-frontmatter-schema.json`
+   - Category: `foundation`
+   - Checks: POWER framework sections (Purpose, Overview, What/Why/When, Examples, References)
+
+2. **WorkorderDocValidator** (`papertrail/validators/workorder.py`)
+   - Schema: `workorder-doc-frontmatter-schema.json`
+   - Category: `workorder`
+   - Checks: Workorder sections (Tasks, Status, Dependencies, Testing, Risks)
+
+3. **SystemDocValidator** (`papertrail/validators/system.py`)
+   - Schema: `system-doc-frontmatter-schema.json`
+   - Category: `system`
+   - Checks: System sections (Quick Summary, Architecture, File Structure, Design Decisions, Integration, Use Cases)
+
+4. **StandardsDocValidator** (`papertrail/validators/standards.py`)
+   - Schema: `standards-doc-frontmatter-schema.json`
+   - Category: `standards`
+   - Checks: Standards sections (Purpose, Scope, Requirements, Validation, Examples)
+
+5. **UserFacingDocValidator** (`papertrail/validators/user_facing.py`)
+   - Schema: `user-facing-doc-frontmatter-schema.json`
+   - Category: `user-facing`
+   - Checks: Audience, difficulty level, tutorial sections
+
+6. **MigrationDocValidator** (`papertrail/validators/migration.py`)
+   - Schema: `migration-doc-frontmatter-schema.json`
+   - Category: `migration`
+   - Checks: Breaking changes section, migration steps
+
+7. **InfrastructureDocValidator** (`papertrail/validators/infrastructure.py`)
+   - Schema: `infrastructure-doc-frontmatter-schema.json`
+   - Category: `infrastructure`
+   - Checks: Prerequisites, Setup, Configuration, Deployment sections
+
+8. **SessionDocValidator** (`papertrail/validators/session.py`)
+   - Schema: `session-doc-frontmatter-schema.json`
+   - Category: `session`
+   - Checks: Session ID format (kebab-case), orchestrator field, participants
+
+9. **PlanValidator** (`papertrail/validators/plan.py`)
+   - Schema: `plan.schema.json`
+   - Category: `plan`
+   - Checks: plan.json structure (10-section format)
+
+10. **GeneralMarkdownValidator** (`papertrail/validators/general.py`)
+    - Schema: `base-frontmatter-schema.json`
+    - Category: `general`
+    - Checks: Base UDS fields only (fallback for unclassified docs)
+
+### ValidatorFactory (Auto-Detection)
+
+**Location**: `papertrail/validators/factory.py`
+
+**Purpose**: Automatically detect document type and return appropriate validator
+
+**Detection Logic** (30+ path patterns):
+1. **Path-based detection**:
+   - `README.md` → FoundationDocValidator
+   - `DELIVERABLES.md` → WorkorderDocValidator
+   - `CLAUDE.md` → SystemDocValidator
+   - `*-standards.md` → StandardsDocValidator
+   - `*-guide.md` → UserFacingDocValidator
+   - `MIGRATION*.md` → MigrationDocValidator
+   - `communication.json` → SessionDocValidator
+   - `plan.json` → PlanValidator
+
+2. **Frontmatter-based detection**:
+   - `workorder_id` present → WorkorderDocValidator
+   - `session_id` present → SessionDocValidator
+   - `migration_type` present → MigrationDocValidator
+
+3. **Fallback**:
+   - If no match → GeneralMarkdownValidator
+
+**Usage**:
+```python
+from papertrail.validators.factory import ValidatorFactory
+
+validator = ValidatorFactory.get_validator(Path("README.md"))
+result = validator.validate_file(Path("README.md"))
+```
+
+### Score Calculation Algorithm
+
+**Formula**:
+```python
+score = 100 - 50*CRITICAL - 20*MAJOR - 10*MINOR - 5*WARNING - 2*warnings
+score = max(0, score)  # Floor at 0
+```
+
+**Severity Levels**:
+- **CRITICAL**: Missing required fields, invalid schema structure
+- **MAJOR**: Invalid enum values, format violations
+- **MINOR**: Recommended field missing
+- **WARNING**: Minor style issues, missing optional sections
+
+**Interpretation**:
+- 90-100: Excellent (validation passes)
+- 70-89: Good (minor issues)
+- 50-69: Fair (multiple issues)
+- 0-49: Poor (major issues)
+
+### ValidationResult Object
+
+**Structure**:
+```python
+class ValidationResult:
+    valid: bool           # True if score >= 90
+    errors: list[ValidationError]
+    warnings: list[str]
+    score: int           # 0-100
+```
+
+**ValidationError**:
+```python
+class ValidationError:
+    severity: ValidationSeverity  # CRITICAL, MAJOR, MINOR, WARNING
+    message: str
+    field: Optional[str]
+```
 
 ---
 
 ## MCP Tools
 
-**Total:** 6 tools
+**Total:** 2 tools
 
-1. **validate_document** - Validate against UDS schema
-2. **check_document_health** - Calculate 0-100 health score
-3. **log_workorder** - Log workorder to global log
-4. **get_workorder_log** - Query workorder history
-5. **inject_uds_headers** - Add UDS headers to documents
-6. **generate_from_template** - Render Jinja2 templates with CodeRef extensions
+### 1. validate_document
+
+**Purpose**: Validate a single document against UDS schema
+
+**Input**:
+```json
+{
+  "file_path": "/absolute/path/to/document.md"
+}
+```
+
+**Output**:
+```markdown
+# Validation Results: document.md
+
+**Valid:** Yes
+**Score:** 98/100
+**Category:** foundation
+
+## Warnings (1)
+
+- Missing recommended POWER section: Examples
+
+✅ Document validates successfully!
+```
+
+**Usage Example**:
+```python
+result = await call_tool("papertrail", "validate_document", {
+    "file_path": "C:/path/to/README.md"
+})
+```
+
+### 2. check_all_docs
+
+**Purpose**: Validate all documents in a directory recursively
+
+**Input**:
+```json
+{
+  "directory": "/absolute/path/to/directory",
+  "pattern": "**/*.md"  # Optional, default: **/*.md
+}
+```
+
+**Output**:
+```markdown
+# Validation Summary: directory_name
+
+**Total Files:** 10
+**Passed:** 8
+**Failed:** 2
+**Average Score:** 92.5/100
+
+## Results
+
+✅ **README.md** - Score: 98/100
+✅ **ARCHITECTURE.md** - Score: 95/100
+❌ **INVALID.md** - Score: 45/100 (3 errors, 2 warnings)
+```
+
+**Usage Example**:
+```python
+result = await call_tool("papertrail", "check_all_docs", {
+    "directory": "C:/path/to/docs",
+    "pattern": "**/*.md"
+})
+```
 
 ---
 

@@ -4,7 +4,8 @@
       "SlashCommand(/create-workorder)",
       "mcp__coderef-workflow__gather_context",
       "mcp__coderef-workflow__execute_plan",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

@@ -34,7 +34,8 @@
       "Bash(powershell -Command:*)",
       "Bash(python:*)",
       "mcp__coderef-workflow__create_plan",
-      "mcp__coderef-workflow__analyze_project_for_planning"
+      "mcp__coderef-workflow__analyze_project_for_planning",
+      "mcp__coderef-workflow__validate_implementation_plan"
     ],
     "deny": [],
     "ask": []

@@ -1,3 +1,4 @@
+WO-ADD-TIMESTAMP-AND-ENFORCE-NO-EMOJIS-001 | coderef-docs | Archived feature: Add Timestamp And Enforce No ... | 2026-01-10T09:52:34.045795+00:00
 WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001 | docs-mcp | Server rename: docs-mcp → coderef-docs (COMPLETE) | 2025-12-24T03:15:41.439135+00:00
 WO-RENAME-DOCS-MCP-TO-CODEREF-DOCS-001 | docs-mcp | Archived feature: Rename Docs Mcp To Coderef Docs | 2025-12-24T02:57:58.338752+00:00
 WO-CHANGELOG-REFACTOR-001 | docs-mcp | changelog-refactor: consolidate 3 tools to 2 wi... | 2025-12-23T22:52:25.651159+00:00

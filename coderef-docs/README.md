@@ -1,6 +1,6 @@
 # coderef-docs
 
-**Version:** 3.3.0
+**Version:** 3.4.0
 **Status:** ✅ Production Ready
 **Protocol:** Model Context Protocol (MCP)
 

@@ -1,7 +1,7 @@
 # Components Reference - coderef-docs MCP Server
 
-**Version:** 3.2.0
-**Last Updated:** 2025-12-27
+**Version:** 3.4.0
+**Last Updated:** 2026-01-10
 **Architecture:** Modular Python MCP Server
 
 ---
@@ -38,7 +38,7 @@ server.py (MCP entry point)
 
 **Responsibilities:**
 - Initialize MCP server
-- Register 11 tools with schemas
+- Register 13 tools with schemas (NEW: resource sheets + validation tools)
 - Health check for @coderef/core CLI
 - Route tool calls to handlers
 
@@ -53,7 +53,7 @@ server.py (MCP entry point)
 
 ### tool_handlers.py
 
-**Purpose:** Business logic for all 11 MCP tools
+**Purpose:** Business logic for all 13 MCP tools
 
 **Components:**
 ```
@@ -77,6 +77,13 @@ Standards:
 
 Quickref:
 - handle_generate_quickref_interactive()
+
+Resource Sheets (NEW v3.4.0):
+- handle_generate_resource_sheet()
+
+Validation:
+- handle_validate_document()
+- handle_check_document_health()
 ```
 
 **Features:**
@@ -177,6 +184,22 @@ api → schema → components → architecture → readme
 - `generate_quickref(data)` - Create scannable guide
 
 **Output:** `quickref.md` (150-250 lines)
+
+---
+
+### generators/resource_sheet_generator.py (NEW in v3.4.0)
+
+**Purpose:** Composable module-based documentation generation
+
+**Key Methods:**
+- `detect_characteristics(code_analysis)` - Detect 20+ code characteristics
+- `select_modules(characteristics)` - Choose universal + conditional modules
+- `compose_documentation(modules, format)` - Assemble in 3 formats (MD/JSON/JSDoc)
+- `auto_fill_modules(code_data, modules)` - Populate with real code intelligence
+
+**Output:** Resource sheets in markdown, JSON schema, or JSDoc format
+
+**Auto-Fill Rate:** 50% in Phase 1 (architecture + integration modules)
 
 ---
 
@@ -426,5 +449,5 @@ server.py
 
 ---
 
-*Generated: 2025-12-27*
-*For AI Agents: All components follow single responsibility principle*
+**Generated:** 2026-01-10
+**AI Assistance:** Claude Code (Sonnet 4.5)

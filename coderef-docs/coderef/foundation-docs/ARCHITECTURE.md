@@ -1,234 +1,454 @@
-# Architecture
+# Architecture Reference
 
-## Dependency Graph
+**Version:** 3.4.0
+**Last Updated:** 2026-01-10
+**Server:** coderef-docs
+**Pattern:** Modular MCP Server with POWER Framework
 
-```mermaid
+---
 
-graph LR
-    file_C__Users_willh__mcp_servers_coderef_docs_validation_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
-    file_boundaries["boundaries"]:::fileStyle
-    file_validate_project_path_input["validate_project_path_input"]:::fileStyle
-    file_isinstance["isinstance"]:::fileStyle
-    file_ValueError["ValueError"]:::fileStyle
-    file_len["len"]:::fileStyle
-    file_bytes["bytes"]:::fileStyle
-    file_validate_version_format["validate_version_format"]:::fileStyle
-    file_validate["validate"]:::fileStyle
-    file_match["match"]:::fileStyle
-    file_validate_template_name_input["validate_template_name_input"]:::fileStyle
-    file_templates["templates"]:::fileStyle
-    file_validate_changelog_inputs["validate_changelog_inputs"]:::fileStyle
-    file_change_type["change_type"]:::fileStyle
-    file_severity["severity"]:::fileStyle
-    file_all["all"]:::fileStyle
-    file_Functions["Functions"]:::fileStyle
-    file_validate_scan_depth["validate_scan_depth"]:::fileStyle
-    file_depth["depth"]:::fileStyle
-    file_list["list"]:::fileStyle
-    file_validate_focus_areas["validate_focus_areas"]:::fileStyle
-    file_validate_severity_filter["validate_severity_filter"]:::fileStyle
-    file_by["by"]:::fileStyle
-    file_validate_audit_scope["validate_audit_scope"]:::fileStyle
-    file_validate_severity_threshold["validate_severity_threshold"]:::fileStyle
-    file_threshold["threshold"]:::fileStyle
-    file_values["values"]:::fileStyle
-    file_validate_file_list["validate_file_list"]:::fileStyle
-    file_paths["paths"]:::fileStyle
-    file_is_absolute["is_absolute"]:::fileStyle
-    file_Path["Path"]:::fileStyle
-    file_traversal["traversal"]:::fileStyle
-    file_reuse["reuse"]:::fileStyle
-    file_validate_section_name["validate_section_name"]:::fileStyle
-    file_validate_plan_file_path["validate_plan_file_path"]:::fileStyle
-    file_resolve["resolve"]:::fileStyle
-    file_is_relative_to["is_relative_to"]:::fileStyle
-    file_validate_plan_json_structure["validate_plan_json_structure"]:::fileStyle
-    file_validate_feature_name_input["validate_feature_name_input"]:::fileStyle
-    file_underscores["underscores"]:::fileStyle
-    file_validate_workorder_id["validate_workorder_id"]:::fileStyle
-    file_validate_risk_inputs["validate_risk_inputs"]:::fileStyle
-    file_project_path["project_path"]:::fileStyle
-    file_proposed_change["proposed_change"]:::fileStyle
-    file_options["options"]:::fileStyle
-    file_go["go"]:::fileStyle
-    file_enumerate["enumerate"]:::fileStyle
-    file_get["get"]:::fileStyle
-    file_validate_resource_path["validate_resource_path"]:::fileStyle
-    file_path["path"]:::fileStyle
-    file_exists["exists"]:::fileStyle
-    file_validate_expert_id["validate_expert_id"]:::fileStyle
-    file_validate_resource_type["validate_resource_type"]:::fileStyle
-    file_resource["resource"]:::fileStyle
-    file_validate_expert_domain["validate_expert_domain"]:::fileStyle
-    file_specialization["specialization"]:::fileStyle
-    file_validate_expert_capabilities["validate_expert_capabilities"]:::fileStyle
-    file_validate_context_expert_inputs["validate_context_expert_inputs"]:::fileStyle
-    file_resource_path["resource_path"]:::fileStyle
-    file_resource_type["resource_type"]:::fileStyle
-    file_expert_id["expert_id"]:::fileStyle
-    file_domain["domain"]:::fileStyle
-    file_capabilities["capabilities"]:::fileStyle
-    file_C__Users_willh__mcp_servers_coderef_docs_uds_helpers_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
-    file_Standard["Standard"]:::fileStyle
-    file_get_server_version["get_server_version"]:::fileStyle
-    file_gracefully["gracefully"]:::fileStyle
-    file_read_text["read_text"]:::fileStyle
-    file_search["search"]:::fileStyle
-    file_generate_uds_header["generate_uds_header"]:::fileStyle
-    file_title["title"]:::fileStyle
-    file_ID["ID"]:::fileStyle
-    file_name["name"]:::fileStyle
-    file_status["status"]:::fileStyle
-    file_version["version"]:::fileStyle
-    file_strftime["strftime"]:::fileStyle
-    file_utcnow["utcnow"]:::fileStyle
-    file_generate_uds_footer["generate_uds_footer"]:::fileStyle
-    file_review["review"]:::fileStyle
-    file_review_days["review_days"]:::fileStyle
-    file_flag["flag"]:::fileStyle
-    file_timedelta["timedelta"]:::fileStyle
-    file_C__Users_willh__mcp_servers_coderef_docs_type_defs_py["C:\Users\willh\.mcp-servers..."]:::fileStyle
-    file_server["server"]:::fileStyle
-    file_TypedDicts["TypedDicts"]:::fileStyle
-    file_type["type"]:::fileStyle
-    file_position["position"]:::fileStyle
-    file_names["names"]:::fileStyle
-    file_extension["extension"]:::fileStyle
-    file_license["license"]:::fileStyle
-    file_affected["affected"]:::fileStyle
-    file_score["score"]:::fileStyle
-    file_dependencies["dependencies"]:::fileStyle
-    file_Transitive["Transitive"]:::fileStyle
-    file_managers["managers"]:::fileStyle
-    file_documentation["documentation"]:::fileStyle
-    file_found["found"]:::fileStyle
-    file_percentage["percentage"]:::fileStyle
-    file_constraints["constraints"]:::fileStyle
-    file_validators["validators"]:::fileStyle
+## Purpose
 
-    %% Style definitions
-    classDef functionStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px
-    classDef classStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    classDef componentStyle fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
-    classDef fileStyle fill:#f5f5f5,stroke:#616161,stroke-width:2px
+This document describes the architectural design of the coderef-docs MCP server, including system patterns, component interactions, data flow, and key design decisions. It provides a comprehensive understanding of how the system is structured and why.
 
+---
 
- Diagram Summary:
-   Format: mermaid
-   Nodes: 100
-   Edges: 0
-   Direction: LR
-     Truncated: Yes (original size: 100)
+## Overview
 
- Tip: Render at https://mermaid.live or in GitHub markdown
+coderef-docs is a **modular Python MCP server** that generates documentation using the POWER framework templates with optional code intelligence injection from @coderef/core CLI.
+
+**Core Principles:**
+1. **Single Responsibility** - Each component has one clear purpose
+2. **Dependency Injection** - Configurable paths and dependencies
+3. **Graceful Degradation** - Falls back when optional features unavailable
+4. **Separation of Concerns** - Tools, generators, validators are independent
+5. **Consistency** - Standardized error handling and logging across all components
+
+---
+
+## System Architecture
+
+### High-Level Design
 
 ```
+┌─────────────────────────────────────────────────────────┐
+│                    MCP Protocol Layer                    │
+│                   (JSON-RPC 2.0 / stdio)                 │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────┐
+│                     server.py                            │
+│              (Tool Registration & Routing)               │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────┐
+│                  tool_handlers.py                        │
+│           (13 Handlers with Decorators)                  │
+│                                                          │
+│  @log_invocation + @mcp_error_handler                   │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+        ┌───────────────────┼───────────────────┐
+        ↓                   ↓                   ↓
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│  Generators  │   │  Extractors  │   │  Validators  │
+├──────────────┤   ├──────────────┤   ├──────────────┤
+│ Foundation   │   │ CLI Wrapper  │   │ Input Rules  │
+│ Changelog    │   │ Cache (LRU)  │   │ Schemas      │
+│ Standards    │   │ Fallback     │   │ Boundaries   │
+│ Audit        │   └──────────────┘   └──────────────┘
+│ Quickref     │
+│ Resource*    │ *NEW v3.4.0
+└──────────────┘
+```
 
+---
 
-## Core Components
+## Component Layers
 
-### Functions (6020)
+### Layer 1: Protocol Interface
 
-- **`randomstring()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:40
-- **`helpTestDataType()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:182
-- **`Python()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/is64bit.py:6
-- **`os()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/is64bit.py:10
-- **`maketemp()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:10
-- **`_cleanup_function()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:20
-- **`getcleanupfunction()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:32
-- **`find_ado_path()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:36
-- **`makeadopackage()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:43
-- **`makemdb()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/setuptestframework.py:62
-- **`try_connection()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/tryconnection.py:1
-- **`try_operation_with_expected_exception()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/tryconnection.py:21
-- **`getIndexedValue()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:58
-- **`make_COM_connecter()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:66
-- **`connect()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:77
-- **`format_parameters()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:120
-- **`_configure_parameter()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:158
-- **`ado_direction_name()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/ado_consts.py:47
-- **`ado_type_name()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/ado_consts.py:170
-- **`standardErrorHandler()`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:24
+**Component:** server.py
+**Responsibility:** MCP protocol compliance, tool registration, request routing
+**Technology:** mcp.server (Model Context Protocol SDK)
 
-### Classes (3632)
+**Key Functions:**
+- `list_tools()` - Returns 13 tool schemas
+- `call_tool(name, arguments)` - Routes to appropriate handler
+- `health_check()` - Validates @coderef/core CLI availability
 
-- **`CommonDBTests`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:44
-- **`XtendString`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1022
-- **`XtendInt`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1025
-- **`XtendFloat`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1028
-- **`TestADOwithSQLServer`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1063
-- **`TestADOwithAccessDB`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1211
-- **`TestADOwithMySql`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1243
-- **`TestADOwithPostgres`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1309
-- **`TimeConverterInterfaceTest`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1372
-- **`TestPythonTimeConverter`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1415
-- **`TestPythonDateTimeConverter`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1459
-- **`cleanup_manager`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py:1522
-- **`DatabaseAPI20Test`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/dbapi20.py:86
-- **`mytest`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/dbapi20.py:101
-- **`test_adodbapi`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/test/test_adodbapi_dbapi20.py:88
-- **`Connection`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:212
-- **`Cursor`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/adodbapi.py:519
-- **`Error`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:38
-- **`Warning`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:47
-- **`InterfaceError`** - C:/Users/willh/.mcp-servers/coderef-docs/.venv/Lib/site-packages/adodbapi/apibase.py:51
+---
 
-### Components (0)
+### Layer 2: Business Logic
 
-_No components found_
+**Component:** tool_handlers.py
+**Responsibility:** Implement core functionality for each of 13 tools
+**Pattern:** Decorator pattern for cross-cutting concerns
 
-## Module Organization
+**Decorators:**
+```python
+@log_invocation  # Logs tool entry/exit with timing
+@mcp_error_handler  # Catches exceptions, formats errors
+async def handle_tool(arguments):
+    ...
+```
 
-### `C:\Users\willh\.mcp-servers\coderef-docs/`
-- Elements: 251
+**Tools Categorization:**
+1. **Template Tools** (2) - list_templates, get_template
+2. **Foundation Docs** (2) - generate_foundation_docs, generate_individual_doc
+3. **Resource Sheets** (1) - generate_resource_sheet (NEW v3.4.0)
+4. **Changelog** (3) - get_changelog, add_changelog_entry, record_changes
+5. **Standards** (3) - establish_standards, audit_codebase, check_consistency
+6. **Validation** (2) - validate_document, check_document_health
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages/`
-- Elements: 340
+---
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\adodbapi/`
-- Elements: 153
+### Layer 3: Domain Logic
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\adodbapi\test/`
-- Elements: 169
+**Components:** generators/*
+**Responsibility:** Document generation workflows
+**Pattern:** Strategy pattern (different generators for different docs)
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\annotated_types/`
-- Elements: 44
+**Generator Hierarchy:**
+```
+BaseGenerator (abstract)
+    ├── FoundationGenerator (5-doc workflow)
+    ├── ChangelogGenerator (CRUD + validation)
+    ├── StandardsGenerator (pattern extraction)
+    ├── AuditGenerator (compliance checking)
+    ├── QuickrefGenerator (interactive Q&A)
+    └── ResourceSheetGenerator (module composition) *NEW v3.4.0
+```
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio/`
-- Elements: 124
+---
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\_backends/`
-- Elements: 441
+### Layer 4: Integration
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\_core/`
-- Elements: 407
+**Component:** extractors.py
+**Responsibility:** Code intelligence extraction from @coderef/core CLI
+**Pattern:** Adapter pattern (wraps external CLI)
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\abc/`
-- Elements: 128
+**Features:**
+- LRU caching (@lru_cache decorator)
+- Subprocess management
+- JSON parsing
+- Graceful fallback to placeholders
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\anyio\streams/`
-- Elements: 111
+**CLI Integration:**
+```python
+def extract_apis(project_path: str) -> Dict:
+    # Call: coderef scan {project_path} --json
+    # Parse: JSON output
+    # Return: {endpoints: [...], patterns: [...]}
+```
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\attr/`
-- Elements: 250
+---
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\certifi/`
-- Elements: 5
+### Layer 5: Cross-Cutting Concerns
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\cffi/`
-- Elements: 640
+**Validation:** validation.py - Input boundary checks (REF-003)
+**Error Handling:** error_responses.py - Consistent formatting (ARCH-001)
+**Logging:** logger_config.py - Structured logging (ARCH-003)
+**Constants:** constants.py - Global config (REF-002)
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\click/`
-- Elements: 606
+---
 
-### `C:\Users\willh\.mcp-servers\coderef-docs\.venv\Lib\site-packages\colorama/`
-- Elements: 77
+## Data Flow
 
+### Foundation Docs Generation Flow
+
+```
+User Request (project_path)
+    ↓
+generate_foundation_docs(project_path)
+    ↓
+Sequential Generation [1/5] → [5/5]
+    ↓
+For each template:
+    ├→ Read POWER template
+    ├→ (Optional) Extract code intelligence
+    ├→ Return template + instructions
+    └→ Claude populates template
+    ↓
+Save to output location
+    ├→ README.md → project root
+    └→ Others → coderef/foundation-docs/
+```
+
+### Resource Sheet Generation Flow (NEW v3.4.0)
+
+```
+User Request (element_name, mode, format)
+    ↓
+Detect Code Characteristics (20+ boolean flags)
+    ↓
+Select Modules (4 universal + conditional)
+    ↓
+Compose Documentation
+    ├→ Markdown format
+    ├→ JSON Schema format
+    └→ JSDoc format
+    ↓
+Auto-Fill (50% in Phase 1)
+    ├→ Architecture module (from .coderef/index.json)
+    ├→ Integration module (dependencies, imports)
+    └→ Stubs (testing, performance)
+    ↓
+Return 3-format output
+```
+
+### Changelog Recording Flow
+
+```
+User Request (version, workorder_id?)
+    ↓
+Auto-Detect Git Changes
+    ├→ git diff --name-only
+    ├→ git diff --stat
+    └→ git log -1
+    ↓
+Suggest change_type & severity
+    ↓
+AI Agent Reviews & Confirms
+    ↓
+Validate Against Schema
+    ↓
+Write to CHANGELOG.json
+```
+
+---
 
 ## Design Patterns
 
-_No patterns detected_
+### 1. Decorator Pattern
+
+**Usage:** Cross-cutting concerns (logging, error handling)
+
+```python
+@log_invocation
+@mcp_error_handler
+async def handle_generate_docs(args):
+    # Core logic without boilerplate
+```
+
+**Benefits:**
+- Separation of concerns
+- Reusable across all 13 handlers
+- Consistent behavior
 
 ---
-**Generated from:** `.coderef/index.json`, `.coderef/diagrams/dependencies.mmd`
-**Date:** 2025-12-31
+
+### 2. Strategy Pattern
+
+**Usage:** Different generators for different doc types
+
+```python
+class BaseGenerator:
+    def generate(self): pass
+
+class FoundationGenerator(BaseGenerator):
+    def generate(self): # 5-doc workflow
+
+class ChangelogGenerator(BaseGenerator):
+    def generate(self): # CHANGELOG.json CRUD
+```
+
+---
+
+### 3. Adapter Pattern
+
+**Usage:** @coderef/core CLI integration
+
+```python
+# External CLI with complex API
+def extract_apis(project_path):
+    # Adapts CLI to simple Dict interface
+```
+
+---
+
+### 4. Template Method Pattern
+
+**Usage:** BaseGenerator workflow
+
+```python
+class BaseGenerator:
+    def generate(self):
+        self.read_template()
+        self.extract_context()  # Overridable
+        self.populate_template()
+        self.save_output()
+```
+
+---
+
+## Key Design Decisions
+
+### Decision 1: Sequential vs Batch Foundation Docs
+
+**Chosen:** Sequential generation ([1/5] → [5/5])
+**Rejected:** Batch dump all templates at once
+**Reason:** Eliminates timeout errors (~1,470 lines → 5x ~250-350 lines)
+
+**Impact:** v3.2.0 upgrade
+**Trade-off:** Slight latency increase (5 calls) vs stability
+
+---
+
+### Decision 2: Optional vs Required Code Intelligence
+
+**Chosen:** Optional with graceful fallback
+**Rejected:** Required @coderef/core CLI dependency
+**Reason:** Works on any system, even without CLI
+
+**Impact:** Usability vs feature completeness
+**Implementation:** extractors.py returns empty dict on CLI failure
+
+---
+
+### Decision 3: POWER Framework vs Free-Form
+
+**Chosen:** Standardized POWER template structure
+**Rejected:** Ad-hoc documentation styles
+**Reason:** Consistency, proven effectiveness, reusability
+
+**POWER = Purpose, Overview, What/Why/When, Examples, References**
+
+---
+
+### Decision 4: Composable Modules vs Rigid Templates
+
+**Chosen:** Composable module architecture (v3.4.0)
+**Rejected:** 20 rigid per-element templates
+**Reason:** Flexibility, DRY principle, auto-fill capability
+
+**Implementation:** ResourceSheetGenerator with detection engine
+
+---
+
+### Decision 5: UDS Metadata Optional vs Required
+
+**Chosen:** Optional (only for workorder docs)
+**Rejected:** Required for all documentation
+**Reason:** Backward compatibility, not all docs need tracking
+
+**Scope:**
+- ✅ Workorder docs (plan.json, DELIVERABLES.md)
+- ❌ Foundation docs (README, ARCHITECTURE)
+
+---
+
+## Architectural Constraints
+
+### Technical Constraints
+
+1. **Python 3.10+** - Required for modern typing features
+2. **MCP Protocol 1.0** - JSON-RPC 2.0 over stdio
+3. **File System Access** - Requires read/write permissions
+4. **Git Repository** - Optional (for changelog auto-detection)
+
+### Performance Constraints
+
+1. **2-minute timeout** - All tools must complete within 120s
+2. **LRU cache size** - 32 entries max for CLI results
+3. **Sequential generation** - No parallel doc generation
+
+### Security Constraints
+
+1. **Path traversal prevention** - Validates all file paths
+2. **No code execution** - Pure document generation
+3. **Read-only analysis** - Doesn't modify source code
+
+---
+
+## Integration Points
+
+### External Dependencies
+
+**Required:**
+- Python stdlib (pathlib, json, asyncio)
+- MCP SDK (mcp.server)
+- jsonschema (validation)
+
+**Optional:**
+- @coderef/core CLI (code intelligence)
+- Git (changelog auto-detection)
+
+### Integration with CodeRef Ecosystem
+
+**Upstream:** None (standalone server)
+**Downstream:**
+- coderef-workflow (orchestrates doc generation)
+- Claude Code (MCP client)
+
+---
+
+## Error Handling Strategy
+
+### Layered Error Handling
+
+```
+Layer 1: Validation (validation.py)
+    ↓ ValueError on invalid input
+Layer 2: Tool Handlers (@mcp_error_handler)
+    ↓ Catches all exceptions
+Layer 3: Error Responses (error_responses.py)
+    ↓ Formats user-friendly messages
+Layer 4: MCP Protocol
+    ↓ Returns TextContent with error
+```
+
+### Error Response Format
+
+```json
+{
+  "type": "text",
+  "text": "❌ Error: [what went wrong]\n\nDetails: [context]\n\nSuggestion: [how to fix]"
+}
+```
+
+---
+
+## Logging Strategy
+
+**Levels:**
+- INFO: Tool invocations, major operations
+- DEBUG: Internal state, detailed flow
+- ERROR: Exceptions, validation failures
+
+**Format:**
+```
+2026-01-10 00:00:00 - coderef-docs - INFO - Tool called: generate_docs
+2026-01-10 00:00:01 - coderef-docs - DEBUG - Reading template: api
+2026-01-10 00:00:02 - coderef-docs - INFO - Successfully generated: API.md
+```
+
+---
+
+## Future Architecture Considerations
+
+**Planned:**
+1. REST API wrapper (HTTP server mode)
+2. Multi-language template support
+3. Plugin architecture for custom generators
+4. Distributed generation (parallel doc creation)
+
+**Under Consideration:**
+1. Database integration for changelog
+2. Real-time collaboration support
+3. Version control integration beyond git
+
+---
+
+## References
+
+- **Component Details:** [COMPONENTS.md](COMPONENTS.md)
+- **API Specifications:** [API.md](API.md)
+- **Data Schemas:** [SCHEMA.md](SCHEMA.md)
+- **MCP Specification:** https://spec.modelcontextprotocol.io/
+
+---
+
+**Maintained by:** coderef-docs MCP server
+**Generated:** 2026-01-10
+**AI Assistance:** Claude Code (Sonnet 4.5)

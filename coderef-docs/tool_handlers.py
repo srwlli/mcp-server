@@ -282,9 +282,7 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     result += "=" * 50 + "\n\n"
     result += "INSTRUCTIONS:\n"
     result += f"Generate {template_info.get('save_as', f'{template_name.upper()}.md')} using the template above.\n"
-    if extracted_data and extracted_data.get('source') == 'coderef-cli':
-        result += f"IMPORTANT: Populate the template with the extracted {template_name} data above (not placeholders).\n"
-        result += f"This ensures the documentation reflects real code structures from @coderef/core analysis.\n"
+    result += f"Use regex-based detection and .coderef/ data when available to populate the template.\n"
     result += f"Save the document to: {output_path}\n"
 
     logger.info(f"Successfully generated plan for {template_name}")

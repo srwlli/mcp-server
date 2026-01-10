@@ -72,13 +72,19 @@ class StandardsGenerator:
 
         try:
             index_data = json.loads(index_path.read_text(encoding='utf-8'))
-            logger.debug(f"Loaded {len(index_data)} elements from index.json")
+            # Handle both old format (array) and new format (object with elements array)
+            if isinstance(index_data, dict):
+                elements = index_data.get('elements', [])
+                logger.debug(f"Loaded {len(elements)} elements from index.json (v2.0 format)")
+            else:
+                elements = index_data
+                logger.debug(f"Loaded {len(elements)} elements from index.json (legacy format)")
         except (json.JSONDecodeError, UnicodeDecodeError) as e:
             logger.warning(f"Failed to read .coderef/index.json: {e}. Falling back to full scan.")
             return self.scan_codebase()
 
         # Extract components from index
-        components = [elem for elem in index_data if elem.get('type') == 'component']
+        components = [elem for elem in elements if elem.get('type') == 'component']
         logger.info(f"Found {len(components)} components in .coderef/index.json")
 
         # Group files by extension

@@ -1,171 +1,208 @@
 # coderef-docs User Guide
 
-**Project:** coderef-docs
-**Date:** 2025-12-27
-**For:** Human users and AI agents
-
-> Comprehensive guide to using coderef-docs MCP server for documentation generation, changelog management, and standards enforcement.
+**Project:** coderef-docs MCP Server
+**Version:** 3.4.0
+**Last Updated:** 2026-01-10
+**Author:** willh, Claude Code AI
 
 ---
 
 ## Table of Contents
 
-- [What is coderef-docs?](#what-is-coderef-docs)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [How It Works](#how-it-works)
-- [Getting Started](#getting-started)
-- [Use Cases](#use-cases)
-- [Tool Reference](#tool-reference)
-- [Workflows](#workflows)
-- [Best Practices](#best-practices)
-- [Troubleshooting](#troubleshooting)
-- [Quick Reference](#quick-reference)
-
----
-
-## What is coderef-docs?
-
-**coderef-docs** is an MCP server that makes documentation easy by providing 11 specialized tools for:
-
-✅ **Generating foundation docs** (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)
-✅ **Managing changelogs** with git auto-detection
-✅ **Enforcing coding standards** across your codebase
-✅ **Creating quick reference guides** for any app type
-
-### Why Use It?
-
-**Problem:** Documentation is tedious and gets out of date
-**Solution:** Auto-generate comprehensive docs from your codebase
-
-**Problem:** Changelogs are manual and inconsistent
-**Solution:** Auto-detect changes from git and create structured entries
-
-**Problem:** Code standards drift over time
-**Solution:** Extract patterns from existing code and audit for violations
+1. [Prerequisites](#prerequisites)
+2. [Installation](#installation)
+3. [How It Works](#how-it-works)
+4. [Getting Started](#getting-started)
+5. [Use Cases](#use-cases)
+6. [Best Practices](#best-practices)
+7. [Troubleshooting](#troubleshooting)
+8. [Quick Reference](#quick-reference)
 
 ---
 
 ## Prerequisites
 
-### Required
+**Required:**
+- Python 3.10 or higher
+- MCP-compatible AI client (Claude Code, etc.)
 
-✅ **Claude Code** or **ChatGPT with MCP support**
-✅ **Python 3.10+**
-
+**Verification:**
 ```bash
 python --version
-# Expected: Python 3.10+
+# Expected: Python 3.10+ or Python 3.11+ or Python 3.12+ or Python 3.13+
 ```
 
-### Optional
-
-🔹 **@coderef/core CLI** for code intelligence (recommended)
-
-```bash
-npm install -g @coderef/core
-coderef --version
-# Expected: @coderef/core v1.x.x
-```
-
-💡 **Tip:** Without the CLI, docs use placeholders instead of real code extraction
+**Optional:**
+- Git (for changelog auto-detection)
+- coderef-context MCP server (for enhanced code intelligence)
 
 ---
 
 ## Installation
 
-### Step 1: Configure MCP
+### Step 1: Install Dependencies
 
-Add to `~/.mcp.json` or `.claude/settings.json`:
+```bash
+cd ~/.mcp-servers/coderef-docs
+pip install -r requirements.txt
+```
+
+**Expected Output:**
+```
+Successfully installed mcp-1.0.0 jsonschema-4.0.0 packaging-21.0
+```
+
+### Step 2: Configure MCP
+
+Add to `~/.mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "coderef-docs": {
       "command": "python",
-      "args": ["-m", "coderef-docs.server"],
-      "env": {}
+      "args": ["C:/Users/willh/.mcp-servers/coderef-docs/server.py"],
+      "cwd": "C:/Users/willh/.mcp-servers/coderef-docs"
     }
   }
 }
 ```
 
-### Step 2: Restart Claude Code
-
-Close and reopen Claude Code to load the MCP server.
-
 ### Step 3: Verify Installation
 
-Type `/` and look for:
-- `/generate-docs`
-- `/record-changes`
-- `/establish-standards`
+Restart your MCP client and check:
 
-✅ **You're ready!**
+```
+Available tools should include:
+- list_templates
+- generate_foundation_docs
+- generate_resource_sheet
+- record_changes
+- establish_standards
+... (13 total tools)
+```
 
 ---
 
 ## How It Works
 
-### Behind the Scenes
+### Architecture Overview
 
 ```
-Your Request
-    ↓
-Claude Code (MCP Client)
-    ↓
-coderef-docs (MCP Server)
-    ↓
-┌─────────────┬──────────────┬─────────────┐
-│  Templates  │  Extractors  │  Generators │
-│  (POWER)    │  (Optional)  │             │
-└─────────────┴──────────────┴─────────────┘
-    ↓
-Generated Docs (Markdown/JSON)
+┌─────────────┐
+│   Claude    │  ← MCP Client (your AI assistant)
+└──────┬──────┘
+       │ stdio (JSON-RPC 2.0)
+       ↓
+┌─────────────────────────────┐
+│  coderef-docs MCP Server    │
+│  ┌──────────────────────┐   │
+│  │  13 MCP Tools        │   │
+│  ├──────────────────────┤   │
+│  │  POWER Templates     │   │
+│  ├──────────────────────┤   │
+│  │  Standards Engine    │   │
+│  └──────────────────────┘   │
+└──────────┬──────────────────┘
+           │
+           ↓
+    ┌──────────────┐
+    │  .coderef/   │  ← Code intelligence data
+    │  Project     │
+    │  Files       │
+    └──────────────┘
 ```
 
-### Context Injection (Optional)
+### Key Components
 
-If `@coderef/core` CLI is installed:
-1. **API.md** gets real API endpoints from your code
-2. **SCHEMA.md** gets real data models
-3. **COMPONENTS.md** gets real UI components
-
-Otherwise: Uses template placeholders (still useful!)
+1. **MCP Tools** - 13 specialized tools for documentation, changelog, and standards
+2. **POWER Framework** - Template system (Purpose, Overview, What/Why/When, Examples, References)
+3. **Standards Engine** - Extract and enforce coding standards
+4. **UDS Integration** - Universal Document Standard for workorder tracking
 
 ---
 
 ## Getting Started
 
-### Your First Documentation Generation
+### Tutorial 1: Generate Foundation Documentation
 
-**Goal:** Generate complete foundation docs for your project
+**Time:** ~2-5 minutes
 
-**Time:** ~2 minutes
+**Step 1:** Call the foundation docs tool
+```
+/generate-docs
+```
 
-**Steps:**
+**What happens behind the scenes:**
+1. Tool scans project for `.coderef/` data
+2. Reads existing foundation docs (if any)
+3. Auto-detects APIs, schemas, components via regex
+4. Generates 5 documents sequentially
 
-1. **Open your project in Claude Code**
+**Step 2:** Documents created
+- `README.md` (project root)
+- `coderef/foundation-docs/API.md`
+- `coderef/foundation-docs/SCHEMA.md`
+- `coderef/foundation-docs/COMPONENTS.md`
+- `coderef/foundation-docs/ARCHITECTURE.md`
 
-2. **Run the command:**
-   ```
-   /generate-docs
-   ```
+**Result:** Complete technical documentation suite following POWER framework
 
-3. **Watch the magic happen:**
-   ```
-   [1/5] Generating API.md...
-   [2/5] Generating SCHEMA.md...
-   [3/5] Generating COMPONENTS.md...
-   [4/5] Generating ARCHITECTURE.md...
-   [5/5] Generating README.md...
-   ```
+---
 
-4. **Check the results:**
-   - `README.md` → Project root
-   - Other docs → `coderef/foundation-docs/`
+### Tutorial 2: Record Code Changes
 
-✅ **Done!** You now have 5 comprehensive documentation files.
+**Time:** ~30 seconds
+
+**Step 1:** Make changes to your code
+```bash
+# Edit some files
+git add .
+```
+
+**Step 2:** Record changes with smart detection
+```
+/record-changes
+```
+
+**What happens:**
+1. Tool auto-detects git changes (staged files)
+2. Analyzes diff to suggest change_type (feature/bugfix/breaking)
+3. Calculates severity based on files changed
+4. Asks for your confirmation
+5. Updates CHANGELOG.json
+
+**Result:** Professional changelog entry with workorder tracking
+
+---
+
+### Tutorial 3: Establish Coding Standards
+
+**Time:** ~5-10 seconds (with .coderef/) or ~1-2 minutes (without)
+
+**Step 1:** Extract standards from your codebase
+```
+/establish-standards
+```
+
+**Behind the scenes:**
+1. Checks for `.coderef/index.json` (fast path: ~50ms)
+2. Falls back to full scan if missing (~5-60 seconds)
+3. Analyzes UI patterns, behavior patterns, UX flows
+4. Generates 4 standards files
+
+**Step 2:** Review generated standards
+- `coderef/standards/UI-STANDARDS.md`
+- `coderef/standards/BEHAVIOR-STANDARDS.md`
+- `coderef/standards/UX-PATTERNS.md`
+- `coderef/standards/COMPONENT-INDEX.md`
+
+**Step 3:** Enforce standards on future code
+```
+/check-consistency
+```
+
+**Result:** Automated standards compliance checking
 
 ---
 
@@ -173,247 +210,69 @@ Otherwise: Uses template placeholders (still useful!)
 
 ### Use Case 1: New Project Documentation
 
-**Scenario:** You just started a project and need docs fast
+**Scenario:** You've built a new MCP server and need complete documentation
 
-**Command:**
-```
+**Workflow:**
+```bash
+# 1. Generate foundation docs
 /generate-docs
-```
 
-**Result:** 5 complete docs in ~2 minutes
+# 2. Generate user-facing docs
+/generate-user-docs
 
-**Behind the Scenes:**
-- Scans your codebase
-- Extracts structure
-- Generates POWER-formatted docs
-- Saves to correct locations
-
----
-
-### Use Case 2: Tracking Feature Changes
-
-**Scenario:** You just finished a feature and need to update the changelog
-
-**Command:**
-```
-/record-changes
-```
-
-**What Happens:**
-1. Auto-detects changed files via `git diff`
-2. Suggests change type (feature/bugfix/etc)
-3. Calculates severity
-4. Shows preview
-5. Creates CHANGELOG entry after confirmation
-
-**Example Interaction:**
-```
-User: /record-changes
-
-Agent: I detected these changes:
-  - tool_handlers.py (modified)
-  - extractors.py (new file)
-
-Suggested type: feature
-Suggested severity: minor
-
-Create changelog entry?
-
-User: Yes
-
-Agent: ✅ Added to CHANGELOG.json v3.2.0
-```
-
----
-
-### Use Case 3: Enforcing Code Standards
-
-**Scenario:** Your team wants consistent code patterns
-
-**Step 1: Extract Standards**
-```
+# 3. Extract coding standards
 /establish-standards
+
+# Total time: ~5-10 minutes
+# Result: 9 professional documents ready to publish
 ```
 
-**Result:** 4 files in `coderef/standards/`
-- `ui-patterns.md`
-- `behavior-patterns.md`
-- `ux-patterns.md`
-- `standards-index.md`
+---
 
-**Step 2: Audit Compliance**
-```
-/audit-codebase
+### Use Case 2: Feature Implementation Tracking
+
+**Scenario:** You implemented a new feature and need to document it
+
+**Workflow:**
+```bash
+# 1. Complete your feature implementation
+git add .
+
+# 2. Record changes
+/record-changes
+
+# 3. Update affected documentation
+/generate-docs  # Regenerate if API/schema changed
+
+# Total time: ~2-3 minutes
+# Result: Feature tracked in CHANGELOG, docs updated
 ```
 
-**Result:** Compliance report with score (0-100)
+---
 
-**Step 3: Pre-commit Check**
-```
+### Use Case 3: Pre-Commit Quality Gate
+
+**Scenario:** You want to enforce coding standards before committing
+
+**Workflow:**
+```bash
+# 1. Make code changes
+git add modified_files.py
+
+# 2. Check consistency
 /check-consistency
+
+# 3. Fix violations if any
+# ... make fixes ...
+
+# 4. Re-check
+/check-consistency  # Should pass
+
+# 5. Commit
+git commit -m "feat: new feature"
+
+# Result: Only standards-compliant code gets committed
 ```
-
-**Result:** Pass/fail for staged changes
-
----
-
-## Tool Reference
-
-### Documentation Tools
-
-#### `/generate-docs`
-Generates 5 foundation docs with code intelligence
-
-**When to use:**
-- New project
-- Major refactoring
-- Documentation refresh
-
-**Time:** ~2 minutes
-**Output:** README, ARCHITECTURE, API, SCHEMA, COMPONENTS
-
----
-
-#### `/generate-quickref`
-Interactive quickref guide generation
-
-**When to use:**
-- Need scannable reference
-- Different app types (CLI, Web, API, etc.)
-
-**Time:** ~5 minutes (interactive)
-**Output:** `coderef/quickref.md` (150-250 lines)
-
----
-
-### Changelog Tools
-
-#### `/record-changes`
-Smart changelog with git auto-detection
-
-**When to use:**
-- After completing a feature
-- Before merging PR
-- Automated changelog updates
-
-**Time:** ~30 seconds
-**Output:** CHANGELOG.json entry
-
-💡 **Best Practice:** Run this before `/archive-feature`
-
----
-
-### Standards Tools
-
-#### `/establish-standards`
-Extract coding standards from codebase
-
-**When to use:**
-- First time setting up standards
-- After major code style changes
-- New team members onboarding
-
-**Time:** ~3-5 minutes
-**Output:** 4 standards files
-
----
-
-#### `/audit-codebase`
-Check compliance with standards
-
-**When to use:**
-- Before release
-- Periodic code quality checks
-- Technical debt assessment
-
-**Time:** ~5-10 minutes
-**Output:** Compliance report with score
-
----
-
-#### `/check-consistency`
-Pre-commit gate for staged changes
-
-**When to use:**
-- In pre-commit hooks
-- Before git commit
-- Quick quality check
-
-**Time:** ~10 seconds
-**Output:** Pass/fail + violations
-
----
-
-## Workflows
-
-### Workflow 1: Complete Documentation from Scratch
-
-```
-Step 1: Generate docs
-  /generate-docs
-  → README, ARCHITECTURE, API, SCHEMA, COMPONENTS
-
-Step 2: Add user guide
-  /generate-quickref
-  → quickref.md
-
-Step 3: Set up standards
-  /establish-standards
-  → Extract patterns from code
-
-Done! ✅
-```
-
-**Time:** ~10 minutes total
-
----
-
-### Workflow 2: Feature Completion
-
-```
-Step 1: Code your feature
-  [Your work here]
-
-Step 2: Record changes
-  /record-changes
-  → Auto-detects changes, creates changelog
-
-Step 3: Update docs (if needed)
-  /generate-docs
-  → Refresh documentation
-
-Step 4: Check standards
-  /check-consistency
-  → Verify no violations
-
-Done! ✅
-```
-
-**Time:** ~3 minutes (documentation part)
-
----
-
-### Workflow 3: Pre-commit Quality Gate
-
-```
-Step 1: Stage your changes
-  git add .
-
-Step 2: Check consistency
-  /check-consistency
-  → Pass/fail for staged files
-
-Step 3: If violations found
-  Fix issues
-  → Re-run check
-
-Step 4: Commit
-  git commit -m "message"
-
-Done! ✅
-```
-
-**Time:** ~30 seconds per check
 
 ---
 
@@ -421,137 +280,154 @@ Done! ✅
 
 ### ✅ Do
 
-**Generate docs early**
-- Run `/generate-docs` at project start
-- Easier to maintain than create later
-
-**Use record_changes for changelogs**
-- Auto-detection saves time
-- Consistent format
-- Workorder tracking
-
-**Establish standards once**
-- Run `/establish-standards` early
-- Use `/audit-codebase` periodically
-- Add `/check-consistency` to pre-commit hooks
-
-**Keep docs in sync**
-- Re-run `/generate-docs` after major changes
-- Update README when adding features
-
----
+- **Run `/establish-standards` once per project** to create baseline standards
+- **Use `/generate-docs` when APIs/schemas change** to keep documentation current
+- **Call `/record-changes` after feature completion** for professional changelog tracking
+- **Check `.coderef/` data exists** for faster standards generation (10x speedup)
+- **Use specific template names** with `generate_individual_doc` for targeted updates
 
 ### 🚫 Don't
 
-**Don't skip changelogs**
-- Future you will thank you
-- Essential for version tracking
-
-**Don't ignore standards violations**
-- Fix critical violations immediately
-- Plan fixes for major/minor
-
-**Don't generate docs repeatedly**
-- They're expensive (time/tokens)
-- Update specific sections manually for small changes
-
----
+- **Don't skip `/establish-standards`** before using `/audit-codebase` or `/check-consistency`
+- **Don't manually edit CHANGELOG.json** - use `/record-changes` for consistency
+- **Don't generate docs without `.coderef/` data** if accuracy matters (use coderef-context first)
+- **Don't ignore validation warnings** - they indicate real issues
 
 ### 💡 Tips
 
-**Tip 1:** Use `/generate-quickref` for user-facing docs, API.md for technical reference
-
-**Tip 2:** Run `/check-consistency` before every commit (add to pre-commit hook)
-
-**Tip 3:** If context injection fails, install `@coderef/core`:
-```bash
-npm install -g @coderef/core
-```
-
-**Tip 4:** README.md goes in project root, all others in `coderef/foundation-docs/`
+- **Tip 1:** Use `.coderef/` data for 10x faster standards generation
+- **Tip 2:** Run `/check-consistency` in pre-commit hooks for automatic enforcement
+- **Tip 3:** Combine with coderef-context for enhanced code intelligence
+- **Tip 4:** Use workorder IDs in changelog entries for full traceability
 
 ---
 
 ## Troubleshooting
 
-### Issue: "Context Injection: DISABLED"
+### Problem: "Template not found" error
 
-**Symptom:** Docs show `[FALLBACK] Using template placeholders`
+**Symptom:**
+```
+ERROR - Template 'readme' not found
+```
 
-**Cause:** `@coderef/core` CLI not installed or not in PATH
+**Cause:** Trying to use invalid template name
 
 **Solution:**
 ```bash
-npm install -g @coderef/core
-# Restart Claude Code
+# List valid templates
+/list-templates
+
+# Valid names: readme, architecture, api, components, schema, user-guide, my-guide
 ```
 
-**Verification:**
+---
+
+### Problem: Standards audit fails
+
+**Symptom:**
+```
+ERROR - No standards found
+```
+
+**Cause:** Standards haven't been established yet
+
+**Solution:**
 ```bash
-coderef --version
-# Should show: @coderef/core v1.x.x
+# Run establish-standards first
+/establish-standards
+
+# Then audit
+/audit-codebase
 ```
 
 ---
 
-### Issue: "File already exists" Error
+### Problem: Slow standards generation
 
-**Symptom:** Can't generate docs because files exist
+**Symptom:** `/establish-standards` takes 30-60 seconds
 
-**Cause:** Protection against overwriting
+**Cause:** No `.coderef/` data available (using slow full scan)
 
 **Solution:**
-- **Option A:** Delete existing docs first
-- **Option B:** Use `/generate-individual-doc` to update specific files
+```bash
+# Option 1: Generate .coderef/ data first (recommended)
+# Call mcp__coderef_context__coderef_scan
+# Then run /establish-standards  (now takes ~50ms)
+
+# Option 2: Accept slower scan (still works fine)
+```
 
 ---
 
-### Issue: Standards Audit Fails
+### Problem: "Invalid request parameters" error
 
-**Symptom:** `/audit-codebase` returns errors
+**Symptom:**
+```
+ERROR - Invalid request parameters
+```
 
-**Cause:** No standards files exist
+**Cause:** Missing required parameters or invalid values
 
-**Solution:**
-1. Run `/establish-standards` first
-2. Then run `/audit-codebase`
+**Solution:** Check tool schema:
+```bash
+# Get template to see required params
+/get-template api
 
----
-
-### Issue: Changelog Entry Fails
-
-**Symptom:** `/record-changes` fails validation
-
-**Cause:** Missing required fields or invalid format
-
-**Solution:** Use `/add-changelog` for manual entry with all required fields
+# Verify parameter names match exactly
+```
 
 ---
 
 ## Quick Reference
 
-| Need | Command | Time | Output |
-|------|---------|------|--------|
-| Complete docs | `/generate-docs` | ~2 min | 5 files |
-| User docs | `/generate-user-docs` | ~5 min | 4 user docs |
-| Update changelog | `/record-changes` | ~30 sec | CHANGELOG entry |
-| Set standards | `/establish-standards` | ~5 min | 4 standards files |
-| Check compliance | `/audit-codebase` | ~10 min | Score + report |
-| Pre-commit check | `/check-consistency` | ~10 sec | Pass/fail |
+### Common Commands
+
+| Task | Command | Time |
+|------|---------|------|
+| Generate all foundation docs | `/generate-docs` | 2-5 min |
+| Generate all user docs | `/generate-user-docs` | 3-7 min |
+| Record code changes | `/record-changes` | 30 sec |
+| Extract standards | `/establish-standards` | 5-10 sec (with .coderef/) |
+| Check compliance | `/audit-codebase` | 1-2 min |
+| Pre-commit check | `/check-consistency` | 10-30 sec |
+
+### MCP Tool Quick Reference
+
+| Tool | Purpose | Required Params |
+|------|---------|-----------------|
+| `list_templates` | Show available templates | None |
+| `get_template` | Get template content | template_name |
+| `generate_foundation_docs` | Generate 5 foundation docs | project_path |
+| `generate_individual_doc` | Generate single doc | project_path, template_name |
+| `generate_resource_sheet` | Create module-based docs | project_path, element_name |
+| `record_changes` | Smart changelog recording | project_path, feature_description |
+| `establish_standards` | Extract coding standards | project_path |
+| `audit_codebase` | Check standards compliance | project_path |
+| `check_consistency` | Pre-commit validation | project_path |
+
+### File Locations
+
+| Document Type | Location |
+|---------------|----------|
+| Foundation docs | `coderef/foundation-docs/` |
+| User docs | `coderef/user/` |
+| Standards | `coderef/standards/` |
+| Changelog | `coderef/CHANGELOG.json` |
+| README | Project root |
 
 ---
 
-## More Resources
+## AI Integration Notes
 
-- **Complete API Reference:** [API.md](../foundation-docs/API.md)
-- **Tool Quick Lookup:** [my-guide.md](my-guide.md)
-- **Architecture Details:** [ARCHITECTURE.md](../foundation-docs/ARCHITECTURE.md)
-- **Fast Reference:** [quickref.md](quickref.md)
+This MCP server is designed to work seamlessly with AI assistants like Claude:
+
+- **Automatic context injection** - Tools provide templates + extracted code data
+- **Smart defaults** - Sensible parameter defaults for common use cases
+- **Progress indicators** - [1/5], [2/5] markers for sequential operations
+- **Error guidance** - Helpful error messages with resolution steps
+- **MCP orchestration** - Works with other MCP servers (coderef-context, etc.)
 
 ---
 
-**Need help?** Check the troubleshooting section or consult the API reference for detailed tool specifications.
-
-**Found a bug?** Report at https://github.com/anthropics/claude-code/issues
-
-*Generated: 2025-12-27*
+**Need Help?** Check [API.md](../foundation-docs/API.md) for detailed tool schemas or [my-guide.md](my-guide.md) for quick tool lookup.

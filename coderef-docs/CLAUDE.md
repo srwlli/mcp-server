@@ -1,10 +1,10 @@
 # coderef-docs - AI Context Documentation
 
 **Project:** coderef-docs (MCP Server)
-**Version:** 3.4.0
+**Version:** 3.5.0
 **Status:** ✅ Production
 **Created:** 2024-10-18
-**Last Updated:** 2026-01-02
+**Last Updated:** 2026-01-10
 
 ---
 
@@ -12,9 +12,18 @@
 
 **coderef-docs** is a focused MCP server providing **13 specialized tools** for documentation generation, changelog management, standards enforcement, and composable resource sheets. It works with coderef-workflow to deliver end-to-end feature lifecycle documentation.
 
-**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with code intelligence injection + **NEW:** composable module-based resource sheets (WO-RESOURCE-SHEET-MCP-TOOL-001).
+**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with .coderef/ code intelligence + composable module-based resource sheets.
 
-**Latest Update (v3.4.0 - WO-RESOURCE-SHEET-MCP-TOOL-001):**
+**Latest Update (v3.5.0 - WO-CODEREF-CONTEXT-MCP-INTEGRATION-001):**
+- ✅ NEW: `.coderef/` integration for foundation doc generation
+  - **NO SCANNING** during doc generation - all .coderef/ files must pre-exist
+  - **Template-Specific Context Mapping** - Each template uses specific .coderef/ files
+  - **10 Resource Types** - index.json, context.md, context.json, graph.json, patterns.json, coverage.json, diagrams/, etc.
+  - **Performance** - < 50ms per file (file reads only, no MCP calls, no subprocess)
+  - **Missing Resources Warning** - User gets actionable warning to run coderef_scan first
+  - **Status:** ✅ Complete integration in tool_handlers.py and mcp_integration.py
+
+**Previous Update (v3.4.0 - WO-RESOURCE-SHEET-MCP-TOOL-001):**
 - ✅ NEW: `generate_resource_sheet` tool - Composable module-based documentation system
   - **Replaces:** 20 rigid templates with ~30-40 composable modules (4 universal + 11+ conditional)
   - **3-Step Workflow:** Detect (code characteristics) → Select (appropriate modules) → Assemble (3 formats)
@@ -207,6 +216,74 @@ UDS injection is **backward compatible** - only applies when `workorder_id` exis
 
 ---
 
+## .coderef/ Integration
+
+**.coderef/ resources provide pre-generated code intelligence for documentation.**
+
+**WO-CODEREF-CONTEXT-MCP-INTEGRATION-001** integrated .coderef/ file reading into foundation doc generation.
+
+**NO SCANNING** during doc generation - all files must pre-exist. If missing, user receives warning to run scanning first.
+
+###Available .coderef/ Resources
+
+| File | Purpose | Used By |
+|------|---------|---------|
+| `index.json` | All code elements (functions, classes, components) | API, SCHEMA, COMPONENTS |
+| `context.md` | Human-readable project summary | README |
+| `context.json` | Structured project overview | ARCHITECTURE, SCHEMA |
+| `graph.json` | Full dependency graph | ARCHITECTURE |
+| `reports/patterns.json` | Code patterns and conventions | README, API, COMPONENTS |
+| `reports/coverage.json` | Test coverage data | (future use) |
+| `reports/drift.json` | Index drift detection | (future use) |
+| `reports/validation.json` | CodeRef validation results | (future use) |
+| `diagrams/` | Dependency, call, import diagrams | ARCHITECTURE |
+| `exports/` | Various export formats | (future use) |
+
+### Template-Specific Context Mapping
+
+```
+README:
+ - context.md (project overview)
+ - patterns.json (coding conventions)
+
+ARCHITECTURE:
+ - context.json (structure)
+ - graph.json (dependencies)
+ - diagrams/ (visual representations)
+
+API:
+ - index.json (filter for endpoints/routes)
+ - patterns.json (API conventions)
+
+SCHEMA:
+ - index.json (filter for models/entities)
+ - context.json (relationships)
+
+COMPONENTS:
+ - index.json (filter for UI components)
+ - patterns.json (component conventions)
+```
+
+### Integration Flow
+
+1. **Resource Check** - `check_coderef_resources()` validates file availability
+2. **Template Mapping** - `get_template_context_files()` identifies needed files
+3. **Instructions** - `get_context_instructions()` provides template-specific guidance
+4. **File Reading** - Claude reads .coderef/ files directly (< 50ms per file)
+5. **Template Population** - Claude extracts relevant data and populates templates
+
+**Performance:** < 50ms per file (file reads only, no MCP calls, no subprocess)
+
+**Missing Resources:** If .coderef/ files don't exist, user gets actionable warning to run `coderef_scan` first. Documentation uses regex-based detection with placeholders as fallback.
+
+### Implementation (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001)
+
+- **Integration Module:** `mcp_integration.py` (check_coderef_resources, get_context_instructions, get_template_context_files)
+- **Tool Handlers:** Updated `handle_generate_foundation_docs` and `handle_generate_individual_doc` in `tool_handlers.py`
+- **Status:** ✅ Complete (no MCP scanning, file-read only)
+
+---
+
 ## File Structure
 
 ```
@@ -384,6 +461,29 @@ Output: CHANGELOG.json entry with workorder tracking, README version bump
 ---
 
 ## Recent Changes
+
+### v3.5.0 - .coderef/ Integration for Foundation Docs (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001) (2026-01-10)
+- ✅ NEW: `.coderef/` integration for foundation doc generation
+  - **NO SCANNING** during doc generation - all .coderef/ files must pre-exist
+  - **Template-Specific Context Mapping:** Each template reads specific .coderef/ files
+    - README: context.md, patterns.json
+    - ARCHITECTURE: context.json, graph.json, diagrams/
+    - API: index.json, patterns.json
+    - SCHEMA: index.json, context.json
+    - COMPONENTS: index.json, patterns.json
+  - **10 Resource Types Supported:** index.json, context.md, context.json, graph.json, patterns.json, coverage.json, drift.json, validation.json, diagrams/, exports/
+  - **Performance:** < 50ms per file (file reads only, no MCP calls, no subprocess)
+  - **Missing Resources Warning:** User gets actionable warning to run coderef_scan first
+- ✅ IMPLEMENTATION: `mcp_integration.py` with 4 new functions
+  - `check_coderef_resources()` - Validates file availability
+  - `get_template_context_files()` - Template-to-file mapping
+  - `get_context_instructions()` - Template-specific guidance
+  - `format_missing_resources_warning()` - User-friendly warnings
+- ✅ INTEGRATION: Updated `tool_handlers.py`
+  - Modified `handle_generate_foundation_docs` to check resources and provide context mapping
+  - Modified `handle_generate_individual_doc` to inject template-specific instructions
+  - Displays available/missing resources with element counts
+- ✅ STATUS: Complete integration (file-read only, no MCP orchestration needed)
 
 ### v3.4.0 - Resource Sheet MCP Tool (WO-RESOURCE-SHEET-MCP-TOOL-001) (2026-01-02)
 - ✅ NEW: `generate_resource_sheet` tool - Composable module-based documentation system

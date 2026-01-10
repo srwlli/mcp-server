@@ -1,3 +1,14 @@
+---
+agent: 'coderef-workflow v1.1.0'
+date: '2025-12-28'
+task: DOCUMENT
+workorder_id: WO-COMPLETE-WORKORDER-CMD-001
+generated_by: coderef-workflow v1.1.0
+feature_id: complete-workorder-command
+doc_type: deliverables
+status: complete
+---
+
 # Deliverables: complete-workorder-command
 
 **Workorder:** WO-COMPLETE-WORKORDER-CMD-001

@@ -1,0 +1,41 @@
+{
+  "feature_name": "add-timestamp-and-enforce-no-emojis",
+  "description": "Integrate timestamp.py and remove-emojis.py utilities into document generation workflow to ensure all generated docs have proper RSMS/UDS-compliant timestamps and are emoji-free",
+  "goal": "Ensure all generated documentation follows timestamp standards (RSMS v2.0, UDS) and enforce no-emoji policy across all generated content",
+  "requirements": [
+    "Update all doc generators (foundation_generator.py, changelog_generator.py, etc.) to use timestamp.py for frontmatter",
+    "Add validation in generators to check for emojis before writing files",
+    "Integrate remove-emojis.py as pre-generation cleanup tool",
+    "Update global documentation standards to explicitly forbid emojis",
+    "Add timestamp validation in UDS validators"
+  ],
+  "out_of_scope": [
+    "Retroactive emoji removal from existing docs (manual cleanup only)",
+    "Timestamp migration for legacy docs without frontmatter",
+    "Runtime emoji detection in user-provided content",
+    "Custom timestamp formats beyond RSMS/UDS standards"
+  ],
+  "constraints": [
+    "Must not break existing generator APIs",
+    "Timestamp format must match RSMS v2.0 and UDS schemas exactly",
+    "No new external dependencies beyond existing Python stdlib",
+    "Backward compatible with docs that don't have timestamps yet"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-ADD-TIMESTAMP-AND-ENFORCE-NO-EMOJIS-001",
+    "workorder_assigned_at": "2026-01-10T09:12:59.713776+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-ADD-TIMESTAMP-AND-ENFORCE-NO-EMOJIS-001",
+    "feature_id": "add-timestamp-and-enforce-no-emojis",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

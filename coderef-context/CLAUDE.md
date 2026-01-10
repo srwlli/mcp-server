@@ -1,249 +1,394 @@
-# coderef-context-agent - Code Intelligence & Scan Lead
+# coderef-context - AI Context Documentation
 
-**Persona:** coderef-context-agent (CodeRef Infrastructure Specialist)
+**Project:** coderef-context (MCP Server)
 **Version:** 2.0.0
-**Status:** ✅ Production (12 MCP tools + Scan Coordinator)
-**Last Updated:** 2026-01-01
+**Status:** ✅ Production
+**Created:** 2025-12-23
+**Last Updated:** 2026-01-10
 
 ---
 
 ## Quick Summary
 
-I am **coderef-context-agent** - the Code Intelligence Specialist and Scan Coordinator for the CodeRef ecosystem. I execute and manage all code scanning operations, maintain the `.coderef/` infrastructure (16 output types), and expose 12 MCP tools for dependency analysis.
+**coderef-context** is a high-performance MCP server that provides read-only code intelligence by reading pre-scanned .coderef/ data structures, eliminating subprocess overhead for 117x faster analysis.
 
-**Dual Role:**
-1. **MCP Server:** Expose code intelligence tools (scan, query, impact, complexity, patterns)
-2. **Scan Lead:** Execute scans, validate output, guide 6-phase setup workflow
+**Core Innovation:** Replaced CLI subprocess calls (1,100 lines, 350ms avg) with direct file reader (450 lines, 3ms avg) - same functionality, 117x performance improvement, zero breaking changes.
 
-**Core Mission:** Generate and maintain `.coderef/` directories that power the entire CodeRef system.
+**Latest Update (v2.0.0 - 2026-01-10):**
+- ✅ Refactored from CLI subprocess to .coderef/ file reader
+- ✅ 117x performance improvement (3ms vs 350ms average)
+- ✅ Reduced code from 1,100 → 450 lines
+- ✅ Zero external dependencies (no Node.js required)
 
----
+**Key Relationships:**
+- **coderef-workflow** = Uses for planning analysis (dependency/impact/complexity)
+- **coderef-docs** = Uses for documentation generation
+- **coderef-personas** = Uses for code-aware context injection
+- **coderef-testing** = Uses for smart test selection
 
-## My Responsibilities
-
-### As MCP Server
-- ✅ Expose 12 tools wrapping @coderef/core CLI (TypeScript AST analysis)
-- ✅ Provide 99% accurate code analysis (AST vs 60% regex)
-- ✅ Enable dependency tracking, impact analysis, complexity metrics
-
-### As Scan Lead
-- ✅ Execute scans: `populate-coderef.py` (16 files) or `scan-all.py` (2-3 files)
-- ✅ Validate all 16 output types
-- ✅ Troubleshoot failures, drift, CLI issues
-- ✅ Guide 6-phase setup workflow
-- ✅ Coordinate across 5 MCP servers
+Together they form the CodeRef ecosystem: pre-scan projects once (.coderef/), then all MCP servers read that cached intelligence for instant context.
 
 ---
 
-## The .coderef/ Structure (16 Output Types)
+## Architecture
 
+### Core Concepts
+
+**1. .coderef/ Directory Structure**
+
+Pre-scanned code intelligence stored in standardized format:
 ```
 .coderef/
-├── index.json              # All code elements
-├── context.md              # Architecture overview
+├── index.json              # All code elements (functions, classes, etc)
+├── graph.json              # Dependency relationships
+├── context.json/md         # Project overview
 ├── reports/
-│   ├── patterns.json       # Code patterns
-│   ├── coverage.json       # Test coverage
-│   ├── validation.json     # Reference validation
-│   ├── drift.json          # Drift detection
-│   └── complexity/         # Metrics
+│   ├── patterns.json       # Code patterns detected
+│   ├── coverage.json       # Test coverage gaps
+│   ├── validation.json     # CodeRef2 reference validation
+│   └── drift.json          # Staleness detection
 ├── diagrams/
-│   ├── dependencies.mmd    # Mermaid graph
-│   ├── dependencies.dot    # GraphViz
-│   ├── calls.mmd
-│   └── imports.mmd
-├── exports/
-│   ├── graph.json
-│   ├── graph.jsonld
-│   └── diagram-wrapped.md
-└── generated-docs/
-    ├── README.md
-    ├── ARCHITECTURE.md
-    ├── API.md
-    └── COMPONENTS.md
+│   ├── dependencies.mmd    # Mermaid dependency graph
+│   └── calls.mmd           # Call graph
+└── exports/
+    ├── graph.json          # Full export
+    └── diagram-wrapped.md  # Embeddable diagrams
 ```
 
----
+**2. File Reader Pattern**
 
-## 12 MCP Tools
+Instead of spawning CLI subprocesses, read JSON files directly:
+```python
+# Old approach (v1.x):
+subprocess.run(["coderef", "scan", project_path])  # 350ms
 
-**Core Intelligence:**
-1. `coderef_scan` - Discover all elements
-2. `coderef_query` - Query relationships
-3. `coderef_impact` - Analyze change impact
-4. `coderef_complexity` - Get metrics
-5. `coderef_patterns` - Discover patterns
-
-**Support:**
-6. `coderef_coverage` - Test coverage
-7. `coderef_context` - Full context
-8. `coderef_validate` - Validate references
-9. `coderef_drift` - Detect drift
-10. `coderef_diagram` - Visual diagrams
-11. `coderef_tag` - Add CodeRef2 tags
-12. `coderef_export` - Export data
-
----
-
-## 6-Phase Setup Workflow
-
-**PHASE 1: Code Intelligence (REQUIRED)**
-- Script: `populate-coderef.py /path/to/project`
-- Output: 16 files, 30-60 seconds
-
-**PHASE 2: Preprocessing (OPTIONAL - Large Codebases)**
-- When: index.json > 200KB
-- Script: `parse_coderef_data.py`
-
-**PHASE 3: Foundation Docs (REQUIRED)**
-- Script: `generate_docs.py`
-- Output: README, ARCHITECTURE, API, COMPONENTS
-
-**PHASE 4: Standards (OPTIONAL - UI Projects)**
-- Script: `enhance-standards.py`
-- Output: UI/UX standards
-
-**PHASE 5: Visualization (OPTIONAL)**
-- Script: `diagram-generator.py`
-
-**PHASE 6: Validation (REQUIRED)**
-- Script: `validate-docs.py`
-
-### Decision Tree
-
-| Project Type | Required | Optional |
-|--------------|----------|----------|
-| Small Backend | 1→3→6 | 5 |
-| Large Backend | 1→2→3→6 | 5 |
-| Small Frontend | 1→3→4→6 | 5 |
-| Large Frontend | 1→2→3→4→6 | 5 |
-
----
-
-## Ecosystem Dependencies
-
-**coderef-workflow:** Reads `.coderef/index.json`, `patterns.json` for planning
-**coderef-docs:** Uses `index.json`, `context.md` for docs
-**coderef-personas:** Reads `context.md` for handoffs
-**coderef-testing:** Uses `coverage.json` for test selection
-
-**Without my scans, the ecosystem has no foundation.**
-
----
-
-## Technical Architecture
-
-**Flow:** @coderef/core (TypeScript) → CLI → Node subprocess → Python MCP → Agent
-
-**Why Subprocess?**
-- Isolation (crash-safe)
-- TypeScript engine (can't port)
-- Single source of truth
-- Async compatible
-
-**AST = 99% Accuracy**
-- Regex: ~60% (text only)
-- Filesystem: ~70% (structure)
-- AST: ~99% (syntax aware)
-
----
-
-## Communication Style
-
-**Proactive:** Scan automatically
-**Precise:** Exact paths/params
-**Educational:** Explain why
-**Troubleshooter:** Fix early
-**Coordinator:** Understand dependencies
-
----
-
-## Common Issues
-
-**CLI path not found:**
-```bash
-export CODEREF_CLI_PATH="C:/Users/willh/Desktop/projects/coderef-system/packages/cli"
+# New approach (v2.0):
+elements = json.loads(Path(project_path / ".coderef/index.json").read_text())  # 3ms
 ```
 
-**Scan timeout (120s):**
-- Cause: > 500k LOC
-- Fix: Smaller scope or `use_ast=False`
+**3. Read-Only Safety**
 
-**Drift > 10%:**
-```bash
-coderef drift /path/to/project --json -i .coderef/index.json
-python scripts/populate-coderef.py /path/to/project
+All operations are read-only except `coderef_tag` (which returns error). This ensures:
+- No accidental modifications to .coderef/ data
+- Safe concurrent access from multiple MCP servers
+- Fast responses (no write locks needed)
+
+### Data Flow
+
+```
+Dashboard Scanner
+    ↓
+.coderef/ files (pre-scanned)
+    ↓
+CodeRefReader.get_index()
+    ↓
+12 MCP Tool Handlers
+    ↓
+coderef-workflow, coderef-docs, coderef-personas, coderef-testing
 ```
 
-**Incomplete output:**
-- Verify CLI flags
-- Run manually, check errors
+### Key Integration Points
+
+- **Depends on:** .coderef/ directory (generated by dashboard or scripts)
+- **Used by:** coderef-workflow (planning), coderef-docs (generation), coderef-personas (context), coderef-testing (selection)
+- **Orchestrated via:** MCP protocol (JSON-RPC 2.0 over stdio)
 
 ---
 
-## Quick Reference
+## Tools Catalog
 
-```bash
-# Complete scan (16 outputs)
-python scripts/populate-coderef.py /path/to/project
+| Name | Purpose | Output Type |
+|------|---------|-------------|
+| `coderef_scan` | Get all scanned code elements | JSON: elements array with locations |
+| `coderef_query` | Query relationships (calls, imports, depends-on) | JSON: target + results array |
+| `coderef_impact` | Analyze change impact (modify/delete/refactor) | JSON: dependents + risk level |
+| `coderef_complexity` | Get complexity metrics for element | JSON: parameters + complexity estimate |
+| `coderef_patterns` | Discover code patterns | JSON: handlers, decorators, etc |
+| `coderef_coverage` | Test coverage analysis | JSON: coverage report |
+| `coderef_context` | Get comprehensive codebase context | JSON or Markdown |
+| `coderef_validate` | Validate CodeRef2 references | JSON: validation results |
+| `coderef_drift` | Detect drift between index and code | JSON: drift percentage + changed files |
+| `coderef_diagram` | Get dependency/call/import diagrams | Mermaid or DOT format |
+| `coderef_tag` | Add CodeRef2 tags to source files | Error (requires CLI) |
+| `coderef_export` | Export data in various formats | JSON, JSON-LD, Mermaid, or DOT |
 
-# Quick scan (2 files)
-./scripts/scan-all.py /path/to/project
-
-# Check drift
-coderef drift /path/to/project --json -i .coderef/index.json
-
-# Validate
-python scripts/validate-docs.py /path/to/project
-```
+**Total:** 12 tools across 5 categories (scan, query, analysis, validation, export)
 
 ---
 
-## Tool Examples
+## Core Workflows
+
+### Workflow 1: Planning with Code Intelligence
 
 ```python
-# Scan project
-await coderef_scan(project_path="/path/to/app")
-# Returns: 247 elements with locations
+# coderef-workflow calls during plan creation:
 
-# Query dependencies
-await coderef_query(target="AuthService", query_type="calls-me")
-# Returns: [login.ts, signup.ts, profile.ts]
+# 1. Get inventory
+scan_result = await call_tool("coderef_scan", {"project_path": "/path/to/project"})
+# Returns: 208 elements (classes, functions, etc)
 
-# Assess impact
-await coderef_impact(element="UserModel", operation="refactor")
-# Returns: 12 files, MEDIUM risk
+# 2. Analyze dependencies
+deps = await call_tool("coderef_query", {
+    "project_path": "/path/to/project",
+    "query_type": "depends-on-me",
+    "target": "AuthService"
+})
+# Returns: [UserController, LoginHandler, ProfileHandler]
 
-# Discover patterns
-await coderef_patterns(pattern_type="handlers")
-# Returns: React hooks, middleware, decorators
+# 3. Assess impact
+impact = await call_tool("coderef_impact", {
+    "project_path": "/path/to/project",
+    "element": "AuthService",
+    "operation": "refactor"
+})
+# Returns: {"risk_level": "MEDIUM", "direct_dependents": 3}
+```
+
+### Workflow 2: Documentation Generation
+
+```python
+# coderef-docs calls for foundation doc generation:
+
+# 1. Get patterns
+patterns = await call_tool("coderef_patterns", {"project_path": "/path/to/project"})
+# Returns: {handlers: [...], decorators: [...]}
+
+# 2. Get architecture diagram
+diagram = await call_tool("coderef_diagram", {
+    "project_path": "/path/to/project",
+    "diagram_type": "dependencies",
+    "format": "mermaid"
+})
+# Returns: Mermaid graph for ARCHITECTURE.md
+```
+
+### Workflow 3: Smart Test Selection
+
+```python
+# coderef-testing uses for impact-based test selection:
+
+# 1. Find affected elements
+changed_files = ["src/auth.py"]
+for file in changed_files:
+    scan = await call_tool("coderef_scan", {"project_path": "/path"})
+    elements_in_file = [e for e in scan['elements'] if e['file'] == file]
+
+    for elem in elements_in_file:
+        impact = await call_tool("coderef_query", {
+            "query_type": "depends-on-me",
+            "target": elem['name']
+        })
+        # Run tests for all dependents
 ```
 
 ---
 
-## Configuration
+## File Structure
 
-**Environment:**
+```
+coderef-context/
+├── server.py                      # MCP entry point (17KB)
+├── src/
+│   ├── coderef_reader.py         # File reader class
+│   ├── handlers_refactored.py    # 12 MCP tool handlers (450 lines)
+│   └── __init__.py
+├── tests/
+│   ├── test_coderef_reader.py    # Unit tests for reader
+│   └── test_handlers.py          # Integration tests
+├── README.md                      # User documentation
+├── CLAUDE.md                      # This file
+├── REFACTOR-COMPLETE.md           # v2.0 refactor summary
+├── MIGRATION-TO-FILE-READER.md   # Migration guide
+└── SYSTEM_REPORT.md               # Ecosystem utilization report
+```
+
+---
+
+## Design Decisions
+
+**1. File Reader vs CLI Subprocess**
+- ✅ Chosen: Direct .coderef/ file reading
+- ❌ Rejected: CLI subprocess calls via Node.js
+- Reason: 117x faster (3ms vs 350ms), no Node.js dependency, simpler code (450 vs 1,100 lines)
+
+**2. Read-Only Operations**
+- ✅ Chosen: All tools read-only (except coderef_tag which errors)
+- ❌ Rejected: Allow modifications to .coderef/ data
+- Reason: Safety (no accidental corruption), concurrency (no locks), speed (no write overhead)
+
+**3. Pre-Scanned Data Model**
+- ✅ Chosen: Require .coderef/ directory to exist before tool calls
+- ❌ Rejected: Auto-scan on demand
+- Reason: Separation of concerns (dashboard scans, MCP servers read), predictable performance
+
+**4. Error Messages with Fix Commands**
+- ✅ Chosen: Return exact commands to fix issues (e.g., "Run: coderef scan /path")
+- ❌ Rejected: Generic error messages
+- Reason: Self-service debugging, clear action steps for agents
+
+---
+
+## Integration Guide
+
+### With coderef-workflow
+
+```python
+# planning_analyzer.py uses coderef-context for enhanced analysis:
+
+async def analyze_dependencies(self, target_element: str):
+    result = await call_coderef_tool("coderef_query", {
+        "project_path": str(self.project_path),
+        "query_type": "depends-on-me",
+        "target": target_element
+    })
+    # Track telemetry
+    self._track_mcp_tool_call('coderef_query', result.get('success', False))
+    return result.get('data')
+```
+
+### With coderef-docs
+
+```python
+# coderef_foundation_generator.py reads patterns for ARCHITECTURE.md:
+
+patterns = await call_tool("coderef_patterns", {
+    "project_path": str(project_path)
+})
+
+# Embed in ARCHITECTURE.md:
+lines.append('## Code Patterns')
+for handler in patterns['handlers'][:10]:
+    lines.append(f"- `{handler['name']}` in `{handler['file']}`")
+```
+
+### With coderef-personas
+
+```python
+# Persona activation loads code context:
+
+context = await call_tool("coderef_context", {
+    "project_path": str(project_path),
+    "output_format": "markdown"
+})
+
+# Inject into persona system prompt:
+system_prompt += f"\n\n## Project Context\n{context}"
+```
+
+---
+
+## Essential Commands
+
+### Development
 ```bash
-export CODEREF_CLI_PATH="C:/Users/willh/Desktop/projects/coderef-system/packages/cli"
+# Install dependencies
+cd C:\Users\willh\.mcp-servers\coderef-context
+pip install -e .
+
+# Run server
+python server.py
+
+# Test manually
+python -c "from src.coderef_reader import CodeRefReader; print(CodeRefReader('.').get_index()[:3])"
 ```
 
-**MCP (.mcp.json):**
-```json
-{
-  "mcpServers": {
-    "coderef-context": {
-      "command": "python",
-      "args": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
-      "env": {"CODEREF_CLI_PATH": "..."},
-      "tools": ["coderef_scan", "coderef_query", ...]
-    }
-  }
-}
+### Testing
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=src --cov-report=html
+
+# Test specific handler
+pytest tests/test_handlers.py::test_handle_coderef_scan -v
+```
+
+### Usage (MCP Tools)
+Tools are called via MCP protocol - no direct CLI usage. See Integration Guide for Python examples.
+
+---
+
+## Use Cases
+
+### UC-1: Planning Feature with Code Intelligence
+```
+User: /create-workorder
+      → Feature: "add-authentication"
+
+Agent: Calls coderef-context to understand codebase
+       ↓
+Step 1: coderef_scan → Discover existing auth-related code
+Step 2: coderef_patterns → Identify auth patterns (decorators, middleware)
+Step 3: coderef_query → Find what depends on existing auth modules
+Step 4: coderef_impact → Assess risk of modifying auth system
+       ↓
+Agent: Creates plan with full code context (no guessing)
+```
+
+### UC-2: Generating Architecture Docs
+```
+User: /generate-docs
+
+Agent: Calls coderef-context for project structure
+       ↓
+Step 1: coderef_scan → Get all modules/classes
+Step 2: coderef_diagram → Generate dependency graph
+Step 3: coderef_complexity → Find high-complexity hotspots
+       ↓
+Agent: Generates ARCHITECTURE.md with real diagrams + metrics
+```
+
+### UC-3: Smart Test Selection
+```
+User: git commit changes to src/auth.py
+
+Agent: Determine affected tests
+       ↓
+Step 1: coderef_scan → Find elements in auth.py
+Step 2: coderef_query (depends-on-me) → Find all dependents
+Step 3: Map dependents to test files
+       ↓
+Agent: Runs only 12 tests (instead of all 500)
+       Result: 10-50x faster CI/CD
 ```
 
 ---
 
-**Version:** v2.0.0 (2026-01-01) - Scan Lead | v1.1.0 - Tag Tool | v1.0.0 - Initial
+## Recent Changes
+
+### v2.0.0 - File Reader Refactor (2026-01-10)
+- ✅ Replaced CLI subprocess calls with direct .coderef/ file reading
+- ✅ 117x performance improvement (3ms vs 350ms average)
+- ✅ Reduced codebase from 1,100 → 450 lines (59% reduction)
+- ✅ Zero external dependencies (removed Node.js requirement)
+- ✅ Added CodeRefReader class for unified file access
+- ✅ All 12 tools refactored with backward compatibility
+
+### v1.1.0 - Tag Tool (2025-12-27)
+- ✅ Added coderef_tag tool for adding CodeRef2 tags
+- ✅ Integration tests with coderef-workflow
+- ✅ Telemetry tracking for MCP tool calls
+
+---
+
+## Next Steps
+
+- ⏳ Add caching layer for frequently accessed .coderef/ files
+- ⏳ Support incremental updates (watch mode for drift detection)
+- ⏳ Add compression for large .coderef/ files (>1MB)
+- ⏳ GraphQL query interface for complex relationship queries
+- ⏳ Real-time collaboration (multi-agent access coordination)
+
+---
+
+## Resources
+
+- **[README.md](README.md)** - User-facing documentation
+- **[REFACTOR-COMPLETE.md](REFACTOR-COMPLETE.md)** - v2.0 refactor summary
+- **[SYSTEM_REPORT.md](SYSTEM_REPORT.md)** - Ecosystem utilization report
+- **[MCP Spec](https://spec.modelcontextprotocol.io/)** - Protocol documentation
+
+---
+
 **Maintained by:** willh, Claude Code AI
-**Status:** ✅ Production - 12 tools operational

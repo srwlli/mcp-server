@@ -271,7 +271,7 @@ class PlanningAnalyzer:
                 files = set(e.get('file') for e in index_data if 'file' in e)
 
                 return {
-                    'index_data': index_data,
+                    # 'index_data': index_data,  # REMOVED: Causes 76K+ token bloat
                     'source': 'coderef_index',
                     'total_elements': len(index_data),
                     'by_type': by_type,
@@ -885,6 +885,142 @@ class PlanningAnalyzer:
 
         logger.debug(f"Identified {len(gaps)} gaps/risks")
         return gaps
+
+    async def analyze_dependencies(self, target_element: str) -> Optional[dict]:
+        """
+        Analyze code dependencies using coderef_query MCP tool.
+
+        Uses coderef_query to find what calls, imports, or depends on target element.
+        Useful for risk assessment to understand impact scope.
+
+        Args:
+            target_element: Element to analyze (e.g., 'AuthService', 'login')
+
+        Returns:
+            Dict with dependency data or None if unavailable
+        """
+        logger.debug(f"Analyzing dependencies for: {target_element}")
+
+        try:
+            result = await call_coderef_tool(
+                "coderef_query",
+                {
+                    "project_path": str(self.project_path),
+                    "query_type": "depends-on-me",
+                    "target": target_element,
+                    "max_depth": 2
+                }
+            )
+            if result.get("success"):
+                logger.info(f"Dependency analysis complete for {target_element}")
+                return result.get("data", {})
+        except Exception as e:
+            logger.debug(f"coderef_query unavailable: {str(e)}")
+
+        return None
+
+    async def analyze_impact(self, element: str, operation: str = "modify") -> Optional[dict]:
+        """
+        Analyze impact of code changes using coderef_impact MCP tool.
+
+        Uses coderef_impact to determine what breaks if element is modified/deleted.
+        Critical for risk assessment in implementation plans.
+
+        Args:
+            element: Element to analyze (e.g., 'UserService')
+            operation: Type of change ('modify', 'delete', 'refactor')
+
+        Returns:
+            Dict with impact analysis or None if unavailable
+        """
+        logger.debug(f"Analyzing impact of {operation} on: {element}")
+
+        try:
+            result = await call_coderef_tool(
+                "coderef_impact",
+                {
+                    "project_path": str(self.project_path),
+                    "element": element,
+                    "operation": operation,
+                    "max_depth": 3
+                }
+            )
+            if result.get("success"):
+                impact_data = result.get("data", {})
+                affected_count = len(impact_data.get("affected_elements", []))
+                logger.info(f"Impact analysis: {affected_count} elements affected by {operation} {element}")
+                return impact_data
+        except Exception as e:
+            logger.debug(f"coderef_impact unavailable: {str(e)}")
+
+        return None
+
+    async def analyze_complexity(self, element: str) -> Optional[dict]:
+        """
+        Analyze code complexity using coderef_complexity MCP tool.
+
+        Uses coderef_complexity to get metrics for effort estimation.
+        Helps determine task size and implementation difficulty.
+
+        Args:
+            element: Element to analyze (e.g., 'PaymentProcessor')
+
+        Returns:
+            Dict with complexity metrics or None if unavailable
+        """
+        logger.debug(f"Analyzing complexity for: {element}")
+
+        try:
+            result = await call_coderef_tool(
+                "coderef_complexity",
+                {
+                    "project_path": str(self.project_path),
+                    "element": element
+                }
+            )
+            if result.get("success"):
+                complexity_data = result.get("data", {})
+                logger.info(f"Complexity analysis complete for {element}")
+                return complexity_data
+        except Exception as e:
+            logger.debug(f"coderef_complexity unavailable: {str(e)}")
+
+        return None
+
+    async def generate_architecture_diagram(self, diagram_type: str = "dependencies", depth: int = 2) -> Optional[str]:
+        """
+        Generate architecture diagram using coderef_diagram MCP tool.
+
+        Uses coderef_diagram to create Mermaid diagrams for complex features.
+        Helps visualize system architecture in implementation plans.
+
+        Args:
+            diagram_type: Type of diagram ('dependencies', 'calls', 'imports', 'all')
+            depth: Maximum depth to traverse
+
+        Returns:
+            Mermaid diagram string or None if unavailable
+        """
+        logger.debug(f"Generating {diagram_type} diagram at depth {depth}")
+
+        try:
+            result = await call_coderef_tool(
+                "coderef_diagram",
+                {
+                    "project_path": str(self.project_path),
+                    "diagram_type": diagram_type,
+                    "format": "mermaid",
+                    "depth": depth
+                }
+            )
+            if result.get("success"):
+                diagram = result.get("data", {}).get("diagram", "")
+                logger.info(f"Generated {diagram_type} diagram ({len(diagram)} chars)")
+                return diagram
+        except Exception as e:
+            logger.debug(f"coderef_diagram unavailable: {str(e)}")
+
+        return None
 
     def _scan_source_files(self) -> List[Path]:
         """

@@ -311,8 +311,8 @@ def main():
         else:
             print("\n❌ Cleanup cancelled")
     else:
-        print("\n💡 Run with --clean to remove duplicates")
-        print("💡 Run with --clean --backup to keep backups")
+        print("\n[TIP] Run with --clean to remove duplicates")
+        print("[TIP] Run with --clean --backup to keep backups")
 
     print()
 

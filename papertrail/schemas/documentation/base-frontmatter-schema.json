@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/base-frontmatter-schema.json",
+  "title": "Base UDS Frontmatter Schema",
+  "description": "Universal Documentation Standards (UDS) base schema - required fields for ALL markdown documents in CodeRef ecosystem",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["agent", "date", "task"],
+  "properties": {
+    "agent": {
+      "type": "string",
+      "description": "UDS Required: Name of the agent or contributor who created/updated the document",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": [
+        "Claude Sonnet 4.5",
+        "coderef-docs v1.2.0",
+        "Taylor",
+        "Ava",
+        "Lloyd",
+        "Marcus"
+      ]
+    },
+    "date": {
+      "type": "string",
+      "description": "UDS Required: Date of creation or last update in YYYY-MM-DD format",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": [
+        "2026-01-10",
+        "2025-12-25",
+        "2026-01-04"
+      ]
+    },
+    "task": {
+      "type": "string",
+      "description": "UDS Required: Type of work performed on the document",
+      "enum": [
+        "CREATE",
+        "UPDATE",
+        "REVIEW",
+        "DOCUMENT",
+        "CONSOLIDATE",
+        "MIGRATE",
+        "ARCHIVE"
+      ],
+      "examples": [
+        "CREATE",
+        "UPDATE",
+        "DOCUMENT"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "description": "Optional: ISO 8601 timestamp of creation or last update with timezone (supports EST -05:00 or UTC)",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2}|Z)$",
+      "examples": [
+        "2026-01-10T12:00:00Z",
+        "2026-01-10T07:00:00-05:00"
+      ]
+    }
+  },
+  "additionalProperties": true,
+  "examples": [
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2026-01-10",
+      "task": "CREATE"
+    },
+    {
+      "agent": "coderef-docs v1.2.0",
+      "date": "2026-01-10",
+      "timestamp": "2026-01-10T12:00:00Z",
+      "task": "DOCUMENT"
+    },
+    {
+      "agent": "Taylor",
+      "date": "2026-01-09",
+      "task": "UPDATE"
+    }
+  ]
+}

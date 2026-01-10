@@ -266,9 +266,9 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
 
     logger.info(f"Generating individual doc: {template_name} for project: {project_path}")
 
-    # Phase 4: Check if we should use Papertrail
+    # WO-UDS-COMPLIANCE-CODEREF-DOCS-001: Changed default to true
     use_papertrail = (
-        os.getenv("PAPERTRAIL_ENABLED", "false").lower() == "true" and
+        os.getenv("PAPERTRAIL_ENABLED", "true").lower() == "true" and
         workorder_id is not None
     )
 
@@ -341,7 +341,29 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     result += "INSTRUCTIONS:\n"
     result += f"Generate {template_info.get('save_as', f'{template_name.upper()}.md')} using the template above.\n"
     result += f"Follow CODE INTELLIGENCE instructions above to populate with real data.\n"
-    result += f"Save the document to: {output_path}\n"
+    result += f"Save the document to: {output_path}\n\n"
+
+    # WO-UDS-COMPLIANCE-CODEREF-DOCS-001: Add validation instructions for foundation docs
+    foundation_templates = ['readme', 'architecture', 'api', 'schema', 'components']
+    if template_name in foundation_templates:
+        result += "=" * 50 + "\n\n"
+        result += "VALIDATION (WO-UDS-COMPLIANCE-CODEREF-DOCS-001):\n"
+        result += f"After saving the document, validate it using FoundationDocValidator:\n\n"
+        result += "```python\n"
+        result += "from papertrail.validators.foundation import FoundationDocValidator\n"
+        result += "from pathlib import Path\n\n"
+        result += f"validator = FoundationDocValidator()\n"
+        result += f"result = validator.validate_file(Path(r'{output_path}'))\n\n"
+        result += "if result.score < 90:\n"
+        result += "    print(f'Validation failed: Score {result.score}/100')\n"
+        result += "    for error in result.errors:\n"
+        result += "        print(f'  ERROR: {error.message}')\n"
+        result += "    for warning in result.warnings:\n"
+        result += "        print(f'  WARNING: {warning}')\n"
+        result += "else:\n"
+        result += "    print(f'Validation passed: Score {result.score}/100')\n"
+        result += "```\n\n"
+        result += f"Validation threshold: Score >= 90\n"
 
     logger.info(f"Successfully generated plan for {template_name}")
     return [TextContent(type="text", text=result)]
@@ -772,7 +794,31 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     result += f"\n📂 Location: {standards_dir}\n\n"
     result += f"These standards documents can now be used with:\n"
     result += f"  • Tool #9: audit_codebase - Find violations of standards\n"
-    result += f"  • Tool #10: check_consistency - Quality gate for new code\n"
+    result += f"  • Tool #10: check_consistency - Quality gate for new code\n\n"
+
+    # WO-UDS-COMPLIANCE-CODEREF-DOCS-001: Add validation instructions for standards docs
+    result += "=" * 60 + "\n\n"
+    result += "VALIDATION (WO-UDS-COMPLIANCE-CODEREF-DOCS-001):\n\n"
+    result += "Validate all standards documents using StandardsDocValidator:\n\n"
+    result += "```python\n"
+    result += "from papertrail.validators.standards import StandardsDocValidator\n"
+    result += "from pathlib import Path\n\n"
+    result += "validator = StandardsDocValidator()\n"
+    result += "standards_files = [\n"
+    for file_path in result_dict['files']:
+        result += f"    Path(r'{file_path}'),\n"
+    result += "]\n\n"
+    result += "for file_path in standards_files:\n"
+    result += "    result = validator.validate_file(file_path)\n"
+    result += "    print(f'Validating {file_path.name}...')\n"
+    result += "    if result.score < 90:\n"
+    result += "        print(f'  FAILED: Score {result.score}/100')\n"
+    result += "        for error in result.errors:\n"
+    result += "            print(f'    ERROR: {error.message}')\n"
+    result += "    else:\n"
+    result += "        print(f'  PASSED: Score {result.score}/100')\n"
+    result += "```\n\n"
+    result += f"Validation threshold: Score >= 90\n"
 
     logger.info(
         "Standards establishment completed successfully",

@@ -99,8 +99,9 @@
         "p1_gaps": [
           "GAP-DOCS-002: Standards docs unvalidated (3 files)"
         ],
-        "blockers": [
-          "Confirm StandardsDocValidator exists in Papertrail (or use SystemDocValidator)"
+        "blockers": [],
+        "blocker_resolutions": [
+          "RESOLVED: StandardsDocValidator exists in Papertrail at papertrail/validators/standards.py"
         ]
       },
       "analysis_source": {

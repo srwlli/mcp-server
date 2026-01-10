@@ -1,0 +1,39 @@
+{
+  "feature_name": "coderef-context-usage-verification",
+  "description": "Ensure coderef-context MCP tools, .coderef/ structure, and foundation docs are properly utilized in the planning phase workflow",
+  "goal": "Verify and enhance integration of code intelligence from coderef-context, pre-scanned .coderef/ data, and foundation docs throughout the planning workflow",
+  "requirements": [
+    "Verify planning_analyzer.py reads .coderef/ files (index.json, patterns.json, coverage.json)",
+    "Ensure foundation docs (ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md) are utilized in analysis",
+    "Confirm coderef-context MCP tools are called when needed for dynamic analysis",
+    "Validate that plans include insights from all three sources (coderef-context, .coderef/, foundation docs)",
+    "Add logging to track which data sources are used during planning"
+  ],
+  "out_of_scope": [
+    "Creating new foundation docs",
+    "Modifying coderef-context server",
+    "Changing plan.json schema"
+  ],
+  "constraints": [
+    "Must maintain backward compatibility with existing plans",
+    "No breaking changes to planning workflow API",
+    "Must work with existing .coderef/ structure"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-CODEREF-CONTEXT-USAGE-VERIFICATION-001",
+    "workorder_assigned_at": "2026-01-10T05:37:55.615695+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-CODEREF-CONTEXT-USAGE-VERIFICATION-001",
+    "feature_id": "coderef-context-usage-verification",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

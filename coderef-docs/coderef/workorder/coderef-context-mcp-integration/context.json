@@ -1,0 +1,45 @@
+{
+  "feature_name": "coderef-context-mcp-integration",
+  "description": "Integrate coderef-context MCP tools into foundation document generation workflow to enable real-time code intelligence via MCP-to-MCP communication, replacing the removed CLI subprocess approach with cleaner server-to-server orchestration",
+  "goal": "Enable foundation docs (API.md, SCHEMA.md, COMPONENTS.md) to be populated with live code intelligence from coderef-context server without subprocess overhead, using proper MCP protocol orchestration coordinated by Claude",
+  "requirements": [
+    "Call coderef-context MCP tools (coderef_scan, coderef_query, coderef_patterns) from coderef-docs tool handlers",
+    "Implement MCP orchestration pattern where Claude coordinates between coderef-docs and coderef-context servers",
+    "Extract APIs, schemas, and components using MCP tools instead of CLI subprocess",
+    "Inject extracted data into foundation doc templates (API.md, SCHEMA.md, COMPONENTS.md)",
+    "Implement hybrid mode: try .coderef/ files first (fast path), call MCP tools as fallback (smart path)",
+    "Add response caching to avoid redundant MCP calls during same session",
+    "Graceful degradation when coderef-context server unavailable (fall back to placeholders)"
+  ],
+  "out_of_scope": [
+    "Direct CLI subprocess calls via extractors.py and cli_utils.py (removed approach)",
+    "Reimplementing the 2,039 lines of subprocess code that was deleted",
+    "Automatic scanning on every doc generation (use hybrid approach instead)",
+    "Real-time scanning without checking .coderef/ cache first"
+  ],
+  "constraints": [
+    "No subprocess calls to @coderef/core CLI executable",
+    "Use MCP protocol exclusively for all coderef-context communication",
+    "Must be faster than old CLI approach (target: <10s per doc with cache, <60s without)",
+    "Backward compatible with projects that don't have coderef-context server running",
+    "Preserve passive .coderef/ file reading as primary fast path",
+    "No breaking changes to existing doc generation workflows"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-CODEREF-CONTEXT-MCP-INTEGRATION-001",
+    "workorder_assigned_at": "2026-01-10T10:38:09.395949+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-CODEREF-CONTEXT-MCP-INTEGRATION-001",
+    "feature_id": "coderef-context-mcp-integration",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

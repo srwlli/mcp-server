@@ -48,7 +48,76 @@ class PlanningAnalyzer:
             project_path: Path to project directory to analyze
         """
         self.project_path = project_path
+
+        # Initialize telemetry tracking for data sources
+        self.telemetry = {
+            'coderef_file_reads': [],      # Track .coderef/ file reads
+            'mcp_tool_calls': [],           # Track MCP tool calls
+            'foundation_doc_reads': [],     # Track foundation doc reads
+            'total_sources_used': 0
+        }
+
         logger.debug(f"Initialized PlanningAnalyzer for project: {project_path}")
+
+    def _track_coderef_file_read(self, file_path: str):
+        """Track when a .coderef/ file is read."""
+        self.telemetry['coderef_file_reads'].append(file_path)
+        self.telemetry['total_sources_used'] += 1
+        logger.info(f"📁 .coderef/ file read: {file_path}")
+
+    def _track_mcp_tool_call(self, tool_name: str, success: bool):
+        """Track when an MCP tool is called."""
+        self.telemetry['mcp_tool_calls'].append({'tool': tool_name, 'success': success})
+        self.telemetry['total_sources_used'] += 1
+        status = "✅" if success else "❌"
+        logger.info(f"🔧 MCP tool called: {tool_name} {status}")
+
+    def _track_foundation_doc_read(self, doc_name: str):
+        """Track when a foundation doc is read."""
+        self.telemetry['foundation_doc_reads'].append(doc_name)
+        self.telemetry['total_sources_used'] += 1
+        logger.info(f"📄 Foundation doc read: {doc_name}")
+
+    def get_telemetry_summary(self) -> dict:
+        """
+        Get summary of data sources used during analysis.
+
+        Returns:
+            Dict with telemetry summary including counts and percentages
+        """
+        total = self.telemetry['total_sources_used']
+        coderef_count = len(self.telemetry['coderef_file_reads'])
+        mcp_count = len(self.telemetry['mcp_tool_calls'])
+        mcp_success_count = sum(1 for call in self.telemetry['mcp_tool_calls'] if call['success'])
+        doc_count = len(self.telemetry['foundation_doc_reads'])
+
+        summary = {
+            'total_sources_used': total,
+            'coderef_file_reads': {
+                'count': coderef_count,
+                'percentage': (coderef_count / total * 100) if total > 0 else 0,
+                'files': self.telemetry['coderef_file_reads']
+            },
+            'mcp_tool_calls': {
+                'count': mcp_count,
+                'success_count': mcp_success_count,
+                'percentage': (mcp_count / total * 100) if total > 0 else 0,
+                'tools': [call['tool'] for call in self.telemetry['mcp_tool_calls']]
+            },
+            'foundation_doc_reads': {
+                'count': doc_count,
+                'percentage': (doc_count / total * 100) if total > 0 else 0,
+                'docs': self.telemetry['foundation_doc_reads']
+            }
+        }
+
+        logger.info(
+            f"📊 Telemetry Summary: {coderef_count} .coderef/ reads, "
+            f"{mcp_count} MCP calls ({mcp_success_count} successful), "
+            f"{doc_count} foundation docs"
+        )
+
+        return summary
 
     def check_coderef_freshness(self) -> str | None:
         """
@@ -259,6 +328,7 @@ class PlanningAnalyzer:
         if check_coderef_available(str(self.project_path)):
             try:
                 index_data = read_coderef_output(str(self.project_path), 'index')
+                self._track_coderef_file_read('.coderef/index.json')
                 logger.info(f"Read .coderef/index.json: {len(index_data)} elements")
 
                 # Group by type for summary
@@ -911,7 +981,9 @@ class PlanningAnalyzer:
                     "max_depth": 2
                 }
             )
-            if result.get("success"):
+            success = result.get("success", False)
+            self._track_mcp_tool_call("coderef_query", success)
+            if success:
                 logger.info(f"Dependency analysis complete for {target_element}")
                 return result.get("data", {})
         except Exception as e:
@@ -945,7 +1017,9 @@ class PlanningAnalyzer:
                     "max_depth": 3
                 }
             )
-            if result.get("success"):
+            success = result.get("success", False)
+            self._track_mcp_tool_call("coderef_impact", success)
+            if success:
                 impact_data = result.get("data", {})
                 affected_count = len(impact_data.get("affected_elements", []))
                 logger.info(f"Impact analysis: {affected_count} elements affected by {operation} {element}")
@@ -978,7 +1052,9 @@ class PlanningAnalyzer:
                     "element": element
                 }
             )
-            if result.get("success"):
+            success = result.get("success", False)
+            self._track_mcp_tool_call("coderef_complexity", success)
+            if success:
                 complexity_data = result.get("data", {})
                 logger.info(f"Complexity analysis complete for {element}")
                 return complexity_data
@@ -1013,7 +1089,9 @@ class PlanningAnalyzer:
                     "depth": depth
                 }
             )
-            if result.get("success"):
+            success = result.get("success", False)
+            self._track_mcp_tool_call("coderef_diagram", success)
+            if success:
                 diagram = result.get("data", {}).get("diagram", "")
                 logger.info(f"Generated {diagram_type} diagram ({len(diagram)} chars)")
                 return diagram

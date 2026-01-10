@@ -1,0 +1,36 @@
+{
+  "feature_name": "integrating-coderef-context",
+  "description": "Integrate coderef-context MCP tools directly into coderef-docs for automatic code analysis",
+  "goal": "Enable foundation docs to use real code intelligence from coderef-context instead of manual template population",
+  "requirements": [
+    "Call coderef-context MCP tools directly (not via CLI subprocess)",
+    "Generate foundation docs using real code analysis",
+    "Use existing .coderef/ data (do not auto-generate)",
+    "Extract APIs, schemas, and components via coderef_scan and coderef_query"
+  ],
+  "out_of_scope": [
+    "Auto-generating .coderef/ data during workflows",
+    "CLI subprocess integration"
+  ],
+  "constraints": [
+    "Must use existing .coderef/ data only",
+    "Must not significantly slow down doc generation"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-INTEGRATING-CODEREF-CONTEXT-001",
+    "workorder_assigned_at": "2026-01-10T07:09:40.723098+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-INTEGRATING-CODEREF-CONTEXT-001",
+    "feature_id": "integrating-coderef-context",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

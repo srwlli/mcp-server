@@ -199,6 +199,40 @@ class PlanningAnalyzer:
         logger.info("Identifying gaps and risks...")
         gaps_and_risks = await self.identify_gaps_and_risks()
 
+        # NEW v1.5.0: Enhanced analysis using MCP tools
+        logger.info("Running enhanced code intelligence analysis...")
+
+        # Try to analyze key components if we have inventory data
+        dependency_analysis = None
+        impact_analysis = None
+        complexity_analysis = None
+        architecture_diagram = None
+
+        # Find a representative element to analyze (use first class or function from inventory)
+        target_element = None
+        if inventory_data and inventory_data.get('source') == 'coderef_index':
+            # Pick first class or major component for analysis
+            # In a real scenario, you'd identify the main entry point or critical component
+            target_element = "main"  # Placeholder - could be extracted from inventory
+
+        if target_element:
+            # Analyze dependencies using coderef_query
+            logger.info(f"Analyzing dependencies for {target_element}...")
+            dependency_analysis = await self.analyze_dependencies(target_element)
+
+            # Analyze impact using coderef_impact
+            logger.info(f"Analyzing impact for {target_element}...")
+            impact_analysis = await self.analyze_impact(target_element, "modify")
+
+            # Analyze complexity using coderef_complexity
+            logger.info(f"Analyzing complexity for {target_element}...")
+            complexity_analysis = await self.analyze_complexity(target_element)
+
+        # Generate architecture diagram if project is complex enough
+        if inventory_data and inventory_data.get('total_elements', 0) > 50:
+            logger.info("Generating architecture diagram...")
+            architecture_diagram = await self.generate_architecture_diagram("dependencies", depth=2)
+
         # Build result
         result: PreparationSummaryDict = {
             'foundation_docs': foundation_docs,
@@ -209,11 +243,19 @@ class PlanningAnalyzer:
             'key_patterns_identified': key_patterns_identified,
             'technology_stack': technology_stack,
             'project_structure': project_structure,
-            'gaps_and_risks': gaps_and_risks
+            'gaps_and_risks': gaps_and_risks,
+            # NEW v1.5.0: Enhanced analysis from MCP tools
+            'dependency_analysis': dependency_analysis,
+            'impact_analysis': impact_analysis,
+            'complexity_analysis': complexity_analysis,
+            'architecture_diagram': architecture_diagram
         }
 
         duration = time.time() - start_time
         logger.info(f"Analysis completed in {duration:.2f}s", extra={'duration_seconds': duration})
+
+        # Add telemetry summary to result
+        result['telemetry_summary'] = self.get_telemetry_summary()
 
         return result
 

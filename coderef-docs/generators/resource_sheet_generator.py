@@ -159,7 +159,7 @@ class ResourceSheetGenerator:
         if auto_analyze:
             # Use code analysis
             analysis = await self.analyzer.analyze_element(
-                element_name, project_path, use_coderef_scan=True
+                element_name, project_path, use_coderef_scan=False
             )
         else:
             # Template mode - no analysis

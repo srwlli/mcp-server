@@ -16,7 +16,6 @@ from datetime import datetime
 # These will be injected from server.py
 TEMPLATES_DIR = None
 TOOL_TEMPLATES_DIR = None
-CODEREF_CONTEXT_AVAILABLE = False  # WO-CONTEXT-DOCS-INTEGRATION-001
 
 # Import dependencies
 from typing import Any
@@ -27,15 +26,6 @@ from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
 from generators.resource_sheet_generator import ResourceSheetGenerator
-
-# Import extractors for context injection (WO-CONTEXT-DOCS-INTEGRATION-001)
-try:
-    from extractors import extract_apis, extract_schemas, extract_components
-except ImportError:
-    # Graceful fallback if extractors not available
-    extract_apis = None
-    extract_schemas = None
-    extract_components = None
 from constants import Paths, Files, ScanDepth, FocusArea, AuditSeverity, AuditScope, PlanningPaths
 from validation import (
     validate_project_path_input,
@@ -158,49 +148,34 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     ]
 
     # Start building response with plan
-    result = "=== FOUNDATION DOCS - SEQUENTIAL GENERATION WITH CONTEXT INJECTION ===\n\n"
+    result = "=== FOUNDATION DOCS - SEQUENTIAL GENERATION ===\n\n"
     result += f"Project: {project_path}\n"
     result += f"Total documents: {len(templates_to_generate)}\n"
-    result += f"Context Injection: "
-    result += "ENABLED (coderef-context integration active)\n" if CODEREF_CONTEXT_AVAILABLE and extract_apis else "DISABLED (fallback mode)\n"
+    result += f"Context Injection: DISABLED (regex-based detection only)\n"
     result += "\nGeneration Plan:\n"
     result += "-" * 50 + "\n\n"
 
     for i, (template_name, description) in enumerate(templates_to_generate, 1):
         result += f"[{i}/{len(templates_to_generate)}] {template_name.upper()}\n"
         result += f"    Description: {description}\n"
-        if template_name in ["api", "schema", "components"]:
-            result += f"    Context Source: @coderef/core CLI (real code analysis)\n"
         result += "\n"
 
     result += "\n" + "=" * 50 + "\n\n"
     result += "GENERATION SEQUENCE:\n\n"
 
-    # Generate each template sequentially with context injection info
+    # Generate each template sequentially
     for i, (template_name, description) in enumerate(templates_to_generate, 1):
         result += f"[{i}/{len(templates_to_generate)}] Generating {template_name.upper()}...\n"
         result += f"Tool: generate_individual_doc\n"
         result += f"Template: {template_name}\n"
-
-        # Show context injection status for API/Schema/Components
-        if template_name in ["api", "schema", "components"] and CODEREF_CONTEXT_AVAILABLE and extract_apis:
-            result += f"Context Injection: ENABLED\n"
-            result += f"  - Calls @coderef/core CLI to extract real {template_name}\n"
-            result += f"  - Results cached for efficiency\n"
-        elif template_name in ["api", "schema", "components"]:
-            result += f"Context Injection: DISABLED (fallback to template placeholders)\n"
-        else:
-            result += f"Context Injection: N/A (non-extraction template)\n"
-
         result += "\n"
 
     result += "=" * 50 + "\n\n"
     result += "INSTRUCTIONS:\n"
     result += "1. Each template will generate in sequence with progress indicators\n"
-    result += "2. For API/Schema/Components: Real code intelligence from @coderef/core CLI\n"
-    result += "3. Claude will populate templates with extracted data or placeholders\n"
-    result += "4. Save each document to its output location as indicated\n"
-    result += "5. Each doc builds on previous ones (refs to earlier docs where needed)\n"
+    result += "2. Claude will populate templates with regex-based detection and .coderef/ data when available\n"
+    result += "3. Save each document to its output location as indicated\n"
+    result += "4. Each doc builds on previous ones (refs to earlier docs where needed)\n"
 
     logger.info(f"Successfully generated foundation docs plan with context injection for: {project_path}")
     return [TextContent(type="text", text=result)]
@@ -301,53 +276,7 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     result += f"Project: {paths['project_path']}\n"
     result += f"Output: {output_path}\n\n"
 
-    # Extract and inject context intelligence for relevant templates
-    extracted_data = None
-    if CODEREF_CONTEXT_AVAILABLE and template_name in ["api", "schema", "components"]:
-        logger.debug(f"Extracting {template_name} using coderef-context CLI")
-        try:
-            if template_name == "api" and extract_apis:
-                extracted_data = extract_apis(paths['project_path'])
-            elif template_name == "schema" and extract_schemas:
-                extracted_data = extract_schemas(paths['project_path'])
-            elif template_name == "components" and extract_components:
-                extracted_data = extract_components(paths['project_path'])
-        except Exception as e:
-            logger.warning(f"Context extraction failed for {template_name}: {e}")
-            extracted_data = None
-
-    # Add extraction status to response
-    result += "=" * 50 + "\n"
-    if template_name in ["api", "schema", "components"]:
-        if extracted_data and extracted_data.get('source') == 'coderef-cli':
-            result += f"Code Intelligence: [ACTIVE] Real {template_name} extracted via @coderef/core\n"
-            result += f"Data Source: @coderef/core CLI (AST-based analysis)\n"
-        else:
-            result += f"Code Intelligence: [FALLBACK] Using template placeholders\n"
-    result += "=" * 50 + "\n\n"
-
-    # Include extracted data in response if available
-    if extracted_data and extracted_data.get('source') == 'coderef-cli':
-        result += f"EXTRACTED {template_name.upper()} DATA:\n\n"
-        if template_name == "api" and "endpoints" in extracted_data:
-            result += f"Found {len(extracted_data.get('endpoints', []))} API endpoints:\n\n"
-            for endpoint in extracted_data.get('endpoints', [])[:10]:  # Show first 10
-                result += f"  - {endpoint.get('method', 'UNKNOWN')} {endpoint.get('path', 'N/A')}\n"
-            if len(extracted_data.get('endpoints', [])) > 10:
-                result += f"  ... and {len(extracted_data.get('endpoints', [])) - 10} more\n"
-        elif template_name == "schema" and "entities" in extracted_data:
-            result += f"Found {len(extracted_data.get('entities', []))} data entities:\n\n"
-            for entity in extracted_data.get('entities', [])[:10]:  # Show first 10
-                result += f"  - {entity.get('name', 'Unknown')}\n"
-            if len(extracted_data.get('entities', [])) > 10:
-                result += f"  ... and {len(extracted_data.get('entities', [])) - 10} more\n"
-        elif template_name == "components" and "components" in extracted_data:
-            result += f"Found {len(extracted_data.get('components', []))} UI components:\n\n"
-            for component in extracted_data.get('components', [])[:10]:  # Show first 10
-                result += f"  - {component.get('name', 'Unknown')} ({component.get('type', 'Component')})\n"
-            if len(extracted_data.get('components', [])) > 10:
-                result += f"  ... and {len(extracted_data.get('components', [])) - 10} more\n"
-        result += "\n" + "=" * 50 + "\n\n"
+    # Context extraction removed - uses regex-based detection and .coderef/ data when available
 
     result += f"TEMPLATE:\n\n{template_content}\n\n"
     result += "=" * 50 + "\n\n"
@@ -1305,11 +1234,3 @@ def set_tool_templates_dir(tool_templates_dir: Path) -> None:
     TOOL_TEMPLATES_DIR = tool_templates_dir
 
 
-def set_coderef_context_available(available: bool) -> None:
-    """
-    Set the CODEREF_CONTEXT_AVAILABLE global flag for handlers to use.
-
-    Part of WO-CONTEXT-DOCS-INTEGRATION-001 Phase 1.
-    """
-    global CODEREF_CONTEXT_AVAILABLE
-    CODEREF_CONTEXT_AVAILABLE = available

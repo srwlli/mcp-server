@@ -16,15 +16,10 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 import json
 import re
-import subprocess
-import os
 from datetime import datetime
 
 from logger_config import logger
 from constants import EXCLUDE_DIRS, ALLOWED_FILE_EXTENSIONS
-
-# Default coderef CLI path (can be overridden by environment variable)
-DEFAULT_CODEREF_CLI_PATH = r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
 from generators.mermaid_formatter import (
     generate_module_diagram,
     compute_graph_metrics,
@@ -62,7 +57,7 @@ class CoderefFoundationGenerator:
         project_path: Path,
         include_components: Optional[bool] = None,
         deep_extraction: bool = True,
-        use_coderef: bool = True,
+        use_coderef: bool = False,
         force_regenerate: bool = False
     ):
         """
@@ -72,7 +67,7 @@ class CoderefFoundationGenerator:
             project_path: Path to project directory
             include_components: Generate COMPONENTS.md (None = auto-detect UI project)
             deep_extraction: Deep extraction from existing docs (vs shallow preview)
-            use_coderef: Use coderef-mcp for pattern detection
+            use_coderef: DEPRECATED - Always False, kept for backward compatibility
             force_regenerate: Regenerate all docs even if they already exist (default: False)
         """
         self.project_path = project_path
@@ -102,21 +97,11 @@ class CoderefFoundationGenerator:
         # Detect if UI project (for COMPONENTS.md fallback)
         is_ui_project = self._detect_ui_project() if self.include_components is None else self.include_components
 
-        # Phase 0: Ensure coderef index exists (auto-scan if needed)
+        # Phase 0: Removed - no longer auto-scanning (subprocess calls removed)
         auto_scan_performed = False
         auto_scan_success = False
-        if self.use_coderef:
-            logger.info("Phase 0: Ensuring coderef index exists...")
-            index_existed = (self.project_path / '.coderef' / 'index.json').exists()
-            scan_success = self._ensure_coderef_index()
-            auto_scan_performed = not index_existed and scan_success
-            auto_scan_success = scan_success
-            if scan_success:
-                logger.info("Coderef index ready" + (" (auto-scanned)" if auto_scan_performed else " (pre-existing)"))
-            else:
-                logger.info("Coderef index unavailable, will use regex fallback")
 
-        # Phase 0.5: Load coderef data (99% accurate AST data)
+        # Phase 0.5: Load coderef data from pre-existing .coderef/ structure
         logger.info("Phase 0.5: Loading coderef data...")
         coderef_data = self._load_coderef_data()
         has_coderef = coderef_data is not None
@@ -142,7 +127,7 @@ class CoderefFoundationGenerator:
 
         # Phase 4: Code pattern detection (coderef-mcp integration)
         logger.info("Phase 4: Detecting code patterns...")
-        patterns = self._detect_code_patterns() if self.use_coderef else {}
+        patterns = self._detect_code_patterns()  # Always use regex-based detection
 
         # Phase 5: Similar features discovery
         logger.info("Phase 5: Discovering similar features...")
@@ -161,9 +146,9 @@ class CoderefFoundationGenerator:
                 'available': has_coderef,
                 'element_count': len(coderef_data.get('elements', [])) if has_coderef else 0,
                 'has_graph': bool(coderef_data.get('graph')) if has_coderef else False,
-                'auto_scan_attempted': self.use_coderef,
-                'auto_scan_performed': auto_scan_performed,
-                'auto_scan_success': auto_scan_success
+                'auto_scan_attempted': False,
+                'auto_scan_performed': False,
+                'auto_scan_success': False
             },
             '_metadata': {
                 'generated_at': datetime.now().isoformat(),
@@ -252,8 +237,8 @@ class CoderefFoundationGenerator:
             'project_context': project_context,
             'is_ui_project': is_ui_project,
             'has_coderef_data': has_coderef,
-            'auto_scan_performed': auto_scan_performed,
-            'auto_scan_success': auto_scan_success,
+            'auto_scan_performed': False,
+            'auto_scan_success': False,
             'force_regenerate': self.force_regenerate,
             'duration_seconds': round(duration, 2),
             'success': True
@@ -339,125 +324,6 @@ class CoderefFoundationGenerator:
         except Exception as e:
             logger.warning(f"Error loading coderef data: {e}")
             return None
-
-    def _ensure_coderef_index(self) -> bool:
-        """
-        Ensure .coderef/index.json exists by running coderef CLI scan if needed.
-
-        Returns:
-            True if index exists (or was created), False if scan failed
-        """
-        index_path = self.project_path / '.coderef' / 'index.json'
-
-        # If index already exists, we're good
-        if index_path.exists():
-            logger.debug(f"Coderef index already exists at {index_path}")
-            return True
-
-        logger.info(f"No coderef index found, running auto-scan for: {self.project_path}")
-
-        # Get CLI path from environment or use default
-        cli_path = os.environ.get("CODEREF_CLI_PATH", DEFAULT_CODEREF_CLI_PATH)
-        cli_bin = os.path.join(cli_path, "dist", "cli.js")
-
-        # Verify CLI exists
-        if not os.path.exists(cli_bin):
-            logger.warning(f"Coderef CLI not found at {cli_bin}, falling back to regex detection")
-            return False
-
-        try:
-            # Create .coderef directory if it doesn't exist
-            coderef_dir = self.project_path / '.coderef'
-            coderef_dir.mkdir(parents=True, exist_ok=True)
-
-            # Determine languages to scan based on project files
-            languages = self._detect_project_languages()
-            lang_arg = ','.join(languages) if languages else 'py,ts,tsx,js,jsx'
-
-            # Build the command
-            cmd = [
-                'node',
-                cli_bin,
-                'scan',
-                str(self.project_path),
-                '--lang', lang_arg,
-                '--analyzer', 'ast',
-                '--json'
-            ]
-
-            logger.info(f"Running coderef scan: {' '.join(cmd[:4])}...")
-
-            # Execute the scan
-            result = subprocess.run(
-                cmd,
-                cwd=cli_path,
-                capture_output=True,
-                text=True,
-                timeout=120  # 2 minute timeout for large projects
-            )
-
-            if result.returncode != 0:
-                logger.warning(f"Coderef scan failed with code {result.returncode}: {result.stderr[:500]}")
-                return False
-
-            # Parse the JSON output
-            try:
-                scan_result = json.loads(result.stdout)
-                elements = scan_result.get('elements', [])
-
-                # Save to index.json
-                index_path.write_text(json.dumps(elements, indent=2), encoding='utf-8')
-                logger.info(f"Coderef scan complete: {len(elements)} elements indexed to {index_path}")
-
-                # If graph data is available, save it too
-                if scan_result.get('graph'):
-                    graph_path = self.project_path / '.coderef' / 'graph.json'
-                    graph_path.write_text(json.dumps(scan_result['graph'], indent=2), encoding='utf-8')
-                    logger.info(f"Graph data saved to {graph_path}")
-
-                return True
-
-            except json.JSONDecodeError as e:
-                logger.warning(f"Failed to parse coderef scan output: {e}")
-                return False
-
-        except subprocess.TimeoutExpired:
-            logger.warning("Coderef scan timed out after 120 seconds")
-            return False
-        except FileNotFoundError:
-            logger.warning("Node.js not found - coderef CLI requires Node.js")
-            return False
-        except Exception as e:
-            logger.warning(f"Coderef scan failed: {e}")
-            return False
-
-    def _detect_project_languages(self) -> List[str]:
-        """Detect programming languages used in the project."""
-        languages = set()
-
-        # Check for common files/extensions
-        lang_indicators = {
-            'py': ['*.py', 'requirements.txt', 'pyproject.toml', 'setup.py'],
-            'ts': ['*.ts', 'tsconfig.json'],
-            'tsx': ['*.tsx'],
-            'js': ['*.js', 'package.json'],
-            'jsx': ['*.jsx'],
-        }
-
-        for lang, patterns in lang_indicators.items():
-            for pattern in patterns:
-                if pattern.startswith('*.'):
-                    # File extension check (limit search to avoid slowdown)
-                    for f in list(self.project_path.rglob(pattern))[:5]:
-                        if not any(excl in str(f) for excl in EXCLUDE_DIRS):
-                            languages.add(lang)
-                            break
-                else:
-                    # Specific file check
-                    if (self.project_path / pattern).exists():
-                        languages.add(lang)
-
-        return list(languages) if languages else ['py', 'ts', 'js']
 
     def _categorize_elements(self, elements: List[Dict]) -> Dict[str, List[Dict]]:
         """

@@ -1240,48 +1240,10 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
             }
         )
 
-        # Auto-generate DELIVERABLES.md template (WO-DELIVERABLES-ENHANCEMENT-001)
-        deliverables_result = None
-        try:
-            deliverables_result = await handle_generate_deliverables_template({
-                'project_path': str(project_path),
-                'feature_name': feature_name
-            })
-            logger.info(f"DELIVERABLES.md automatically generated for {feature_name}")
-        except Exception as e:
-            logger.warning(f"Failed to auto-generate DELIVERABLES.md: {e}")
-
-        # Build success message
-        deliverables_status = "✅ Generated" if deliverables_result else "⚠️  Failed (see logs)"
-        message = f"✅ Implementation Plan Created\n"
-        message += f"=" * 60 + "\n\n"
-        message += f"Feature: {feature_name}\n"
-        message += f"Workorder: {workorder_id}\n"
-        message += f"Location: coderef/workorder/{feature_name}/\n\n"
-        message += f"📋 Files Created:\n"
-        message += f"  - plan.json {deliverables_status}\n"
-        message += f"  - DELIVERABLES.md {deliverables_status}\n\n"
-        message += f"📋 Plan includes:\n"
-        message += f"  - META_DOCUMENTATION (version, status, workorder tracking)\n"
-        message += f"  - 0_preparation (discovery & analysis)\n"
-        message += f"  - 1_executive_summary (feature overview & goals)\n"
-        message += f"  - 2_risk_assessment (risks & complexity)\n"
-        message += f"  - 3_current_state_analysis (existing architecture)\n"
-        message += f"  - 4_key_features (requirements breakdown)\n"
-        message += f"  - 5_task_id_system (task definitions with workorder tracking)\n"
-        message += f"  - 6_implementation_phases (phased approach)\n"
-        message += f"  - 7_testing_strategy (test plan)\n"
-        message += f"  - 8_success_criteria (acceptance criteria)\n\n"
-        message += f"Next Steps:\n"
-        message += f"  1. Review plan at coderef/workorder/{feature_name}/plan.json\n"
-        message += f"  2. Review DELIVERABLES.md (auto-generated with enhanced template)\n"
-        if multi_agent:
-            message += f"  3. Generate communication.json with /generate-agent-communication\n"
-            message += f"  4. Assign agents with /assign-agent-task\n"
-        else:
-            message += f"  3. Execute plan with /execute-plan\n"
-        message += f"  4. Track progress and update deliverables\n"
-        message += f"  5. Archive feature when complete with /archive-feature\n"
+        # Build success message (concise to prevent stalls)
+        message = f"✅ Plan created: {workorder_id}\n"
+        message += f"Location: coderef/workorder/{feature_name}/plan.json\n\n"
+        message += f"Next: /validate-plan or /align-plan to continue"
 
         return format_success_response(
             data={

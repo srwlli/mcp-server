@@ -108,6 +108,27 @@ class ChangelogGenerator:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write('\n')  # Add trailing newline
 
+        # GAP-012: Validate CHANGELOG.json with Papertrail (UDS compliance)
+        try:
+            from papertrail.validators.general import GeneralValidator
+            validator = GeneralValidator()
+            result = validator.validate_file(str(self.changelog_path))
+
+            if not result['valid']:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"CHANGELOG.json validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"CHANGELOG.json validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available
+        except Exception:
+            pass  # Validation error - continue
+
     def get_next_change_id(self) -> str:
         """
         Generate next sequential change ID.

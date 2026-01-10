@@ -843,6 +843,23 @@ class RiskGenerator:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(assessment, f, indent=2)
 
+        # GAP-015: Validate risk assessment (UDS compliance)
+        try:
+            from papertrail.validators.general import GeneralValidator
+            validator = GeneralValidator()
+            result = validator.validate_file(str(filepath))
+
+            if not result['valid']:
+                logger.warning(f"Risk assessment validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                logger.info(f"Risk assessment validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available
+        except Exception:
+            pass  # Validation error - continue
+
         logger.info(f"Risk assessment saved to {filepath}")
 
         return filepath

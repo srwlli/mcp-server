@@ -375,6 +375,24 @@ class QuickrefGenerator(BaseGenerator):
         try:
             with open(quickref_path, 'w', encoding='utf-8') as f:
                 f.write(content)
+
+            # GAP-014: Validate quickref.md (UDS compliance)
+            try:
+                from papertrail.validators.user_facing import UserFacingValidator
+                validator = UserFacingValidator()
+                result = validator.validate_file(str(quickref_path))
+
+                if not result['valid']:
+                    logger.warning(f"quickref.md validation failed (score: {result.get('score', 0)})")
+                    for error in result.get('errors', []):
+                        logger.warning(f"  - {error}")
+                else:
+                    logger.info(f"quickref.md validated successfully (score: {result.get('score', 100)})")
+            except ImportError:
+                pass  # Papertrail not available
+            except Exception:
+                pass  # Validation error - continue
+
             logger.info(f"Quickref saved to: {quickref_path}")
             return str(quickref_path)
         except Exception as e:

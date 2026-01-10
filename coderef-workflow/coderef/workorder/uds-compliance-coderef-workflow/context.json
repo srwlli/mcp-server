@@ -1,0 +1,39 @@
+{
+  "feature_name": "uds-compliance-coderef-workflow",
+  "description": "Migrate from internal validators to Papertrail, add validation to 30 unvalidated outputs, achieve 100% validation coverage",
+  "goal": "Consolidate validation under Papertrail as single source of truth, validate all workflow artifacts",
+  "requirements": [
+    "Migrate plan.json validation from internal PlanValidator to Papertrail PlanValidator",
+    "Deprecate generators/plan_validator.py and schema_validator.py",
+    "Integrate SessionDocValidator for communication.json (create + all updates)",
+    "Integrate WorkorderDocValidator for context.json, analysis.json, DELIVERABLES updates",
+    "Integrate FoundationDocValidator for README, ARCHITECTURE, SCHEMA, COMPONENTS",
+    "Integrate SystemDocValidator for CLAUDE.md",
+    "Add validation to all 24 tools generating outputs",
+    "Re-validate after all update operations"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Breaking changes: PlanValidator API differs (validate_plan() vs validate_file())",
+    "Must update all imports from generators.plan_validator to papertrail.validators.plan",
+    "Must update tests to use Papertrail validators",
+    "Phased rollout required (3 stages) to mitigate risk"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-UDS-COMPLIANCE-CODEREF-WORKFLOW-001",
+    "workorder_assigned_at": "2026-01-10T19:33:47.914499+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-UDS-COMPLIANCE-CODEREF-WORKFLOW-001",
+    "feature_id": "uds-compliance-coderef-workflow",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

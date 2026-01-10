@@ -39,3 +39,5 @@ WO-WORKORDER-TRACKING-001 | html-tools | Real-time workorder/stub tracking syste
 WO-CODEREF-OUTPUT-UTILIZATION-001 | coderef-ecosystem | COMPLETE - 100% server coverage: 59,676 elements discovered across all 5 MCP servers | 2025-12-31T12:00:00Z
 WO-ECOSYSTEM-RESOURCE-INVENTORY-001 | coderef-ecosystem | Ecosystem resource inventory session | 2026-01-02
 [2026-01-10] WO-UDS-SYSTEM-001: uds-comprehensive-system - Comprehensive Universal Documentation Standards system with 3-tier hierarchy, 9 schemas, 9 validators, 30+ doc types
+WO-PAPERTRAIL-UDS-ALIGNMENT-001 | coderef-ecosystem | Align coderef-docs and coderef-workflow with Papertrail UDS standards | 2026-01-10T18:10:54.526617+00:00
+WO-PAPERTRAIL-UDS-ALIGNMENT-002 | coderef-ecosystem | Phase 2: Gap analysis and alignment planning (target: 100% validation) | 2026-01-10T18:55:27.420351+00:00

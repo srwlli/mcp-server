@@ -1,0 +1,55 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-UDS-ALIGNMENT-001",
+  "feature_name": "papertrail-uds-alignment",
+  "created": "2026-01-10",
+  "status": "complete",
+  "description": "Align coderef-docs and coderef-workflow tool documentation with new Papertrail UDS standards, schemas, and validators",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Aggregate Phase 1 inventory reports into master document",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\orchestrator-phase1-inventory.md",
+    "status": "complete",
+    "completed_at": "2026-01-10T15:30:00Z",
+    "notes": "✅ Complete - Created master inventory aggregating 3 agent reports. Key findings: 37 tools, 50 outputs, only 12% validated (6/50). Critical gap: 11 file types have schemas + validators available but not integrated. Identified 7 high-priority misalignments including communication.json, context.json, and all foundation docs."
+  },
+
+  "agents": [
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\papertrail-standards.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\papertrail-standards.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T12:00:00-05:00",
+      "notes": "✅ Complete - Documented 8 schemas (base, foundation, workorder, plan, session, system, standards, communication), 10 validators, ValidatorFactory auto-detection, score calculation algorithm, integration patterns for coderef-docs and coderef-workflow. Created both JSON (structured) and MD (human-readable) standards guides."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-docs-inventory.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-docs-inventory.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T12:30:00-05:00",
+      "notes": "✅ Complete - Inventoried 13 tools generating 18 distinct outputs. 4 validated outputs (CHANGELOG.json via jsonschema, audit reports via standards, Papertrail UDS validation/health). 14 unvalidated outputs (foundation docs, quickref, resource sheets, standards). Includes .coderef/ integration notes and Papertrail UDS integration details."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-workflow-inventory.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-workflow-inventory.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T05:00:00Z",
+      "notes": "✅ Complete - Inventoried 24 tools generating 32 outputs. Only 2 outputs validated (plan.json, DELIVERABLES.md). DELIVERABLES.md uses full Papertrail integration. 30 outputs need validation."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  }
+}

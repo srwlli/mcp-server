@@ -1,0 +1,75 @@
+{
+  "project_analysis": {
+    "project_type": "MCP Ecosystem - Slash Command",
+    "primary_language": "Markdown (slash command) + Python (MCP tools)",
+    "framework": "Claude Code slash commands + MCP protocol",
+    "architecture_style": "Command-driven workflow orchestration"
+  },
+  "existing_patterns": {
+    "slash_commands": {
+      "location": "~/.claude/commands/",
+      "format": "Markdown with workflow steps",
+      "examples": [
+        "/create-workorder - 11-step workflow",
+        "/align-plan - TodoWrite generation",
+        "/update-deliverables - Git metrics capture"
+      ],
+      "pattern": "Step-by-step instructions with MCP tool calls"
+    },
+    "mcp_tools": {
+      "location": "coderef-workflow/tool_handlers.py",
+      "existing_tools": [
+        "update_task_status - Mark tasks complete",
+        "update_deliverables - Capture metrics",
+        "update_all_documentation - Update README/CHANGELOG",
+        "archive_feature - Move to archive"
+      ],
+      "calling_pattern": "mcp__coderef_workflow__{tool_name}"
+    },
+    "plan_structure": {
+      "location": "coderef/workorder/{feature}/plan.json",
+      "sections": 10,
+      "key_sections": {
+        "6_IMPLEMENTATION_PHASES": "Tasks organized by phase with dependencies",
+        "7_TESTING_STRATEGY": "Test commands and coverage requirements",
+        "8_SUCCESS_CRITERIA": "Verification checklist"
+      }
+    },
+    "todowrite_integration": {
+      "format": "Checklist with task IDs (PHASE-###)",
+      "statuses": ["pending", "in_progress", "completed"],
+      "display": "Printed to CLI terminal"
+    }
+  },
+  "dependencies": {
+    "required_tools": [
+      "update_task_status",
+      "update_deliverables",
+      "update_all_documentation",
+      "archive_feature"
+    ],
+    "file_dependencies": [
+      "plan.json (read)",
+      "DELIVERABLES.md (read/write)",
+      "TodoWrite state (update)"
+    ],
+    "external_dependencies": [
+      "Git (for commits)",
+      "Test frameworks (pytest/jest per plan)",
+      "File system (read/write code)"
+    ]
+  },
+  "technical_constraints": {
+    "command_location": "~/.claude/commands/ (global)",
+    "execution_model": "Synchronous, sequential task execution",
+    "error_handling": "Read from plan.json 2_RISK_ASSESSMENT",
+    "test_execution": "Shell commands from 7_TESTING_STRATEGY",
+    "git_workflow": "Commit after each task completion"
+  },
+  "implementation_approach": {
+    "phase_1": "Parse plan.json and extract task list",
+    "phase_2": "Iterate through phases, implement each task",
+    "phase_3": "Run tests and verify success criteria",
+    "phase_4": "Execute post-implementation tools (deliverables, docs, archive)"
+  }
+}

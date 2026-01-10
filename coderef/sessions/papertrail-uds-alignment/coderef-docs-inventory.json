@@ -1,0 +1,199 @@
+{
+  "agent_id": "coderef-docs",
+  "timestamp": "2026-01-10T10:30:00Z",
+  "phase": "Phase 1: Inventory",
+  "outputs": [
+    {
+      "tool_name": "generate_foundation_docs",
+      "file_path": "tool_handlers.py:127",
+      "generates": [
+        {
+          "output_file": "README.md",
+          "format": "markdown",
+          "structure": "POWER framework (Purpose, Overview, What/Why/When, Examples, References). Uses .coderef/context.md and patterns.json for code intelligence. Saved to project root.",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/foundation-docs/ARCHITECTURE.md",
+          "format": "markdown",
+          "structure": "POWER framework. Uses .coderef/context.json (structure), graph.json (dependencies), and diagrams/ (visual representations) for architecture data.",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/foundation-docs/API.md",
+          "format": "markdown",
+          "structure": "POWER framework. Uses .coderef/index.json (filters for HTTP decorators, API patterns, endpoints/routes) and patterns.json (API conventions).",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/foundation-docs/SCHEMA.md",
+          "format": "markdown",
+          "structure": "POWER framework. Uses .coderef/index.json (filters for ORM patterns, models/entities, schemas) and context.json (entity relationships).",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/foundation-docs/COMPONENTS.md",
+          "format": "markdown",
+          "structure": "POWER framework. Uses .coderef/index.json (filters for React/Vue components) and patterns.json (component conventions).",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_individual_doc",
+      "file_path": "tool_handlers.py:242",
+      "generates": [
+        {
+          "output_file": "README.md | ARCHITECTURE.md | API.md | SCHEMA.md | COMPONENTS.md | USER-GUIDE.md | my-guide.md (variable based on template_name parameter)",
+          "format": "markdown",
+          "structure": "POWER framework with .coderef/ code intelligence integration. Optional Papertrail UDS integration when PAPERTRAIL_ENABLED=true and workorder_id provided (adds YAML frontmatter header/footer with metadata: generated_by, workorder_id, feature_id, status, timestamp, next_review).",
+          "uses_validation": "optional (Papertrail UDS validation when enabled, lines 270-317)"
+        }
+      ]
+    },
+    {
+      "tool_name": "add_changelog_entry",
+      "file_path": "tool_handlers.py:352",
+      "generates": [
+        {
+          "output_file": "coderef/changelog/CHANGELOG.json",
+          "format": "json",
+          "structure": "{\"$schema\": \"./schema.json\", \"project\": \"string\", \"changelog_version\": \"1.0\", \"current_version\": \"X.Y.Z\", \"entries\": [{\"version\": \"X.Y.Z\", \"change_type\": \"feature|bugfix|enhancement|breaking_change|deprecation|security\", \"severity\": \"critical|major|minor|patch\", \"title\": \"string\", \"description\": \"string\", \"files\": [\"array\"], \"reason\": \"string\", \"impact\": \"string\", \"breaking\": boolean, \"migration\": \"string\", \"summary\": \"string\", \"contributors\": [\"array\"]}]}. Validates against jsonschema.",
+          "uses_validation": "yes (jsonschema validation via ChangelogGenerator)"
+        }
+      ]
+    },
+    {
+      "tool_name": "record_changes",
+      "file_path": "tool_handlers.py:509",
+      "generates": [
+        {
+          "output_file": "No direct file output (agentic workflow tool)",
+          "format": "text",
+          "structure": "Auto-detects git changes (staged files), suggests change_type from commit messages (feat/fix/BREAKING CHANGE patterns), calculates severity from scope (file count), generates preview for agent confirmation. Agent must call add_changelog_entry to complete. Returns instructions, not files.",
+          "uses_validation": "no (workflow orchestrator only)"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_quickref_interactive",
+      "file_path": "tool_handlers.py:652",
+      "generates": [
+        {
+          "output_file": "coderef/user/quickref.md",
+          "format": "markdown",
+          "structure": "Universal quickref guide for any application type (CLI, Web, API, Desktop, Library). 150-250 lines scannable reference with commands/endpoints/config. Interactive workflow: AI interviews user (gather app details) → generates quickref using proven pattern (Purpose, Core Concepts, Essential Commands/Endpoints, Common Workflows, Troubleshooting, Quick Reference Tables).",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_resource_sheet",
+      "file_path": "tool_handlers.py:1191",
+      "generates": [
+        {
+          "output_file": "{element_name}-RESOURCE-SHEET.md",
+          "format": "markdown",
+          "structure": "Composable module-based documentation (WO-RESOURCE-SHEET-MCP-TOOL-001). Uses detection engine (reads .coderef/index.json) to identify code characteristics → selects appropriate modules (universal: architecture, integration, testing, performance + conditional modules for specific patterns) → assembles documentation. Auto-fill rate: ~50% in Phase 1 (architecture + integration fully populated).",
+          "uses_validation": "optional (validate_against_code parameter, default true)"
+        },
+        {
+          "output_file": "{element_name}-schema.json",
+          "format": "json",
+          "structure": "JSON Schema format generated from same code analysis as markdown. Synchronized with markdown output - same modules, same auto-fill.",
+          "uses_validation": "optional (validate_against_code parameter, default true)"
+        },
+        {
+          "output_file": "{element_name}-jsdoc.js",
+          "format": "text",
+          "structure": "JSDoc format generated from same code analysis as markdown. Synchronized with markdown output - same modules, same auto-fill.",
+          "uses_validation": "optional (validate_against_code parameter, default true)"
+        }
+      ]
+    },
+    {
+      "tool_name": "establish_standards",
+      "file_path": "tool_handlers.py:717",
+      "generates": [
+        {
+          "output_file": "coderef/standards/ui-patterns.md",
+          "format": "markdown",
+          "structure": "UI patterns extracted from codebase (buttons: allowed_sizes/variants, colors: allowed_hex_codes, modals, forms, inputs, etc.). Uses .coderef/index.json fast path if available (~50ms), otherwise scans entire codebase (~5-60s). Includes pattern definitions, examples, and violation detection rules.",
+          "uses_validation": "no (but reads .coderef/ for intelligence when available)"
+        },
+        {
+          "output_file": "coderef/standards/behavior-patterns.md",
+          "format": "markdown",
+          "structure": "Behavior patterns extracted from codebase (error handling: expected_patterns, loading states, validation, data fetching, etc.). Defines expected patterns and anti-patterns for consistency enforcement.",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/standards/ux-patterns.md",
+          "format": "markdown",
+          "structure": "UX patterns extracted from codebase (navigation patterns, permission checks, user workflows, accessibility patterns, etc.). Documents user experience conventions for consistency auditing.",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "audit_codebase",
+      "file_path": "tool_handlers.py:791",
+      "generates": [
+        {
+          "output_file": "coderef/audits/audit-report-{timestamp}.md",
+          "format": "markdown",
+          "structure": "Comprehensive audit report with: compliance score (0-100, grade A-F), violations breakdown by severity (critical/major/minor), file locations, pattern violations, fix suggestions (if generate_fixes=true), scan metadata (duration, files_scanned, standards_files). Validates code against standards from establish_standards. Status: PASSING (score >= 70) or FAILING (score < 70).",
+          "uses_validation": "yes (validates code against established standards from coderef/standards/*.md)"
+        }
+      ]
+    },
+    {
+      "tool_name": "check_consistency",
+      "file_path": "tool_handlers.py:955",
+      "generates": [
+        {
+          "output_file": "No file output (terminal summary only)",
+          "format": "text",
+          "structure": "Pre-commit quality gate. Auto-detects changed files from git (staged by default) or accepts explicit file list. Checks files against standards, filters by severity threshold (critical/major/minor), returns terminal-friendly summary with [PASS]/[FAIL] status, violations count, files checked, duration. Exit code 1 if violations found and fail_on_violations=true. No files written - designed for CI/CD pipelines.",
+          "uses_validation": "yes (validates changed files against established standards)"
+        }
+      ]
+    },
+    {
+      "tool_name": "validate_document",
+      "file_path": "tool_handlers.py:1065",
+      "generates": [
+        {
+          "output_file": "No file output (JSON response only)",
+          "format": "json",
+          "structure": "Papertrail UDS validation (Phase 3 integration). Returns JSON: {\"valid\": boolean, \"errors\": [{\"severity\": string, \"message\": string, \"location\": string}], \"warnings\": [...], \"validation_score\": number, \"success\": boolean}. Requires Papertrail package installed (pip install papertrail>=1.0.0).",
+          "uses_validation": "yes (Papertrail UDS schema validation)"
+        }
+      ]
+    },
+    {
+      "tool_name": "check_document_health",
+      "file_path": "tool_handlers.py:1130",
+      "generates": [
+        {
+          "output_file": "No file output (JSON response only)",
+          "format": "json",
+          "structure": "Papertrail document health check (Phase 3 integration). Returns JSON: {\"score\": number (0-100), \"grade\": string, \"breakdown\": {\"traceability\": number, \"completeness\": number, \"freshness\": number, \"validation\": number}, \"issues\": [...], \"recommendations\": [...], \"success\": boolean}. Requires Papertrail package installed.",
+          "uses_validation": "yes (Papertrail health scoring)"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_tools": 13,
+    "total_outputs": 18,
+    "validated_outputs": 4,
+    "unvalidated_outputs": 14,
+    "notes": "4 validated outputs: CHANGELOG.json (jsonschema), audit-report (standards validation), validate_document (Papertrail UDS), check_document_health (Papertrail). 3 optional validations: generate_individual_doc (Papertrail UDS if enabled), generate_resource_sheet (validate_against_code if enabled), check_consistency (standards validation, terminal only)."
+  },
+  "integration_notes": {
+    "coderef_integration": "6 tools leverage .coderef/ resources: generate_foundation_docs, generate_individual_doc (template-specific context files), generate_resource_sheet (reads index.json for detection), establish_standards (fast path reads index.json ~50ms vs full scan ~5-60s). NO SCANNING during doc generation - files must pre-exist or user gets warning.",
+    "papertrail_integration": "3 tools support Papertrail UDS (Phase 3 & 4): generate_individual_doc (optional YAML frontmatter when PAPERTRAIL_ENABLED=true), validate_document, check_document_health. Requires Papertrail package installed.",
+    "workorder_tracking": "CHANGELOG.json entries support workorder tracking (workorder_id field). generate_individual_doc accepts workorder_id, feature_id, version parameters when Papertrail enabled."
+  }
+}

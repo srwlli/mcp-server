@@ -1,0 +1,103 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-UDS-ALIGNMENT-001",
+  "task": "Papertrail UDS Standards Alignment",
+  "description": "Ensure coderef-docs and coderef-workflow documentation generation tools comply with new Papertrail Universal Documentation Standard (UDS), schemas, and validators completed in recent workorder",
+
+  "session_phase": "Phase 1: Inventory - Self-Audit of Outputs",
+
+  "orchestrator_instructions": {
+    "role": "WAIT for all agents to complete Phase 1. Then aggregate inventory reports into master document showing what each agent generates.",
+    "steps": {
+      "step_1": "READ all 3 agent output files (papertrail-standards.json/md, coderef-docs-inventory.json/md, coderef-workflow-inventory.json/md)",
+      "step_2": "CREATE master inventory showing: Papertrail standards + coderef-docs outputs + coderef-workflow outputs",
+      "step_3": "SAVE inventory to orchestrator-phase1-inventory.md",
+      "step_4": "UPDATE orchestrator status in communication.json to 'complete'"
+    },
+    "note": "Phase 2 (alignment/gap analysis) will be a separate session after Phase 1 inventory is complete"
+  },
+
+  "agent_instructions": {
+    "papertrail_agent": {
+      "role": "EXPLAIN the validation system: document schemas, validators, and UDS standards that other agents should follow",
+      "steps": {
+        "step_1": "READ your own codebase: CLAUDE.md, schemas/, validators/, UDS documentation",
+        "step_2": "DOCUMENT: What schemas exist (context.json, plan.json, communication.json, DELIVERABLES.md, etc.)",
+        "step_3": "DOCUMENT: What validators exist and how to use them",
+        "step_4": "DOCUMENT: UDS structure requirements (required fields, format rules, validation patterns)",
+        "step_5": "DOCUMENT: Integration patterns - how other agents should use your validation system",
+        "step_6": "CREATE papertrail-standards.json (structured data) and papertrail-standards.md (human-readable guide)",
+        "step_7": "UPDATE your status in communication.json to 'complete'"
+      }
+    },
+
+    "coderef_docs_agent": {
+      "role": "INVENTORY your own outputs: review your project and list ALL files/documents you generate",
+      "steps": {
+        "step_1": "READ your own codebase: tool_handlers.py and all tool implementations",
+        "step_2": "IDENTIFY: Every tool that generates output files (JSON, markdown, etc.)",
+        "step_3": "LIST: What files each tool creates (e.g., 'generate_foundation_docs creates ARCHITECTURE.md, API.md, etc.')",
+        "step_4": "LIST: What format/structure each output uses",
+        "step_5": "LIST: Whether each output currently uses validation",
+        "step_6": "CREATE coderef-docs-inventory.json (structured list) and coderef-docs-inventory.md (summary)",
+        "step_7": "UPDATE your status in communication.json to 'complete'"
+      }
+    },
+
+    "coderef_workflow_agent": {
+      "role": "INVENTORY your own outputs: review your project and list ALL files/documents you generate",
+      "steps": {
+        "step_1": "READ your own codebase: tool_handlers.py and all workflow implementations",
+        "step_2": "IDENTIFY: Every workflow that generates output files (context.json, plan.json, DELIVERABLES.md, etc.)",
+        "step_3": "LIST: What files each workflow creates (e.g., 'gather_context creates context.json with fields X, Y, Z')",
+        "step_4": "LIST: What format/structure each output uses",
+        "step_5": "LIST: Whether each output currently uses validation",
+        "step_6": "CREATE coderef-workflow-inventory.json (structured list) and coderef-workflow-inventory.md (summary)",
+        "step_7": "UPDATE your status in communication.json to 'complete'"
+      }
+    }
+  },
+
+  "output_format": "Both JSON and Markdown",
+
+  "json_output_template": {
+    "agent_id": "string",
+    "timestamp": "ISO 8601 format",
+    "phase": "Phase 1: Inventory",
+    "outputs": [
+      {
+        "tool_name": "string (e.g., 'generate_foundation_docs')",
+        "file_path": "string (e.g., 'tool_handlers.py:123')",
+        "generates": [
+          {
+            "output_file": "string (e.g., 'ARCHITECTURE.md')",
+            "format": "json|markdown|text",
+            "structure": "Brief description of structure/fields",
+            "uses_validation": "yes|no|unknown"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "total_tools": "number",
+      "total_outputs": "number",
+      "validated_outputs": "number",
+      "unvalidated_outputs": "number"
+    }
+  },
+
+  "markdown_output_template": "# [Agent Name] Output Inventory\n\n## Summary\n- Total tools: X\n- Total outputs generated: X\n- Validated outputs: X\n- Unvalidated outputs: X\n\n## Tool Inventory\n\n### Tool Name 1\n**Location:** file_path:line_number\n**Generates:**\n- output_file_1 (format) - structure description - validation: yes/no\n- output_file_2 (format) - structure description - validation: yes/no\n\n### Tool Name 2\n...",
+
+  "quality_standards": {
+    "completeness": "All tools/workflows that generate UDS documents must be audited. Report must include specific file names, line numbers, and concrete examples.",
+    "accuracy": "Findings must be verified by reading actual source code. Do not guess or assume - read the files.",
+    "format": "JSON must follow template exactly. Markdown must be human-readable with clear sections and actionable recommendations."
+  },
+
+  "reference_documents": {
+    "papertrail_uds": "C:\\Users\\willh\\.mcp-servers\\papertrail\\CLAUDE.md",
+    "papertrail_schemas": "C:\\Users\\willh\\.mcp-servers\\papertrail\\schemas\\",
+    "papertrail_validators": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\",
+    "coderef_docs_tools": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\tool_handlers.py",
+    "coderef_workflow_tools": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\tool_handlers.py"
+  }
+}

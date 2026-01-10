@@ -1,0 +1,251 @@
+{
+  "agent_id": "coderef-docs",
+  "timestamp": "2026-01-10T17:00:00Z",
+  "phase": "Phase 2: Gap Analysis",
+  "gaps": [
+    {
+      "gap_id": "GAP-DOCS-001: Foundation docs unvalidated",
+      "tool_or_file": "generate_foundation_docs + generate_individual_doc",
+      "outputs_affected": [
+        "README.md",
+        "ARCHITECTURE.md",
+        "API.md",
+        "SCHEMA.md",
+        "COMPONENTS.md"
+      ],
+      "current_state": "PAPERTRAIL_ENABLED check exists (lines 270-317) but defaults to false. No validation when disabled.",
+      "target_state": "Integrate FoundationDocValidator for all 5 foundation docs. Make PAPERTRAIL_ENABLED=true by default.",
+      "priority": "P0",
+      "rationale": "Foundation docs are core project documentation viewed by all developers and users. Missing validation allows incomplete/incorrect docs to be generated. Schema and validator already exist in Papertrail - this is purely integration work.",
+      "complexity": "moderate",
+      "effort_hours": 4,
+      "effort_breakdown": {
+        "update_generate_foundation_docs": 1.5,
+        "update_generate_individual_doc": 1,
+        "test_all_5_files": 1,
+        "update_documentation": 0.5
+      },
+      "blockers": [],
+      "dependencies": [
+        "Papertrail package must be in requirements.txt",
+        "FoundationDocValidator must be importable from papertrail.validators.foundation"
+      ],
+      "implementation_notes": [
+        "Update tool_handlers.py lines 127-237 (generate_foundation_docs)",
+        "Update tool_handlers.py lines 242-347 (generate_individual_doc)",
+        "Change default: PAPERTRAIL_ENABLED=true instead of checking env var",
+        "Call FoundationDocValidator().validate_file(output_path) after generation",
+        "Return validation errors to user if score < 90"
+      ]
+    },
+    {
+      "gap_id": "GAP-DOCS-002: Standards docs unvalidated",
+      "tool_or_file": "establish_standards",
+      "outputs_affected": [
+        "coderef/standards/ui-patterns.md",
+        "coderef/standards/behavior-patterns.md",
+        "coderef/standards/ux-patterns.md"
+      ],
+      "current_state": "No validation. Files generated from codebase scan but not validated against schema.",
+      "target_state": "Integrate Papertrail validator for standards docs (StandardsDocValidator or SystemDocValidator - need confirmation).",
+      "priority": "P1",
+      "rationale": "Standards docs define coding patterns for audit_codebase and check_consistency tools. Invalid standards = broken audits. Medium-high impact on quality enforcement.",
+      "complexity": "moderate",
+      "effort_hours": 3,
+      "effort_breakdown": {
+        "confirm_validator_type": 0.5,
+        "update_establish_standards_handler": 1,
+        "update_StandardsGenerator_class": 1,
+        "test_all_3_files": 0.5
+      },
+      "blockers": [
+        "UNCLEAR: Which validator to use? Phase 1 shows 'standards-doc-frontmatter-schema.json' exists but uncertain if StandardsDocValidator exists. May use SystemDocValidator instead."
+      ],
+      "dependencies": [
+        "Papertrail must have validator for standards docs",
+        "Confirm Papertrail schema: standards-doc-frontmatter-schema.json location and structure"
+      ],
+      "implementation_notes": [
+        "Update tool_handlers.py lines 717-786 (handle_establish_standards)",
+        "Update generators/standards_generator.py save_standards() method",
+        "Add validator import and call after file write",
+        "Check Papertrail docs to confirm StandardsDocValidator exists"
+      ]
+    },
+    {
+      "gap_id": "GAP-DOCS-003: Quickref unvalidated (no schema exists)",
+      "tool_or_file": "generate_quickref_interactive",
+      "outputs_affected": [
+        "coderef/user/quickref.md"
+      ],
+      "current_state": "No validation. No schema exists in Papertrail. User-facing documentation with variable structure (5 app types: CLI, Web, API, Desktop, Library).",
+      "target_state": "DECISION REQUIRED: Create Papertrail schema for quickref.md? OR keep as unstructured user doc?",
+      "priority": "P2",
+      "rationale": "Quickref is user-facing documentation (not system/workorder doc). Variable structure based on app type. May not need strict validation. Low-medium impact if unvalidated.",
+      "complexity": "complex",
+      "effort_hours": 5,
+      "effort_hours_if_schema_required": 5,
+      "effort_hours_if_no_schema": 0,
+      "effort_breakdown": {
+        "design_quickref_schema": 2,
+        "create_papertrail_schema_file": 1,
+        "create_or_extend_validator": 1,
+        "integrate_into_handler": 0.5,
+        "test_5_app_types": 0.5
+      },
+      "blockers": [
+        "No schema exists in Papertrail for quickref.md",
+        "DECISION: Should quickref.md have strict schema validation? Or allow variable structure?"
+      ],
+      "dependencies": [
+        "If schema required: WO-PAPERTRAIL-SCHEMA-ADDITIONS-001 (quickref.md schema)",
+        "If schema required: ValidatorFactory update to detect quickref.md"
+      ],
+      "implementation_notes": [
+        "OPTION 1 (strict validation): Create schema with required sections (Purpose, Core Concepts, Essential Commands, etc.), add validator, integrate",
+        "OPTION 2 (no validation): Keep as unstructured user doc, accept variable format",
+        "RECOMMENDATION: P2 priority - defer to Phase 3 decision. User docs may not need UDS validation."
+      ]
+    },
+    {
+      "gap_id": "GAP-DOCS-004: Resource sheets optional validation",
+      "tool_or_file": "generate_resource_sheet",
+      "outputs_affected": [
+        "{element}-RESOURCE-SHEET.md",
+        "{element}-schema.json",
+        "{element}-jsdoc.js"
+      ],
+      "current_state": "Optional validate_against_code parameter (default true) checks code consistency. No Papertrail UDS schema validation.",
+      "target_state": "Add Papertrail UDS validator alongside existing validate_against_code check? OR keep current validation as sufficient?",
+      "priority": "P2",
+      "rationale": "Resource sheets are developer reference docs with composable module structure. Already have code consistency validation. UDS validation would add metadata/structure checks but may not be critical.",
+      "complexity": "moderate",
+      "effort_hours": 3,
+      "effort_hours_if_schema_required": 3,
+      "effort_hours_if_no_schema": 0,
+      "effort_breakdown": {
+        "design_resource_sheet_schema": 1,
+        "create_or_extend_validator": 1,
+        "integrate_into_ResourceSheetGenerator": 0.5,
+        "test_3_output_formats": 0.5
+      },
+      "blockers": [
+        "No schema exists in Papertrail for resource sheets",
+        "DECISION: Should resource sheets have UDS schema? Or is validate_against_code sufficient?"
+      ],
+      "dependencies": [
+        "If schema required: WO-PAPERTRAIL-SCHEMA-ADDITIONS-001 (resource-sheet schema)",
+        "If schema required: ValidatorFactory update"
+      ],
+      "implementation_notes": [
+        "Current validation checks code consistency (module population, auto-fill accuracy)",
+        "UDS validation would add: frontmatter metadata, required sections, field types",
+        "RECOMMENDATION: P2 priority - validate_against_code may be sufficient. Defer UDS schema to Phase 3 if needed.",
+        "If UDS added: Update generators/resource_sheet_generator.py generate() method"
+      ]
+    },
+    {
+      "gap_id": "GAP-DOCS-005: CHANGELOG.json validator migration",
+      "tool_or_file": "add_changelog_entry",
+      "outputs_affected": [
+        "coderef/changelog/CHANGELOG.json"
+      ],
+      "current_state": "Uses jsonschema validation via ChangelogGenerator (generators/changelog_generator.py). NOT using Papertrail validator.",
+      "target_state": "Migrate from jsonschema to Papertrail validator? OR keep existing validation?",
+      "priority": "P3",
+      "rationale": "CHANGELOG.json is already validated (jsonschema). Migration to Papertrail validator would consolidate validation but is low priority since validation exists. No functional gap.",
+      "complexity": "trivial",
+      "effort_hours": 2,
+      "effort_breakdown": {
+        "check_if_papertrail_has_changelog_schema": 0.5,
+        "replace_jsonschema_with_papertrail_validator": 1,
+        "update_tests": 0.5
+      },
+      "blockers": [
+        "UNCLEAR: Does Papertrail have a changelog.json schema? Not listed in Phase 1 inventory."
+      ],
+      "dependencies": [
+        "If Papertrail schema doesn't exist: Keep jsonschema (no migration needed)",
+        "If Papertrail schema exists: Migrate to Papertrail validator for consistency"
+      ],
+      "implementation_notes": [
+        "Update generators/changelog_generator.py add_change() method",
+        "Replace jsonschema.validate() calls with Papertrail validator",
+        "Low priority - already validated, migration is optional consolidation"
+      ]
+    },
+    {
+      "gap_id": "GAP-DOCS-006: PAPERTRAIL_ENABLED default false",
+      "tool_or_file": "generate_individual_doc (configuration)",
+      "outputs_affected": [
+        "All foundation docs when PAPERTRAIL_ENABLED=false"
+      ],
+      "current_state": "PAPERTRAIL_ENABLED defaults to false (reads from env var). User must manually set env var to enable validation.",
+      "target_state": "Change default to PAPERTRAIL_ENABLED=true. Make validation the default behavior.",
+      "priority": "P0",
+      "rationale": "Critical enabler for GAP-DOCS-001. If PAPERTRAIL_ENABLED stays false by default, foundation docs validation won't run even after integration. This is a design/configuration gap, not implementation.",
+      "complexity": "trivial",
+      "effort_hours": 0.5,
+      "effort_breakdown": {
+        "update_default_in_handler": 0.25,
+        "update_documentation": 0.25
+      },
+      "blockers": [],
+      "dependencies": [
+        "Must ensure Papertrail package is always available (requirements.txt)",
+        "May need fallback behavior if Papertrail import fails"
+      ],
+      "implementation_notes": [
+        "Update tool_handlers.py line 270: Change check from env var to True default",
+        "Add try/except for Papertrail import failures (graceful degradation)",
+        "Document in CLAUDE.md that validation is enabled by default"
+      ]
+    }
+  ],
+  "migration_plan": {
+    "deprecated_components": [],
+    "new_integrations": [
+      "FoundationDocValidator (from papertrail.validators.foundation)",
+      "StandardsDocValidator or SystemDocValidator (from papertrail.validators)",
+      "Optional: QuickrefValidator if schema created",
+      "Optional: ResourceSheetValidator if schema created"
+    ],
+    "breaking_changes": [
+      "PAPERTRAIL_ENABLED default change from false to true (may affect users who don't have Papertrail installed)",
+      "Foundation docs will fail generation if validation score < 90 (stricter than current behavior)",
+      "Standards docs will fail if frontmatter invalid (new validation)"
+    ],
+    "rollout_strategy": "Phased rollout recommended: (1) P0 gaps first (foundation docs + default change), (2) P1 gaps (standards docs), (3) P2/P3 gaps deferred to Phase 3 based on user need"
+  },
+  "summary": {
+    "total_gaps": 6,
+    "p0_gaps": 2,
+    "p1_gaps": 1,
+    "p2_gaps": 2,
+    "p3_gaps": 1,
+    "total_effort_hours": 17.5,
+    "total_effort_hours_if_all_schemas_created": 17.5,
+    "total_effort_hours_minimum": 9.5,
+    "estimated_timeline": "1-2 weeks (P0+P1 only: 3-5 days)",
+    "validation_rate_current": "22% (4/18 outputs validated)",
+    "validation_rate_after_p0_p1": "72% (13/18 outputs validated)",
+    "validation_rate_target": "100% (18/18 outputs validated if P2/P3 completed)"
+  },
+  "recommendations": {
+    "phase_3_priorities": [
+      "WO-CODEREF-DOCS-UDS-COMPLIANCE-001: Implement P0+P1 gaps (foundation docs, standards docs, default change)",
+      "Defer P2 gaps (quickref, resource sheets) until user need confirmed",
+      "Defer P3 gap (CHANGELOG migration) unless Papertrail changelog schema exists"
+    ],
+    "blockers_to_resolve": [
+      "Confirm StandardsDocValidator exists in Papertrail (or use SystemDocValidator)",
+      "Decide if quickref.md needs schema validation (recommend: no)",
+      "Decide if resource sheets need UDS validation (recommend: keep validate_against_code)",
+      "Check if Papertrail has changelog.json schema (if not, keep jsonschema)"
+    ],
+    "dependencies_to_add": [
+      "Add 'papertrail>=1.0.0' to requirements.txt",
+      "Document Papertrail installation in README"
+    ]
+  }
+}

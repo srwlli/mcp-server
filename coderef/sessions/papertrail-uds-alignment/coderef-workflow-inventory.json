@@ -1,0 +1,367 @@
+{
+  "agent_id": "coderef-workflow",
+  "timestamp": "2026-01-10T05:00:00Z",
+  "phase": "Phase 1: Inventory",
+  "outputs": [
+    {
+      "tool_name": "gather_context",
+      "file_path": "tool_handlers.py:1273",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/context.json",
+          "format": "json",
+          "structure": "Requirements, constraints, goal, description, decisions, out_of_scope, success_criteria",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "analyze_project_for_planning",
+      "file_path": "tool_handlers.py:900",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/analysis.json",
+          "format": "json",
+          "structure": "foundation_docs (README, ARCHITECTURE, etc.), dependencies, inventory (functions, classes, components), patterns, reference_components, test_inventory",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "create_plan",
+      "file_path": "tool_handlers.py:1169",
+      "generator": "generators/planning_generator.py:171",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/plan.json",
+          "format": "json",
+          "structure": "10-section structure: META_DOCUMENTATION, 0_preparation through 9_implementation_checklist. Includes workorder_id, version, status, phases, tasks, testing strategy, success criteria",
+          "uses_validation": "yes",
+          "validator": "generators/plan_validator.py - PlanValidator.validate_plan(), schema_validator.py - validate_plan_schema()"
+        }
+      ]
+    },
+    {
+      "tool_name": "validate_implementation_plan",
+      "file_path": "tool_handlers.py:1051",
+      "generator": "generators/plan_validator.py",
+      "generates": [
+        {
+          "output_file": "Returns validation result (not saved to file)",
+          "format": "json",
+          "structure": "score (0-100), grade, issues (severity, section, message), recommendations",
+          "uses_validation": "yes",
+          "validator": "Internal - PlanValidator performs validation"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_plan_review_report",
+      "file_path": "tool_handlers.py:1087",
+      "generator": "generators/review_formatter.py",
+      "generates": [
+        {
+          "output_file": "coderef/reviews/review-{planname}-{timestamp}.md",
+          "format": "markdown",
+          "structure": "Plan Review Report: score, grade, issue breakdown, recommendations, approval status",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_deliverables_template",
+      "file_path": "tool_handlers.py:1641",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/DELIVERABLES.md",
+          "format": "markdown",
+          "structure": "UDS-compliant: YAML frontmatter (uds section, metadata), Status, Overview, Metrics (LOC, commits, time), Phase Checklists, Success Criteria, Implementation Notes. Uses Papertrail template engine.",
+          "uses_validation": "yes",
+          "validator": "papertrail.validator.validate_uds() - called at line 1614"
+        }
+      ]
+    },
+    {
+      "tool_name": "update_deliverables",
+      "file_path": "tool_handlers.py:1810",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/DELIVERABLES.md (updates existing)",
+          "format": "markdown",
+          "structure": "Updates metrics section with git-derived data: LOC added/removed, commit count, contributors, time spent",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_agent_communication",
+      "file_path": "tool_handlers.py:1854",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/communication.json",
+          "format": "json",
+          "structure": "Multi-agent coordination: agent assignments, precise steps, forbidden files, success criteria, agent status tracking",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "assign_agent_task",
+      "file_path": "tool_handlers.py:2061",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/communication.json (updates existing)",
+          "format": "json",
+          "structure": "Updates agent assignment and generates agent-scoped workorder ID",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "verify_agent_completion",
+      "file_path": "tool_handlers.py:2164",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/communication.json (updates existing)",
+          "format": "json",
+          "structure": "Updates agent status to VERIFIED after git diff checks and success criteria validation",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "aggregate_agent_deliverables",
+      "file_path": "tool_handlers.py:2306",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/DELIVERABLES-combined.md",
+          "format": "markdown",
+          "structure": "Combined metrics from multiple agent DELIVERABLES.md files: summed LOC, merged commits, aggregated contributors, total time",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "track_agent_status",
+      "file_path": "tool_handlers.py:2439",
+      "generates": [
+        {
+          "output_file": "Returns dashboard (not saved to file)",
+          "format": "json",
+          "structure": "Real-time agent status dashboard: feature-level and project-wide tracking",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "archive_feature",
+      "file_path": "tool_handlers.py:2567",
+      "generates": [
+        {
+          "output_file": "coderef/archived/{feature-name}/ (moves entire folder)",
+          "format": "directory",
+          "structure": "Moves feature from coderef/workorder/ to coderef/archived/",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/archived/index.json (updates)",
+          "format": "json",
+          "structure": "Archive index with metadata: feature_name, archived_date, original_location, status",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "update_all_documentation",
+      "file_path": "tool_handlers.py:2790",
+      "generates": [
+        {
+          "output_file": "README.md (updates)",
+          "format": "markdown",
+          "structure": "Updates version number and What's New section",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "CLAUDE.md (updates)",
+          "format": "markdown",
+          "structure": "Updates version history and workorder tracking",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "CHANGELOG.json (updates)",
+          "format": "json",
+          "structure": "Adds structured entry with metadata: version, change_type, severity, workorder_id, files, reason, impact, migration (if breaking)",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "execute_plan",
+      "file_path": "tool_handlers.py:2968",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/execution-log.json",
+          "format": "json",
+          "structure": "TodoWrite task list: timestamp, workorder_id, feature_name, task_count, tasks array (content, activeForm, status)",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "update_task_status",
+      "file_path": "tool_handlers.py:3866",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/plan.json (updates)",
+          "format": "json",
+          "structure": "Updates task status in implementation_phases section and calculates progress summary",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "log_workorder",
+      "file_path": "tool_handlers.py:3261",
+      "generates": [
+        {
+          "output_file": "coderef/workorder-log.txt (appends)",
+          "format": "text",
+          "structure": "One-line entry: WO-ID | Project | Description | Timestamp. Latest entries at top (reverse chronological)",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "get_workorder_log",
+      "file_path": "tool_handlers.py:3391",
+      "generates": [
+        {
+          "output_file": "Returns filtered log entries (not saved to file)",
+          "format": "json",
+          "structure": "Workorder log entries filtered by project, pattern, or date range",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_handoff_context",
+      "file_path": "tool_handlers.py:3503",
+      "generator": "generators/handoff_generator.py",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/claude.md",
+          "format": "markdown",
+          "structure": "Agent handoff context: feature overview, current state, next steps, dependencies, gotchas. Auto-populated from plan.json, analysis.json, git history.",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "assess_risk",
+      "file_path": "tool_handlers.py:3560",
+      "generator": "generators/risk_generator.py",
+      "generates": [
+        {
+          "output_file": "coderef/workorder/{feature-name}/risk-assessment-{timestamp}.json (optional)",
+          "format": "json",
+          "structure": "AI-powered risk assessment: scores across 5 dimensions (breaking changes, security, performance, maintainability, reversibility), multi-option comparison, go/no-go recommendation",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "audit_plans",
+      "file_path": "tool_handlers.py:4008",
+      "generator": "generators/audit_generator.py",
+      "generates": [
+        {
+          "output_file": "Returns audit report (not saved to file)",
+          "format": "json",
+          "structure": "Plan health report: format validation, progress status, stale plan detection, issue identification, health score (0-100)",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "generate_features_inventory",
+      "file_path": "tool_handlers.py:4266",
+      "generator": "generators/features_inventory_generator.py",
+      "generates": [
+        {
+          "output_file": "coderef/features-inventory.json (if save_to_file=true)",
+          "format": "json",
+          "structure": "Inventory of all active and archived features: status, progress, workorder tracking, workflow coverage",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "coderef/features-inventory.md (if save_to_file=true, format=markdown)",
+          "format": "markdown",
+          "structure": "Human-readable feature inventory list",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "add_changelog_entry",
+      "file_path": "tool_handlers.py:273",
+      "generator": "generators/changelog_generator.py",
+      "generates": [
+        {
+          "output_file": "CHANGELOG.json (updates)",
+          "format": "json",
+          "structure": "Adds new changelog entry: version, change_type, severity, title, description, files, reason, impact, contributors, migration (if breaking)",
+          "uses_validation": "no"
+        }
+      ]
+    },
+    {
+      "tool_name": "coderef_foundation_docs",
+      "file_path": "tool_handlers.py:3738",
+      "generator": "generators/coderef_foundation_generator.py",
+      "generates": [
+        {
+          "output_file": "ARCHITECTURE.md",
+          "format": "markdown",
+          "structure": "Architecture patterns, decisions, constraints extracted from existing docs and code analysis",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "SCHEMA.md",
+          "format": "markdown",
+          "structure": "Database entities and relationships",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "COMPONENTS.md (optional for UI projects)",
+          "format": "markdown",
+          "structure": "Component hierarchy for frontend projects",
+          "uses_validation": "no"
+        },
+        {
+          "output_file": "project-context.json",
+          "format": "json",
+          "structure": "Structured context for planning: patterns, decisions, constraints, API endpoints, schemas, dependencies",
+          "uses_validation": "no"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_tools": 24,
+    "total_outputs": 32,
+    "validated_outputs": 2,
+    "unvalidated_outputs": 30,
+    "validation_details": {
+      "plan.json": "Yes - uses plan_validator.py PlanValidator.validate_plan() and schema_validator.py validate_plan_schema()",
+      "DELIVERABLES.md": "Yes - uses papertrail.validator.validate_uds() at tool_handlers.py:1614"
+    }
+  },
+  "notes": [
+    "DELIVERABLES.md generation uses Papertrail UDS validation system (imported at tool_handlers.py:1487-1493)",
+    "plan.json has internal validation but doesn't use Papertrail validators",
+    "Most outputs (30/32) currently have no validation",
+    "Key integration point: generate_deliverables_template imports and uses Papertrail UDS system",
+    "context.json, analysis.json, communication.json, execution-log.json are unvalidated JSON files",
+    "All documentation files (README.md, CLAUDE.md, ARCHITECTURE.md, etc.) have no validation"
+  ]
+}

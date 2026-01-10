@@ -1,0 +1,124 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-UDS-ALIGNMENT-002",
+  "task": "Phase 2: Gap Analysis & Alignment Planning",
+  "description": "Analyze Phase 1 inventory findings and create detailed implementation plans to achieve 100% validation rate (50/50 outputs validated)",
+  "phase_1_summary": "Phase 1 found: 37 tools, 50 outputs, 12% validated (6/50). Target: 100% (50/50). Gap: +44 outputs need validation.",
+
+  "session_phase": "Phase 2: Gap Analysis & Implementation Planning",
+
+  "orchestrator_instructions": {
+    "role": "Aggregate gap analysis reports and create prioritized alignment plan targeting 100% validation coverage",
+    "steps": {
+      "step_1": "READ Phase 1 master inventory: C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\orchestrator-phase1-inventory.md",
+      "step_2": "READ all 3 agent gap analysis outputs",
+      "step_3": "PRIORITIZE gaps by impact: P0 (blocks quality), P1 (critical), P2 (important), P3 (nice-to-have)",
+      "step_4": "CREATE implementation roadmap with effort estimates (hours per tool)",
+      "step_5": "GENERATE orchestrator-alignment-plan.md with workorder breakdown for Phase 3",
+      "step_6": "UPDATE orchestrator status in communication.json to 'complete'"
+    }
+  },
+
+  "agent_instructions": {
+    "papertrail_agent": {
+      "role": "Identify missing schemas and assess schema creation complexity",
+      "steps": {
+        "step_1": "READ Phase 1 master inventory (section 4: Gap Analysis Summary)",
+        "step_2": "IDENTIFY missing schemas: analysis.json, execution-log.json, risk-assessment.json (from Phase 1 findings)",
+        "step_3": "ASSESS: Do these files need schemas? Or can they remain unstructured?",
+        "step_4": "FOR EACH missing schema: estimate complexity (hours), required fields, validation rules",
+        "step_5": "CHECK: Are there any other Papertrail improvements needed? (ValidatorFactory updates, new severity levels, etc.)",
+        "step_6": "CREATE papertrail-gaps.json (structured) and papertrail-gaps.md (summary)",
+        "step_7": "UPDATE your status in communication.json to 'complete'"
+      }
+    },
+
+    "coderef_docs_agent": {
+      "role": "Assess integration complexity for adding validation to 14 unvalidated outputs",
+      "steps": {
+        "step_1": "READ Phase 1 master inventory (section 2: Coderef-Docs)",
+        "step_2": "READ your Phase 1 inventory: coderef-docs-inventory.json",
+        "step_3": "FOR EACH unvalidated tool: estimate integration complexity (trivial/moderate/complex)",
+        "step_4": "IDENTIFY: Which tools need simple validator calls vs major refactoring",
+        "step_5": "ESTIMATE: Hours per tool to add validation (e.g., generate_foundation_docs: 2-4 hours for 5 files)",
+        "step_6": "IDENTIFY: Blockers or dependencies (e.g., PAPERTRAIL_ENABLED must be default true)",
+        "step_7": "PRIORITIZE: Which tools have highest impact? (foundation docs = P0, quickref = P3)",
+        "step_8": "CREATE coderef-docs-gaps.json (structured with effort estimates) and coderef-docs-gaps.md (summary)",
+        "step_9": "UPDATE your status in communication.json to 'complete'"
+      }
+    },
+
+    "coderef_workflow_agent": {
+      "role": "Plan migration from internal validators to Papertrail validators and assess validation integration for 30 unvalidated outputs",
+      "steps": {
+        "step_1": "READ Phase 1 master inventory (section 3: Coderef-Workflow, section 4.3: Validator Duplication)",
+        "step_2": "READ your Phase 1 inventory: coderef-workflow-inventory.json",
+        "step_3": "PLAN: Migration strategy for internal validators (plan_validator.py, schema_validator.py) to Papertrail",
+        "step_4": "IDENTIFY: Breaking changes from migration (API changes, import changes, test updates)",
+        "step_5": "ESTIMATE: Migration effort (hours) for validator deprecation",
+        "step_6": "FOR EACH unvalidated output: assess integration complexity and effort (context.json, communication.json = P0)",
+        "step_7": "IDENTIFY: High-priority gaps (communication.json has schema+validator but not used = CRITICAL)",
+        "step_8": "ESTIMATE: Total implementation hours for 100% validation coverage",
+        "step_9": "CREATE coderef-workflow-gaps.json (structured with migration plan + effort) and coderef-workflow-gaps.md (summary)",
+        "step_10": "UPDATE your status in communication.json to 'complete'"
+      }
+    }
+  },
+
+  "output_format": "Both JSON and Markdown",
+
+  "json_output_template": {
+    "agent_id": "string",
+    "timestamp": "ISO 8601 format",
+    "phase": "Phase 2: Gap Analysis",
+    "gaps": [
+      {
+        "gap_id": "string (e.g., 'GAP-001: Foundation docs unvalidated')",
+        "tool_or_file": "string (e.g., 'generate_foundation_docs')",
+        "current_state": "string (e.g., 'No validation')",
+        "target_state": "string (e.g., 'FoundationDocValidator integrated')",
+        "priority": "P0|P1|P2|P3",
+        "complexity": "trivial|moderate|complex",
+        "effort_hours": "number (estimated hours)",
+        "blockers": ["array of strings"],
+        "dependencies": ["array of strings"]
+      }
+    ],
+    "migration_plan": {
+      "deprecated_components": ["array of strings to deprecate"],
+      "new_integrations": ["array of strings to add"],
+      "breaking_changes": ["array of breaking changes"],
+      "rollout_strategy": "string (phased vs all-at-once)"
+    },
+    "summary": {
+      "total_gaps": "number",
+      "p0_gaps": "number",
+      "p1_gaps": "number",
+      "p2_gaps": "number",
+      "p3_gaps": "number",
+      "total_effort_hours": "number",
+      "estimated_timeline": "string (e.g., '2-3 weeks')"
+    }
+  },
+
+  "markdown_output_template": "# [Agent Name] Gap Analysis\n\n## Summary\n- Total gaps: X\n- P0 (Critical): X\n- P1 (High): X\n- P2 (Medium): X\n- P3 (Low): X\n- Total effort: X hours\n\n## Priority Gaps\n\n### P0: Critical\nGAP-001: [Tool/File Name]\n- Current: [current state]\n- Target: [target state]\n- Effort: X hours\n- Blockers: [list]\n\n### P1: High\n...\n\n## Migration Plan\n...",
+
+  "quality_standards": {
+    "completeness": "All 44 unvalidated outputs from Phase 1 must be assessed. Every gap needs priority, complexity, and effort estimate.",
+    "accuracy": "Effort estimates must be realistic based on actual code inspection. Do not guess - read the tool implementations.",
+    "format": "JSON must follow template exactly. Markdown must be actionable with clear priorities and next steps."
+  },
+
+  "success_criteria": {
+    "phase_2_complete": "All 3 agents provide gap analysis with effort estimates and priorities",
+    "target_defined": "100% validation coverage (50/50 outputs validated)",
+    "roadmap_created": "Orchestrator creates prioritized implementation plan for Phase 3 workorders",
+    "blockers_identified": "All dependencies and blockers clearly documented"
+  },
+
+  "reference_documents": {
+    "phase_1_master_inventory": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\orchestrator-phase1-inventory.md",
+    "papertrail_standards": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\papertrail-standards.json",
+    "coderef_docs_inventory": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-docs-inventory.json",
+    "coderef_workflow_inventory": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\coderef-workflow-inventory.json"
+  }
+}

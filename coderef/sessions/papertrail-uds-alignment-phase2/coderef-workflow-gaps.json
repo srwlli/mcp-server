@@ -1,0 +1,265 @@
+{
+  "agent_id": "coderef-workflow",
+  "timestamp": "2026-01-10T16:00:00Z",
+  "phase": "Phase 2: Gap Analysis",
+  "gaps": [
+    {
+      "gap_id": "GAP-001",
+      "tool_or_file": "communication.json (generate_agent_communication)",
+      "current_state": "No validation - schema and validator exist in Papertrail but not integrated",
+      "target_state": "SessionDocValidator integrated - validates on create and all updates",
+      "priority": "P0",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": ["Papertrail SessionDocValidator available"]
+    },
+    {
+      "gap_id": "GAP-002",
+      "tool_or_file": "context.json (gather_context)",
+      "current_state": "No validation - schema and validator exist in Papertrail but not integrated",
+      "target_state": "WorkorderDocValidator integrated - validates context.json creation",
+      "priority": "P0",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": ["Papertrail WorkorderDocValidator available"]
+    },
+    {
+      "gap_id": "GAP-003",
+      "tool_or_file": "analysis.json (analyze_project_for_planning)",
+      "current_state": "No validation - no schema exists in Papertrail",
+      "target_state": "Schema created, WorkorderDocValidator extended or new validator created",
+      "priority": "P0",
+      "complexity": "moderate",
+      "effort_hours": 3,
+      "blockers": ["Schema doesn't exist yet"],
+      "dependencies": ["WO-PAPERTRAIL-SCHEMA-ADDITIONS-001 must complete first"]
+    },
+    {
+      "gap_id": "GAP-004",
+      "tool_or_file": "plan.json (create_plan) - VALIDATOR DUPLICATION",
+      "current_state": "Uses internal PlanValidator (generators/plan_validator.py) - duplicates Papertrail",
+      "target_state": "Migrate to Papertrail PlanValidator, deprecate internal validator",
+      "priority": "P0",
+      "complexity": "moderate",
+      "effort_hours": 4,
+      "blockers": ["Breaking change - API differences between internal and Papertrail validators"],
+      "dependencies": ["Test coverage for plan validation", "Update imports across codebase"]
+    },
+    {
+      "gap_id": "GAP-005",
+      "tool_or_file": "communication.json updates (assign_agent_task, verify_agent_completion)",
+      "current_state": "Updates bypass validation - only reads/writes JSON",
+      "target_state": "Re-validate after each update using SessionDocValidator",
+      "priority": "P1",
+      "complexity": "trivial",
+      "effort_hours": 1.5,
+      "blockers": [],
+      "dependencies": ["GAP-001 complete (initial validation)"]
+    },
+    {
+      "gap_id": "GAP-006",
+      "tool_or_file": "DELIVERABLES.md updates (update_deliverables)",
+      "current_state": "Only initial generation validated (line 1614), updates at line 1810 bypass validation",
+      "target_state": "Re-validate after updates using WorkorderDocValidator",
+      "priority": "P1",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-007",
+      "tool_or_file": "execution-log.json (execute_plan)",
+      "current_state": "No validation - no schema exists",
+      "target_state": "Schema created, validator integrated",
+      "priority": "P1",
+      "complexity": "moderate",
+      "effort_hours": 3,
+      "blockers": ["Schema doesn't exist yet"],
+      "dependencies": ["WO-PAPERTRAIL-SCHEMA-ADDITIONS-001"]
+    },
+    {
+      "gap_id": "GAP-008",
+      "tool_or_file": "plan.json updates (update_task_status)",
+      "current_state": "Updates plan.json without re-validation",
+      "target_state": "Re-validate after task status updates",
+      "priority": "P1",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": ["GAP-004 complete (Papertrail PlanValidator migration)"]
+    },
+    {
+      "gap_id": "GAP-009",
+      "tool_or_file": "ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md, project-context.json (coderef_foundation_docs)",
+      "current_state": "No validation - FoundationDocValidator exists but not integrated",
+      "target_state": "FoundationDocValidator integrated for all markdown outputs",
+      "priority": "P1",
+      "complexity": "moderate",
+      "effort_hours": 2,
+      "blockers": [],
+      "dependencies": ["Papertrail FoundationDocValidator available"]
+    },
+    {
+      "gap_id": "GAP-010",
+      "tool_or_file": "README.md updates (update_all_documentation)",
+      "current_state": "No validation on README.md updates",
+      "target_state": "FoundationDocValidator validates README.md after updates",
+      "priority": "P1",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": ["Papertrail FoundationDocValidator available"]
+    },
+    {
+      "gap_id": "GAP-011",
+      "tool_or_file": "CLAUDE.md updates (update_all_documentation)",
+      "current_state": "No validation on CLAUDE.md updates",
+      "target_state": "SystemDocValidator validates CLAUDE.md after updates",
+      "priority": "P1",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": ["Papertrail SystemDocValidator available"]
+    },
+    {
+      "gap_id": "GAP-012",
+      "tool_or_file": "CHANGELOG.json updates (update_all_documentation, add_changelog_entry)",
+      "current_state": "No validation on CHANGELOG.json updates",
+      "target_state": "Schema validation for CHANGELOG.json structure",
+      "priority": "P2",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-013",
+      "tool_or_file": "review-{plan}-{ts}.md (generate_plan_review_report)",
+      "current_state": "No validation",
+      "target_state": "Optional: Add UDS frontmatter and validate as workorder doc",
+      "priority": "P2",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-014",
+      "tool_or_file": "claude.md handoff context (generate_handoff_context)",
+      "current_state": "No validation",
+      "target_state": "WorkorderDocValidator or create HandoffDocValidator",
+      "priority": "P2",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-015",
+      "tool_or_file": "risk-assessment-{ts}.json (assess_risk)",
+      "current_state": "No validation - no schema exists",
+      "target_state": "Schema created, validator integrated",
+      "priority": "P2",
+      "complexity": "moderate",
+      "effort_hours": 2.5,
+      "blockers": ["Schema doesn't exist yet"],
+      "dependencies": ["WO-PAPERTRAIL-SCHEMA-ADDITIONS-001"]
+    },
+    {
+      "gap_id": "GAP-016",
+      "tool_or_file": "DELIVERABLES-combined.md (aggregate_agent_deliverables)",
+      "current_state": "No validation",
+      "target_state": "WorkorderDocValidator validates aggregated deliverables",
+      "priority": "P2",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-017",
+      "tool_or_file": "archive index.json (archive_feature)",
+      "current_state": "No validation on archive index updates",
+      "target_state": "Schema validation for archive index structure",
+      "priority": "P3",
+      "complexity": "trivial",
+      "effort_hours": 1.5,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-018",
+      "tool_or_file": "features-inventory.json/md (generate_features_inventory)",
+      "current_state": "No validation",
+      "target_state": "Schema validation for inventory structure",
+      "priority": "P3",
+      "complexity": "trivial",
+      "effort_hours": 1,
+      "blockers": [],
+      "dependencies": []
+    },
+    {
+      "gap_id": "GAP-019",
+      "tool_or_file": "workorder-log.txt (log_workorder)",
+      "current_state": "Plain text log - no validation",
+      "target_state": "Optional: Migrate to JSON with schema validation or keep as text",
+      "priority": "P3",
+      "complexity": "moderate",
+      "effort_hours": 2,
+      "blockers": ["Requires format migration"],
+      "dependencies": []
+    }
+  ],
+  "migration_plan": {
+    "deprecated_components": [
+      "generators/plan_validator.py (internal PlanValidator)",
+      "schema_validator.py (if exists - duplicate of Papertrail schema validation)"
+    ],
+    "new_integrations": [
+      "Papertrail PlanValidator (replace internal)",
+      "Papertrail SessionDocValidator (communication.json)",
+      "Papertrail WorkorderDocValidator (context.json, analysis.json, DELIVERABLES updates)",
+      "Papertrail FoundationDocValidator (README, ARCHITECTURE, SCHEMA, COMPONENTS)",
+      "Papertrail SystemDocValidator (CLAUDE.md)"
+    ],
+    "breaking_changes": [
+      "plan_validator.py API change - internal PlanValidator.validate_plan() vs Papertrail PlanValidator.validate_file()",
+      "Imports must change from 'from generators.plan_validator import PlanValidator' to 'from papertrail.validators.plan import PlanValidator'",
+      "Validation result structure may differ slightly (internal vs Papertrail format)",
+      "Tests must be updated to use Papertrail validators"
+    ],
+    "rollout_strategy": "Phased rollout in 3 stages:\n\nStage 1 (P0 - Week 1): Critical gaps with existing schemas\n- GAP-001: communication.json validation\n- GAP-002: context.json validation\n- GAP-004: Migrate plan.json to Papertrail PlanValidator\n- GAP-005: communication.json update validation\n- GAP-006: DELIVERABLES.md update validation\n\nStage 2 (P1 - Week 2): High-priority gaps and updates\n- GAP-008: plan.json update validation\n- GAP-009: Foundation docs validation\n- GAP-010: README.md validation\n- GAP-011: CLAUDE.md validation\n- GAP-007: execution-log.json (requires schema from Papertrail)\n\nStage 3 (P2/P3 - Week 3+): Medium/low priority\n- GAP-003: analysis.json (requires schema)\n- GAP-012 through GAP-019: Remaining outputs\n\nDeprecation Timeline:\n- Week 1: Add deprecation warnings to internal validators\n- Week 2: Migrate all usages to Papertrail\n- Week 3: Remove internal validators from codebase"
+  },
+  "summary": {
+    "total_gaps": 19,
+    "p0_gaps": 4,
+    "p1_gaps": 8,
+    "p2_gaps": 5,
+    "p3_gaps": 2,
+    "total_effort_hours": 29,
+    "estimated_timeline": "3 weeks (phased rollout)"
+  },
+  "blockers_and_dependencies": {
+    "critical_blocker": "3 file types need schemas created first in Papertrail: analysis.json, execution-log.json, risk-assessment.json",
+    "breaking_changes_require_testing": "plan.json migration requires comprehensive test updates",
+    "coordination_required": "Must coordinate with Papertrail team for schema additions (WO-PAPERTRAIL-SCHEMA-ADDITIONS-001)"
+  },
+  "validation_coverage_projection": {
+    "current": "2 of 32 outputs validated (6%)",
+    "after_stage_1": "11 of 32 outputs validated (34%) - P0 gaps closed",
+    "after_stage_2": "19 of 32 outputs validated (59%) - P0+P1 gaps closed",
+    "after_stage_3": "32 of 32 outputs validated (100%) - Full UDS compliance",
+    "target": "100% validation rate"
+  },
+  "notes": [
+    "4 P0 gaps are CRITICAL - have schemas/validators available but not integrated (communication.json, context.json, plan.json migration, update validation)",
+    "8 P1 gaps are HIGH PRIORITY - mostly trivial integration effort (1-2 hours each)",
+    "3 gaps require new schemas from Papertrail (analysis.json, execution-log.json, risk-assessment.json)",
+    "plan.json migration is most complex (4 hours) due to breaking changes and test updates",
+    "Total 29 hours effort = roughly 1 week of focused work per developer",
+    "Phased rollout mitigates risk and allows for testing between stages"
+  ]
+}

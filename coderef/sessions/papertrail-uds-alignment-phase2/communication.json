@@ -1,0 +1,56 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-UDS-ALIGNMENT-002",
+  "feature_name": "papertrail-uds-alignment-phase2",
+  "created": "2026-01-10",
+  "status": "complete",
+  "description": "Phase 2: Gap Analysis - Identify integration complexity and create prioritized alignment plan based on Phase 1 inventory findings",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\instructions.json",
+  "phase_1_reference": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\orchestrator-phase1-inventory.md",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Aggregate gap analysis reports and create prioritized alignment plan (P0/P1/P2/P3)",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\orchestrator-alignment-plan.md",
+    "status": "complete",
+    "completed_at": "2026-01-10T18:00:00Z",
+    "notes": "✅ Complete - Aggregated 30 gaps (6 P0, 10 P1, 10 P2, 4 P3) across 3 agents. Total effort: 60.5 hours. Created 3-4 week implementation roadmap with 3 workorder specifications. Target: 100% validation coverage (50/50 outputs). Phased rollout: Week 1 (P0 11.5h → 36%), Week 2 (P1 27h → 58%), Week 3 (P2 17h → 74%), Week 4 (P3 5h → 100%). Critical path: Papertrail creates schemas Week 1, enables coderef-workflow implementation."
+  },
+
+  "agents": [
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\papertrail-gaps.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\papertrail-gaps.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T13:00:00-05:00",
+      "notes": "✅ Complete - Identified 5 gaps (0 P0, 1 P1, 3 P2, 1 P3). Total effort: 14 hours. Create 2 new schemas (analysis.json P2, execution-log.json P1), skip 1 redundant schema (risk-assessment.json P3 - use plan.json instead), update ValidatorFactory patterns (P2), add cross-validation for execution logs (P2). Key recommendation: execution-log-json-schema.json is P1 critical for workflow resumption."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\coderef-docs-gaps.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\coderef-docs-gaps.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T17:00:00Z",
+      "notes": "✅ Complete - Identified 6 gaps (2 P0, 1 P1, 2 P2, 1 P3). 7.5-17.5 hours total effort (9.5h minimum for P0+P1). Phased rollout: P0+P1 achieves 72% validation rate (13/18 outputs). P0 gaps: foundation docs (5 files) + PAPERTRAIL_ENABLED default. P1: standards docs (3 files). P2: quickref + resource sheets (schema decision required). P3: CHANGELOG migration (optional). 4 blockers require resolution: StandardsDocValidator existence, quickref/resource sheet schema decisions, Papertrail changelog schema check."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\coderef-workflow-gaps.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment-phase2\\coderef-workflow-gaps.md",
+      "status": "complete",
+      "completed_at": "2026-01-10T16:00:00Z",
+      "notes": "✅ Complete - Identified 19 gaps (4 P0, 8 P1, 5 P2, 2 P3). 29 hours total effort. 3-week phased rollout plan. Critical finding: 4 P0 gaps have schemas/validators available but not integrated (communication.json, context.json, plan.json migration, DELIVERABLES updates). Requires 3 new schemas from Papertrail (analysis.json, execution-log.json, risk-assessment.json). Migration from internal validators to Papertrail is P0 priority."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  }
+}

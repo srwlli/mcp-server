@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/standards-doc-frontmatter-schema.json",
+  "title": "Standards Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for standards documentation (global-documentation-standards.md, resource-sheet-standards.md, etc.). Standards docs define policies, conventions, and enforcement rules.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "scope",
+        "version",
+        "enforcement"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string",
+          "description": "Scope of standards (what they apply to)",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "All documentation across CodeRef ecosystem",
+            "Resource sheets only",
+            "Plan.json files"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "Standards version (semver)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": [
+            "1.0.0",
+            "2.1.0"
+          ]
+        },
+        "enforcement": {
+          "type": "string",
+          "description": "How standards are enforced",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "Automated validators + manual review",
+            "MCP tool validation",
+            "PowerShell script validation"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional: Standards category",
+          "enum": [
+            "documentation",
+            "code",
+            "testing",
+            "security",
+            "architecture"
+          ],
+          "examples": [
+            "documentation",
+            "security"
+          ]
+        },
+        "applies_to": {
+          "type": "array",
+          "description": "Optional: List of projects these standards apply to",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            [
+              "coderef-workflow",
+              "coderef-docs",
+              "papertrail"
+            ]
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Document title",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Lloyd (Planning Assistant)",
+      "date": "2026-01-04",
+      "task": "CREATE",
+      "scope": "All documentation across CodeRef ecosystem",
+      "version": "1.0.0",
+      "enforcement": "Automated validators + manual review",
+      "category": "documentation",
+      "title": "Global Documentation Standards"
+    },
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2025-12-30",
+      "task": "UPDATE",
+      "scope": "Resource sheets only",
+      "version": "2.0.0",
+      "enforcement": "PowerShell script validation",
+      "category": "documentation"
+    }
+  ]
+}

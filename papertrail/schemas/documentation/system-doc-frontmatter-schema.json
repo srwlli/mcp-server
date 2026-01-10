@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/system-doc-frontmatter-schema.json",
+  "title": "System Document YAML Front Matter Schema",
+  "description": "Validates YAML front matter for system documentation (CLAUDE.md, SESSION-INDEX.md, etc.). System docs describe codebase architecture, session management, and project history.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": [
+        "project",
+        "version",
+        "status"
+      ],
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Project name",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": [
+            "CodeRef Ecosystem",
+            "Papertrail",
+            "coderef-workflow"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "System version (semver)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": [
+            "1.0.0",
+            "2.1.3",
+            "0.9.0"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "System status",
+          "enum": [
+            "Production",
+            "Development",
+            "Deprecated",
+            "Archived"
+          ],
+          "examples": [
+            "Production",
+            "Development"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional: Document title",
+          "minLength": 1,
+          "maxLength": 200,
+          "examples": [
+            "CodeRef Ecosystem - AI Context Documentation",
+            "Papertrail System Documentation"
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Optional: ISO 8601 timestamp with timezone",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2}|Z)$",
+          "examples": [
+            "2026-01-10T14:30:45Z",
+            "2026-01-10T09:30:45-05:00"
+          ]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "agent": "Lloyd (Planning Assistant)",
+      "date": "2026-01-10",
+      "task": "DOCUMENT",
+      "project": "CodeRef Ecosystem",
+      "version": "1.2.0",
+      "status": "Production",
+      "title": "CodeRef Ecosystem - AI Context Documentation"
+    },
+    {
+      "agent": "Claude Sonnet 4.5",
+      "date": "2026-01-10",
+      "task": "UPDATE",
+      "project": "Papertrail",
+      "version": "1.0.0",
+      "status": "Production"
+    }
+  ]
+}

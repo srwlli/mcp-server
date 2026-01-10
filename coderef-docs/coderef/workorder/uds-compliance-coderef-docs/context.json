@@ -1,0 +1,42 @@
+{
+  "feature_name": "uds-compliance-coderef-docs",
+  "description": "Integrate Papertrail validators for 14 unvalidated outputs to achieve 100% validation coverage",
+  "goal": "Add validation to all foundation docs, standards docs, and enable Papertrail by default",
+  "requirements": [
+    "Integrate FoundationDocValidator for 5 foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)",
+    "Change PAPERTRAIL_ENABLED default from false to true",
+    "Integrate validator for standards docs (ui-patterns, behavior-patterns, ux-patterns)",
+    "Add validation to generate_foundation_docs tool (lines 127-237)",
+    "Add validation to generate_individual_doc tool (lines 242-347)",
+    "Add validation to establish_standards tool (lines 717-786)",
+    "Return validation errors to user if score < 90"
+  ],
+  "out_of_scope": [
+    "Quickref.md schema creation (P2 - defer to later phase)",
+    "Resource sheets UDS validation (P2 - keep validate_against_code)",
+    "CHANGELOG.json migration to Papertrail (P3 - optional)"
+  ],
+  "constraints": [
+    "Must add papertrail>=1.0.0 to requirements.txt",
+    "Must add try/except for graceful degradation if Papertrail unavailable",
+    "Breaking change: validation failures will block doc generation (stricter than current)",
+    "Must update tests to handle validation errors"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-UDS-COMPLIANCE-CODEREF-DOCS-001",
+    "workorder_assigned_at": "2026-01-10T19:22:31.044255+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-UDS-COMPLIANCE-CODEREF-DOCS-001",
+    "feature_id": "uds-compliance-coderef-docs",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

@@ -174,7 +174,7 @@ class ValidatorFactory:
             "user_facing": user_facing.UserFacingDocValidator,
             "general": general.GeneralMarkdownValidator,
             "execution_log": execution_log.ExecutionLogValidator,  # New: execution-log.json
-            "analysis": None,  # Coming next (Phase 3)
+            "analysis": analysis.AnalysisValidator,  # New: analysis.json
             "resource_sheet": None,  # Will use existing resource-sheets/validate.ps1 for now
             "plan": None,  # Will use existing plans/validate.py for now
         }

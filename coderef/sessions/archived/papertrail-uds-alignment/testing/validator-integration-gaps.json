@@ -1,0 +1,165 @@
+{
+  "report_date": "2026-01-10",
+  "session_id": "papertrail-uds-alignment-testing",
+  "status": "validators_exist_not_integrated",
+
+  "summary": {
+    "validators_implemented": 2,
+    "validators_tested": 2,
+    "unit_tests_passing": 20,
+    "integration_tests_failing": 9,
+    "integration_gaps": 5
+  },
+
+  "what_works": [
+    "AnalysisValidator (6 tests passing, 80% coverage)",
+    "ExecutionLogValidator (9 tests passing, 87% coverage)",
+    "ValidatorFactory auto-detection (5 tests passing)",
+    "Cross-validation logic (task_id → plan.json)",
+    "Validation scoring algorithm (0-100)",
+    "Error severity classification (CRITICAL/MAJOR/MINOR/WARNING)"
+  ],
+
+  "what_doesnt_work": [
+    "analyze_project_for_planning doesn't call AnalysisValidator",
+    "execute_plan doesn't call ExecutionLogValidator",
+    "update_task_status doesn't validate before updating",
+    "Workflows don't use ValidatorFactory for auto-detection",
+    "No validation metadata in generated files (_uds.validation_score)",
+    "Cross-validation not enabled in workflows",
+    "No error handling for validation failures",
+    "No warn/fail thresholds (50/90 scores)",
+    "Invalid data not rejected by workflows"
+  ],
+
+  "integration_gaps": {
+    "GAP-001": {
+      "title": "AnalysisValidator Not Called by Workflow",
+      "priority": "HIGH",
+      "effort_hours": 2,
+      "file": "coderef-workflow/generators/planning_analyzer.py",
+      "function": "analyze_project_for_planning()",
+      "required_changes": [
+        "Import AnalysisValidator",
+        "Call validator.validate_content(analysis_data)",
+        "Add validation_score to _uds metadata",
+        "Log warnings if score < 90"
+      ],
+      "tests_that_will_pass": [
+        "test_analyze_project_calls_validator",
+        "test_analysis_output_includes_validation_metadata"
+      ]
+    },
+
+    "GAP-002": {
+      "title": "ExecutionLogValidator Not Called by execute_plan",
+      "priority": "HIGH",
+      "effort_hours": 2,
+      "file": "coderef-workflow/tool_handlers.py",
+      "function": "execute_plan() or handle_execute_plan()",
+      "required_changes": [
+        "Import ExecutionLogValidator",
+        "Call validator.validate_file(exec_log_path, enable_cross_validation=True)",
+        "Log warnings if score < 90",
+        "Fail if critical errors (orphaned task IDs)"
+      ],
+      "tests_that_will_pass": [
+        "test_execute_plan_calls_validator",
+        "test_execute_plan_enables_cross_validation"
+      ]
+    },
+
+    "GAP-003": {
+      "title": "update_task_status Doesn't Validate",
+      "priority": "MEDIUM",
+      "effort_hours": 1,
+      "file": "coderef-workflow/tool_handlers.py",
+      "function": "update_task_status()",
+      "required_changes": [
+        "Validate execution-log.json before updating",
+        "Reject updates if score < 50",
+        "Warn if score < 90"
+      ],
+      "tests_that_will_pass": [
+        "test_update_task_status_validates_before_update"
+      ]
+    },
+
+    "GAP-004": {
+      "title": "Workflows Don't Use ValidatorFactory",
+      "priority": "MEDIUM",
+      "effort_hours": 1,
+      "file": "All workflow files that instantiate validators",
+      "function": "Multiple",
+      "required_changes": [
+        "Replace hardcoded validator instantiation",
+        "Use ValidatorFactory.get_validator(path)",
+        "Remove redundant validator imports"
+      ],
+      "tests_that_will_pass": [
+        "test_workflows_use_factory_for_auto_detection"
+      ]
+    },
+
+    "GAP-005": {
+      "title": "No Error Handling for Validation Failures",
+      "priority": "MEDIUM",
+      "effort_hours": 2,
+      "file": "coderef-workflow/utils/validation.py (create new)",
+      "function": "handle_validation_result() (create new)",
+      "required_changes": [
+        "Create consistent error handling function",
+        "Define thresholds: score >= 90 (success), 50-90 (warn), < 50 (fail)",
+        "Log validation errors appropriately",
+        "Raise ValueError for critical failures"
+      ],
+      "tests_that_will_pass": [
+        "test_workflow_warns_on_low_validation_score",
+        "test_workflow_continues_with_warnings",
+        "test_workflow_rejects_critical_failures"
+      ]
+    }
+  },
+
+  "next_workorder": {
+    "workorder_id": "WO-VALIDATOR-INTEGRATION-001",
+    "title": "Integrate Papertrail Validators into coderef-workflow Tools",
+    "description": "Integrate AnalysisValidator and ExecutionLogValidator into coderef-workflow so that generated JSON files are automatically validated",
+    "priority": "HIGH",
+    "estimated_effort_hours": 6,
+    "dependencies": [
+      "Validators implemented and tested (complete)",
+      "Test specifications created (complete)",
+      "Access to coderef-workflow codebase (required)"
+    ],
+    "success_criteria": [
+      "All 9 tests in test_workflow_integration.py pass",
+      "Validators called automatically by workflows",
+      "Validation metadata in generated files",
+      "Cross-validation detects orphaned task IDs",
+      "Invalid data rejected with clear errors"
+    ]
+  },
+
+  "test_files": {
+    "unit_tests": "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_validators.py",
+    "integration_gap_tests": "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_workflow_integration.py",
+    "factory_tests": "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_factory.py"
+  },
+
+  "verification_commands": {
+    "verify_validators_work": "pytest tests/validators/test_validators.py -v",
+    "verify_integration_gaps": "pytest tests/validators/test_workflow_integration.py -v",
+    "verify_all_after_integration": "pytest tests/validators/ -v",
+    "check_coverage": "pytest tests/validators/ --cov=papertrail.validators --cov-report=term"
+  },
+
+  "expected_results_after_integration": {
+    "total_tests": 29,
+    "unit_tests_passing": 20,
+    "integration_tests_passing": 9,
+    "coverage_analysis": "80%",
+    "coverage_execution_log": "87%",
+    "xfail_count": 0
+  }
+}

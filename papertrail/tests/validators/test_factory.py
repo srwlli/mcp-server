@@ -222,3 +222,187 @@ class TestValidatorFactory:
 
         assert pattern_types.issuperset(expected_types), \
             f"Missing patterns for: {expected_types - pattern_types}"
+
+    # ===== NEW INTEGRATION TESTS (TEST-003) =====
+
+    def test_analysis_json_detection(self):
+        """Test that analysis.json paths are correctly detected as AnalysisValidator"""
+        from papertrail.validators.analysis import AnalysisValidator
+
+        paths = [
+            "/path/to/coderef/workorder/my-feature/analysis.json",
+            "C:/Users/test/coderef/workorder/auth-system/analysis.json",
+            "/project/coderef/workorder/feature-x/analysis.json",
+        ]
+
+        for path in paths:
+            vtype = ValidatorFactory.detect_validator_type(path)
+            assert vtype == "analysis", f"Failed to detect analysis type for {path}"
+
+            # Verify get_validator returns AnalysisValidator instance
+            validator = ValidatorFactory.get_validator(path)
+            assert isinstance(validator, AnalysisValidator), \
+                f"Expected AnalysisValidator instance for {path}, got {type(validator)}"
+
+    def test_execution_log_detection(self):
+        """Test that execution-log.json paths are correctly detected as ExecutionLogValidator"""
+        from papertrail.validators.execution_log import ExecutionLogValidator
+
+        paths = [
+            "/path/to/coderef/workorder/my-feature/execution-log.json",
+            "C:/project/coderef/workorder/auth-system/execution-log.json",
+            "/home/user/coderef/workorder/feature-x/execution-log.json",
+        ]
+
+        for path in paths:
+            vtype = ValidatorFactory.detect_validator_type(path)
+            assert vtype == "execution_log", f"Failed to detect execution_log type for {path}"
+
+            # Verify get_validator returns ExecutionLogValidator instance
+            validator = ValidatorFactory.get_validator(path)
+            assert isinstance(validator, ExecutionLogValidator), \
+                f"Expected ExecutionLogValidator instance for {path}, got {type(validator)}"
+
+    def test_path_pattern_matching_edge_cases(self):
+        """Test path pattern matching for edge cases (nested dirs, different separators)"""
+        import tempfile
+        from pathlib import Path
+
+        # Test nested directories
+        nested_paths = [
+            "/path/to/coderef/workorder/nested/deep/structure/analysis.json",
+            "C:/coderef/workorder/windows/path/execution-log.json",  # Windows-style
+            "/unix/style/coderef/workorder/feature/analysis.json",
+        ]
+
+        expected = ["analysis", "execution_log", "analysis"]
+
+        for path, exp in zip(nested_paths, expected):
+            vtype = ValidatorFactory.detect_validator_type(path)
+            assert vtype == exp, f"Failed for nested path {path}: got {vtype}, expected {exp}"
+
+    def test_end_to_end_analysis_validation(self):
+        """Test end-to-end analysis.json validation using ValidatorFactory auto-detection"""
+        import tempfile
+        import json
+
+        valid_analysis = {
+            "foundation_docs": {
+                "available": ["README.md"],
+                "missing": []
+            },
+            "inventory_data": {
+                "source": "coderef_index",
+                "total_elements": 50,
+                "by_type": {"function": 30, "class": 20},
+                "files": 10
+            },
+            "technology_stack": {
+                "language": "Python",
+                "framework": "Flask",
+                "database": "PostgreSQL",
+                "testing": "pytest",
+                "build": "setuptools"
+            },
+            "project_structure": {
+                "main_directories": ["src"],
+                "file_counts": {"src": 10},
+                "organization_pattern": "modular"
+            },
+            "_uds": {
+                "generated_by": "coderef-workflow v2.0.0",
+                "document_type": "Project Analysis",
+                "workorder_id": "WO-TEST-FEATURE-001",
+                "feature_id": "test-feature",
+                "last_updated": "2026-01-10",
+                "ai_assistance": True,
+                "status": "DRAFT",
+                "next_review": "2026-02-10"
+            }
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir_path = Path(tmpdir)
+
+            # Create workorder directory structure
+            workorder_dir = tmpdir_path / "coderef" / "workorder" / "test-feature"
+            workorder_dir.mkdir(parents=True, exist_ok=True)
+
+            # Write analysis.json
+            analysis_path = workorder_dir / "analysis.json"
+            with open(analysis_path, 'w') as f:
+                json.dump(valid_analysis, f)
+
+            # Auto-detect validator and validate
+            validator = ValidatorFactory.get_validator(analysis_path)
+            result = validator.validate_file(analysis_path)
+
+            # Should pass validation without manual instantiation
+            assert result.score >= 90, f"Expected score >= 90, got {result.score}. Errors: {result.errors}"
+            assert result.valid is True
+
+    def test_end_to_end_execution_log_validation_with_cross_validation(self):
+        """Test end-to-end execution-log.json validation with cross-validation using ValidatorFactory"""
+        import tempfile
+        import json
+
+        valid_exec_log = [
+            {
+                "timestamp": "2026-01-10T14:40:21.165589",
+                "workorder_id": "WO-TEST-FEATURE-001",
+                "feature_name": "test-feature",
+                "task_count": 2,
+                "tasks": [
+                    {
+                        "content": "SETUP-001: Setup project",
+                        "status": "completed",
+                        "activeForm": "Setting up project"
+                    },
+                    {
+                        "content": "IMPL-001: Implement feature",
+                        "status": "in_progress",
+                        "activeForm": "Implementing feature"
+                    }
+                ]
+            }
+        ]
+
+        valid_plan = {
+            "UNIVERSAL_PLANNING_STRUCTURE": {
+                "5_task_id_system": {
+                    "tasks": [
+                        {"id": "SETUP-001", "description": "Setup"},
+                        {"id": "IMPL-001", "description": "Implementation"}
+                    ]
+                }
+            }
+        }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir_path = Path(tmpdir)
+
+            # Create workorder directory structure
+            workorder_dir = tmpdir_path / "coderef" / "workorder" / "test-feature"
+            workorder_dir.mkdir(parents=True, exist_ok=True)
+
+            # Write execution-log.json
+            exec_log_path = workorder_dir / "execution-log.json"
+            with open(exec_log_path, 'w') as f:
+                json.dump(valid_exec_log, f)
+
+            # Write plan.json
+            plan_path = workorder_dir / "plan.json"
+            with open(plan_path, 'w') as f:
+                json.dump(valid_plan, f)
+
+            # Auto-detect validator and validate with cross-validation
+            validator = ValidatorFactory.get_validator(exec_log_path)
+            result = validator.validate_file(exec_log_path, enable_cross_validation=True)
+
+            # Should pass validation with cross-validation
+            assert result.score >= 90, f"Expected score >= 90, got {result.score}. Errors: {result.errors}"
+            assert result.valid is True
+
+            # Verify no cross-validation errors
+            cross_val_errors = [e for e in result.errors if "not found in plan" in e.message.lower()]
+            assert len(cross_val_errors) == 0, f"Unexpected cross-validation errors: {cross_val_errors}"

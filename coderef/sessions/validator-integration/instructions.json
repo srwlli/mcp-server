@@ -1,0 +1,245 @@
+{
+  "session_id": "validator-integration",
+  "phase": "Validator Integration - Audit and Implementation",
+  "created": "2026-01-10",
+  "purpose": "Each agent audits their own codebase using coderef tools to verify which validator integration gaps apply, then creates workorder and implements if needed",
+
+  "context_requirements": {
+    "required_reading": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\validator-integration-gap-report.md",
+      "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\validator-integration-gaps.json",
+      "Agent's own .coderef/context.md",
+      "Agent's own ARCHITECTURE.md (if exists)",
+      "Agent's own CLAUDE.md"
+    ],
+    "tools_to_use": [
+      "coderef_scan - Discover code structure and functions",
+      "coderef_query - Find function calls and dependencies",
+      "coderef_complexity - Analyze validator integration points",
+      "coderef_patterns - Find existing validation patterns",
+      "Read tool - Read foundation docs and context files"
+    ],
+    "tools_to_avoid": [
+      "grep - Use coderef_query instead",
+      "find - Use coderef_scan instead",
+      "Manual file searching - Use coderef tools"
+    ]
+  },
+
+  "orchestrator_instructions": {
+    "role": "Coordinate multi-agent validator integration verification",
+    "steps": [
+      "Wait for all 4 agents to complete their audits",
+      "Read each agent's audit report (JSON + markdown)",
+      "Aggregate findings: which agents need integration workorders",
+      "Track workorder creation and completion",
+      "After all implementations complete, verify testing/ subdirectory results",
+      "Create orchestrator-integration-report.md with summary"
+    ],
+    "success_criteria": [
+      "All agents completed audit",
+      "Agents needing integration created workorders",
+      "All integration workorders completed",
+      "Testing verification passed (9 XFAIL tests now passing)",
+      "Documentation updated"
+    ]
+  },
+
+  "agent_instructions": {
+    "overview": "Each agent audits their own codebase using coderef tools to determine which validator integration gaps apply to them",
+
+    "step_1_read_context": {
+      "description": "Read gap report and understand the 5 integration gaps",
+      "actions": [
+        "Read validator-integration-gap-report.md (provided context)",
+        "Read validator-integration-gaps.json (structured summary)",
+        "Read your own .coderef/context.md",
+        "Read your own ARCHITECTURE.md (if exists)",
+        "Read your own CLAUDE.md",
+        "Understand the 5 gaps: GAP-001 through GAP-005"
+      ]
+    },
+
+    "step_2_scan_codebase": {
+      "description": "Use coderef-context tools to discover code structure",
+      "actions": [
+        "Run coderef_scan on your project to discover all functions",
+        "Focus on: tool handlers, generators, validators, output writers",
+        "Identify functions that generate JSON files (analysis.json, execution-log.json, etc.)",
+        "Use coderef_query to find existing validator imports (if any)",
+        "Use coderef_complexity to analyze integration complexity"
+      ],
+      "example_queries": [
+        "coderef_query(query_type='calls', target='validate') - Find existing validation calls",
+        "coderef_query(query_type='imports', target='papertrail') - Check if papertrail validators imported",
+        "coderef_patterns(pattern_type='validation') - Find existing validation patterns"
+      ]
+    },
+
+    "step_3_audit_gaps": {
+      "description": "Audit your codebase against each gap",
+      "gaps_to_verify": {
+        "GAP-001": {
+          "description": "Does analyze_project_for_planning call AnalysisValidator?",
+          "applies_if": "You have a function that generates analysis.json",
+          "check": "Use coderef_query to find analyze_project_for_planning function, verify if it calls AnalysisValidator"
+        },
+        "GAP-002": {
+          "description": "Does execute_plan call ExecutionLogValidator with cross-validation?",
+          "applies_if": "You have a function that generates execution-log.json",
+          "check": "Use coderef_query to find execute_plan function, verify if it calls ExecutionLogValidator"
+        },
+        "GAP-003": {
+          "description": "Does update_task_status validate before updating?",
+          "applies_if": "You have a function that modifies execution-log.json",
+          "check": "Use coderef_query to find update_task_status function, verify if it validates first"
+        },
+        "GAP-004": {
+          "description": "Do workflows use ValidatorFactory for auto-detection?",
+          "applies_if": "You have any validator imports",
+          "check": "Use coderef_query to find validator imports, check if using ValidatorFactory"
+        },
+        "GAP-005": {
+          "description": "Is there consistent error handling for validation failures?",
+          "applies_if": "You have any validation calls",
+          "check": "Use coderef_patterns to find error handling patterns, verify consistency"
+        }
+      }
+    },
+
+    "step_4_create_audit_report": {
+      "description": "Create structured audit report",
+      "outputs": {
+        "json": "{agent_id}-audit.json",
+        "markdown": "{agent_id}-audit.md"
+      },
+      "report_structure": {
+        "agent_id": "Your agent ID",
+        "audit_date": "2026-01-10",
+        "gaps_applicable": [
+          "List of gap IDs that apply to your codebase (e.g., ['GAP-001', 'GAP-002'])"
+        ],
+        "gaps_not_applicable": [
+          "List of gap IDs that don't apply (e.g., ['GAP-003', 'GAP-004', 'GAP-005'])"
+        ],
+        "integration_needed": true,
+        "estimated_effort_hours": "X hours",
+        "files_to_modify": [
+          "List of files that need changes"
+        ],
+        "workorder_id": "WO-{YOUR-PROJECT}-VALIDATOR-INTEGRATION-001 (if integration needed)",
+        "next_steps": "Create workorder and implement, OR No action needed"
+      }
+    },
+
+    "step_5_decision": {
+      "if_integration_needed": {
+        "description": "If any gaps apply, create workorder and implement",
+        "actions": [
+          "Create workorder in your coderef/workorder/ directory",
+          "Use gap report specifications as implementation guide",
+          "Implement integration following GAP-XXX instructions",
+          "Update communication.json status when complete"
+        ]
+      },
+      "if_no_integration_needed": {
+        "description": "If no gaps apply, document and complete",
+        "actions": [
+          "Document why gaps don't apply in audit report",
+          "Update communication.json status to 'complete'",
+          "Provide audit report to orchestrator"
+        ]
+      }
+    }
+  },
+
+  "agent_specific_instructions": {
+    "coderef-workflow": {
+      "priority": "HIGH - Primary integration work",
+      "expected_gaps": ["GAP-001", "GAP-002", "GAP-003", "GAP-004", "GAP-005"],
+      "estimated_effort": "4-6 hours",
+      "key_files_to_audit": [
+        "tool_handlers.py (execute_plan, update_task_status)",
+        "generators/planning_analyzer.py (analyze_project_for_planning)",
+        "Any file that generates JSON outputs"
+      ],
+      "coderef_queries": [
+        "coderef_query(query_type='calls', target='analyze_project_for_planning')",
+        "coderef_query(query_type='calls', target='execute_plan')",
+        "coderef_query(query_type='calls', target='update_task_status')",
+        "coderef_query(query_type='imports', target='validator')"
+      ]
+    },
+    "coderef-docs": {
+      "priority": "MEDIUM - Verify if docs generation needs validation",
+      "expected_gaps": ["Possibly GAP-004 if validators already imported"],
+      "estimated_effort": "1-2 hours (audit only, may not need integration)",
+      "key_files_to_audit": [
+        "Any file that generates documentation JSON",
+        "Foundation docs generators",
+        "Check if validators already integrated from WO-UDS-COMPLIANCE-CODEREF-DOCS-001"
+      ],
+      "coderef_queries": [
+        "coderef_scan() - Discover all generators",
+        "coderef_query(query_type='imports', target='papertrail')",
+        "coderef_patterns(pattern_type='validation')"
+      ]
+    },
+    "papertrail": {
+      "priority": "LOW - Support role, validators already created",
+      "expected_gaps": ["None - validators exist and are tested"],
+      "estimated_effort": "1 hour (audit + support)",
+      "key_tasks": [
+        "Verify validators are correctly exported",
+        "Verify ValidatorFactory patterns are documented",
+        "Provide integration support to other agents if needed",
+        "Confirm 20/20 tests still passing"
+      ],
+      "coderef_queries": [
+        "coderef_scan() - Verify validator exports",
+        "coderef_query(query_type='calls', target='ValidatorFactory')"
+      ]
+    },
+    "coderef-testing": {
+      "priority": "HIGH - Verify integration after coderef-workflow completes",
+      "expected_gaps": ["None - role is verification, not implementation"],
+      "estimated_effort": "2-3 hours",
+      "key_tasks": [
+        "Audit: Verify test_workflow_integration.py has 9 XFAIL tests",
+        "After coderef-workflow completes: Run integration tests",
+        "Verify 9 XFAIL tests now pass (29/29 total)",
+        "Document test results in testing/ subdirectory"
+      ],
+      "dependencies": "Wait for coderef-workflow to complete integration",
+      "testing_subdirectory": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\testing"
+    }
+  },
+
+  "success_criteria": {
+    "phase_1_audit": [
+      "All 4 agents completed codebase audit using coderef tools",
+      "Each agent created audit report (JSON + markdown)",
+      "Agents identified which gaps apply to them",
+      "Agents created workorders if integration needed"
+    ],
+    "phase_2_implementation": [
+      "Agents with applicable gaps implemented integration",
+      "Validators called automatically by workflows",
+      "Validation metadata in generated files",
+      "Consistent error handling implemented"
+    ],
+    "phase_3_verification": [
+      "Testing agent verified workflow integration",
+      "9 XFAIL tests now pass (29/29 total)",
+      "No regression in existing tests",
+      "Documentation updated"
+    ]
+  },
+
+  "notes": {
+    "coderef_tools_usage": "MANDATORY - All agents must use coderef-context MCP tools (coderef_scan, coderef_query, coderef_complexity, coderef_patterns) instead of grep/find. This ensures consistent code discovery and leverages the coderef ecosystem.",
+    "foundation_docs_first": "READ foundation docs (.coderef/context.md, ARCHITECTURE.md, CLAUDE.md) BEFORE scanning code. This provides context and reduces discovery time.",
+    "gap_report_authority": "The validator-integration-gap-report.md is the authoritative specification. Follow GAP-XXX instructions exactly for implementation.",
+    "testing_workflow": "Testing agent waits for coderef-workflow completion before verifying. This is a sequential dependency, not parallel execution."
+  }
+}

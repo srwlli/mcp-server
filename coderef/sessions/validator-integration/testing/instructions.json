@@ -1,0 +1,197 @@
+{
+  "session_id": "validator-integration-testing",
+  "phase": "Integration Verification",
+  "created": "2026-01-10",
+  "purpose": "Verify coderef-workflow validator integration by running workflow integration tests that were previously XFAIL",
+
+  "orchestrator_instructions": {
+    "task": "Wait for coderef-workflow to complete integration, then verify testing results",
+    "steps": [
+      "Monitor parent session: wait for coderef-workflow status = 'complete'",
+      "Read coderef-testing integration-verification-report.json",
+      "Verify all 9 tests pass (no more XFAIL)",
+      "Verify total test count: 29/29 passing (20 unit + 9 integration)",
+      "Create orchestrator-testing-verification.md",
+      "Update parent session communication.json",
+      "Mark validator-integration session as complete"
+    ],
+    "success_criteria": [
+      "All 9 integration tests pass",
+      "No regression in 20 unit tests",
+      "Total: 29/29 tests passing",
+      "Integration verified across all 5 gaps"
+    ]
+  },
+
+  "agent_instructions": {
+    "agent_id": "coderef-testing",
+    "prerequisite": "⚠️ WAIT FOR: coderef-workflow must complete integration before running these tests",
+    "task": "Run test_workflow_integration.py and verify 9 XFAIL tests now pass",
+
+    "context": {
+      "background": "During WO-PAPERTRAIL-SCHEMA-ADDITIONS-001 testing, we created 9 integration tests that are marked XFAIL because validators weren't integrated into workflows yet. After coderef-workflow implements integration, these tests should pass.",
+      "test_file": "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_workflow_integration.py",
+      "expected_result": "9/9 tests pass (no more XFAIL markers needed)"
+    },
+
+    "step_1_verify_prerequisite": {
+      "description": "Confirm coderef-workflow completed integration",
+      "actions": [
+        "Read parent session communication.json",
+        "Verify coderef-workflow agent status = 'complete'",
+        "Verify coderef-workflow created workorder (e.g., WO-VALIDATOR-INTEGRATION-WORKFLOW-001)",
+        "If not complete: WAIT and notify orchestrator"
+      ]
+    },
+
+    "step_2_review_integration": {
+      "description": "Review what coderef-workflow implemented",
+      "actions": [
+        "Read coderef-workflow-audit.md from parent session",
+        "Understand which gaps were fixed: GAP-001, GAP-002, GAP-003, GAP-004, GAP-005",
+        "Note which files were modified",
+        "Understand the integration approach"
+      ]
+    },
+
+    "step_3_run_integration_tests": {
+      "description": "Run the 9 XFAIL tests that should now pass",
+      "commands": [
+        "cd C:\\Users\\willh\\.mcp-servers\\papertrail",
+        "pytest tests/validators/test_workflow_integration.py -v"
+      ],
+      "expected_tests": [
+        "test_analyze_project_calls_validator",
+        "test_analysis_output_includes_validation_metadata",
+        "test_execute_plan_calls_validator",
+        "test_execute_plan_enables_cross_validation",
+        "test_update_task_status_validates_before_update",
+        "test_workflows_use_factory_for_auto_detection",
+        "test_workflow_warns_on_low_validation_score",
+        "test_workflow_continues_with_warnings",
+        "test_workflow_rejects_critical_failures"
+      ],
+      "expected_result": "9/9 passing (no XFAIL)"
+    },
+
+    "step_4_verify_no_regression": {
+      "description": "Ensure unit tests still pass",
+      "commands": [
+        "pytest tests/validators/test_validators.py -v",
+        "pytest tests/validators/test_factory.py -v"
+      ],
+      "expected_result": "20/20 unit tests passing (no regression)"
+    },
+
+    "step_5_run_full_test_suite": {
+      "description": "Run all validator tests together",
+      "commands": [
+        "pytest tests/validators/ -v --tb=short"
+      ],
+      "expected_result": "29/29 tests passing (20 unit + 9 integration)"
+    },
+
+    "step_6_verify_coverage": {
+      "description": "Check test coverage unchanged",
+      "commands": [
+        "pytest tests/validators/ --cov=papertrail.validators --cov-report=term"
+      ],
+      "expected_coverage": {
+        "analysis_validator": "80%+ (same as before)",
+        "execution_log_validator": "87%+ (same as before)",
+        "validator_factory": "High coverage"
+      }
+    },
+
+    "step_7_create_verification_report": {
+      "description": "Document test results",
+      "output_files": [
+        "integration-verification-report.json",
+        "integration-verification-report.md"
+      ],
+      "report_structure": {
+        "summary": {
+          "total_tests": 29,
+          "passing": 29,
+          "failing": 0,
+          "xfail_removed": 9,
+          "regression": false
+        },
+        "integration_tests": {
+          "test_analyze_project_calls_validator": "PASS",
+          "test_analysis_output_includes_validation_metadata": "PASS",
+          "test_execute_plan_calls_validator": "PASS",
+          "test_execute_plan_enables_cross_validation": "PASS",
+          "test_update_task_status_validates_before_update": "PASS",
+          "test_workflows_use_factory_for_auto_detection": "PASS",
+          "test_workflow_warns_on_low_validation_score": "PASS",
+          "test_workflow_continues_with_warnings": "PASS",
+          "test_workflow_rejects_critical_failures": "PASS"
+        },
+        "unit_tests": {
+          "test_validators.py": "15/15 passing",
+          "test_factory.py": "5/5 passing"
+        },
+        "coverage": {
+          "analysis_validator": "XX%",
+          "execution_log_validator": "XX%",
+          "validator_factory": "XX%"
+        },
+        "gaps_verified": [
+          "GAP-001: analyze_project_for_planning calls AnalysisValidator ✅",
+          "GAP-002: execute_plan calls ExecutionLogValidator with cross-validation ✅",
+          "GAP-003: update_task_status validates before updating ✅",
+          "GAP-004: Workflows use ValidatorFactory for auto-detection ✅",
+          "GAP-005: Consistent error handling implemented ✅"
+        ],
+        "integration_status": "COMPLETE - All validators integrated into workflows"
+      }
+    },
+
+    "step_8_update_communication_json": {
+      "description": "Mark testing complete",
+      "actions": [
+        "Update testing/communication.json status to 'complete'",
+        "Add completion notes with test results",
+        "Update aggregation counts"
+      ]
+    }
+  },
+
+  "if_tests_fail": {
+    "description": "What to do if integration tests still fail",
+    "actions": [
+      "Document which tests failed and why",
+      "Identify which gaps are not fully integrated",
+      "Create detailed failure report with error messages",
+      "Notify orchestrator and coderef-workflow agent",
+      "Wait for coderef-workflow to fix issues",
+      "Re-run tests after fixes"
+    ],
+    "report_format": {
+      "failed_tests": ["List of test names"],
+      "failure_reasons": ["Specific error messages"],
+      "gaps_not_fixed": ["GAP-XXX IDs"],
+      "recommended_fixes": ["Specific code changes needed"]
+    }
+  },
+
+  "success_criteria": {
+    "critical": [
+      "All 9 integration tests pass",
+      "No regression in 20 unit tests",
+      "Total: 29/29 tests passing"
+    ],
+    "optional": [
+      "Coverage maintained or improved",
+      "Test execution time < 10 seconds",
+      "No warnings in test output"
+    ]
+  },
+
+  "reference_documents": [
+    "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\validator-integration-gap-report.md",
+    "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_workflow_integration.py",
+    "Parent session: C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\communication.json"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "session_id": "validator-integration-testing",
+  "created": "2026-01-10",
+  "status": "not_started",
+  "description": "Verify coderef-workflow validator integration - Run 9 XFAIL tests that should now pass after integration",
+  "parent_session": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration",
+  "depends_on": "coderef-workflow integration completion",
+
+  "orchestrator": {
+    "agent_id": "assistant-orchestrator",
+    "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+    "role": "Wait for coderef-workflow completion, verify testing results, update parent session",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\testing\\orchestrator-testing-verification.md",
+    "status": "not_started"
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\testing\\integration-verification-report.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\testing\\integration-verification-report.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Run test_workflow_integration.py after coderef-workflow completes - verify 9 XFAIL tests now pass"
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 1,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 1
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "session_id": "validator-integration",
+  "created": "2026-01-10",
+  "status": "not_started",
+  "description": "Multi-agent session: Each agent audits their codebase to verify which validator integration gaps apply, then implements integration if needed",
+  "phase": "Validator Integration - Post-Testing",
+  "parent_context": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\validator-integration-gap-report.md",
+
+  "orchestrator": {
+    "agent_id": "assistant-orchestrator",
+    "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+    "role": "Coordinate multi-agent validator integration, aggregate audit results, verify completion",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\orchestrator-integration-report.md",
+    "status": "not_started"
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-workflow-audit.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-workflow-audit.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Audit tool_handlers.py and generators/ to verify which gaps apply, create workorder if integration needed"
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-docs-audit.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-docs-audit.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Audit documentation generation tools to verify if validators need integration"
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\papertrail-audit.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\papertrail-audit.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Verify validators are correctly exported and accessible, provide integration support"
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-testing-audit.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\coderef-testing-audit.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Coordinate testing subdirectory - verify workflow integration tests after coderef-workflow implements changes"
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 4,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 4
+  },
+
+  "testing_subdirectory": {
+    "path": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\testing",
+    "purpose": "Dedicated testing verification after coderef-workflow completes integration",
+    "agent": "coderef-testing",
+    "depends_on": "coderef-workflow completion"
+  }
+}

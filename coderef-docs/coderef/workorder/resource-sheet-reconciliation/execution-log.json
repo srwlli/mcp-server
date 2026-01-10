@@ -1,0 +1,135 @@
+[
+  {
+    "timestamp": "2026-01-02T16:53:25.858149",
+    "workorder_id": "WO-RESOURCE-SHEET-RECONCILIATION-001",
+    "feature_name": "resource-sheet-reconciliation",
+    "task_count": 25,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Review deep dive analysis of dual-agent collision",
+        "activeForm": "PRE-IMPL-001: Reviewing deep dive analysis of dual-agent collision",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-002: Understand Phase 2 handoff bug (dict vs dataclass)",
+        "activeForm": "PRE-IMPL-002: Understanding Phase 2 handoff bug (dict vs dataclass)",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-003: Review TypeScript module templates as porting reference",
+        "activeForm": "PRE-IMPL-003: Reviewing TypeScript module templates as porting reference",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/AUDIT-001: Audit TypeScript system and identify salvageable components",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/AUDIT-001: Auditing TypeScript system and identify salvageable components",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-001: Port 3 UI conditional modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-001: Porting 3 UI conditional modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-002: Port 2 state conditional modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-002: Porting 2 state conditional modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-003: Port 4 network conditional modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-003: Porting 4 network conditional modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-004: Port 2 hook conditional modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/PORT-004: Porting 2 hook conditional modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-001: Add 3 new characteristics to detection engine",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-001: Adding 3 new characteristics to detection engine",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-002: Update types.py with new fields",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/DETECT-002: Updating types.py with new fields",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-001: Fix ModuleRegistry dataclass handling",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-001: Fixing ModuleRegistry dataclass handling",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-002: Register all 11 conditional modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/REGISTRY-002: Registering all 11 conditional modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-001: Write unit tests for 11 new modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-001: Writing unit tests for 11 new modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-002: Integration test - React component",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-002: Integrationing test - React component",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-003: Integration test - API service",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/TEST-003: Integrationing test - API service",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/VERIFY-001: Validate 60%+ auto-fill rate",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/VERIFY-001: Validateing 60%+ auto-fill rate",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-001: Create PHASE-2-COMPLETION-SUMMARY.md",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-001: Creating PHASE-2-COMPLETION-SUMMARY.md",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-002: Update README.md with 15 modules",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/DOC-002: Updating README.md with 15 modules",
+        "status": "pending"
+      },
+      {
+        "content": "WO-RESOURCE-SHEET-RECONCILIATION-001/CLEANUP-001: Archive TypeScript system with notes",
+        "activeForm": "WO-RESOURCE-SHEET-RECONCILIATION-001/CLEANUP-001: Archiveing TypeScript system with notes",
+        "status": "pending"
+      },
+      {
+        "content": "All tests passing (24 total: 13 existing + 11 new)",
+        "activeForm": "All tests passing (24 total: 13ing existing + 11 new)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-002: Auto-fill rate 60%+ validated",
+        "activeForm": "FINALIZA-002: Auto-filling rate 60%+ validated",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-003: All 15 modules registered and selectable",
+        "activeForm": "FINALIZA-003: Alling 15 modules registered and selectable",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-004: TypeScript system archived (not deleted)",
+        "activeForm": "FINALIZA-004: TypeScripting system archived (not deleted)",
+        "status": "pending"
+      },
+      {
+        "content": "FINALIZA-005: Documentation updated with reconciliation story",
+        "activeForm": "FINALIZA-005: Documentationing updated with reconciliation story",
+        "status": "pending"
+      },
+      {
+        "content": "CHANGELOG entry: feat(v3.5.0) Complete Phase 2 via TypeScript reconciliation",
+        "activeForm": "CHANGELOG entry: feat(v3.5.0)ing Complete Phase 2 via TypeScript reconciliation",
+        "status": "pending"
+      }
+    ]
+  }
+]

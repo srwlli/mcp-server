@@ -1,0 +1,413 @@
+{
+  "agent_id": "coderef-docs",
+  "timestamp": "2026-01-02",
+  "workorder_id": "WO-REFERENCE-SHEET-RECONCILIATION-001",
+  "plan_reviewed": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\resource-sheet-reconciliation\\plan.json",
+
+  "documentation_standards": {
+    "unified_system_overview": {
+      "purpose": "Define complete documentation standards for unified resource sheet system (Tool 1 + Tool 2 merged)",
+      "scope": "User docs, quality gates, maintenance, coderef-workflow integration",
+      "output_formats": ["markdown", "json_schema", "jsdoc"]
+    },
+
+    "user_documentation_structure": {
+      "core_documents": [
+        {
+          "name": "RESOURCE-SHEET-USER-GUIDE.md",
+          "location": "coderef/user/",
+          "purpose": "Primary user-facing guide for /create-resource-sheet command",
+          "sections": [
+            "Quick Start - 3-step workflow (detect → select → assemble)",
+            "Element Type Classification - 20 types with examples",
+            "Invocation Modes - reverse-engineer, template, refresh",
+            "Output Formats - Markdown, JSON Schema, JSDoc",
+            "Auto-Fill Capabilities - What's auto-populated vs manual",
+            "Advanced Usage - Custom modules, overrides, extensions",
+            "Troubleshooting - Common issues and solutions"
+          ],
+          "audience": "Developers using /create-resource-sheet command",
+          "maintenance_frequency": "Update when new element types or modes added"
+        },
+        {
+          "name": "MODULE-REFERENCE.md",
+          "location": "coderef/foundation-docs/",
+          "purpose": "Technical reference for all 15 modules (4 universal + 11 conditional)",
+          "sections": [
+            "Universal Modules - Architecture, Integration, Testing, Performance",
+            "Conditional Modules by Category - UI, State, Network, Hooks",
+            "Module Selection Logic - Triggers and characteristics",
+            "Module Content Schema - Fields, auto-fill sources, placeholders",
+            "Composition Rules - How modules combine",
+            "Extension Points - Adding custom modules"
+          ],
+          "audience": "Advanced users, contributors, module developers",
+          "maintenance_frequency": "Update when modules added/changed"
+        },
+        {
+          "name": "ELEMENT-TYPE-CATALOG.md",
+          "location": "coderef/foundation-docs/",
+          "purpose": "Comprehensive catalog of 20 element types from Tool 2",
+          "sections": [
+            "Classification Table - All 20 types ranked by impact",
+            "Type Descriptions - Purpose, focus areas, required sections",
+            "Detection Patterns - How element type is auto-detected",
+            "Module Mappings - Which modules apply to which types",
+            "Examples - Sample resource sheets for each type",
+            "Migration from Tool 2 - Mapping old catalog to new system"
+          ],
+          "audience": "All users needing element type reference",
+          "maintenance_frequency": "Update when element types refined"
+        },
+        {
+          "name": "QUICK-REFERENCE-CARD.md",
+          "location": "coderef/user/",
+          "purpose": "One-page cheat sheet for common operations",
+          "sections": [
+            "Command Syntax - /create-resource-sheet [target] [options]",
+            "Common Options - mode, element-type, output-format",
+            "Element Type Quick Reference - Top 10 types with examples",
+            "Module Selection Cheat Sheet - Universal vs conditional",
+            "Auto-Fill Rates - Expected completion % by element type",
+            "Quality Gate Checklist - Pre-submission validation"
+          ],
+          "audience": "Quick reference during active development",
+          "maintenance_frequency": "Stable - minimal updates"
+        }
+      ],
+
+      "documentation_hierarchy": {
+        "entry_point": "RESOURCE-SHEET-USER-GUIDE.md (start here)",
+        "technical_deep_dive": "MODULE-REFERENCE.md (for advanced usage)",
+        "reference_lookup": "ELEMENT-TYPE-CATALOG.md (type definitions)",
+        "quick_reference": "QUICK-REFERENCE-CARD.md (cheat sheet)"
+      }
+    },
+
+    "quality_gate_templates": {
+      "validation_categories": [
+        {
+          "category": "Structural Validation",
+          "purpose": "Ensure generated resource sheet has required sections",
+          "checks": [
+            {
+              "check_id": "STRUCT-001",
+              "name": "Header Metadata Present",
+              "validation": "Resource sheet has agent/date/task header block",
+              "severity": "critical",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "STRUCT-002",
+              "name": "Executive Summary Complete",
+              "validation": "2-4 sentence summary covering what/role/position/intent",
+              "severity": "critical",
+              "auto_verifiable": false
+            },
+            {
+              "check_id": "STRUCT-003",
+              "name": "Required Sections Present",
+              "validation": "All element-type-specific required sections exist",
+              "severity": "major",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "STRUCT-004",
+              "name": "State Ownership Table Exists",
+              "validation": "If element is stateful, state ownership table present",
+              "severity": "major",
+              "auto_verifiable": true
+            }
+          ]
+        },
+        {
+          "category": "Content Quality",
+          "purpose": "Ensure documentation is complete and actionable",
+          "checks": [
+            {
+              "check_id": "QUAL-001",
+              "name": "No Placeholders in Critical Sections",
+              "validation": "No TODO or [PLACEHOLDER] in required sections",
+              "severity": "major",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "QUAL-002",
+              "name": "Exhaustiveness Standard Met",
+              "validation": "All state keys, events, contracts documented (Tool 1 standard)",
+              "severity": "major",
+              "auto_verifiable": false
+            },
+            {
+              "check_id": "QUAL-003",
+              "name": "Voice & Tone Compliance",
+              "validation": "Imperative voice, no hedging, active voice (Tool 1 guidelines)",
+              "severity": "minor",
+              "auto_verifiable": false
+            },
+            {
+              "check_id": "QUAL-004",
+              "name": "Tables Over Prose",
+              "validation": "Structured data in tables, not paragraphs (Tool 1 structural rule)",
+              "severity": "minor",
+              "auto_verifiable": true
+            }
+          ]
+        },
+        {
+          "category": "Element-Specific Validation",
+          "purpose": "Element type requirements from Tool 2 catalog",
+          "checks": [
+            {
+              "check_id": "ELEM-001",
+              "name": "Focus Areas Checklist Complete",
+              "validation": "All element-type focus areas addressed (from Tool 2 template)",
+              "severity": "major",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "ELEM-002",
+              "name": "Required Sections for Type Present",
+              "validation": "All required sections for element type exist (from Tool 2 template)",
+              "severity": "critical",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "ELEM-003",
+              "name": "Element-Specific Tables Complete",
+              "validation": "Type-specific tables (props, events, endpoints, etc.) populated",
+              "severity": "major",
+              "auto_verifiable": false
+            }
+          ]
+        },
+        {
+          "category": "Refactor Safety (Tool 1)",
+          "purpose": "Verify documentation supports safe refactoring",
+          "checks": [
+            {
+              "check_id": "SAFE-001",
+              "name": "State Ownership Unambiguous",
+              "validation": "Clear ownership rules, no conflicts",
+              "severity": "critical",
+              "auto_verifiable": false
+            },
+            {
+              "check_id": "SAFE-002",
+              "name": "Failure Modes Documented",
+              "validation": "All failure modes have recovery paths",
+              "severity": "major",
+              "auto_verifiable": false
+            },
+            {
+              "check_id": "SAFE-003",
+              "name": "Non-Goals Explicit",
+              "validation": "Out-of-scope items listed to prevent scope creep",
+              "severity": "minor",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "SAFE-004",
+              "name": "Contracts Defined",
+              "validation": "All external integration contracts documented",
+              "severity": "critical",
+              "auto_verifiable": false
+            }
+          ]
+        },
+        {
+          "category": "Auto-Fill Validation",
+          "purpose": "Verify auto-population from graph integration",
+          "checks": [
+            {
+              "check_id": "AUTO-001",
+              "name": "Auto-Fill Rate Meets Target",
+              "validation": "Generated content >= 60% auto-filled (Phase 2 target)",
+              "severity": "major",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "AUTO-002",
+              "name": "Manual Review Flags Present",
+              "validation": "Low auto-fill sections flagged for human review",
+              "severity": "minor",
+              "auto_verifiable": true
+            },
+            {
+              "check_id": "AUTO-003",
+              "name": "Graph Data Citations",
+              "validation": "Auto-filled data cites source (imports, exports, dependencies)",
+              "severity": "minor",
+              "auto_verifiable": true
+            }
+          ]
+        }
+      ],
+
+      "validation_workflow": {
+        "step_1": "Run structural validation (STRUCT-* checks)",
+        "step_2": "Run element-specific validation (ELEM-* checks)",
+        "step_3": "Run content quality checks (QUAL-* checks)",
+        "step_4": "Run refactor safety checks (SAFE-* checks)",
+        "step_5": "Run auto-fill validation (AUTO-* checks)",
+        "step_6": "Generate validation report with pass/fail/warning counts",
+        "step_7": "Flag critical failures for manual review"
+      },
+
+      "scoring_system": {
+        "critical_fail": "Any critical check fails → REJECT resource sheet",
+        "major_threshold": "≤2 major failures → PASS with warnings",
+        "minor_threshold": "≤5 minor failures → PASS",
+        "perfect_score": "All checks pass → APPROVED"
+      }
+    },
+
+    "maintenance_workflow": {
+      "update_triggers": [
+        "New element type added to catalog (20 → 21+)",
+        "New conditional module created (11 → 12+)",
+        "Detection characteristics enhanced",
+        "Auto-fill capabilities improved",
+        "Template structure changed",
+        "Quality gate rules updated"
+      ],
+
+      "update_process": {
+        "step_1": {
+          "action": "Identify change type",
+          "details": "Element type, module, detection, auto-fill, template, or quality gate"
+        },
+        "step_2": {
+          "action": "Update primary documentation",
+          "details": "MODULE-REFERENCE.md for modules, ELEMENT-TYPE-CATALOG.md for types, etc."
+        },
+        "step_3": {
+          "action": "Update dependent docs",
+          "details": "Cross-references, examples, quick reference card"
+        },
+        "step_4": {
+          "action": "Version control",
+          "details": "Update version number, add CHANGELOG entry, archive old sections if breaking"
+        },
+        "step_5": {
+          "action": "Validation",
+          "details": "Run quality gates on updated docs, verify examples work"
+        },
+        "step_6": {
+          "action": "Announcement",
+          "details": "Update RESOURCE-SHEET-USER-GUIDE.md with What's New section"
+        }
+      },
+
+      "deprecation_protocol": {
+        "mark_deprecated": "Add ⚠️ DEPRECATED header to old section",
+        "migration_notes": "Provide migration path to new approach",
+        "archive_timeline": "Keep deprecated content for 1 version, then move to appendix",
+        "breaking_changes": "Bump major version, document in CHANGELOG"
+      },
+
+      "versioning_strategy": {
+        "semantic_versioning": "MAJOR.MINOR.PATCH",
+        "major_bump": "Breaking changes (element types removed, required sections changed)",
+        "minor_bump": "New element types, new modules, new features",
+        "patch_bump": "Bug fixes, clarifications, examples added"
+      }
+    },
+
+    "coderef_workflow_integration": {
+      "planning_workflow_hooks": {
+        "when_to_use": [
+          "During Phase 0 (Preparation) - generate resource sheets for reference components",
+          "During Phase 3 (Current State Analysis) - document existing architecture",
+          "Post-implementation - document newly created components"
+        ],
+        "integration_points": [
+          {
+            "workflow_phase": "0_preparation",
+            "tool_call": "generate_resource_sheet",
+            "purpose": "Document reference components before planning",
+            "input": "Reference component from analysis.json",
+            "output": "Resource sheet for reference component (used in planning)",
+            "auto_trigger": false,
+            "manual_trigger": "Agent calls /create-resource-sheet during analysis"
+          },
+          {
+            "workflow_phase": "3_current_state_analysis",
+            "tool_call": "generate_resource_sheet",
+            "purpose": "Document affected components for impact analysis",
+            "input": "Affected files from current state analysis",
+            "output": "Resource sheets for existing components (baseline documentation)",
+            "auto_trigger": false,
+            "manual_trigger": "Agent documents current state before changes"
+          },
+          {
+            "workflow_phase": "post_implementation",
+            "tool_call": "generate_resource_sheet",
+            "purpose": "Document newly created components",
+            "input": "New components from implementation",
+            "output": "Resource sheets for new components (final documentation)",
+            "auto_trigger": false,
+            "manual_trigger": "Agent runs /create-resource-sheet after feature complete"
+          }
+        ]
+      },
+
+      "output_format_expectations": {
+        "markdown_output": {
+          "location": "coderef/workorder/{feature-name}/docs/",
+          "filename": "{component-name}-resource-sheet.md",
+          "use_case": "Human-readable component documentation",
+          "integration": "Referenced in DELIVERABLES.md as documentation artifact"
+        },
+        "json_schema_output": {
+          "location": "coderef/workorder/{feature-name}/schemas/",
+          "filename": "{component-name}-schema.json",
+          "use_case": "Validation, tooling, API contracts",
+          "integration": "Used by coderef-workflow for type validation"
+        },
+        "jsdoc_output": {
+          "location": "Inline in source code",
+          "filename": "N/A (embedded in .ts/.tsx files)",
+          "use_case": "IDE autocomplete, inline documentation",
+          "integration": "Agent adds JSDoc comments during implementation"
+        }
+      },
+
+      "slash_command_recommendations": {
+        "new_command": "/document-component",
+        "purpose": "Shorthand for /create-resource-sheet focused on components",
+        "syntax": "/document-component {ComponentName}",
+        "behavior": "Auto-detects element type, generates all 3 formats, saves to workorder docs",
+        "integration": "Calls generate_resource_sheet MCP tool with component-focused defaults"
+      },
+
+      "agent_guidance": {
+        "when_to_generate": [
+          "Before refactoring - document current state",
+          "After major feature - document new components",
+          "During code review - verify documentation exists",
+          "When onboarding - create resource sheets for complex systems"
+        ],
+        "quality_expectations": [
+          "Resource sheet passes all critical quality gates",
+          "Auto-fill rate >= 60% for most element types",
+          "Manual sections flagged for review",
+          "Examples provided for complex behaviors"
+        ]
+      }
+    }
+  },
+
+  "recommendations": [
+    "Merge Tool 1's quality framework (exhaustiveness, voice, refactor safety) into unified system as core quality gates",
+    "Preserve all 20 element types from Tool 2 - high value, well-defined specializations",
+    "Use modular approach (4 universal + 11 conditional modules) rather than single monolithic template",
+    "Integrate graph queries for auto-fill (60%+ target) - achievable with coderef-context MCP",
+    "Create 4-tier documentation hierarchy (user guide → reference → catalog → quick ref) for different audiences",
+    "Implement validation pipeline with 5 categories (structural, content, element-specific, refactor-safety, auto-fill)",
+    "Add /document-component shorthand command for common use case",
+    "Version documentation using semantic versioning aligned with tool changes",
+    "Deprecate old content gracefully with migration notes (don't delete immediately)",
+    "Hook into coderef-workflow at 3 phases (preparation, current state, post-implementation)"
+  ]
+}

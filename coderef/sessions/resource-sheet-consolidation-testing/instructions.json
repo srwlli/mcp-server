@@ -1,0 +1,164 @@
+{
+  "session_id": "resource-sheet-consolidation-testing",
+  "workorder_id": "WO-RESOURCE-SHEET-CONSOLIDATION-001-TESTING",
+  "parent_workorder": "WO-RESOURCE-SHEET-CONSOLIDATION-001",
+  "session_type": "testing_validation",
+  "created": "2026-01-03",
+  "status": "plan_approved_awaiting_implementation",
+  "description": "Test validation session for resource sheet consolidation implementation (Phases 2-3)",
+
+  "agents": {
+    "testing_agent": {
+      "role": "Quality Assurance & Validation",
+      "persona": "Testing specialist with expertise in MCP tool validation, graph integration testing, and documentation quality assurance",
+      "tasks": [
+        "Develop comprehensive test plan for Phases 2-3 implementation",
+        "Define test cases for 20 element type detection (80%+ confidence target)",
+        "Create validation suite for 60-80% auto-fill from graph integration",
+        "Design 4-gate validation pipeline tests",
+        "Establish P1 batch regression testing protocol (15 reference sheets)",
+        "Define performance benchmarks (<2s generation, <500ms graph load, <50ms queries)",
+        "Create acceptance criteria checklist for handoff back to orchestrator"
+      ],
+      "deliverables": [
+        "test-plan.json - Comprehensive test strategy document",
+        "test-cases.json - Structured test case definitions",
+        "validation-checklist.md - Quality gate checklist",
+        "testing-handoff.md - Instructions for executing tests post-implementation"
+      ],
+      "status": "plan_complete",
+      "priority": "high",
+      "estimated_duration": "3-5 hours for test plan development",
+      "actual_duration": "Completed in session",
+      "deliverables_status": {
+        "test-plan.json": "complete",
+        "test-cases.json": "complete",
+        "validation-checklist.md": "complete",
+        "testing-handoff.md": "complete",
+        "TEST-PLAN-REVIEW-SUMMARY.md": "complete",
+        "COMPLETION-CERTIFICATE.md": "complete",
+        "READY-FOR-APPROVAL.md": "complete"
+      }
+    }
+  },
+
+  "context": {
+    "what_is_being_tested": "Resource sheet consolidation - routing /create-resource-sheet to enhanced MCP tool",
+    "implementation_phases": {
+      "phase_1": "Complete - Deprecation warnings added, handoff document created (orchestrator)",
+      "phase_2": "Pending - Route slash command to MCP tool, add element_type passthrough (coderef-docs agent, 1-2 hours)",
+      "phase_3": "Pending - Full MCP enhancement with detection, graph integration, validation (coderef-docs agent, 12-16 hours)",
+      "phase_4": "Ready for Planning - Testing and validation (testing agent, 2-4 hours execution)"
+    },
+    "critical_requirements": {
+      "routing": "100% of /create-resource-sheet invocations call MCP tool",
+      "detection": "All 20 element types detected with 80%+ confidence",
+      "autofill": "60-80% average completion rate (test with 15 P1 examples)",
+      "validation": "4-gate pipeline catches critical/major/minor errors",
+      "performance": "<2 seconds total generation time"
+    },
+    "reference_materials": {
+      "primary": [
+        "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\orchestrator-output.md",
+        "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\reference-sheet-reconciliation\\coderef-output.md",
+        "C:\\Users\\willh\\Desktop\\assistant\\coderef\\workorder\\resource-sheet-consolidation\\CODEREF-DOCS-HANDOFF.md"
+      ],
+      "test_data": [
+        "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\coderef\\reference-sheets\\ (15 P1 batch examples)",
+        "Files: CONSTANTS.md, ERROR-RESPONSES.md, MCP-CLIENT.md, TYPE-DEFS.md, VALIDATION.md (3 formats each)"
+      ],
+      "agent_outputs": [
+        "papertrail-output.json - Unified template schema",
+        "coderef-system-output.json - Graph integration mappings",
+        "coderef-docs-output.json - Documentation standards"
+      ]
+    }
+  },
+
+  "testing_scope": {
+    "in_scope": [
+      "Slash command routing verification",
+      "Element type detection accuracy (20 types)",
+      "Graph integration auto-fill percentage",
+      "4-gate validation pipeline correctness",
+      "P1 batch regression testing (15 examples)",
+      "Performance benchmarks",
+      "Output format validation (markdown, JSON, JSDoc)"
+    ],
+    "out_of_scope": [
+      "MCP protocol implementation details",
+      "Graph generation from codebase (tested separately)",
+      "Claude Code slash command infrastructure",
+      "Legacy .md file functionality (deprecated)"
+    ],
+    "test_data": {
+      "p1_batch": {
+        "location": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\coderef\\reference-sheets\\",
+        "count": 15,
+        "elements": ["CONSTANTS", "ERROR-RESPONSES", "MCP-CLIENT", "TYPE-DEFS", "VALIDATION"],
+        "formats": ["markdown", "json-schema", "jsdoc"],
+        "purpose": "Baseline reference for regression testing"
+      },
+      "element_types": {
+        "count": 20,
+        "priority_1": ["top_level_widgets", "stateful_containers", "global_state", "custom_hooks", "api_clients"],
+        "priority_2": ["data_models", "utility_modules", "constants", "error_definitions", "type_definitions"],
+        "priority_3": ["validation", "middleware", "transformers", "event_handlers", "services"],
+        "priority_4": ["configuration", "context_providers", "decorators", "factories", "observers"]
+      }
+    }
+  },
+
+  "success_criteria": {
+    "test_plan_complete": {
+      "criteria": [
+        "All 5 testing categories covered (routing, detection, auto-fill, validation, performance)",
+        "Test cases defined for all 20 element types",
+        "P1 batch regression protocol established",
+        "Performance benchmarks specified with measurement methodology",
+        "Acceptance criteria checklist ready for orchestrator review"
+      ]
+    },
+    "ready_for_execution": {
+      "criteria": [
+        "Test plan reviewed and approved by orchestrator",
+        "Test data locations verified and accessible",
+        "Validation criteria defined with pass/fail thresholds",
+        "Testing handoff document complete with step-by-step instructions",
+        "Rollback plan defined if critical failures found"
+      ]
+    }
+  },
+
+  "communication": {
+    "orchestrator": {
+      "last_update": "2026-01-03",
+      "message": "Test plan APPROVED. Excellent work, testing agent. All 49 test cases, 7 categories, and 5 critical requirements meet standards. Ready to signal coderef-docs agent for Phases 2-3 implementation (15-20 hours estimated). Testing agent will execute Phase 4 after implementation completes.",
+      "status": "plan_approved",
+      "approval_date": "2026-01-03"
+    },
+    "testing_agent": {
+      "status": "plan_approved_standing_by",
+      "last_update": "2026-01-03",
+      "message": "Plan APPROVED by orchestrator. Standing by for coderef-docs agent to complete Phases 2-3 implementation. Will execute 49 test cases (2-4 hours) when implementation ready. All test plan deliverables complete and ready for Phase 4 execution.",
+      "next_action": "Wait for coderef-docs agent Phases 2-3 completion signal, then execute Phase 4 tests using approved test plan",
+      "blockers": [],
+      "summary": {
+        "total_test_cases": 49,
+        "test_categories": 7,
+        "critical_requirements": 5,
+        "estimated_execution_time": "2-4 hours",
+        "deliverables_complete": 7,
+        "approval_status": "approved",
+        "approval_date": "2026-01-03"
+      }
+    }
+  },
+
+  "handoff_protocol": {
+    "from": "orchestrator (coderef-assistant)",
+    "to": "testing_agent",
+    "handoff_type": "test_planning",
+    "instructions": "See TESTING-AGENT-BRIEF.md for complete briefing"
+  }
+}

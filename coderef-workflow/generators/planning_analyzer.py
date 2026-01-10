@@ -78,6 +78,122 @@ class PlanningAnalyzer:
         self.telemetry['total_sources_used'] += 1
         logger.info(f"📄 Foundation doc read: {doc_name}")
 
+    def _extract_entry_point_from_docs(self) -> Optional[str]:
+        """
+        Extract documented entry point from foundation docs.
+
+        Searches ARCHITECTURE.md and README.md for explicit entry point mentions.
+        Prioritizes structured METADATA section over free-text parsing.
+
+        Returns:
+            Entry point name (e.g., 'server'), or None if not documented
+        """
+        import re
+
+        # Check if foundation docs were read during analysis
+        if not hasattr(self, 'foundation_doc_content'):
+            return None
+
+        # Search in ARCHITECTURE.md first (most authoritative)
+        arch_doc = self.foundation_doc_content.get('ARCHITECTURE.md', {})
+        arch_content = arch_doc.get('preview', '')
+
+        # Pattern 1: Structured METADATA section (PREFERRED)
+        # **Entry Point:** server.py
+        match = re.search(r'\*\*Entry\s+Point:\*\*\s+(\w+)(?:\.py)?', arch_content, re.IGNORECASE)
+        if match:
+            logger.info(f"Found structured entry point in ARCHITECTURE.md METADATA: {match.group(1)}")
+            return match.group(1)
+
+        # Pattern 2: Free-text format (FALLBACK)
+        # "Entry point: server.py" or "Entry Point: server.py"
+        match = re.search(r'entry\s+point[:\s]+(\w+)(?:\.py)?', arch_content, re.IGNORECASE)
+        if match:
+            logger.info(f"Found documented entry point in ARCHITECTURE.md: {match.group(1)}")
+            return match.group(1)
+
+        # Pattern 3: "Main module: server.py"
+        match = re.search(r'main\s+module[:\s]+(\w+)(?:\.py)?', arch_content, re.IGNORECASE)
+        if match:
+            logger.info(f"Found documented main module in ARCHITECTURE.md: {match.group(1)}")
+            return match.group(1)
+
+        # Search in README.md as fallback
+        readme_doc = self.foundation_doc_content.get('README.md', {})
+        readme_content = readme_doc.get('preview', '')
+
+        # Pattern 4: "Run server" or "python server.py" in usage section
+        match = re.search(r'python\s+(\w+)\.py', readme_content, re.IGNORECASE)
+        if match:
+            logger.info(f"Found entry point in README.md usage: {match.group(1)}")
+            return match.group(1)
+
+        logger.debug("No documented entry point found in foundation docs")
+        return None
+
+    def _select_analysis_target(self) -> Optional[str]:
+        """
+        Intelligently select a representative element for code analysis.
+
+        Priority order:
+        1. Documented entry point from foundation docs (ARCHITECTURE.md, README.md)
+        2. Entry points from heuristics (server, app, main, index)
+        3. Classes with most dependencies
+        4. Most complex functions
+        5. First available element
+
+        Returns:
+            Element name to analyze, or None if no elements found
+        """
+        try:
+            # Read .coderef/index.json to get all elements
+            elements = read_coderef_output(str(self.project_path), 'index')
+
+            if not elements:
+                logger.debug("No elements found in .coderef/index.json")
+                return None
+
+            # Priority 1: Parse foundation docs for documented entry point
+            documented_entry = self._extract_entry_point_from_docs()
+            if documented_entry:
+                # Find this element in the index
+                for elem in elements:
+                    if elem.get('name', '').lower() == documented_entry.lower():
+                        logger.info(f"Selected documented entry point for analysis: {elem.get('name')}")
+                        return elem.get('name')
+
+            # Priority 2: Entry points from heuristics (fallback if not documented)
+            entry_point_names = ['server', 'app', 'main', 'index', 'start', 'init']
+            for elem in elements:
+                elem_name = elem.get('name', '').lower()
+                if elem_name in entry_point_names and elem.get('type') in ['function', 'class']:
+                    logger.info(f"Selected heuristic entry point for analysis: {elem.get('name')}")
+                    return elem.get('name')
+
+            # Priority 2: Classes (prefer classes over functions for broader analysis)
+            classes = [e for e in elements if e.get('type') == 'class']
+            if classes:
+                # Return first class
+                logger.info(f"Selected class for analysis: {classes[0].get('name')}")
+                return classes[0].get('name')
+
+            # Priority 3: Functions
+            functions = [e for e in elements if e.get('type') == 'function']
+            if functions:
+                logger.info(f"Selected function for analysis: {functions[0].get('name')}")
+                return functions[0].get('name')
+
+            # Priority 4: Any element
+            if elements:
+                logger.info(f"Selected first element for analysis: {elements[0].get('name')}")
+                return elements[0].get('name')
+
+            return None
+
+        except Exception as e:
+            logger.debug(f"Error selecting analysis target: {e}")
+            return None
+
     def get_telemetry_summary(self) -> dict:
         """
         Get summary of data sources used during analysis.
@@ -152,6 +268,111 @@ class PlanningAnalyzer:
             logger.debug(f"Could not read drift.json: {e}")
             return None
 
+    async def validate_planning_prerequisites(self) -> dict:
+        """
+        Validate that explicit context exists before planning.
+
+        Enforces CodeRef philosophy: explicits over heuristics.
+        Returns validation report with critical/warning/info issues.
+
+        Returns:
+            Dict with 'critical', 'warnings', 'passed' lists
+        """
+        critical = []
+        warnings = []
+        passed = []
+
+        # Check 1: .coderef/ must exist
+        if not check_coderef_available(str(self.project_path)):
+            critical.append({
+                'check': '.coderef/ directory',
+                'message': '.coderef/ directory not found',
+                'fix': f'Run: coderef scan {self.project_path}',
+                'reason': 'Required for code intelligence - no heuristic fallback'
+            })
+        else:
+            passed.append('.coderef/ directory exists')
+
+            # Check 1a: .coderef/ must be fresh (< 10% drift)
+            drift_check = self.check_coderef_freshness()
+            if drift_check and 'stale' in drift_check.lower():
+                warnings.append({
+                    'check': '.coderef/ freshness',
+                    'message': drift_check,
+                    'fix': f'Run: coderef scan {self.project_path}',
+                    'reason': 'Stale data may lead to incorrect analysis'
+                })
+            else:
+                passed.append('.coderef/ data is fresh')
+
+        # Check 2: Foundation docs must exist
+        foundation_docs = self.scan_foundation_docs()
+        missing_docs = foundation_docs.get('missing', [])
+
+        if 'ARCHITECTURE.md' in missing_docs:
+            critical.append({
+                'check': 'ARCHITECTURE.md',
+                'message': 'ARCHITECTURE.md not found',
+                'fix': 'Run: /generate-docs or manually create foundation docs',
+                'reason': 'Entry point and architecture patterns must be documented explicitly'
+            })
+        else:
+            passed.append('ARCHITECTURE.md exists')
+
+        if 'README.md' in missing_docs:
+            warnings.append({
+                'check': 'README.md',
+                'message': 'README.md not found',
+                'fix': 'Run: /generate-docs to create README',
+                'reason': 'Project overview should be documented'
+            })
+        else:
+            passed.append('README.md exists')
+
+        # Check 3: Entry point must be explicitly documented
+        if 'ARCHITECTURE.md' not in missing_docs:
+            # Read foundation docs to check for entry point
+            foundation_doc_content = self.read_foundation_doc_content()
+            self.foundation_doc_content = foundation_doc_content
+
+            entry_point = self._extract_entry_point_from_docs()
+            if not entry_point:
+                critical.append({
+                    'check': 'Documented entry point',
+                    'message': 'Entry point not documented in ARCHITECTURE.md',
+                    'fix': 'Add to ARCHITECTURE.md: "Entry point: server.py" (or your main file)',
+                    'reason': 'Heuristic guessing (server, app, main) is unreliable - document explicitly'
+                })
+            else:
+                passed.append(f'Entry point documented: {entry_point}')
+
+        # Check 4: Coding patterns should be available
+        try:
+            patterns = read_coderef_output(str(self.project_path), 'patterns')
+            if patterns and len(patterns) > 0:
+                passed.append(f'Coding patterns available ({len(patterns)} patterns)')
+            else:
+                warnings.append({
+                    'check': 'Coding patterns',
+                    'message': 'No coding patterns found in .coderef/reports/patterns.json',
+                    'fix': 'Run: python scripts/populate-coderef.py ' + str(self.project_path),
+                    'reason': 'Pattern detection improves plan quality'
+                })
+        except Exception:
+            warnings.append({
+                'check': 'Coding patterns',
+                'message': 'patterns.json not found or invalid',
+                'fix': 'Run: python scripts/populate-coderef.py ' + str(self.project_path),
+                'reason': 'Pattern detection improves plan quality'
+            })
+
+        return {
+            'critical': critical,
+            'warnings': warnings,
+            'passed': passed,
+            'can_proceed': len(critical) == 0
+        }
+
     async def analyze(self) -> PreparationSummaryDict:
         """
         Main analysis method - orchestrates all scanning operations.
@@ -177,6 +398,7 @@ class PlanningAnalyzer:
 
         logger.info("Reading foundation doc content...")
         foundation_doc_content = self.read_foundation_doc_content()
+        self.foundation_doc_content = foundation_doc_content  # Store for entry point extraction
 
         logger.info("Reading inventory data...")
         inventory_data = await self.read_inventory_data()
@@ -208,12 +430,10 @@ class PlanningAnalyzer:
         complexity_analysis = None
         architecture_diagram = None
 
-        # Find a representative element to analyze (use first class or function from inventory)
+        # Find a representative element to analyze using intelligent selection
         target_element = None
         if inventory_data and inventory_data.get('source') == 'coderef_index':
-            # Pick first class or major component for analysis
-            # In a real scenario, you'd identify the main entry point or critical component
-            target_element = "main"  # Placeholder - could be extracted from inventory
+            target_element = self._select_analysis_target()
 
         if target_element:
             # Analyze dependencies using coderef_query

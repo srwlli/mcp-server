@@ -1,0 +1,374 @@
+{
+  "agent_id": "coderef-workflow",
+  "workorder_id": "WO-DOC-OUTPUT-AUDIT-001",
+  "inputs": [
+    {
+      "file": "README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Planning context, foundation doc analysis"
+    },
+    {
+      "file": "ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Planning context extraction"
+    },
+    {
+      "file": "API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Planning context extraction"
+    },
+    {
+      "file": "COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Planning context extraction"
+    },
+    {
+      "file": "SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Planning context extraction"
+    },
+    {
+      "file": "USER-GUIDE.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Planning context extraction"
+    },
+    {
+      "file": "coderef/foundation-docs/README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Dual-location foundation doc check"
+    },
+    {
+      "file": "coderef/foundation-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Deep extraction for plan context"
+    },
+    {
+      "file": "coderef/foundation-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Deep extraction for plan context"
+    },
+    {
+      "file": "coderef/foundation-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Deep extraction for plan context"
+    },
+    {
+      "file": "coderef/foundation-docs/SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Deep extraction for plan context"
+    },
+    {
+      "file": "coderef/standards/BEHAVIOR-STANDARDS.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Existence check during planning"
+    },
+    {
+      "file": "coderef/standards/COMPONENT-PATTERN.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Existence check during planning"
+    },
+    {
+      "file": "coderef/standards/UI-STANDARDS.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Existence check during planning"
+    },
+    {
+      "file": "coderef/standards/UX-PATTERNS.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Existence check during planning"
+    },
+    {
+      "file": "coderef/standards/COMPONENT-INDEX.md",
+      "type": "standard_doc",
+      "frequency": "often",
+      "purpose": "Existence check during planning"
+    },
+    {
+      "file": "coderef/workorder/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Load implementation plan"
+    },
+    {
+      "file": "coderef/workorder/{feature}/context.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Load feature requirements"
+    },
+    {
+      "file": "coderef/workorder/{feature}/communication.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Multi-agent coordination"
+    },
+    {
+      "file": "coderef/workorder/{feature}/DELIVERABLES.md",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Read metrics, parse status"
+    },
+    {
+      "file": "coderef/workorder/{feature}/analysis.json",
+      "type": "workflow_doc",
+      "frequency": "often",
+      "purpose": "Load project analysis for planning"
+    },
+    {
+      "file": "coderef/archived/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Discover similar features"
+    },
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "always",
+      "purpose": "Priority 1: Fast inventory read"
+    },
+    {
+      "file": ".coderef/graph.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Dependency graph for diagrams"
+    },
+    {
+      "file": ".coderef/context.md",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Human-readable context"
+    },
+    {
+      "file": ".coderef/reports/patterns.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "AST-based pattern detection"
+    },
+    {
+      "file": ".coderef/reports/coverage.json",
+      "type": "coderef_output",
+      "frequency": "sometimes",
+      "purpose": "Test coverage gap analysis"
+    },
+    {
+      "file": ".coderef/reports/complexity.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Code complexity metrics"
+    },
+    {
+      "file": "coderef/workorder-log.txt",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Read workorder history"
+    },
+    {
+      "file": "coderef/archived/index.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Archive metadata"
+    },
+    {
+      "file": "coderef/inventory/manifest.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Priority 3: Legacy inventory fallback"
+    },
+    {
+      "file": "coderef/inventory/api.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy API inventory fallback"
+    },
+    {
+      "file": "coderef/inventory/database.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy DB inventory fallback"
+    },
+    {
+      "file": "coderef/inventory/dependencies.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy dependency fallback"
+    },
+    {
+      "file": "coderef/inventory/config.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy config inventory fallback"
+    },
+    {
+      "file": "coderef/inventory/tests.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy test inventory fallback"
+    },
+    {
+      "file": "coderef/inventory/documentation.json",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Legacy doc inventory fallback"
+    },
+    {
+      "file": "package.json",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "Tech stack detection"
+    },
+    {
+      "file": "requirements.txt",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "Tech stack detection (Python)"
+    },
+    {
+      "file": "pyproject.toml",
+      "type": "config",
+      "frequency": "often",
+      "purpose": "Tech stack detection (Python)"
+    },
+    {
+      "file": "go.mod",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Tech stack detection (Go)"
+    },
+    {
+      "file": "Cargo.toml",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Tech stack detection (Rust)"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "README.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate project overview"
+    },
+    {
+      "file": "coderef/foundation-docs/ARCHITECTURE.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate architecture with diagrams"
+    },
+    {
+      "file": "coderef/foundation-docs/SCHEMA.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate database schema docs"
+    },
+    {
+      "file": "coderef/foundation-docs/COMPONENTS.md",
+      "type": "foundation_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate component hierarchy (UI)"
+    },
+    {
+      "file": "coderef/foundation-docs/API.md",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Generate API endpoint docs"
+    },
+    {
+      "file": "coderef/foundation-docs/project-context.json",
+      "type": "foundation_doc",
+      "frequency": "often",
+      "purpose": "Structured planning context"
+    },
+    {
+      "file": "coderef/workorder/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Generate 10-section implementation plan"
+    },
+    {
+      "file": "coderef/workorder/{feature}/context.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Save gathered requirements"
+    },
+    {
+      "file": "coderef/workorder/{feature}/analysis.json",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Save project analysis for planning"
+    },
+    {
+      "file": "coderef/workorder/{feature}/DELIVERABLES.md",
+      "type": "workflow_doc",
+      "frequency": "always",
+      "purpose": "Generate metrics template, update metrics"
+    },
+    {
+      "file": "coderef/workorder/{feature}/communication.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate multi-agent coordination"
+    },
+    {
+      "file": "coderef/workorder/{feature}/claude.md",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Generate agent handoff context"
+    },
+    {
+      "file": "coderef/workorder-log.txt",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Append workorder entries (global log)"
+    },
+    {
+      "file": "coderef/archived/index.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Update archive metadata"
+    },
+    {
+      "file": "coderef/planning-reviews/review-{feature}-{timestamp}.md",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Generate plan validation reports"
+    },
+    {
+      "file": "coderef/risk-assessments/risk-{feature}-{timestamp}.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Generate risk assessment reports"
+    },
+    {
+      "file": "coderef/audits/audit-{timestamp}.md",
+      "type": "other",
+      "frequency": "rarely",
+      "purpose": "Generate plan audit reports"
+    },
+    {
+      "file": "coderef/features-inventory.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Generate feature inventory"
+    },
+    {
+      "file": "coderef/features-inventory.md",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Generate feature inventory (markdown)"
+    }
+  ]
+}

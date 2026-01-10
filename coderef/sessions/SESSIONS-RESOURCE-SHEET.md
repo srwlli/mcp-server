@@ -307,8 +307,7 @@ Before committing session files, verify:
 
 **Run validation:**
 ```powershell
-cd C:\Users\willh\.mcp-servers\coderef\sessions
-.\validate-sessions.ps1
+pwsh C:\Users\willh\.mcp-servers\papertrail\validators\sessions\validate.ps1
 ```
 
 **Expected output:**
@@ -321,7 +320,7 @@ All sessions valid!
 
 | Mistake | Error | Fix |
 |---------|-------|-----|
-| Status typo | "completed" instead of "complete" | Run `.\validate-sessions.ps1 -FixTypos` |
+| Status typo | "completed" instead of "complete" | Run validator with `-FixTypos` flag |
 | Wrong date format | "01-04-2026" | Use YYYY-MM-DD: "2026-01-04" |
 | Missing aggregation | Schema validation fails | Add aggregation object with totals |
 | Unescaped backslashes | "C:\Users\..." | Use double backslashes: "C:\\\\Users\\\\..." |
@@ -330,20 +329,20 @@ All sessions valid!
 
 ### Schema Reference
 
-**JSON Schema Location:** `sessions/communication-schema.json`
+**JSON Schema Location:** `C:\Users\willh\.mcp-servers\papertrail\schemas\sessions\communication-schema.json`
 
-**Validator:** `sessions/validate-sessions.ps1`
+**Validator Location:** `C:\Users\willh\.mcp-servers\papertrail\validators\sessions\validate.ps1`
 
 **Usage:**
 ```powershell
 # Validate all sessions
-.\validate-sessions.ps1
+pwsh C:\Users\willh\.mcp-servers\papertrail\validators\sessions\validate.ps1
 
 # Auto-fix common typos
-.\validate-sessions.ps1 -FixTypos
+pwsh C:\Users\willh\.mcp-servers\papertrail\validators\sessions\validate.ps1 -FixTypos
 
 # Verbose output
-.\validate-sessions.ps1 -Verbose
+pwsh C:\Users\willh\.mcp-servers\papertrail\validators\sessions\validate.ps1 -Verbose
 ```
 
 ## 4. State Lifecycle

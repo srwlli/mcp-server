@@ -1,0 +1,443 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-CONSOLIDATION-AUDIT-001",
+  "manifest_version": "2.0",
+  "generated_date": "2026-01-04",
+  "status": "UPDATED - 5 of 8 agents complete (62.5%)",
+  "completed_agents": ["coderef-context", "coderef-workflow", "coderef-testing", "coderef-packages", "papertrail"],
+  "pending_agents": ["coderef-assistant", "coderef-docs", "coderef-personas", "coderef-dashboard"],
+
+  "executive_summary": {
+    "total_files_discovered": 56,
+    "schemas": 18,
+    "validators": 10,
+    "standards": 16,
+    "qa_tools": 12,
+    "recommended_to_move": 39,
+    "new_validation_systems_to_create": 3,
+    "lines_of_code_to_migrate": "3000+ LOC (validators alone: 2030 LOC)",
+    "critical_conflicts": 1,
+    "key_finding": "Major discovery: coderef-testing (9 files, universal test infrastructure) and coderef-packages (5 files, 2030 LOC of validators including P0 critical breaking-change-detector) contain production-quality validation/QA systems that must be consolidated into papertrail. coderef-workflow has 11 schemas + 3 validators for plan validation. PHASE 9 NEW: Resource sheet validation system (naming conventions + YAML front matter + UDS compliance). Total migration scope: 39 files + 3 new validation files across 5 projects."
+  },
+
+  "inventory_summary": {
+    "by_project": {
+      "papertrail": {"schemas": 5, "validators": 0, "standards": 4, "qa_tools": 0, "to_move": 5, "note": "BASELINE - UDS schemas already in place"},
+      "coderef-workflow": {"schemas": 11, "validators": 3, "standards": 0, "qa_tools": 2, "to_move": 14, "note": "GOLDMINE - comprehensive planning schemas + validators"},
+      "coderef-testing": {"schemas": 2, "validators": 1, "standards": 4, "qa_tools": 4, "to_move": 9, "note": "Universal test infrastructure - framework-agnostic"},
+      "coderef-packages": {"schemas": 0, "validators": 4, "standards": 4, "qa_tools": 3, "to_move": 5, "note": "2030 LOC validators including P0 breaking-change-detector"},
+      "coderef-context": {"schemas": 0, "validators": 0, "standards": 4, "qa_tools": 4, "to_move": 2, "note": "QA templates only (pytest.ini, pyproject.toml)"}
+    },
+    "totals": {
+      "files_found": 56,
+      "recommended_to_move": 39,
+      "percentage_to_consolidate": "69.6%"
+    }
+  },
+
+  "critical_conflicts": [
+    {
+      "conflict_id": "CONFLICT-001",
+      "severity": "CRITICAL",
+      "type": "duplicate_schema",
+      "description": "Both papertrail and coderef-workflow have plan.json validation schemas with potentially different purposes",
+      "files": [
+        "papertrail/schemas/plan.json (UDS schema for DELIVERABLES/documentation)",
+        "coderef-workflow/coderef/schemas/plan.schema.json (validates 10-section implementation plan structure)"
+      ],
+      "resolution_required": "MUST READ both files and determine: (1) Are they validating the same thing? (2) Is one more comprehensive? (3) Should they be merged? (4) Which is canonical?",
+      "blocker": true,
+      "priority": "HIGHEST",
+      "action": "IMMEDIATE - Read both files, perform diff analysis, document decision"
+    }
+  },
+
+  "detailed_inventory": {
+    "schemas": {
+      "papertrail_baseline": [
+        {"file": "papertrail/schemas/plan.json", "purpose": "UDS schema for plan.json (10-section structure, workorder tracking)", "status": "BASELINE", "loc": "~66"},
+        {"file": "papertrail/schemas/deliverables.json", "purpose": "UDS schema for DELIVERABLES.md (metrics, status)", "status": "BASELINE", "loc": "~70"},
+        {"file": "papertrail/schemas/architecture.json", "purpose": "UDS schema for ARCHITECTURE.md (POWER framework)", "status": "BASELINE", "loc": "~50"},
+        {"file": "papertrail/schemas/readme.json", "purpose": "UDS schema for README.md (POWER framework)", "status": "BASELINE", "loc": "~52"},
+        {"file": "papertrail/schemas/api.json", "purpose": "UDS schema for API.md (POWER framework + API versioning)", "status": "BASELINE", "loc": "~52"}
+      ],
+      "coderef_workflow_to_move": [
+        {"file": "coderef/schemas/plan.schema.json", "purpose": "Validates plan.json structure - 10-section format", "priority": 1, "conflict": "CONFLICT-001"},
+        {"file": "coderef/schemas/validation-schema.json", "purpose": "Security boundary - path traversal prevention", "priority": 1, "security": true},
+        {"file": "coderef/schemas/server-schema.json", "purpose": "MCP server configuration", "priority": 2, "reusable": "all MCP servers"},
+        {"file": "coderef/schemas/tool-handlers-schema.json", "purpose": "MCP tool handler implementations", "priority": 2},
+        {"file": "coderef/schemas/planning-analyzer-schema.json", "purpose": "analysis.json output format", "priority": 3},
+        {"file": "coderef/schemas/planning-generator-schema.json", "purpose": "Plan generation logic", "priority": 3},
+        {"file": "coderef/schemas/plan-validator-schema.json", "purpose": "Validation results (0-100 score)", "priority": 3},
+        {"file": "coderef/schemas/mcp-client-schema.json", "purpose": "MCP client-to-server communication", "priority": 2},
+        {"file": "coderef/schemas/type-defs-schema.json", "purpose": "TypedDict structures", "priority": 2},
+        {"file": "coderef/schemas/constants-schema.json", "purpose": "Naming conventions, value constraints", "priority": 3},
+        {"file": "coderef/schemas/error-responses-schema.json", "purpose": "Standard error structure", "priority": 2}
+      ],
+      "coderef_testing_to_move": [
+        {"file": "src/models.py", "purpose": "Universal test result schema (Pydantic models)", "priority": 1, "reusable": "any test framework", "type": "python_schema"},
+        {"file": "coderef/foundation-docs/SCHEMA.md", "purpose": "Schema documentation for models.py", "priority": 2, "companion": "models.py"}
+      ]
+    },
+
+    "validators": {
+      "coderef_workflow_to_move": [
+        {"file": "generators/plan_validator.py", "purpose": "Validates plans (0-100 scoring)", "priority": 1, "loc": "~500", "depends_on": "plan.schema.json"},
+        {"file": "plan_format_validator.py", "purpose": "Enforces plan.json format", "priority": 1, "loc": "~100"},
+        {"file": "schema_validator.py", "purpose": "Generic schema validation utilities", "priority": 1, "loc": "~200", "depends_on": "all schemas"}
+      ],
+      "coderef_testing_to_move": [
+        {"file": "src/result_analyzer.py", "purpose": "Test result quality validation", "priority": 1, "loc": "~400", "validates": "coverage, flaky tests, performance, health"}
+      ],
+      "coderef_packages_to_move": [
+        {"file": "core/src/validator/validator.ts", "purpose": "CodeRef2 EBNF validator (21 core types)", "priority": 1, "loc": 348, "language": "typescript"},
+        {"file": "cli/src/validator.ts", "purpose": "Tag validation wrapper", "priority": 2, "loc": 39, "language": "typescript", "depends_on": "@coderef/core"},
+        {"file": "path-validation/src/path-validation.ts", "purpose": "Windows path validation service", "priority": 2, "loc": "~100", "language": "typescript"},
+        {"file": "cli/src/drift-detector.ts", "purpose": "Drift detection (Levenshtein similarity)", "priority": 1, "loc": 487, "language": "typescript"}
+      ]
+    },
+
+    "qa_tools": {
+      "coderef_testing_to_move": [
+        {"file": "src/test_aggregator.py", "purpose": "Result aggregation & normalization", "priority": 1, "loc": "~300", "reusable": true},
+        {"file": "src/test_runner.py", "purpose": "Framework-agnostic test execution", "priority": 1, "loc": "~600", "frameworks": ["pytest", "jest", "vitest", "cargo", "mocha"]},
+        {"file": "src/framework_detector.py", "purpose": "Auto-detect test frameworks", "priority": 1, "loc": "~200", "reusable": true}
+      ],
+      "coderef_packages_to_move": [
+        {"file": "core/src/context/breaking-change-detector.ts", "purpose": "P0 CRITICAL - Breaking change detection", "priority": 0, "loc": 1156, "severity": "critical", "prevents": "runtime breakage"}
+      ],
+      "coderef_context_templates": [
+        {"file": "pytest.ini", "purpose": "Pytest config with standard markers", "action": "EXTRACT TEMPLATE", "extract": "test markers (unit, integration, performance)"},
+        {"file": "pyproject.toml", "purpose": "MCP dev dependencies standards", "action": "EXTRACT TEMPLATE", "extract": "dev dependencies (pytest>=8.0.0, black, ruff)"}
+      ]
+    },
+
+    "standards_documentation": {
+      "coderef_testing_to_move": [
+        {"file": "TESTING_GUIDE.md", "purpose": "Universal testing standards", "priority": 2, "reusable": true},
+        {"file": "coderef/user/USER-GUIDE.md", "purpose": "Test orchestration patterns", "priority": 2, "reusable": true},
+        {"file": "coderef/foundation-docs/ARCHITECTURE.md", "purpose": "Framework-agnostic architecture", "priority": 2, "reusable": true}
+      ],
+      "project_specific_do_not_move": [
+        {"file": "*/BEHAVIOR-STANDARDS.md", "projects": ["papertrail", "coderef-context", "coderef-packages"], "reason": "Auto-generated output"},
+        {"file": "*/COMPONENT-INDEX.md", "projects": ["papertrail", "coderef-context", "coderef-packages"], "reason": "Auto-generated output"},
+        {"file": "*/UI-STANDARDS.md", "projects": ["papertrail", "coderef-context", "coderef-packages"], "reason": "Auto-generated output"},
+        {"file": "*/UX-PATTERNS.md", "projects": ["papertrail", "coderef-context", "coderef-packages"], "reason": "Auto-generated output"},
+        {"file": "coderef-testing/CLAUDE.md", "reason": "Project-specific AI context"},
+        {"file": "coderef-testing/pyproject.toml", "reason": "Project-specific build config"},
+        {"file": "coderef-workflow/pyproject.toml", "reason": "Project-specific build config"},
+        {"file": "coderef-workflow/pytest.ini", "reason": "Project-specific test config"}
+      ]
+    }
+  },
+
+  "migration_plan": {
+    "phase_0_conflict_resolution": {
+      "priority": "CRITICAL - MUST COMPLETE FIRST",
+      "blocking": true,
+      "tasks": [
+        {
+          "task": "Resolve CONFLICT-001",
+          "action": "Read and compare papertrail/schemas/plan.json vs coderef-workflow/coderef/schemas/plan.schema.json",
+          "decision_required": "Determine canonical version or merge strategy",
+          "output": "Document decision in conflict-resolution-log.md"
+        }
+      ]
+    },
+
+    "phase_1_critical_security": {
+      "priority": "HIGHEST",
+      "files": [
+        {"file": "coderef-workflow/coderef/schemas/validation-schema.json", "reason": "Security boundary - prevents attacks"}
+      ],
+      "destination": "papertrail/schemas/security/",
+      "dependencies": "None"
+    },
+
+    "phase_2_breaking_change_detector": {
+      "priority": "CRITICAL (P0)",
+      "files": [
+        {"file": "coderef-packages/core/src/context/breaking-change-detector.ts", "loc": 1156, "reason": "P0 feature - prevents runtime failures during refactoring"}
+      ],
+      "destination": "papertrail/qa-tools/breaking-changes/",
+      "language": "typescript",
+      "note": "May require Python port or TypeScript runtime in papertrail"
+    },
+
+    "phase_3_core_schemas": {
+      "priority": "HIGH",
+      "files": [
+        "coderef-workflow/coderef/schemas/error-responses-schema.json (move first - dependency)",
+        "coderef-workflow/coderef/schemas/server-schema.json",
+        "coderef-workflow/coderef/schemas/tool-handlers-schema.json",
+        "coderef-workflow/coderef/schemas/mcp-client-schema.json",
+        "coderef-workflow/coderef/schemas/type-defs-schema.json"
+      ],
+      "destination": "papertrail/schemas/mcp/",
+      "rationale": "Core MCP infrastructure contracts - reusable across all 5 MCP servers"
+    },
+
+    "phase_4_test_infrastructure": {
+      "priority": "HIGH",
+      "files": [
+        "coderef-testing/src/models.py (universal test result schema)",
+        "coderef-testing/src/result_analyzer.py (validator)",
+        "coderef-testing/src/test_runner.py (framework-agnostic runner)",
+        "coderef-testing/src/test_aggregator.py (result aggregation)",
+        "coderef-testing/src/framework_detector.py (framework detection)",
+        "coderef-testing/TESTING_GUIDE.md (standards)",
+        "coderef-testing/USER-GUIDE.md (standards)",
+        "coderef-testing/ARCHITECTURE.md (standards)",
+        "coderef-testing/SCHEMA.md (documentation)"
+      ],
+      "destination": "papertrail/test-infrastructure/",
+      "language": "python",
+      "rationale": "Universal test orchestration - designed to be framework-agnostic and reusable"
+    },
+
+    "phase_5_coderef_validators": {
+      "priority": "HIGH",
+      "files": [
+        "coderef-packages/core/src/validator/validator.ts (348 LOC EBNF validator)",
+        "coderef-packages/cli/src/validator.ts (39 LOC tag validator)",
+        "coderef-packages/path-validation/src/path-validation.ts (path validator)",
+        "coderef-packages/cli/src/drift-detector.ts (487 LOC drift detection)"
+      ],
+      "destination": "papertrail/validators/coderef/",
+      "language": "typescript",
+      "total_loc": 874,
+      "note": "May require Python port or TypeScript runtime"
+    },
+
+    "phase_6_planning_schemas": {
+      "priority": "MEDIUM",
+      "files": [
+        "coderef-workflow/coderef/schemas/planning-analyzer-schema.json",
+        "coderef-workflow/coderef/schemas/planning-generator-schema.json",
+        "coderef-workflow/coderef/schemas/plan-validator-schema.json",
+        "coderef-workflow/coderef/schemas/constants-schema.json"
+      ],
+      "destination": "papertrail/schemas/planning/",
+      "rationale": "Planning-specific contracts"
+    },
+
+    "phase_7_plan_validators": {
+      "priority": "HIGH",
+      "files": [
+        "coderef-workflow/generators/plan_validator.py (~500 LOC)",
+        "coderef-workflow/plan_format_validator.py (~100 LOC)",
+        "coderef-workflow/schema_validator.py (~200 LOC)"
+      ],
+      "destination": "papertrail/validators/planning/",
+      "language": "python",
+      "dependencies": "MUST move after Phase 6 (planning schemas)",
+      "total_loc": 800
+    },
+
+    "phase_8_qa_templates": {
+      "priority": "LOW",
+      "action": "EXTRACT (not full migration)",
+      "files": [
+        {"file": "coderef-context/pytest.ini", "extract": "Standard markers (unit, integration, performance, asyncio)"},
+        {"file": "coderef-context/pyproject.toml", "extract": "MCP dev dependencies pattern"}
+      ],
+      "destination": "papertrail/templates/qa/",
+      "output": "Create template files, not direct copies"
+    },
+
+    "phase_9_resource_sheet_validation": {
+      "priority": "MEDIUM",
+      "action": "CREATE NEW",
+      "tasks": [
+        {
+          "task": "Create resource-sheet-metadata-schema.json",
+          "purpose": "Validate YAML front matter in resource sheets (Agent, Date, Task fields)",
+          "destination": "papertrail/schemas/documentation/",
+          "validation_rules": [
+            "YAML front matter required at document start",
+            "Required fields: Agent, Date, Task",
+            "Date format: YYYY-MM-DD",
+            "Task enum: [REVIEW, CONSOLIDATE, DOCUMENT]"
+          ]
+        },
+        {
+          "task": "Create validate-resource-sheets.ps1",
+          "purpose": "Validate resource sheet naming conventions and UDS compliance",
+          "destination": "papertrail/validators/documentation/",
+          "validation_rules": [
+            "Filename must match subject (e.g., AuthService-RESOURCE-SHEET.md for AuthService component)",
+            "Filename must end with -RESOURCE-SHEET.md or -REFERENCE-SHEET.md",
+            "YAML front matter must be present and valid",
+            "Document must have UDS-compliant section headers (Executive Summary, Audience & Intent, etc.)"
+          ],
+          "auto_fix_capabilities": [
+            "Fix filename casing inconsistencies",
+            "Add missing YAML front matter template",
+            "Warn about subject/filename mismatches"
+          ]
+        },
+        {
+          "task": "Create resource-sheet-standards.md",
+          "purpose": "Define UDS standards for resource/reference sheets",
+          "destination": "papertrail/standards/documentation/",
+          "content": [
+            "Naming conventions (subject-based filenames)",
+            "Required YAML front matter fields",
+            "Mandatory section structure",
+            "Table-over-prose guidelines",
+            "Refactor-safety checklist",
+            "Maintenance protocol"
+          ]
+        }
+      ],
+      "dependencies": "None (standalone validation system)",
+      "integration_points": [
+        "Integrate with existing validate-sessions.ps1 pattern",
+        "Add pre-commit hook support",
+        "CI/CD validation workflow"
+      ]
+    }
+  },
+
+  "migration_order_summary": [
+    "PHASE 0: Resolve CONFLICT-001 (plan.json duplicate) - BLOCKING",
+    "PHASE 1: Move validation-schema.json (security)",
+    "PHASE 2: Move breaking-change-detector.ts (P0 critical QA tool)",
+    "PHASE 3: Move core MCP schemas (server, tool-handlers, mcp-client, error-responses, type-defs)",
+    "PHASE 4: Move test infrastructure (models.py, validators, runners, docs - 9 files)",
+    "PHASE 5: Move CodeRef validators (EBNF, tag, path, drift - 874 LOC)",
+    "PHASE 6: Move planning schemas (analyzer, generator, validator, constants)",
+    "PHASE 7: Move plan validators (plan_validator, format_validator, schema_validator - 800 LOC)",
+    "PHASE 8: Extract QA templates (pytest.ini markers, pyproject.toml)",
+    "PHASE 9: Create resource sheet validation system (schema + validator + standards)"
+  ],
+
+  "language_considerations": {
+    "python": {
+      "files": 21,
+      "total_loc": "~3000",
+      "projects": ["coderef-workflow (validators)", "coderef-testing (test infrastructure)"],
+      "migration": "Direct migration - papertrail is Python-based"
+    },
+    "typescript": {
+      "files": 5,
+      "total_loc": 2030,
+      "projects": ["coderef-packages (validators, drift-detector, breaking-change-detector)"],
+      "migration_options": [
+        "Option 1: Port to Python (recommended for consistency)",
+        "Option 2: Keep TypeScript, add Node.js runtime to papertrail",
+        "Option 3: Expose via subprocess/CLI interface from papertrail"
+      ],
+      "recommendation": "Start with Option 3 (CLI interface) for speed, plan Option 1 (Python port) for long-term"
+    }
+  },
+
+  "dependencies": {
+    "schema_dependencies": [
+      {"schema": "tool-handlers-schema.json", "depends_on": ["error-responses-schema.json", "type-defs-schema.json"]},
+      {"validator": "plan_validator.py", "depends_on": ["plan.schema.json"]},
+      {"validator": "schema_validator.py", "depends_on": ["all schemas - move last"]}
+    ],
+    "module_dependencies": [
+      {"file": "cli/src/validator.ts", "depends_on": "@coderef/core (external package)"},
+      {"file": "breaking-change-detector.ts", "depends_on": ["AnalyzerService", "GraphBuilder", "ImpactSimulator", "QueryExecutor"]},
+      {"file": "drift-detector.ts", "depends_on": "@coderef/core/scanCurrentElements"}
+    ]
+  },
+
+  "risk_assessment": {
+    "critical_risks": [
+      "CONFLICT-001: Incorrect plan.json merge could break ecosystem-wide plan validation",
+      "Language mismatch: 2030 LOC TypeScript validators require porting or runtime",
+      "Breaking-change-detector dependencies: Requires TypeScript Compiler API"
+    ],
+    "high_risks": [
+      "Import path updates: 50-100 imports across coderef-workflow need updating",
+      "Test coverage: All validators must pass 100% tests after migration"
+    ],
+    "medium_risks": [
+      "Schema dependency order: Moving schemas out of order causes validation failures",
+      "TypeScript runtime: Adding Node.js to papertrail increases complexity"
+    ],
+    "mitigation": [
+      "Create comprehensive test suite in papertrail before migration",
+      "Use feature flags to gradually switch projects to papertrail schemas",
+      "Maintain backward compatibility during transition period"
+    ]
+  },
+
+  "estimated_impact": {
+    "files_to_move": 39,
+    "projects_affected": 5,
+    "schemas_consolidated": 18,
+    "validators_consolidated": 10,
+    "qa_tools_consolidated": 8,
+    "total_loc_migrated": "5000+ LOC",
+    "import_paths_to_update": "100-150 (across coderef-workflow, coderef-testing, coderef-packages)",
+    "test_coverage_required": "100% (all validators + QA tools must pass)",
+    "estimated_effort": "3-5 days for full migration + testing + documentation"
+  },
+
+  "post_migration_tasks": {
+    "immediate": [
+      "Update all import paths in source projects",
+      "Run full test suite in papertrail (100% pass required)",
+      "Update validator.py in papertrail to load all new schemas",
+      "Create migration guide for remaining MCP servers"
+    ],
+    "follow_up": [
+      "Port TypeScript validators to Python (2030 LOC)",
+      "Create schema registry/index for discoverability",
+      "Implement schema versioning for breaking changes",
+      "Update documentation (README, ARCHITECTURE, CLAUDE.md)"
+    ],
+    "integration_testing": [
+      "Test plan validation with consolidated plan.schema.json",
+      "Test security validation with validation-schema.json",
+      "Test breaking change detection workflow",
+      "Test universal test runner across all frameworks"
+    ]
+  },
+
+  "recommendations": {
+    "immediate_actions": [
+      "CRITICAL: Resolve CONFLICT-001 (compare plan.json schemas)",
+      "Wait for remaining 3 agents to complete (coderef-assistant, coderef-docs, coderef-personas, coderef-dashboard)",
+      "Prioritize breaking-change-detector migration (P0 critical feature)",
+      "Create Python port roadmap for TypeScript validators"
+    ],
+    "future_considerations": [
+      "Establish universal naming convention: *.schema.json for schemas, *.validator.py for validators",
+      "Create unified QA tool registry in papertrail",
+      "Build TypeScript-to-Python transpiler for validator logic",
+      "Implement CI/CD validation checks using papertrail schemas"
+    ]
+  },
+
+  "next_steps": [
+    "1. RESOLVE CONFLICT-001: Read and compare plan.json vs plan.schema.json",
+    "2. Wait for 3 pending agent audits to complete (37.5% remaining)",
+    "3. Update manifest with findings from pending agents",
+    "4. Create detailed TypeScript migration strategy",
+    "5. Execute Phase 0-2 (conflict + security + breaking-change-detector)",
+    "6. Run pilot migration with 1 schema + 1 validator to validate process",
+    "7. Execute full migration plan (Phases 3-8)",
+    "8. Update all import paths across affected projects",
+    "9. Run comprehensive test suite (100% pass required)",
+    "10. Document migration in MIGRATION-LOG.md"
+  ],
+
+  "agent_notes": {
+    "coderef-context": "QA templates (pytest.ini, pyproject.toml) - extract patterns only",
+    "coderef-workflow": "GOLDMINE - 11 schemas + 3 validators (~800 LOC) for planning system",
+    "coderef-testing": "Universal test infrastructure - 9 files, framework-agnostic, production-ready",
+    "coderef-packages": "CRITICAL - 2030 LOC TypeScript validators including P0 breaking-change-detector",
+    "papertrail": "BASELINE - 5 UDS schemas, target destination for all migrations"
+  },
+
+  "completion_status": {
+    "agents_complete": "5/8 (62.5%)",
+    "agents_pending": "3/8 (37.5%)",
+    "estimated_final_total": "60-80 files (based on current 56 from 5 agents)",
+    "confidence": "HIGH - Major validation sources discovered (coderef-workflow, coderef-testing, coderef-packages)"
+  }
+}

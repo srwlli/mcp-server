@@ -1,0 +1,362 @@
+{
+  "metadata": {
+    "format": "coderef-graph",
+    "version": "2.0.0",
+    "exportedAt": "2026-01-03T11:50:18.500Z",
+    "nodeCount": 262,
+    "edgeCount": 241
+  },
+  "nodes": [
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:__init__",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:__init__",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 23
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:detect_frameworks",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:detect_frameworks",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 385
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:clear_cache",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:clear_cache",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 390
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_pytest",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_pytest",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 131
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_pytest_version",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_pytest_version",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 162
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_pytest_config",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_pytest_config",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 178
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_jest",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_jest",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 196
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_jest_version",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_jest_version",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 219
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_jest_config",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_jest_config",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 232
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_vitest",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_vitest",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 243
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_vitest_version",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_vitest_version",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 265
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_vitest_config",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_vitest_config",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 278
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_cargo",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_cargo",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 289
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_cargo_version",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_cargo_version",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 314
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_cargo_toml",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_cargo_toml",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 319
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_mocha",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_detect_mocha",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 329
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_mocha_version",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_get_mocha_version",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 360
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_mocha_config",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:_find_mocha_config",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 373
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:FrameworkDetector",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py:FrameworkDetector",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 20
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:calculate_success_rate",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:calculate_success_rate",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 72
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestStatus",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestStatus",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 10
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestFramework",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestFramework",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 21
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:FrameworkInfo",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:FrameworkInfo",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 32
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestResult",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestResult",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 43
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestSummary",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestSummary",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 59
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:CoverageInfo",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:CoverageInfo",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 82
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:UnifiedTestResults",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:UnifiedTestResults",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 91
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:FrameworkDetectionResult",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:FrameworkDetectionResult",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 107
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestRunRequest",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestRunRequest",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 116
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestAnalysisResult",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py:TestAnalysisResult",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/models.py",
+      "line": 127
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:__init__",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:__init__",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 22
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:load_plan",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:load_plan",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 28
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:generate_proof_report",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:generate_proof_report",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 35
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:_generate_plan_comparison",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:_generate_plan_comparison",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 216
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:save_report",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:save_report",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 243
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:TestingProofGenerator",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py:TestingProofGenerator",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/proof_generator.py",
+      "line": 19
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:analyze_coverage",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:analyze_coverage",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 363
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:detect_flaky_tests",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:detect_flaky_tests",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 368
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:analyze_performance",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:analyze_performance",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 373
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:validate_test_health",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:validate_test_health",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 378
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:compare_results",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:compare_results",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 246
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_failing_tests",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_failing_tests",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 293
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_test_distribution_by_status",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_test_distribution_by_status",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 317
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_test_distribution_by_file",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:get_test_distribution_by_file",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 334
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:ResultAnalyzer",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py:ResultAnalyzer",
+      "type": "class",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/result_analyzer.py",
+      "line": 18
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:__init__",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:__init__",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+      "line": 24
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:aggregate_results",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:aggregate_results",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+      "line": 468
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:archive_results",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:archive_results",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+      "line": 473
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:get_archived_results",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:get_archived_results",
+      "type": "function",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+      "line": 159
+    },
+    {
+      "id": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:get_latest_result",
+      "name": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py:get_latest_result",
+      "type": "method",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/test_aggregator.py",
+      "line": 186
+    }
+  ],
+  "edges": []
+}

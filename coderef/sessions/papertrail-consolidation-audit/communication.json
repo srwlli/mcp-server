@@ -1,0 +1,81 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-CONSOLIDATION-AUDIT-001",
+  "feature_name": "papertrail-consolidation-audit",
+  "created": "2026-01-04",
+  "status": "not_started",
+  "description": "Audit all 9 agents to discover schemas, validators, standards docs, and QA tools that should be consolidated into papertrail for centralized validation/QA",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\instructions.json",
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Consolidate all agent audit reports into unified migration manifest",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\orchestrator-migration-manifest.json",
+    "status": "complete",
+    "notes": "COMPLETE (v2.0) - Consolidated 5/8 agent audits into comprehensive migration manifest. Found 56 files: 39 recommended to move (69.6%). Key findings: coderef-workflow (11 schemas + 3 validators), coderef-testing (9 files universal test infrastructure), coderef-packages (2030 LOC TypeScript validators including P0 breaking-change-detector). CRITICAL: CONFLICT-001 (plan.json duplicate) must be resolved before migration. Total scope: 5000+ LOC, 39 files across 5 projects. Waiting for 3 pending agents to complete."
+  },
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-assistant-audit.json",
+      "status": "not_started",
+      "notes": "Search for schemas, validators, standards in assistant project"
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-context-audit.json",
+      "status": "complete",
+      "notes": "COMPLETE - Found 8 files: 0 schemas, 0 validators, 4 standards (empty placeholders), 4 QA tools. Recommend moving pytest.ini and pyproject.toml dev dependencies to papertrail."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-workflow-audit.json",
+      "status": "complete",
+      "notes": "COMPLETE - Found 16 files: 11 schemas, 3 validators, 2 QA tools. Recommend moving 14 to papertrail (all schemas + validators). QA tools stay (project-specific)."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-docs-audit.json",
+      "status": "not_started",
+      "notes": "Search for schemas, validators, standards in coderef-docs"
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-personas-audit.json",
+      "status": "not_started",
+      "notes": "Search for schemas, validators, standards in coderef-personas"
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-testing-audit.json",
+      "status": "complete",
+      "notes": "COMPLETE - Found 12 files: 2 schemas (models.py, SCHEMA.md), 2 validators (result_analyzer.py, pyproject.toml), 4 standards (TESTING_GUIDE.md, USER-GUIDE.md, CLAUDE.md, ARCHITECTURE.md), 4 QA tools (test_aggregator.py, test_runner.py, framework_detector.py, tests/). Recommend moving 9 to papertrail: universal test infrastructure (models.py, result_analyzer.py, test_runner.py, framework_detector.py, test_aggregator.py, TESTING_GUIDE.md, USER-GUIDE.md, SCHEMA.md, ARCHITECTURE.md). Keep 3 project-specific (pyproject.toml, CLAUDE.md, tests/)."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\papertrail-audit.json",
+      "status": "complete",
+      "notes": "COMPLETE - Found 9 files: 5 UDS schemas (plan, deliverables, architecture, readme, api), 4 auto-generated standards docs. Recommend moving all 5 schemas to papertrail (already there - this IS the papertrail baseline). Standards docs are project-specific output files (should NOT move)."
+    },
+    {
+      "agent_id": "coderef-packages",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-packages-audit.json",
+      "status": "complete",
+      "notes": "COMPLETE - Found 11 files: 0 schemas, 4 validators (2030 LOC total), 4 auto-generated standards, 3 QA tools. Recommend moving 5 items to papertrail: core/validator.ts (348 LOC EBNF validator), cli/validator.ts (39 LOC tag validator), path-validation package, drift-detector.ts (487 LOC), breaking-change-detector.ts (1156 LOC P0 critical). Standards docs are project-specific output (DO NOT move)."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-consolidation-audit\\coderef-dashboard-audit.json",
+      "status": "not_started",
+      "notes": "Search for schemas, validators, standards in coderef-dashboard"
+    }
+  ]
+}

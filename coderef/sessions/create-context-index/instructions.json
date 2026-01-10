@@ -1,0 +1,64 @@
+{
+  "workorder_id": "WO-CONTEXT-INDEX-001",
+  "task": "Context File Discovery and Cataloging",
+  "description": "Search projects for reference sheets, documentation files, and other context-rich files useful for AI agents",
+
+  "orchestrator_instructions": {
+    "role": "Aggregate all project-specific indexes into a master context catalog",
+    "steps": {
+      "step_1": "READ all 3 agent output files (coderef-system-index.md, coderef-dashboard-index.md, coderef-core-index.md)",
+      "step_2": "COMBINE all file lists into a single master-context-index.md organized by project",
+      "step_3": "ADD summary statistics (total files per project, total across all projects)",
+      "step_4": "UPDATE orchestrator.status in communication.json to 'complete'"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Search assigned project directory for context-useful files and create file index",
+    "steps": {
+      "step_1": "SEARCH your project directory (in communication.json agents[].agent_path) for these file types: *.md, *.txt, *-schema.json, *-template.*, CLAUDE.md, README.md, ARCHITECTURE.md, API.md, resource-sheet-*.md, reference-*.md, docs/*, .coderef/*, coderef/*, guide-*.md",
+      "step_2": "CREATE simple list in your output file (no descriptions, just file paths relative to project root)",
+      "step_3": "ORGANIZE by category: Documentation, Schemas, Templates, Reference Sheets, Other",
+      "step_4": "UPDATE your status in communication.json to 'complete'"
+    },
+
+    "search_patterns": [
+      "**/*.md (all markdown files)",
+      "**/*-schema.json (JSON schemas)",
+      "**/*-template.* (templates)",
+      "**/CLAUDE.md (AI context docs)",
+      "**/README.md (project documentation)",
+      "**/ARCHITECTURE.md (architecture docs)",
+      "**/API.md (API documentation)",
+      "**/resource-sheet-*.md (resource sheets)",
+      "**/reference-*.md (reference guides)",
+      "**/docs/** (documentation folders)",
+      "**/.coderef/** (coderef directories)",
+      "**/coderef/** (coderef directories)",
+      "**/guide-*.md (guides)",
+      "**/*-guide.md (guides)",
+      "**/quickref.md (quick references)",
+      "**/standards/** (standards documentation)"
+    ],
+
+    "file_categories": {
+      "Documentation": ["README.md", "CLAUDE.md", "ARCHITECTURE.md", "API.md", "docs/"],
+      "Schemas": ["*-schema.json", "schema.json", "*.schema.json"],
+      "Templates": ["*-template.*", "template-*", "templates/"],
+      "Reference Sheets": ["resource-sheet-*.md", "reference-*.md", "quickref.md"],
+      "Guides": ["guide-*.md", "*-guide.md", "guides/"],
+      "Standards": ["standards/", "*-standard.md"],
+      "Other": ["*.txt", "notes/", "*.json (non-schema)"]
+    }
+  },
+
+  "output_format": "markdown",
+
+  "output_template": "# {Project Name} - Context File Index\n\n**Project Path:** {path}\n**Generated:** {date}\n**Total Files:** {count}\n\n---\n\n## Documentation\n\n- path/to/file1.md\n- path/to/file2.md\n\n## Schemas\n\n- path/to/schema.json\n\n## Templates\n\n- path/to/template.md\n\n## Reference Sheets\n\n- path/to/reference.md\n\n## Guides\n\n- path/to/guide.md\n\n## Standards\n\n- path/to/standard.md\n\n## Other\n\n- path/to/other.txt\n\n---\n\n**Note:** All paths are relative to project root.",
+
+  "quality_standards": {
+    "completeness": "Agent finds ALL matching files in project directory using glob patterns",
+    "accuracy": "File paths are correct and relative to project root",
+    "format": "Simple markdown list organized by category, NO descriptions or explanations"
+  }
+}

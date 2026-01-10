@@ -1,0 +1,211 @@
+{
+  "agent_id": "coderef-docs-agent",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "audit_date": "2026-01-04",
+
+  "findings": {
+    "schemas": [
+      {
+        "file_path": "schemas/plan.schema.json",
+        "file_name": "plan.schema.json",
+        "purpose": "Validates implementation plan.json structure - 10-section planning format with phases, tasks, and metadata",
+        "used_by": ["schema_validator.py", "generators/plan_validator.py", "coderef-workflow MCP server (external)"],
+        "should_move": true,
+        "notes": "Core planning schema used across ecosystem. Referenced by coderef-workflow. Single source of truth for plan structure. DUPLICATE exists at coderef/schemas/plan.schema.json - need consolidation."
+      },
+      {
+        "file_path": "coderef/schemas/plan.schema.json",
+        "file_name": "plan.schema.json",
+        "purpose": "DUPLICATE of schemas/plan.schema.json - validates plan.json structure",
+        "used_by": ["generators/plan_validator.py (via SCHEMA_PATH)"],
+        "should_move": false,
+        "notes": "DUPLICATE - should be removed. Keep schemas/plan.schema.json as single source of truth."
+      },
+      {
+        "file_path": "schemas/stub.schema.json",
+        "file_name": "stub.schema.json",
+        "purpose": "Validates stub.json files - lightweight feature placeholders for backlog tracking",
+        "used_by": ["No direct usage found - likely used by coderef-workflow"],
+        "should_move": true,
+        "notes": "Defines stub.json contract for feature backlog. Reusable across projects."
+      },
+      {
+        "file_path": "coderef/inventory/api-schema.json",
+        "file_name": "api-schema.json",
+        "purpose": "Validates API endpoint inventory manifests (FastAPI, Flask, Express, GraphQL)",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates external API discovery contracts."
+      },
+      {
+        "file_path": "coderef/inventory/database-schema.json",
+        "file_name": "database-schema.json",
+        "purpose": "Validates database schema inventory for SQL and NoSQL systems (PostgreSQL, MySQL, MongoDB, SQLite)",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates database discovery contracts."
+      },
+      {
+        "file_path": "coderef/inventory/config-schema.json",
+        "file_name": "config-schema.json",
+        "purpose": "Validates configuration inventory manifests",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates config discovery contracts."
+      },
+      {
+        "file_path": "coderef/inventory/tests-schema.json",
+        "file_name": "tests-schema.json",
+        "purpose": "Validates test inventory manifests",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates test discovery contracts."
+      },
+      {
+        "file_path": "coderef/inventory/documentation-schema.json",
+        "file_name": "documentation-schema.json",
+        "purpose": "Validates documentation inventory manifests",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates documentation discovery contracts."
+      },
+      {
+        "file_path": "coderef/inventory/dependencies-schema.json",
+        "file_name": "dependencies-schema.json",
+        "purpose": "Validates dependency inventory manifests",
+        "used_by": ["Referenced in coderef/inventory/config.json"],
+        "should_move": true,
+        "notes": "Part of inventory manifest system. Validates dependency discovery contracts."
+      },
+      {
+        "file_path": "resource_sheet/schemas/resourcesheetgenerator.schema.json",
+        "file_name": "resourcesheetgenerator.schema.json",
+        "purpose": "Validates ResourceSheetGenerator output - defines structure for architecture, integration, testing, and performance modules",
+        "used_by": ["resource_sheet/resource_sheet_generator.py (WO-RESOURCE-SHEET-MCP-TOOL-001)"],
+        "should_move": true,
+        "notes": "Core resource sheet schema. Part of composable module-based documentation system. Validates 3-format output (Markdown + JSON Schema + JSDoc)."
+      },
+      {
+        "file_path": "resource_sheet/schemas/testelement.schema.json",
+        "file_name": "testelement.schema.json",
+        "purpose": "Validates TestElement resource sheet structure",
+        "used_by": ["resource_sheet/resource_sheet_generator.py"],
+        "should_move": true,
+        "notes": "Part of resource sheet system. Validates test element documentation."
+      },
+      {
+        "file_path": "resource_sheet/examples/sample-authservice.schema.json",
+        "file_name": "sample-authservice.schema.json",
+        "purpose": "Example output schema (not a validator) - demonstrates AuthService resource sheet format",
+        "used_by": ["Documentation/examples only"],
+        "should_move": false,
+        "notes": "EXAMPLE FILE - not a validator. Should stay as documentation artifact."
+      },
+      {
+        "file_path": "coderef/reference-sheets/resource-sheet-generation-system/resource-sheet-generation-system.schema.json",
+        "file_name": "resource-sheet-generation-system.schema.json",
+        "purpose": "Schema documenting the resource sheet generation system itself",
+        "used_by": ["Documentation only"],
+        "should_move": false,
+        "notes": "Project-specific documentation artifact. Not a reusable validator."
+      },
+      {
+        "file_path": "mcp-specific-context/feature-context-schema.json",
+        "file_name": "feature-context-schema.json",
+        "purpose": "Validates MCP feature context structure",
+        "used_by": ["Unknown - likely MCP server internal usage"],
+        "should_move": true,
+        "notes": "Validates MCP-specific contracts. Reusable across MCP servers."
+      },
+      {
+        "file_path": "templates/risk/assessment-schema.json",
+        "file_name": "assessment-schema.json",
+        "purpose": "Validates risk assessment output structure",
+        "used_by": ["templates/risk/ risk assessment generator"],
+        "should_move": true,
+        "notes": "Validates risk assessment contracts. Reusable quality gate schema."
+      }
+    ],
+    "validators": [],
+    "standards": [
+      {
+        "file_path": "coderef/standards/UI-STANDARDS.md",
+        "file_name": "UI-STANDARDS.md",
+        "purpose": "Defines UI patterns extracted from codebase (color, button, typography patterns)",
+        "used_by": ["generators/standards_generator.py (establish_standards tool)", "generators/audit_generator.py (audit_codebase tool)"],
+        "should_move": true,
+        "notes": "Generated by establish_standards tool. Used for compliance auditing. Reusable quality gate. DUPLICATE exists at coderef/foundation/standards/UI-STANDARDS.md."
+      },
+      {
+        "file_path": "coderef/standards/BEHAVIOR-STANDARDS.md",
+        "file_name": "BEHAVIOR-STANDARDS.md",
+        "purpose": "Defines behavior patterns extracted from codebase (error handling, loading states, data flow)",
+        "used_by": ["generators/standards_generator.py", "generators/audit_generator.py"],
+        "should_move": true,
+        "notes": "Generated by establish_standards tool. Used for compliance auditing. Reusable quality gate. DUPLICATE exists at coderef/foundation/standards/BEHAVIOR-STANDARDS.md."
+      },
+      {
+        "file_path": "coderef/standards/UX-PATTERNS.md",
+        "file_name": "UX-PATTERNS.md",
+        "purpose": "Defines UX patterns extracted from codebase (navigation, permissions, user feedback)",
+        "used_by": ["generators/standards_generator.py", "generators/audit_generator.py"],
+        "should_move": true,
+        "notes": "Generated by establish_standards tool. Used for compliance auditing. Reusable quality gate. DUPLICATE exists at coderef/foundation/standards/UX-PATTERNS.md."
+      },
+      {
+        "file_path": "coderef/standards/COMPONENT-INDEX.md",
+        "file_name": "COMPONENT-INDEX.md",
+        "purpose": "Index of discovered components with file locations",
+        "used_by": ["generators/standards_generator.py"],
+        "should_move": true,
+        "notes": "Generated by establish_standards tool. Component inventory. DUPLICATE exists at coderef/foundation/standards/COMPONENT-INDEX.md."
+      },
+      {
+        "file_path": "coderef/foundation/standards/UI-STANDARDS.md",
+        "file_name": "UI-STANDARDS.md",
+        "purpose": "DUPLICATE of coderef/standards/UI-STANDARDS.md",
+        "used_by": ["Unknown"],
+        "should_move": false,
+        "notes": "DUPLICATE - should be removed. Keep coderef/standards/ as single source of truth."
+      },
+      {
+        "file_path": "coderef/foundation/standards/BEHAVIOR-STANDARDS.md",
+        "file_name": "BEHAVIOR-STANDARDS.md",
+        "purpose": "DUPLICATE of coderef/standards/BEHAVIOR-STANDARDS.md",
+        "used_by": ["Unknown"],
+        "should_move": false,
+        "notes": "DUPLICATE - should be removed. Keep coderef/standards/ as single source of truth."
+      },
+      {
+        "file_path": "coderef/foundation/standards/UX-PATTERNS.md",
+        "file_name": "UX-PATTERNS.md",
+        "purpose": "DUPLICATE of coderef/standards/UX-PATTERNS.md",
+        "used_by": ["Unknown"],
+        "should_move": false,
+        "notes": "DUPLICATE - should be removed. Keep coderef/standards/ as single source of truth."
+      },
+      {
+        "file_path": "coderef/foundation/standards/COMPONENT-INDEX.md",
+        "file_name": "COMPONENT-INDEX.md",
+        "purpose": "DUPLICATE of coderef/standards/COMPONENT-INDEX.md",
+        "used_by": ["Unknown"],
+        "should_move": false,
+        "notes": "DUPLICATE - should be removed. Keep coderef/standards/ as single source of truth."
+      }
+    ],
+    "qa_tools": []
+  },
+
+  "summary": {
+    "total_files_found": 23,
+    "schemas_count": 15,
+    "validators_count": 0,
+    "standards_count": 8,
+    "qa_tools_count": 0,
+    "recommended_to_move": 14,
+    "duplicates_found": 5,
+    "examples_found": 1
+  },
+
+  "agent_recommendation": "Move 14 schemas and standards files to papertrail as reusable validation/quality gates. These files validate external contracts (plan.json, stub.json, inventory manifests, resource sheets, risk assessments) and define coding standards (UI/UX/behavior patterns). CRITICAL: Consolidate 5 duplicates first (plan.schema.json x2, 4 standards files x2). Keep 1 example file (sample-authservice.schema.json) and 1 project-specific doc (resource-sheet-generation-system.schema.json) in coderef-docs. All inventory schemas (6 files) are strong candidates for papertrail as they validate discovery contracts across API/database/config/tests/docs/dependencies domains."
+}

@@ -1,0 +1,73 @@
+{
+  "workorder_id": "WO-SCANNER-001",
+  "task": "CodeRef Scanner Integration - Phase 1",
+  "description": "Integrate coderef-core scanning logic into dashboard UI (Step 1 of incremental build)",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate agents and verify integration works end-to-end",
+    "steps": {
+      "step_1": "READ each agent's output.json to understand what was implemented",
+      "step_2": "VERIFY that coderef-core exposes scanning API",
+      "step_3": "VERIFY that dashboard scanner component can call coderef-core",
+      "step_4": "CREATE orchestrator-output.json with integration status and next steps"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Implement assigned piece of scanner integration",
+    "steps": {
+      "step_1": "READ your section of instructions below",
+      "step_2": "IMPLEMENT the simple, focused task assigned to you",
+      "step_3": "CREATE output.json at your path in communication.json with what you did"
+    },
+
+    "coderef-system_specific": {
+      "task": "Ensure coderef package can bridge coderef-core to dashboard",
+      "instructions": [
+        "READ coderef-core to understand what scanning functions exist",
+        "CREATE simple export/re-export if needed",
+        "DOCUMENT the API surface for dashboard consumption"
+      ],
+      "deliverable": "JSON with exported functions and usage examples"
+    },
+
+    "coderef-core_specific": {
+      "task": "Expose core scanning functionality in a simple, consumable way",
+      "instructions": [
+        "IDENTIFY the main scanning entry point (likely scan() or similar)",
+        "ENSURE it's exported and callable from outside packages",
+        "DOCUMENT the function signature and expected inputs/outputs"
+      ],
+      "deliverable": "JSON with function signature, parameters, and return type"
+    },
+
+    "dashboard-scanner_specific": {
+      "task": "Create basic scanner UI component that can call coderef-core",
+      "instructions": [
+        "CREATE a simple React component in scanner directory",
+        "IMPORT the scanning function from coderef-core (via coderef package)",
+        "ADD a button that triggers the scan (hardcoded path for now)",
+        "DISPLAY scan results in a simple <pre> tag"
+      ],
+      "deliverable": "JSON with component file path, key functions, and basic usage"
+    }
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "agent_id": "agent-name",
+    "completed_step": "step description",
+    "files_created": ["path1", "path2"],
+    "files_modified": ["path1"],
+    "key_exports": ["function1", "function2"],
+    "notes": "Any important context or blockers",
+    "next_step_recommendation": "What should happen next"
+  },
+
+  "quality_standards": {
+    "completeness": "Each agent completes their specific task and creates output.json",
+    "accuracy": "Exported functions are documented with signatures",
+    "format": "All outputs must be valid JSON matching the template structure"
+  }
+}

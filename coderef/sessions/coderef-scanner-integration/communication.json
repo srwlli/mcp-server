@@ -1,0 +1,51 @@
+{
+  "workorder_id": "WO-SCANNER-001",
+  "feature_name": "coderef-scanner-integration",
+  "created": "2026-01-04",
+  "status": "not_started",
+  "description": "Build full functioning CodeRef scanner on dashboard by integrating coderef-core scanning logic",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-scanner-integration\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate scanner integration across coderef-system, coderef-core, and dashboard packages",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-scanner-integration\\orchestrator-output.json",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef",
+      "role": "Implement coderef package integration layer",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-scanner-integration\\coderef-system-output.json",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-core",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "role": "Expose core scanning functionality for dashboard consumption",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-scanner-integration\\coderef-core-output.json",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "dashboard-scanner",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\scanner",
+      "role": "Build UI scanner component consuming coderef-core",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-scanner-integration\\dashboard-scanner-output.json",
+      "status": "not_started",
+      "notes": ""
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 3
+  }
+}

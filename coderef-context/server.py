@@ -2,34 +2,35 @@
 """
 CodeRef Context MCP Server
 
-Exposes @coderef/core CLI tools as standardized MCP tools for Claude agents.
+Reads pre-scanned code intelligence from .coderef/ directory.
+Provides fast, read-only access to code analysis for workflow and docs agents.
 
 Tools exposed:
-- /scan - Discover code elements
+- /scan - Get scanned code elements
 - /query - Query relationships (what-calls, what-imports, shortest-path)
 - /impact - Analyze change impact
 - /complexity - Function/class complexity metrics
 - /patterns - Discover patterns and test gaps
 - /coverage - Test coverage analysis
-- /context - Generate comprehensive codebase context
+- /context - Get comprehensive codebase context
 - /validate - Validate CodeRef2 references
 - /drift - Detect drift between index and code
-- /diagram - Generate dependency diagrams
-- /tag - Add CodeRef2 tags to source files
-- /export - Export data in various formats (JSON, JSON-LD, Mermaid, DOT)
+- /diagram - Get dependency diagrams
+- /tag - Add CodeRef2 tags (requires CLI)
+- /export - Get exported data (JSON, JSON-LD, Mermaid, DOT)
 
 Architecture:
-- Each tool wraps a @coderef/core CLI command
-- Subprocess calls for isolation and reliability
-- JSON parsing for agent consumption
+- Reads from .coderef/ directory (pre-scanned by dashboard or scripts)
+- No subprocess overhead (100x faster than CLI)
+- Direct file access for instant results
+- Read-only operations (safe)
 """
 
-__version__ = "1.2.0"
+__version__ = "2.0.0"
 __mcp_version__ = "1.0"
 
 import asyncio
 import os
-import subprocess
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -38,58 +39,27 @@ from mcp.server import Server
 from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
 
-# Import processors
-from processors.export_processor import export_coderef
-
-# Get CLI path - check global install first, then local, then environment variable
-def get_cli_command():
-    """Get the CLI command, checking global install first."""
-    # 1. Check if coderef is globally installed (via npm) AND actually works
-    try:
-        result = subprocess.run(
-            ["where", "coderef"] if os.name == "nt" else ["which", "coderef"],
-            capture_output=True,
-            text=True,
-            timeout=5
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            global_path = result.stdout.strip().split('\n')[0]
-            # Test if it actually works
-            test_result = subprocess.run(
-                ["coderef", "--version"],
-                capture_output=True,
-                timeout=5
-            )
-            if test_result.returncode == 0:
-                print(f"[coderef-context] Using global coderef install: {global_path}")
-                return ["coderef"]
-            else:
-                print(f"[coderef-context] Global coderef exists but doesn't work, using local")
-    except Exception as e:
-        print(f"[coderef-context] Global coderef check failed: {e}")
-
-    # 2. Fall back to local development path
-    default_cli_path = os.path.expandvars(
-        r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
-    )
-    cli_path = os.environ.get("CODEREF_CLI_PATH", default_cli_path)
-    cli_bin = os.path.join(cli_path, "dist", "cli.js")
-
-    if os.path.exists(cli_bin):
-        print(f"[coderef-context] Using local CLI: {cli_bin}")
-        return ["node", cli_bin]
-
-    # 3. If nothing works, try environment variable path
-    print(f"[coderef-context] WARNING: CLI not found at {cli_bin}, will try 'coderef' command")
-    return ["coderef"]
-
-CLI_COMMAND = get_cli_command()
+# Import refactored handlers (read from .coderef/ files)
+from src.handlers_refactored import (
+    handle_coderef_scan,
+    handle_coderef_query,
+    handle_coderef_impact,
+    handle_coderef_complexity,
+    handle_coderef_patterns,
+    handle_coderef_coverage,
+    handle_coderef_context,
+    handle_coderef_validate,
+    handle_coderef_drift,
+    handle_coderef_diagram,
+    handle_coderef_tag,
+    handle_coderef_export,
+)
 
 # Initialize MCP server
 app = Server("coderef-context")
 
 print(f"[coderef-context] Initializing MCP server v{__version__}")
-print(f"[coderef-context] CLI command: {' '.join(CLI_COMMAND)}")
+print(f"[coderef-context] Mode: File Reader (reads from .coderef/ directory)")
 
 
 # ============================================================================
@@ -420,13 +390,15 @@ async def list_tools() -> List[Tool]:
     ]
 
 
+
+
 # ============================================================================
-# Tool Handlers (Placeholder - will implement after CLI_SPEC.md)
+# Tool Handlers - Imported from handlers_refactored.py
 # ============================================================================
 
 @app.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
-    """Handle tool calls by wrapping @coderef/core CLI commands."""
+    """Handle tool calls by reading from .coderef/ directory."""
 
     try:
         if name == "coderef_scan":
@@ -458,658 +430,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 
     except Exception as e:
         return [TextContent(type="text", text=f"Error calling tool {name}: {str(e)}")]
-
-
-# ============================================================================
-# Tool Handler Implementations (Based on CLI_SPEC.md)
-# ============================================================================
-
-async def handle_coderef_scan(args: dict) -> list[TextContent]:
-    """Handle /scan tool - Discover code elements.
-
-    Uses async subprocess to prevent blocking the event loop.
-    Timeout: 120s (allows ~20-25s for large AST scans + buffer).
-    """
-    project_path = args.get("project_path", ".")
-    languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
-    use_ast = args.get("use_ast", False)
-
-    # Build CLI command: coderef scan <sourceDir> --lang ts,tsx --json [--ast]
-    cmd = [
-        *CLI_COMMAND, "scan",
-        project_path,
-        "--lang", ",".join(languages),
-        "--json"
-    ]
-    if use_ast:
-        cmd.append("--ast")
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Scan timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        # Parse JSON output (skip CLI progress messages)
-        try:
-            stdout_text = stdout.decode()
-            # Skip lines until we find JSON array or object
-            json_start = stdout_text.find('[')
-            if json_start == -1:
-                json_start = stdout_text.find('{')
-            if json_start >= 0:
-                stdout_text = stdout_text[json_start:]
-            data = json.loads(stdout_text)
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "elements_found": len(data) if isinstance(data, list) else 0,
-                "elements": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_query(args: dict) -> list[TextContent]:
-    """Handle /query tool - Query code relationships.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    query_type = args.get("query_type", "depends-on-me")
-    target = args.get("target")
-    max_depth = args.get("max_depth", 3)
-
-    if not target:
-        return [TextContent(type="text", text="Error: target parameter is required")]
-
-    # Build CLI command: coderef query <target> --type <type> --depth <depth> --format json
-    cmd = [
-        *CLI_COMMAND, "query",
-        target,
-        "--type", query_type,
-        "--depth", str(max_depth),
-        "--format", "json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Query timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            stdout_text = stdout.decode()
-            # Skip lines until we find JSON array or object
-            json_start = stdout_text.find('[')
-            if json_start == -1:
-                json_start = stdout_text.find('{')
-            if json_start >= 0:
-                stdout_text = stdout_text[json_start:]
-            data = json.loads(stdout_text)
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "query_type": query_type,
-                "target": target,
-                "results": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_impact(args: dict) -> list[TextContent]:
-    """Handle /impact tool - Analyze change impact.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    element = args.get("element")
-    operation = args.get("operation", "modify")
-    max_depth = args.get("max_depth", 3)
-
-    if not element:
-        return [TextContent(type="text", text="Error: element parameter is required")]
-
-    # Build CLI command: coderef impact <target> --depth <depth> --format json
-    cmd = [
-        *CLI_COMMAND, "impact",
-        element,
-        "--depth", str(max_depth),
-        "--format", "json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Impact analysis timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "element": element,
-                "operation": operation,
-                "impact": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_complexity(args: dict) -> list[TextContent]:
-    """Handle /complexity tool - Get complexity metrics.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    element = args.get("element")
-
-    if not element:
-        return [TextContent(type="text", text="Error: element parameter is required")]
-
-    # Complexity metrics come from context command with element filtering
-    # For now, return a note that this should use context command
-    cmd = [
-        *CLI_COMMAND, "context",
-        project_path,
-        "--lang", "ts,tsx,js,jsx",
-        "--json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            # Extract complexity info for target element if available
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "element": element,
-                "note": "Complexity metrics derived from context generation",
-                "context": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_patterns(args: dict) -> list[TextContent]:
-    """Handle /patterns tool - Discover patterns.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    pattern_type = args.get("pattern_type", "all")
-    limit = args.get("limit", 10)
-
-    # Pattern discovery comes from context command's test pattern analysis
-    cmd = [
-        *CLI_COMMAND, "context",
-        project_path,
-        "--lang", "ts,tsx,js,jsx",
-        "--json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Pattern discovery timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "pattern_type": pattern_type,
-                "limit": limit,
-                "patterns": data.get("testPatterns", {}) if isinstance(data, dict) else {}
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_coverage(args: dict) -> list[TextContent]:
-    """Handle /coverage tool - Test coverage analysis.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    format_type = args.get("format", "summary")
-
-    # Build CLI command: coderef coverage --format json
-    cmd = [
-        *CLI_COMMAND, "coverage",
-        "--format", "json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Coverage analysis timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "coverage": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_context(args: dict) -> list[TextContent]:
-    """Handle /context tool - Generate comprehensive context.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    languages = args.get("languages", ["ts", "tsx", "js", "jsx"])
-    output_format = args.get("output_format", "json")
-
-    # Build CLI command: coderef context <sourceDir> --lang <langs> --json
-    cmd = [
-        *CLI_COMMAND, "context",
-        project_path,
-        "--lang", ",".join(languages)
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Context generation timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "format": output_format,
-                "context": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_validate(args: dict) -> list[TextContent]:
-    """Handle /validate tool - Validate CodeRef references.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    pattern = args.get("pattern", "**/*.ts")
-
-    # Build CLI command: coderef validate <sourceDir> --pattern <pattern> --format json
-    cmd = [
-        *CLI_COMMAND, "validate",
-        project_path,
-        "--pattern", pattern,
-        "--format", "json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Validation timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "pattern": pattern,
-                "validation": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_drift(args: dict) -> list[TextContent]:
-    """Handle /drift tool - Detect reference drift.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    index_path = args.get("index_path", ".coderef-index.json")
-
-    # Build CLI command: coderef drift <sourceDir> --index <indexPath> --format json
-    cmd = [
-        *CLI_COMMAND, "drift",
-        project_path,
-        "--index", index_path,
-        "--format", "json"
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Drift detection timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        try:
-            data = json.loads(stdout.decode())
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "drift_report": data
-            }, indent=2))]
-        except json.JSONDecodeError as e:
-            return [TextContent(type="text", text=f"JSON parse error: {str(e)}")]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_diagram(args: dict) -> list[TextContent]:
-    """Handle /diagram tool - Generate dependency diagrams.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    project_path = args.get("project_path", ".")
-    diagram_type = args.get("diagram_type", "dependencies")
-    format_type = args.get("format", "mermaid")
-    depth = args.get("depth", 2)
-
-    # Build CLI command: coderef diagram --format <format> --depth <depth> --output stdout
-    cmd = [
-        *CLI_COMMAND, "diagram",
-        "--format", format_type,
-        "--depth", str(depth)
-    ]
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=project_path
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Diagram generation timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        stdout_text = stdout.decode()
-
-        # For non-JSON formats (mermaid, dot), return text directly
-        if format_type in ["mermaid", "dot"]:
-            return [TextContent(type="text", text=stdout_text)]
-
-        # For JSON format, parse and wrap
-        try:
-            data = json.loads(stdout_text)
-            return [TextContent(type="text", text=json.dumps({
-                "success": True,
-                "diagram": data
-            }, indent=2))]
-        except json.JSONDecodeError:
-            # If not JSON, return as-is
-            return [TextContent(type="text", text=stdout_text)]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_tag(args: dict) -> list[TextContent]:
-    """Handle /tag tool - Add CodeRef2 tags to source files.
-
-    Uses async subprocess to prevent blocking the event loop.
-    """
-    path = args.get("path")
-    if not path:
-        return [TextContent(type="text", text="Error: path parameter is required")]
-
-    # Build CLI command: coderef tag <path> [options]
-    cmd = [*CLI_COMMAND, "tag", path]
-
-    # Add optional flags
-    if args.get("dry_run", False):
-        cmd.append("--dry-run")
-    if args.get("force", False):
-        cmd.append("--force")
-    if args.get("verbose", False):
-        cmd.append("--verbose")
-    if args.get("update_lineno", False):
-        cmd.append("--update-lineno")
-    if args.get("include_private", False):
-        cmd.append("--include-private")
-
-    # Add optional parameters
-    if "lang" in args:
-        cmd.extend(["--lang", args["lang"]])
-    if "exclude" in args:
-        cmd.extend(["--exclude", args["exclude"]])
-
-    try:
-        # Use async subprocess instead of blocking subprocess.run()
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(),
-                timeout=120
-            )
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-            return [TextContent(type="text", text="Error: Tagging timeout (120s exceeded)")]
-
-        if process.returncode != 0:
-            return [TextContent(type="text", text=f"Error: {stderr.decode()}")]
-
-        stdout_text = stdout.decode()
-
-        # Return the output (shows files tagged, elements processed, etc.)
-        return [TextContent(type="text", text=stdout_text)]
-
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-async def handle_coderef_export(args: dict) -> list[TextContent]:
-    """Handle /export tool - Export coderef data in various formats.
-
-    Uses async subprocess to prevent blocking the event loop.
-    Delegates to export_processor module for CLI interaction.
-    """
-    project_path = args.get("project_path", ".")
-    format = args.get("format")
-    output_path = args.get("output_path")
-    max_nodes = args.get("max_nodes")
-
-    if not format:
-        return [TextContent(type="text", text="Error: format parameter is required")]
-
-    # Call export processor with CLI command
-    return await export_coderef(
-        cli_command=CLI_COMMAND,
-        project_path=project_path,
-        format=format,
-        output_path=output_path,
-        max_nodes=max_nodes,
-        timeout=120
-    )
 
 
 # ============================================================================

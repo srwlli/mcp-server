@@ -1,0 +1,355 @@
+{
+  "test_plan_id": "TP-RESOURCE-SHEET-CONSOLIDATION-001",
+  "workorder_id": "WO-RESOURCE-SHEET-CONSOLIDATION-001-TESTING",
+  "parent_workorder": "WO-RESOURCE-SHEET-CONSOLIDATION-001",
+  "version": "1.0.0",
+  "created": "2026-01-03",
+  "status": "plan_submitted",
+  "testing_agent": "Testing Specialist",
+
+  "executive_summary": {
+    "purpose": "Validate resource sheet consolidation implementation (Phases 2-3) before production deployment",
+    "scope": "Routing verification, element detection, graph integration, validation pipeline, performance benchmarks, output formats, edge cases",
+    "test_data": "15 P1 batch reference sheets + 20 element type definitions",
+    "execution_time_estimate": "2-4 hours for full test execution",
+    "success_threshold": "All critical requirements must pass with 0 failures"
+  },
+
+  "critical_requirements": {
+    "CR-1": {
+      "id": "CR-1",
+      "name": "Routing Works",
+      "description": "Every /create-resource-sheet invocation calls MCP tool (not .md file)",
+      "target": "100% routing to mcp__coderef-docs__generate_resource_sheet",
+      "priority": "critical",
+      "test_categories": ["routing_validation"]
+    },
+    "CR-2": {
+      "id": "CR-2",
+      "name": "Element Type Detection",
+      "description": "All 20 element types detected with confidence scoring",
+      "target": "80%+ confidence across all priority tiers",
+      "priority": "critical",
+      "test_categories": ["element_detection"]
+    },
+    "CR-3": {
+      "id": "CR-3",
+      "name": "Graph Auto-Fill",
+      "description": "60-80% average completion rate via graph queries",
+      "target": "60-80% average across 15 P1 examples",
+      "priority": "critical",
+      "test_categories": ["graph_integration"]
+    },
+    "CR-4": {
+      "id": "CR-4",
+      "name": "Validation Pipeline",
+      "description": "4-gate validation catches critical/major/minor errors",
+      "target": "100% error detection for structural, content, element-specific, auto-fill threshold checks",
+      "priority": "critical",
+      "test_categories": ["validation_pipeline"]
+    },
+    "CR-5": {
+      "id": "CR-5",
+      "name": "Performance Benchmarks",
+      "description": "End-to-end generation time under 2 seconds",
+      "target": "<500ms graph load, <50ms per query, <1s rendering, <2s total",
+      "priority": "critical",
+      "test_categories": ["performance_benchmarks"]
+    }
+  },
+
+  "test_categories": {
+    "category_1": {
+      "id": "CAT-1",
+      "name": "Routing Validation",
+      "description": "Verify slash command routes to MCP tool instead of .md file",
+      "priority": "critical",
+      "test_count": 3,
+      "estimated_duration": "15 minutes",
+      "test_cases": ["ROUTE-001", "ROUTE-002", "ROUTE-003"],
+      "success_criteria": {
+        "pass_threshold": "100% of routing tests pass",
+        "measurement": "Tool invocation logs + output verification",
+        "evidence_required": "MCP tool call traces for all 15 P1 examples"
+      }
+    },
+    "category_2": {
+      "id": "CAT-2",
+      "name": "Element Type Detection",
+      "description": "Verify 3-stage detection algorithm (filename → code analysis → fallback)",
+      "priority": "critical",
+      "test_count": 24,
+      "estimated_duration": "45 minutes",
+      "test_cases": ["DETECT-001", "DETECT-002", "DETECT-003", "DETECT-004"],
+      "success_criteria": {
+        "pass_threshold": "80%+ confidence for all 20 element types",
+        "measurement": "Confidence scores per element type",
+        "evidence_required": "Detection accuracy matrix: 20 types × 3 stages"
+      }
+    },
+    "category_3": {
+      "id": "CAT-3",
+      "name": "Graph Integration Auto-Fill",
+      "description": "Verify graph queries achieve 60-80% completion rate",
+      "priority": "critical",
+      "test_count": 5,
+      "estimated_duration": "30 minutes",
+      "test_cases": ["GRAPH-001", "GRAPH-002", "GRAPH-003", "GRAPH-004", "GRAPH-005"],
+      "success_criteria": {
+        "pass_threshold": "60-80% average completion across 15 P1 examples",
+        "measurement": "Auto-fill percentage per section + overall average",
+        "evidence_required": "Completion rate report: Dependencies (90%), Public API (95%), Usage Examples (70%), Required Dependencies (75%)"
+      }
+    },
+    "category_4": {
+      "id": "CAT-4",
+      "name": "Validation Pipeline",
+      "description": "Verify 4-gate validation catches errors correctly",
+      "priority": "critical",
+      "test_count": 5,
+      "estimated_duration": "30 minutes",
+      "test_cases": ["VALID-001", "VALID-002", "VALID-003", "VALID-004", "VALID-005"],
+      "success_criteria": {
+        "pass_threshold": "100% error detection for all gate categories",
+        "measurement": "Error detection rate per gate (structural, content, element-specific, auto-fill threshold)",
+        "evidence_required": "Validation report showing all 20+ validation rules enforced"
+      }
+    },
+    "category_5": {
+      "id": "CAT-5",
+      "name": "Performance Benchmarks",
+      "description": "Verify end-to-end performance meets targets",
+      "priority": "critical",
+      "test_count": 4,
+      "estimated_duration": "20 minutes",
+      "test_cases": ["PERF-001", "PERF-002", "PERF-003", "PERF-004"],
+      "success_criteria": {
+        "pass_threshold": "<2s total end-to-end generation time",
+        "measurement": "Timing metrics: graph load (<500ms), query execution (<50ms × 4), rendering (<1s)",
+        "evidence_required": "Performance report with 95th percentile timings across 15 P1 examples"
+      }
+    },
+    "category_6": {
+      "id": "CAT-6",
+      "name": "Output Format Validation",
+      "description": "Verify 3 output formats (markdown, JSON schema, JSDoc) are correct",
+      "priority": "high",
+      "test_count": 4,
+      "estimated_duration": "30 minutes",
+      "test_cases": ["FORMAT-001", "FORMAT-002", "FORMAT-003", "FORMAT-004"],
+      "success_criteria": {
+        "pass_threshold": "100% format correctness, 0 regression failures",
+        "measurement": "Format validation + diff comparison with P1 baseline",
+        "evidence_required": "Regression test report showing 0 content degradation vs P1 baseline"
+      }
+    },
+    "category_7": {
+      "id": "CAT-7",
+      "name": "Edge Cases & Error Handling",
+      "description": "Verify graceful degradation and error handling",
+      "priority": "medium",
+      "test_count": 4,
+      "estimated_duration": "20 minutes",
+      "test_cases": ["EDGE-001", "EDGE-002", "EDGE-003", "EDGE-004"],
+      "success_criteria": {
+        "pass_threshold": "100% graceful error handling, no crashes",
+        "measurement": "Error handling verification + manual review prompt validation",
+        "evidence_required": "Edge case handling report with graceful degradation examples"
+      }
+    }
+  },
+
+  "test_data": {
+    "p1_batch_reference_sheets": {
+      "location": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\coderef\\reference-sheets\\",
+      "file_count": 10,
+      "elements": {
+        "CONSTANTS": {
+          "formats": ["CONSTANTS.md", "constants-jsdoc.txt"],
+          "element_type": "constants",
+          "priority": "P2"
+        },
+        "ERROR-RESPONSES": {
+          "formats": ["ERROR-RESPONSES.md", "error-responses-jsdoc.txt"],
+          "element_type": "error_definitions",
+          "priority": "P2"
+        },
+        "MCP-CLIENT": {
+          "formats": ["MCP-CLIENT.md", "mcp-client-jsdoc.txt"],
+          "element_type": "api_clients",
+          "priority": "P1"
+        },
+        "TYPE-DEFS": {
+          "formats": ["TYPE-DEFS.md", "type-defs-jsdoc.txt"],
+          "element_type": "type_definitions",
+          "priority": "P2"
+        },
+        "VALIDATION": {
+          "formats": ["VALIDATION.md", "validation-jsdoc.txt"],
+          "element_type": "validation",
+          "priority": "P3"
+        }
+      },
+      "purpose": "Baseline for regression testing and quality validation"
+    },
+    "element_type_definitions": {
+      "source": ".claude/commands/resource-sheet-catalog.md",
+      "total_types": 20,
+      "priority_1": ["top_level_widgets", "stateful_containers", "global_state", "custom_hooks", "api_clients"],
+      "priority_2": ["data_models", "utility_modules", "constants", "error_definitions", "type_definitions"],
+      "priority_3": ["validation", "middleware", "transformers", "event_handlers", "services"],
+      "priority_4": ["configuration", "context_providers", "decorators", "factories", "observers"],
+      "detection_patterns": "Filename patterns + code analysis rules for 3-stage detection"
+    },
+    "synthetic_test_data": {
+      "purpose": "Test edge cases and validation pipeline",
+      "types": [
+        "Malformed input (missing sections)",
+        "Incomplete content (placeholder text)",
+        "Ambiguous element types (low confidence)",
+        "Invalid file paths",
+        "Missing graph data"
+      ]
+    }
+  },
+
+  "test_execution_sequence": [
+    {
+      "step": 1,
+      "category": "routing_validation",
+      "description": "Verify slash command routing to MCP tool",
+      "blocking": true,
+      "rationale": "Must pass before testing MCP tool features"
+    },
+    {
+      "step": 2,
+      "category": "element_detection",
+      "description": "Verify 3-stage element type detection",
+      "blocking": true,
+      "rationale": "Detection drives conditional module selection"
+    },
+    {
+      "step": 3,
+      "category": "graph_integration",
+      "description": "Verify graph queries for auto-fill",
+      "blocking": true,
+      "rationale": "Auto-fill is core value proposition (60-80% target)"
+    },
+    {
+      "step": 4,
+      "category": "validation_pipeline",
+      "description": "Verify 4-gate validation catches errors",
+      "blocking": true,
+      "rationale": "Quality gates prevent low-quality outputs"
+    },
+    {
+      "step": 5,
+      "category": "performance_benchmarks",
+      "description": "Verify performance meets <2s target",
+      "blocking": false,
+      "rationale": "Performance optimization can happen post-launch"
+    },
+    {
+      "step": 6,
+      "category": "output_format_validation",
+      "description": "Verify 3 output formats + P1 regression",
+      "blocking": false,
+      "rationale": "Format correctness but not blocking"
+    },
+    {
+      "step": 7,
+      "category": "edge_cases",
+      "description": "Verify graceful error handling",
+      "blocking": false,
+      "rationale": "Edge cases are nice-to-have, not showstoppers"
+    }
+  ],
+
+  "acceptance_criteria": {
+    "must_pass": [
+      "CR-1: 100% routing to MCP tool (all 15 P1 examples)",
+      "CR-2: 80%+ confidence for all 20 element types",
+      "CR-3: 60-80% average auto-fill rate",
+      "CR-4: 100% error detection for 4-gate validation",
+      "All P1 regression tests pass (0 content degradation)"
+    ],
+    "should_pass": [
+      "CR-5: <2s total generation time (95th percentile)",
+      "100% graceful error handling (no crashes)",
+      "All 3 output formats valid (markdown, JSON schema, JSDoc)"
+    ],
+    "nice_to_have": [
+      "Performance optimization opportunities identified",
+      "Edge case documentation complete"
+    ]
+  },
+
+  "rollback_plan": {
+    "trigger_conditions": [
+      "CR-1 failure: Routing doesn't work (critical)",
+      "CR-2 failure: <80% detection confidence (critical)",
+      "CR-3 failure: <60% auto-fill rate (critical)",
+      "CR-4 failure: Validation gates fail to catch errors (critical)",
+      "P1 regression failures: Output quality degraded vs baseline (major)"
+    ],
+    "rollback_steps": [
+      "1. Document all failures with evidence (logs, diffs, timing data)",
+      "2. Update instructions.json status to 'testing_failed'",
+      "3. Report findings to orchestrator with severity levels",
+      "4. Orchestrator delegates fixes to coderef-docs agent",
+      "5. Re-run tests after fixes implemented",
+      "6. Repeat until all critical requirements pass"
+    ],
+    "fallback_options": [
+      "Option 1: Fix critical issues, defer nice-to-have",
+      "Option 2: Deploy Phase 2 only (routing), defer Phase 3 (enhancements)",
+      "Option 3: Keep .md files, deprecate MCP tool consolidation"
+    ]
+  },
+
+  "test_environment": {
+    "requirements": [
+      "coderef-docs MCP server with Phases 2-3 complete",
+      "coderef-context MCP server accessible for graph integration",
+      ".coderef/exports/graph.json generated for test projects",
+      "P1 batch reference sheets accessible",
+      "Timing measurement tools (time command, Python timeit, etc.)"
+    ],
+    "setup_steps": [
+      "1. Verify coderef-docs agent has completed Phases 2-3",
+      "2. Verify all 15 P1 reference sheets accessible",
+      "3. Generate .coderef/exports/graph.json for coderef-workflow project",
+      "4. Prepare test data (synthetic malformed inputs for validation tests)",
+      "5. Set up logging/tracing for routing verification",
+      "6. Calibrate timing tools for performance benchmarks"
+    ]
+  },
+
+  "reporting": {
+    "format": "Structured JSON + Human-readable markdown",
+    "deliverables": [
+      "test-results.json - Structured pass/fail data for all test cases",
+      "test-report.md - Human-readable summary with evidence",
+      "performance-report.md - Timing data with charts/graphs",
+      "regression-report.md - P1 batch diff analysis",
+      "testing-handoff-complete.md - Final handoff to orchestrator"
+    ],
+    "communication_protocol": "Update instructions.json status after each category completes",
+    "success_communication": "Signal to orchestrator: 'All critical requirements passed. Ready for production.'",
+    "failure_communication": "Signal to orchestrator: 'Critical failures found. See test-report.md for details. Recommend rollback.'"
+  },
+
+  "notes": {
+    "testing_philosophy": "Test what matters: routing, detection, auto-fill, validation, performance. Don't over-test implementation details.",
+    "risk_areas": [
+      "Graph integration might fail if .coderef/exports/graph.json is missing or malformed",
+      "Detection confidence might be lower than 80% for rarely-used element types",
+      "Performance might exceed 2s target on first run (cold start), acceptable on warm runs"
+    ],
+    "assumptions": [
+      "coderef-docs agent will implement Phases 2-3 per CODEREF-DOCS-HANDOFF.md specifications",
+      "P1 batch reference sheets represent expected output quality",
+      "Graph data (.coderef/exports/graph.json) will be available for coderef-workflow project"
+    ]
+  }
+}

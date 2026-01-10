@@ -1,0 +1,152 @@
+{
+  "agent_id": "coderef-testing",
+  "workorder_id": "WO-DOC-OUTPUT-AUDIT-001",
+  "inputs": [
+    {
+      "file": "coderef/workorder/{feature}/plan.json",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Read testing strategy for proof reports"
+    },
+    {
+      "file": ".coderef/drift.json",
+      "type": "coderef_output",
+      "frequency": "often",
+      "purpose": "Impact-based test selection"
+    },
+    {
+      "file": ".coderef/index.json",
+      "type": "coderef_output",
+      "frequency": "rarely",
+      "purpose": "Fallback for changed files detection"
+    },
+    {
+      "file": "package.json",
+      "type": "config",
+      "frequency": "always",
+      "purpose": "Detect jest/vitest/mocha frameworks"
+    },
+    {
+      "file": "pytest.ini",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect pytest framework"
+    },
+    {
+      "file": "pyproject.toml",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect pytest config and version"
+    },
+    {
+      "file": "conftest.py",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect pytest test presence"
+    },
+    {
+      "file": "Cargo.toml",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect cargo/rust tests"
+    },
+    {
+      "file": ".mocharc.json",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Detect mocha framework config"
+    },
+    {
+      "file": ".mocharc.js",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Detect mocha framework config"
+    },
+    {
+      "file": ".mocharc.cjs",
+      "type": "config",
+      "frequency": "rarely",
+      "purpose": "Detect mocha framework config"
+    },
+    {
+      "file": "jest.config.js",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect jest config file path"
+    },
+    {
+      "file": "jest.config.ts",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect jest config file path"
+    },
+    {
+      "file": "vitest.config.ts",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect vitest config file path"
+    },
+    {
+      "file": "vitest.config.js",
+      "type": "config",
+      "frequency": "sometimes",
+      "purpose": "Detect vitest config file path"
+    },
+    {
+      "file": ".jest-results.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Parse jest test results"
+    },
+    {
+      "file": ".vitest-results.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Parse vitest test results"
+    },
+    {
+      "file": ".test-archive/*.json",
+      "type": "other",
+      "frequency": "often",
+      "purpose": "Read historical test results"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "AI agent context (not programmatic)"
+    },
+    {
+      "file": "README.md",
+      "type": "foundation_doc",
+      "frequency": "rarely",
+      "purpose": "User documentation (not programmatic)"
+    }
+  ],
+  "outputs": [
+    {
+      "file": "coderef/workorder/{feature}/{feature}-testing-proof.md",
+      "type": "workflow_doc",
+      "frequency": "sometimes",
+      "purpose": "Testing proof report with plan comparison"
+    },
+    {
+      "file": ".test-archive/{framework}_{timestamp}.json",
+      "type": "other",
+      "frequency": "always",
+      "purpose": "Archive test results with timestamps"
+    },
+    {
+      "file": ".jest-results.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Jest JSON output (triggered by runner)"
+    },
+    {
+      "file": ".vitest-results.json",
+      "type": "other",
+      "frequency": "sometimes",
+      "purpose": "Vitest JSON output (triggered by runner)"
+    }
+  ]
+}

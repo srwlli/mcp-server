@@ -1,28 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(cat:*)",
-      "Bash(mkdir:*)",
-      "Bash(git commit:*)",
-      "Bash(find:*)",
-      "Bash(python:*)",
-      "Bash(test:*)",
-      "mcp__coderef-personas__use_persona",
-      "mcp__coderef-workflow__create_plan",
-      "mcp__coderef-workflow__validate_implementation_plan",
-      "Bash(git push)",
-      "mcp__coderef-workflow__update_deliverables",
-      "mcp__coderef-docs__generate_foundation_docs",
-      "mcp__coderef-docs__generate_individual_doc",
-      "Bash(node:*)",
-      "Bash(/tmp/coderef-scan.json)",
-      "Bash(\"C:\\Users\\willh\\AppData\\Roaming\\npm\\coderef.CMD\" scan . --lang py --json)",
-      "Bash(.coderef/reports/patterns.json)",
-      "Bash(git checkout:*)",
-      "Bash(git merge:*)",
-      "Bash(cp:*)",
-      "Bash(rm:*)"
+      "SlashCommand(/create-workorder)",
+      "mcp__coderef-workflow__gather_context",
+      "mcp__coderef-workflow__execute_plan",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

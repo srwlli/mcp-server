@@ -1,0 +1,280 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "no-emoji-and-timestamp",
+    "workorder_id": "WO-NO-EMOJI-AND-TIMESTAMP-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": true,
+    "has_analysis": true,
+    "uds": {
+      "generated_by": "coderef-workflow v2.0.0",
+      "document_type": "Implementation Plan",
+      "last_updated": "2026-01-10",
+      "ai_assistance": true,
+      "next_review": "2026-02-09"
+    }
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {},
+    "1_executive_summary": {
+      "purpose": "Document two utility files in coderef-docs/coderef/ directory: timestamp.py (7.3K) for generating RSMS v2.0 and UDS-compliant timestamps with functions get_date(), get_timestamp(), get_iso_timestamp(); and remove-emojis.py (6.2K) CLI tool for stripping emojis from markdown/text files with dry-run, recursive processing, and custom pattern support",
+      "value_proposition": "Provide comprehensive documentation for these utility functions to improve discoverability and ease of use for developers working with the coderef-docs system",
+      "real_world_analogy": "Similar to building no-emoji-and-timestamp - systematically implementing each requirement to deliver complete functionality",
+      "use_case": "User requests no-emoji-and-timestamp \u2192 System implements: Document timestamp.py functions with parameter descriptions and return values, Document remove-emojis.py CLI arguments and usage examples, Explain RSMS v2.0 and UDS timestamp format compliance \u2192 Feature is functional",
+      "output": "Implemented 5 requirements: Document timestamp.py functions with parameter descriptions and return values, Document remove-emojis.py CLI arguments and usage examples, Explain RSMS v2.0 and UDS timestamp format compliance"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "complexity": "medium (estimated 5-15 files, 200-1000 lines)",
+      "scope": "Estimated 5 requirements affecting multiple components",
+      "file_system_risk": "low (standard code changes only)",
+      "dependencies": [
+        "Documentation only - no code changes",
+        "Follow existing documentation patterns in coderef-docs",
+        "Keep documentation concise and scannable"
+      ],
+      "performance_concerns": [
+        "No significant performance concerns identified - monitor during implementation"
+      ],
+      "security_considerations": [
+        "Follow existing security patterns - review during implementation"
+      ],
+      "breaking_changes": "none (extending existing functionality)"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "Identify during implementation based on feature scope"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "Existing modules and components - identify during implementation"
+        ],
+        "existing_external": [],
+        "new_external": [],
+        "new_internal": []
+      },
+      "architecture_context": "Follows existing patterns: Standard implementation patterns"
+    },
+    "4_key_features": {
+      "primary_features": [
+        "Document timestamp.py functions with parameter descriptions and return values",
+        "Document remove-emojis.py CLI arguments and usage examples",
+        "Explain RSMS v2.0 and UDS timestamp format compliance",
+        "Show practical examples for both utilities",
+        "Include error handling and edge cases"
+      ],
+      "secondary_features": [],
+      "edge_case_handling": [
+        "Empty or null input validation",
+        "Invalid input error handling",
+        "Boundary conditions and limits"
+      ],
+      "configuration_options": [
+        "None"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "SETUP-001: Create initial project structure and setup development environment with required dependencies",
+        "LOGIC-001: Implement Document timestamp.py functions with parameter descriptions and return values following existing project patterns and architecture",
+        "LOGIC-002: Implement Document remove-emojis.py CLI arguments and usage examples following existing project patterns and architecture",
+        "LOGIC-003: Implement Explain RSMS v2.0 and UDS timestamp format compliance following existing project patterns and architecture",
+        "LOGIC-004: Implement Show practical examples for both utilities following existing project patterns and architecture",
+        "LOGIC-005: Implement Include error handling and edge cases following existing project patterns and architecture",
+        "TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
+        "TEST-002: Write integration tests to verify end-to-end functionality and component interactions",
+        "DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Phase 1: Foundation",
+          "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
+          "tasks": [
+            "SETUP-001"
+          ],
+          "deliverables": [
+            "All files exist",
+            "Dependencies installed",
+            "Environment configured"
+          ]
+        },
+        {
+          "phase": 2,
+          "name": "Phase 2: Core Implementation",
+          "description": "Implement primary features and business logic following existing patterns",
+          "tasks": [
+            "LOGIC-001"
+          ],
+          "deliverables": [
+            "Happy path works end-to-end",
+            "Core functionality complete"
+          ]
+        },
+        {
+          "phase": 3,
+          "name": "Phase 3: Testing",
+          "description": "Comprehensive testing at unit, integration, and end-to-end levels",
+          "tasks": [
+            "TEST-001"
+          ],
+          "deliverables": [
+            "All tests passing",
+            "Coverage meets requirements"
+          ]
+        },
+        {
+          "phase": 4,
+          "name": "Phase 4: Documentation",
+          "description": "Complete documentation for users and developers",
+          "tasks": [
+            "DOC-001"
+          ],
+          "deliverables": [
+            "All documentation complete",
+            "Examples provided"
+          ]
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test individual functions and methods in isolation",
+        "Verify input validation and error handling",
+        "Test edge cases and boundary conditions",
+        "Achieve minimum 80% code coverage"
+      ],
+      "integration_tests": [
+        "Test component interactions and data flow",
+        "Verify end-to-end functionality",
+        "Test integration with existing systems"
+      ],
+      "end_to_end_tests": [
+        "Not applicable"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Empty or null input provided",
+          "setup": "Call function with None or empty string",
+          "expected_behavior": "Function validates input and returns appropriate error",
+          "verification": "Assert error message and status code",
+          "error_handling": "ValueError or ValidationError"
+        },
+        {
+          "scenario": "Invalid input format provided",
+          "setup": "Call function with malformed or incorrect data type",
+          "expected_behavior": "Function validates input type and returns error",
+          "verification": "Assert error message indicates invalid format",
+          "error_handling": "TypeError or ValidationError"
+        },
+        {
+          "scenario": "Boundary conditions at limits",
+          "setup": "Test with minimum and maximum allowed values",
+          "expected_behavior": "Function handles boundary values correctly",
+          "verification": "Assert results are within expected range",
+          "error_handling": "No error expected for valid boundaries"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Feature implementation complete",
+          "metric": "All requirements implemented",
+          "target": "100% of specified requirements",
+          "validation": "Manual verification against requirements list"
+        },
+        {
+          "requirement": "Integration successful",
+          "metric": "Feature works with existing system",
+          "target": "No breaking changes to existing functionality",
+          "validation": "Run full test suite"
+        },
+        {
+          "requirement": "Document timestamp.py functions with parameter descriptions and return values",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: Document timestamp.py functions with parameter descriptions and return values"
+        },
+        {
+          "requirement": "Document remove-emojis.py CLI arguments and usage examples",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: Document remove-emojis.py CLI arguments and usage examples"
+        },
+        {
+          "requirement": "Explain RSMS v2.0 and UDS timestamp format compliance",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: Explain RSMS v2.0 and UDS timestamp format compliance"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run coverage tool"
+        },
+        {
+          "requirement": "Code quality",
+          "metric": "Linter passes",
+          "target": "Zero linting errors",
+          "validation": "Run linter"
+        },
+        {
+          "requirement": "Type safety",
+          "metric": "Type checker passes",
+          "target": "Zero type errors",
+          "validation": "Run type checker"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Response time",
+          "metric": "Execution time",
+          "target": "< 1 second for typical operations",
+          "validation": "Performance tests"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Input validation",
+          "metric": "All inputs validated",
+          "target": "100% validation coverage",
+          "validation": "Security review"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "\u2610 Review complete plan for gaps or ambiguities",
+        "\u2610 Verify all requirements are clear and testable",
+        "\u2610 Set up development environment with required dependencies"
+      ],
+      "phase_1": [
+        "\u2610 SETUP-001: Create initial project structure and setup development environment with required dependencies"
+      ],
+      "phase_2": [
+        "\u2610 LOGIC-001: Implement core feature functionality following existing project patterns and architecture"
+      ],
+      "phase_3": [
+        "\u2610 TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
+        "\u2610 TEST-002: Write integration tests to verify end-to-end functionality and component interactions"
+      ],
+      "phase_4": [
+        "\u2610 DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+      ],
+      "finalization": [
+        "\u2610 All tests passing (unit + integration)",
+        "\u2610 Code review completed and approved",
+        "\u2610 Documentation updated and complete",
+        "\u2610 Changelog entry created with version bump",
+        "\u2610 Final verification against success criteria"
+      ]
+    }
+  }
+}

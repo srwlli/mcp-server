@@ -1,0 +1,29 @@
+=== Generating API ===
+
+Project: C:\Users\willh\.mcp-servers\coderef-docs
+Output: C:\Users\willh\.mcp-servers\coderef-docs\coderef\foundation-docs\API.md
+
+TEMPLATE:
+
+framework: POWER
+purpose: Generate API.md as the technical interface reference.
+# NOTE: Placeholders like {{readme_summary}} are for AI guidance only.
+# They indicate which previous documents to reference but are not
+# automatically substituted. The AI assistant will use them as
+# context instructions.
+output: Must follow required header/footer with [Date] and [Version]. Document endpoints, schemas, authentication, and error handling. Reference README.md ({{readme_summary}}) and ARCHITECTURE.md ({{architecture_summary}}).
+work: Parse controllers, routes, and services. No execution.
+examples:
+- cURL request and response sample
+- Error response JSON object
+requirements: Must include pagination, rate limits, and AI-focused footer.
+save_as: API.md
+store_as: api_summary
+
+
+==================================================
+
+INSTRUCTIONS:
+Generate API.md using the template above.
+Use regex-based detection and .coderef/ data when available to populate the template.
+Save the document to: C:\Users\willh\.mcp-servers\coderef-docs\coderef\foundation-docs\API.md

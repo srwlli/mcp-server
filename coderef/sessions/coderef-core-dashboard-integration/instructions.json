@@ -1,0 +1,83 @@
+{
+  "workorder_id": "WO-CORE-DASHBOARD-INTEGRATION-001",
+  "task": "@coderef/core Scanner Integration into Dashboard",
+  "description": "Phase 1: Wire up existing scanner functions (scanCurrentElements) from @coderef/core into coderef-dashboard via Next.js API routes, eliminating CLI subprocess calls",
+
+  "orchestrator_instructions": {
+    "role": "Synthesize both agent plans into unified implementation roadmap",
+    "steps": {
+      "step_1": "READ both agent plan.json files from their output_file paths",
+      "step_2": "ANALYZE dependencies between packages (core exposure) and dashboard (API consumption)",
+      "step_3": "IDENTIFY integration points, shared types, and coordination requirements",
+      "step_4": "CREATE unified orchestrator-plan.json with synthesis of both plans, dependency order, and integration timeline"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Review context, check for resource sheets, and create detailed plan.json for your project",
+    "steps": {
+      "step_1": "CHECK for resource sheets in your project's coderef/reference-sheets/ directory",
+      "step_2": "READ the integration context (see context section below)",
+      "step_3": "ANALYZE current scanner implementation (packages) or current CLI usage (dashboard)",
+      "step_4": "CREATE plan.json at your output_file path following the template below"
+    }
+  },
+
+  "context": {
+    "goal": "Streamline integration of @coderef/core directly into coderef-dashboard, replacing CLI-dependent workflow with seamless web-based experience",
+    "phase_1_scope": "Wire up ONLY the two scanner functions that exist now - scanCurrentElements() and related analysis",
+    "approach": {
+      "packages_side": "Add @coderef/core as dependency to dashboard, expose scanner functions cleanly",
+      "dashboard_side": "Create Next.js API routes (/api/scan, /api/query, /api/impact) that import core functions directly",
+      "formatters": "Copy Mermaid/Graphviz formatters from CLI formatters/ to dashboard lib/formatters/",
+      "ui": "Develop React components to replace terminal tables/colors with interactive web elements"
+    },
+    "benefits": {
+      "performance": "Eliminate slow subprocess calls",
+      "type_safety": "Fast, type-safe access to analysis features",
+      "consistency": "Maintain CLI visualization capabilities in web UI"
+    }
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "workorder_id": "WO-CORE-DASHBOARD-INTEGRATION-001",
+    "project": "{coderef-packages | coderef-dashboard}",
+    "resource_sheets_found": [
+      "{List resource sheet paths found in coderef/reference-sheets/, or empty array if none}"
+    ],
+    "current_state_analysis": {
+      "scanner_functions": "{packages: list exported scanner functions | dashboard: describe current CLI usage}",
+      "integration_points": "{Where integration will happen}",
+      "dependencies": "{Current dependencies related to scanner/CLI}"
+    },
+    "implementation_plan": {
+      "phase_1": {
+        "tasks": [
+          "{List specific tasks for Phase 1 - scanner integration only}"
+        ],
+        "files_to_modify": ["{List files}"],
+        "files_to_create": ["{List files}"],
+        "estimated_effort": "{hours or story points}"
+      }
+    },
+    "integration_requirements": {
+      "from_other_agent": "{What you need from the other agent}",
+      "exports": "{What you'll provide to the other agent}",
+      "shared_types": "{TypeScript types that need to be shared}"
+    },
+    "risks": [
+      "{List potential risks or blockers}"
+    ],
+    "success_criteria": [
+      "{How to verify this phase is complete}"
+    ]
+  },
+
+  "quality_standards": {
+    "completeness": "Plan must cover resource sheet discovery, current state analysis, and detailed Phase 1 tasks",
+    "accuracy": "Scanner function names and API route patterns must match actual implementation",
+    "format": "Valid JSON following output_template structure"
+  }
+}

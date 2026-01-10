@@ -1,0 +1,170 @@
+{
+  "agent_id": "coderef",
+  "timestamp": "2026-01-02",
+  "plans_reviewed": [
+    "C:\\Users\\willh\\Desktop\\assistant\\coderef\\workorder\\resource-sheet-system\\plan.json",
+    "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\resource-sheet-reconciliation\\plan.json",
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\workorder\\resource-sheet-graph-integration\\plan.json"
+  ],
+  "tools_analyzed": {
+    "tool_1": {
+      "path": "C:\\Users\\willh\\Desktop\\assistant\\.claude\\commands\\create-resource-sheet.md",
+      "lines": 240,
+      "provides": [
+        "Agent execution framework (step-by-step instructions)",
+        "13-section documentation template",
+        "Writing guidelines (voice, tone, precision)",
+        "Refactor-safety validation checklist",
+        "Maintenance protocol",
+        "Output format specification"
+      ],
+      "missing": [
+        "Element type classification",
+        "Element-specific checklists",
+        "Specialized templates per type"
+      ]
+    },
+    "tool_2": {
+      "path": "C:\\Users\\willh\\Desktop\\assistant\\.claude\\commands\\resource-sheet-catalog.md",
+      "lines": 634,
+      "provides": [
+        "20 element type classifications",
+        "Element-specific checklists per type",
+        "Required sections per type",
+        "Focus areas per element type",
+        "Master checklist for all types"
+      ],
+      "missing": [
+        "Agent execution framework",
+        "Writing quality standards",
+        "Output format specification",
+        "Validation rules"
+      ]
+    }
+  },
+  "critical_discovery": {
+    "finding": "coderef-docs v3.4.0 ALREADY HAS a working MCP tool called generate_resource_sheet",
+    "location": "coderef-docs/generators/resource_sheet_generator.py",
+    "status": "Phase 1 complete (17/22 tasks, 100% test coverage)",
+    "features": [
+      "Composable module architecture (4 universal + 11 conditional modules planned)",
+      "3-step workflow: Detect → Select → Assemble",
+      "3 output formats: Markdown + JSON Schema + JSDoc",
+      "50% auto-fill rate in Phase 1 (architecture + integration modules)",
+      "Detection engine reads .coderef/index.json",
+      "CharacteristicsDetector maps 20+ code patterns",
+      "ModuleRegistry manages module selection",
+      "DocumentComposer assembles outputs"
+    ],
+    "implication": "We don't need to build from scratch - we need to RECONCILE the slash commands with the existing MCP tool"
+  },
+  "consolidation_design": {
+    "approach": "RECONCILIATION (not rebuild)",
+    "strategy": "Deprecate slash commands → Route to MCP tool → Enhance MCP tool with missing features from slash commands",
+    "key_insight": "Tool 1 + Tool 2 define WHAT to document. MCP tool ALREADY does the HOW. We just need to connect them."
+  },
+  "key_questions_answered": {
+    "q1_how_to_merge_files_structurally": {
+      "answer": "Don't merge the .md files - DEPRECATE them and route to MCP tool",
+      "rationale": "MCP tool already exists with superior architecture (composable modules vs monolithic templates). Merging .md files would duplicate effort.",
+      "implementation": "Add deprecation notices to both .md files pointing users to MCP tool generate_resource_sheet"
+    },
+    "q2_where_do_20_element_types_fit": {
+      "answer": "Map the 20 element types from Tool 2 to conditional modules in MCP tool",
+      "rationale": "MCP tool has conditional modules concept (11 planned). Tool 2's 20 types map to module selection triggers.",
+      "implementation": "Create mapping table: Element Type (Tool 2) → Conditional Modules (MCP tool) → Detection Characteristics"
+    },
+    "q3_how_does_element_detection_work": {
+      "answer": "CharacteristicsDetector already exists with 20+ detection patterns",
+      "rationale": "MCP tool Phase 1 implemented detection engine. It reads .coderef/index.json and maps code patterns to boolean flags.",
+      "implementation": "Enhance detector with Tool 2's classification logic (20 element types) to improve module selection accuracy"
+    },
+    "q4_how_does_command_route_to_element_types": {
+      "answer": "/create-resource-sheet command calls MCP tool generate_resource_sheet with element_type parameter",
+      "rationale": "MCP tool accepts element_type parameter for manual override. If not provided, auto-detects from characteristics.",
+      "implementation": "Update slash command to pass element_type if specified by user, otherwise let MCP tool auto-detect"
+    },
+    "q5_migration_path": {
+      "answer": "3-phase migration: Deprecate → Route → Enhance",
+      "phase_1": "Add deprecation warnings to Tool 1 and Tool 2 (.md files)",
+      "phase_2": "Update /create-resource-sheet command to call MCP tool generate_resource_sheet",
+      "phase_3": "Port Tool 1's writing guidelines and Tool 2's checklists into MCP tool modules",
+      "timeline": "Phase 1: Immediate (deprecation), Phase 2: 1-2 hours (routing), Phase 3: Deferred to MCP tool Phase 2 work"
+    }
+  },
+  "structural_design": {
+    "unified_system": {
+      "entry_point": "/create-resource-sheet command",
+      "backend": "MCP tool generate_resource_sheet (coderef-docs)",
+      "architecture": "Slash command wrapper → MCP tool handler → Detection → Module Selection → Assembly"
+    },
+    "file_changes": {
+      "deprecate": [
+        ".claude/commands/create-resource-sheet.md - Add deprecation notice at top",
+        ".claude/commands/resource-sheet-catalog.md - Add deprecation notice at top"
+      ],
+      "modify": [
+        ".claude/commands/create-resource-sheet.md - Keep for backward compatibility but route to MCP tool",
+        "coderef-docs/generators/resource_sheet_generator.py - Enhance with Tool 1's guidelines and Tool 2's types"
+      ],
+      "new": [
+        "coderef-docs/modules/resource-sheet/mapping/element-type-mapping.json - Map Tool 2's 20 types to modules",
+        "coderef-docs/modules/resource-sheet/guidelines/writing-standards.py - Port Tool 1's writing guidelines",
+        "coderef-docs/modules/resource-sheet/validation/refactor-safety.py - Port Tool 1's validation checklist"
+      ]
+    }
+  },
+  "feature_preservation": {
+    "from_tool_1": {
+      "writing_guidelines": "Port to MCP tool as post-processing step (voice, tone, precision rules)",
+      "refactor_safety_checklist": "Port to MCP tool validation module",
+      "13_section_template": "Already exists in MCP tool base template",
+      "maintenance_protocol": "Document in MCP tool usage guide"
+    },
+    "from_tool_2": {
+      "20_element_types": "Map to conditional modules + detection characteristics",
+      "element_specific_checklists": "Integrate into ModuleRegistry selection logic",
+      "required_sections_per_type": "Define in module metadata (which sections each module provides)",
+      "master_checklist": "Convert to validation rules in MCP tool"
+    }
+  },
+  "validation": {
+    "completeness_check": {
+      "all_tool_1_features_preserved": true,
+      "all_tool_2_features_preserved": true,
+      "slash_command_continues_working": true,
+      "zero_functionality_loss": true
+    },
+    "technical_feasibility": {
+      "mcp_tool_exists": true,
+      "routing_mechanism_possible": true,
+      "enhancement_path_clear": true,
+      "backward_compatibility_maintained": true
+    },
+    "alignment_with_ecosystem": {
+      "follows_mcp_tool_pattern": true,
+      "consistent_with_coderef_docs": true,
+      "integrates_with_workflow": true,
+      "no_architectural_conflicts": true
+    }
+  },
+  "recommendations": [
+    "IMMEDIATE: Add deprecation notices to both .md files (15 min)",
+    "SHORT_TERM: Update /create-resource-sheet command to route to MCP tool (1-2 hours)",
+    "MEDIUM_TERM: Create element type mapping (Tool 2's 20 types → MCP modules) (2-3 hours)",
+    "LONG_TERM: Port writing guidelines and validation into MCP tool Phase 2 (deferred to existing workorder)",
+    "INTEGRATION: Leverage Plan 3's graph integration for auto-fill improvement (separate workorder)"
+  ],
+  "next_steps": {
+    "user_decision_required": [
+      "Confirm deprecation approach (keep .md files with warnings vs delete entirely)",
+      "Decide on Phase 2 timeline for MCP tool enhancements",
+      "Approve element type mapping design"
+    ],
+    "ready_to_implement": [
+      "Deprecation notices can be added immediately",
+      "Slash command routing can be implemented today",
+      "Mapping table can be created this week"
+    ]
+  }
+}

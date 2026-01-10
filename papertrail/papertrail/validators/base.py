@@ -51,7 +51,7 @@ class BaseUDSValidator(UDSValidator):
             self._load_schema()
 
     def _load_schema(self):
-        """Load JSON schema for this validator"""
+        """Load JSON schema for this validator and resolve $ref"""
         schema_path = self.schemas_dir / self.schema_name
         if not schema_path.exists():
             raise FileNotFoundError(f"Schema not found: {schema_path}")
@@ -59,6 +59,53 @@ class BaseUDSValidator(UDSValidator):
         import json
         with open(schema_path, 'r', encoding='utf-8') as f:
             self.schema = json.load(f)
+        
+        # Resolve $ref if schema uses allOf pattern
+        if 'allOf' in self.schema:
+            self._resolve_allof()
+    
+    def _resolve_allof(self):
+        """Resolve allOf references by merging schemas"""
+        if 'allOf' not in self.schema:
+            return
+
+        import json
+        merged_required = []
+        merged_properties = {}
+
+        for item in self.schema['allOf']:
+            # Handle $ref
+            if '$ref' in item:
+                ref_path = item['$ref']
+                if ref_path.startswith('./'):
+                    # Load referenced schema
+                    ref_file = self.schemas_dir / ref_path[2:]
+                    if ref_file.exists():
+                        with open(ref_file, 'r', encoding='utf-8') as f:
+                            ref_schema = json.load(f)
+
+                        # Merge required fields
+                        if 'required' in ref_schema:
+                            merged_required.extend(ref_schema['required'])
+
+                        # Merge properties
+                        if 'properties' in ref_schema:
+                            merged_properties.update(ref_schema['properties'])
+
+            # Handle inline schema
+            if 'required' in item:
+                merged_required.extend(item['required'])
+
+            if 'properties' in item:
+                merged_properties.update(item['properties'])
+
+        # Update schema with merged values
+        self.schema['required'] = list(set(merged_required))
+        self.schema['properties'] = merged_properties
+        self.schema['type'] = 'object'
+
+        # Remove allOf to prevent Draft7Validator from trying to resolve $ref
+        del self.schema['allOf']
 
     def validate_file(self, file_path: Union[str, Path]) -> ValidationResult:
         """

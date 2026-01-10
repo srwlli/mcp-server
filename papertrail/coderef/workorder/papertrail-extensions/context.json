@@ -1,0 +1,273 @@
+{
+  "feature_name": "papertrail-extensions",
+  "workorder_id": "WO-PAPERTRAIL-EXTENSIONS-001",
+  "description": "Enhance Papertrail template engine extensions (git, coderef, workflow) to provide real data instead of mock data for enhanced DELIVERABLES.md generation",
+  "goal": "Enable Papertrail to extract real git metrics, component diffs, and plan data for comprehensive deliverables reporting across CodeRef ecosystem",
+  "created_at": "2026-01-02T18:00:00Z",
+  "status": "pending",
+  "requirements": [
+    "Enhance git_integration.py extension to extract real git data (files changed, commits, additions/deletions)",
+    "Enhance coderef_context.py extension to compare index.json snapshots and identify components/functions added",
+    "Enhance workflow.py extension to extract plan phases, tasks, and priority checklists from plan.json",
+    "Add template filters for data formatting (file_status_icon, priority_color, etc.)",
+    "Provide context interface contract for coderef-workflow integration",
+    "All extensions must return structured data (lists, dicts) compatible with Jinja2 templates",
+    "Unit tests for all new extension functions (80%+ coverage)"
+  ],
+  "constraints": [
+    "Must maintain backward compatibility with existing Phase 2 mock extensions",
+    "Git operations must handle non-git projects gracefully (return empty arrays)",
+    "CodeRef operations must handle missing .coderef/ directories (return empty arrays)",
+    "All file paths must use pathlib.Path for cross-platform compatibility",
+    "Performance: Git diff parsing must complete in <1 second for typical features (50-100 commits)"
+  ],
+  "success_criteria": {
+    "functional": {
+      "git_extension": "Extracts files_changed (path, status, additions, deletions), commits (hash, message, author, date), total_additions, total_deletions",
+      "coderef_extension": "Compares index.json snapshots, returns components_added, functions_added, complexity_delta",
+      "workflow_extension": "Extracts plan phases (name, status, duration, deliverables), tasks sorted by priority",
+      "template_filters": "Provides file_status_icon, priority_color, format_duration, humanize_date filters"
+    },
+    "quality": {
+      "unit_tests": "80%+ coverage for all new functions",
+      "integration_test": "End-to-end test rendering enhanced DELIVERABLES template with real data",
+      "documentation": "All new functions documented with docstrings and examples"
+    },
+    "performance": {
+      "git_diff_parsing": "< 1 second for 50-100 commits",
+      "index_comparison": "< 500ms for 50K element index.json",
+      "plan_extraction": "< 100ms for typical plan.json (10 sections, 50 tasks)"
+    }
+  },
+  "context": {
+    "problem": "Current Papertrail extensions (Phase 2) use mock data. Enhanced DELIVERABLES.md requires real git metrics, component diffs, and plan data to provide comprehensive feature completion summaries.",
+    "background": {
+      "related_workorder": "WO-DELIVERABLES-ENHANCEMENT-001 (coderef-workflow side - depends on this)",
+      "current_state": "Papertrail has 3 extensions (git, coderef, workflow) with mock implementations",
+      "usage": "coderef-workflow will call Papertrail template engine with enhanced template expecting real data"
+    },
+    "data_sources": {
+      "git": "Git repository via subprocess (git log, git diff)",
+      "coderef": ".coderef/index.json (baseline snapshot vs current)",
+      "workflow": "plan.json (6_implementation_phases, tasks)"
+    },
+    "interface_contract": {
+      "description": "Context variables Papertrail must provide to coderef-workflow templates",
+      "schema": {
+        "git": {
+          "files_changed": [
+            {
+              "path": "string",
+              "status": "added|modified|deleted",
+              "additions": "int",
+              "deletions": "int"
+            }
+          ],
+          "commits": [
+            {
+              "hash": "string (40 chars)",
+              "message": "string",
+              "author": "string",
+              "date": "ISO 8601 timestamp"
+            }
+          ],
+          "total_additions": "int",
+          "total_deletions": "int"
+        },
+        "coderef": {
+          "components_added": [
+            {
+              "name": "string",
+              "type": "component|function|class",
+              "file": "string (path)",
+              "line": "int"
+            }
+          ],
+          "functions_added": "array (same structure)",
+          "complexity_delta": "float (average complexity change)"
+        },
+        "plan": {
+          "phases": [
+            {
+              "name": "string",
+              "status": "pending|in_progress|completed",
+              "duration": "string (e.g., '2 days')",
+              "deliverables": ["string"]
+            }
+          ],
+          "tasks": [
+            {
+              "task_id": "string (e.g., SETUP-001)",
+              "description": "string",
+              "priority": "critical|high|medium|low",
+              "status": "pending|in_progress|completed|blocked"
+            }
+          ]
+        }
+      }
+    },
+    "example_usage": {
+      "description": "How coderef-workflow will call Papertrail",
+      "code": "from papertrail import TemplateEngine\n\nengine = TemplateEngine()\ncontext = {\n    'git': engine.get_git_data(workorder_id='WO-FEATURE-001'),\n    'coderef': engine.get_coderef_data(baseline='index-baseline.json', current='index.json'),\n    'plan': engine.get_plan_data(plan_path='plan.json')\n}\n\ndeliverables = engine.render_with_uds(\n    template_path='DELIVERABLES_enhanced_template.md',\n    context=context,\n    header=header,\n    footer=footer\n)"
+    }
+  },
+  "decisions": [
+    {
+      "decision": "Use subprocess for git operations instead of GitPython library",
+      "rationale": "Avoid additional dependency, subprocess is stdlib, faster for simple operations",
+      "alternatives_considered": ["GitPython library", "dulwich pure-Python git"],
+      "chosen": "subprocess"
+    },
+    {
+      "decision": "Compare index.json snapshots instead of live scanning",
+      "rationale": "Baseline snapshot saved at feature start, compare with current for accurate delta",
+      "alternatives_considered": ["Live scan before/after", "Git diff on .coderef/index.json"],
+      "chosen": "Snapshot comparison"
+    },
+    {
+      "decision": "Extract plan data via JSON parsing, not workflow API calls",
+      "rationale": "plan.json is structured data, direct parsing faster than API roundtrip",
+      "alternatives_considered": ["coderef-workflow MCP API", "Direct file parsing"],
+      "chosen": "Direct parsing"
+    }
+  ],
+  "out_of_scope": [
+    "Visual diagram generation (Mermaid charts) - future enhancement",
+    "Real-time git monitoring (webhook integration) - not needed for batch generation",
+    "Database storage of historical metrics - Phase 5 enhancement",
+    "Web UI for deliverables visualization - separate project"
+  ],
+  "dependencies": {
+    "internal": [
+      "Papertrail UDS schema (already complete)",
+      "Papertrail template engine (already complete)",
+      "Existing extension system (Phase 2 infrastructure)"
+    ],
+    "external": [
+      "Git repository must exist (gracefully handle non-git projects)",
+      ".coderef/index.json must be generated before usage",
+      "plan.json must exist in coderef/workorder/{feature}/ directory"
+    ]
+  },
+  "implementation_phases": [
+    {
+      "phase_id": "PHASE-1",
+      "name": "Git Extension Enhancement",
+      "tasks": [
+        "Implement get_files_changed(workorder_id) - parse git log --grep with --name-status",
+        "Implement get_commits(workorder_id) - parse git log --grep with format",
+        "Implement get_additions_deletions(file_path) - parse git diff --numstat",
+        "Add error handling for non-git repositories (return empty arrays)",
+        "Unit tests for all git functions"
+      ],
+      "effort": "1.5 hours",
+      "deliverables": ["Enhanced git_integration.py", "Unit tests (test_git_integration.py)"]
+    },
+    {
+      "phase_id": "PHASE-2",
+      "name": "CodeRef Extension Enhancement",
+      "tasks": [
+        "Implement get_components_added(baseline_path, current_path) - compare index.json snapshots",
+        "Implement get_functions_added() - same comparison for functions",
+        "Implement calculate_complexity_delta() - average complexity change",
+        "Add error handling for missing .coderef/ directories",
+        "Unit tests for all coderef functions"
+      ],
+      "effort": "1.5 hours",
+      "deliverables": ["Enhanced coderef_context.py", "Unit tests (test_coderef_context.py)"]
+    },
+    {
+      "phase_id": "PHASE-3",
+      "name": "Workflow Extension Enhancement",
+      "tasks": [
+        "Implement get_plan_phases(plan_path) - extract 6_implementation_phases",
+        "Implement get_priority_checklist(plan_path) - extract tasks sorted by priority",
+        "Add plan.json schema validation (ensure valid structure)",
+        "Add error handling for missing plan.json",
+        "Unit tests for all workflow functions"
+      ],
+      "effort": "1 hour",
+      "deliverables": ["Enhanced workflow.py", "Unit tests (test_workflow.py)"]
+    },
+    {
+      "phase_id": "PHASE-4",
+      "name": "Template Filters",
+      "tasks": [
+        "Add file_status_icon filter (A=➕, M=📝, D=❌)",
+        "Add priority_color filter (critical=🔴, high=🟠, medium=🟡, low=🟢)",
+        "Add format_duration filter (convert 'PT2H30M' to '2 hours 30 minutes')",
+        "Add humanize_date filter (ISO 8601 to 'Jan 2, 2026')",
+        "Unit tests for all filters"
+      ],
+      "effort": "0.5 hours",
+      "deliverables": ["Template filters in engine.py", "Unit tests"]
+    },
+    {
+      "phase_id": "PHASE-5",
+      "name": "Integration Testing",
+      "tasks": [
+        "Create end-to-end test with real git repository",
+        "Create enhanced DELIVERABLES template for testing",
+        "Test full rendering pipeline with all extensions",
+        "Performance testing (measure git diff, index comparison times)",
+        "Documentation update (README, docstrings, examples)"
+      ],
+      "effort": "0.5 hours",
+      "deliverables": ["Integration test suite", "Updated documentation"]
+    }
+  ],
+  "testing_strategy": {
+    "unit_tests": {
+      "required": true,
+      "coverage_target": "80%",
+      "files": [
+        "tests/test_git_integration.py",
+        "tests/test_coderef_context.py",
+        "tests/test_workflow.py",
+        "tests/test_template_filters.py"
+      ]
+    },
+    "integration_tests": {
+      "required": true,
+      "description": "End-to-end rendering with real data sources",
+      "test_scenarios": [
+        "Render enhanced DELIVERABLES with git repository",
+        "Render with .coderef/ data present",
+        "Render with plan.json present",
+        "Graceful degradation when data sources missing"
+      ]
+    },
+    "performance_tests": {
+      "required": true,
+      "benchmarks": {
+        "git_diff_parsing": "< 1 second for 50-100 commits",
+        "index_comparison": "< 500ms for 50K elements",
+        "plan_extraction": "< 100ms"
+      }
+    }
+  },
+  "risks": [
+    {
+      "risk": "Git operations fail in non-git projects",
+      "probability": "medium",
+      "impact": "medium",
+      "mitigation": "Wrap all git subprocess calls in try/except, return empty arrays on failure"
+    },
+    {
+      "risk": "Large index.json files (>500KB) slow down comparison",
+      "probability": "low",
+      "impact": "medium",
+      "mitigation": "Stream parsing instead of loading entire file into memory, add performance test"
+    },
+    {
+      "risk": "plan.json schema changes break parsing",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": "Add JSON schema validation before parsing, version check in plan.json"
+    }
+  ],
+  "related_workorders": [
+    "WO-DELIVERABLES-ENHANCEMENT-001 (coderef-workflow - depends on this)",
+    "WO-JSON-COMPANION-DOCS-001 (document effectiveness roadmap P2-2)"
+  ]
+}

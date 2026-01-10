@@ -1,0 +1,151 @@
+{
+  "agent_id": "coderef-workflow",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+  "audit_date": "2026-01-04",
+  "findings": {
+    "schemas": [
+      {
+        "file_path": "coderef/schemas/plan.schema.json",
+        "file_name": "plan.schema.json",
+        "purpose": "Validates implementation plan.json structure - single source of truth for 10-section planning format",
+        "used_by": ["generators/plan_validator.py", "schema_validator.py", "tool_handlers.py", "planning_generator.py"],
+        "should_move": true,
+        "notes": "Core contract for planning system - used across entire workflow ecosystem"
+      },
+      {
+        "file_path": "coderef/schemas/validation-schema.json",
+        "file_name": "validation-schema.json",
+        "purpose": "Validates validation.py security boundary - enforces input validation constraints (path traversal, null bytes, etc)",
+        "used_by": ["validation.py (implicitly)", "all tool handlers via validation layer"],
+        "should_move": true,
+        "notes": "Security contract - prevents path traversal and injection attacks at tool boundaries"
+      },
+      {
+        "file_path": "coderef/schemas/server-schema.json",
+        "file_name": "server-schema.json",
+        "purpose": "Validates MCP server configuration and structure",
+        "used_by": ["server.py (MCP server entry point)"],
+        "should_move": true,
+        "notes": "Reusable across all MCP servers in ecosystem"
+      },
+      {
+        "file_path": "coderef/schemas/tool-handlers-schema.json",
+        "file_name": "tool-handlers-schema.json",
+        "purpose": "Validates tool handler implementations - ensures tool functions follow MCP protocol",
+        "used_by": ["tool_handlers.py (24 tool implementations)"],
+        "should_move": true,
+        "notes": "Standard contract for MCP tool implementations"
+      },
+      {
+        "file_path": "coderef/schemas/planning-analyzer-schema.json",
+        "file_name": "planning-analyzer-schema.json",
+        "purpose": "Validates planning analyzer module - enforces analysis.json output format",
+        "used_by": ["generators/planning_analyzer.py", "analyze_project_for_planning tool"],
+        "should_move": true,
+        "notes": "Contract for project analysis output"
+      },
+      {
+        "file_path": "coderef/schemas/planning-generator-schema.json",
+        "file_name": "planning-generator-schema.json",
+        "purpose": "Validates planning generator module - enforces plan generation logic",
+        "used_by": ["generators/planning_generator.py", "create_plan tool"],
+        "should_move": true,
+        "notes": "Contract for plan generation process"
+      },
+      {
+        "file_path": "coderef/schemas/plan-validator-schema.json",
+        "file_name": "plan-validator-schema.json",
+        "purpose": "Validates plan validator module - enforces validation results format (0-100 score, issues, recommendations)",
+        "used_by": ["generators/plan_validator.py", "validate_implementation_plan tool"],
+        "should_move": true,
+        "notes": "Contract for plan quality scoring (0-100)"
+      },
+      {
+        "file_path": "coderef/schemas/mcp-client-schema.json",
+        "file_name": "mcp-client-schema.json",
+        "purpose": "Validates MCP client module - enforces client-to-server communication protocol",
+        "used_by": ["src/mcp_client.py (async client for coderef-context calls)"],
+        "should_move": true,
+        "notes": "Reusable for any MCP client implementation"
+      },
+      {
+        "file_path": "coderef/schemas/type-defs-schema.json",
+        "file_name": "type-defs-schema.json",
+        "purpose": "Validates type definitions module - enforces TypedDict structures",
+        "used_by": ["type_defs.py", "all modules using typed structures"],
+        "should_move": true,
+        "notes": "Central type contract for entire system"
+      },
+      {
+        "file_path": "coderef/schemas/constants-schema.json",
+        "file_name": "constants-schema.json",
+        "purpose": "Validates constants module - enforces naming conventions and value constraints",
+        "used_by": ["constants.py (directory paths, file patterns, validation constants)"],
+        "should_move": true,
+        "notes": "Enforces consistency in global constants"
+      },
+      {
+        "file_path": "coderef/schemas/error-responses-schema.json",
+        "file_name": "error-responses-schema.json",
+        "purpose": "Validates error response formats - enforces standard error structure across all tools",
+        "used_by": ["tool_handlers.py", "all tools returning errors"],
+        "should_move": true,
+        "notes": "Standard contract for error messages (code, message, details)"
+      }
+    ],
+    "validators": [
+      {
+        "file_path": "generators/plan_validator.py",
+        "file_name": "plan_validator.py",
+        "purpose": "Validates implementation plans against plan.schema.json and quality checklist - scores 0-100 for completeness, quality, autonomy",
+        "used_by": ["tool_handlers.py (validate_implementation_plan tool)", "referenced in 12 files across system"],
+        "should_move": true,
+        "notes": "Core validation logic for plan quality - enables iterative review loop until score >= 90"
+      },
+      {
+        "file_path": "plan_format_validator.py",
+        "file_name": "plan_format_validator.py",
+        "purpose": "Enforces standard plan.json format - rejects non-standard formats (.md, .txt, .yaml) with clear guidance",
+        "used_by": ["tool_handlers.py (create_plan and related tools)"],
+        "should_move": true,
+        "notes": "Format enforcement - prevents AI from generating wrong file formats"
+      },
+      {
+        "file_path": "schema_validator.py",
+        "file_name": "schema_validator.py",
+        "purpose": "Schema validation utilities for plan.json - provides normalize/validate functions with strict mode",
+        "used_by": ["tool_handlers.py", "tests/test_validation_bug.py", "tests/test_validation_bug_simple.py"],
+        "should_move": true,
+        "notes": "Shared validation utilities - has strict mode to log warnings on normalization"
+      }
+    ],
+    "standards": [],
+    "qa_tools": [
+      {
+        "file_path": "pyproject.toml",
+        "file_name": "pyproject.toml",
+        "purpose": "Project configuration - defines dependencies, dev tools (ruff, mypy, pytest), package metadata",
+        "used_by": ["Build system (hatchling)", "ruff linter", "mypy type checker", "pytest test runner"],
+        "should_move": false,
+        "notes": "Project-specific configuration - tightly coupled to coderef-workflow build/test process"
+      },
+      {
+        "file_path": "pytest.ini",
+        "file_name": "pytest.ini",
+        "purpose": "Pytest test configuration - test discovery paths, output options, coverage settings, async support, markers",
+        "used_by": ["pytest test runner", "coverage.py"],
+        "should_move": false,
+        "notes": "Project-specific test configuration - defines test paths and markers for this project only"
+      }
+    ]
+  },
+  "summary": {
+    "total_files_found": 16,
+    "schemas_count": 11,
+    "validators_count": 3,
+    "standards_count": 0,
+    "qa_tools_count": 2,
+    "recommended_to_move": 14
+  },
+  "agent_recommendation": "STRONGLY RECOMMEND moving all 11 schemas and 3 validators to papertrail. These files enforce external contracts (plan.json format, validation rules, error structures, security boundaries) and are reusable across the entire CodeRef ecosystem. They validate: (1) Planning artifacts (plan.schema.json, planning-*-schema.json), (2) Security boundaries (validation-schema.json - prevents path traversal), (3) MCP protocol compliance (server-schema.json, tool-handlers-schema.json, mcp-client-schema.json), (4) Standard error formats (error-responses-schema.json), and (5) Type contracts (type-defs-schema.json, constants-schema.json). The validators implement the actual validation logic using these schemas. Together they form a cohesive validation system that should be centralized in papertrail for consistency across all 5 MCP servers (coderef-context, coderef-workflow, coderef-docs, coderef-personas, coderef-testing). The QA tools (pyproject.toml, pytest.ini) should NOT move as they are project-specific build/test configurations."
+}

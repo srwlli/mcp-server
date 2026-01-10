@@ -1,0 +1,168 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "---\nworkorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001\ngenerated_by: coderef-docs v1.2.0\nfeature_id: foundation-docs\ntimestamp: 2025-12-30T00:00:00Z\ntitle: Papertrail System Architecture\nversion: 1.0.0\nstatus: APPROVED\ndoc_type: architecture\n---\n\n# Papertrail System Architecture\n\n## Purpose\n\nThis document defines the system architecture of Papertrail, the Universal Documentation Standards (UDS) package for the CodeRef ecosystem. It explains how Papertrail integrates with MCP servers (coderef-docs, ",
+      "headers": [
+        "Papertrail System Architecture",
+        "Purpose",
+        "Overview",
+        "System Topology",
+        "High-Level Architecture",
+        "Module Boundaries",
+        "Stack Decisions",
+        "Technology Stack",
+        "Key Design Decisions",
+        "{{ title }}"
+      ],
+      "size": 23522
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "---\nworkorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001\ngenerated_by: coderef-docs v1.2.0\nfeature_id: foundation-docs\ntimestamp: 2025-12-30T00:00:00Z\ntitle: Papertrail API Reference\nversion: 1.0.0\nstatus: APPROVED\ndoc_type: api\n---\n\n# Papertrail API Reference\n\n## Purpose\n\nThis document provides the complete API reference for Papertrail, the Universal Documentation Standards (UDS) package for the CodeRef ecosystem. It covers all public classes, functions, and integrations for implementing UDS headers",
+      "headers": [
+        "Papertrail API Reference",
+        "Purpose",
+        "Overview",
+        "API Endpoints",
+        "1. UDS Data Structures API",
+        "Generate YAML frontmatter",
+        "Generate YAML footer",
+        "2. Validation API",
+        "Validate document",
+        "Architecture"
+      ],
+      "size": 20637
+    },
+    "COMPONENTS.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "---\nworkorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001\ngenerated_by: coderef-docs v1.2.0\nfeature_id: foundation-docs\ntimestamp: 2025-12-30T00:00:00Z\ntitle: Papertrail Component Library\nversion: 1.0.0\nstatus: APPROVED\ndoc_type: components\n---\n\n# Papertrail Component Library\n\n## Purpose\n\nThis document provides a complete inventory of Papertrail's reusable Python components, including modules, classes, functions, and extensions. It serves as a quick reference for developers integrating Papertrail into",
+      "headers": [
+        "Papertrail Component Library",
+        "Purpose",
+        "Overview",
+        "Component Hierarchy",
+        "Core Components",
+        "1. UDS Data Structures (papertrail.uds)",
+        "2. Validation Components (papertrail.validator)",
+        "Architecture",
+        "Purpose",
+        "3. Health Scoring Components (papertrail.health)"
+      ],
+      "size": 21257
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "---\nworkorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001\ngenerated_by: coderef-docs v1.2.0\nfeature_id: foundation-docs\ntimestamp: 2025-12-30T00:00:00Z\ntitle: Papertrail Schema Reference\nversion: 1.0.0\nstatus: APPROVED\ndoc_type: schema\n---\n\n# Papertrail Schema Reference\n\n## Purpose\n\nThis document defines the complete data schemas for Papertrail's Universal Documentation Standards (UDS) system. It provides JSON schema definitions, data models, validation rules, and entity relationships for all 5 CodeRe",
+      "headers": [
+        "Papertrail Schema Reference",
+        "Purpose",
+        "Overview",
+        "UDS Data Models",
+        "1. UDSHeader",
+        "2. UDSFooter",
+        "3. Enums",
+        "4. Validation Result Models",
+        "5. Health Score Models",
+        "Document Schemas"
+      ],
+      "size": 23203
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "---\nworkorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001\ngenerated_by: coderef-docs v1.2.0\nfeature_id: foundation-docs\ntimestamp: 2025-12-30T00:00:00Z\ntitle: Papertrail - Universal Documentation Standards\nversion: 1.0.0\nstatus: APPROVED\ndoc_type: readme\n---\n\n# Papertrail - Universal Documentation Standards\n\n**Version:** 1.0.0\n**Status:** Production (Phase 4 Complete)\n**Workorder:** WO-PAPERTRAIL-PYTHON-PACKAGE-001\n\n## Purpose\n\nPapertrail provides Universal Documentation Standards (UDS) for the CodeRe",
+      "headers": [
+        "Papertrail - Universal Documentation Standards",
+        "Purpose",
+        "Overview",
+        "What/Why/When",
+        "What is Papertrail?",
+        "Why Papertrail?",
+        "When to Use Papertrail?",
+        "Features",
+        "Core Features",
+        "Supported Document Types"
+      ],
+      "size": 16633
+    }
+  },
+  "inventory_data": {
+    "available": [],
+    "missing": [
+      "Run /quick-inventory to generate inventory data"
+    ]
+  },
+  "coding_standards": {
+    "available": [
+      "BEHAVIOR-STANDARDS.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ],
+    "missing": [
+      "COMPONENT-PATTERN.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [
+    "Error handling: try-catch blocks found in 5 files",
+    "Naming: camelCase for functions (28/29 functions)"
+  ],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      "htmlcov"
+    ],
+    "file_counts": {
+      "htmlcov": 19,
+      "tests": 8,
+      "papertrail\\extensions": 6,
+      "validators\\typescript": 6,
+      "papertrail": 5,
+      "papertrail.egg-info": 5,
+      "test-infrastructure": 5,
+      "coderef\\foundation-docs": 5,
+      "papertrail\\schemas": 5,
+      "schemas\\mcp": 5
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Missing foundation docs: USER-GUIDE.md",
+    "Missing coding standards: COMPONENT-PATTERN.md",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ],
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Project Analysis",
+    "workorder_id": "WO-RESOURCE-SHEET-VALIDATION-001",
+    "feature_id": "resource-sheet-validation",
+    "last_updated": "2026-01-04",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-03"
+  }
+}

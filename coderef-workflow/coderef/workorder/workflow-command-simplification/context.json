@@ -1,0 +1,37 @@
+{
+  "feature_name": "workflow-command-simplification",
+  "description": "Refactor workflow commands to core essentials - reduce from 33+ commands to just 3 workorder commands (/create-workorder, /complete-workorder, /align-plan). Remove redundant commands and consolidate functionality into internal MCP tool calls.",
+  "goal": "Simplify user experience by providing only essential workflow commands while maintaining all functionality through internal MCP tool orchestration",
+  "requirements": [
+    "Keep /create-workorder (planning phase)",
+    "Keep /complete-workorder (execution phase, includes archiving)",
+    "Keep /align-plan (TodoWrite task list generation)",
+    "Remove 30+ redundant workflow commands from ~/.claude/commands/",
+    "Ensure removed commands remain available as MCP tools",
+    "Update documentation to reflect simplified command set"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Must maintain all functionality (just reorganized)",
+    "No breaking changes to MCP tool interfaces",
+    "Commands in ~/.claude/commands/ (global deployment)",
+    "Cannot modify other MCP servers (coderef-docs, coderef-context, coderef-personas)"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-WORKFLOW-COMMAND-SIMPLIFICATION-001",
+    "workorder_assigned_at": "2026-01-04T11:47:51.791593+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-WORKFLOW-COMMAND-SIMPLIFICATION-001",
+    "feature_id": "workflow-command-simplification",
+    "last_updated": "2026-01-04",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-03"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "workorder_id": "WO-CONTEXT-INDEX-001",
+  "feature_name": "create-context-index",
+  "created": "2026-01-04",
+  "status": "complete",
+  "description": "Identify and catalog all reference sheets and context files across coderef projects",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\create-context-index\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Aggregate all project indexes into master context-index",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\create-context-index\\master-context-index.md",
+    "status": "complete",
+    "notes": "Aggregated 173 total files from 3 projects into master index with statistics and usage recommendations"
+  },
+
+  "agents": [
+    {
+      "agent_id": "assistant-coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "role": "Search coderef-system for reference sheets and context files",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\create-context-index\\coderef-system-index.md",
+      "status": "complete",
+      "notes": "Found 45 context files: guides, templates, standards, documentation"
+    },
+    {
+      "agent_id": "assistant-coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Search coderef-dashboard for reference sheets and context files",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\create-context-index\\coderef-dashboard-index.md",
+      "status": "complete",
+      "notes": "Found 109 context files: 23 docs, 3 schemas, 1 template, 30 reference sheets, 6 guides, 4 standards, 42 other"
+    },
+    {
+      "agent_id": "assistant-coderef-core",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "role": "Search coderef-core package for reference sheets and context files",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\create-context-index\\coderef-core-index.md",
+      "status": "complete",
+      "notes": "Found 19 context files: 8 docs, 8 reference sheets, 1 guide, 3 other"
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  },
+
+  "references": [
+    {
+      "title": "CodeRef Core - Comprehensive Codebase Audit Report",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\src\\coderef\\CODEBASE-AUDIT-REPORT.md",
+      "description": "Complete audit of all CodeRef implementations across 3 locations (root, src/, coderef-core-updates/). Identifies source of truth, feature mapping, critical issues, and migration recommendations.",
+      "type": "audit_report"
+    },
+    {
+      "title": "Complete CodeRef System Consolidation Plan",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\src\\coderef\\migration-strategy.md",
+      "description": "Migration strategy to consolidate all three CodeRef implementations into one unified system with working regex and AST scanners producing ElementData[] output.",
+      "type": "migration_plan"
+    },
+    {
+      "title": "Timestamp Utility (Python)",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\coderef\\notes\\timestamp.py",
+      "description": "Python script for generating standardized timestamps in YAML front matter format (YYYY-MM-DD) for CodeRef document generation. Will be used when creating any document in the coderef ecosystem. Planned location: coderef/notes/timestamp.py or scripts/utils/timestamp.py.",
+      "type": "utility_script",
+      "status": "planned",
+      "stub_location": "C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\coderef-timestamp-utility\\stub.json"
+    },
+    {
+      "title": "RSMS Resource Sheet Generator",
+      "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\rsms.py",
+      "description": "Resource Sheet Metadata Standards (RSMS) generator for creating compliant YAML front matter in resource sheets. Follows RSMS v2.0 schema. Planned implementation - similar to uds.py pattern. Will generate RSMS v2.0 compliant YAML front matter with required fields: agent, date, task, subject, parent_project, category.",
+      "type": "generator_module",
+      "status": "planned",
+      "reference_implementation": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\uds.py"
+    },
+    {
+      "title": "Reference Sheet Generator (Python MCP)",
+      "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\resource_sheet\\detection\\",
+      "description": "Python MCP resource sheet generator with TypeScript-style 24-category classification, confidence scoring, and fuzzy matching. Enhancement planned to align Python implementation with TypeScript reference blueprint.",
+      "type": "generator_module",
+      "status": "in_progress",
+      "stub_location": "C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\reference-sheet-generator\\stub.json"
+    },
+    {
+      "title": "CodeRef Core - Resource Directory",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\coderef\\resource",
+      "description": "Central resource directory containing 10 reference sheets and technical documentation for coderef-core scanner implementation. Includes API contracts, architecture diagrams, scanner system docs, and implementation plans. Key files: SCANNER-SYSTEM.md, API-SCANNER-CONTRACT.md, TYPESCRIPT-IMPLEMENTATION-PLAN.md, SCAN-EXECUTOR.md.",
+      "type": "resource_directory",
+      "status": "active",
+      "file_count": 10,
+      "categories": {
+        "reference_sheets": 8,
+        "guides": 0,
+        "other": 2
+      }
+    }
+  ]
+}

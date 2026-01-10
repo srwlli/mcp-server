@@ -16,7 +16,14 @@
       "Bash(done)",
       "mcp__coderef-docs__generate_foundation_docs",
       "mcp__coderef-docs__generate_individual_doc",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(pwsh -File:*)",
+      "mcp__coderef-workflow__gather_context",
+      "mcp__coderef-workflow__create_plan",
+      "Bash(find schemas -name \"*.json\" -type f -exec sh -c 'echo \"\"=== {} ===\"\" && jq -r \"\".properties | keys[]\"\" {} 2>/dev/null | grep -i \"\"agent\\|date\\|task\\|front\"\" | head -5' ;)",
+      "Bash(cat:*)"
     ]
   },
   "enabledMcpjsonServers": [

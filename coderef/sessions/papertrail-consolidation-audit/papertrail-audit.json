@@ -1,0 +1,97 @@
+{
+  "agent_id": "papertrail-agent",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "audit_date": "2026-01-04",
+
+  "findings": {
+    "schemas": [
+      {
+        "file_path": "papertrail/schemas/plan.json",
+        "file_name": "plan.json",
+        "purpose": "UDS schema for plan.json - validates 10-section implementation plan structure with workorder tracking",
+        "used_by": ["papertrail/validator.py"],
+        "should_move": true,
+        "notes": "Core UDS schema. Validates workorder_id format (WO-{FEATURE}-{CATEGORY}-###), all 10 required sections, MCP attribution (generated_by coderef-workflow), and status lifecycle. CRITICAL for papertrail consolidation."
+      },
+      {
+        "file_path": "papertrail/schemas/deliverables.json",
+        "file_name": "deliverables.json",
+        "purpose": "UDS schema for DELIVERABLES.md - validates execution tracking and metrics (LOC, commits, time)",
+        "used_by": ["papertrail/validator.py"],
+        "should_move": true,
+        "notes": "Core UDS schema. Validates workorder_id, completion status, implementation metrics (added/removed/modified LOC), git commit counts, and contributor tracking. CRITICAL for papertrail consolidation."
+      },
+      {
+        "file_path": "papertrail/schemas/architecture.json",
+        "file_name": "architecture.json",
+        "purpose": "UDS schema for ARCHITECTURE.md - validates POWER framework structure (Purpose, Overview, What/Why/When, Examples, References)",
+        "used_by": ["papertrail/validator.py"],
+        "should_move": true,
+        "notes": "Core UDS schema. Validates POWER framework compliance, workorder_id, MCP attribution (generated_by coderef-docs), and version tracking. Used for architecture documentation validation."
+      },
+      {
+        "file_path": "papertrail/schemas/readme.json",
+        "file_name": "readme.json",
+        "purpose": "UDS schema for README.md - validates POWER framework structure for project overviews",
+        "used_by": ["papertrail/validator.py"],
+        "should_move": true,
+        "notes": "Core UDS schema. Validates POWER framework compliance for README docs, workorder_id, version number, and project purpose clarity. Ensures consistent README structure across CodeRef ecosystem."
+      },
+      {
+        "file_path": "papertrail/schemas/api.json",
+        "file_name": "api.json",
+        "purpose": "UDS schema for API.md - validates POWER framework structure with API-specific metadata (API versioning)",
+        "used_by": ["papertrail/validator.py"],
+        "should_move": true,
+        "notes": "Core UDS schema. Validates POWER framework compliance for API docs, workorder_id, API version format (v1, v2.1), and public endpoint documentation. Includes API-specific validation rules."
+      }
+    ],
+    "validators": [],
+    "standards": [
+      {
+        "file_path": "coderef/standards/BEHAVIOR-STANDARDS.md",
+        "file_name": "BEHAVIOR-STANDARDS.md",
+        "purpose": "Auto-generated documentation of behavior patterns (error handling, loading states, form validation) extracted from codebase",
+        "used_by": ["enhance-standards.py (generator script)"],
+        "should_move": false,
+        "notes": "Project-specific output file generated from .coderef/ data. Currently contains placeholder content (no patterns detected). This is a generated artifact, not a source file. Each project would have its own behavior standards."
+      },
+      {
+        "file_path": "coderef/standards/COMPONENT-INDEX.md",
+        "file_name": "COMPONENT-INDEX.md",
+        "purpose": "Auto-generated component inventory from .coderef/index.json",
+        "used_by": ["enhance-standards.py (generator script)"],
+        "should_move": false,
+        "notes": "Project-specific output file. Currently empty (0 components detected) as papertrail is a Python library with no UI components. This is a cache/output file, not a reusable standard."
+      },
+      {
+        "file_path": "coderef/standards/UI-STANDARDS.md",
+        "file_name": "UI-STANDARDS.md",
+        "purpose": "Auto-generated documentation of UI patterns (colors, buttons, typography) extracted from codebase",
+        "used_by": ["enhance-standards.py (generator script)"],
+        "should_move": false,
+        "notes": "Project-specific output file generated from .coderef/ data. Currently contains placeholder content (no UI patterns detected). Each project would have its own UI standards based on its codebase."
+      },
+      {
+        "file_path": "coderef/standards/UX-PATTERNS.md",
+        "file_name": "UX-PATTERNS.md",
+        "purpose": "Auto-generated documentation of UX flows (navigation, permissions, accessibility) extracted from codebase",
+        "used_by": ["enhance-standards.py (generator script)"],
+        "should_move": false,
+        "notes": "Project-specific output file with placeholder content. Intended to document navigation, auth patterns, and a11y patterns specific to this project. Not a reusable standard."
+      }
+    ],
+    "qa_tools": []
+  },
+
+  "summary": {
+    "total_files_found": 9,
+    "schemas_count": 5,
+    "validators_count": 0,
+    "standards_count": 4,
+    "qa_tools_count": 0,
+    "recommended_to_move": 5
+  },
+
+  "agent_recommendation": "MOVE all 5 UDS schemas to papertrail (plan.json, deliverables.json, architecture.json, readme.json, api.json). These are the core Universal Documentation Standards that validate document structure across the entire CodeRef ecosystem. They are reusable, enforce naming conventions, and validate external contracts. The 4 standards files (BEHAVIOR-STANDARDS.md, COMPONENT-INDEX.md, UI-STANDARDS.md, UX-PATTERNS.md) should NOT move - they are project-specific output files generated from .coderef/ data by enhance-standards.py. Each project will have its own versions of these standards based on its codebase. No validators or QA tools were found in this project - validation is handled programmatically by validator.py which loads the schemas."
+}

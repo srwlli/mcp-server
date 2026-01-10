@@ -32,7 +32,9 @@
       "Bash(findstr:*)",
       "Bash(powershell -Command \"Get-Content ''C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\workorder\\server-output-documentation\\DOC-002-coderef-docs-outputs.md'' | Measure-Object -Line\")",
       "Bash(powershell -Command:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "mcp__coderef-workflow__create_plan",
+      "mcp__coderef-workflow__analyze_project_for_planning"
     ],
     "deny": [],
     "ask": []

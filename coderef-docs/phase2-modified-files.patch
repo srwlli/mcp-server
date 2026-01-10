@@ -1,0 +1,64 @@
+diff --git a/coderef-docs/resource_sheet/modules/__init__.py b/coderef-docs/resource_sheet/modules/__init__.py
+index 883d537..f8b142f 100644
+--- a/coderef-docs/resource_sheet/modules/__init__.py
++++ b/coderef-docs/resource_sheet/modules/__init__.py
+@@ -32,10 +32,14 @@ class ModuleRegistry:
+         }
+ 
+     def register(self, module: DocumentationModule) -> None:
+-        """Register a module in the registry."""
+-        self._modules[module["id"]] = module
+-        if module["category"] in self._categories:
+-            self._categories[module["category"]].append(module["id"])
++        """Register a module in the registry (supports both dict and dataclass)."""
++        # Handle both dict and dataclass instances
++        module_id = module.id if hasattr(module, 'id') else module["id"]
++        module_category = module.category if hasattr(module, 'category') else module["category"]
++
++        self._modules[module_id] = module
++        if module_category in self._categories:
++            self._categories[module_category].append(module_id)
+ 
+     def get(self, module_id: str) -> DocumentationModule | None:
+         """Get a module by ID."""
+@@ -65,31 +69,34 @@ class ModuleRegistry:
+         selected = []
+ 
+         for module in self._modules.values():
++            # Handle both dict and dataclass instances
++            triggers = module.triggers if hasattr(module, 'triggers') else module["triggers"]
++
+             # Check if any required characteristics are present
+-            if module["triggers"]["required_when"]:
++            if triggers["required_when"]:
+                 has_required = any(
+                     characteristics.get(char, False)
+-                    for char in module["triggers"]["required_when"]
++                    for char in triggers["required_when"]
+                 )
+                 if has_required:
+                     # Check incompatibilities
+                     has_incompatible = any(
+                         characteristics.get(char, False)
+-                        for char in module["triggers"]["incompatible_with"]
++                        for char in triggers["incompatible_with"]
+                     )
+                     if not has_incompatible:
+                         selected.append(module)
+ 
+             # Check optional characteristics
+-            elif module["triggers"]["optional_when"]:
++            elif triggers["optional_when"]:
+                 has_optional = any(
+                     characteristics.get(char, False)
+-                    for char in module["triggers"]["optional_when"]
++                    for char in triggers["optional_when"]
+                 )
+                 if has_optional:
+                     has_incompatible = any(
+                         characteristics.get(char, False)
+-                        for char in module["triggers"]["incompatible_with"]
++                        for char in triggers["incompatible_with"]
+                     )
+                     if not has_incompatible:
+                         selected.append(module)

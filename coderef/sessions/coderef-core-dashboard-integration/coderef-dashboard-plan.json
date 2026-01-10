@@ -1,0 +1,390 @@
+{
+  "workorder_id": "WO-CORE-DASHBOARD-INTEGRATION-001",
+  "project": "coderef-dashboard",
+  "agent_id": "coderef-dashboard",
+  "created": "2026-01-04",
+
+  "resource_sheets_found": [
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\CODEREF-EXPLORER-WIDGET.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\SCAN-EXECUTOR.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\FILE-TREE.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\PROMPTING-WORKFLOW.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\API-ACCESS.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\ProjectSelector-resource-sheet.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\INDEX.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\assistant-page.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\stubs-system.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\workorders-system.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\data-flow-architecture.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\reference-sheets\\notifications-ux-review.md"
+  ],
+
+  "current_state_analysis": {
+    "scanner_implementation": {
+      "current_approach": "Python subprocess execution via ScanExecutor class",
+      "scripts_used": [
+        "scan-all.py - Minimal .coderef/ generation (index.json, context.md)",
+        "populate-coderef.py - Complete .coderef/ generation (16 files)"
+      ],
+      "execution_model": "Sequential project processing with child_process.spawn()",
+      "output_streaming": "Real-time SSE streaming via EventEmitter pattern",
+      "script_locations": {
+        "scan": "process.env.SCAN_SCRIPT_PATH || 'C:\\Users\\willh\\Desktop\\projects\\coderef-system\\scripts\\scan-all.py'",
+        "populate": "process.env.POPULATE_SCRIPT_PATH || 'C:\\Users\\willh\\Desktop\\projects\\coderef-system\\scripts\\populate-coderef.py'"
+      }
+    },
+
+    "integration_points": {
+      "api_routes": [
+        "POST /api/scanner/scan - Initiates scan via ScanExecutor",
+        "GET /api/scanner/scan/[scanId]/output - SSE streaming endpoint",
+        "GET /api/scanner/scan/[scanId]/status - Progress polling",
+        "POST /api/scanner/scan/[scanId]/cancel - Cancellation endpoint"
+      ],
+      "core_file": "packages/dashboard/src/app/api/scanner/lib/scanExecutor.ts (343 lines)",
+      "ui_components": [
+        "packages/dashboard/src/components/Scanner/index.tsx",
+        "packages/dashboard/src/components/Scanner/ProjectListCard.tsx",
+        "packages/dashboard/src/components/Scanner/ConsoleTabs.tsx",
+        "packages/dashboard/src/components/Scanner/ActionBar.tsx"
+      ]
+    },
+
+    "dependencies": {
+      "current": [
+        "child_process (Node.js built-in) - spawn() for Python execution",
+        "events (Node.js built-in) - EventEmitter for real-time output",
+        "fs/promises (Node.js built-in) - Project storage",
+        "next (14+) - Next.js API routes and SSE"
+      ],
+      "missing": [
+        "@coderef/core - Scanner library NOT currently a dependency"
+      ]
+    },
+
+    "existing_api_pattern": {
+      "pattern_used": "CodeRefApi client with apiFetch() wrapper",
+      "location": "packages/dashboard/src/lib/coderef/api-access.ts (157 lines)",
+      "features": [
+        "Generic apiFetch<T>() with error handling",
+        "ApiError class with error codes",
+        "ApiResponse<T> standard envelope",
+        "Namespaced modules (ProjectsApi, TreeApi, FileApi)",
+        "Type imports from route files for type safety"
+      ],
+      "example_integration": "ProjectsApi.list() calls GET /api/coderef/projects"
+    }
+  },
+
+  "implementation_plan": {
+    "phase_1": {
+      "description": "Replace Python subprocess calls with @coderef/core direct function calls",
+      "goal": "Eliminate CLI dependency, enable fast in-process scanning with type safety",
+
+      "tasks": [
+        {
+          "id": "TASK-001",
+          "title": "Add @coderef/core dependency to dashboard package.json",
+          "description": "Install @coderef/core as workspace dependency for direct imports",
+          "subtasks": [
+            "Add '@coderef/core': 'workspace:*' to dashboard package.json dependencies",
+            "Run npm install to link workspace package",
+            "Verify import works: import { scanCurrentElements } from '@coderef/core'"
+          ],
+          "estimated_effort": "15 minutes"
+        },
+
+        {
+          "id": "TASK-002",
+          "title": "Create new API route: POST /api/scan",
+          "description": "New endpoint that calls @coderef/core scanner functions directly (in-process, no subprocess)",
+          "file": "packages/dashboard/src/app/api/scan/route.ts",
+          "implementation": {
+            "imports": [
+              "import { scanCurrentElements } from '@coderef/core'",
+              "import { createSuccessResponse, createErrorResponse } from '@/types/api'"
+            ],
+            "request_body": {
+              "projectPath": "string (absolute path to scan)",
+              "options": {
+                "lang": "string[] (file extensions: ['ts', 'tsx', 'js', 'jsx'])",
+                "recursive": "boolean (default: true)",
+                "exclude": "string[] (glob patterns to exclude)"
+              }
+            },
+            "response": {
+              "success_format": "ApiResponse<{ elements: ElementData[]; summary: ScanSummary }>",
+              "error_format": "ApiResponse with error.code and error.message"
+            },
+            "error_handling": [
+              "Catch scanner exceptions and return SCAN_FAILED error",
+              "Validate projectPath exists before scanning",
+              "Handle invalid options (bad lang extension, etc.)"
+            ]
+          },
+          "subtasks": [
+            "Create route file: app/api/scan/route.ts",
+            "Implement POST handler with scanCurrentElements() call",
+            "Add request validation (projectPath required, options optional)",
+            "Add error handling for scanner failures",
+            "Return ApiResponse<ScanResult> format matching existing API pattern",
+            "Add TypeScript types for request/response"
+          ],
+          "estimated_effort": "2-3 hours"
+        },
+
+        {
+          "id": "TASK-003",
+          "title": "Create ScanApi client module in api-access.ts",
+          "description": "Add scanner operations to CodeRefApi following existing ProjectsApi/TreeApi pattern",
+          "file": "packages/dashboard/src/lib/coderef/api-access.ts",
+          "implementation": {
+            "namespace": "ScanApi",
+            "methods": [
+              {
+                "name": "scan(projectPath: string, options?: ScanOptions): Promise<ScanResult>",
+                "description": "Trigger scan via POST /api/scan",
+                "returns": "{ elements: ElementData[]; summary: ScanSummary }"
+              }
+            ],
+            "integration": "Add ScanApi to CodeRefApi unified export: { projects, tree, file, scan }"
+          },
+          "subtasks": [
+            "Add ScanApi namespace with scan() method",
+            "Define ScanOptions interface (lang, recursive, exclude)",
+            "Define ScanResult interface (elements, summary)",
+            "Use apiFetch<ScanResult>() for type-safe HTTP call",
+            "Add to CodeRefApi export: scan: ScanApi",
+            "Update api-access.ts exports"
+          ],
+          "estimated_effort": "1-2 hours"
+        },
+
+        {
+          "id": "TASK-004",
+          "title": "Refactor ScanExecutor to call /api/scan instead of Python scripts",
+          "description": "Replace spawn('python') calls with HTTP fetch to new /api/scan endpoint",
+          "file": "packages/dashboard/src/app/api/scanner/lib/scanExecutor.ts",
+          "current_behavior": {
+            "scan_phase": "spawn('python', [scanScriptPath, projectPath])",
+            "populate_phase": "spawn('python', [populateScriptPath, projectPath])",
+            "output_streaming": "stdout.on('data') → emitOutput()"
+          },
+          "new_behavior": {
+            "scan_phase": "await fetch('/api/scan', { body: { projectPath, options } })",
+            "populate_phase": "Keep Python script temporarily (Phase 2: migrate to @coderef/core)",
+            "output_streaming": "Simulate output events from scan progress (no real-time from in-process scan)"
+          },
+          "implementation": {
+            "replace_runScanForProject": "Use CodeRefApi.scan.scan() instead of spawn()",
+            "output_simulation": [
+              "Emit 'output' event at scan start: '[Scanner] Starting scan for: {path}'",
+              "Wait for scan completion",
+              "Emit 'output' event at scan end: '[Scanner] Completed: {path} ({elementCount} elements)'"
+            ],
+            "error_handling": "Catch ApiError from scan() and emit to SSE clients"
+          },
+          "subtasks": [
+            "Import CodeRefApi from @/lib/coderef/api-access",
+            "Replace runScanForProject() spawn() logic with await CodeRefApi.scan.scan()",
+            "Emit simulated output events (start/complete messages)",
+            "Handle ApiError exceptions from scan API call",
+            "Keep runPopulateForProject() unchanged (Python script for now)",
+            "Test sequential project scanning still works"
+          ],
+          "estimated_effort": "2-3 hours"
+        },
+
+        {
+          "id": "TASK-005",
+          "title": "Update Scanner UI to handle new scan output format",
+          "description": "Adapt ConsoleTabs to display simplified output (no Python stdout streaming)",
+          "files": [
+            "packages/dashboard/src/components/Scanner/ConsoleTabs.tsx",
+            "packages/dashboard/src/components/Scanner/ActionBar.tsx"
+          ],
+          "current_behavior": "SSE streams Python script stdout line-by-line",
+          "new_behavior": "SSE streams simulated scan progress messages (start/complete only)",
+          "implementation": {
+            "no_ui_changes_needed": "SSE still works, just fewer output lines",
+            "output_format": [
+              "[Scanner] Starting scan for: C:\\path\\to\\project",
+              "[Scanner] Completed: C:\\path\\to\\project (1,234 elements found)",
+              "[Intelligence] Starting populate for: C:\\path\\to\\project",
+              "[Intelligence] Completed: C:\\path\\to\\project"
+            ]
+          },
+          "subtasks": [
+            "Test SSE output display with new format",
+            "Verify no UI regressions (ConsoleTabs still shows output)",
+            "Update any hardcoded expectations of Python stdout format"
+          ],
+          "estimated_effort": "1 hour"
+        },
+
+        {
+          "id": "TASK-006",
+          "title": "Add comprehensive tests for /api/scan endpoint",
+          "description": "Unit tests for scanner API route and ScanExecutor integration",
+          "file": "packages/dashboard/src/app/api/scan/__tests__/route.test.ts",
+          "test_cases": [
+            "should return scan results for valid project path",
+            "should return error for invalid project path",
+            "should handle scanner exceptions gracefully",
+            "should validate request body (projectPath required)",
+            "should support scan options (lang, recursive, exclude)",
+            "should return ApiResponse<ScanResult> format"
+          ],
+          "subtasks": [
+            "Create __tests__ directory in app/api/scan/",
+            "Write unit tests using Vitest/Jest",
+            "Mock @coderef/core scanCurrentElements() function",
+            "Test error handling paths",
+            "Test success response format",
+            "Achieve 80%+ coverage"
+          ],
+          "estimated_effort": "2-3 hours"
+        },
+
+        {
+          "id": "TASK-007",
+          "title": "Update documentation and resource sheets",
+          "description": "Document new scanner integration approach",
+          "files": [
+            "coderef/reference-sheets/SCAN-EXECUTOR.md",
+            "coderef/reference-sheets/API-ACCESS.md"
+          ],
+          "updates": [
+            "SCAN-EXECUTOR.md: Document new HTTP-based scan phase (not Python subprocess)",
+            "API-ACCESS.md: Add ScanApi namespace documentation",
+            "Add integration diagram showing @coderef/core → /api/scan → ScanExecutor flow"
+          ],
+          "subtasks": [
+            "Update SCAN-EXECUTOR.md architecture section",
+            "Add ScanApi to API-ACCESS.md",
+            "Create integration flow diagram (Mermaid)",
+            "Document migration from Python to in-process scanning"
+          ],
+          "estimated_effort": "1-2 hours"
+        }
+      ],
+
+      "files_to_modify": [
+        "packages/dashboard/package.json - Add @coderef/core dependency",
+        "packages/dashboard/src/app/api/scanner/lib/scanExecutor.ts - Replace Python spawn with API call",
+        "packages/dashboard/src/lib/coderef/api-access.ts - Add ScanApi namespace",
+        "coderef/reference-sheets/SCAN-EXECUTOR.md - Update docs",
+        "coderef/reference-sheets/API-ACCESS.md - Add ScanApi docs"
+      ],
+
+      "files_to_create": [
+        "packages/dashboard/src/app/api/scan/route.ts - New scanner endpoint",
+        "packages/dashboard/src/app/api/scan/__tests__/route.test.ts - Unit tests"
+      ],
+
+      "estimated_effort": "10-15 hours total",
+
+      "success_criteria": [
+        "✅ @coderef/core added as workspace dependency",
+        "✅ POST /api/scan endpoint returns scan results (no Python subprocess)",
+        "✅ ScanApi.scan() method available in CodeRefApi",
+        "✅ ScanExecutor.runScanForProject() calls API instead of spawn()",
+        "✅ Scanner UI still works (SSE streaming, progress tracking)",
+        "✅ Unit tests pass with 80%+ coverage",
+        "✅ Documentation updated to reflect new architecture"
+      ]
+    }
+  },
+
+  "integration_requirements": {
+    "from_other_agent": {
+      "coderef_packages_exports": [
+        "scanCurrentElements() function from @coderef/core",
+        "ElementData type definition",
+        "ScanOptions interface (lang, recursive, exclude options)",
+        "Scanner error types (ScanError, ValidationError, etc.)"
+      ],
+      "package_exposure": [
+        "@coderef/core must be consumable as workspace dependency",
+        "Types must be exported from @coderef/core/index.ts",
+        "Scanner functions must be async and return Promise<ElementData[]>"
+      ]
+    },
+
+    "exports": {
+      "api_endpoints": [
+        "POST /api/scan - Main scanner endpoint",
+        "GET /api/scanner/scan/[scanId]/output - SSE streaming (unchanged)",
+        "GET /api/scanner/scan/[scanId]/status - Progress polling (unchanged)"
+      ],
+      "client_api": [
+        "CodeRefApi.scan.scan(projectPath, options) - Type-safe scanner client"
+      ]
+    },
+
+    "shared_types": {
+      "from_core": [
+        "ElementData - Scanned code element structure",
+        "ScanOptions - Scanner configuration options",
+        "ScanResult - Scan output format"
+      ],
+      "from_dashboard": [
+        "ApiResponse<T> - Standard API response envelope",
+        "ApiError - Custom error class with codes"
+      ],
+      "coordination": "Core types imported by dashboard, dashboard wraps in ApiResponse"
+    }
+  },
+
+  "risks": [
+    {
+      "risk": "Breaking change for existing scanner users",
+      "mitigation": "Phase 1 only changes scan phase, populate still uses Python",
+      "severity": "Medium"
+    },
+    {
+      "risk": "@coderef/core not optimized for large projects (10,000+ files)",
+      "mitigation": "Test with large projects, add streaming/chunking if needed",
+      "severity": "High"
+    },
+    {
+      "risk": "Loss of real-time stdout streaming from Python scripts",
+      "mitigation": "Simulate output events, add progress callbacks to @coderef/core if needed",
+      "severity": "Low"
+    },
+    {
+      "risk": "Type mismatch between @coderef/core and dashboard expectations",
+      "mitigation": "Import types from @coderef/core, use TypeScript strict mode",
+      "severity": "Medium"
+    },
+    {
+      "risk": "Performance regression (in-process scan slower than subprocess)",
+      "mitigation": "Benchmark scan times before/after migration",
+      "severity": "Medium"
+    }
+  ],
+
+  "success_criteria": [
+    "✅ Scanner executes without spawning Python subprocesses for scan phase",
+    "✅ Scan results return in <5 seconds for typical projects (1,000-2,000 files)",
+    "✅ Type safety maintained (no 'any' types, all responses typed)",
+    "✅ SSE streaming still works (output events reach frontend)",
+    "✅ Unit test coverage >= 80% for new /api/scan endpoint",
+    "✅ Scanner UI functionality unchanged from user perspective",
+    "✅ Documentation updated to reflect new architecture",
+    "✅ Zero breaking changes to existing scanner API contracts"
+  ],
+
+  "dependencies_on_other_agent": [
+    "coderef-packages agent must expose scanCurrentElements() from @coderef/core",
+    "coderef-packages agent must export TypeScript types (ElementData, ScanOptions)",
+    "coderef-packages agent must ensure @coderef/core works as workspace dependency"
+  ],
+
+  "notes": {
+    "migration_strategy": "Incremental migration - Phase 1 only migrates scan phase, populate phase stays on Python until Phase 2",
+    "backward_compatibility": "Old scanner API routes (/api/scanner/scan) remain functional, new /api/scan is additional",
+    "testing_approach": "Test both old (Python) and new (@coderef/core) paths in parallel during Phase 1",
+    "rollback_plan": "If @coderef/core integration fails, revert ScanExecutor changes and continue using Python scripts"
+  }
+}

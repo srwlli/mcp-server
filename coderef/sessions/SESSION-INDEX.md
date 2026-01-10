@@ -85,6 +85,23 @@ This index tracks all session workorders and supporting documentation created fo
 
 ---
 
+## Papertrail Consolidation Audit
+
+**WO-PAPERTRAIL-CONSOLIDATION-AUDIT-001** - Ecosystem Audit for Validation/Schema/Standards Consolidation
+- Status: ⏳ Not Started
+- Created: 2026-01-04
+- Participants: 8 agents (coderef-context, coderef-workflow, coderef-docs, coderef-personas, coderef-testing, papertrail, coderef-packages, coderef-dashboard)
+- Communication: `sessions/papertrail-consolidation-audit/communication.json`
+- Instructions: `sessions/papertrail-consolidation-audit/instructions.json`
+- Orchestrator Output: `sessions/papertrail-consolidation-audit/orchestrator-migration-manifest.json`
+- Purpose: Discover all schemas, validators, standards docs, and QA tools across ecosystem to consolidate into papertrail
+
+**Goal:** Create unified migration manifest showing what validation/standards files exist, where they live, and what should move to papertrail for centralized QA/standards enforcement.
+
+**Related:** See `PAPERTRAIL-REPOSITIONING-PLAN.md` for architectural context
+
+---
+
 ## Session Metrics
 
 **Total Workorders:** 6

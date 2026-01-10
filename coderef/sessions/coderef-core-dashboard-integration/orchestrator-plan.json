@@ -1,0 +1,439 @@
+{
+  "workorder_id": "WO-CORE-DASHBOARD-INTEGRATION-001",
+  "orchestrator": "coderef",
+  "created": "2026-01-04",
+  "status": "synthesis_complete",
+
+  "executive_summary": {
+    "goal": "Replace Python subprocess scanner execution with direct @coderef/core function calls in coderef-dashboard",
+    "approach": "Wire @coderef/core scanner functions into Next.js API routes for fast, type-safe, in-process scanning",
+    "total_tasks": 13,
+    "total_effort_hours": {
+      "packages": "4-6 hours",
+      "dashboard": "10-15 hours",
+      "total_range": "14-21 hours"
+    },
+    "key_benefit": "Eliminate CLI subprocess overhead, gain type safety, reduce scan latency from seconds to milliseconds"
+  },
+
+  "dependency_analysis": {
+    "critical_path": [
+      "PKG-001: Verify @coderef/core exports → BLOCKS all dashboard work",
+      "PKG-003: Verify TypeScript declarations → BLOCKS dashboard TypeScript integration",
+      "TASK-001: Add @coderef/core dependency → BLOCKS all API route creation",
+      "TASK-002: Create /api/scan route → BLOCKS ScanExecutor refactor",
+      "TASK-003: Create ScanApi client → BLOCKS ScanExecutor refactor",
+      "TASK-004: Refactor ScanExecutor → BLOCKS UI updates",
+      "TASK-005: Update Scanner UI → BLOCKS user acceptance",
+      "TASK-006: Add tests → BLOCKS production deployment",
+      "TASK-007: Update docs → BLOCKS knowledge transfer"
+    ],
+    "blocking_tasks": {
+      "PKG-001": "Blocks TASK-001 (must verify exports exist before adding dependency)",
+      "PKG-003": "Blocks TASK-002 (must have type definitions for API route implementation)",
+      "TASK-001": "Blocks TASK-002, TASK-003 (dependency must be installed before imports)",
+      "TASK-002": "Blocks TASK-004 (API route must exist before executor can call it)",
+      "TASK-003": "Blocks TASK-004 (ScanApi client must exist for executor to use)"
+    },
+    "parallel_opportunities": [
+      "PKG-002 (API docs) can run parallel with dashboard integration",
+      "PKG-004 (tests) can run parallel with PKG-002",
+      "PKG-005 (error docs) can run parallel with PKG-002, PKG-004",
+      "PKG-006 (Next.js example) can run after PKG-001 completes, parallel with dashboard work"
+    ]
+  },
+
+  "integration_points": {
+    "package_exposure": {
+      "source": "@coderef/core v2.0.0",
+      "entry_point": "dist/index.js (ES module)",
+      "type_definitions": "dist/index.d.ts",
+      "key_exports": [
+        "scanCurrentElements(path: string, languages: string | string[], options?: ScanOptions): Promise<ElementData[]>",
+        "LANGUAGE_PATTERNS: Record<string, RegExp[]>",
+        "ElementData: { name, type, file, line, exported, parameters, metadata }",
+        "ScanOptions: { recursive?, exclude?, verbose? }",
+        "AnalyzerService, QueryExecutor, ImpactSimulator, ComplexityScorer, ContextGenerator"
+      ],
+      "installation": "workspace:* dependency in dashboard package.json",
+      "risk": "ESM compatibility - Next.js must support ES modules (verified: Next.js 14+ supports ESM)"
+    },
+
+    "api_architecture": {
+      "new_endpoint": "POST /api/scan",
+      "request_format": {
+        "projectPath": "string (absolute path)",
+        "options": {
+          "lang": "string[] (['ts', 'tsx', 'js', 'jsx'])",
+          "recursive": "boolean (default: true)",
+          "exclude": "string[] (glob patterns)"
+        }
+      },
+      "response_format": "ApiResponse<{ elements: ElementData[]; summary: ScanSummary }>",
+      "error_handling": "ApiError with error codes (SCAN_FAILED, VALIDATION_ERROR, etc.)",
+      "integration_pattern": "Follows existing CodeRefApi pattern (ProjectsApi, TreeApi, FileApi)"
+    },
+
+    "executor_refactoring": {
+      "current": "spawn('python', [scanScriptPath, projectPath]) with stdout streaming",
+      "new": "await CodeRefApi.scan.scan(projectPath, options) with simulated output events",
+      "output_streaming": "SSE still works, but fewer output lines (start/complete only vs line-by-line Python stdout)",
+      "populate_phase": "UNCHANGED - keeps Python script for Phase 1, migrated in Phase 2",
+      "backward_compatibility": "Old /api/scanner/scan routes remain, new /api/scan is additional"
+    },
+
+    "shared_types": {
+      "from_core": [
+        "ElementData - Scanned element structure",
+        "ScanOptions - Scanner configuration",
+        "ScanResult - Scan output format",
+        "DependencyGraph - Graph structure",
+        "AnalysisResult - Complete analysis output"
+      ],
+      "from_dashboard": [
+        "ApiResponse<T> - Standard HTTP response envelope",
+        "ApiError - Error class with codes",
+        "ScanSummary - Aggregated scan metrics"
+      ],
+      "coordination": "Dashboard imports core types, wraps in ApiResponse envelope"
+    }
+  },
+
+  "implementation_roadmap": {
+    "phase_1": {
+      "title": "Core Scanner Integration",
+      "description": "Enable direct in-process scanning for Dashboard via @coderef/core",
+      "duration": "14-21 hours total",
+
+      "work_streams": [
+        {
+          "stream": "Packages Preparation (Parallel Track A)",
+          "agent": "coderef-packages",
+          "duration": "4-6 hours",
+          "tasks": [
+            {
+              "id": "PKG-001",
+              "title": "Verify @coderef/core exports",
+              "effort": "30 minutes",
+              "priority": "CRITICAL - BLOCKS ALL DASHBOARD WORK",
+              "output": "Verification report confirming scanCurrentElements, types exported from dist/index.js",
+              "dependencies": "None",
+              "parallel_safe": false
+            },
+            {
+              "id": "PKG-002",
+              "title": "Document API contract",
+              "effort": "1-2 hours",
+              "priority": "High",
+              "output": "packages/core/API-SCANNER-CONTRACT.md",
+              "dependencies": "PKG-001 (need verified exports to document)",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["dashboard integration", "PKG-004", "PKG-005"]
+            },
+            {
+              "id": "PKG-003",
+              "title": "Verify TypeScript declarations",
+              "effort": "15 minutes",
+              "priority": "CRITICAL - BLOCKS DASHBOARD TYPESCRIPT",
+              "output": "Verification that dist/index.d.ts has all scanner types",
+              "dependencies": "PKG-001",
+              "parallel_safe": false
+            },
+            {
+              "id": "PKG-004",
+              "title": "Test scanner in isolation",
+              "effort": "1-2 hours",
+              "priority": "Medium",
+              "output": "packages/core/__tests__/scanner-standalone.test.ts",
+              "dependencies": "PKG-001",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["PKG-002", "PKG-005", "PKG-006"]
+            },
+            {
+              "id": "PKG-005",
+              "title": "Document error handling",
+              "effort": "1 hour",
+              "priority": "Medium",
+              "output": "Error section in API-SCANNER-CONTRACT.md",
+              "dependencies": "PKG-002 (adds to contract doc)",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["PKG-004", "PKG-006"]
+            },
+            {
+              "id": "PKG-006",
+              "title": "Next.js integration example",
+              "effort": "1 hour",
+              "priority": "Low",
+              "output": "packages/core/examples/nextjs-api-route.ts",
+              "dependencies": "PKG-001",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["dashboard integration", "PKG-002", "PKG-004", "PKG-005"]
+            }
+          ]
+        },
+
+        {
+          "stream": "Dashboard Integration (Sequential Track B)",
+          "agent": "coderef-dashboard",
+          "duration": "10-15 hours",
+          "tasks": [
+            {
+              "id": "TASK-001",
+              "title": "Add @coderef/core dependency",
+              "effort": "15 minutes",
+              "priority": "CRITICAL - BLOCKS ALL API WORK",
+              "output": "Updated dashboard/package.json with workspace:* dependency",
+              "dependencies": "PKG-001 (must verify exports exist first)",
+              "parallel_safe": false,
+              "blocking": ["TASK-002", "TASK-003", "TASK-004"]
+            },
+            {
+              "id": "TASK-002",
+              "title": "Create POST /api/scan route",
+              "effort": "2-3 hours",
+              "priority": "CRITICAL",
+              "output": "app/api/scan/route.ts with scanCurrentElements integration",
+              "dependencies": "TASK-001 (dependency installed), PKG-003 (types available)",
+              "parallel_safe": false,
+              "blocking": ["TASK-004"]
+            },
+            {
+              "id": "TASK-003",
+              "title": "Create ScanApi client",
+              "effort": "1-2 hours",
+              "priority": "CRITICAL",
+              "output": "Updated lib/coderef/api-access.ts with ScanApi namespace",
+              "dependencies": "TASK-001 (need types), TASK-002 (API route must exist)",
+              "parallel_safe": false,
+              "blocking": ["TASK-004"]
+            },
+            {
+              "id": "TASK-004",
+              "title": "Refactor ScanExecutor",
+              "effort": "2-3 hours",
+              "priority": "CRITICAL",
+              "output": "Updated scanExecutor.ts using HTTP fetch instead of Python spawn",
+              "dependencies": "TASK-002 (API route), TASK-003 (ScanApi client)",
+              "parallel_safe": false,
+              "blocking": ["TASK-005"]
+            },
+            {
+              "id": "TASK-005",
+              "title": "Update Scanner UI",
+              "effort": "1 hour",
+              "priority": "Medium",
+              "output": "Verified ConsoleTabs displays new output format",
+              "dependencies": "TASK-004 (executor refactored)",
+              "parallel_safe": false,
+              "blocking": ["TASK-006"]
+            },
+            {
+              "id": "TASK-006",
+              "title": "Add comprehensive tests",
+              "effort": "2-3 hours",
+              "priority": "High",
+              "output": "app/api/scan/__tests__/route.test.ts with 80%+ coverage",
+              "dependencies": "TASK-002 (route exists), TASK-003 (client exists), TASK-004 (executor refactored)",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["TASK-007"]
+            },
+            {
+              "id": "TASK-007",
+              "title": "Update documentation",
+              "effort": "1-2 hours",
+              "priority": "Medium",
+              "output": "Updated SCAN-EXECUTOR.md, API-ACCESS.md with new architecture",
+              "dependencies": "TASK-002, TASK-003, TASK-004 (implementation complete)",
+              "parallel_safe": true,
+              "can_run_parallel_with": ["TASK-006"]
+            }
+          ]
+        }
+      ],
+
+      "execution_strategy": {
+        "optimal_parallelization": [
+          "Step 1: PKG-001 (verify exports) - MUST complete first (30 min)",
+          "Step 2: PKG-003 (verify types) - MUST complete second (15 min)",
+          "Step 3: TASK-001 (add dependency) - MUST complete third (15 min)",
+          "Step 4 (Parallel): PKG-002, PKG-004, PKG-005, PKG-006 + TASK-002 (2-3 hours parallel)",
+          "Step 5: TASK-003 (create ScanApi client) - Sequential (1-2 hours)",
+          "Step 6: TASK-004 (refactor executor) - Sequential (2-3 hours)",
+          "Step 7: TASK-005 (update UI) - Sequential (1 hour)",
+          "Step 8 (Parallel): TASK-006 (tests) + TASK-007 (docs) - (2-3 hours parallel)"
+        ],
+        "timeline_estimate": {
+          "optimistic": "14 hours (perfect parallelization, no blockers)",
+          "realistic": "17.5 hours (some blockers, coordination overhead)",
+          "pessimistic": "21 hours (integration issues, type mismatches, debugging)"
+        }
+      }
+    },
+
+    "phase_2": {
+      "title": "CLI Standardization & Populate Command",
+      "description": "Migrate full report generation to native CLI command, removing Python script dependency",
+      "status": "PLANNED - NOT IN CURRENT SCOPE",
+      "tasks": [
+        {
+          "id": "PKG-NEW-001",
+          "agent": "coderef-packages",
+          "task": "Standardize CLI output paths",
+          "description": "Update config/paths.ts to ensure consistent .coderef/ structure auto-creation"
+        },
+        {
+          "id": "PKG-NEW-002",
+          "agent": "coderef-packages",
+          "task": "Implement 'coderef populate' command",
+          "description": "Port logic from populate-coderef.py to native CLI command"
+        },
+        {
+          "id": "TASK-NEW-001",
+          "agent": "coderef-dashboard",
+          "task": "Migrate populate phase",
+          "description": "Switch ScanExecutor to use 'coderef populate' instead of Python script"
+        }
+      ]
+    }
+  },
+
+  "risk_register": {
+    "risks": [
+      {
+        "id": "RISK-001",
+        "risk": "Path resolution differences",
+        "description": "Dashboard runs in C:\\Users\\willh\\Desktop\\coderef-dashboard but scans projects in different directories. Scanner expects absolute paths.",
+        "severity": "Medium",
+        "impact": "High",
+        "probability": "High",
+        "mitigation": "Dashboard must resolve project paths to absolute before calling scanCurrentElements. Document this requirement in API-SCANNER-CONTRACT.md (PKG-002).",
+        "contingency": "Add path validation in /api/scan route to reject relative paths",
+        "owner": "Both agents (packages documents, dashboard implements)"
+      },
+      {
+        "id": "RISK-002",
+        "risk": "ESM vs CommonJS module resolution",
+        "description": "@coderef/core is ES module (type: 'module'). Next.js supports ESM but may have edge cases.",
+        "severity": "Medium",
+        "impact": "Critical",
+        "probability": "Low",
+        "mitigation": "Verify Next.js config allows ESM dependencies. Test import works in dev and production builds. PKG-004 standalone test will catch this early.",
+        "contingency": "If ESM incompatible, create CommonJS wrapper or transpile core to CommonJS",
+        "owner": "coderef-dashboard"
+      },
+      {
+        "id": "RISK-003",
+        "risk": "Large scan performance blocking API routes",
+        "description": "Scanning 1000+ files may take 1-3 seconds. Next.js API routes have default timeout of 10s (Vercel) or 60s (self-hosted).",
+        "severity": "Low",
+        "impact": "Medium",
+        "probability": "Medium",
+        "mitigation": "Document expected scan times in PKG-002. Consider streaming progress via Server-Sent Events for large scans (Phase 2).",
+        "contingency": "Increase API route timeout or implement async job queue for large scans",
+        "owner": "coderef-dashboard"
+      },
+      {
+        "id": "RISK-004",
+        "risk": "Type mismatch between @coderef/core and dashboard expectations",
+        "description": "Dashboard may expect different ElementData structure than core provides",
+        "severity": "Medium",
+        "impact": "High",
+        "probability": "Medium",
+        "mitigation": "Import types from @coderef/core, use TypeScript strict mode. PKG-003 verifies types are exported. TASK-002 uses imported types.",
+        "contingency": "Create type adapter layer in dashboard if mismatches found",
+        "owner": "Both agents (packages exports, dashboard imports)"
+      },
+      {
+        "id": "RISK-005",
+        "risk": "Loss of real-time stdout streaming from Python scripts",
+        "description": "Python scripts stream output line-by-line. In-process scan returns all at once.",
+        "severity": "Low",
+        "impact": "Low",
+        "probability": "High",
+        "mitigation": "Simulate output events in TASK-004 (start/complete messages). Add progress callbacks to @coderef/core if needed (Phase 2).",
+        "contingency": "Accept fewer output lines as acceptable UX tradeoff for speed",
+        "owner": "coderef-dashboard"
+      }
+    ],
+    "risk_matrix": {
+      "critical_severity": [],
+      "high_severity": [],
+      "medium_severity": ["RISK-001", "RISK-002", "RISK-004"],
+      "low_severity": ["RISK-003", "RISK-005"]
+    }
+  },
+
+  "validation_checklist": {
+    "pre_integration": [
+      "✅ @coderef/core package.json has correct 'main' and 'types' exports (PKG-001)",
+      "✅ dist/index.d.ts exports ElementData, ScanOptions, scanCurrentElements (PKG-003)",
+      "✅ Dashboard project has Next.js 14+ (supports ESM) (TASK-001)",
+      "✅ Resource sheets reviewed by both agents"
+    ],
+    "during_integration": [
+      "⏳ workspace:* dependency resolves correctly (TASK-001)",
+      "⏳ TypeScript compiler accepts imported types (TASK-002)",
+      "⏳ /api/scan returns scan results without errors (TASK-002)",
+      "⏳ ScanApi.scan() method works in ScanExecutor (TASK-003, TASK-004)",
+      "⏳ SSE streaming still displays output (TASK-005)",
+      "⏳ Unit tests pass with 80%+ coverage (TASK-006)"
+    ],
+    "post_integration": [
+      "⏳ Scanner executes without spawning Python subprocess for scan phase",
+      "⏳ Scan results return in <5 seconds for typical projects (1,000-2,000 files)",
+      "⏳ Type safety maintained (no 'any' types, all responses typed)",
+      "⏳ SSE streaming still works (output events reach frontend)",
+      "⏳ Scanner UI functionality unchanged from user perspective",
+      "⏳ Documentation updated (SCAN-EXECUTOR.md, API-ACCESS.md)",
+      "⏳ Zero breaking changes to existing scanner API contracts"
+    ]
+  },
+
+  "success_criteria": {
+    "packages_deliverables": [
+      "✅ API-SCANNER-CONTRACT.md created (PKG-002)",
+      "✅ Standalone scanner test passes (PKG-004)",
+      "✅ Next.js API route example created (PKG-006)",
+      "✅ Error handling patterns documented (PKG-005)",
+      "✅ All exports verified in dist/index.d.ts (PKG-001, PKG-003)"
+    ],
+    "dashboard_deliverables": [
+      "✅ @coderef/core added as workspace dependency (TASK-001)",
+      "✅ POST /api/scan endpoint returns scan results (TASK-002)",
+      "✅ ScanApi.scan() method available in CodeRefApi (TASK-003)",
+      "✅ ScanExecutor.runScanForProject() calls API instead of spawn() (TASK-004)",
+      "✅ Scanner UI still works (SSE streaming, progress tracking) (TASK-005)",
+      "✅ Unit tests pass with 80%+ coverage (TASK-006)",
+      "✅ Documentation updated (TASK-007)"
+    ],
+    "integration_success": [
+      "✅ No Python subprocess spawned during scan phase",
+      "✅ Scan latency reduced from seconds to <1 second",
+      "✅ Type safety across API boundary (TypeScript errors caught at compile time)",
+      "✅ Zero breaking changes to existing dashboard scanner functionality",
+      "✅ Both agents marked status='complete' in communication.json"
+    ]
+  },
+
+  "coordination_notes": {
+    "communication_protocol": "Use communication.json for status updates, notes, and dependency signaling",
+    "handoff_points": [
+      "PKG-001 → TASK-001: Packages confirms exports ready, dashboard adds dependency",
+      "PKG-002 → TASK-002: API contract doc guides dashboard API route implementation",
+      "PKG-003 → TASK-002: Type verification enables dashboard TypeScript integration",
+      "PKG-006 → TASK-002: Example code provides reference implementation"
+    ],
+    "parallel_coordination": "Packages can work on PKG-002, PKG-004, PKG-005, PKG-006 while dashboard implements TASK-002 through TASK-007",
+    "final_sync": "Both agents update communication.json status to 'complete' when all tasks done"
+  },
+
+  "notes": {
+    "migration_strategy": "Incremental - Phase 1 only migrates scan phase, populate stays Python until Phase 2",
+    "backward_compatibility": "Old /api/scanner/scan routes remain functional, new /api/scan is additional",
+    "testing_approach": "Test both old (Python) and new (@coderef/core) paths in parallel during Phase 1",
+    "rollback_plan": "If @coderef/core integration fails, revert ScanExecutor changes and continue using Python scripts",
+    "formatters_location": "Mermaid/Graphviz formatters in @coderef/cli/src/formatters/ (NOT in core). Dashboard will need to copy or import from CLI.",
+    "ast_scanner_option": "Core has regex scanner (85%, <1s) and AST scanner (99%, 1-3s). Phase 1 uses regex. Phase 2 can add AST option.",
+    "existing_dashboard_command": "@coderef/cli has dashboard command (cli/src/commands/dashboard.ts) that uses core directly. Dashboard can reference as implementation example."
+  }
+}

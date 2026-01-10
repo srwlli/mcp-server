@@ -1,0 +1,585 @@
+{
+  "agent_id": "papertrail",
+  "timestamp": "2026-01-02",
+  "workorder_id": "WO-REFERENCE-SHEET-RECONCILIATION-001",
+  "task": "Design auto-generation system for unified resource sheet templates (Tool 1 quality framework + Tool 2 element types)",
+
+  "executive_summary": {
+    "problem": "Two separate resource sheet systems exist: Tool 1 (create-resource-sheet.md - 240 lines of execution framework) and Tool 2 (resource-sheet-catalog.md - 634 lines with 20 element type templates). Tool 1 has HOW (agent framework, quality controls), Tool 2 has WHAT (element classification, specialized checklists).",
+    "solution": "Design unified template generation engine that combines Tool 1's base framework (13 sections + quality gates) with Tool 2's element-specific overlays (20 types with custom checklists). Single /create-resource-sheet command routes to element-specific generator.",
+    "key_insight": "Template generation is a 3-layer system: BASE (Tool 1's 13 sections) + CONDITIONAL (Tool 2's element-specific modules) + VALIDATION (Tool 1's quality gates). Auto-generation means applying all 3 layers systematically."
+  },
+
+  "unified_template_schema": {
+    "schema_version": "1.0.0",
+    "description": "JSON schema for unified resource sheets combining base framework with element-specific extensions",
+
+    "base_template": {
+      "source": "Tool 1 (create-resource-sheet.md)",
+      "sections": [
+        {
+          "id": "header_metadata",
+          "required": true,
+          "fields": ["agent", "date", "task"],
+          "auto_fill": "100% (agent name, current date, task=DOCUMENT)",
+          "generation_rule": "Always generated from system context"
+        },
+        {
+          "id": "executive_summary",
+          "required": true,
+          "fields": ["what_is", "primary_role", "architectural_position", "maintenance_intent"],
+          "auto_fill": "30-50% (can infer from code analysis)",
+          "generation_rule": "Extract from JSDoc, README, or code structure analysis"
+        },
+        {
+          "id": "audience_intent",
+          "required": true,
+          "fields": ["markdown_authority", "code_authority", "schema_authority"],
+          "auto_fill": "80% (standard template with element-specific overrides)",
+          "generation_rule": "Use default hierarchy, customize based on element type"
+        },
+        {
+          "id": "architecture_overview",
+          "required": true,
+          "fields": ["role_in_system", "component_hierarchy", "integration_points", "layout_contracts"],
+          "auto_fill": "60-80% (from graph data and code analysis)",
+          "generation_rule": "Query dependency graph for imports/exports/consumers, extract hierarchy from code structure"
+        },
+        {
+          "id": "state_ownership",
+          "required": "conditional (if stateful)",
+          "fields": ["state_table", "precedence_rules"],
+          "auto_fill": "40-60% (detect state vars, ownership requires human judgment)",
+          "generation_rule": "Scan for useState, useReducer, class properties; table structure auto-generated"
+        },
+        {
+          "id": "data_persistence",
+          "required": "conditional (if persists data)",
+          "fields": ["storage_keys", "versioning_strategy", "failure_modes", "cross_tab_sync"],
+          "auto_fill": "50-70% (detect localStorage/indexedDB calls)",
+          "generation_rule": "Search for storage API usage, extract keys/schemas from code"
+        },
+        {
+          "id": "state_lifecycle",
+          "required": "conditional (if stateful)",
+          "fields": ["initialization", "hydration", "validation", "migration", "runtime_updates", "persistence_triggers"],
+          "auto_fill": "30-50% (detect lifecycle methods, sequence requires analysis)",
+          "generation_rule": "Identify useEffect/componentDidMount patterns, map to lifecycle stages"
+        },
+        {
+          "id": "behaviors_events",
+          "required": true,
+          "fields": ["user_behaviors", "system_behaviors"],
+          "auto_fill": "50-70% (detect event handlers from code)",
+          "generation_rule": "Scan for onClick, onChange, event listeners; categorize as user vs system"
+        },
+        {
+          "id": "event_callback_contracts",
+          "required": "conditional (if has events)",
+          "fields": ["event_table"],
+          "auto_fill": "60-80% (extract from TypeScript types and handlers)",
+          "generation_rule": "Parse event handler signatures, payload types, side effect tracking"
+        },
+        {
+          "id": "performance_considerations",
+          "required": true,
+          "fields": ["known_limits", "bottlenecks", "optimization_opportunities", "deferred_optimizations"],
+          "auto_fill": "10-30% (requires profiling data, mostly template)",
+          "generation_rule": "Template with placeholders, flag for human review"
+        },
+        {
+          "id": "accessibility",
+          "required": true,
+          "fields": ["current_gaps", "required_tasks"],
+          "auto_fill": "40-60% (detect ARIA attributes, roles from JSX)",
+          "generation_rule": "Scan for aria-*, role attributes; identify missing a11y patterns"
+        },
+        {
+          "id": "testing_strategy",
+          "required": true,
+          "fields": ["must_cover_scenarios", "explicitly_not_tested"],
+          "auto_fill": "20-40% (detect test files, extract scenarios)",
+          "generation_rule": "Find associated test files, parse describe/it blocks for scenarios"
+        },
+        {
+          "id": "non_goals",
+          "required": true,
+          "fields": ["rejected_features"],
+          "auto_fill": "0% (requires human decision)",
+          "generation_rule": "Template with placeholder, flag for human input"
+        },
+        {
+          "id": "common_pitfalls",
+          "required": true,
+          "fields": ["known_bugs", "integration_gotchas", "configuration_mistakes", "edge_cases"],
+          "auto_fill": "10-30% (extract from code comments, issues, docs)",
+          "generation_rule": "Search for TODO, FIXME, HACK comments; check issue tracker"
+        }
+      ],
+      "total_sections": 13,
+      "avg_auto_fill_rate": "45-60%"
+    },
+
+    "element_specific_overlays": {
+      "source": "Tool 2 (resource-sheet-catalog.md)",
+      "description": "20 element types with specialized checklists and required sections",
+
+      "classification_taxonomy": [
+        {
+          "rank": 1,
+          "element_type": "top_level_widgets",
+          "detection_patterns": ["Page suffix", "Widget suffix", "top-level component", "route target"],
+          "additional_sections": ["composition_hierarchy", "user_workflows", "layout_contracts", "performance_budget"],
+          "checklist_overlay": ["Composition hierarchy", "User workflows", "State orchestration", "Integration points", "Layout contracts", "Lifecycle events", "Performance budget", "Accessibility root"]
+        },
+        {
+          "rank": 2,
+          "element_type": "stateful_containers",
+          "detection_patterns": ["Provider suffix", "Controller suffix", "Manager suffix", "useState/useReducer usage"],
+          "additional_sections": ["state_authority_table", "lifecycle_diagram", "persistence_contract", "event_subscriptions"],
+          "checklist_overlay": ["State ownership rules", "Coordination logic", "Persistence strategy", "Cache invalidation", "Error boundaries", "Subscription management", "Initialization sequence", "Testing isolation"]
+        },
+        {
+          "rank": 3,
+          "element_type": "global_state_layer",
+          "detection_patterns": ["store.ts", "Context suffix", "Redux/Zustand patterns"],
+          "additional_sections": ["store_schema", "actions_reference", "selectors_catalog", "middleware_order"],
+          "checklist_overlay": ["Store shape", "Actions catalog", "Selectors library", "Persistence mapping", "Middleware stack", "Devtools integration", "Hydration strategy", "Testing approach"]
+        },
+        {
+          "rank": 4,
+          "element_type": "custom_hooks",
+          "detection_patterns": ["use prefix", "hook pattern"],
+          "additional_sections": ["hook_signature", "side_effects_catalog", "dependency_rules", "return_contract"],
+          "checklist_overlay": ["Side effects", "Cleanup guarantees", "Dependency array", "Return contract", "Stale closure bugs", "Composition patterns", "Testing approach", "Performance gotchas"]
+        },
+        {
+          "rank": 5,
+          "element_type": "api_client",
+          "detection_patterns": ["client suffix", "api/sdk patterns", "fetch/axios usage"],
+          "additional_sections": ["endpoint_reference", "auth_flow", "error_taxonomy", "retry_strategy"],
+          "checklist_overlay": ["Endpoint catalog", "Auth strategy", "Retry logic", "Error taxonomy", "Response normalization", "Caching strategy", "Rate limiting", "Testing mocks"]
+        },
+        {
+          "rank": 6,
+          "element_type": "data_models",
+          "detection_patterns": ["types.ts", "schema.ts", "validator patterns"],
+          "additional_sections": ["schema_definition", "validation_rules", "versioning_strategy", "migration_playbook"],
+          "checklist_overlay": ["Canonical TypeScript types", "Validation rules", "Versioning strategy", "JSON Schema", "Default values", "Discriminated unions", "Serialization", "Testing validation"]
+        },
+        {
+          "rank": 7,
+          "element_type": "persistence_subsystem",
+          "detection_patterns": ["storage.ts", "cache.ts", "indexedDB patterns"],
+          "additional_sections": ["keys_catalog", "hydration_lifecycle", "conflict_resolution", "quota_management"],
+          "checklist_overlay": ["Storage keys catalog", "Hydration sequence", "Conflict resolution", "Quota behavior", "Versioning", "Serialization", "Security", "Testing approach"]
+        },
+        {
+          "rank": 8,
+          "element_type": "eventing_messaging",
+          "detection_patterns": ["eventBus", "messageHub", "BroadcastChannel usage"],
+          "additional_sections": ["event_catalog", "ordering_guarantees", "cross_tab_sync", "subscription_management"],
+          "checklist_overlay": ["Event catalog", "Ordering guarantees", "Cross-tab sync", "Debouncing/throttling", "Subscription lifecycle", "Error handling", "Testing approach", "Performance"]
+        },
+        {
+          "rank": 9,
+          "element_type": "routing_navigation",
+          "detection_patterns": ["router.ts", "routes.ts", "navigation patterns"],
+          "additional_sections": ["route_map", "route_guards", "deep_link_schema", "transition_lifecycle"],
+          "checklist_overlay": ["Route map", "Route guards", "Deep linking", "Query param contracts", "Transition lifecycle", "History management", "Testing approach", "Performance"]
+        },
+        {
+          "rank": 10,
+          "element_type": "file_tree_primitives",
+          "detection_patterns": ["TreeNode", "PathUtils", "FileIndex patterns"],
+          "additional_sections": ["tree_schema", "path_utilities", "indexing_strategy", "selection_semantics"],
+          "checklist_overlay": ["Data structures", "Path utilities", "Indexing strategy", "Selection semantics", "Favorites/bookmarks", "Sorting/filtering", "Testing approach", "Performance"]
+        },
+        {
+          "rank": 11,
+          "element_type": "context_menu_commands",
+          "detection_patterns": ["contextMenu", "commandRegistry", "actions patterns"],
+          "additional_sections": ["actions_catalog", "permissions_model", "keyboard_shortcuts"],
+          "checklist_overlay": ["Actions catalog", "Permissions", "Enable/disable logic", "Analytics hooks", "Positioning", "Keyboard shortcuts", "Testing approach", "Accessibility"]
+        },
+        {
+          "rank": 12,
+          "element_type": "permission_authz",
+          "detection_patterns": ["permissions.ts", "authz.ts", "rbac patterns"],
+          "additional_sections": ["roles_catalog", "capabilities_reference", "policy_language"],
+          "checklist_overlay": ["Roles catalog", "Capabilities", "UI gating", "Server enforcement", "Policy language", "Testing approach", "Performance", "Audit logging"]
+        },
+        {
+          "rank": 13,
+          "element_type": "error_handling",
+          "detection_patterns": ["ErrorBoundary", "errorHandler", "toast patterns"],
+          "additional_sections": ["error_taxonomy", "user_messaging", "recovery_flows"],
+          "checklist_overlay": ["Error categories", "User-facing messages", "Recovery flows", "Error boundaries", "Logging integration", "Testing approach", "Performance", "Accessibility"]
+        },
+        {
+          "rank": 14,
+          "element_type": "logging_telemetry",
+          "detection_patterns": ["analytics.ts", "telemetry.ts", "logger patterns"],
+          "additional_sections": ["event_taxonomy", "payload_schemas", "privacy_constraints"],
+          "checklist_overlay": ["Event naming", "Payload schemas", "Privacy constraints", "Sampling strategy", "Provider integration", "Testing approach", "Performance", "Debugging"]
+        },
+        {
+          "rank": 15,
+          "element_type": "performance_critical_ui",
+          "detection_patterns": ["Virtual prefix", "Canvas suffix", "performance annotations"],
+          "additional_sections": ["performance_budgets", "profiling_guide", "virtualization_strategy", "optimization_history"],
+          "checklist_overlay": ["Performance budgets", "Profiling setup", "Virtualization", "Memoization", "Bottleneck analysis", "Testing approach", "Optimization history", "Monitoring"]
+        },
+        {
+          "rank": 16,
+          "element_type": "design_system_components",
+          "detection_patterns": ["Button", "Modal", "Input", "design-system path"],
+          "additional_sections": ["props_reference", "variants_catalog", "theming_tokens"],
+          "checklist_overlay": ["Props API", "Variants catalog", "Accessibility guarantees", "Theming tokens", "Composition patterns", "Testing approach", "Performance", "Migration notes"]
+        },
+        {
+          "rank": 17,
+          "element_type": "theming_styling",
+          "detection_patterns": ["theme.ts", "tokens.css", "tailwind.config"],
+          "additional_sections": ["token_map", "dark_mode_strategy", "customization_api"],
+          "checklist_overlay": ["Token map", "Dark mode", "Customization points", "Anti-patterns", "Responsive strategy", "Testing approach", "Performance", "Migration"]
+        },
+        {
+          "rank": 18,
+          "element_type": "build_tooling",
+          "detection_patterns": ["build.js", "codegen.ts", "scripts/ path"],
+          "additional_sections": ["script_purpose", "inputs_outputs", "ci_integration"],
+          "checklist_overlay": ["Purpose", "Inputs/outputs", "Safe usage", "CI integration", "Error handling", "Testing approach", "Performance", "Debugging"]
+        },
+        {
+          "rank": 19,
+          "element_type": "ci_cd_pipelines",
+          "detection_patterns": [".github/workflows", "deploy.yml", "ci patterns"],
+          "additional_sections": ["pipeline_overview", "artifacts_catalog", "rollback_playbook"],
+          "checklist_overlay": ["Pipeline stages", "Artifacts", "Environment variables", "Rollback strategy", "Debugging failures", "Testing integration", "Performance", "Security"]
+        },
+        {
+          "rank": 20,
+          "element_type": "testing_harness",
+          "detection_patterns": ["test-utils", "mocks/", "fixtures/", "__tests__"],
+          "additional_sections": ["standard_patterns", "mock_boundaries", "fixture_catalog"],
+          "checklist_overlay": ["Standard patterns", "Mock boundaries", "Fixture management", "Golden-path suites", "Async testing", "Coverage targets", "Performance", "Debugging"]
+        }
+      ],
+      "total_element_types": 20
+    },
+
+    "combined_structure": {
+      "description": "How base template + element overlay combine",
+      "formula": "FINAL_DOCUMENT = BASE_TEMPLATE (13 sections) + ELEMENT_OVERLAY (4-8 additional sections) + VALIDATION (quality gates)",
+      "example_stateful_container": {
+        "base_sections": 13,
+        "overlay_sections": 4,
+        "total_sections": 17,
+        "overlay_adds": ["state_authority_table", "lifecycle_diagram", "persistence_contract", "event_subscriptions"],
+        "overlay_enhances": ["state_ownership (adds ownership rules)", "behaviors_events (adds subscription management)"]
+      },
+      "example_custom_hook": {
+        "base_sections": 13,
+        "overlay_sections": 4,
+        "total_sections": 17,
+        "overlay_adds": ["hook_signature", "side_effects_catalog", "dependency_rules", "return_contract"],
+        "overlay_enhances": ["testing_strategy (adds renderHook patterns)", "common_pitfalls (adds stale closure examples)"]
+      }
+    }
+  },
+
+  "element_type_detection": {
+    "algorithm": "multi_stage_classification",
+    "description": "Auto-detect element type from target name, file path, and code analysis",
+
+    "stage_1_filename_patterns": {
+      "description": "Fast classification based on naming conventions",
+      "rules": [
+        {"pattern": "^use[A-Z]", "element_type": "custom_hooks", "confidence": 90},
+        {"pattern": "(Page|Widget)$", "element_type": "top_level_widgets", "confidence": 85},
+        {"pattern": "(Provider|Controller|Manager)$", "element_type": "stateful_containers", "confidence": 85},
+        {"pattern": "store\\.ts$", "element_type": "global_state_layer", "confidence": 95},
+        {"pattern": "(client|api|sdk)\\.ts$", "element_type": "api_client", "confidence": 80},
+        {"pattern": "(types|schema|validator)\\.ts$", "element_type": "data_models", "confidence": 85},
+        {"pattern": "(storage|cache)\\.ts$", "element_type": "persistence_subsystem", "confidence": 90},
+        {"pattern": "(eventBus|messageHub)\\.ts$", "element_type": "eventing_messaging", "confidence": 90},
+        {"pattern": "(router|routes|navigation)\\.ts$", "element_type": "routing_navigation", "confidence": 90},
+        {"pattern": "(TreeNode|PathUtils|FileIndex)", "element_type": "file_tree_primitives", "confidence": 80},
+        {"pattern": "(contextMenu|commandRegistry|actions)", "element_type": "context_menu_commands", "confidence": 85},
+        {"pattern": "(permissions|authz|rbac)", "element_type": "permission_authz", "confidence": 90},
+        {"pattern": "ErrorBoundary|errorHandler", "element_type": "error_handling", "confidence": 90},
+        {"pattern": "(analytics|telemetry|logger)", "element_type": "logging_telemetry", "confidence": 85},
+        {"pattern": "^Virtual|Canvas$", "element_type": "performance_critical_ui", "confidence": 80},
+        {"pattern": "^(Button|Modal|Input|Select)$", "element_type": "design_system_components", "confidence": 85},
+        {"pattern": "theme|tokens", "element_type": "theming_styling", "confidence": 90},
+        {"pattern": "(build|codegen)\\.js$", "element_type": "build_tooling", "confidence": 85},
+        {"pattern": "\\.github/workflows|deploy\\.yml", "element_type": "ci_cd_pipelines", "confidence": 95},
+        {"pattern": "test-utils|mocks/|fixtures/", "element_type": "testing_harness", "confidence": 90}
+      ]
+    },
+
+    "stage_2_code_analysis": {
+      "description": "Refine classification by analyzing code structure",
+      "rules": [
+        {"code_pattern": "useState|useReducer", "element_type": "stateful_containers", "boost_confidence": 15},
+        {"code_pattern": "createStore|configureStore", "element_type": "global_state_layer", "boost_confidence": 20},
+        {"code_pattern": "useEffect.*return.*cleanup", "element_type": "custom_hooks", "boost_confidence": 10},
+        {"code_pattern": "fetch|axios", "element_type": "api_client", "boost_confidence": 15},
+        {"code_pattern": "localStorage|sessionStorage|indexedDB", "element_type": "persistence_subsystem", "boost_confidence": 20},
+        {"code_pattern": "addEventListener|BroadcastChannel", "element_type": "eventing_messaging", "boost_confidence": 15},
+        {"code_pattern": "useRouter|useNavigate", "element_type": "routing_navigation", "boost_confidence": 15},
+        {"code_pattern": "aria-.*|role=", "element_type": "design_system_components", "boost_confidence": 10}
+      ]
+    },
+
+    "stage_3_fallback": {
+      "description": "Default classification when detection is ambiguous",
+      "rule": "If confidence < 50%, default to 'top_level_widgets' and flag for manual review",
+      "manual_review_prompt": "Auto-detection confidence is low. Please specify element type manually: [list of 20 types]"
+    },
+
+    "output_format": {
+      "element_type": "stateful_containers",
+      "confidence": 95,
+      "detection_method": "stage_1_filename + stage_2_code_analysis",
+      "matched_patterns": ["Provider suffix", "useState usage"],
+      "manual_review_needed": false
+    }
+  },
+
+  "template_generation_rules": {
+    "description": "How to generate element-specific resource sheets",
+
+    "rule_1_base_template": {
+      "action": "Always include all 13 base sections from Tool 1",
+      "exception": "Conditional sections (state_ownership, data_persistence, state_lifecycle) only if element is stateful/persistent",
+      "implementation": "Template engine checks element characteristics, skips irrelevant sections"
+    },
+
+    "rule_2_element_overlay": {
+      "action": "Add element-specific sections based on detected type",
+      "lookup": "Use classification_taxonomy to find additional_sections for element_type",
+      "merge_strategy": "Append overlay sections after base sections, deduplicate if overlap"
+    },
+
+    "rule_3_checklist_injection": {
+      "action": "Inject element-specific checklist into each relevant section",
+      "example": "For 'stateful_containers', inject 'State ownership rules' checklist into state_ownership section",
+      "format": "Add as H4 heading '#### Checklist' with bullet points"
+    },
+
+    "rule_4_auto_fill": {
+      "action": "Populate fields with auto-generated content where possible",
+      "data_sources": [
+        "Dependency graph (.coderef/graph.json) for imports/exports/consumers",
+        "Code analysis for state vars, event handlers, lifecycle methods",
+        "JSDoc comments for descriptions",
+        "Test files for testing scenarios",
+        "Issue tracker for known bugs/pitfalls"
+      ],
+      "placeholder_format": "Use `<!-- TODO: [field_name] - [guidance] -->` for manual fields",
+      "target_auto_fill": "60-80% completion"
+    },
+
+    "rule_5_validation": {
+      "action": "Apply Tool 1's quality gates before finalizing",
+      "gates": [
+        "Refactor safety checklist (9 items)",
+        "Final checklist (12 items)",
+        "No ambiguous 'should' statements",
+        "Tables for structured data",
+        "Diagrams marked illustrative"
+      ],
+      "fail_behavior": "Flag validation failures, do not block generation"
+    },
+
+    "generation_sequence": {
+      "step_1": "Detect element type (stage 1, 2, 3)",
+      "step_2": "Load base template (13 sections)",
+      "step_3": "Load element overlay (lookup from taxonomy)",
+      "step_4": "Merge base + overlay (deduplicate, order by importance)",
+      "step_5": "Auto-fill fields (graph data, code analysis, heuristics)",
+      "step_6": "Inject checklists (element-specific focus areas)",
+      "step_7": "Validate (quality gates from Tool 1)",
+      "step_8": "Generate markdown output",
+      "step_9": "Flag manual review items (low confidence, missing data)"
+    },
+
+    "example_stateful_container_generation": {
+      "input": {"target": "FileTreeController", "scope": "component"},
+      "detected_type": {"element_type": "stateful_containers", "confidence": 95},
+      "base_sections": 13,
+      "overlay_sections": 4,
+      "total_sections": 17,
+      "auto_fill_rate": "72%",
+      "auto_filled_fields": [
+        "header_metadata (100%)",
+        "architecture_overview (80% - imports/exports from graph)",
+        "state_ownership (60% - detected useState/useReducer)",
+        "behaviors_events (70% - event handlers extracted)",
+        "event_callback_contracts (75% - TypeScript signatures)"
+      ],
+      "manual_review_needed": [
+        "executive_summary (requires human synthesis)",
+        "non_goals (human decision)",
+        "performance_considerations (needs profiling data)",
+        "common_pitfalls (requires experience)"
+      ],
+      "validation_result": {
+        "refactor_safety": "PASS (9/9)",
+        "final_checklist": "WARN (10/12 - missing non-goals, some ambiguous language)",
+        "overall": "APPROVED_WITH_WARNINGS"
+      }
+    }
+  },
+
+  "validation_pipeline": {
+    "description": "Quality gates from Tool 1 applied to generated resource sheets",
+
+    "gate_1_refactor_safety": {
+      "source": "Tool 1, section 5",
+      "checks": [
+        {"check": "Can new developer refactor without breaking contracts?", "validation": "Check for explicit contracts in state_ownership, event_callback_contracts"},
+        {"check": "Are state ownership rules unambiguous?", "validation": "State table must have precedence rules"},
+        {"check": "Are failure modes documented with recovery paths?", "validation": "data_persistence section must include failure_modes"},
+        {"check": "Are non-goals explicit?", "validation": "non_goals section must be non-empty"},
+        {"check": "Do diagrams match text?", "validation": "Diagrams must have disclaimer: 'illustrative, not authoritative'"},
+        {"check": "All persistence documented?", "validation": "All localStorage/indexedDB keys in persistence table"},
+        {"check": "All failure recovery paths?", "validation": "Each failure mode has recovery strategy"},
+        {"check": "All external integration contracts?", "validation": "integration_points section complete"},
+        {"check": "Non-goals prevent scope creep?", "validation": "non_goals section exists and is specific"}
+      ],
+      "scoring": "Pass if 8/9 checks pass, Warn if 6-7, Fail if <6"
+    },
+
+    "gate_2_final_checklist": {
+      "source": "Tool 1, section 8",
+      "checks": [
+        {"check": "Executive summary complete", "validation": "2-4 sentences covering what/role/position/intent"},
+        {"check": "State ownership table included", "validation": "Table exists if element is stateful"},
+        {"check": "All persistence documented", "validation": "storage_keys populated if element persists data"},
+        {"check": "Failure modes covered", "validation": "failure_modes section exists"},
+        {"check": "Non-goals explicit", "validation": "non_goals section non-empty"},
+        {"check": "Accessibility gaps noted", "validation": "accessibility section has gaps table"},
+        {"check": "Common pitfalls listed", "validation": "common_pitfalls section non-empty"},
+        {"check": "Refactor-safe contracts defined", "validation": "Passes gate_1_refactor_safety"},
+        {"check": "No ambiguous 'should' statements", "validation": "Regex scan for 'should probably', 'might', 'could'"},
+        {"check": "Tables used for structured data", "validation": "state_table, event_table use markdown tables"},
+        {"check": "Diagrams marked illustrative", "validation": "All diagrams have disclaimer or none present"}
+      ],
+      "scoring": "Pass if 11/11, Warn if 9-10, Fail if <9"
+    },
+
+    "gate_3_element_specific_validation": {
+      "source": "Tool 2, element-specific checklists",
+      "description": "Validate element-specific requirements are met",
+      "example_stateful_container": {
+        "required_sections": ["state_authority_table", "lifecycle_diagram", "persistence_contract", "event_subscriptions"],
+        "required_checklist_items": ["State ownership rules", "Coordination logic", "Persistence strategy", "Cache invalidation", "Error boundaries", "Subscription management", "Initialization sequence", "Testing isolation"],
+        "validation": "All 4 sections exist, all 8 checklist items addressed"
+      },
+      "scoring": "Pass if all required sections exist and checklists complete"
+    },
+
+    "gate_4_auto_fill_threshold": {
+      "description": "Ensure auto-fill rate meets target",
+      "threshold": "60%",
+      "calculation": "(auto_filled_fields / total_fields) * 100",
+      "fail_behavior": "If <60%, flag entire document for manual review with message: 'Low auto-fill rate. Graph data may be incomplete.'",
+      "scoring": "Pass if >=60%, Warn if 40-59%, Fail if <40%"
+    },
+
+    "combined_validation_result": {
+      "gates": [
+        {"gate": "refactor_safety", "status": "PASS|WARN|FAIL"},
+        {"gate": "final_checklist", "status": "PASS|WARN|FAIL"},
+        {"gate": "element_specific", "status": "PASS|WARN|FAIL"},
+        {"gate": "auto_fill_threshold", "status": "PASS|WARN|FAIL"}
+      ],
+      "overall": "APPROVED (all PASS) | APPROVED_WITH_WARNINGS (1+ WARN, no FAIL) | REJECTED (1+ FAIL)",
+      "action": {
+        "APPROVED": "Generate final markdown, no manual review needed",
+        "APPROVED_WITH_WARNINGS": "Generate final markdown, flag warnings for user review",
+        "REJECTED": "Do not generate final output, return validation errors to user"
+      }
+    }
+  },
+
+  "integration_with_plans": {
+    "plan_1_resource_sheet_system": {
+      "alignment": "High - proposes MCP tool with 20 element templates",
+      "adopted_from_plan_1": [
+        "MCP tool architecture (generate, classify, validate tools)",
+        "Template storage in structured format",
+        "Element classification taxonomy",
+        "Validation system with checklist enforcement"
+      ],
+      "deviations": "Plan 1 focuses on MCP implementation, this output focuses on template generation schema"
+    },
+
+    "plan_2_resource_sheet_reconciliation": {
+      "alignment": "Very High - directly addresses TypeScript-to-Python porting",
+      "adopted_from_plan_2": [
+        "11 conditional modules concept (maps to element overlays)",
+        "Enhanced detection engine (stage 1-3 classification)",
+        "60%+ auto-fill target",
+        "Module selection based on characteristics"
+      ],
+      "key_insight": "Plan 2's 'conditional modules' are exactly the element-specific overlays in this schema"
+    },
+
+    "plan_3_resource_sheet_graph_integration": {
+      "alignment": "Very High - graph data powers auto-fill",
+      "adopted_from_plan_3": [
+        "DependencyGraph queries for imports/exports/consumers",
+        "60-80% auto-fill rate from graph data",
+        "Consumer-side solution (resource-sheet reads graph)",
+        "Graph query helpers (getImportsForElement, etc.)"
+      ],
+      "implementation_note": "Auto-fill rule_4 directly uses graph data as primary source"
+    },
+
+    "synthesis": {
+      "unified_approach": "Combine Plan 1's MCP architecture + Plan 2's conditional modules + Plan 3's graph auto-fill",
+      "formula": "MCP_TOOL(generate) → TEMPLATE_ENGINE(base + overlay) → GRAPH_QUERIES(auto_fill) → VALIDATION(quality_gates) → MARKDOWN_OUTPUT",
+      "key_innovation": "Template generation is not just merging files - it's a data-driven pipeline with multi-stage classification, graph-powered auto-fill, and element-specific validation"
+    }
+  },
+
+  "recommendations": [
+    "Implement element type detection as a separate MCP tool (classify_element) for reusability",
+    "Use Jinja2 template engine for base template + conditional sections (already in Plan 2)",
+    "Store element taxonomy as JSON schema for easy updates and versioning",
+    "Build validation pipeline as post-processing step, not inline during generation",
+    "Create auto-fill confidence scoring to flag low-quality auto-generated sections",
+    "Implement template versioning (v1.0.0) to handle future schema evolution",
+    "Add dry-run mode for validation-only (no output generation)",
+    "Support custom element types (allow users to define new types beyond the 20)",
+    "Integrate with coderef-workflow for planning workflows (resource sheets as planning inputs)",
+    "Consider progressive disclosure: generate base template first, then ask user for element type refinement"
+  ],
+
+  "migration_path": {
+    "from_current_state": "Two separate slash commands (create-resource-sheet.md + resource-sheet-catalog.md)",
+    "to_future_state": "Single unified MCP tool (generate_resource_sheet) with element-type routing",
+    "migration_steps": [
+      "Phase 1: Implement unified template schema (this output)",
+      "Phase 2: Build element type detection algorithm",
+      "Phase 3: Create template generation engine (base + overlay + auto-fill)",
+      "Phase 4: Implement validation pipeline",
+      "Phase 5: Integrate with coderef-context for graph data",
+      "Phase 6: Deprecate old slash commands, add migration notices",
+      "Phase 7: Update all references in coderef/core documentation"
+    ],
+    "backward_compatibility": "Old /create-resource-sheet command can call new MCP tool with element_type='generic' fallback"
+  },
+
+  "success_metrics": {
+    "template_coverage": "All 20 element types have complete schemas",
+    "auto_fill_rate": "60-80% average across all element types",
+    "validation_pass_rate": "80%+ documents pass all 4 validation gates",
+    "generation_speed": "<5 seconds per resource sheet",
+    "user_satisfaction": "Manual review time reduced from 30 minutes to <10 minutes"
+  }
+}

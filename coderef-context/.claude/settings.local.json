@@ -29,7 +29,9 @@
       "Bash(.coderef/index.json)",
       "Bash(/dev/null -exec ls -lh {})",
       "Bash(coderef export:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(\"C:\\Users\\willh\\.mcp-servers\\coderef-context\\server_clean.py\")",
+      "Bash(timeout 5 python:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

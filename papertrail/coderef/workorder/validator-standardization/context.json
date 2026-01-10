@@ -1,0 +1,47 @@
+{
+  "feature_name": "validator-standardization",
+  "description": "Standardize all Papertrail validators as Python library modules (not CLI tools). Create unified validator framework used internally by coderef-docs and coderef-workflow MCP servers. Eliminate PowerShell scripts, consolidate validation logic into papertrail Python package.",
+  "goal": "Convert validator scripts into reusable Python library modules that MCP servers import directly. Single Python package with consistent validation API.",
+  "requirements": [
+    "Convert validators/resource-sheets/validate.ps1 to papertrail/validators/resource_sheets.py module",
+    "Convert validators/sessions/validate.ps1 to papertrail/validators/sessions.py module",
+    "Keep validators/scripts/validate.py and validators/plans/validate.py as-is (already Python)",
+    "Create ResourceSheetValidator class extending papertrail.validator.UDSValidator",
+    "Create SessionValidator class extending papertrail.validator.UDSValidator",
+    "Remove ajv-cli dependency (use jsonschema library)",
+    "All validators return ValidationResult objects (consistent with papertrail.validator)",
+    "Support programmatic validation (no CLI needed)",
+    "Maintain all validation rules from PowerShell versions"
+  ],
+  "out_of_scope": [
+    "CLI interfaces or argparse (internal library only)",
+    "Standalone validator scripts (validators/ becomes internal only)",
+    "User-facing documentation (internal API for MCP servers)",
+    "TypeScript validator migration",
+    "Adding new validation types"
+  ],
+  "constraints": [
+    "Must integrate with existing papertrail.validator.UDSValidator base class",
+    "Must return papertrail.validator.ValidationResult objects",
+    "Must use existing schemas in schemas/ directory",
+    "No breaking changes to JSON schemas",
+    "Validators consumed by coderef-docs and coderef-workflow via Python imports only"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-VALIDATOR-STANDARDIZATION-001",
+    "workorder_assigned_at": "2026-01-10T06:10:20.138141+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-VALIDATOR-STANDARDIZATION-001",
+    "feature_id": "validator-standardization",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

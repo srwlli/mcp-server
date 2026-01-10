@@ -1,0 +1,850 @@
+{
+  "test_cases_id": "TC-RESOURCE-SHEET-CONSOLIDATION-001",
+  "workorder_id": "WO-RESOURCE-SHEET-CONSOLIDATION-001-TESTING",
+  "version": "1.0.0",
+  "created": "2026-01-03",
+  "total_test_cases": 49,
+
+  "category_1_routing_validation": {
+    "ROUTE-001": {
+      "id": "ROUTE-001",
+      "name": "Slash Command Invocation Routes to MCP Tool",
+      "category": "routing_validation",
+      "priority": "critical",
+      "description": "Verify that /create-resource-sheet command invokes mcp__coderef-docs__generate_resource_sheet instead of loading .md file",
+      "preconditions": [
+        "coderef-docs MCP server running with Phases 2-3 complete",
+        "Slash command registry updated to route to MCP tool",
+        "Test logging enabled to capture tool invocations"
+      ],
+      "steps": [
+        "1. Enable MCP tool invocation logging",
+        "2. Run /create-resource-sheet CONSTANTS.md",
+        "3. Check logs for mcp__coderef-docs__generate_resource_sheet call",
+        "4. Verify .md file NOT loaded as template",
+        "5. Verify output generated successfully"
+      ],
+      "expected_results": {
+        "tool_invoked": "mcp__coderef-docs__generate_resource_sheet",
+        "md_file_loaded": false,
+        "output_generated": true,
+        "errors": []
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "MCP tool invocation log showing correct tool call",
+      "test_data": "CONSTANTS.md from P1 batch"
+    },
+    "ROUTE-002": {
+      "id": "ROUTE-002",
+      "name": "Element Type Parameter Passthrough",
+      "category": "routing_validation",
+      "priority": "critical",
+      "description": "Verify element_type parameter is passed to MCP tool when specified by user",
+      "preconditions": [
+        "ROUTE-001 passed",
+        "MCP tool accepts element_type parameter"
+      ],
+      "steps": [
+        "1. Run /create-resource-sheet MCP-CLIENT.md api_clients",
+        "2. Verify element_type='api_clients' passed to MCP tool",
+        "3. Verify MCP tool uses specified type (no auto-detection)",
+        "4. Run /create-resource-sheet TYPE-DEFS.md (no type specified)",
+        "5. Verify MCP tool auto-detects element type"
+      ],
+      "expected_results": {
+        "parameter_passed": true,
+        "manual_type_used": "api_clients",
+        "auto_detection_fallback": "type_definitions",
+        "errors": []
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "MCP tool parameter logs showing element_type usage",
+      "test_data": "MCP-CLIENT.md, TYPE-DEFS.md from P1 batch"
+    },
+    "ROUTE-003": {
+      "id": "ROUTE-003",
+      "name": "Backward Compatibility - All P1 Examples",
+      "category": "routing_validation",
+      "priority": "critical",
+      "description": "Verify slash command works for all 10 P1 batch examples via MCP backend",
+      "preconditions": [
+        "ROUTE-001 passed",
+        "All 10 P1 reference sheets accessible"
+      ],
+      "steps": [
+        "1. For each of 10 P1 examples (CONSTANTS, ERROR-RESPONSES, MCP-CLIENT, TYPE-DEFS, VALIDATION × 2 formats):",
+        "2. Run /create-resource-sheet [filename]",
+        "3. Verify MCP tool invoked (not .md template)",
+        "4. Verify output generated successfully",
+        "5. Count success rate: must be 100%"
+      ],
+      "expected_results": {
+        "total_tests": 10,
+        "successful_routing": 10,
+        "success_rate": "100%",
+        "failures": []
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "10/10 successful MCP tool invocations with output generation",
+      "test_data": "All 10 P1 batch reference sheets"
+    }
+  },
+
+  "category_2_element_detection": {
+    "DETECT-001": {
+      "id": "DETECT-001",
+      "name": "Stage 1 - Filename Pattern Matching (20 Types)",
+      "category": "element_detection",
+      "priority": "critical",
+      "description": "Verify filename pattern detection achieves 80-95% confidence for all 20 element types",
+      "preconditions": [
+        "Element type mapping with 20 regex patterns loaded",
+        "Test files representing all 20 element types available"
+      ],
+      "steps": [
+        "1. For each of 20 element types:",
+        "2. Provide filename matching detection pattern (e.g., 'ButtonWidget.tsx' for top_level_widgets)",
+        "3. Run detection Stage 1 (filename patterns only)",
+        "4. Verify confidence score >= 80%",
+        "5. Aggregate results across all 20 types"
+      ],
+      "expected_results": {
+        "total_types_tested": 20,
+        "types_with_80_plus_confidence": 20,
+        "average_confidence": "85-95%",
+        "failures": []
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Detection accuracy matrix: 20 types × confidence scores",
+      "test_data": "Synthetic filenames representing all 20 element types"
+    },
+    "DETECT-002": {
+      "id": "DETECT-002",
+      "name": "Stage 2 - Code Analysis Refinement",
+      "category": "element_detection",
+      "priority": "critical",
+      "description": "Verify code analysis stage adds +10-20% confidence boost",
+      "preconditions": [
+        "DETECT-001 passed",
+        "Code analysis rules configured for all element types"
+      ],
+      "steps": [
+        "1. Select 10 test cases with ambiguous filenames (70-80% Stage 1 confidence)",
+        "2. Run Stage 2 code analysis on each",
+        "3. Verify confidence increases by +10-20%",
+        "4. Verify final confidence >= 80%"
+      ],
+      "expected_results": {
+        "test_cases": 10,
+        "confidence_increases": 10,
+        "average_boost": "+15%",
+        "final_confidence_all_above_80": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Before/after confidence scores showing +10-20% boost",
+      "test_data": "10 ambiguous code examples"
+    },
+    "DETECT-003": {
+      "id": "DETECT-003",
+      "name": "Stage 3 - Fallback to Manual Review",
+      "category": "element_detection",
+      "priority": "high",
+      "description": "Verify fallback prompts for manual review when confidence <80%",
+      "preconditions": [
+        "DETECT-001 and DETECT-002 passed",
+        "Fallback logic implemented"
+      ],
+      "steps": [
+        "1. Create 5 intentionally ambiguous test cases (confidence <80% after Stage 2)",
+        "2. Run detection pipeline",
+        "3. Verify Stage 3 fallback triggers",
+        "4. Verify manual review prompt displayed",
+        "5. Verify default element type suggestion provided"
+      ],
+      "expected_results": {
+        "ambiguous_cases": 5,
+        "fallback_triggered": 5,
+        "manual_prompts_shown": 5,
+        "default_suggestions_provided": 5
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Screenshots/logs showing manual review prompts",
+      "test_data": "5 ambiguous files with low detection confidence"
+    },
+    "DETECT-004": {
+      "id": "DETECT-004",
+      "name": "Confidence Scoring Accuracy",
+      "category": "element_detection",
+      "priority": "high",
+      "description": "Verify confidence scores are accurate and calibrated",
+      "preconditions": [
+        "All detection stages implemented",
+        "Test dataset with known element types"
+      ],
+      "steps": [
+        "1. Create test dataset with 40 files (20 types × 2 examples each)",
+        "2. Run full 3-stage detection on all 40 files",
+        "3. Compare detected type vs ground truth",
+        "4. Calculate accuracy: correct detections / total",
+        "5. Verify accuracy >= 80% overall"
+      ],
+      "expected_results": {
+        "total_files": 40,
+        "correct_detections": 32,
+        "accuracy": ">=80%",
+        "false_positives": "<=20%"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Confusion matrix showing detection accuracy by element type",
+      "test_data": "40 labeled test files (ground truth)"
+    }
+  },
+
+  "category_3_graph_integration": {
+    "GRAPH-001": {
+      "id": "GRAPH-001",
+      "name": "Dependencies Section Auto-Fill (90% Target)",
+      "category": "graph_integration",
+      "priority": "critical",
+      "description": "Verify getImportsForElement() achieves 90% auto-fill for Dependencies section",
+      "preconditions": [
+        ".coderef/exports/graph.json generated for coderef-workflow",
+        "Graph helper getImportsForElement() implemented"
+      ],
+      "steps": [
+        "1. Load graph for coderef-workflow project",
+        "2. Query getImportsForElement('mcp_client.py')",
+        "3. Verify imports detected: subprocess, json, asyncio, logging, pathlib",
+        "4. Measure auto-fill percentage: (auto-filled lines / total section lines)",
+        "5. Repeat for all 10 P1 files, calculate average"
+      ],
+      "expected_results": {
+        "files_tested": 10,
+        "average_auto_fill": ">=90%",
+        "min_auto_fill": ">=80%",
+        "query_time": "<50ms per query"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Auto-fill percentage report per file + timing data",
+      "test_data": "10 P1 batch files with graph data"
+    },
+    "GRAPH-002": {
+      "id": "GRAPH-002",
+      "name": "Public API Section Auto-Fill (95% Target)",
+      "category": "graph_integration",
+      "priority": "critical",
+      "description": "Verify getExportsForElement() achieves 95% auto-fill for Public API section",
+      "preconditions": [
+        "GRAPH-001 passed",
+        "Graph helper getExportsForElement() implemented"
+      ],
+      "steps": [
+        "1. Query getExportsForElement('mcp_client.py')",
+        "2. Verify exports detected: MCPToolClient, call_coderef_tool",
+        "3. Measure auto-fill percentage",
+        "4. Repeat for all 10 P1 files, calculate average"
+      ],
+      "expected_results": {
+        "files_tested": 10,
+        "average_auto_fill": ">=95%",
+        "min_auto_fill": ">=90%",
+        "query_time": "<50ms per query"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Auto-fill percentage report per file + timing data",
+      "test_data": "10 P1 batch files with graph data"
+    },
+    "GRAPH-003": {
+      "id": "GRAPH-003",
+      "name": "Usage Examples Section Auto-Fill (70% Target)",
+      "category": "graph_integration",
+      "priority": "critical",
+      "description": "Verify getConsumersForElement() achieves 70% auto-fill for Usage Examples section",
+      "preconditions": [
+        "GRAPH-001 and GRAPH-002 passed",
+        "Graph helper getConsumersForElement() implemented"
+      ],
+      "steps": [
+        "1. Query getConsumersForElement('mcp_client.py')",
+        "2. Verify consumers detected (files importing mcp_client.py)",
+        "3. Extract usage patterns from consumer code",
+        "4. Measure auto-fill percentage",
+        "5. Repeat for all 10 P1 files, calculate average"
+      ],
+      "expected_results": {
+        "files_tested": 10,
+        "average_auto_fill": ">=70%",
+        "min_auto_fill": ">=60%",
+        "query_time": "<50ms per query"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Auto-fill percentage report per file + timing data",
+      "test_data": "10 P1 batch files with graph data"
+    },
+    "GRAPH-004": {
+      "id": "GRAPH-004",
+      "name": "Required Dependencies Section Auto-Fill (75% Target)",
+      "category": "graph_integration",
+      "priority": "critical",
+      "description": "Verify getDependenciesForElement() achieves 75% auto-fill for Required Dependencies section",
+      "preconditions": [
+        "GRAPH-001, GRAPH-002, GRAPH-003 passed",
+        "Graph helper getDependenciesForElement() implemented"
+      ],
+      "steps": [
+        "1. Query getDependenciesForElement('mcp_client.py')",
+        "2. Verify direct + transitive dependencies detected",
+        "3. Measure auto-fill percentage",
+        "4. Repeat for all 10 P1 files, calculate average"
+      ],
+      "expected_results": {
+        "files_tested": 10,
+        "average_auto_fill": ">=75%",
+        "min_auto_fill": ">=65%",
+        "query_time": "<50ms per query"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Auto-fill percentage report per file + timing data",
+      "test_data": "10 P1 batch files with graph data"
+    },
+    "GRAPH-005": {
+      "id": "GRAPH-005",
+      "name": "Overall Completion Rate (60-80% Target)",
+      "category": "graph_integration",
+      "priority": "critical",
+      "description": "Verify average completion rate across all sections meets 60-80% target",
+      "preconditions": [
+        "GRAPH-001, GRAPH-002, GRAPH-003, GRAPH-004 passed"
+      ],
+      "steps": [
+        "1. Aggregate auto-fill percentages from GRAPH-001 through GRAPH-004",
+        "2. Calculate weighted average: (Dependencies * 0.25 + Public API * 0.25 + Usage * 0.25 + Required Deps * 0.25)",
+        "3. Verify average is between 60-80%",
+        "4. Generate completion rate report"
+      ],
+      "expected_results": {
+        "overall_completion_rate": "60-80%",
+        "dependencies_avg": ">=90%",
+        "public_api_avg": ">=95%",
+        "usage_examples_avg": ">=70%",
+        "required_dependencies_avg": ">=75%"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Comprehensive completion rate report with breakdown by section",
+      "test_data": "All 10 P1 batch files"
+    }
+  },
+
+  "category_4_validation_pipeline": {
+    "VALID-001": {
+      "id": "VALID-001",
+      "name": "Gate 1 - Structural Validation (4 Checks)",
+      "category": "validation_pipeline",
+      "priority": "critical",
+      "description": "Verify Gate 1 catches structural errors: missing header, summary, required sections, state ownership",
+      "preconditions": [
+        "4-gate validation pipeline implemented",
+        "Synthetic malformed inputs prepared"
+      ],
+      "steps": [
+        "1. Test missing header: Submit document without file metadata header",
+        "2. Test missing summary: Submit document without executive summary",
+        "3. Test missing sections: Submit document missing required sections (Architecture, State Ownership)",
+        "4. Test missing state table: Submit document without state ownership table",
+        "5. Verify all 4 structural errors caught"
+      ],
+      "expected_results": {
+        "checks_tested": 4,
+        "errors_caught": 4,
+        "error_severity": ["critical", "critical", "critical", "critical"],
+        "false_negatives": 0
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation report showing all 4 structural checks enforced",
+      "test_data": "4 malformed documents (1 per structural violation)"
+    },
+    "VALID-002": {
+      "id": "VALID-002",
+      "name": "Gate 2 - Content Quality (4 Checks)",
+      "category": "validation_pipeline",
+      "priority": "critical",
+      "description": "Verify Gate 2 catches content quality errors: placeholders, incomplete sections, voice violations, missing tables",
+      "preconditions": [
+        "VALID-001 passed"
+      ],
+      "steps": [
+        "1. Test placeholders: Submit document with '...', 'TODO', '[TBD]' placeholders",
+        "2. Test incomplete sections: Submit document with <20% content in required sections",
+        "3. Test voice violations: Submit document with passive voice, hedging ('should probably', 'might')",
+        "4. Test missing tables: Submit document missing structured data tables",
+        "5. Verify all 4 content quality errors caught"
+      ],
+      "expected_results": {
+        "checks_tested": 4,
+        "errors_caught": 4,
+        "error_severity": ["major", "major", "minor", "major"],
+        "false_negatives": 0
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation report showing all 4 content quality checks enforced",
+      "test_data": "4 malformed documents (1 per content quality violation)"
+    },
+    "VALID-003": {
+      "id": "VALID-003",
+      "name": "Gate 3 - Element-Specific Validation (3 Checks)",
+      "category": "validation_pipeline",
+      "priority": "critical",
+      "description": "Verify Gate 3 catches element-specific errors: missing focus areas, required sections, element tables",
+      "preconditions": [
+        "VALID-001 and VALID-002 passed"
+      ],
+      "steps": [
+        "1. Test missing focus areas: Submit api_clients document without endpoint documentation",
+        "2. Test missing required sections: Submit stateful_containers document without State Management section",
+        "3. Test missing element tables: Submit constants document without Constants Table",
+        "4. Verify all 3 element-specific errors caught"
+      ],
+      "expected_results": {
+        "checks_tested": 3,
+        "errors_caught": 3,
+        "error_severity": ["major", "major", "major"],
+        "false_negatives": 0
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation report showing all 3 element-specific checks enforced",
+      "test_data": "3 malformed documents (1 per element-specific violation)"
+    },
+    "VALID-004": {
+      "id": "VALID-004",
+      "name": "Gate 4 - Auto-Fill Threshold (1 Check)",
+      "category": "validation_pipeline",
+      "priority": "critical",
+      "description": "Verify Gate 4 rejects documents with <60% auto-fill completion",
+      "preconditions": [
+        "VALID-001, VALID-002, VALID-003 passed",
+        "Graph integration working (GRAPH-001 through GRAPH-005 passed)"
+      ],
+      "steps": [
+        "1. Generate document with minimal auto-fill (e.g., file with no graph data)",
+        "2. Measure completion rate",
+        "3. Verify Gate 4 triggers rejection if <60%",
+        "4. Verify warning if 60-70%, pass if >70%"
+      ],
+      "expected_results": {
+        "test_cases": 3,
+        "reject_below_60": true,
+        "warn_60_to_70": true,
+        "pass_above_70": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation report showing auto-fill threshold enforcement",
+      "test_data": "3 documents with varying auto-fill rates (40%, 65%, 80%)"
+    },
+    "VALID-005": {
+      "id": "VALID-005",
+      "name": "Scoring System - Pass/Warn/Reject",
+      "category": "validation_pipeline",
+      "priority": "high",
+      "description": "Verify validation scoring correctly categorizes outputs as Pass, Warn, or Reject",
+      "preconditions": [
+        "All 4 gates (VALID-001 through VALID-004) passed"
+      ],
+      "steps": [
+        "1. Test PASS case: Submit fully compliant document",
+        "2. Test WARN case: Submit document with minor violations (voice issues, 65% auto-fill)",
+        "3. Test REJECT case: Submit document with critical violations (missing sections)",
+        "4. Verify scoring system correctly categorizes all 3 cases"
+      ],
+      "expected_results": {
+        "pass_case_score": ">=90",
+        "warn_case_score": "70-89",
+        "reject_case_score": "<70",
+        "scoring_accurate": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation reports showing Pass/Warn/Reject scoring",
+      "test_data": "3 documents representing Pass, Warn, Reject cases"
+    }
+  },
+
+  "category_5_performance_benchmarks": {
+    "PERF-001": {
+      "id": "PERF-001",
+      "name": "Graph Load Time (<500ms Target)",
+      "category": "performance_benchmarks",
+      "priority": "critical",
+      "description": "Verify .coderef/exports/graph.json loads in under 500ms",
+      "preconditions": [
+        ".coderef/exports/graph.json generated for coderef-workflow (1000+ elements)"
+      ],
+      "steps": [
+        "1. Measure graph load time using Python timeit or similar",
+        "2. Run 10 iterations, calculate average",
+        "3. Verify average load time <500ms",
+        "4. Verify 95th percentile <500ms"
+      ],
+      "expected_results": {
+        "iterations": 10,
+        "average_load_time": "<500ms",
+        "p95_load_time": "<500ms",
+        "max_load_time": "<600ms"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Timing report with average, p95, max load times",
+      "test_data": "coderef-workflow graph.json"
+    },
+    "PERF-002": {
+      "id": "PERF-002",
+      "name": "Query Execution Time (<50ms per Query)",
+      "category": "performance_benchmarks",
+      "priority": "critical",
+      "description": "Verify 4 graph queries execute in <50ms each",
+      "preconditions": [
+        "PERF-001 passed",
+        "All 4 graph helpers implemented (getImportsForElement, getExportsForElement, getConsumersForElement, getDependenciesForElement)"
+      ],
+      "steps": [
+        "1. Run getImportsForElement('mcp_client.py'), measure time",
+        "2. Run getExportsForElement('mcp_client.py'), measure time",
+        "3. Run getConsumersForElement('mcp_client.py'), measure time",
+        "4. Run getDependenciesForElement('mcp_client.py'), measure time",
+        "5. Verify all 4 queries <50ms each"
+      ],
+      "expected_results": {
+        "total_queries": 4,
+        "average_query_time": "<50ms",
+        "max_query_time": "<60ms",
+        "parallel_execution_time": "<50ms (queries run in parallel)"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Timing report showing all 4 query times + parallel execution time",
+      "test_data": "mcp_client.py with graph data"
+    },
+    "PERF-003": {
+      "id": "PERF-003",
+      "name": "Template Rendering Time (<1s Target)",
+      "category": "performance_benchmarks",
+      "priority": "critical",
+      "description": "Verify template rendering completes in <1 second",
+      "preconditions": [
+        "PERF-001 and PERF-002 passed",
+        "Template rendering with graph auto-fill implemented"
+      ],
+      "steps": [
+        "1. Measure time to render full template (base + conditional modules + graph data)",
+        "2. Run 10 iterations, calculate average",
+        "3. Verify average rendering time <1s",
+        "4. Verify 95th percentile <1s"
+      ],
+      "expected_results": {
+        "iterations": 10,
+        "average_rendering_time": "<1s",
+        "p95_rendering_time": "<1s",
+        "max_rendering_time": "<1.2s"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Timing report with average, p95, max rendering times",
+      "test_data": "CONSTANTS.md template rendering"
+    },
+    "PERF-004": {
+      "id": "PERF-004",
+      "name": "End-to-End Generation Time (<2s Target)",
+      "category": "performance_benchmarks",
+      "priority": "critical",
+      "description": "Verify total end-to-end generation time is <2 seconds",
+      "preconditions": [
+        "PERF-001, PERF-002, PERF-003 passed"
+      ],
+      "steps": [
+        "1. Measure total time from /create-resource-sheet invocation to output completion",
+        "2. Breakdown: graph load + detection + 4 queries + rendering + validation",
+        "3. Run 10 iterations on all 10 P1 files",
+        "4. Calculate average and 95th percentile",
+        "5. Verify 95th percentile <2s"
+      ],
+      "expected_results": {
+        "total_tests": 100,
+        "average_total_time": "<1.5s",
+        "p95_total_time": "<2s",
+        "max_total_time": "<2.5s",
+        "breakdown": {
+          "graph_load": "<500ms",
+          "detection": "<100ms",
+          "queries_parallel": "<50ms",
+          "rendering": "<1s",
+          "validation": "<100ms"
+        }
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Performance report with timing breakdown + 95th percentile analysis",
+      "test_data": "All 10 P1 batch files"
+    }
+  },
+
+  "category_6_output_format_validation": {
+    "FORMAT-001": {
+      "id": "FORMAT-001",
+      "name": "Markdown Format Correctness",
+      "category": "output_format_validation",
+      "priority": "high",
+      "description": "Verify markdown output follows format standards (headings, tables, code blocks)",
+      "preconditions": [
+        "Markdown generator implemented"
+      ],
+      "steps": [
+        "1. Generate CONSTANTS.md",
+        "2. Validate markdown syntax (no broken tables, headings, code blocks)",
+        "3. Verify headings hierarchy (H1 → H2 → H3 → H4)",
+        "4. Verify tables have headers and are well-formatted",
+        "5. Verify code blocks have language hints"
+      ],
+      "expected_results": {
+        "markdown_valid": true,
+        "heading_hierarchy_correct": true,
+        "tables_well_formatted": true,
+        "code_blocks_have_hints": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Markdown validation report",
+      "test_data": "CONSTANTS.md generation"
+    },
+    "FORMAT-002": {
+      "id": "FORMAT-002",
+      "name": "JSON Schema Format Correctness",
+      "category": "output_format_validation",
+      "priority": "high",
+      "description": "Verify JSON schema output is valid JSON Schema Draft 7",
+      "preconditions": [
+        "JSON schema generator implemented"
+      ],
+      "steps": [
+        "1. Generate CONSTANTS.json (JSON schema)",
+        "2. Validate against JSON Schema Draft 7 specification",
+        "3. Verify schema includes required fields, types, descriptions",
+        "4. Verify schema is valid JSON (parse test)"
+      ],
+      "expected_results": {
+        "valid_json": true,
+        "valid_json_schema": true,
+        "required_fields_present": true,
+        "types_specified": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "JSON Schema validation report",
+      "test_data": "CONSTANTS.json generation"
+    },
+    "FORMAT-003": {
+      "id": "FORMAT-003",
+      "name": "JSDoc Format Correctness",
+      "category": "output_format_validation",
+      "priority": "high",
+      "description": "Verify JSDoc output follows JSDoc 3 standard",
+      "preconditions": [
+        "JSDoc generator implemented"
+      ],
+      "steps": [
+        "1. Generate constants-jsdoc.txt",
+        "2. Validate JSDoc tags (@param, @returns, @typedef, @property)",
+        "3. Verify type annotations correct",
+        "4. Verify descriptions present for all documented elements"
+      ],
+      "expected_results": {
+        "valid_jsdoc": true,
+        "tags_correct": true,
+        "type_annotations_present": true,
+        "descriptions_complete": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "JSDoc validation report",
+      "test_data": "constants-jsdoc.txt generation"
+    },
+    "FORMAT-004": {
+      "id": "FORMAT-004",
+      "name": "P1 Batch Regression Test (15 Files)",
+      "category": "output_format_validation",
+      "priority": "critical",
+      "description": "Verify regenerated P1 examples match baseline quality (no content degradation)",
+      "preconditions": [
+        "All format tests (FORMAT-001, FORMAT-002, FORMAT-003) passed",
+        "P1 baseline reference sheets available"
+      ],
+      "steps": [
+        "1. Regenerate all 10 P1 batch files using new MCP tool",
+        "2. Diff against baseline reference sheets",
+        "3. Measure content similarity (should be >=95%)",
+        "4. Identify any quality regressions (missing sections, incomplete data)",
+        "5. Verify 0 regressions"
+      ],
+      "expected_results": {
+        "files_regenerated": 10,
+        "content_similarity": ">=95%",
+        "regressions": 0,
+        "quality_maintained": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Regression report with diff analysis and content similarity scores",
+      "test_data": "All 10 P1 batch files + baseline reference sheets"
+    }
+  },
+
+  "category_7_edge_cases": {
+    "EDGE-001": {
+      "id": "EDGE-001",
+      "name": "Missing Graph Data - Graceful Degradation",
+      "category": "edge_cases",
+      "priority": "medium",
+      "description": "Verify system handles missing .coderef/exports/graph.json gracefully",
+      "preconditions": [
+        "MCP tool error handling implemented"
+      ],
+      "steps": [
+        "1. Delete or rename .coderef/exports/graph.json",
+        "2. Run /create-resource-sheet CONSTANTS.md",
+        "3. Verify no crash occurs",
+        "4. Verify warning message displayed about missing graph",
+        "5. Verify template still generated (with lower auto-fill rate)"
+      ],
+      "expected_results": {
+        "no_crash": true,
+        "warning_displayed": true,
+        "output_generated": true,
+        "auto_fill_rate": "<60% (degraded mode)"
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Error handling logs showing graceful degradation",
+      "test_data": "Test without graph.json"
+    },
+    "EDGE-002": {
+      "id": "EDGE-002",
+      "name": "Ambiguous Element Type - Manual Review Prompt",
+      "category": "edge_cases",
+      "priority": "medium",
+      "description": "Verify system prompts for manual review when element type is ambiguous",
+      "preconditions": [
+        "Detection fallback (Stage 3) implemented"
+      ],
+      "steps": [
+        "1. Provide file with ambiguous name (e.g., 'helper.py' could be utility_modules or services)",
+        "2. Run detection",
+        "3. Verify confidence <80% after Stage 2",
+        "4. Verify Stage 3 fallback triggers",
+        "5. Verify manual review prompt shown with suggested types"
+      ],
+      "expected_results": {
+        "low_confidence_detected": true,
+        "fallback_triggered": true,
+        "manual_prompt_shown": true,
+        "suggested_types": ["utility_modules", "services"]
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Prompt screenshot or log showing manual review request",
+      "test_data": "Ambiguous filename: helper.py"
+    },
+    "EDGE-003": {
+      "id": "EDGE-003",
+      "name": "Invalid File Path - Error Handling",
+      "category": "edge_cases",
+      "priority": "medium",
+      "description": "Verify system handles invalid file paths gracefully",
+      "preconditions": [
+        "File validation implemented"
+      ],
+      "steps": [
+        "1. Run /create-resource-sheet nonexistent_file.py",
+        "2. Verify error message displayed: 'File not found'",
+        "3. Verify no crash occurs",
+        "4. Verify helpful error message suggests checking file path"
+      ],
+      "expected_results": {
+        "no_crash": true,
+        "error_message_shown": true,
+        "message_helpful": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Error message logs",
+      "test_data": "Invalid file path: nonexistent_file.py"
+    },
+    "EDGE-004": {
+      "id": "EDGE-004",
+      "name": "Malformed Input Data - Validation Rejection",
+      "category": "edge_cases",
+      "priority": "medium",
+      "description": "Verify validation pipeline rejects malformed inputs",
+      "preconditions": [
+        "4-gate validation pipeline implemented (VALID-001 through VALID-005 passed)"
+      ],
+      "steps": [
+        "1. Submit document with critical violations (missing sections)",
+        "2. Verify Gate 1 rejects input",
+        "3. Submit document with content quality issues (placeholders)",
+        "4. Verify Gate 2 rejects input",
+        "5. Verify rejection messages are clear and actionable"
+      ],
+      "expected_results": {
+        "structural_violations_rejected": true,
+        "content_violations_rejected": true,
+        "rejection_messages_clear": true
+      },
+      "actual_results": {},
+      "status": "pending",
+      "evidence_required": "Validation rejection logs with clear error messages",
+      "test_data": "Malformed documents from VALID-001 and VALID-002"
+    }
+  },
+
+  "summary": {
+    "total_test_cases": 49,
+    "by_category": {
+      "routing_validation": 3,
+      "element_detection": 4,
+      "graph_integration": 5,
+      "validation_pipeline": 5,
+      "performance_benchmarks": 4,
+      "output_format_validation": 4,
+      "edge_cases": 4
+    },
+    "by_priority": {
+      "critical": 29,
+      "high": 8,
+      "medium": 4
+    },
+    "estimated_execution_time": {
+      "routing_validation": "15 min",
+      "element_detection": "45 min",
+      "graph_integration": "30 min",
+      "validation_pipeline": "30 min",
+      "performance_benchmarks": "20 min",
+      "output_format_validation": "30 min",
+      "edge_cases": "20 min",
+      "total": "2-4 hours"
+    }
+  }
+}

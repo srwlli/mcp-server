@@ -37,7 +37,14 @@
       "Bash(coderef context:*)",
       "Bash(tee:*)",
       "Bash(test:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(coderef coverage:*)",
+      "Bash(coderef impact --help:*)",
+      "Bash(coderef complexity --help:*)",
+      "Bash(coderef patterns:*)",
+      "Bash(coderef complexity:*)",
+      "Bash(coderef export:*)",
+      "Bash(coderef update-ref:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

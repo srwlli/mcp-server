@@ -1,0 +1,35 @@
+{
+  "feature_name": "resource-sheet-validation",
+  "description": "Validate existing resource sheets against RSMS schema and update them to comply with latest standards",
+  "goal": "Ensure all resource sheet documentation meets RSMS v1.0 specification",
+  "requirements": [
+    "Validate all RESOURCE-SHEET-*.md files against schemas/resource-sheet.json",
+    "Identify non-compliant documents",
+    "Update resource sheets with correct RSMS metadata (version, relationships, subject classification)",
+    "Generate validation report with compliance scores"
+  ],
+  "out_of_scope": [
+    "Creating new resource sheets from scratch"
+  ],
+  "constraints": [
+    "Must preserve existing content while updating metadata headers",
+    "No breaking changes to RSMS schema"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-RESOURCE-SHEET-VALIDATION-001",
+    "workorder_assigned_at": "2026-01-04T11:50:05.484537+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-RESOURCE-SHEET-VALIDATION-001",
+    "feature_id": "resource-sheet-validation",
+    "last_updated": "2026-01-04",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-03"
+  }
+}

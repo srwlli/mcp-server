@@ -1,0 +1,206 @@
+{
+  "workorder_id": "WO-CORE-DASHBOARD-INTEGRATION-001",
+  "project": "coderef-packages",
+  "resource_sheets_found": [
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\core\\RESOURCE-SHEET.md",
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\CORE-VS-CLI-RELATIONSHIP.md",
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages\\SCANNER-OUTPUTS-IMPLEMENTATION-STATUS.md",
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\reference-sheets\\cli-command-system\\cli-command-system.md",
+    "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\coderef\\reference-sheets\\ResourceSheetGenerator\\ResourceSheetGenerator.md"
+  ],
+  "references": [
+    {
+      "title": "CodeRef Core - Comprehensive Codebase Audit Report",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\src\\coderef\\CODEBASE-AUDIT-REPORT.md",
+      "description": "Complete audit of all CodeRef implementations across 3 locations (root, src/, coderef-core-updates/). Identifies source of truth, feature mapping, critical issues, and migration recommendations.",
+      "type": "audit_report"
+    },
+    {
+      "title": "Complete CodeRef System Consolidation Plan",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\src\\coderef\\migration-strategy.md",
+      "description": "Migration strategy to consolidate all three CodeRef implementations into one unified system with working regex and AST scanners producing ElementData[] output.",
+      "type": "migration_plan"
+    }
+  ],
+  "current_state_analysis": {
+    "scanner_functions": {
+      "primary_export": "scanCurrentElements(path, languages, options)",
+      "exported_from": "@coderef/core via packages/core/src/index.ts line 58",
+      "function_location": "packages/scanner.js (regex-based scanner)",
+      "ast_alternative": "packages/core/src/analyzer/ast-element-scanner.ts (scanFileWithAST, scanFilesWithAST)",
+      "supporting_exports": [
+        "LANGUAGE_PATTERNS - Language-specific regex patterns",
+        "AnalyzerService - Dependency graph construction",
+        "QueryExecutor - Relationship queries",
+        "ImpactSimulator - Change impact analysis",
+        "ComplexityScorer - Complexity metrics",
+        "ContextGenerator - Comprehensive context generation",
+        "BreakingChangeDetector - Breaking change detection"
+      ],
+      "type_exports": [
+        "ElementData - Scanned element structure",
+        "ScanOptions - Configuration options",
+        "DependencyGraph - Graph data structure",
+        "AnalysisResult - Complete analysis output"
+      ]
+    },
+    "integration_points": {
+      "entry_point": "@coderef/core package exports (packages/core/src/index.ts)",
+      "build_output": "packages/core/dist/index.js (compiled ES module)",
+      "package_name": "@coderef/core v2.0.0",
+      "module_type": "ES module (type: module)",
+      "existing_consumers": [
+        "@coderef/cli (workspace:*)",
+        "coderef-context MCP server",
+        "coderef-workflow MCP server"
+      ]
+    },
+    "dependencies": {
+      "runtime": {
+        "acorn": "^8.15.0 - JavaScript AST parser",
+        "glob": "^11.0.3 - File pattern matching",
+        "minimatch": "^10.0.3 - Pattern matching",
+        "zod": "^4.1.12 - Runtime validation"
+      },
+      "peer": "Node.js 20+ (uses ES modules)",
+      "build": "TypeScript 5.9.3"
+    }
+  },
+  "implementation_plan": {
+    "phase_1": {
+      "tasks": [
+        {
+          "id": "PKG-001",
+          "task": "Verify @coderef/core exports are dashboard-ready",
+          "description": "Ensure scanCurrentElements, AnalyzerService, and related functions are properly exported from dist/index.js",
+          "validation": "Check packages/core/dist/index.d.ts has all type definitions",
+          "status": "verification_needed"
+        },
+        {
+          "id": "PKG-002",
+          "task": "Document scanner API contract for dashboard consumption",
+          "description": "Create API-SCANNER-CONTRACT.md documenting scanCurrentElements signature, return types, error handling, and usage patterns",
+          "output_file": "packages/core/API-SCANNER-CONTRACT.md",
+          "status": "pending"
+        },
+        {
+          "id": "PKG-003",
+          "task": "Verify TypeScript declaration files are published",
+          "description": "Ensure package.json 'types' field points to dist/index.d.ts and all scanner types are exported",
+          "validation": "Check core/package.json line 7: 'types': 'dist/index.d.ts'",
+          "status": "verification_needed"
+        },
+        {
+          "id": "PKG-004",
+          "task": "Test scanner functions in isolation",
+          "description": "Create test harness to validate scanCurrentElements works standalone (no CLI dependencies)",
+          "test_file": "packages/core/__tests__/scanner-standalone.test.ts",
+          "status": "pending"
+        },
+        {
+          "id": "PKG-005",
+          "task": "Document error handling patterns",
+          "description": "Document how scanner functions throw errors (file not found, parse errors, etc.) for dashboard error boundaries",
+          "output_file": "packages/core/API-SCANNER-CONTRACT.md (error section)",
+          "status": "pending"
+        },
+        {
+          "id": "PKG-006",
+          "task": "Provide example usage for Next.js environment",
+          "description": "Create example showing scanCurrentElements usage in Next.js API route context",
+          "output_file": "packages/core/examples/nextjs-api-route.ts",
+          "status": "pending"
+        }
+      ],
+      "files_to_modify": [
+        "packages/core/package.json - Verify exports configuration",
+        "packages/core/README.md - Add dashboard integration section"
+      ],
+      "files_to_create": [
+        "packages/core/API-SCANNER-CONTRACT.md - Scanner API documentation for dashboard",
+        "packages/core/__tests__/scanner-standalone.test.ts - Standalone scanner tests",
+        "packages/core/examples/nextjs-api-route.ts - Next.js integration example"
+      ],
+      "estimated_effort": "4-6 hours (mostly documentation and validation)"
+    }
+  },
+  "integration_requirements": {
+    "from_other_agent": {
+      "dashboard_environment": "Confirm Next.js version and module resolution strategy (ESM vs CommonJS)",
+      "path_strategy": "How dashboard will resolve absolute paths (dashboard runs in different directory than scanned projects)",
+      "error_handling": "Dashboard's error boundary and user feedback patterns",
+      "performance_requirements": "Expected scan times for typical projects (100-1000 files)"
+    },
+    "exports": {
+      "package_name": "@coderef/core",
+      "entry_point": "dist/index.js",
+      "type_definitions": "dist/index.d.ts",
+      "primary_functions": [
+        "scanCurrentElements(path: string, languages: string | string[], options?: ScanOptions): Promise<ElementData[]>",
+        "AnalyzerService class for dependency graph construction",
+        "QueryExecutor class for relationship queries",
+        "ImpactSimulator class for change impact analysis",
+        "ComplexityScorer class for complexity metrics",
+        "ContextGenerator class for comprehensive context"
+      ],
+      "installation": "Add '@coderef/core': 'workspace:*' to dashboard/package.json OR use file: reference if not in same workspace"
+    },
+    "shared_types": {
+      "ElementData": "Scanned element structure (name, type, file, line, exported, parameters, metadata)",
+      "ScanOptions": "Configuration (recursive, exclude, verbose)",
+      "DependencyGraph": "Graph structure (nodes Map, edges array, bidirectional indexes)",
+      "AnalysisResult": "Complete analysis output (graph, statistics, circular dependencies, isolated nodes)",
+      "QueryResult": "Query execution result (matched nodes, count, execution time, cached status)",
+      "BlastRadius": "Impact analysis result (direct/transitive/secondary impacts, risk score, severity)",
+      "ElementComplexity": "Complexity metrics (LOC, cyclomatic, parameters, risk level)"
+    }
+  },
+  "risks": [
+    {
+      "risk": "Path resolution differences",
+      "description": "Dashboard runs in C:\\Users\\willh\\Desktop\\coderef-dashboard but scans projects in different directories. Scanner expects absolute paths.",
+      "mitigation": "Dashboard must resolve project paths to absolute before calling scanCurrentElements. Document this requirement.",
+      "severity": "medium"
+    },
+    {
+      "risk": "Node.js API availability in Next.js API routes",
+      "description": "Scanner uses fs, path, glob (Node.js APIs). Next.js API routes run in Node.js (server-side) so this should work, but need to verify no browser bundling issues.",
+      "mitigation": "Verify @coderef/core is only imported in Next.js API routes (app/api/*), never in client components",
+      "severity": "low"
+    },
+    {
+      "risk": "Large scan performance blocking API routes",
+      "description": "Scanning 1000+ files may take 1-3 seconds. Next.js API routes have default timeout of 10s (vercel) or 60s (self-hosted).",
+      "mitigation": "Document expected scan times. Consider streaming progress via Server-Sent Events for large scans (Phase 2).",
+      "severity": "low"
+    },
+    {
+      "risk": "TypeScript version mismatch",
+      "description": "@coderef/core built with TS 5.9.3, dashboard may use different version causing type compatibility issues.",
+      "mitigation": "Document minimum TypeScript version requirement. Test with dashboard's TS version.",
+      "severity": "low"
+    },
+    {
+      "risk": "ESM vs CommonJS module resolution",
+      "description": "@coderef/core is ES module (type: 'module'). Next.js supports ESM but may have edge cases.",
+      "mitigation": "Verify Next.js config allows ESM dependencies. Test import works in dev and production builds.",
+      "severity": "medium"
+    }
+  ],
+  "success_criteria": [
+    "✅ @coderef/core package.json verified to have correct 'main' and 'types' exports",
+    "✅ API-SCANNER-CONTRACT.md created documenting scanner functions for dashboard team",
+    "✅ Standalone scanner test passes (no CLI dependencies)",
+    "✅ Example Next.js API route created showing scanCurrentElements usage",
+    "✅ Error handling patterns documented for dashboard error boundaries",
+    "✅ Shared TypeScript types documented for dashboard imports",
+    "✅ Path resolution requirements documented (absolute paths required)",
+    "✅ All exports verified in dist/index.d.ts type definitions"
+  ],
+  "additional_notes": {
+    "formatters_location": "Mermaid/Graphviz formatters currently in @coderef/cli/src/formatters/ (NOT in core). Dashboard will need to copy these files or import from CLI (not recommended due to circular dependency). Recommend copying to dashboard/lib/formatters/.",
+    "ast_scanner_option": "Core has both regex scanner (scanCurrentElements) and AST scanner (ast-element-scanner.ts). Regex is faster (~85% accuracy, <1s), AST is more accurate (99%, 1-3s). Phase 1 should expose regex scanner. Phase 2 can add AST option.",
+    "existing_dashboard_command": "@coderef/cli already has dashboard command (cli/src/commands/dashboard.ts) that uses core directly. Dashboard can reference this as implementation example.",
+    "workspace_dependency": "If dashboard is in same pnpm workspace, use '@coderef/core': 'workspace:*'. If separate project, use 'file:../coderef-system/packages/core' or publish to npm registry."
+  }
+}

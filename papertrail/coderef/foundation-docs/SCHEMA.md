@@ -1,11 +1,11 @@
 ---
 agent: coderef-docs v1.2.0
-date: 2026-01-10
+date: '2026-01-10'
 task: DOCUMENT
 workorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001
 generated_by: coderef-docs v1.2.0
 feature_id: foundation-docs
-timestamp: 2025-12-30T00:00:00Z
+timestamp: '2025-12-30T00:00:00Z'
 title: Papertrail Schema Reference
 version: 1.0.0
 status: APPROVED
@@ -129,7 +129,7 @@ class UDSHeader:
 workorder_id: WO-AUTH-SYSTEM-001
 generated_by: coderef-docs v1.2.0
 feature_id: auth-system
-timestamp: 2025-12-30T10:15:00Z
+timestamp: '2025-12-30T10:15:00Z'
 title: Authentication System Architecture
 version: 2.1.0
 status: APPROVED
@@ -847,7 +847,7 @@ with open("plan.json", "w") as f:
 workorder_id: WO-AUTH-SYSTEM-001
 generated_by: coderef-docs v1.2.0
 feature_id: auth-system
-timestamp: 2025-12-30T10:15:00Z
+timestamp: '2025-12-30T10:15:00Z'
 title: Authentication System Architecture
 version: 2.1.0
 status: APPROVED
@@ -872,7 +872,7 @@ ValidationResult(
 workorder_id: WO-AUTH-001  # ❌ Missing category segment
 generated_by: coderef-docs v1.2.0
 feature_id: auth-system
-timestamp: 2025-12-30T10:15:00Z
+timestamp: '2025-12-30T10:15:00Z'
 ---
 ```
 
@@ -900,7 +900,7 @@ ValidationResult(
 workorder_id: WO-AUTH-SYSTEM-001
 generated_by: coderef-docs v1.2.0
 feature_id: auth-system
-timestamp: 2025-12-30T10:15:00Z
+timestamp: '2025-12-30T10:15:00Z'
 ---
 
 # Architecture

@@ -1,0 +1,39 @@
+{
+  "feature_name": "no-emoji-and-timestamp",
+  "description": "Document two utility files in coderef-docs/coderef/ directory: timestamp.py (7.3K) for generating RSMS v2.0 and UDS-compliant timestamps with functions get_date(), get_timestamp(), get_iso_timestamp(); and remove-emojis.py (6.2K) CLI tool for stripping emojis from markdown/text files with dry-run, recursive processing, and custom pattern support",
+  "goal": "Provide comprehensive documentation for these utility functions to improve discoverability and ease of use for developers working with the coderef-docs system",
+  "requirements": [
+    "Document timestamp.py functions with parameter descriptions and return values",
+    "Document remove-emojis.py CLI arguments and usage examples",
+    "Explain RSMS v2.0 and UDS timestamp format compliance",
+    "Show practical examples for both utilities",
+    "Include error handling and edge cases"
+  ],
+  "out_of_scope": [
+    "Modifying the utility implementations",
+    "Adding new features to utilities",
+    "Creating tests for utilities"
+  ],
+  "constraints": [
+    "Documentation only - no code changes",
+    "Follow existing documentation patterns in coderef-docs",
+    "Keep documentation concise and scannable"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-NO-EMOJI-AND-TIMESTAMP-001",
+    "workorder_assigned_at": "2026-01-10T09:20:30.098526+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-NO-EMOJI-AND-TIMESTAMP-001",
+    "feature_id": "no-emoji-and-timestamp",
+    "last_updated": "2026-01-10",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-09"
+  }
+}

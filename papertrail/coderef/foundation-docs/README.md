@@ -1,11 +1,11 @@
 ---
 agent: coderef-docs v1.2.0
-date: 2026-01-10
+date: '2026-01-10'
 task: DOCUMENT
 workorder_id: WO-UDS-SYSTEM-001
 generated_by: coderef-docs v1.2.0
 feature_id: uds-comprehensive-system
-timestamp: 2026-01-10T12:00:00Z
+timestamp: '2026-01-10T12:00:00Z'
 title: Papertrail - Universal Documentation Standards
 version: 1.0.0
 status: APPROVED

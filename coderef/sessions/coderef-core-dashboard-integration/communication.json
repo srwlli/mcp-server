@@ -1,0 +1,38 @@
+﻿{
+    "workorder_id":  "WO-CORE-DASHBOARD-INTEGRATION-001",
+    "feature_name":  "coderef-core-dashboard-integration",
+    "created":  "2026-01-04",
+    "status":  "in_progress",
+    "description":  "Integrate @coderef/core scanner functions directly into coderef-dashboard via Next.js API routes, replacing CLI subprocess calls with fast, type-safe access",
+    "instructions_file":  "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-core-dashboard-integration\\instructions.json",
+    "orchestrator":  {
+                         "agent_id":  "coderef",
+                         "agent_path":  "C:\\Users\\willh\\.mcp-servers\\coderef",
+                         "role":  "Synthesize both agent plans into unified implementation roadmap",
+                         "output_file":  "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-core-dashboard-integration\\orchestrator-plan.json",
+                         "status":  "complete",
+                         "notes":  "✅ Comprehensive orchestrator plan created. Synthesized 13 tasks from both agents (6 packages + 7 dashboard). Identified critical path, parallelization opportunities, 5 risks with mitigations, and optimal execution strategy. Timeline: 14-21 hours total (optimistic: 14h, realistic: 17.5h, pessimistic: 21h). Key deliverables: dependency analysis, integration points, risk register, validation checklist, success criteria."
+                     },
+    "agents":  [
+                   {
+                       "agent_id":  "coderef-packages",
+                       "agent_path":  "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages",
+                       "output_file":  "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-core-dashboard-integration\\coderef-packages-plan.json",
+                       "status":  "complete",
+                       "notes":  "✅ ALL TASKS COMPLETE. PKG-001: Verified exports (scanCurrentElements, ElementData, ScanOptions in dist/index.d.ts). PKG-002: Created API-SCANNER-CONTRACT.md (comprehensive 800+ line documentation). PKG-003: Verified TypeScript declarations. PKG-004: Created scanner-standalone.test.ts (22 tests, Next.js simulation). PKG-005: Documented error handling (ENOENT, EACCES, validation). PKG-006: Created nextjs-api-route.ts example (full POST/GET implementation with SSE streaming). Ready for dashboard integration."
+                   },
+                   {
+                       "agent_id":  "coderef-dashboard",
+                       "agent_path":  "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+                       "output_file":  "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-core-dashboard-integration\\coderef-dashboard-plan.json",
+                       "status":  "complete",
+                       "notes":  "âœ… Found 12 resource sheets. Created comprehensive Phase 1 plan with 7 tasks for integrating @coderef/core scanner via new /api/scan endpoint. Plan includes: dependency setup, API route creation, ScanApi client module, ScanExecutor refactor, UI updates, testing, and docs. Estimated effort: 10-15 hours."
+                   }
+               ],
+    "aggregation":  {
+                        "total_agents":  2,
+                        "completed":  2,
+                        "pending":  0,
+                        "not_started":  0
+                    }
+}

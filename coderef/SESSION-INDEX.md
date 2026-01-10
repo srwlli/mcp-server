@@ -15,6 +15,7 @@ task: DOCUMENT
 | Session Name | WO-ID | Created | Status | Agents | Description |
 |--------------|-------|---------|--------|--------|-------------|
 | coderef-scanner-integration | WO-SCANNER-001 | 2026-01-04 | not_started | 3 | Build full functioning CodeRef scanner on dashboard |
+| create-context-index | WO-CONTEXT-INDEX-001 | 2026-01-04 | not_started | 3 | Identify and catalog reference sheets and context files |
 
 ---
 

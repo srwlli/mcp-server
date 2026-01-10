@@ -1,0 +1,151 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-CONSOLIDATION-AUDIT-001",
+  "task": "Papertrail Consolidation Audit",
+  "description": "Discover all validation/schema/standards files across the CodeRef ecosystem to create a unified migration manifest for papertrail consolidation",
+
+  "agent_identification": {
+    "how_to_identify_your_role": "Find your project directory path in communication.json agents[] array and match it to the table below",
+    "agent_roster": [
+      {"agent_id": "coderef-assistant", "project_path": "C:\\Users\\willh\\Desktop\\assistant"},
+      {"agent_id": "coderef-context", "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context"},
+      {"agent_id": "coderef-workflow", "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow"},
+      {"agent_id": "coderef-docs", "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs"},
+      {"agent_id": "coderef-personas", "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas"},
+      {"agent_id": "coderef-testing", "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing"},
+      {"agent_id": "papertrail", "project_path": "C:\\Users\\willh\\.mcp-servers\\papertrail"},
+      {"agent_id": "coderef-packages", "project_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system\\packages"},
+      {"agent_id": "coderef-dashboard", "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard"}
+    ],
+    "instruction": "If your working directory matches one of the project_path values above, you are that agent. Follow the agent_instructions below. Orchestrator role varies by session."
+  },
+
+  "orchestrator_instructions": {
+    "role": "Consolidate all 9 agent audit reports into unified migration manifest",
+    "steps": {
+      "step_1": "READ all 9 agent audit JSON files from their output_file paths",
+      "step_2": "CATEGORIZE findings into: schemas, validators, standards, QA tools",
+      "step_3": "IDENTIFY duplicates, conflicts, and dependencies",
+      "step_4": "CREATE orchestrator-migration-manifest.json with: what exists, where it lives, what moves to papertrail, priority order, conflicts to resolve"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Search your project for validation/schema/standards files and report findings",
+    "steps": {
+      "step_1": "SEARCH your project for file patterns (see search_patterns below)",
+      "step_2": "CATEGORIZE each file found into: schema, validator, standards_doc, qa_tool, other",
+      "step_3": "ANALYZE each file: purpose, dependencies, who uses it",
+      "step_4": "CREATE audit JSON at your output_file path (see output_template below)",
+      "step_5": "UPDATE your status in communication.json to 'complete'"
+    }
+  },
+
+  "search_patterns": {
+    "schemas": [
+      "**/*.schema.json",
+      "**/*-schema.json",
+      "**/schemas/**/*.json"
+    ],
+    "validators": [
+      "**/validate-*.ps1",
+      "**/validate-*.sh",
+      "**/*-validator.*",
+      "**/validators/**/*"
+    ],
+    "standards": [
+      "**/*-standards.md",
+      "**/*-conventions.md",
+      "**/standards/**/*.md",
+      "**/*quality-gates*.md"
+    ],
+    "qa_tools": [
+      "**/lint*",
+      "**/test-*.ps1",
+      "**/*-checker.*",
+      "**/audit-*.ps1"
+    ]
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "agent_id": "{agent-id}",
+    "project_path": "{absolute-path}",
+    "audit_date": "2026-01-04",
+
+    "findings": {
+      "schemas": [
+        {
+          "file_path": "{relative-to-project-root}",
+          "file_name": "{name}",
+          "purpose": "{what-it-validates}",
+          "used_by": ["{files-or-scripts-that-use-it}"],
+          "should_move": true|false,
+          "notes": "{any-context}"
+        }
+      ],
+      "validators": [
+        {
+          "file_path": "{relative-to-project-root}",
+          "file_name": "{name}",
+          "purpose": "{what-it-validates}",
+          "used_by": ["{who-calls-it}"],
+          "should_move": true|false,
+          "notes": "{any-context}"
+        }
+      ],
+      "standards": [
+        {
+          "file_path": "{relative-to-project-root}",
+          "file_name": "{name}",
+          "purpose": "{what-standards-it-defines}",
+          "used_by": ["{who-references-it}"],
+          "should_move": true|false,
+          "notes": "{any-context}"
+        }
+      ],
+      "qa_tools": [
+        {
+          "file_path": "{relative-to-project-root}",
+          "file_name": "{name}",
+          "purpose": "{what-it-checks}",
+          "used_by": ["{integration-points}"],
+          "should_move": true|false,
+          "notes": "{any-context}"
+        }
+      ]
+    },
+
+    "summary": {
+      "total_files_found": 0,
+      "schemas_count": 0,
+      "validators_count": 0,
+      "standards_count": 0,
+      "qa_tools_count": 0,
+      "recommended_to_move": 0
+    },
+
+    "agent_recommendation": "{Brief recommendation on what should move to papertrail and why}"
+  },
+
+  "decision_criteria": {
+    "should_move_if": [
+      "File validates external contracts (JSON schemas, file formats)",
+      "File enforces naming conventions or standards",
+      "File performs quality checks (lint, audit, compliance)",
+      "File is reusable across multiple projects"
+    ],
+    "should_NOT_move_if": [
+      "File is project-specific implementation detail",
+      "File is tightly coupled to project code",
+      "File is part of build/compile process",
+      "File is deprecated or unused"
+    ]
+  },
+
+  "quality_standards": {
+    "completeness": "Report ALL files matching search patterns, categorize each one, provide recommendation",
+    "accuracy": "File paths must be correct, purpose must be clear, used_by must be verified",
+    "format": "Valid JSON following output_template structure"
+  }
+}

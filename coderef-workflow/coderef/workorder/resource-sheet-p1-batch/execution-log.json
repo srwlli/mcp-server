@@ -1,0 +1,65 @@
+[
+  {
+    "timestamp": "2026-01-02T19:56:40.448355",
+    "workorder_id": "WO-RESOURCE-SHEET-P1-001",
+    "feature_name": "resource-sheet-p1-batch",
+    "task_count": 11,
+    "tasks": [
+      {
+        "content": "PRE-IMPL-001: Read RESOURCE-SHEET-SYSTEM.md template",
+        "activeForm": "PRE-IMPL-001: Reading RESOURCE-SHEET-SYSTEM.md template",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-002: Review LIST-FOR-SHEET.md for P1 file details",
+        "activeForm": "PRE-IMPL-002: Reviewing LIST-FOR-SHEET.md for P1 file details",
+        "status": "pending"
+      },
+      {
+        "content": "PRE-IMPL-003: Understand 3-output requirement (md + json + txt)",
+        "activeForm": "PRE-IMPL-003: Understanding 3-output requirement (md + json + txt)",
+        "status": "pending"
+      },
+      {
+        "content": "DURING-I-001: Generate markdown documentation with all required sections",
+        "activeForm": "DURING-I-001: Generating markdown documentation with all required sections",
+        "status": "pending"
+      },
+      {
+        "content": "DURING-I-002: Generate JSON schema from TypedDicts and function signatures",
+        "activeForm": "DURING-I-002: Generating JSON schema from TypedDicts and function signatures",
+        "status": "pending"
+      },
+      {
+        "content": "DURING-I-003: Generate JSDoc suggestions for inline documentation",
+        "activeForm": "DURING-I-003: Generating JSDoc suggestions for inline documentation",
+        "status": "pending"
+      },
+      {
+        "content": "DURING-I-004: Document integration points with P0 files (server.py, tool_handlers.py, etc.)",
+        "activeForm": "DURING-I-004: Documenting integration points with P0 files (server.py, tool_handlers.py, etc.)",
+        "status": "pending"
+      },
+      {
+        "content": "POST-IMP-001: Verify all 15 files created",
+        "activeForm": "POST-IMP-001: Verifying all 15 files created",
+        "status": "pending"
+      },
+      {
+        "content": "POST-IMP-002: Run refactor-safety checklist on each sheet",
+        "activeForm": "POST-IMP-002: Running refactor-safety checklist on each sheet",
+        "status": "pending"
+      },
+      {
+        "content": "POST-IMP-003: Update LIST-FOR-SHEET.md completion tracking",
+        "activeForm": "POST-IMP-003: Updating LIST-FOR-SHEET.md completion tracking",
+        "status": "pending"
+      },
+      {
+        "content": "POST-IMP-004: Commit and push after each sheet completion",
+        "activeForm": "POST-IMP-004: Commiting and push after each sheet completion",
+        "status": "pending"
+      }
+    ]
+  }
+]

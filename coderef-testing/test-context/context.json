@@ -1,0 +1,197 @@
+{
+  "overview": {
+    "sourceDir": ".",
+    "languages": [
+      "py"
+    ],
+    "totalFiles": 21,
+    "totalElements": 482
+  },
+  "entryPoints": [
+    {
+      "type": "function",
+      "name": "main",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/server.py",
+      "line": 706,
+      "exported": false
+    }
+  ],
+  "criticalFunctions": [
+    {
+      "type": "method",
+      "name": "__init__",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 23,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "detect_frameworks",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 33,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "clear_cache",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 110,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_detect_pytest",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 131,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_get_pytest_version",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 162,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_find_pytest_config",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 178,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_detect_jest",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 196,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_get_jest_version",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 219,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_find_jest_config",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 232,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_detect_vitest",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 243,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_get_vitest_version",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 265,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_find_vitest_config",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 278,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_detect_cargo",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 289,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_get_cargo_version",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 314,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_find_cargo_toml",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 319,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_detect_mocha",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 329,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_get_mocha_version",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 360,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "method",
+      "name": "_find_mocha_config",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 373,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "function",
+      "name": "detect_frameworks",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 385,
+      "exported": false,
+      "score": 0
+    },
+    {
+      "type": "function",
+      "name": "clear_cache",
+      "file": "C:/Users/willh/.mcp-servers/coderef-testing/src/framework_detector.py",
+      "line": 390,
+      "exported": false,
+      "score": 0
+    }
+  ],
+  "architecturePatterns": {
+    "errorHandling": 0,
+    "barrelExports": 0,
+    "decorators": 78,
+    "asyncAwait": 82
+  },
+  "dependencies": {
+    "nodeCount": 565,
+    "edgeCount": 909,
+    "circularity": 0,
+    "isolatedNodes": 0
+  },
+  "health": {
+    "complexity": 1.608849557522124,
+    "maintainability": "Good"
+  }
+}

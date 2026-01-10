@@ -1,0 +1,177 @@
+{
+  "agent_id": "coderef-testing-agent",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+  "audit_date": "2026-01-04",
+
+  "findings": {
+    "schemas": [
+      {
+        "file_path": "src/models.py",
+        "file_name": "models.py",
+        "purpose": "Pydantic models defining unified test result schema across all frameworks (pytest, jest, vitest, cargo, mocha). Includes TestResult, TestSummary, UnifiedTestResults, FrameworkInfo, CoverageInfo, TestAnalysisResult",
+        "used_by": [
+          "src/test_runner.py",
+          "src/test_aggregator.py",
+          "src/result_analyzer.py",
+          "tests/test_models.py",
+          "tests/test_aggregator.py",
+          "tests/test_analyzer.py",
+          "MCP server.py tools"
+        ],
+        "should_move": true,
+        "notes": "Universal schema for test results - reusable across any project. Validates test result structure, framework metadata, coverage data. Strong candidate for papertrail as it defines external contract for test result interchange format."
+      },
+      {
+        "file_path": "coderef/foundation-docs/SCHEMA.md",
+        "file_name": "SCHEMA.md",
+        "purpose": "Documentation of all Pydantic models in src/models.py with field descriptions, validation rules, and example JSON payloads",
+        "used_by": [
+          "Developers implementing test tools",
+          "AI agents understanding test result format",
+          "External integrations consuming test results"
+        ],
+        "should_move": true,
+        "notes": "Documents the schema contract - should move with models.py. Provides comprehensive schema reference for test result validation."
+      }
+    ],
+
+    "validators": [
+      {
+        "file_path": "src/result_analyzer.py",
+        "file_name": "result_analyzer.py",
+        "purpose": "Validates and analyzes test results - coverage analysis, flaky test detection, performance analysis, test health scoring. Contains validation methods for test result quality.",
+        "used_by": [
+          "MCP server tools (analyze_coverage, detect_flaky_tests, analyze_test_performance, validate_test_health)",
+          "tests/test_analyzer.py"
+        ],
+        "should_move": true,
+        "notes": "Performs quality validation on test results. Reusable validator for any test result data. Contains `validate_*` methods for result analysis."
+      },
+      {
+        "file_path": "pyproject.toml",
+        "file_name": "pyproject.toml",
+        "purpose": "Python project configuration with linting/validation tools: mypy (type checking), black (code formatting), ruff (linting), pytest configuration",
+        "used_by": [
+          "CI/CD pipeline",
+          "Development workflow",
+          "pytest test runner"
+        ],
+        "should_move": false,
+        "notes": "Project-specific build configuration. Contains project metadata and dev tool configuration. Not suitable for papertrail - tightly coupled to coderef-testing project structure."
+      }
+    ],
+
+    "standards": [
+      {
+        "file_path": "TESTING_GUIDE.md",
+        "file_name": "TESTING_GUIDE.md",
+        "purpose": "Architecture overview and testing standards for building universal test orchestration. Defines framework-agnostic patterns, execution standards, result format conventions.",
+        "used_by": [
+          "Developers implementing test infrastructure",
+          "AI agents planning test features",
+          "Documentation references"
+        ],
+        "should_move": true,
+        "notes": "Defines testing standards and conventions applicable to any test framework. Strong candidate for papertrail - establishes universal testing patterns."
+      },
+      {
+        "file_path": "coderef/user/USER-GUIDE.md",
+        "file_name": "USER-GUIDE.md",
+        "purpose": "User-facing guide for using coderef-testing MCP server across any project. Documents slash commands, tool usage, best practices.",
+        "used_by": [
+          "End users running tests via MCP",
+          "AI agents using test tools",
+          "Integration documentation"
+        ],
+        "should_move": true,
+        "notes": "Reusable user standards for test orchestration. Contains universal usage patterns applicable to any project using test automation."
+      },
+      {
+        "file_path": "CLAUDE.md",
+        "file_name": "CLAUDE.md",
+        "purpose": "AI context documentation for coderef-testing. Defines project standards, architecture decisions, design patterns, integration guidelines.",
+        "used_by": [
+          "Claude Code AI agents",
+          "Development planning",
+          "System architecture reference"
+        ],
+        "should_move": false,
+        "notes": "Project-specific AI context. While it defines standards, it's tightly coupled to coderef-testing project. Not suitable for papertrail consolidation."
+      },
+      {
+        "file_path": "coderef/foundation-docs/ARCHITECTURE.md",
+        "file_name": "ARCHITECTURE.md",
+        "purpose": "Architecture documentation defining framework detection patterns, test execution flow, result aggregation standards, MCP tool design.",
+        "used_by": [
+          "Developers understanding system design",
+          "AI agents planning features",
+          "Integration documentation"
+        ],
+        "should_move": true,
+        "notes": "Documents universal architecture patterns for test orchestration. Reusable standards for building framework-agnostic test systems."
+      }
+    ],
+
+    "qa_tools": [
+      {
+        "file_path": "src/test_aggregator.py",
+        "file_name": "test_aggregator.py",
+        "purpose": "Aggregates test results from multiple frameworks/runs into unified format. Normalizes results, archives with timestamps, provides result comparison.",
+        "used_by": [
+          "MCP server tools (aggregate_results, compare_test_runs)",
+          "tests/test_aggregator.py"
+        ],
+        "should_move": true,
+        "notes": "Universal QA tool for result aggregation. Reusable across any project needing test result normalization. Not project-specific."
+      },
+      {
+        "file_path": "src/test_runner.py",
+        "file_name": "test_runner.py",
+        "purpose": "Framework-agnostic test execution engine. Runs pytest, jest, vitest, cargo, mocha tests with async/parallel execution, timeout handling, result capture.",
+        "used_by": [
+          "MCP server tools (run_all_tests, run_test_file, run_tests_in_parallel)",
+          "tests/test_runner.py",
+          "tests/integration/test_pytest.py",
+          "tests/integration/test_jest.py"
+        ],
+        "should_move": true,
+        "notes": "Universal test runner - not specific to coderef-testing. Provides framework-agnostic test execution. Strong candidate for papertrail as reusable QA infrastructure."
+      },
+      {
+        "file_path": "src/framework_detector.py",
+        "file_name": "framework_detector.py",
+        "purpose": "Auto-detects test frameworks in any project (pytest, jest, vitest, cargo, mocha). Scans project structure for framework indicators.",
+        "used_by": [
+          "src/test_runner.py",
+          "MCP server tools (list_test_frameworks, discover_tests)",
+          "tests/test_framework_detector.py"
+        ],
+        "should_move": true,
+        "notes": "Universal framework detection logic. Reusable across any project needing test framework identification. Not project-specific implementation."
+      },
+      {
+        "file_path": "tests/",
+        "file_name": "tests/ directory",
+        "purpose": "Test suite for coderef-testing itself. Contains unit tests, integration tests, comprehensive tests for all modules.",
+        "used_by": [
+          "pytest test runner",
+          "CI/CD validation",
+          "Development workflow"
+        ],
+        "should_move": false,
+        "notes": "Project-specific tests for coderef-testing implementation. Not suitable for papertrail - validates coderef-testing code, not reusable."
+      }
+    ]
+  },
+
+  "summary": {
+    "total_files_found": 12,
+    "schemas_count": 2,
+    "validators_count": 2,
+    "standards_count": 4,
+    "qa_tools_count": 4,
+    "recommended_to_move": 9
+  },
+
+  "agent_recommendation": "RECOMMENDED TO MOVE (9/12 files): coderef-testing contains highly reusable validation infrastructure:\n\n**MOVE TO PAPERTRAIL:**\n1. src/models.py - Universal test result schema (framework-agnostic)\n2. coderef/foundation-docs/SCHEMA.md - Schema documentation\n3. src/result_analyzer.py - Test result validation & quality analysis\n4. src/test_aggregator.py - Result normalization & aggregation\n5. src/test_runner.py - Framework-agnostic test execution engine\n6. src/framework_detector.py - Universal framework detection\n7. TESTING_GUIDE.md - Universal testing standards\n8. coderef/user/USER-GUIDE.md - Reusable test orchestration patterns\n9. coderef/foundation-docs/ARCHITECTURE.md - Framework-agnostic architecture\n\n**DO NOT MOVE (3/12 files):**\n1. pyproject.toml - Project-specific build config\n2. CLAUDE.md - Project-specific AI context\n3. tests/ - Project-specific test suite\n\n**WHY:** coderef-testing is explicitly designed as universal test infrastructure. Models, validators, runners, and documentation define reusable contracts for test result validation across ANY framework (pytest, jest, vitest, cargo, mocha). These are NOT project-specific - they're foundational QA tools.\n\n**PRIORITY:** High - These schemas/validators will be referenced by multiple projects in CodeRef ecosystem (coderef-context, coderef-workflow, coderef-docs, coderef-personas, next-scraper, etc.) for test result validation."
+}

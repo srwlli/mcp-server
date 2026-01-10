@@ -96,6 +96,8 @@ validators/
 │   ├── validate.py
 │   ├── format_validator.py
 │   └── schema_validator.py
+├── sessions/            # communication.json validation (multi-agent sessions)
+│   └── validate.ps1
 └── typescript/          # TypeScript-specific validators
     └── (6 files)
 ```
@@ -161,6 +163,42 @@ python validators/scripts/validate.py /path/to/project --path src/
 
 **Supported Languages:** Python (.py), Bash (.sh), PowerShell (.ps1), TypeScript (.ts), JavaScript (.js)
 
+### Session Validation
+
+**Script:** `validators/sessions/validate.ps1`
+
+**Purpose:** Validates multi-agent session communication files against JSON schema
+
+**Usage:**
+```bash
+# Validate all sessions
+pwsh validators/sessions/validate.ps1
+
+# Verbose output (show workorder, status, agent counts)
+pwsh validators/sessions/validate.ps1 -Verbose
+
+# Auto-fix common status typos
+pwsh validators/sessions/validate.ps1 -FixTypos
+```
+
+**Validation Checks:**
+1. ✅ Workorder ID format: `WO-{CATEGORY}-{ID}-###`
+2. ✅ Feature name format: kebab-case
+3. ✅ Status enums: `not_started`, `in_progress`, `complete`
+4. ✅ Agent IDs: Valid CodeRef ecosystem agents
+5. ✅ File paths: Absolute Windows paths
+6. ✅ Required fields: workorder_id, feature_name, created, status, description, instructions_file, orchestrator, agents
+
+**Auto-Fix Typos:**
+- `completed` → `complete`
+- `done` → `complete`
+- `finished` → `complete`
+- `started` → `in_progress`
+- `running` → `in_progress`
+- `pending` → `not_started`
+
+**Schema:** `schemas/sessions/communication-schema.json`
+
 ---
 
 ## File Structure
@@ -181,6 +219,8 @@ papertrail/
 │   ├── documentation/
 │   │   ├── resource-sheet-metadata-schema.json  # RSMS v2.0 schema
 │   │   └── script-frontmatter-schema.json       # Script/test frontmatter schema
+│   ├── sessions/
+│   │   └── communication-schema.json            # Multi-agent session schema
 │   ├── uds-document.json       # UDS schema (workorder-based docs)
 │   └── workorder-log.json      # Workorder log schema
 ├── standards/

@@ -14,20 +14,25 @@
 
 **Core Innovation:** Works in tandem with **coderef-context** (code intelligence) and **coderef-docs** (documentation generation) to provide AI agents with the tools to manage complex, multi-phase feature implementations. **NEW:** Workorder ID tracking for complete audit trail and feature lifecycle management.
 
-**Latest Update (v1.4.0 - 2025-01-04):**
+**Latest Update (v1.5.0 - 2025-01-10):**
+- ✅ Added 4 new MCP tool integration methods to planning_analyzer.py
+- ✅ `analyze_dependencies()` - Uses coderef_query for dependency analysis
+- ✅ `analyze_impact()` - Uses coderef_impact for change impact assessment
+- ✅ `analyze_complexity()` - Uses coderef_complexity for effort estimation
+- ✅ `generate_architecture_diagram()` - Uses coderef_diagram for visualization
+- ✅ Comprehensive telemetry tracking for data source usage (file reads vs MCP calls)
+- ✅ Unit tests for all 4 MCP tool methods with mocked responses
+
+**Previous (v1.4.0 - 2025-01-04):**
 - ✅ Simplified /create-workorder workflow (11 steps → 9 steps)
 - ✅ Step 2: User provides context directly (no interactive Q&A)
 - ✅ Step 3: Uses .coderef/ exclusively (no fallbacks, errors if missing)
 - ✅ Step 4: Creates plan.json only (DELIVERABLES.md removed)
-- ✅ Removed Step 5 (Multi-Agent Decision) - single-agent workflow only
-- ✅ Kept TodoWrite alignment (Step 8) and Git commit (Step 9)
 
 **Previous (v1.3.0 - 2025-01-02):**
-- ✅ Integrated .coderef/ structure into planning workflow (replaces foundation doc generation)
+- ✅ Integrated .coderef/ structure into planning workflow
 - ✅ Planning analyzer now reads patterns.json, coverage.json, index.json (5-10x faster)
 - ✅ Automatic drift detection warns if .coderef/ is >10% stale
-- ✅ Removed redundant Step 3 from /create-workorder (11 steps → 10 steps)
-- ✅ Foundation docs generation now optional post-implementation step
 
 **Previous (v1.2.0):**
 - ✅ Added autonomous /complete-workorder command
@@ -90,11 +95,22 @@ Feature Planning Flow:
 └─ align_plan() → Align plan with todo list for tracking
 ```
 
-**Key Integration Points (v1.3.0):**
+**Key Integration Points (v1.5.0):**
 - **Priority 1:** Read `.coderef/` pre-scanned data (fastest, 5-10x speedup)
-- **Priority 2:** Call MCP tools (`coderef_scan`, `coderef_patterns`, `coderef_coverage`)
+- **Priority 2:** Call MCP tools for dynamic analysis (see below)
 - **Priority 3:** Fallback to regex-based filesystem analysis
 - **Freshness Check:** Warns if drift >10%, prompts re-scan before planning
+
+**MCP Tools for Dynamic Analysis (v1.5.0):**
+- `coderef_query` - Dependency/relationship analysis (what depends on X?)
+- `coderef_impact` - Impact analysis (what breaks if I change X?)
+- `coderef_complexity` - Complexity metrics for effort estimation
+- `coderef_diagram` - Architecture diagram generation (Mermaid)
+
+**Telemetry Tracking (v1.5.0):**
+- Tracks all data sources used: `.coderef/` file reads, MCP tool calls, foundation doc reads
+- Logs with emoji indicators: 📁 file, 🔧 MCP tool, 📄 doc
+- `get_telemetry_summary()` provides usage statistics and percentages
 
 **How to Generate .coderef/ (before planning):**
 ```bash

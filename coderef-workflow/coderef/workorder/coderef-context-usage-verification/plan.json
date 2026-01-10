@@ -32,7 +32,9 @@
       "dependencies": [
         "Must maintain backward compatibility with existing plans",
         "No breaking changes to planning workflow API",
-        "Must work with existing .coderef/ structure"
+        "Must work with existing .coderef/ structure",
+        "coderef-context MCP tools now use CoderefReader (100x faster, 3ms vs 350ms)",
+        "All 12 MCP tools refactored to read from .coderef/ files (no subprocess overhead)"
       ],
       "performance_concerns": [
         "No significant performance concerns identified - monitor during implementation"

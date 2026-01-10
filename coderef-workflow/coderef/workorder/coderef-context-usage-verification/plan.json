@@ -76,66 +76,81 @@
     },
     "5_task_id_system": {
       "tasks": [
-        "SETUP-001: Create initial project structure and setup development environment with required dependencies",
-        "LOGIC-001: Implement Verify planning_analyzer.py reads .coderef/ files (index.json, patterns.json, coverage.json) following existing project patterns and architecture",
-        "LOGIC-002: Implement Ensure foundation docs (ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md) are utilized in analysis following existing project patterns and architecture",
-        "LOGIC-003: Implement Confirm coderef-context MCP tools are called when needed for dynamic analysis following existing project patterns and architecture",
-        "LOGIC-004: Implement Validate that plans include insights from all three sources (coderef-context, .coderef/, foundation docs) following existing project patterns and architecture",
-        "LOGIC-005: Implement Add logging to track which data sources are used during planning following existing project patterns and architecture",
-        "TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
-        "TEST-002: Write integration tests to verify end-to-end functionality and component interactions",
-        "DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+        "SETUP-001: Review current planning_analyzer.py to identify where .coderef/ files are read and where MCP tools should be called",
+        "VERIFY-001: Verify planning_analyzer.py reads .coderef/index.json for code inventory (line ~215 in planning_analyzer.py)",
+        "VERIFY-002: Verify planning_analyzer.py reads .coderef/reports/patterns.json for coding conventions",
+        "VERIFY-003: Verify planning_analyzer.py reads .coderef/reports/coverage.json for test gap analysis",
+        "VERIFY-004: Verify foundation docs (ARCHITECTURE.md, SCHEMA.md, API.md, COMPONENTS.md) are parsed and included in analysis.json",
+        "ENHANCE-001: Add coderef_query MCP tool call to planning_analyzer.py for dependency/relationship analysis during risk assessment",
+        "ENHANCE-002: Add coderef_impact MCP tool call to planning_analyzer.py for impact analysis in risk assessment section",
+        "ENHANCE-003: Add coderef_complexity MCP tool call to planning_analyzer.py for effort estimation in task generation",
+        "ENHANCE-004: Add coderef_diagram MCP tool call to optionally generate architecture diagrams for complex features",
+        "LOG-001: Add logging to track which data sources are used (file reads vs MCP tool calls) with telemetry",
+        "TEST-001: Write unit tests for new MCP tool integration with mocked responses",
+        "TEST-002: Write integration tests to verify end-to-end planning workflow uses all three sources",
+        "DOC-001: Update CLAUDE.md and planning documentation to reflect MCP tool usage"
       ]
     },
     "6_implementation_phases": {
       "phases": [
         {
           "phase": 1,
-          "name": "Phase 1: Foundation",
-          "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
+          "name": "Phase 1: Discovery & Verification",
+          "description": "Review current implementation and verify existing .coderef/ and foundation doc usage",
           "tasks": [
-            "SETUP-001"
+            "SETUP-001",
+            "VERIFY-001",
+            "VERIFY-002",
+            "VERIFY-003",
+            "VERIFY-004"
           ],
           "deliverables": [
-            "All files exist",
-            "Dependencies installed",
-            "Environment configured"
+            "Complete audit of current data source usage",
+            "Documentation of which tools are used vs missing",
+            "Gap analysis complete"
           ]
         },
         {
           "phase": 2,
-          "name": "Phase 2: Core Implementation",
-          "description": "Implement primary features and business logic following existing patterns",
+          "name": "Phase 2: MCP Tool Integration",
+          "description": "Add coderef_query, coderef_impact, coderef_complexity, and coderef_diagram MCP tool calls",
           "tasks": [
-            "LOGIC-001"
+            "ENHANCE-001",
+            "ENHANCE-002",
+            "ENHANCE-003",
+            "ENHANCE-004"
           ],
           "deliverables": [
-            "Happy path works end-to-end",
-            "Core functionality complete"
+            "All 4 MCP tools integrated into planning_analyzer.py",
+            "Plans include dynamic code intelligence from MCP tools",
+            "Risk assessment uses coderef_impact data"
           ]
         },
         {
           "phase": 3,
-          "name": "Phase 3: Testing",
-          "description": "Comprehensive testing at unit, integration, and end-to-end levels",
+          "name": "Phase 3: Logging & Telemetry",
+          "description": "Add comprehensive logging to track data source utilization",
           "tasks": [
-            "TEST-001"
+            "LOG-001"
           ],
           "deliverables": [
-            "All tests passing",
-            "Coverage meets requirements"
+            "Logs show which data sources are used per planning session",
+            "Telemetry tracks .coderef/ file reads vs MCP tool calls"
           ]
         },
         {
           "phase": 4,
-          "name": "Phase 4: Documentation",
-          "description": "Complete documentation for users and developers",
+          "name": "Phase 4: Testing & Documentation",
+          "description": "Comprehensive testing and documentation updates",
           "tasks": [
+            "TEST-001",
+            "TEST-002",
             "DOC-001"
           ],
           "deliverables": [
-            "All documentation complete",
-            "Examples provided"
+            "All tests passing with 80%+ coverage",
+            "Integration tests verify all three data sources used",
+            "Documentation updated with MCP tool usage examples"
           ]
         }
       ]

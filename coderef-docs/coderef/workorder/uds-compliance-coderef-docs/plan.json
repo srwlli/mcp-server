@@ -16,7 +16,108 @@
     }
   },
   "UNIVERSAL_PLANNING_STRUCTURE": {
-    "0_preparation": {},
+    "0_preparation": {
+      "discovery": {
+        "foundation_docs_available": [
+          "README.md (root)",
+          "API.md (coderef/foundation-docs)",
+          "ARCHITECTURE.md (coderef/foundation-docs)",
+          "COMPONENTS.md (coderef/foundation-docs)",
+          "SCHEMA.md (coderef/foundation-docs)"
+        ],
+        "coding_standards_available": [
+          "BEHAVIOR-STANDARDS.md",
+          "UI-STANDARDS.md",
+          "UX-PATTERNS.md",
+          "COMPONENT-INDEX.md"
+        ],
+        "project_structure": {
+          "total_files": 138,
+          "main_directories": [
+            "generators",
+            "tests",
+            "coderef/archived",
+            "coderef/workorder"
+          ],
+          "organization_pattern": "Modular MCP Server with POWER Framework"
+        }
+      },
+      "technology_stack": {
+        "language": "Python",
+        "framework": "Flask",
+        "testing": "pytest",
+        "mcp_protocol": "1.0"
+      },
+      "existing_patterns": {
+        "naming_conventions": "camelCase for functions (54/54 functions)",
+        "documentation_framework": "POWER (Purpose, Overview, What/Why/When, Examples, References)",
+        "validation_approach": "Optional PAPERTRAIL_ENABLED flag (currently defaults to false)"
+      },
+      "integration_points": {
+        "papertrail_validators": {
+          "FoundationDocValidator": "For README, ARCHITECTURE, API, SCHEMA, COMPONENTS",
+          "StandardsDocValidator": "For ui-patterns, behavior-patterns, ux-patterns (needs confirmation)",
+          "integration_location": "tool_handlers.py lines 127-237, 242-347, 717-786"
+        },
+        "current_validation": {
+          "CHANGELOG.json": "jsonschema validation (working)",
+          "foundation_docs": "None (PAPERTRAIL_ENABLED defaults to false)",
+          "standards_docs": "None"
+        }
+      },
+      "reference_implementations": {
+        "similar_features": [
+          "WO-PAPERTRAIL-UDS-ALIGNMENT-002 (Phase 2 gap analysis)",
+          "WO-CODEREF-CONTEXT-MCP-INTEGRATION-001 (.coderef/ integration)"
+        ],
+        "patterns_to_follow": [
+          "Sequential generation approach (generate_foundation_docs)",
+          "Graceful degradation for missing dependencies",
+          "Context injection with fallback to placeholders"
+        ]
+      },
+      "constraints": {
+        "must_have": [
+          "papertrail>=1.0.0 in requirements.txt",
+          "Try/except for graceful degradation if Papertrail unavailable",
+          "Validation score >= 90 threshold for passing"
+        ],
+        "breaking_changes": [
+          "Validation failures will block doc generation (stricter than current)",
+          "PAPERTRAIL_ENABLED default change from false to true"
+        ],
+        "backward_compatibility": [
+          "Graceful fallback if Papertrail import fails",
+          "Clear error messages for validation failures"
+        ]
+      },
+      "gaps_identified": {
+        "p0_gaps": [
+          "GAP-DOCS-001: Foundation docs unvalidated (5 files)",
+          "GAP-DOCS-006: PAPERTRAIL_ENABLED default false"
+        ],
+        "p1_gaps": [
+          "GAP-DOCS-002: Standards docs unvalidated (3 files)"
+        ],
+        "blockers": [
+          "Confirm StandardsDocValidator exists in Papertrail (or use SystemDocValidator)"
+        ]
+      },
+      "analysis_source": {
+        "method": "analyze_project_for_planning using .coderef/ data",
+        "file": "coderef/workorder/uds-compliance-coderef-docs/analysis.json",
+        "coderef_resources_used": [
+          ".coderef/index.json"
+        ],
+        "foundation_docs_analyzed": [
+          "README.md",
+          "ARCHITECTURE.md",
+          "API.md",
+          "SCHEMA.md",
+          "COMPONENTS.md"
+        ]
+      }
+    },
     "1_executive_summary": {
       "purpose": "Integrate Papertrail validators for 14 unvalidated outputs to achieve 100% validation coverage",
       "value_proposition": "Add validation to all foundation docs, standards docs, and enable Papertrail by default",

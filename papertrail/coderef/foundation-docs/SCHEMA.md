@@ -1,4 +1,7 @@
 ---
+agent: coderef-docs v1.2.0
+date: 2026-01-10
+task: DOCUMENT
 workorder_id: WO-PAPERTRAIL-FOUNDATION-DOCS-001
 generated_by: coderef-docs v1.2.0
 feature_id: foundation-docs

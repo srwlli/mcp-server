@@ -1254,6 +1254,23 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
         generator.save_plan(feature_name, plan)
         plan_file = project_path / 'coderef' / 'workorder' / feature_name / 'plan.json'
 
+        # GAP-013: Validate generated plan.json (UDS compliance)
+        try:
+            from papertrail.validators.plan import PlanValidator
+            validator = PlanValidator()
+            result = validator.validate_file(str(plan_file))
+
+            if not result['valid']:
+                logger.warning(f"Generated plan.json validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                logger.info(f"Generated plan.json validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            logger.warning("Papertrail PlanValidator not available - skipping plan generation validation")
+        except Exception as e:
+            logger.warning(f"Plan generation validation error: {e} - continuing")
+
         logger.info(
             f'Implementation plan generated and saved successfully',
             extra={

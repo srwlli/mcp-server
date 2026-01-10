@@ -1134,6 +1134,28 @@ def update_claude_md_version(project_path: Path, old_version: str, new_version: 
                 )
 
         claude_path.write_text(content, encoding='utf-8')
+
+        # GAP-011: Validate CLAUDE.md after update (UDS compliance)
+        try:
+            from papertrail.validators.system import SystemDocValidator
+            validator = SystemDocValidator()
+            result = validator.validate_file(str(claude_path))
+
+            if not result['valid']:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"CLAUDE.md update validation failed (score: {result.get('score', 0)})")
+                for error in result.get('errors', []):
+                    logger.warning(f"  - {error}")
+            else:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"CLAUDE.md update validated successfully (score: {result.get('score', 100)})")
+        except ImportError:
+            pass  # Papertrail not available - skip validation
+        except Exception:
+            pass  # Validation error - continue without validation
+
         return True
 
     except (IOError, UnicodeDecodeError):

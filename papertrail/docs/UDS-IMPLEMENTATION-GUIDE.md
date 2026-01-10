@@ -750,6 +750,179 @@ Before submitting your validator:
 
 ---
 
+## JSON Validators (Non-Markdown Files)
+
+For JSON files (like `analysis.json`, `execution-log.json`, `plan.json`), the validation pattern differs from markdown validators:
+
+### Differences from Markdown Validators
+
+| Aspect | Markdown Validators | JSON Validators |
+|--------|---------------------|-----------------|
+| **Base Class** | Extends `BaseUDSValidator` | Standalone class (no base class) |
+| **Schema Location** | `schemas/documentation/` | `schemas/workflow/` or `schemas/planning/` |
+| **Frontmatter** | Yes - YAML front matter | No - pure JSON |
+| **Validation Target** | Frontmatter + content sections | Entire JSON structure |
+| **validate_file()** | Inherited from base class | Custom implementation |
+
+### JSON Validator Template
+
+```python
+from pathlib import Path
+from typing import Optional, Union, List, Dict, Any
+import json
+from jsonschema import Draft7Validator, ValidationError as JsonSchemaValidationError
+
+from ..validator import ValidationResult, ValidationError, ValidationSeverity
+
+
+class MyJsonValidator:
+    """Validator for my-file.json"""
+
+    def __init__(self, schemas_dir: Optional[Path] = None):
+        if schemas_dir is None:
+            schemas_dir = Path(__file__).parent.parent.parent / "schemas" / "workflow"
+        self.schemas_dir = schemas_dir
+        self.schema = None
+        self._load_schema()
+
+    def _load_schema(self):
+        schema_path = self.schemas_dir / "my-json-schema.json"
+        if not schema_path.exists():
+            raise FileNotFoundError(f"Schema not found: {schema_path}")
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            self.schema = json.load(f)
+
+    def validate_file(self, file_path: Union[str, Path]) -> ValidationResult:
+        file_path = Path(file_path)
+        if not file_path.exists():
+            return ValidationResult(
+                valid=False,
+                errors=[ValidationError(
+                    severity=ValidationSeverity.CRITICAL,
+                    message=f"File not found: {file_path}"
+                )],
+                warnings=[],
+                score=0
+            )
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except json.JSONDecodeError as e:
+            return ValidationResult(
+                valid=False,
+                errors=[ValidationError(
+                    severity=ValidationSeverity.CRITICAL,
+                    message=f"Invalid JSON: {str(e)}"
+                )],
+                warnings=[],
+                score=0
+            )
+
+        return self.validate_content(data, file_path)
+
+    def validate_content(self, data: Dict[str, Any], file_path: Optional[Path] = None) -> ValidationResult:
+        errors = []
+        warnings = []
+
+        # JSON Schema validation
+        validator = Draft7Validator(self.schema)
+        schema_errors = list(validator.iter_errors(data))
+
+        for error in schema_errors:
+            path = " -> ".join(str(p) for p in error.path) if error.path else "root"
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MAJOR,
+                message=f"Schema validation failed at {path}: {error.message}",
+                field=path
+            ))
+
+        # Additional custom validation
+        # ... your validation logic here ...
+
+        score = self._calculate_score(errors, warnings)
+        return ValidationResult(
+            valid=score >= 90,
+            errors=errors,
+            warnings=warnings,
+            score=score
+        )
+
+    def _calculate_score(self, errors: List[ValidationError], warnings: List[str]) -> int:
+        score = 100
+        for error in errors:
+            if error.severity == ValidationSeverity.CRITICAL:
+                score -= 50
+            elif error.severity == ValidationSeverity.MAJOR:
+                score -= 20
+            elif error.severity == ValidationSeverity.MINOR:
+                score -= 10
+            elif error.severity == ValidationSeverity.WARNING:
+                score -= 5
+        score -= 2 * len(warnings)
+        return max(0, score)
+```
+
+### Example: ExecutionLogValidator
+
+**Location:** `papertrail/validators/execution_log.py`
+**Schema:** `schemas/workflow/execution-log-json-schema.json`
+**Purpose:** Validates task execution logs with cross-validation to plan.json
+
+**Key Features:**
+- Validates JSON array structure (execution log entries)
+- Workorder ID format validation: `WO-{CATEGORY}-{ID}-###`
+- Feature name format validation: kebab-case
+- Task status enum validation: pending, in_progress, completed, failed, skipped
+- Cross-validation: Verifies task_id references exist in plan.json
+- Graceful fallback: Warns if plan.json missing (doesn't fail validation)
+
+**Usage:**
+```python
+from papertrail.validators.execution_log import ExecutionLogValidator
+
+validator = ExecutionLogValidator()
+result = validator.validate_file("coderef/workorder/my-feature/execution-log.json")
+
+if result.valid:
+    print(f"✅ Valid - Score: {result.score}/100")
+else:
+    print(f"❌ Invalid - Score: {result.score}/100")
+    for error in result.errors:
+        print(f"  - {error.message}")
+```
+
+### Example: AnalysisValidator
+
+**Location:** `papertrail/validators/analysis.py`
+**Schema:** `schemas/workflow/analysis-json-schema.json`
+**Purpose:** Validates project analysis files generated by coderef-workflow
+
+**Key Features:**
+- Validates JSON object structure (analysis data)
+- UDS metadata validation (_uds section)
+- Inventory consistency check: total_elements vs sum of by_type (10% tolerance)
+- Tech stack completeness: warns if >=3 'unknown' values
+- Foundation docs warnings: critical docs (README, ARCHITECTURE) missing
+- Fallback source warning: indicates reduced data quality
+
+**Usage:**
+```python
+from papertrail.validators.analysis import AnalysisValidator
+
+validator = AnalysisValidator()
+result = validator.validate_file("coderef/workorder/my-feature/analysis.json")
+
+if result.valid:
+    print(f"✅ Valid - Score: {result.score}/100")
+else:
+    print(f"❌ Invalid - Score: {result.score}/100")
+    for error in result.errors:
+        print(f"  - {error.message}")
+```
+
+---
+
 ## Example: Complete Implementation
 
 See `papertrail/validators/infrastructure.py` for a complete example implementation including:

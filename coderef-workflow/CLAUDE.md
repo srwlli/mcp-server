@@ -71,6 +71,36 @@ All tools, commands, and artifacts must use **global paths only**:
 
 ---
 
+## 🚫 No-Timeline Constraint (Agentic Planning)
+
+**ALL PLANNING IS COMPLEXITY-BASED, NOT TIME-BASED.**
+
+Since all coding is performed autonomously by AI agents, plans focus on **WHAT** needs to be done and **HOW COMPLEX** it is, never **WHEN** or **HOW LONG**.
+
+### Enforced Constraint
+
+Plans are **automatically rejected** (validation failure) if they contain:
+- `hours`, `minutes`, `duration` (explicit time references)
+- `timeline`, `schedule`, `deadline` (temporal planning)
+- `estimated_time`, `time_estimate` (time field names)
+
+### Allowed Terminology
+
+✅ **Complexity levels:** `trivial`, `low`, `medium`, `high`, `very_high`
+✅ **Scope indicators:** "15-25% of total tasks", "5-10 tasks"
+✅ **Technical terms:** `real-time`, `runtime` (system properties, not estimates)
+
+### Validation
+
+The `validate_no_time_estimates()` method enforces this constraint:
+- Scans plan.json for forbidden keywords
+- Fails with **major severity** if time references found
+- Suggests using complexity levels instead
+
+**Principle:** Plans describe architecture and completeness, not schedules. Agents work autonomously without deadlines.
+
+---
+
 ## System Architecture
 
 ### Overview

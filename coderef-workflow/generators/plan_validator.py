@@ -93,6 +93,7 @@ class PlanValidator:
         self.validate_quality()
         self.validate_workorder()  # F6.4: Optional validation (only runs if workorder exists)
         self.validate_autonomy()
+        self.validate_no_time_estimates()  # NEW: Enforce agentic constraint (no timelines)
 
         # Check for circular dependencies
         if 'UNIVERSAL_PLANNING_STRUCTURE' in self.plan_data:
@@ -620,3 +621,50 @@ class PlanValidator:
         flags = re.IGNORECASE if ignore_case else 0
         regex = re.compile(pattern, flags)
         return any(regex.search(issue['issue']) for issue in self.issues)
+
+    def validate_no_time_estimates(self):
+        """
+        Enforce agentic constraint: Plans must not contain time estimates.
+
+        Plans are complexity-based, not time-based. AI agents work autonomously
+        without deadlines. Focus on WHAT and HOW COMPLEX, never WHEN or HOW LONG.
+
+        Rejects plans containing:
+        - hours, minutes, duration (explicit time references)
+        - timeline, schedule, deadline (temporal planning)
+        - estimated_time, time_estimate (time field names)
+
+        Allows:
+        - "real-time" (technical term)
+        - "runtime" (technical term)
+        - "estimated_effort: low/medium/high" (complexity enum, not time)
+        """
+        logger.debug('Validating no time estimates (agentic constraint)...')
+
+        plan_str = json.dumps(self.plan_data).lower()
+
+        # Time keywords that violate agentic constraint
+        time_keywords = [
+            'hours', 'minutes', 'duration', 'timeline',
+            'schedule', 'deadline', 'estimated_time', 'time_estimate'
+        ]
+
+        # Exceptions (technical terms that contain "time")
+        exceptions = ['real-time', 'realtime', 'runtime', 'run-time']
+
+        found_keywords = []
+        for keyword in time_keywords:
+            # Check if keyword exists
+            if keyword in plan_str:
+                # Skip if it's part of an exception
+                is_exception = any(exc in plan_str for exc in exceptions if keyword in exc)
+                if not is_exception:
+                    found_keywords.append(keyword)
+
+        if found_keywords:
+            self.issues.append({
+                'severity': 'major',
+                'section': 'autonomy',
+                'issue': f'Plan contains time estimates: {", ".join(found_keywords)}',
+                'suggestion': 'Remove time references. Use complexity levels (trivial/low/medium/high/very_high) instead. Plans describe WHAT and HOW COMPLEX, not WHEN or HOW LONG.'
+            })

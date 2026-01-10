@@ -204,42 +204,42 @@
           "typical_tasks": ["SETUP tasks", "DB tasks", "Scaffolding"],
           "completion_criteria": "All files exist, dependencies installed, code compiles",
           "complexity": "low",
-          "effort_percentage": "15-25%"
+          "typical_scope": "15-25% of total tasks"
         },
         "phase_2_core_implementation": {
           "purpose": "Implement primary features and business logic",
           "typical_tasks": ["LOGIC tasks", "API tasks", "UI tasks"],
           "completion_criteria": "Happy path works end-to-end",
           "complexity": "high",
-          "effort_percentage": "40-50%"
+          "typical_scope": "40-50% of total tasks"
         },
         "phase_3_edge_cases_security": {
           "purpose": "Handle errors, validation, security",
           "typical_tasks": ["Error handling", "SEC tasks", "Performance optimizations"],
           "completion_criteria": "All edge cases handled, security requirements met",
           "complexity": "medium",
-          "effort_percentage": "20-25%"
+          "typical_scope": "20-25% of total tasks"
         },
         "phase_4_testing": {
           "purpose": "Comprehensive testing at all levels",
           "typical_tasks": ["TEST tasks", "Manual testing"],
           "completion_criteria": "All tests pass, coverage meets requirements",
           "complexity": "medium",
-          "effort_percentage": "15-20%"
+          "typical_scope": "15-20% of total tasks"
         },
         "phase_5_documentation_deployment": {
           "purpose": "Finalize docs and prepare for release",
           "typical_tasks": ["DOC tasks", "DEPLOY tasks"],
           "completion_criteria": "All documentation complete, ready to deploy",
           "complexity": "low",
-          "effort_percentage": "5-10%"
+          "typical_scope": "5-10% of total tasks"
         }
       },
       "required_fields_per_phase": {
         "title": "Descriptive phase name",
         "purpose": "Why this phase exists",
-        "complexity": "low | medium | high | very_high",
-        "effort_level": "1-5 scale (1=trivial, 5=major)",
+        "complexity": "trivial | low | medium | high | very_high",
+        "task_count_range": "Approximate number of tasks (e.g., 5-10 tasks)",
         "tasks": ["TASK-ID: Description"],
         "completion_criteria": "How to know phase is done"
       },

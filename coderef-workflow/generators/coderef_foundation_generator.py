@@ -274,6 +274,24 @@ class CoderefFoundationGenerator:
             output_path.write_text(content, encoding='utf-8')
             files_generated.append(relative_path)
 
+            # GAP-009: Validate foundation docs (UDS compliance)
+            if doc_name.endswith('.md'):
+                try:
+                    from papertrail.validators.foundation import FoundationDocValidator
+                    validator = FoundationDocValidator()
+                    result = validator.validate_file(str(output_path))
+
+                    if not result['valid']:
+                        logger.warning(f"{doc_name} validation failed (score: {result.get('score', 0)})")
+                        for error in result.get('errors', []):
+                            logger.warning(f"  - {error}")
+                    else:
+                        logger.info(f"{doc_name} validated successfully (score: {result.get('score', 100)})")
+                except ImportError:
+                    logger.warning("FoundationDocValidator not available - skipping validation")
+                except Exception as e:
+                    logger.warning(f"{doc_name} validation error: {e} - continuing")
+
             doc_duration = time.time() - doc_start
             doc_timings[doc_name] = {'skipped': False, 'duration': round(doc_duration, 2)}
             logger.info(f"Generated {doc_name} ({idx}/{total_docs}) in {doc_duration:.2f}s")

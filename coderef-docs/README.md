@@ -1,6 +1,6 @@
 # coderef-docs
 
-**Version:** 3.4.0
+**Version:** 3.6.0
 **Status:** ✅ Production Ready
 **Protocol:** Model Context Protocol (MCP)
 
@@ -10,7 +10,9 @@
 
 **coderef-docs** is an MCP server providing 13 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
 
-**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection + composable module-based resource sheets (WO-RESOURCE-SHEET-MCP-TOOL-001).
+**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection + composable module-based resource sheets + integrated Papertrail UDS validation (WO-UDS-COMPLIANCE-CODEREF-DOCS-001).
+
+**Latest (v3.6.0):** Integrated Papertrail validators for 8 documentation outputs (5 foundation docs + 3 standards docs), increasing validation coverage from 22% to 72%.
 
 ---
 
@@ -158,9 +160,56 @@ mcp__coderef-docs__generate_resource_sheet({
 
 **Implementation:** WO-RESOURCE-SHEET-MCP-TOOL-001 (Phase 1 Complete)
 
-### 6. Universal Document Standard (UDS)
+### 6. Documentation Validation (NEW in v3.6.0)
 
-**NEW in v3.2.0** - Structured metadata for workorder documents
+**Integrated Papertrail UDS Validators** - WO-UDS-COMPLIANCE-CODEREF-DOCS-001
+
+**Purpose:** Ensure all generated documentation meets Universal Document Standard (UDS) quality requirements.
+
+**Validated Outputs:**
+- ✅ **Foundation Docs (5):** README, ARCHITECTURE, API, SCHEMA, COMPONENTS
+- ✅ **Standards Docs (3):** ui-patterns, behavior-patterns, ux-patterns
+- **Coverage:** 72% (13/18 outputs validated)
+
+**How It Works:**
+1. Generate document using `/generate-docs` or `/establish-standards`
+2. Tool outputs executable Python validation code
+3. Claude executes validation after saving the file
+4. Validation returns score (0-100) with errors and warnings
+5. **Threshold:** Score >= 90 required for passing
+
+**Example Validation Code:**
+```python
+from papertrail.validators.foundation import FoundationDocValidator
+from pathlib import Path
+
+validator = FoundationDocValidator()
+result = validator.validate_file(Path('README.md'))
+
+if result.score < 90:
+    print(f'Validation failed: Score {result.score}/100')
+    for error in result.errors:
+        print(f'  ERROR: {error.message}')
+else:
+    print(f'Validation passed: Score {result.score}/100')
+```
+
+**Key Features:**
+- ✅ PAPERTRAIL_ENABLED defaults to `true` (automatic validation)
+- ✅ Validates frontmatter schema compliance
+- ✅ Checks required sections (Purpose, Overview, etc.)
+- ✅ Reports structural and content issues
+- ✅ Can be disabled by setting `PAPERTRAIL_ENABLED=false`
+
+**Validators:**
+- **FoundationDocValidator** - For README, ARCHITECTURE, API, SCHEMA, COMPONENTS
+- **StandardsDocValidator** - For ui-patterns, behavior-patterns, ux-patterns
+
+**Implementation:** Lines 346-366, 784-808 in tool_handlers.py
+
+### 7. Universal Document Standard (UDS)
+
+**Introduced in v3.2.0** - Structured metadata for workorder documents
 
 **What is UDS?**
 - YAML frontmatter for markdown files (DELIVERABLES.md, claude.md)

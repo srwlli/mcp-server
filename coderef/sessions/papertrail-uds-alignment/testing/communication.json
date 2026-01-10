@@ -1,0 +1,39 @@
+{
+  "workorder_id": "WO-PAPERTRAIL-SCHEMA-ADDITIONS-001",
+  "feature_name": "papertrail-uds-alignment-testing",
+  "created": "2026-01-10",
+  "status": "not_started",
+  "description": "Implement 3 deferred testing tasks for AnalysisValidator, ExecutionLogValidator, and ValidatorFactory integration",
+  "parent_session": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment",
+
+  "orchestrator": {
+    "agent_id": "assistant-orchestrator",
+    "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+    "role": "Coordinate testing implementation, verify test coverage >= 90%",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\testing\\orchestrator-testing-report.md",
+    "status": "not_started"
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\testing\\testing-completion-report.json",
+      "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\papertrail-uds-alignment\\testing\\testing-completion-report.md",
+      "status": "not_started",
+      "notes": "",
+      "tasks": [
+        "TEST-001: AnalysisValidator unit tests (2-3 hours)",
+        "TEST-002: ExecutionLogValidator unit tests (3-4 hours)",
+        "TEST-003: ValidatorFactory integration tests (2-3 hours)"
+      ]
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 1,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 1
+  }
+}

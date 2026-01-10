@@ -4065,6 +4065,23 @@ async def handle_update_task_status(arguments: dict) -> list[TextContent]:
         json.dump(plan_data, f, indent=2, ensure_ascii=False)
         f.write('\n')
 
+    # GAP-008: Re-validate after task status update (UDS compliance)
+    try:
+        from papertrail.validators.plan import PlanValidator
+        validator = PlanValidator()
+        result = validator.validate_file(str(plan_path))
+
+        if not result['valid']:
+            logger.warning(f"plan.json update validation failed (score: {result.get('score', 0)})")
+            for error in result.get('errors', []):
+                logger.warning(f"  - {error}")
+        else:
+            logger.info(f"plan.json update validated successfully (score: {result.get('score', 100)})")
+    except ImportError:
+        logger.warning("Papertrail PlanValidator not available - skipping update validation")
+    except Exception as e:
+        logger.warning(f"Plan update validation error: {e} - continuing without validation")
+
     # Calculate progress summary
     total_tasks = 0
     completed_tasks = 0

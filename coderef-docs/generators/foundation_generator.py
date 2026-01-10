@@ -10,6 +10,7 @@ from datetime import datetime
 # Add parent directory to path for types import
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from type_defs import WorkflowStepDict, TemplateDict
+from utils.timestamp import get_date, get_timestamp, get_iso_timestamp
 
 # Papertrail imports (Phase 3 integration)
 try:
@@ -192,7 +193,7 @@ class FoundationGenerator(BaseGenerator):
                 workorder_id=workorder_id,
                 generated_by="coderef-docs v2.0.0",
                 feature_id=feature_id,
-                timestamp=datetime.utcnow().isoformat() + "Z",
+                timestamp=get_iso_timestamp(),
                 title=context.get("title", template_name.upper()),
                 version=version,
                 status=DocumentStatus.DRAFT
@@ -205,7 +206,7 @@ class FoundationGenerator(BaseGenerator):
                 generated_by="coderef-docs v2.0.0",
                 workorder_id=workorder_id,
                 feature_id=feature_id,
-                last_updated=datetime.utcnow().strftime("%Y-%m-%d")
+                last_updated=get_date()
             )
 
             # Setup template engine with CodeRef extensions

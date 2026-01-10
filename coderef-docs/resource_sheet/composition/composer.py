@@ -11,6 +11,7 @@ from pathlib import Path
 from datetime import datetime
 
 from ..types import DocumentationModule, CodeCharacteristics, ResourceSheetMetadata, GenerationMode
+from utils.timestamp import get_date
 
 
 class DocumentComposer:
@@ -156,7 +157,7 @@ element: {element}
 type: Auto-detected
 modules: [{module_list}]
 auto_fill_rate: {auto_fill_rate:.1f}%
-generated: {datetime.now().strftime("%Y-%m-%d")}
+generated: {get_date()}
 mode: {mode}
 version: 1.0.0
 ---"""

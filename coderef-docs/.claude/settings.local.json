@@ -18,7 +18,11 @@
       "Bash(node:*)",
       "Bash(/tmp/coderef-scan.json)",
       "Bash(\"C:\\Users\\willh\\AppData\\Roaming\\npm\\coderef.CMD\" scan . --lang py --json)",
-      "Bash(.coderef/reports/patterns.json)"
+      "Bash(.coderef/reports/patterns.json)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

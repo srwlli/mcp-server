@@ -82,7 +82,7 @@ class PlanningGenerator:
         Raises:
             ValueError: If context file exists but is malformed
         """
-        context_file = self.project_path / Paths.CONTEXT_DIR / "working" / feature_name / "context.json"
+        context_file = self.project_path / Paths.CONTEXT_DIR / "workorder" / feature_name / "context.json"
 
         if not context_file.exists():
             logger.warning(f"Context file not found: {context_file}")
@@ -205,7 +205,7 @@ class PlanningGenerator:
                 logger.warning("No context.json found - generating plan without requirements context")
 
         if analysis is None:
-            analysis = self.load_analysis()
+            analysis = self.load_analysis(feature_name)
             if analysis is None:
                 logger.warning("No analysis data available - generating plan without codebase analysis")
 

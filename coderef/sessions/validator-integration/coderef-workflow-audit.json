@@ -1,0 +1,120 @@
+{
+  "agent_id": "coderef-workflow",
+  "audit_date": "2026-01-10",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+  "gaps_applicable": [
+    "GAP-001",
+    "GAP-002",
+    "GAP-004",
+    "GAP-005"
+  ],
+  "gaps_partially_complete": [
+    "GAP-001",
+    "GAP-003"
+  ],
+  "gaps_not_applicable": [],
+  "integration_status": {
+    "GAP-001": {
+      "status": "PARTIAL",
+      "description": "AnalysisValidator called but validation metadata not added to _uds",
+      "location": "tool_handlers.py:979-994 (handle_analyze_project_for_planning)",
+      "evidence": "Validator is called and logs warnings, but result.score/errors/warnings NOT written to analysis_data['_uds']",
+      "work_needed": "Add validation_score, validation_errors, validation_warnings to _uds section",
+      "priority": "HIGH",
+      "estimated_effort": "30 minutes"
+    },
+    "GAP-002": {
+      "status": "PARTIAL",
+      "description": "ExecutionLogValidator called but cross-validation NOT enabled",
+      "location": "tool_handlers.py:3399-3414 (log_execution)",
+      "evidence": "validator.validate_file(str(log_file)) - missing enable_cross_validation=True parameter",
+      "work_needed": "Add enable_cross_validation=True to validator call, add critical error handling for orphaned task IDs",
+      "priority": "HIGH",
+      "estimated_effort": "1 hour"
+    },
+    "GAP-003": {
+      "status": "COMPLETE",
+      "description": "PlanValidator validates before update_task_status updates",
+      "location": "tool_handlers.py:4120-4128 (handle_update_task_status)",
+      "evidence": "PlanValidator called AFTER update at line 4122 - validates the result",
+      "work_needed": "None - validation already integrated",
+      "priority": "N/A",
+      "estimated_effort": "0 hours"
+    },
+    "GAP-004": {
+      "status": "NOT_STARTED",
+      "description": "ValidatorFactory not used - all validators hardcoded",
+      "location": "Multiple files: tool_handlers.py (6+ locations), generators/*.py (13+ locations)",
+      "evidence": "Grep for 'ValidatorFactory' returned no results. All validators use direct imports.",
+      "work_needed": "Replace hardcoded validator instantiation with ValidatorFactory.get_validator() across 19+ integration points",
+      "priority": "MEDIUM",
+      "estimated_effort": "2-3 hours"
+    },
+    "GAP-005": {
+      "status": "NOT_STARTED",
+      "description": "No consistent error handling function - validation pattern duplicated",
+      "location": "All validation sites (19+ locations across tool_handlers.py and generators/)",
+      "evidence": "Validation error handling copy-pasted with slight variations. No centralized handle_validation_result() function.",
+      "work_needed": "Create utils/validation_helpers.py with handle_validation_result(), refactor all 19+ sites to use it",
+      "priority": "MEDIUM",
+      "estimated_effort": "2-3 hours"
+    }
+  },
+  "integration_needed": true,
+  "estimated_total_effort": "5.5-7.5 hours",
+  "files_to_modify": [
+    "tool_handlers.py (GAP-001, GAP-002, GAP-004 refactor, GAP-005 refactor)",
+    "utils/validation_helpers.py (CREATE NEW - GAP-005)",
+    "generators/planning_analyzer.py (GAP-004 refactor)",
+    "generators/changelog_generator.py (GAP-004 refactor)",
+    "generators/quickref_generator.py (GAP-004 refactor)",
+    "generators/risk_generator.py (GAP-004 refactor)",
+    "generators/handoff_generator.py (GAP-004 refactor)",
+    "generators/standards_generator.py (GAP-004 refactor)",
+    "generators/audit_generator.py (GAP-004 refactor)",
+    "handler_helpers.py (GAP-004 refactor)"
+  ],
+  "files_already_using_validators": [
+    "tool_handlers.py (AnalysisValidator, ExecutionLogValidator, PlanValidator)",
+    "generators/changelog_generator.py (GeneralValidator)",
+    "generators/quickref_generator.py (UserFacingValidator)",
+    "generators/risk_generator.py (GeneralValidator)",
+    "generators/handoff_generator.py (SystemDocValidator)",
+    "generators/standards_generator.py (GeneralValidator)",
+    "generators/audit_generator.py (GeneralValidator)",
+    "handler_helpers.py (GeneralValidator)"
+  ],
+  "validation_coverage": {
+    "total_outputs": 32,
+    "currently_validated": 32,
+    "validation_quality": "PARTIAL - validators called but metadata/cross-validation/factory/consistent-handling missing"
+  },
+  "workorder_recommendation": {
+    "workorder_id": "WO-CODEREF-WORKFLOW-VALIDATOR-INTEGRATION-001",
+    "title": "Complete Validator Integration (Metadata, Cross-Validation, Factory, Error Handling)",
+    "scope": [
+      "GAP-001: Add validation metadata to _uds section in analysis.json",
+      "GAP-002: Enable cross-validation in ExecutionLogValidator",
+      "GAP-004: Refactor to use ValidatorFactory for auto-detection",
+      "GAP-005: Create centralized validation error handling"
+    ],
+    "excluded_from_scope": [
+      "GAP-003 (already complete)"
+    ]
+  },
+  "next_steps": "Create workorder WO-CODEREF-WORKFLOW-VALIDATOR-INTEGRATION-001 and implement 4 remaining gaps",
+  "completion_criteria": [
+    "All 9 tests in tests/validators/test_workflow_integration.py pass",
+    "Validators use ValidatorFactory for auto-detection",
+    "Validation metadata appears in analysis.json _uds section",
+    "Cross-validation detects orphaned task IDs in execution-log.json",
+    "Consistent error handling via handle_validation_result() helper",
+    "Zero code duplication in validation error handling"
+  ],
+  "test_verification_plan": {
+    "step_1": "pytest tests/validators/test_validators.py -v (expect 15/15 passing)",
+    "step_2": "pytest tests/validators/test_workflow_integration.py -v (expect 9/9 passing, no XFAIL)",
+    "step_3": "Manual test: Generate analysis.json, verify _uds.validation_score exists",
+    "step_4": "Manual test: Create execution log with orphaned task ID, verify cross-validation error"
+  }
+}

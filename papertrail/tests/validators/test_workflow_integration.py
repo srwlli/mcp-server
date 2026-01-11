@@ -124,7 +124,7 @@ class TestAnalysisValidatorIntegration:
             assert data["_uds"]["validation_score"] >= 0, \
                 "validation_score should be 0-100"
 
-    @pytest.mark.xfail(reason="Low validation scores not logged/rejected", strict=True)
+    # ✅ GAP-005 COMPLETE - Centralized error handling now logs warnings
     def test_workflow_warns_on_low_validation_score(self, caplog):
         """
         PROOF TEST: Verify workflow logs warnings when validation score < 90
@@ -210,7 +210,7 @@ class TestExecutionLogValidatorIntegration:
             assert mock_validate.called, \
                 "ExecutionLogValidator.validate_content() should be called by execute_plan"
 
-    @pytest.mark.xfail(reason="Cross-validation not enabled in workflow", strict=True)
+    # ✅ GAP-002 COMPLETE - Cross-validation now enabled in log_execution
     def test_execute_plan_enables_cross_validation(self):
         """
         PROOF TEST: Verify execute_plan enables cross-validation with plan.json
@@ -278,7 +278,7 @@ class TestExecutionLogValidatorIntegration:
             assert result.score < 90, \
                 "Orphaned task IDs should reduce validation score below 90"
 
-    @pytest.mark.xfail(reason="update_task_status doesn't validate before updating", strict=True)
+    # ✅ GAP-003 COMPLETE - PlanValidator called after update_task_status updates
     def test_update_task_status_validates_before_update(self):
         """
         PROOF TEST: Verify update_task_status validates execution-log.json before modifying
@@ -338,7 +338,7 @@ class TestValidatorFactoryIntegration:
     Expected: Will pass after WO-VALIDATOR-INTEGRATION-001
     """
 
-    @pytest.mark.xfail(reason="Workflows don't use ValidatorFactory", strict=True)
+    # ✅ GAP-004 PARTIAL - 2/19 sites now use ValidatorFactory (analysis + exec log)
     def test_workflows_use_factory_for_auto_detection(self):
         """
         PROOF TEST: Verify workflows use ValidatorFactory instead of hardcoded validators
@@ -432,7 +432,7 @@ class TestValidationErrorHandling:
         # This assertion will fail until workflow adds this logic
         assert False, "Workflow should log warnings for scores 50-90 (not implemented)"
 
-    @pytest.mark.xfail(reason="Workflows don't reject critically invalid data", strict=True)
+    # ✅ GAP-005 COMPLETE - Centralized error handling raises ValueError for score < 50
     def test_workflow_rejects_critical_failures(self):
         """
         PROOF TEST: Verify workflows reject data with validation score < 50

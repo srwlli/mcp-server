@@ -36,7 +36,8 @@
       "mcp__coderef-workflow__create_plan",
       "mcp__coderef-workflow__analyze_project_for_planning",
       "mcp__coderef-workflow__validate_implementation_plan",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "mcp__coderef-context__coderef_scan"
     ],
     "deny": [],
     "ask": []

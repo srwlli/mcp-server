@@ -1,0 +1,35 @@
+{
+  "workorder_id": "WO-CODEREF-DOCS-DIRECT-VALIDATION-001",
+  "feature_name": "coderef-docs-direct-validation",
+  "created": "2026-01-10",
+  "status": "not_started",
+  "description": "Add direct validation integration to coderef-docs - write validation metadata to markdown frontmatter _uds sections while preserving instruction-based validation pattern",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate coderef-docs direct validation integration - ensure both patterns (instruction-based + direct) work together",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\orchestrator-docs-validation-plan.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\coderef-docs-implementation-report.md",
+      "status": "not_started",
+      "notes": "",
+      "task_summary": "Add direct validation integration - call validators at runtime, write metadata to frontmatter _uds, keep instruction-based validation intact"
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 1,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 1
+  }
+}

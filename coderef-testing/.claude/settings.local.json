@@ -45,7 +45,8 @@
       "Bash(coderef complexity:*)",
       "Bash(coderef export:*)",
       "Bash(coderef update-ref:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(pytest:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

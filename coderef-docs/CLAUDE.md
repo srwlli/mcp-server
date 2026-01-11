@@ -1,7 +1,7 @@
 # coderef-docs - AI Context Documentation
 
 **Project:** coderef-docs (MCP Server)
-**Version:** 3.6.0
+**Version:** 3.7.0
 **Status:** ✅ Production
 **Created:** 2024-10-18
 **Last Updated:** 2026-01-10
@@ -12,10 +12,20 @@
 
 **coderef-docs** is a focused MCP server providing **13 specialized tools** for documentation generation, changelog management, standards enforcement, and composable resource sheets. It works with coderef-workflow to deliver end-to-end feature lifecycle documentation.
 
-**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with .coderef/ code intelligence + composable module-based resource sheets + integrated Papertrail UDS validation.
+**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with .coderef/ code intelligence + composable module-based resource sheets + **dual validation pattern (instruction-based + direct integration)**.
 
-**Latest Update (v3.6.0 - WO-UDS-COMPLIANCE-CODEREF-DOCS-001):**
-- ✅ INTEGRATED: Papertrail validators for foundation and standards docs
+**Latest Update (v3.7.0 - WO-CODEREF-DOCS-DIRECT-VALIDATION-001):**
+- ✅ DUAL VALIDATION PATTERN: Instruction-based + Direct integration coexist
+  - **Pattern 1 (Instruction-Based)** - Tools output Python validation code for Claude to execute (user transparency)
+  - **Pattern 2 (Direct Integration)** - Tools output code to write validation metadata to frontmatter `_uds` section (machine-readable)
+  - **Why Both** - Instruction-based provides transparency, direct integration provides metadata for downstream tools
+  - **Helper Function** - `write_validation_metadata_to_frontmatter()` in utils/validation_helpers.py
+  - **Frontmatter Structure** - `_uds: {validation_score, validation_errors, validation_warnings, validated_at, validator}`
+  - **No Breaking Changes** - Existing instruction-based validation unchanged
+  - **Status:** ✅ Complete with 20 passing tests (12 existing + 8 new)
+
+**Previous Update (v3.6.0 - WO-UDS-COMPLIANCE-CODEREF-DOCS-001):**
+- ✅ INTEGRATED: Papertrail validators for foundation and standards docs (instruction-based pattern)
   - **Foundation Docs** - FoundationDocValidator for README, ARCHITECTURE, API, SCHEMA, COMPONENTS
   - **Standards Docs** - StandardsDocValidator for ui-patterns, behavior-patterns, ux-patterns
   - **Validation Instructions** - Tools now output executable Python code for document validation
@@ -471,6 +481,25 @@ Output: CHANGELOG.json entry with workorder tracking, README version bump
 ---
 
 ## Recent Changes
+
+### v3.7.0 - Direct Validation Integration (WO-CODEREF-DOCS-DIRECT-VALIDATION-001) (2026-01-10)
+- ✅ DUAL VALIDATION PATTERN: Added direct integration alongside existing instruction-based validation
+  - **Pattern 1 (Instruction-Based):** Tools output Python validation code for Claude to execute (user transparency)
+  - **Pattern 2 (Direct Integration):** Tools output code to write validation metadata to frontmatter `_uds` section (machine-readable)
+  - **Helper Function:** `write_validation_metadata_to_frontmatter()` in utils/validation_helpers.py
+  - **Frontmatter Structure:** `_uds: {validation_score, validation_errors, validation_warnings, validated_at, validator}`
+- ✅ INTEGRATION: Both validation patterns coexist without conflicts
+  - Foundation docs (5): Both patterns in tool_handlers.py lines 346-385
+  - Standards docs (3): Both patterns in tool_handlers.py lines 816-865
+  - Hybrid approach: Tools output enhanced instructions, Claude executes both validations
+- ✅ TESTING: 20 tests passing (12 existing + 8 new)
+  - test_direct_validation.py: 8 new tests verify direct validation integration
+  - No regression: All existing instruction-based tests still pass
+  - test_both_patterns_coexist: Verifies dual pattern works correctly
+- ✅ DOCUMENTATION: Comprehensive architectural decision document
+  - ARCHITECTURAL-DECISION.md explains hybrid approach (Option 3)
+  - Both patterns documented with rationale (transparency + machine metadata)
+  - No breaking changes to existing WO-UDS-COMPLIANCE-CODEREF-DOCS-001 implementation
 
 ### v3.5.0 - .coderef/ Integration for Foundation Docs (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001) (2026-01-10)
 - ✅ NEW: `.coderef/` integration for foundation doc generation

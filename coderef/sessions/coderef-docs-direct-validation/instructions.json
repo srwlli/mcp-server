@@ -1,0 +1,271 @@
+{
+  "session_id": "coderef-docs-direct-validation",
+  "workorder_id": "WO-CODEREF-DOCS-DIRECT-VALIDATION-001",
+  "created": "2026-01-10",
+  "purpose": "Add direct validation integration to coderef-docs - write validation metadata to markdown frontmatter _uds sections alongside existing instruction-based validation",
+
+  "context": {
+    "background": "coderef-docs currently uses instruction-based validation (WO-UDS-COMPLIANCE-CODEREF-DOCS-001 complete). User decision: keep instruction-based AND add direct integration that writes metadata to frontmatter. Both patterns will coexist.",
+    "why_both_patterns": "Instruction-based provides user transparency (Claude sees validation code), direct integration provides machine-readable metadata in frontmatter for downstream tools.",
+    "reference_work": "WO-UDS-COMPLIANCE-CODEREF-DOCS-001 (72% coverage, 12 tests passing, instruction-based complete)"
+  },
+
+  "agent_instructions": {
+    "agent_id": "coderef-docs",
+    "task": "Add direct validation integration on top of existing instruction-based validation",
+    "estimated_effort": "3-4 hours",
+
+    "step_1_understand_current_state": {
+      "description": "Review existing instruction-based validation implementation",
+      "actions": [
+        "Read C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\uds-compliance-coderef-docs\\COMPLETION-SUMMARY.md",
+        "Review tool_handlers.py lines 346-366 (foundation doc validation instructions)",
+        "Review tool_handlers.py lines 799-821 (standards doc validation instructions)",
+        "Review tests/test_validator_integration.py (6 unit tests)",
+        "Review tests/test_integration_e2e.py (6 integration tests)",
+        "Understand: instruction-based validation outputs code for Claude to execute"
+      ],
+      "time_estimate": "30 minutes"
+    },
+
+    "step_2_design_frontmatter_metadata": {
+      "description": "Design _uds frontmatter structure for validation metadata",
+      "design_spec": {
+        "frontmatter_structure": {
+          "_uds": {
+            "validation_score": "integer 0-100",
+            "validation_errors": "array of error objects [{severity, message, field}]",
+            "validation_warnings": "array of warning strings",
+            "validated_at": "ISO 8601 timestamp",
+            "validator": "string (validator class name)"
+          }
+        },
+        "example": "---\nagent: Claude Code\ndate: 2026-01-10\n_uds:\n  validation_score: 95\n  validation_errors: []\n  validation_warnings: [\"Missing API examples section\"]\n  validated_at: 2026-01-10T14:30:00Z\n  validator: FoundationDocValidator\n---"
+      },
+      "actions": [
+        "Confirm frontmatter structure matches papertrail UDS standards",
+        "Verify YAML serialization handles nested _uds object",
+        "Document metadata fields in design doc"
+      ],
+      "time_estimate": "30 minutes"
+    },
+
+    "step_3_create_validation_helper": {
+      "description": "Create helper function to write validation metadata to frontmatter",
+      "file_to_create": "utils/validation_helpers.py",
+      "function_signature": "def write_validation_metadata_to_frontmatter(file_path: Path, validation_result: ValidationResult) -> None",
+      "implementation": {
+        "steps": [
+          "Read file and extract existing frontmatter",
+          "Add _uds section with validation metadata",
+          "Serialize validation_result.score, errors, warnings",
+          "Add validated_at timestamp (ISO 8601)",
+          "Add validator class name",
+          "Write updated frontmatter back to file",
+          "Preserve original content"
+        ],
+        "error_handling": [
+          "Handle missing frontmatter (create it)",
+          "Handle invalid YAML (log error, skip metadata)",
+          "Handle file write errors (log error, continue)"
+        ]
+      },
+      "actions": [
+        "Create utils/validation_helpers.py",
+        "Implement write_validation_metadata_to_frontmatter()",
+        "Add unit tests for helper function",
+        "Test edge cases: missing frontmatter, invalid YAML, write errors"
+      ],
+      "time_estimate": "1 hour"
+    },
+
+    "step_4_integrate_foundation_docs": {
+      "description": "Add direct validation to foundation doc generator (5 templates)",
+      "file_to_modify": "tool_handlers.py",
+      "location": "handle_generate_individual_doc function (lines 300-400)",
+      "templates_affected": ["readme", "architecture", "api", "schema", "components"],
+      "implementation": {
+        "after_file_saved": [
+          "Import FoundationDocValidator from papertrail.validators.foundation",
+          "Instantiate validator",
+          "Call validator.validate_file(output_path)",
+          "Call write_validation_metadata_to_frontmatter(output_path, result)",
+          "Log validation score and warnings",
+          "Keep instruction-based validation output (no changes to existing code)"
+        ],
+        "pseudocode": "# After saving file\nfrom papertrail.validators.foundation import FoundationDocValidator\nfrom utils.validation_helpers import write_validation_metadata_to_frontmatter\n\nvalidator = FoundationDocValidator()\nresult = validator.validate_file(output_path)\nwrite_validation_metadata_to_frontmatter(output_path, result)\nlogger.info(f'Validation score: {result.score}/100')\n\n# Existing instruction-based output continues..."
+      },
+      "actions": [
+        "Modify tool_handlers.py after file write",
+        "Add validator import and instantiation",
+        "Call validator and write metadata",
+        "Verify instruction-based validation still outputs (no breaking changes)",
+        "Test with generate_individual_doc('readme')"
+      ],
+      "time_estimate": "1 hour"
+    },
+
+    "step_5_integrate_standards_docs": {
+      "description": "Add direct validation to standards doc generator (3 standards types)",
+      "file_to_modify": "tool_handlers.py",
+      "location": "handle_establish_standards function (lines 750-850)",
+      "standards_affected": ["ui-patterns", "behavior-patterns", "ux-patterns"],
+      "implementation": {
+        "after_files_saved": [
+          "Import StandardsDocValidator from papertrail.validators.standards",
+          "For each generated file: instantiate validator, validate, write metadata",
+          "Log validation scores",
+          "Keep instruction-based validation output"
+        ],
+        "pseudocode": "# After saving all standards files\nfrom papertrail.validators.standards import StandardsDocValidator\nfrom utils.validation_helpers import write_validation_metadata_to_frontmatter\n\nvalidator = StandardsDocValidator()\nfor file_path in generated_files:\n    result = validator.validate_file(file_path)\n    write_validation_metadata_to_frontmatter(file_path, result)\n    logger.info(f'{file_path}: Score {result.score}/100')\n\n# Existing instruction-based output continues..."
+      },
+      "actions": [
+        "Modify tool_handlers.py after file write loop",
+        "Add validator import and instantiation",
+        "Call validator for each file and write metadata",
+        "Verify instruction-based validation still outputs",
+        "Test with establish_standards()"
+      ],
+      "time_estimate": "45 minutes"
+    },
+
+    "step_6_update_tests": {
+      "description": "Add tests to verify direct validation integration works alongside instruction-based",
+      "test_file": "tests/test_direct_validation.py (CREATE NEW)",
+      "test_cases": [
+        {
+          "test_name": "test_foundation_doc_has_validation_metadata_in_frontmatter",
+          "description": "Generate README, verify _uds.validation_score exists in frontmatter",
+          "assertions": [
+            "Frontmatter contains _uds section",
+            "_uds.validation_score is integer 0-100",
+            "_uds.validation_errors is list",
+            "_uds.validation_warnings is list",
+            "_uds.validated_at is ISO 8601 timestamp",
+            "_uds.validator == 'FoundationDocValidator'"
+          ]
+        },
+        {
+          "test_name": "test_standards_doc_has_validation_metadata_in_frontmatter",
+          "description": "Generate standards, verify _uds metadata in all 3 files",
+          "assertions": [
+            "All 3 files have _uds section",
+            "Validation scores present",
+            "Validator == 'StandardsDocValidator'"
+          ]
+        },
+        {
+          "test_name": "test_instruction_based_validation_still_outputs",
+          "description": "Verify instruction-based validation code still appears in tool output",
+          "assertions": [
+            "Tool output contains 'VALIDATION (WO-UDS-COMPLIANCE-CODEREF-DOCS-001)'",
+            "Tool output contains validator import code",
+            "Instruction-based pattern unchanged"
+          ]
+        },
+        {
+          "test_name": "test_both_patterns_coexist",
+          "description": "Verify direct + instruction-based validation both run",
+          "assertions": [
+            "Frontmatter has _uds metadata (direct)",
+            "Tool output has validation code (instruction-based)",
+            "Both patterns successful"
+          ]
+        }
+      ],
+      "existing_tests": {
+        "action": "Ensure existing 12 tests still pass (no regression)",
+        "files": [
+          "tests/test_validator_integration.py (6 tests)",
+          "tests/test_integration_e2e.py (6 tests)"
+        ]
+      },
+      "actions": [
+        "Create tests/test_direct_validation.py",
+        "Implement 4 new test cases",
+        "Run existing 12 tests (verify no regression)",
+        "Run new 4 tests (verify direct validation works)",
+        "Total expected: 16/16 tests passing"
+      ],
+      "time_estimate": "45 minutes"
+    },
+
+    "step_7_update_documentation": {
+      "description": "Document both validation patterns in CLAUDE.md and README.md",
+      "files_to_update": [
+        "CLAUDE.md (add direct validation section)",
+        "README.md (update validation section with both patterns)",
+        "COMPLETION-SUMMARY.md (create for WO-CODEREF-DOCS-DIRECT-VALIDATION-001)"
+      ],
+      "documentation_content": {
+        "pattern_comparison": "## Validation Patterns\n\n### Pattern 1: Instruction-Based (v3.6.0)\n- Tool outputs validation code\n- Claude executes validation\n- User transparency\n\n### Pattern 2: Direct Integration (v3.7.0)\n- Tool calls validator at runtime\n- Writes metadata to frontmatter _uds\n- Machine-readable validation\n\n### Both patterns run for all docs\n- Instruction-based: User sees validation process\n- Direct: Metadata persisted in frontmatter",
+        "validation_coverage": "Update coverage from 72% (13/18 outputs) to document dual validation approach"
+      },
+      "actions": [
+        "Update CLAUDE.md with v3.7.0 section",
+        "Update README.md validation section",
+        "Create COMPLETION-SUMMARY.md for this workorder",
+        "Document both patterns coexist"
+      ],
+      "time_estimate": "30 minutes"
+    },
+
+    "step_8_verify_and_complete": {
+      "description": "Run full test suite, verify both patterns work, update communication.json",
+      "verification_steps": [
+        "Run pytest tests/ -v (expect 16/16 passing)",
+        "Manually generate README, inspect frontmatter (_uds present)",
+        "Manually generate standards, inspect all 3 files (_uds present)",
+        "Verify tool output still shows instruction-based validation code",
+        "Confirm no breaking changes to existing behavior"
+      ],
+      "completion_checklist": [
+        "✅ 16/16 tests passing (12 existing + 4 new)",
+        "✅ Frontmatter _uds metadata appears in generated docs",
+        "✅ Instruction-based validation code still outputs",
+        "✅ Both patterns coexist without conflicts",
+        "✅ Documentation updated (CLAUDE.md, README.md, COMPLETION-SUMMARY.md)",
+        "✅ No regression in existing functionality"
+      ],
+      "final_actions": [
+        "Update communication.json status to 'complete'",
+        "Create implementation report",
+        "Notify orchestrator of completion"
+      ],
+      "time_estimate": "30 minutes"
+    }
+  },
+
+  "success_criteria": {
+    "critical": [
+      "Frontmatter _uds metadata appears in all generated docs (foundation + standards)",
+      "Instruction-based validation still outputs (no breaking changes)",
+      "Both patterns run successfully without conflicts",
+      "16/16 tests passing (12 existing + 4 new)",
+      "No regression in existing functionality"
+    ],
+    "optional": [
+      "Validation metadata is well-formatted and human-readable",
+      "Helper function is reusable for future validators",
+      "Documentation clearly explains both patterns"
+    ]
+  },
+
+  "architectural_decisions": {
+    "why_both_patterns": "User decision: downstream tools need validation metadata (requires direct integration), but user transparency is also valued (requires instruction-based). Both patterns serve different purposes and should coexist.",
+    "frontmatter_vs_content": "Metadata goes in frontmatter _uds section (structured, machine-readable) not in content (unstructured, human-readable)",
+    "no_breaking_changes": "Existing instruction-based validation must remain intact - this is additive integration, not replacement"
+  },
+
+  "reference_documents": [
+    "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\uds-compliance-coderef-docs\\COMPLETION-SUMMARY.md",
+    "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\validator-integration\\orchestrator-integration-review.md",
+    "C:\\Users\\willh\\.mcp-servers\\papertrail\\docs\\UDS-IMPLEMENTATION-GUIDE.md"
+  ],
+
+  "notes": {
+    "session_relationship": "This session is independent of validator-integration session. coderef-workflow can proceed with their GAP implementation in parallel.",
+    "pattern_legitimacy": "Both patterns are architecturally valid. Gap report was written for JSON files (direct integration). Markdown files benefit from both patterns.",
+    "user_decision": "1. Downstream tools need metadata: YES. 2. Markdown docs should have _uds: YES. 3. Developer education burden: YES (acceptable). 4. Rework tolerance: Keep docs as-is, build new integration, wire up both."
+  }
+}

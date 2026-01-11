@@ -1,6 +1,6 @@
 # coderef-docs
 
-**Version:** 3.6.0
+**Version:** 3.7.0
 **Status:** ✅ Production Ready
 **Protocol:** Model Context Protocol (MCP)
 
@@ -10,9 +10,9 @@
 
 **coderef-docs** is an MCP server providing 13 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement. It enables AI agents to generate, maintain, and validate project documentation with optional real code intelligence from @coderef/core CLI.
 
-**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection + composable module-based resource sheets + integrated Papertrail UDS validation (WO-UDS-COMPLIANCE-CODEREF-DOCS-001).
+**Core Innovation:** Sequential foundation doc generation with context injection + agentic changelog recording with git auto-detection + composable module-based resource sheets + **dual validation pattern (instruction-based + direct integration)** (WO-CODEREF-DOCS-DIRECT-VALIDATION-001).
 
-**Latest (v3.6.0):** Integrated Papertrail validators for 8 documentation outputs (5 foundation docs + 3 standards docs), increasing validation coverage from 22% to 72%.
+**Latest (v3.7.0):** Added direct validation integration that writes validation metadata to frontmatter `_uds` sections, coexisting with existing instruction-based validation for both user transparency and machine-readable metadata.
 
 ---
 
@@ -160,25 +160,23 @@ mcp__coderef-docs__generate_resource_sheet({
 
 **Implementation:** WO-RESOURCE-SHEET-MCP-TOOL-001 (Phase 1 Complete)
 
-### 6. Documentation Validation (NEW in v3.6.0)
+### 6. Documentation Validation (UPDATED in v3.7.0)
 
-**Integrated Papertrail UDS Validators** - WO-UDS-COMPLIANCE-CODEREF-DOCS-001
+**Dual Validation Pattern** - WO-UDS-COMPLIANCE-CODEREF-DOCS-001 + WO-CODEREF-DOCS-DIRECT-VALIDATION-001
 
-**Purpose:** Ensure all generated documentation meets Universal Document Standard (UDS) quality requirements.
+**Purpose:** Ensure all generated documentation meets Universal Document Standard (UDS) quality requirements with both user transparency and machine-readable metadata.
 
 **Validated Outputs:**
 - ✅ **Foundation Docs (5):** README, ARCHITECTURE, API, SCHEMA, COMPONENTS
 - ✅ **Standards Docs (3):** ui-patterns, behavior-patterns, ux-patterns
 - **Coverage:** 72% (13/18 outputs validated)
 
-**How It Works:**
-1. Generate document using `/generate-docs` or `/establish-standards`
-2. Tool outputs executable Python validation code
-3. Claude executes validation after saving the file
-4. Validation returns score (0-100) with errors and warnings
-5. **Threshold:** Score >= 90 required for passing
+**Two Validation Patterns:**
 
-**Example Validation Code:**
+#### Pattern 1: Instruction-Based Validation (v3.6.0 - User Transparency)
+Tools output Python validation code for Claude to execute, providing visibility into the validation process.
+
+**Example:**
 ```python
 from papertrail.validators.foundation import FoundationDocValidator
 from pathlib import Path
@@ -194,11 +192,47 @@ else:
     print(f'Validation passed: Score {result.score}/100')
 ```
 
+#### Pattern 2: Direct Integration (v3.7.0 - Machine Metadata)
+Tools output Python code to write validation metadata to frontmatter `_uds` section for downstream tool consumption.
+
+**Example:**
+```python
+from papertrail.validators.foundation import FoundationDocValidator
+from utils.validation_helpers import write_validation_metadata_to_frontmatter
+from pathlib import Path
+
+file_path = Path('README.md')
+validator = FoundationDocValidator()
+validation_result = validator.validate_file(file_path)
+write_validation_metadata_to_frontmatter(file_path, validation_result)
+print(f'Wrote validation metadata: score={validation_result.score}/100')
+```
+
+**Frontmatter Result:**
+```yaml
+---
+agent: Claude Code
+date: 2026-01-10
+_uds:
+  validation_score: 95
+  validation_errors: []
+  validation_warnings: ["Missing API examples section"]
+  validated_at: 2026-01-10T14:30:00Z
+  validator: FoundationDocValidator
+---
+```
+
+**Why Both Patterns?**
+- **Pattern 1 (Instruction-Based):** User sees validation process, educational value, transparency
+- **Pattern 2 (Direct Integration):** Downstream tools can read validation metadata from frontmatter programmatically
+- **Both Run:** Tools output both validation blocks, Claude executes both
+
 **Key Features:**
 - ✅ PAPERTRAIL_ENABLED defaults to `true` (automatic validation)
 - ✅ Validates frontmatter schema compliance
 - ✅ Checks required sections (Purpose, Overview, etc.)
 - ✅ Reports structural and content issues
+- ✅ Writes machine-readable metadata to frontmatter `_uds` section
 - ✅ Can be disabled by setting `PAPERTRAIL_ENABLED=false`
 
 **Validators:**

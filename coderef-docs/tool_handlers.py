@@ -363,7 +363,24 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
         result += "else:\n"
         result += "    print(f'Validation passed: Score {result.score}/100')\n"
         result += "```\n\n"
-        result += f"Validation threshold: Score >= 90\n"
+        result += f"Validation threshold: Score >= 90\n\n"
+
+        # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Add direct validation with frontmatter metadata
+        result += "=" * 50 + "\n\n"
+        result += "DIRECT VALIDATION (WO-CODEREF-DOCS-DIRECT-VALIDATION-001):\n"
+        result += f"After saving, write validation metadata to frontmatter _uds section:\n\n"
+        result += "```python\n"
+        result += "from papertrail.validators.foundation import FoundationDocValidator\n"
+        result += "from utils.validation_helpers import write_validation_metadata_to_frontmatter\n"
+        result += "from pathlib import Path\n\n"
+        result += f"file_path = Path(r'{output_path}')\n"
+        result += f"validator = FoundationDocValidator()\n"
+        result += f"validation_result = validator.validate_file(file_path)\n"
+        result += f"write_validation_metadata_to_frontmatter(file_path, validation_result)\n"
+        result += f"print(f'Wrote validation metadata: score={{validation_result.score}}/100')\n"
+        result += "```\n\n"
+        result += f"This writes validation_score, validation_errors, validation_warnings to frontmatter _uds section.\n"
+        result += f"Machine-readable metadata for downstream tools.\n"
 
     logger.info(f"Successfully generated plan for {template_name}")
     return [TextContent(type="text", text=result)]
@@ -818,7 +835,28 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     result += "    else:\n"
     result += "        print(f'  PASSED: Score {result.score}/100')\n"
     result += "```\n\n"
-    result += f"Validation threshold: Score >= 90\n"
+    result += f"Validation threshold: Score >= 90\n\n"
+
+    # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Add direct validation with frontmatter metadata
+    result += "=" * 60 + "\n\n"
+    result += "DIRECT VALIDATION (WO-CODEREF-DOCS-DIRECT-VALIDATION-001):\n\n"
+    result += "After saving, write validation metadata to frontmatter _uds section for all standards files:\n\n"
+    result += "```python\n"
+    result += "from papertrail.validators.standards import StandardsDocValidator\n"
+    result += "from utils.validation_helpers import write_validation_metadata_to_frontmatter\n"
+    result += "from pathlib import Path\n\n"
+    result += "validator = StandardsDocValidator()\n"
+    result += "standards_files = [\n"
+    for file_path in result_dict['files']:
+        result += f"    Path(r'{file_path}'),\n"
+    result += "]\n\n"
+    result += "for file_path in standards_files:\n"
+    result += "    validation_result = validator.validate_file(file_path)\n"
+    result += "    write_validation_metadata_to_frontmatter(file_path, validation_result)\n"
+    result += "    print(f'{file_path.name}: Wrote validation metadata (score={validation_result.score}/100)')\n"
+    result += "```\n\n"
+    result += f"This writes validation_score, validation_errors, validation_warnings to frontmatter _uds section.\n"
+    result += f"Machine-readable metadata for downstream tools.\n"
 
     logger.info(
         "Standards establishment completed successfully",

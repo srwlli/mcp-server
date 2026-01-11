@@ -23,7 +23,8 @@
       "mcp__coderef-workflow__gather_context",
       "mcp__coderef-workflow__create_plan",
       "Bash(find schemas -name \"*.json\" -type f -exec sh -c 'echo \"\"=== {} ===\"\" && jq -r \"\".properties | keys[]\"\" {} 2>/dev/null | grep -i \"\"agent\\|date\\|task\\|front\"\" | head -5' ;)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "mcp__coderef-context__coderef_scan"
     ]
   },
   "enabledMcpjsonServers": [

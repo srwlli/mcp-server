@@ -1082,22 +1082,20 @@ This document defines the UX patterns discovered in the {project_name} codebase.
         component_path.write_text(component_doc, encoding='utf-8')
         saved_files.append(str(component_path))
 
-        # GAP-017: Validate standards outputs (UDS compliance)
+        # GAP-004 + GAP-005: Validate standards outputs with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.general import GeneralValidator
-            validator = GeneralValidator()
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
             for standards_file in [ui_path, behavior_path, ux_path, component_path]:
+                validator = ValidatorFactory.get_validator(str(standards_file))
                 result = validator.validate_file(str(standards_file))
-
-                if not result['valid']:
-                    logger.warning(f"{standards_file.name} validation failed (score: {result.get('score', 0)})")
-                    for error in result.get('errors', []):
-                        logger.warning(f"  - {error}")
-                else:
-                    logger.info(f"{standards_file.name} validated successfully (score: {result.get('score', 100)})")
+                handle_validation_result(result, standards_file.name)
         except ImportError:
             pass  # Papertrail not available
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            logger.error("Standards validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue
 

@@ -376,20 +376,19 @@ class QuickrefGenerator(BaseGenerator):
             with open(quickref_path, 'w', encoding='utf-8') as f:
                 f.write(content)
 
-            # GAP-014: Validate quickref.md (UDS compliance)
+            # GAP-004 + GAP-005: Validate quickref.md with ValidatorFactory and centralized error handling
             try:
-                from papertrail.validators.user_facing import UserFacingValidator
-                validator = UserFacingValidator()
-                result = validator.validate_file(str(quickref_path))
+                from papertrail.validators.factory import ValidatorFactory
+                from utils.validation_helpers import handle_validation_result
 
-                if not result['valid']:
-                    logger.warning(f"quickref.md validation failed (score: {result.get('score', 0)})")
-                    for error in result.get('errors', []):
-                        logger.warning(f"  - {error}")
-                else:
-                    logger.info(f"quickref.md validated successfully (score: {result.get('score', 100)})")
+                validator = ValidatorFactory.get_validator(str(quickref_path))
+                result = validator.validate_file(str(quickref_path))
+                handle_validation_result(result, "quickref.md")
             except ImportError:
                 pass  # Papertrail not available
+            except ValueError:
+                # Critical validation failure - but continue with graceful degradation
+                logger.error("quickref.md validation failed critically - continuing with partial data")
             except Exception:
                 pass  # Validation error - continue
 

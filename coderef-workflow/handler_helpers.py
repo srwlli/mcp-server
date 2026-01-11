@@ -743,24 +743,21 @@ def update_archive_index(project_path: Path, feature_name: str, folder_name: str
     except IOError as e:
         raise IOError(f"Failed to write index.json: {e}")
 
-    # GAP-019: Validate archive index (UDS compliance)
+    # GAP-004 + GAP-005: Validate archive index with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.general import GeneralValidator
-        validator = GeneralValidator()
-        result = validator.validate_file(str(index_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.warning(f"Archive index.json validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.info(f"Archive index.json validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(index_path))
+        result = validator.validate_file(str(index_path))
+        handle_validation_result(result, "archive-index.json")
     except ImportError:
         pass  # Papertrail not available
+    except ValueError:
+        # Critical validation failure - but continue with graceful degradation
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error("Archive index validation failed critically - continuing with partial data")
     except Exception:
         pass  # Validation error - continue
 
@@ -1085,24 +1082,21 @@ def update_readme_version(project_path: Path, old_version: str, new_version: str
 
         readme_path.write_text(content, encoding='utf-8')
 
-        # GAP-010: Validate README.md after update (UDS compliance)
+        # GAP-004 + GAP-005: Validate README.md with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.foundation import FoundationDocValidator
-            validator = FoundationDocValidator()
-            result = validator.validate_file(str(readme_path))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.warning(f"README.md update validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.info(f"README.md update validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(readme_path))
+            result = validator.validate_file(str(readme_path))
+            handle_validation_result(result, "README.md")
         except ImportError:
             pass  # Papertrail not available - skip validation
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error("README.md validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue without validation
 
@@ -1156,24 +1150,21 @@ def update_claude_md_version(project_path: Path, old_version: str, new_version: 
 
         claude_path.write_text(content, encoding='utf-8')
 
-        # GAP-011: Validate CLAUDE.md after update (UDS compliance)
+        # GAP-004 + GAP-005: Validate CLAUDE.md with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.system import SystemDocValidator
-            validator = SystemDocValidator()
-            result = validator.validate_file(str(claude_path))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.warning(f"CLAUDE.md update validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.info(f"CLAUDE.md update validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(claude_path))
+            result = validator.validate_file(str(claude_path))
+            handle_validation_result(result, "CLAUDE.md")
         except ImportError:
             pass  # Papertrail not available - skip validation
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error("CLAUDE.md validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue without validation
 

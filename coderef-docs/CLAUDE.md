@@ -12,27 +12,18 @@
 
 **coderef-docs** is a focused MCP server providing **13 specialized tools** for documentation generation, changelog management, standards enforcement, and composable resource sheets. It works with coderef-workflow to deliver end-to-end feature lifecycle documentation.
 
-**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with .coderef/ code intelligence + composable module-based resource sheets + **dual validation pattern (instruction-based + direct integration)**.
+**Core Innovation:** POWER framework templates + agentic changelog recording with git auto-detection + sequential foundation doc generation with .coderef/ code intelligence + composable module-based resource sheets + **direct validation integration**.
 
 **Latest Update (v3.7.0 - WO-CODEREF-DOCS-DIRECT-VALIDATION-001):**
-- ✅ DUAL VALIDATION PATTERN: Instruction-based + Direct integration coexist
-  - **Pattern 1 (Instruction-Based)** - Tools output Python validation code for Claude to execute (user transparency)
-  - **Pattern 2 (Direct Integration)** - Tools output code to write validation metadata to frontmatter `_uds` section (machine-readable)
-  - **Why Both** - Instruction-based provides transparency, direct integration provides metadata for downstream tools
+- ✅ DIRECT VALIDATION INTEGRATION: Tools execute validation at runtime (not Claude)
+  - **True Direct Integration** - Tools save files, run validators, write validation metadata
+  - **Tool Responsibilities** - Generate content → Save file → Run validator → Write metadata → Return simple result
+  - **Claude Responsibilities** - None (tool does all work)
   - **Helper Function** - `write_validation_metadata_to_frontmatter()` in utils/validation_helpers.py
   - **Frontmatter Structure** - `_uds: {validation_score, validation_errors, validation_warnings, validated_at, validator}`
-  - **No Breaking Changes** - Existing instruction-based validation unchanged
-  - **Status:** ✅ Complete with 20 passing tests (12 existing + 8 new)
-
-**Previous Update (v3.6.0 - WO-UDS-COMPLIANCE-CODEREF-DOCS-001):**
-- ✅ INTEGRATED: Papertrail validators for foundation and standards docs (instruction-based pattern)
-  - **Foundation Docs** - FoundationDocValidator for README, ARCHITECTURE, API, SCHEMA, COMPONENTS
-  - **Standards Docs** - StandardsDocValidator for ui-patterns, behavior-patterns, ux-patterns
-  - **Validation Instructions** - Tools now output executable Python code for document validation
-  - **Validation Threshold** - Score >= 90 required for passing
-  - **PAPERTRAIL_ENABLED Default** - Changed from false to true for automatic validation
-  - **Validation Coverage** - Increased from 22% (4/18) to 72% (13/18) outputs
-  - **Status:** ✅ Complete with 12 passing tests (6 unit + 6 integration)
+  - **No Instruction Blocks** - Tool output contains simple result messages, NOT Python code for Claude to execute
+  - **Validation Coverage** - 72% (13/18) outputs validated at tool runtime
+  - **Status:** ✅ Complete with direct integration pattern
 
 **Previous Update (v3.5.0 - WO-CODEREF-CONTEXT-MCP-INTEGRATION-001):**
 - ✅ NEW: `.coderef/` integration for foundation doc generation

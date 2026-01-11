@@ -843,20 +843,19 @@ class RiskGenerator:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(assessment, f, indent=2)
 
-        # GAP-015: Validate risk assessment (UDS compliance)
+        # GAP-004 + GAP-005: Validate risk assessment with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.general import GeneralValidator
-            validator = GeneralValidator()
-            result = validator.validate_file(str(filepath))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                logger.warning(f"Risk assessment validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                logger.info(f"Risk assessment validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(filepath))
+            result = validator.validate_file(str(filepath))
+            handle_validation_result(result, "risk-assessment.json")
         except ImportError:
             pass  # Papertrail not available
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            logger.error("Risk assessment validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue
 

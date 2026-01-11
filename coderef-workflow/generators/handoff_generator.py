@@ -89,20 +89,19 @@ class HandoffGenerator(BaseGenerator):
         output_path.write_text(context, encoding="utf-8")
         logger.info(f"Handoff context written to: {output_path}")
 
-        # GAP-016: Validate handoff context (UDS compliance)
+        # GAP-004 + GAP-005: Validate handoff context with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.system import SystemDocValidator
-            validator = SystemDocValidator()
-            result = validator.validate_file(str(output_path))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                logger.warning(f"claude.md validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                logger.info(f"claude.md validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(output_path))
+            result = validator.validate_file(str(output_path))
+            handle_validation_result(result, "claude.md")
         except ImportError:
             pass  # Papertrail not available
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            logger.error("claude.md validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue
 

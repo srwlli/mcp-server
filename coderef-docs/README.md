@@ -162,51 +162,23 @@ mcp__coderef-docs__generate_resource_sheet({
 
 ### 6. Documentation Validation (UPDATED in v3.7.0)
 
-**Dual Validation Pattern** - WO-UDS-COMPLIANCE-CODEREF-DOCS-001 + WO-CODEREF-DOCS-DIRECT-VALIDATION-001
+**Direct Validation Integration** - WO-CODEREF-DOCS-DIRECT-VALIDATION-001
 
-**Purpose:** Ensure all generated documentation meets Universal Document Standard (UDS) quality requirements with both user transparency and machine-readable metadata.
+**Purpose:** Ensure all generated documentation meets Universal Document Standard (UDS) quality requirements by validating documents at tool runtime and writing validation metadata to frontmatter.
 
 **Validated Outputs:**
 - ✅ **Foundation Docs (5):** README, ARCHITECTURE, API, SCHEMA, COMPONENTS
 - ✅ **Standards Docs (3):** ui-patterns, behavior-patterns, ux-patterns
 - **Coverage:** 72% (13/18 outputs validated)
 
-**Two Validation Patterns:**
+**How It Works:**
 
-#### Pattern 1: Instruction-Based Validation (v3.6.0 - User Transparency)
-Tools output Python validation code for Claude to execute, providing visibility into the validation process.
-
-**Example:**
-```python
-from papertrail.validators.foundation import FoundationDocValidator
-from pathlib import Path
-
-validator = FoundationDocValidator()
-result = validator.validate_file(Path('README.md'))
-
-if result.score < 90:
-    print(f'Validation failed: Score {result.score}/100')
-    for error in result.errors:
-        print(f'  ERROR: {error.message}')
-else:
-    print(f'Validation passed: Score {result.score}/100')
-```
-
-#### Pattern 2: Direct Integration (v3.7.0 - Machine Metadata)
-Tools output Python code to write validation metadata to frontmatter `_uds` section for downstream tool consumption.
-
-**Example:**
-```python
-from papertrail.validators.foundation import FoundationDocValidator
-from utils.validation_helpers import write_validation_metadata_to_frontmatter
-from pathlib import Path
-
-file_path = Path('README.md')
-validator = FoundationDocValidator()
-validation_result = validator.validate_file(file_path)
-write_validation_metadata_to_frontmatter(file_path, validation_result)
-print(f'Wrote validation metadata: score={validation_result.score}/100')
-```
+Tools execute validation directly (not via Claude):
+1. **Generate Content** - Tool creates document content
+2. **Save File** - Tool writes file to disk
+3. **Run Validator** - Tool executes FoundationDocValidator or StandardsDocValidator
+4. **Write Metadata** - Tool writes validation results to frontmatter `_uds` section
+5. **Return Result** - Tool returns simple result message (NOT instruction blocks)
 
 **Frontmatter Result:**
 ```yaml
@@ -222,24 +194,20 @@ _uds:
 ---
 ```
 
-**Why Both Patterns?**
-- **Pattern 1 (Instruction-Based):** User sees validation process, educational value, transparency
-- **Pattern 2 (Direct Integration):** Downstream tools can read validation metadata from frontmatter programmatically
-- **Both Run:** Tools output both validation blocks, Claude executes both
-
 **Key Features:**
-- ✅ PAPERTRAIL_ENABLED defaults to `true` (automatic validation)
+- ✅ Tool executes validation at runtime (not Claude)
 - ✅ Validates frontmatter schema compliance
 - ✅ Checks required sections (Purpose, Overview, etc.)
 - ✅ Reports structural and content issues
 - ✅ Writes machine-readable metadata to frontmatter `_uds` section
-- ✅ Can be disabled by setting `PAPERTRAIL_ENABLED=false`
+- ✅ Validation threshold: Score >= 90
+- ✅ Helper function: `write_validation_metadata_to_frontmatter()` in utils/validation_helpers.py
 
 **Validators:**
 - **FoundationDocValidator** - For README, ARCHITECTURE, API, SCHEMA, COMPONENTS
 - **StandardsDocValidator** - For ui-patterns, behavior-patterns, ux-patterns
 
-**Implementation:** Lines 346-366, 784-808 in tool_handlers.py
+**Implementation:** Direct validation in tool_handlers.py (foundation docs and standards docs handlers)
 
 ### 7. Universal Document Standard (UDS)
 

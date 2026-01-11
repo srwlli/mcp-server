@@ -889,20 +889,19 @@ class AuditGenerator:
         # Save report
         report_path.write_text(report_content, encoding='utf-8')
 
-        # GAP-018: Validate audit report (UDS compliance)
+        # GAP-004 + GAP-005: Validate audit report with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.general import GeneralValidator
-            validator = GeneralValidator()
-            result = validator.validate_file(str(report_path))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                logger.warning(f"Audit report validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                logger.info(f"Audit report validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(report_path))
+            result_validation = validator.validate_file(str(report_path))
+            handle_validation_result(result_validation, "audit-report.md")
         except ImportError:
             pass  # Papertrail not available
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            logger.error("Audit report validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue
 

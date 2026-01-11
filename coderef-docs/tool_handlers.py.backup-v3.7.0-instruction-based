@@ -316,7 +316,7 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
             logger.warning(f"Papertrail generation failed: {e}, falling back to template")
             # Fall through to legacy generation
 
-    # Legacy generation (template-only with direct validation)
+    # Legacy generation (template-only)
     generator = BaseGenerator(TEMPLATES_DIR)
 
     paths = generator.prepare_generation(project_path)
@@ -328,71 +328,62 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     output_path = generator.get_doc_output_path(paths['project_path'], template_name)
     logger.debug(f"Output path determined: {output_path}")
 
-    # Add basic frontmatter
-    doc_content = "---\n"
-    doc_content += f"generated_by: coderef-docs\n"
-    doc_content += f"template: {template_name}\n"
-    doc_content += f"date: {datetime.utcnow().isoformat()}Z\n"
-    doc_content += "---\n\n"
-    doc_content += template_content
+    result = f"=== Generating {template_name.upper()} ===\n\n"
+    result += f"Project: {paths['project_path']}\n"
+    result += f"Output: {output_path}\n\n"
 
-    # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Direct integration - Tool saves file and validates
-    try:
-        # Ensure output directory exists
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+    # WO-CODEREF-CONTEXT-MCP-INTEGRATION-001: Add .coderef/ context instructions
+    result += get_context_instructions(Path(project_path), template_name)
+    result += "\n"
 
-        # Save file
-        output_path.write_text(doc_content, encoding='utf-8')
-        logger.info(f"Saved {template_name} to {output_path}")
+    result += f"TEMPLATE:\n\n{template_content}\n\n"
+    result += "=" * 50 + "\n\n"
+    result += "INSTRUCTIONS:\n"
+    result += f"Generate {template_info.get('save_as', f'{template_name.upper()}.md')} using the template above.\n"
+    result += f"Follow CODE INTELLIGENCE instructions above to populate with real data.\n"
+    result += f"Save the document to: {output_path}\n\n"
 
-        # Run direct validation for foundation docs
-        foundation_templates = ['readme', 'architecture', 'api', 'schema', 'components']
-        validation_score = None
-        validation_errors_count = 0
-        validation_warnings_count = 0
+    # WO-UDS-COMPLIANCE-CODEREF-DOCS-001: Add validation instructions for foundation docs
+    foundation_templates = ['readme', 'architecture', 'api', 'schema', 'components']
+    if template_name in foundation_templates:
+        result += "=" * 50 + "\n\n"
+        result += "VALIDATION (WO-UDS-COMPLIANCE-CODEREF-DOCS-001):\n"
+        result += f"After saving the document, validate it using FoundationDocValidator:\n\n"
+        result += "```python\n"
+        result += "from papertrail.validators.foundation import FoundationDocValidator\n"
+        result += "from pathlib import Path\n\n"
+        result += f"validator = FoundationDocValidator()\n"
+        result += f"result = validator.validate_file(Path(r'{output_path}'))\n\n"
+        result += "if result.score < 90:\n"
+        result += "    print(f'Validation failed: Score {result.score}/100')\n"
+        result += "    for error in result.errors:\n"
+        result += "        print(f'  ERROR: {error.message}')\n"
+        result += "    for warning in result.warnings:\n"
+        result += "        print(f'  WARNING: {warning}')\n"
+        result += "else:\n"
+        result += "    print(f'Validation passed: Score {result.score}/100')\n"
+        result += "```\n\n"
+        result += f"Validation threshold: Score >= 90\n\n"
 
-        if template_name in foundation_templates:
-            from papertrail.validators.foundation import FoundationDocValidator
-            from utils.validation_helpers import write_validation_metadata_to_frontmatter
+        # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Add direct validation with frontmatter metadata
+        result += "=" * 50 + "\n\n"
+        result += "DIRECT VALIDATION (WO-CODEREF-DOCS-DIRECT-VALIDATION-001):\n"
+        result += f"After saving, write validation metadata to frontmatter _uds section:\n\n"
+        result += "```python\n"
+        result += "from papertrail.validators.foundation import FoundationDocValidator\n"
+        result += "from utils.validation_helpers import write_validation_metadata_to_frontmatter\n"
+        result += "from pathlib import Path\n\n"
+        result += f"file_path = Path(r'{output_path}')\n"
+        result += f"validator = FoundationDocValidator()\n"
+        result += f"validation_result = validator.validate_file(file_path)\n"
+        result += f"write_validation_metadata_to_frontmatter(file_path, validation_result)\n"
+        result += f"print(f'Wrote validation metadata: score={{validation_result.score}}/100')\n"
+        result += "```\n\n"
+        result += f"This writes validation_score, validation_errors, validation_warnings to frontmatter _uds section.\n"
+        result += f"Machine-readable metadata for downstream tools.\n"
 
-            validator = FoundationDocValidator()
-            validation_result = validator.validate_file(output_path)
-            write_validation_metadata_to_frontmatter(output_path, validation_result)
-
-            validation_score = validation_result.score
-            validation_errors_count = len(validation_result.errors) if hasattr(validation_result, 'errors') and validation_result.errors else 0
-            validation_warnings_count = len(validation_result.warnings) if hasattr(validation_result, 'warnings') and validation_result.warnings else 0
-
-            logger.info(f'Validated {template_name}: {validation_score}/100 ({validation_errors_count} errors, {validation_warnings_count} warnings)')
-
-            if validation_score < 90:
-                logger.warning(f'{template_name}: Validation score below threshold (90)')
-                if hasattr(validation_result, 'errors') and validation_result.errors:
-                    for error in validation_result.errors:
-                        logger.error(f'  {error.severity if hasattr(error, "severity") else "ERROR"}: {error.message if hasattr(error, "message") else str(error)}')
-
-        # Return simple result (NOT instructions)
-        result = f"✅ Generated and saved {template_name.upper()}.md\n\n"
-        result += f"📁 Location: {output_path}\n"
-        result += f"📄 Template: {template_name}\n"
-
-        if validation_score is not None:
-            result += f"\n📊 Validation: {validation_score}/100\n"
-            result += f"  • Errors: {validation_errors_count}\n"
-            result += f"  • Warnings: {validation_warnings_count}\n"
-            result += f"  • Metadata written to frontmatter _uds section\n"
-
-            if validation_score >= 90:
-                result += f"\n✅ Validation passed (threshold: 90)\n"
-            else:
-                result += f"\n⚠️  Validation below threshold (score: {validation_score}, threshold: 90)\n"
-
-        logger.info(f"Successfully generated {template_name}")
-        return [TextContent(type="text", text=result)]
-
-    except Exception as e:
-        logger.error(f"Failed to generate {template_name}: {e}")
-        return [TextContent(type="text", text=f"❌ Error: {str(e)}")]
+    logger.info(f"Successfully generated plan for {template_name}")
+    return [TextContent(type="text", text=result)]
 
 
 @log_invocation
@@ -822,44 +813,50 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     result += f"  • Tool #9: audit_codebase - Find violations of standards\n"
     result += f"  • Tool #10: check_consistency - Quality gate for new code\n\n"
 
-    # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Direct validation (tool executes)
-    # Tool validates all standards files and writes metadata to frontmatter
-    try:
-        from papertrail.validators.standards import StandardsDocValidator
-        from utils.validation_helpers import write_validation_metadata_to_frontmatter
+    # WO-UDS-COMPLIANCE-CODEREF-DOCS-001: Add validation instructions for standards docs
+    result += "=" * 60 + "\n\n"
+    result += "VALIDATION (WO-UDS-COMPLIANCE-CODEREF-DOCS-001):\n\n"
+    result += "Validate all standards documents using StandardsDocValidator:\n\n"
+    result += "```python\n"
+    result += "from papertrail.validators.standards import StandardsDocValidator\n"
+    result += "from pathlib import Path\n\n"
+    result += "validator = StandardsDocValidator()\n"
+    result += "standards_files = [\n"
+    for file_path in result_dict['files']:
+        result += f"    Path(r'{file_path}'),\n"
+    result += "]\n\n"
+    result += "for file_path in standards_files:\n"
+    result += "    result = validator.validate_file(file_path)\n"
+    result += "    print(f'Validating {file_path.name}...')\n"
+    result += "    if result.score < 90:\n"
+    result += "        print(f'  FAILED: Score {result.score}/100')\n"
+    result += "        for error in result.errors:\n"
+    result += "            print(f'    ERROR: {error.message}')\n"
+    result += "    else:\n"
+    result += "        print(f'  PASSED: Score {result.score}/100')\n"
+    result += "```\n\n"
+    result += f"Validation threshold: Score >= 90\n\n"
 
-        validator = StandardsDocValidator()
-        validation_results = []
-
-        for file_path in result_dict['files']:
-            file_path_obj = Path(file_path)
-            validation_result = validator.validate_file(file_path_obj)
-            write_validation_metadata_to_frontmatter(file_path_obj, validation_result)
-
-            validation_results.append({
-                'file': file_path_obj.name,
-                'score': validation_result.score,
-                'errors': len(validation_result.errors),
-                'warnings': len(validation_result.warnings)
-            })
-
-            logger.info(f'Validated {file_path_obj.name}: {validation_result.score}/100')
-            if validation_result.score < 90:
-                logger.warning(f'{file_path_obj.name}: Validation below threshold (score={validation_result.score})')
-
-        # Add validation summary to result
-        result += "=" * 60 + "\n\n"
-        result += "📋 VALIDATION RESULTS:\n\n"
-        for vr in validation_results:
-            status = "✅ PASSED" if vr['score'] >= 90 else "⚠️  NEEDS REVIEW"
-            result += f"  {status} {vr['file']}: {vr['score']}/100\n"
-            if vr['errors'] > 0:
-                result += f"    └─ {vr['errors']} errors, {vr['warnings']} warnings\n"
-        result += f"\n💾 Validation metadata saved to frontmatter _uds sections\n"
-
-    except Exception as e:
-        logger.error(f"Validation failed: {e}")
-        result += f"\n⚠️  Validation skipped due to error: {e}\n"
+    # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Add direct validation with frontmatter metadata
+    result += "=" * 60 + "\n\n"
+    result += "DIRECT VALIDATION (WO-CODEREF-DOCS-DIRECT-VALIDATION-001):\n\n"
+    result += "After saving, write validation metadata to frontmatter _uds section for all standards files:\n\n"
+    result += "```python\n"
+    result += "from papertrail.validators.standards import StandardsDocValidator\n"
+    result += "from utils.validation_helpers import write_validation_metadata_to_frontmatter\n"
+    result += "from pathlib import Path\n\n"
+    result += "validator = StandardsDocValidator()\n"
+    result += "standards_files = [\n"
+    for file_path in result_dict['files']:
+        result += f"    Path(r'{file_path}'),\n"
+    result += "]\n\n"
+    result += "for file_path in standards_files:\n"
+    result += "    validation_result = validator.validate_file(file_path)\n"
+    result += "    write_validation_metadata_to_frontmatter(file_path, validation_result)\n"
+    result += "    print(f'{file_path.name}: Wrote validation metadata (score={validation_result.score}/100)')\n"
+    result += "```\n\n"
+    result += f"This writes validation_score, validation_errors, validation_warnings to frontmatter _uds section.\n"
+    result += f"Machine-readable metadata for downstream tools.\n"
 
     logger.info(
         "Standards establishment completed successfully",

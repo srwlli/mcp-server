@@ -108,24 +108,21 @@ class ChangelogGenerator:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write('\n')  # Add trailing newline
 
-        # GAP-012: Validate CHANGELOG.json with Papertrail (UDS compliance)
+        # GAP-004 + GAP-005: Validate CHANGELOG.json with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.general import GeneralValidator
-            validator = GeneralValidator()
-            result = validator.validate_file(str(self.changelog_path))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.warning(f"CHANGELOG.json validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.info(f"CHANGELOG.json validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(self.changelog_path))
+            result = validator.validate_file(str(self.changelog_path))
+            handle_validation_result(result, "CHANGELOG.json")
         except ImportError:
             pass  # Papertrail not available
+        except ValueError:
+            # Critical validation failure - but continue with graceful degradation
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error("CHANGELOG.json validation failed critically - continuing with partial data")
         except Exception:
             pass  # Validation error - continue
 

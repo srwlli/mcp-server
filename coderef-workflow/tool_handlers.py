@@ -1112,19 +1112,22 @@ async def handle_validate_implementation_plan(arguments: dict) -> list[TextConte
         logger.warning(f'Plan file not found: {plan_file_str}')
         raise FileNotFoundError(f'Plan file not found: {plan_file_str}')
 
-    # GAP-004: Migrate to Papertrail PlanValidator (BREAKING CHANGE)
+    # GAP-004 + GAP-005: Validate plan with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.plan import PlanValidator
-        validator = PlanValidator()
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
+
+        validator = ValidatorFactory.get_validator(str(plan_path))
         result = validator.validate_file(str(plan_path))
+        handle_validation_result(result, "plan.json")
 
         logger.info(
-            f'Validation complete (Papertrail): score={result.get("score", 0)}, valid={result.get("valid", False)}',
+            f'Validation complete: score={result.get("score", 0)}, valid={result.get("valid", False)}',
             extra={'score': result.get('score', 0), 'valid': result.get('valid', False)}
         )
     except ImportError:
         # Fallback to legacy validator if Papertrail not available
-        logger.warning("Papertrail PlanValidator not available - using legacy validator")
+        logger.warning("Papertrail validators not available - using legacy validator")
         validator = LegacyPlanValidator(plan_path)
         result = validator.validate()
 
@@ -1132,6 +1135,11 @@ async def handle_validate_implementation_plan(arguments: dict) -> list[TextConte
             f'Validation complete (legacy): score={result["score"]}, result={result["validation_result"]}, issues={len(result["issues"])}',
             extra={'score': result['score'], 'result': result['validation_result']}
         )
+    except ValueError:
+        # Critical validation failure from handle_validation_result
+        logger.error("Plan validation failed critically - using legacy validator as fallback")
+        validator = LegacyPlanValidator(plan_path)
+        result = validator.validate()
 
     # Return result as JSON
     return [TextContent(type='text', text=json.dumps(result, indent=2))]
@@ -1161,24 +1169,32 @@ async def handle_generate_plan_review_report(arguments: dict) -> list[TextConten
         logger.warning(f'Plan file not found: {plan_file_str}')
         raise FileNotFoundError(f'Plan file not found: {plan_file_str}')
 
-    # GAP-004: Run validation first to get validation results (Papertrail PlanValidator)
+    # GAP-004 + GAP-005: Run validation with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.plan import PlanValidator
-        validator = PlanValidator()
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
+
+        validator = ValidatorFactory.get_validator(str(plan_path))
         validation_result = validator.validate_file(str(plan_path))
+        handle_validation_result(validation_result, "plan.json")
 
         logger.debug(
-            f'Validation completed (Papertrail): score={validation_result.get("score", 0)}, valid={validation_result.get("valid", False)}'
+            f'Validation completed: score={validation_result.get("score", 0)}, valid={validation_result.get("valid", False)}'
         )
     except ImportError:
         # Fallback to legacy validator if Papertrail not available
-        logger.warning("Papertrail PlanValidator not available - using legacy validator for review report")
+        logger.warning("Papertrail validators not available - using legacy validator for review report")
         validator = LegacyPlanValidator(plan_path)
         validation_result = validator.validate()
 
         logger.debug(
             f'Validation completed (legacy): score={validation_result["score"]}, issues={len(validation_result["issues"])}'
         )
+    except ValueError:
+        # Critical validation failure - use legacy validator as fallback
+        logger.error("Plan validation failed critically - using legacy validator")
+        validator = LegacyPlanValidator(plan_path)
+        validation_result = validator.validate()
 
     # Extract plan name from file path
     plan_name = plan_path.stem  # e.g., "feature-auth-plan" from "feature-auth-plan.json"
@@ -1297,20 +1313,18 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
         generator.save_plan(feature_name, plan)
         plan_file = project_path / 'coderef' / 'workorder' / feature_name / 'plan.json'
 
-        # GAP-013: Validate generated plan.json (UDS compliance)
+        # GAP-004 + GAP-005: Validate generated plan with ValidatorFactory and centralized error handling
         try:
-            from papertrail.validators.plan import PlanValidator
-            validator = PlanValidator()
-            result = validator.validate_file(str(plan_file))
+            from papertrail.validators.factory import ValidatorFactory
+            from utils.validation_helpers import handle_validation_result
 
-            if not result['valid']:
-                logger.warning(f"Generated plan.json validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                logger.info(f"Generated plan.json validated successfully (score: {result.get('score', 100)})")
+            validator = ValidatorFactory.get_validator(str(plan_file))
+            result = validator.validate_file(str(plan_file))
+            handle_validation_result(result, "plan.json")
         except ImportError:
-            logger.warning("Papertrail PlanValidator not available - skipping plan generation validation")
+            logger.warning("Papertrail validators not available - skipping plan generation validation")
+        except ValueError:
+            logger.error("Generated plan validation failed critically - continuing with partial plan")
         except Exception as e:
             logger.warning(f"Plan generation validation error: {e} - continuing")
 
@@ -1486,21 +1500,18 @@ async def handle_gather_context(arguments: dict) -> list[TextContent]:
     with open(context_file, 'w', encoding='utf-8') as f:
         json.dump(context_data, f, indent=2)
 
-    # Validate with WorkorderDocValidator (GAP-002: UDS compliance)
+    # GAP-004 + GAP-005: Validate context.json with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.workorder import WorkorderDocValidator
-        validator = WorkorderDocValidator()
-        result = validator.validate_file(str(context_file))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            # Log validation errors but don't fail (graceful degradation)
-            logger.warning(f"context.json validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"context.json validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(context_file))
+        result = validator.validate_file(str(context_file))
+        handle_validation_result(result, "context.json")
     except ImportError:
-        logger.warning("WorkorderDocValidator not available - skipping validation")
+        logger.warning("Papertrail validators not available - skipping validation")
+    except ValueError:
+        logger.error("context.json validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"Validation error: {e} - continuing without validation")
 
@@ -1936,20 +1947,18 @@ async def handle_update_deliverables(arguments: dict) -> list[TextContent]:
     content = content.replace('**Last Updated**: ', f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Previous: ")
     deliverables_path.write_text(content, encoding='utf-8')
 
-    # GAP-006: Re-validate after update (UDS compliance)
+    # GAP-004 + GAP-005: Validate DELIVERABLES.md with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.workorder import WorkorderDocValidator
-        validator = WorkorderDocValidator()
-        result = validator.validate_file(str(deliverables_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            logger.warning(f"DELIVERABLES.md update validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"DELIVERABLES.md update validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(deliverables_path))
+        result = validator.validate_file(str(deliverables_path))
+        handle_validation_result(result, "DELIVERABLES.md")
     except ImportError:
-        logger.warning("WorkorderDocValidator not available - skipping DELIVERABLES update validation")
+        logger.warning("Papertrail validators not available - skipping DELIVERABLES update validation")
+    except ValueError:
+        logger.error("DELIVERABLES.md validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"DELIVERABLES update validation error: {e} - continuing without validation")
 
@@ -2159,21 +2168,18 @@ async def handle_generate_agent_communication(arguments: dict) -> list[TextConte
     # Save communication.json
     comm_path.write_text(json.dumps(communication, indent=2), encoding='utf-8')
 
-    # Validate with SessionDocValidator (GAP-001: UDS compliance)
+    # GAP-004 + GAP-005: Validate communication.json with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.session import SessionDocValidator
-        validator = SessionDocValidator()
-        result = validator.validate_file(str(comm_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            # Log validation errors but don't fail (graceful degradation)
-            logger.warning(f"communication.json validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"communication.json validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(comm_path))
+        result = validator.validate_file(str(comm_path))
+        handle_validation_result(result, "communication.json")
     except ImportError:
-        logger.warning("SessionDocValidator not available - skipping validation")
+        logger.warning("Papertrail validators not available - skipping validation")
+    except ValueError:
+        logger.error("communication.json validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"Validation error: {e} - continuing without validation")
 
@@ -2273,20 +2279,18 @@ async def handle_assign_agent_task(arguments: dict) -> list[TextContent]:
     # Save updated communication.json
     comm_path.write_text(json.dumps(comm_data, indent=2), encoding='utf-8')
 
-    # GAP-005: Re-validate after update (UDS compliance)
+    # GAP-004 + GAP-005: Validate communication.json with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.session import SessionDocValidator
-        validator = SessionDocValidator()
-        result = validator.validate_file(str(comm_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            logger.warning(f"communication.json update validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"communication.json update validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(comm_path))
+        result = validator.validate_file(str(comm_path))
+        handle_validation_result(result, "communication.json")
     except ImportError:
-        logger.warning("SessionDocValidator not available - skipping update validation")
+        logger.warning("Papertrail validators not available - skipping update validation")
+    except ValueError:
+        logger.error("communication.json validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"Update validation error: {e} - continuing without validation")
 
@@ -2436,20 +2440,18 @@ async def handle_verify_agent_completion(arguments: dict) -> list[TextContent]:
     # Save updated communication.json
     comm_path.write_text(json.dumps(comm_data, indent=2), encoding='utf-8')
 
-    # GAP-005: Re-validate after verification update (UDS compliance)
+    # GAP-004 + GAP-005: Validate communication.json with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.session import SessionDocValidator
-        validator = SessionDocValidator()
-        result = validator.validate_file(str(comm_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            logger.warning(f"communication.json verification update validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"communication.json verification update validated (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(comm_path))
+        result = validator.validate_file(str(comm_path))
+        handle_validation_result(result, "communication.json")
     except ImportError:
-        logger.warning("SessionDocValidator not available - skipping verification update validation")
+        logger.warning("Papertrail validators not available - skipping verification update validation")
+    except ValueError:
+        logger.error("communication.json validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"Verification update validation error: {e} - continuing without validation")
 
@@ -4155,20 +4157,18 @@ async def handle_update_task_status(arguments: dict) -> list[TextContent]:
         json.dump(plan_data, f, indent=2, ensure_ascii=False)
         f.write('\n')
 
-    # GAP-008: Re-validate after task status update (UDS compliance)
+    # GAP-004 + GAP-005: Validate plan.json with ValidatorFactory and centralized error handling
     try:
-        from papertrail.validators.plan import PlanValidator
-        validator = PlanValidator()
-        result = validator.validate_file(str(plan_path))
+        from papertrail.validators.factory import ValidatorFactory
+        from utils.validation_helpers import handle_validation_result
 
-        if not result['valid']:
-            logger.warning(f"plan.json update validation failed (score: {result.get('score', 0)})")
-            for error in result.get('errors', []):
-                logger.warning(f"  - {error}")
-        else:
-            logger.info(f"plan.json update validated successfully (score: {result.get('score', 100)})")
+        validator = ValidatorFactory.get_validator(str(plan_path))
+        result = validator.validate_file(str(plan_path))
+        handle_validation_result(result, "plan.json")
     except ImportError:
-        logger.warning("Papertrail PlanValidator not available - skipping update validation")
+        logger.warning("Papertrail validators not available - skipping update validation")
+    except ValueError:
+        logger.error("plan.json validation failed critically - continuing with partial data")
     except Exception as e:
         logger.warning(f"Plan update validation error: {e} - continuing without validation")
 

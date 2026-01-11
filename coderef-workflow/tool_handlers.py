@@ -973,15 +973,18 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
 
             logger.info(f"UDS metadata injected into analysis.json for workorder: {workorder_id}")
 
-            # GAP-001: Validate BEFORE saving to add validation metadata to _uds
+            # GAP-001 + GAP-004 + GAP-005: Validate with ValidatorFactory and centralized error handling
             try:
                 # Write temp file for validation
                 temp_file = analysis_file.with_suffix('.tmp.json')
                 with open(temp_file, 'w', encoding='utf-8') as f:
                     json.dump(result, f, indent=2)
 
-                from papertrail.validators.analysis import AnalysisValidator
-                validator = AnalysisValidator()
+                # GAP-004: Use ValidatorFactory for auto-detection
+                from papertrail.validators.factory import ValidatorFactory
+                from utils.validation_helpers import handle_validation_result
+
+                validator = ValidatorFactory.get_validator(str(temp_file))
                 validation_result = validator.validate_file(str(temp_file))
 
                 # GAP-001: Add validation metadata to _uds section
@@ -989,21 +992,23 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
                 result['_uds']['validation_errors'] = len(validation_result.get('errors', []))
                 result['_uds']['validation_warnings'] = len(validation_result.get('warnings', []))
 
-                if not validation_result['valid']:
-                    logger.warning(f"analysis.json validation failed (score: {validation_result.get('score', 0)})")
-                    for error in validation_result.get('errors', []):
-                        logger.warning(f"  - {error}")
-                else:
-                    logger.info(f"analysis.json validated successfully (score: {validation_result.get('score', 100)})")
+                # GAP-005: Use centralized error handling
+                handle_validation_result(validation_result, "analysis.json")
 
                 # Clean up temp file
                 temp_file.unlink()
 
             except ImportError:
-                logger.warning("AnalysisValidator not available - skipping validation")
+                logger.warning("Papertrail validators not available - skipping validation")
                 result['_uds']['validation_score'] = None
                 result['_uds']['validation_errors'] = None
                 result['_uds']['validation_warnings'] = None
+            except ValueError:
+                # Critical validation failure - but continue with graceful degradation
+                logger.error("Analysis validation failed critically - continuing with partial data")
+                result['_uds']['validation_score'] = 0
+                result['_uds']['validation_errors'] = 999
+                result['_uds']['validation_warnings'] = 999
             except Exception as e:
                 logger.warning(f"Analysis validation error: {e} - continuing without validation")
                 result['_uds']['validation_score'] = None
@@ -3417,27 +3422,27 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
         with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(execution_log, f, indent=2)
 
-        # GAP-002: Validate execution-log.json with cross-validation enabled (UDS compliance)
+        # GAP-002 + GAP-004 + GAP-005: Validate with cross-validation, factory, and centralized handling
         try:
+            # GAP-004: Use ValidatorFactory (note: execution-log requires explicit validator due to cross-validation param)
             from papertrail.validators.execution_log import ExecutionLogValidator
+            from utils.validation_helpers import handle_validation_result
+
             validator = ExecutionLogValidator()
 
             # GAP-002: Enable cross-validation to detect orphaned task IDs
             result = validator.validate_file(str(log_file), enable_cross_validation=True)
 
-            # GAP-002: Check for critical errors (orphaned task IDs)
+            # GAP-002: Check for critical errors (orphaned task IDs) BEFORE centralized handling
             critical_errors = [e for e in result.get('errors', []) if e.get('severity') == 'CRITICAL']
             if critical_errors:
                 error_msg = f"Critical validation errors in execution log (orphaned task IDs): {critical_errors}"
                 logger.error(error_msg)
                 raise ValueError(error_msg)
 
-            if not result['valid']:
-                logger.warning(f"execution-log.json validation failed (score: {result.get('score', 0)})")
-                for error in result.get('errors', []):
-                    logger.warning(f"  - {error}")
-            else:
-                logger.info(f"execution-log.json validated successfully (score: {result.get('score', 100)})")
+            # GAP-005: Use centralized error handling for non-critical errors
+            handle_validation_result(result, "execution-log.json")
+
         except ImportError:
             logger.warning("ExecutionLogValidator not available - skipping validation")
         except ValueError:

@@ -1,0 +1,81 @@
+{
+  "workorder_id": "WO-SESSIONS-HUB-002",
+  "feature_name": "sessions-hub-phase2-multiagent",
+  "created": "2026-01-11",
+  "status": "not_started",
+  "description": "Multi-agent parallel implementation of Sessions Hub UI - System 1 (Creation) and System 2 (Monitoring) with integration phase",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef-assistant",
+    "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+    "role": "Coordinate parallel execution of Creator and Monitor agents, verify forbidden file compliance, synthesize completion reports",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\orchestrator-output.json",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-dashboard-creator",
+      "workorder_id": "WO-SESSIONS-HUB-002-CREATOR",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Build System 1 (Session Creation) - Sprints 1-4",
+      "context_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\agent1\\CLAUDE.md",
+      "phases": ["Sprint 1: Stub + Instructions", "Sprint 2: Attachments", "Sprint 3: Agent Assignment", "Sprint 4: Session Generation"],
+      "output_directory": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\components\\SessionsHub\\SessionCreation",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\creator-deliverables.md",
+      "forbidden_files": [
+        "packages/dashboard/src/components/SessionsHub/SessionMonitoring/**",
+        "packages/dashboard/src/lib/api/sessions.ts"
+      ],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-dashboard-monitor",
+      "workorder_id": "WO-SESSIONS-HUB-002-MONITOR",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Build System 2 (Session Monitoring) - Sprint 5",
+      "context_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\agent2\\CLAUDE.md",
+      "phases": ["Sprint 5: Session Reader + Monitor UI"],
+      "output_directory": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\components\\SessionsHub\\SessionMonitoring",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\monitor-deliverables.md",
+      "forbidden_files": [
+        "packages/dashboard/src/components/SessionsHub/SessionCreation/**",
+        "packages/dashboard/src/api/sessions/create/**"
+      ],
+      "status": "complete",
+      "notes": "Sprint 5 complete: SessionReader API (4 functions), 6 UI components, 2 API routes, SWR integration with 10-second polling. All deliverables committed and pushed. Zero forbidden file violations."
+    },
+    {
+      "agent_id": "coderef-dashboard-integration",
+      "workorder_id": "WO-SESSIONS-HUB-002-INTEGRATION",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Integrate Creator + Monitor systems - Sprint 6",
+      "context_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\agent3\\CLAUDE.md",
+      "phases": ["Sprint 6: SessionsHub Container + Tab Navigation"],
+      "output_directory": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\components\\SessionsHub",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\sessions-hub-phase2-multiagent\\integration-deliverables.md",
+      "depends_on": ["coderef-dashboard-creator", "coderef-dashboard-monitor"],
+      "forbidden_files": [],
+      "status": "not_started",
+      "notes": "BLOCKED: Wait for Creator + Monitor completion"
+    }
+  ],
+
+  "parallel_execution": {
+    "enabled": true,
+    "can_run_simultaneously": ["coderef-dashboard-creator", "coderef-dashboard-monitor"],
+    "must_run_sequentially": ["coderef-dashboard-integration"],
+    "rationale": "Creator and Monitor have no file system conflicts (separate directories). Integration requires both systems complete."
+  },
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 1,
+    "in_progress": 0,
+    "not_started": 2,
+    "blocked": 1
+  }
+}

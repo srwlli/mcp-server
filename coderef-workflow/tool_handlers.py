@@ -3417,11 +3417,20 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
         with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(execution_log, f, indent=2)
 
-        # GAP-007: Validate execution-log.json after save (UDS compliance)
+        # GAP-002: Validate execution-log.json with cross-validation enabled (UDS compliance)
         try:
             from papertrail.validators.execution_log import ExecutionLogValidator
             validator = ExecutionLogValidator()
-            result = validator.validate_file(str(log_file))
+
+            # GAP-002: Enable cross-validation to detect orphaned task IDs
+            result = validator.validate_file(str(log_file), enable_cross_validation=True)
+
+            # GAP-002: Check for critical errors (orphaned task IDs)
+            critical_errors = [e for e in result.get('errors', []) if e.get('severity') == 'CRITICAL']
+            if critical_errors:
+                error_msg = f"Critical validation errors in execution log (orphaned task IDs): {critical_errors}"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
 
             if not result['valid']:
                 logger.warning(f"execution-log.json validation failed (score: {result.get('score', 0)})")
@@ -3431,6 +3440,9 @@ def log_execution(project_path: Path, feature_name: str, workorder_id: str, task
                 logger.info(f"execution-log.json validated successfully (score: {result.get('score', 100)})")
         except ImportError:
             logger.warning("ExecutionLogValidator not available - skipping validation")
+        except ValueError:
+            # Re-raise critical validation errors (orphaned task IDs)
+            raise
         except Exception as val_error:
             logger.warning(f"Execution log validation error: {val_error} - continuing")
 

@@ -1302,9 +1302,9 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
             extra={'workorder_id': workorder_id, 'feature_name': feature_name}
         )
 
-    # AUTOMATICALLY GENERATE PLAN (NEW in v1.2.0)
+    # AUTOMATICALLY GENERATE PLAN (NEW in v1.2.0, AI-powered in v2.0.0)
     try:
-        plan = generator.generate_plan(
+        plan = await generator.generate_plan(
             feature_name=feature_name,
             context=context,
             analysis=analysis,

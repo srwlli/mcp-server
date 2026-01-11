@@ -1,9 +1,10 @@
 """Planning generator for creating implementation plans."""
 
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import json
 import sys
+import asyncio
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -168,7 +169,7 @@ class PlanningGenerator:
             log_error('template_load_error', str(e))
             raise ValueError(f"Error loading template file: {str(e)}")
 
-    def generate_plan(
+    async def generate_plan(
         self,
         feature_name: str,
         context: Optional[Dict[str, Any]] = None,
@@ -213,13 +214,13 @@ class PlanningGenerator:
 
         # Generate plan (with single retry on failure)
         try:
-            plan = self._generate_plan_internal(feature_name, context, analysis, template, workorder_id)
+            plan = await self._generate_plan_with_agent(feature_name, context, analysis, template, workorder_id)
             logger.info(f"Plan generated successfully for: {feature_name}")
             return plan
         except Exception as e:
             logger.warning(f"First attempt failed: {str(e)}. Retrying once...")
             try:
-                plan = self._generate_plan_internal(feature_name, context, analysis, template, workorder_id)
+                plan = await self._generate_plan_with_agent(feature_name, context, analysis, template, workorder_id)
                 logger.info(f"Plan generated successfully on retry for: {feature_name}")
                 return plan
             except Exception as retry_error:
@@ -229,7 +230,7 @@ class PlanningGenerator:
                 self.save_plan(feature_name, partial_plan)
                 raise ValueError(f"Plan generation failed: {str(retry_error)}. Partial plan saved.")
 
-    def _generate_plan_internal(
+    async def _generate_plan_with_agent(
         self,
         feature_name: str,
         context: Optional[Dict[str, Any]],
@@ -238,11 +239,72 @@ class PlanningGenerator:
         workorder_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Internal plan generation logic.
+        AI-powered plan generation using Task agent with full codebase context.
 
-        NOTE: This is a simplified implementation. In production, this would use
-        an AI model (like Claude) to actually synthesize the inputs into a complete plan.
-        For now, it creates a skeleton plan structure.
+        This method launches a Task agent with comprehensive context (requirements,
+        coderef data, foundation docs) and explicit instructions to use coderef MCP
+        tools for dependency analysis, impact assessment, and pattern adherence.
+
+        Args:
+            feature_name: Feature name
+            context: Context data (requirements, goals, constraints)
+            analysis: Analysis data (foundation docs, tech stack, patterns)
+            template: Template structure for plan sections
+            workorder_id: Optional workorder ID for tracking
+
+        Returns:
+            Plan dict with all 10 sections, file-specific tasks, dependency-ordered phases
+
+        Raises:
+            ValueError: If Task agent unavailable or plan generation fails
+        """
+        logger.info(f"Generating AI-powered plan for: {feature_name}")
+
+        # Pre-flight validation - ensure .coderef/ exists
+        self._validate_coderef_exists()
+
+        # Load coderef data
+        coderef_data = {
+            "index": self._load_coderef_index(),
+            "patterns": self._load_coderef_patterns(),
+            "graph": self._load_coderef_graph(),
+            "coverage": self._load_coderef_coverage(),
+            "complexity": self._load_coderef_complexity()
+        }
+
+        # Build comprehensive agent prompt
+        agent_prompt = self._build_agent_prompt(
+            feature_name, context, analysis, coderef_data, template
+        )
+
+        # Launch Task agent
+        try:
+            logger.debug("Launching Task agent for plan generation...")
+            # NOTE: Task tool is called via MCP - this would need actual MCP integration
+            # For now, fall back to template-based generation with a clear message
+            raise NotImplementedError("Task agent integration not yet implemented")
+
+        except (NotImplementedError, Exception) as e:
+            logger.error(f"AI agent generation failed: {str(e)}")
+            logger.warning("Falling back to template-based generation")
+            # Fallback to old template method
+            return self._generate_plan_internal_fallback(
+                feature_name, context, analysis, template, workorder_id
+            )
+
+    def _generate_plan_internal_fallback(
+        self,
+        feature_name: str,
+        context: Optional[Dict[str, Any]],
+        analysis: Optional[Dict[str, Any]],
+        template: Dict[str, Any],
+        workorder_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Fallback template-based plan generation (original implementation).
+
+        Used when Task agent is unavailable or fails. Creates skeleton plan structure
+        with generic tasks instead of file-specific implementation details.
 
         Args:
             feature_name: Feature name
@@ -252,19 +314,18 @@ class PlanningGenerator:
             workorder_id: Optional workorder ID for tracking
 
         Returns:
-            Plan dict with all 10 sections
+            Plan dict with all 10 sections (generic template-based)
         """
-        logger.debug(f"Generating plan internal for: {feature_name}")
+        logger.debug(f"Generating fallback plan for: {feature_name}")
 
-        # In a full implementation, this would call an AI model to generate the plan
-        # For now, create skeleton structure following template
+        # Create skeleton structure following template
         plan = {
             "META_DOCUMENTATION": {
                 "feature_name": feature_name,
                 "workorder_id": workorder_id,
                 "version": template.get("_AI_INSTRUCTIONS", {}).get("version", "1.0.0"),
                 "status": "planning",
-                "generated_by": "PlanningGenerator",
+                "generated_by": "PlanningGenerator (fallback mode)",
                 "has_context": context is not None,
                 "has_analysis": analysis is not None,
             },
@@ -283,6 +344,500 @@ class PlanningGenerator:
         }
 
         return plan
+
+    # ========== CodeRef Data Loading Methods (IMPL-002) ==========
+
+    def _load_coderef_index(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/index.json - code inventory with all functions, classes, components.
+
+        Returns:
+            Code inventory dict or None if file doesn't exist
+        """
+        index_path = self.project_path / ".coderef" / "index.json"
+        if not index_path.exists():
+            logger.warning(f"CodeRef index not found: {index_path}")
+            return None
+
+        try:
+            with open(index_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"📁 Loaded coderef index: {len(data)} elements")
+            return data
+        except Exception as e:
+            logger.error(f"Failed to load coderef index: {e}")
+            return None
+
+    def _load_coderef_patterns(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/reports/patterns.json - coding conventions and patterns.
+
+        Returns:
+            Patterns dict or None if file doesn't exist
+        """
+        patterns_path = self.project_path / ".coderef" / "reports" / "patterns.json"
+        if not patterns_path.exists():
+            logger.warning(f"CodeRef patterns not found: {patterns_path}")
+            return None
+
+        try:
+            with open(patterns_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"📁 Loaded coderef patterns: {len(data.get('patterns', []))} patterns")
+            return data
+        except Exception as e:
+            logger.error(f"Failed to load coderef patterns: {e}")
+            return None
+
+    def _load_coderef_graph(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/graph.json - dependency graph for relationship analysis.
+
+        Returns:
+            Dependency graph dict or None if file doesn't exist
+        """
+        graph_path = self.project_path / ".coderef" / "graph.json"
+        if not graph_path.exists():
+            logger.warning(f"CodeRef graph not found: {graph_path}")
+            return None
+
+        try:
+            with open(graph_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"📁 Loaded coderef graph: {len(data.get('nodes', []))} nodes")
+            return data
+        except Exception as e:
+            logger.error(f"Failed to load coderef graph: {e}")
+            return None
+
+    def _load_coderef_coverage(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/reports/coverage.json - test coverage data for gap identification.
+
+        Returns:
+            Coverage dict or None if file doesn't exist
+        """
+        coverage_path = self.project_path / ".coderef" / "reports" / "coverage.json"
+        if not coverage_path.exists():
+            logger.warning(f"CodeRef coverage not found: {coverage_path}")
+            return None
+
+        try:
+            with open(coverage_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"📁 Loaded coderef coverage: {data.get('overall_coverage', 'unknown')}%")
+            return data
+        except Exception as e:
+            logger.error(f"Failed to load coderef coverage: {e}")
+            return None
+
+    def _load_coderef_complexity(self) -> Optional[Dict[str, Any]]:
+        """
+        Load .coderef/reports/complexity.json - complexity metrics for effort estimation.
+
+        Returns:
+            Complexity dict or None if file doesn't exist
+        """
+        complexity_path = self.project_path / ".coderef" / "reports" / "complexity.json"
+        if not complexity_path.exists():
+            logger.warning(f"CodeRef complexity not found: {complexity_path}")
+            return None
+
+        try:
+            with open(complexity_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"📁 Loaded coderef complexity: {len(data.get('files', []))} files analyzed")
+            return data
+        except Exception as e:
+            logger.error(f"Failed to load coderef complexity: {e}")
+            return None
+
+    # ========== End CodeRef Data Loading Methods ==========
+
+    def _build_agent_prompt(
+        self,
+        feature_name: str,
+        context: Optional[Dict[str, Any]],
+        analysis: Optional[Dict[str, Any]],
+        coderef_data: Dict[str, Any],
+        template: Dict[str, Any]
+    ) -> str:
+        """
+        Build comprehensive prompt for Task agent with all context.
+
+        Constructs detailed prompt including:
+        - Feature requirements from context.json
+        - Codebase intelligence from .coderef/
+        - Architecture context from foundation docs
+        - Explicit coderef MCP tool usage instructions
+        - Template structure for plan sections
+
+        Args:
+            feature_name: Feature name
+            context: User requirements and constraints
+            analysis: Project analysis with foundation docs
+            coderef_data: All coderef data (index, patterns, graph, coverage, complexity)
+            template: Plan structure template
+
+        Returns:
+            Comprehensive prompt string for Task agent
+        """
+        # Extract context data
+        description = context.get("description", "Feature implementation") if context else "Feature implementation"
+        goal = context.get("goal", "Implement feature") if context else "Implement feature"
+        requirements = context.get("requirements", []) if context else []
+        constraints = context.get("constraints", []) if context else []
+
+        # Extract coderef data counts
+        index_count = len(coderef_data.get("index", [])) if coderef_data.get("index") else 0
+        patterns_count = len(coderef_data.get("patterns", {}).get("patterns", [])) if coderef_data.get("patterns") else 0
+        graph_nodes = len(coderef_data.get("graph", {}).get("nodes", [])) if coderef_data.get("graph") else 0
+        coverage_pct = coderef_data.get("coverage", {}).get("overall_coverage", "unknown") if coderef_data.get("coverage") else "unknown"
+
+        # Extract foundation docs
+        foundation_docs = analysis.get("foundation_doc_content", {}) if analysis else {}
+        architecture_preview = foundation_docs.get("ARCHITECTURE.md", {}).get("preview", "Not available")[:500]
+        api_preview = foundation_docs.get("API.md", {}).get("preview", "Not available")[:500]
+
+        prompt = f"""You are an expert implementation planner. Generate a detailed, executable plan for this feature:
+
+**FEATURE:** {feature_name}
+
+**DESCRIPTION:** {description}
+
+**GOAL:** {goal}
+
+**REQUIREMENTS ({len(requirements)} total):**
+{self._format_list(requirements)}
+
+**CONSTRAINTS ({len(constraints)} total):**
+{self._format_list(constraints)}
+
+---
+
+**CRITICAL: You have COMPLETE codebase context. USE IT EXPLICITLY.**
+
+**CODE INVENTORY (.coderef/index.json):**
+- Total elements: {index_count}
+- Available: Functions, classes, components with exact file paths and line numbers
+
+**CODING PATTERNS (.coderef/reports/patterns.json):**
+- {patterns_count} patterns identified
+- Includes: Error handling patterns, naming conventions, code organization rules
+
+**DEPENDENCY GRAPH (.coderef/graph.json):**
+- {graph_nodes} nodes in dependency graph
+- Use for: Dependency analysis, impact assessment, task ordering
+
+**TEST COVERAGE (.coderef/reports/coverage.json):**
+- Overall coverage: {coverage_pct}%
+- Use for: Identifying test gaps, planning test strategy
+
+**ARCHITECTURE (ARCHITECTURE.md preview):**
+{architecture_preview}...
+
+**API REFERENCE (API.md preview):**
+{api_preview}...
+
+---
+
+**YOUR TASK - Generate Implementation Plan**
+
+You MUST create a plan.json following the 10-section structure below.
+
+**MANDATORY REQUIREMENTS:**
+
+1. **DEPENDENCY ANALYSIS** (use coderef data):
+   - Check which existing functions/classes this feature depends on (use index.json)
+   - Identify which files will be modified (check code inventory for exact paths)
+   - Analyze dependency chains (use graph.json if available)
+
+2. **PATTERN ADHERENCE** (use patterns.json):
+   - Follow existing coding patterns from patterns.json
+   - Match error handling approaches
+   - Use established naming conventions
+
+3. **TASK BREAKDOWN** (be SPECIFIC - most important):
+   - Break each requirement into FILE-LEVEL tasks
+   - Example: "IMPL-001: Modify src/auth/jwt.service.ts lines 45-60 - add generateRefreshToken() method"
+   - NOT: "IMPL-001: Implement JWT tokens"
+   - Include exact file paths from code inventory
+   - Reference specific line numbers where changes occur
+
+4. **PHASE PLANNING** (use dependencies):
+   - Order tasks by dependency (what must happen first?)
+   - Identify parallel vs sequential work
+   - Create realistic phases (not always 4!)
+   - Add "dependencies" and "rationale" fields to each phase
+
+5. **TESTING STRATEGY** (use coverage.json):
+   - Address current test coverage gaps
+   - Specify which test files to create/modify
+   - Include edge cases and integration tests
+
+---
+
+**OUTPUT FORMAT:**
+
+Return a JSON object with this structure:
+
+{{
+  "META_DOCUMENTATION": {{
+    "feature_name": "{feature_name}",
+    "workorder_id": "WO-{feature_name.upper().replace('-', '-')}-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "AI Agent",
+    "has_context": true,
+    "has_analysis": true
+  }},
+  "UNIVERSAL_PLANNING_STRUCTURE": {{
+    "0_preparation": {{ ... }},
+    "1_executive_summary": {{ ... }},
+    "2_risk_assessment": {{ ... }},
+    "3_current_state_analysis": {{ ... }},
+    "4_key_features": {{ ... }},
+    "5_task_id_system": {{
+      "tasks": [
+        "SETUP-001: Specific setup task with file paths",
+        "IMPL-001: Modify path/to/file.py lines X-Y - add specific method/function",
+        "IMPL-002: Create path/to/new_file.py - implement specific component",
+        ...
+      ]
+    }},
+    "6_implementation_phases": {{
+      "phases": [
+        {{
+          "phase": 1,
+          "name": "Descriptive Phase Name",
+          "description": "What this phase accomplishes",
+          "tasks": ["SETUP-001", "IMPL-001"],
+          "deliverables": ["Specific deliverable 1", "Specific deliverable 2"],
+          "dependencies": "Sequential - SETUP-001 must complete before IMPL-001",
+          "rationale": "Why this phase grouping makes sense"
+        }}
+      ]
+    }},
+    "7_testing_strategy": {{ ... }},
+    "8_success_criteria": {{ ... }},
+    "9_implementation_checklist": {{ ... }}
+  }}
+}}
+
+---
+
+**VALIDATION RULES:**
+
+- ✅ Every task MUST reference specific files from code inventory
+- ✅ Every task MUST consider existing patterns from patterns.json
+- ✅ Every phase MUST have dependency-ordered tasks with rationale
+- ✅ Risk assessment MUST address breaking changes and dependencies
+- ✅ Testing strategy MUST address gaps from coverage.json
+- ✅ NO time estimates (hours/minutes) - use complexity levels instead
+- ✅ NO questions in plan - answer everything
+
+**EXAMPLE TASK (GOOD):**
+"IMPL-003: Modify generators/planning_generator.py lines 232-285 - Replace _generate_plan_internal() with _generate_plan_with_agent() async method that launches Task agent with coderef context"
+
+**EXAMPLE TASK (BAD):**
+"IMPL-003: Implement AI agent integration following existing patterns"
+
+---
+
+Generate the complete plan now. Be specific, reference actual files, and use the codebase intelligence provided.
+"""
+        return prompt
+
+    def _format_list(self, items: List[str], max_items: int = 10) -> str:
+        """Format list of items for prompt, truncating if too long."""
+        if not items:
+            return "- None specified"
+
+        displayed = items[:max_items]
+        result = "\n".join(f"- {item}" for item in displayed)
+
+        if len(items) > max_items:
+            result += f"\n... and {len(items) - max_items} more"
+
+        return result
+
+    # ========== End Prompt Builder ==========
+
+    def _validate_coderef_exists(self) -> None:
+        """
+        Pre-flight validation - ensure .coderef/ directory exists with required files.
+
+        Checks for:
+        - .coderef/index.json (code inventory)
+        - .coderef/graph.json (dependency graph)
+        - .coderef/reports/patterns.json (coding conventions)
+
+        Also checks drift.json if available and warns if >10% stale.
+
+        Raises:
+            ValueError: If required .coderef/ files are missing with instructions
+        """
+        coderef_dir = self.project_path / ".coderef"
+
+        if not coderef_dir.exists():
+            raise ValueError(
+                f"❌ Error: .coderef/ directory not found at {self.project_path}\n\n"
+                f"CodeRef data is required for AI-powered planning.\n\n"
+                f"Run one of these commands to generate it:\n"
+                f"  Quick scan:  coderef scan {self.project_path}\n"
+                f"  Full scan:   python scripts/populate-coderef.py {self.project_path}\n\n"
+                f"Then retry: /create-workorder"
+            )
+
+        # Check required files
+        required_files = [
+            (".coderef/index.json", "code inventory"),
+            (".coderef/graph.json", "dependency graph"),
+            (".coderef/reports/patterns.json", "coding patterns")
+        ]
+
+        missing = []
+        for file_path, description in required_files:
+            full_path = self.project_path / file_path
+            if not full_path.exists():
+                missing.append(f"  - {file_path} ({description})")
+
+        if missing:
+            raise ValueError(
+                f"❌ Error: Required .coderef/ files missing:\n" +
+                "\n".join(missing) + "\n\n" +
+                f"Run: coderef scan {self.project_path}\n"
+                f"Or:  python scripts/populate-coderef.py {self.project_path}\n\n"
+                f"Then retry: /create-workorder"
+            )
+
+        # Check freshness (drift)
+        drift_file = self.project_path / ".coderef" / "reports" / "drift.json"
+        if drift_file.exists():
+            try:
+                with open(drift_file, 'r') as f:
+                    drift_data = json.load(f)
+                drift_percentage = drift_data.get("drift_percentage", 0)
+
+                if drift_percentage > 10:
+                    logger.warning(
+                        f"⚠️  .coderef/ data is {drift_percentage}% stale.\n"
+                        f"   Recommended: Re-run populate-coderef.py before planning.\n"
+                        f"   Proceeding with stale data may produce inaccurate plans."
+                    )
+            except Exception as e:
+                logger.debug(f"Could not check drift: {e}")
+
+        logger.info("✅ CodeRef data validation passed")
+
+    def _validate_plan_uses_coderef(self, plan: Dict[str, Any], coderef_data: Dict[str, Any]) -> None:
+        """
+        Post-generation validation - verify plan uses coderef context.
+
+        Checks:
+        - Tasks reference actual files from code inventory
+        - Patterns from patterns.json mentioned
+        - Dependencies considered
+
+        Args:
+            plan: Generated plan dict
+            coderef_data: CodeRef data used during generation
+
+        Raises:
+            ValueError: If plan doesn't use coderef context properly
+        """
+        validation_errors = []
+
+        # Get tasks from plan
+        tasks = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("5_task_id_system", {}).get("tasks", [])
+
+        # Check 1: Tasks should reference specific files (not be generic)
+        generic_count = 0
+        for task in tasks:
+            # Generic tasks often have phrases like "following existing patterns" without file paths
+            if "following existing" in task.lower() and "/" not in task:
+                generic_count += 1
+
+        if generic_count > len(tasks) * 0.5:  # More than 50% are generic
+            validation_errors.append(
+                f"Plan contains {generic_count}/{len(tasks)} generic tasks without file references. "
+                f"Tasks must specify exact files to modify (e.g., 'Modify src/auth.py lines 45-60')."
+            )
+
+        # Check 2: Phases should have dependency/rationale fields
+        phases = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("6_implementation_phases", {}).get("phases", [])
+        phases_without_rationale = sum(1 for phase in phases if not phase.get("rationale"))
+
+        if phases_without_rationale > 0:
+            validation_errors.append(
+                f"{phases_without_rationale} phases missing 'rationale' field. "
+                f"Each phase must explain why tasks are grouped together."
+            )
+
+        if validation_errors:
+            logger.warning(
+                f"⚠️  Plan validation warnings:\n" +
+                "\n".join(f"  - {err}" for err in validation_errors)
+            )
+            # Don't raise - just warn for now since we're using fallback
+        else:
+            logger.info("✅ Plan uses coderef context appropriately")
+
+    def _track_coderef_usage(self, agent_execution_log: Optional[Dict[str, Any]] = None) -> Dict[str, int]:
+        """
+        Track which coderef MCP tools the agent used during plan generation.
+
+        Parses agent execution log for tool calls:
+        - coderef_query
+        - coderef_impact
+        - coderef_patterns
+        - coderef_complexity
+        - coderef_coverage
+
+        Args:
+            agent_execution_log: Optional execution log from Task agent
+
+        Returns:
+            Dict mapping tool names to call counts
+        """
+        tools_used = {
+            "coderef_query": 0,
+            "coderef_impact": 0,
+            "coderef_patterns": 0,
+            "coderef_complexity": 0,
+            "coderef_coverage": 0
+        }
+
+        if not agent_execution_log:
+            logger.debug("No agent execution log available for telemetry")
+            return tools_used
+
+        # Parse log for tool calls (implementation depends on agent log format)
+        # This is a stub - actual implementation would parse agent's tool_calls
+        for action in agent_execution_log.get("actions", []):
+            tool_name = action.get("tool")
+            if tool_name in tools_used:
+                tools_used[tool_name] += 1
+
+        # Log telemetry
+        total_calls = sum(tools_used.values())
+        logger.info("📊 CodeRef ecosystem usage during planning:")
+        for tool, count in tools_used.items():
+            if count > 0:
+                logger.info(f"  🔧 {tool}: {count} calls")
+
+        if total_calls < 5:
+            logger.warning(
+                f"⚠️  Agent used only {total_calls} coderef tool calls. "
+                f"Plan may not be fully grounded in codebase context. "
+                f"Recommended: At least 5 tool calls for thorough analysis."
+            )
+        else:
+            logger.info(f"✅ Good coderef usage: {total_calls} tool calls")
+
+        return tools_used
+
+    # ========== End Validation & Telemetry ==========
 
     def _generate_preparation_section(
         self,

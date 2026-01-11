@@ -2,17 +2,17 @@
   "workorder_id": "WO-CODEREF-DOCS-DIRECT-VALIDATION-001",
   "feature_name": "coderef-docs-direct-validation",
   "created": "2026-01-10",
-  "status": "not_started",
-  "description": "Add direct validation integration to coderef-docs - write validation metadata to markdown frontmatter _uds sections while preserving instruction-based validation pattern",
+  "status": "in_progress",
+  "description": "Add TRUE direct validation integration to coderef-docs - tool saves files and runs validators at runtime (NOT instruction-based). REWORK REQUIRED: Remove enhanced instruction approach, implement tool-side execution.",
   "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\instructions.json",
 
   "orchestrator": {
     "agent_id": "coderef",
     "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
-    "role": "Coordinate coderef-docs direct validation integration - ensure both patterns (instruction-based + direct) work together",
-    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\orchestrator-docs-validation-plan.md",
-    "status": "not_started",
-    "notes": ""
+    "role": "Coordinate coderef-docs TRUE direct validation integration - tool saves files and runs validators (NOT instruction-based)",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\REWORK-INSTRUCTIONS.md",
+    "status": "in_progress",
+    "notes": "Issued REWORK instructions - first implementation was incorrect (used enhanced instructions instead of true direct integration). Explicit instructions provided in REWORK-INSTRUCTIONS.md. Agent must remove all instruction-based code and implement tool-side validation."
   },
 
   "agents": [
@@ -20,9 +20,9 @@
       "agent_id": "coderef-docs",
       "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
       "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\coderef-docs-implementation-report.md",
-      "status": "not_started",
-      "notes": "",
-      "task_summary": "Add direct validation integration - call validators at runtime, write metadata to frontmatter _uds, keep instruction-based validation intact"
+      "status": "in_progress",
+      "notes": "⚠️ REWORK REQUIRED - First implementation used 'enhanced instructions' (Claude executes validation). Gap report requires TRUE direct integration (tool executes validation). See REWORK-INSTRUCTIONS.md for explicit requirements. Must: 1) Remove all instruction-based code, 2) Tool saves files directly, 3) Tool runs validators at runtime, 4) Tool writes metadata, 5) Rewrite tests to verify tool behavior not Claude behavior.",
+      "task_summary": "REWORK: Implement TRUE direct validation - tool saves files, runs validators, writes metadata. NO instruction-based validation. Tool executes everything, Claude does nothing."
     }
   ],
 

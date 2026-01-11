@@ -39,16 +39,31 @@
       "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
       "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\agent-2-coderef-docs-complete.md",
       "output_file_md": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\archived\\papertrail-uds-alignment\\testing\\agent-2-coderef-docs-complete.md",
-      "status": "complete",
+      "status": "rework_in_progress",
       "completed_at": "2026-01-10T11:00:00Z",
-      "notes": "✅ COMPLETE - NO WORK NEEDED. Validators already integrated via WO-UDS-COMPLIANCE-CODEREF-DOCS-001 (completed 2026-01-10). Uses instruction-based validation pattern (different from gap report's direct integration). 72% validation coverage (13/18 outputs). 12/12 tests passing. No gaps applicable (GAP-001 through GAP-005 N/A or alternative design).",
+      "rework_started_at": "2026-01-10T15:00:00Z",
+      "notes": "⚠️ REWORK IN PROGRESS - Original implementation complete (WO-UDS-COMPLIANCE-CODEREF-DOCS-001) used instruction-based pattern. Gap report requires direct integration (tool executes validators). New session created: WO-CODEREF-DOCS-DIRECT-VALIDATION-001. Agent must remove instruction-based code and implement TRUE direct integration. See C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\REWORK-INSTRUCTIONS.md for explicit requirements.",
       "task_summary": "Audit documentation generation tools to verify if validators need integration",
       "audit_findings": {
-        "gaps_applicable": [],
+        "gaps_applicable": ["GAP-001 (requires direct integration rework)"],
         "validation_coverage": "72% (13/18 outputs)",
-        "validation_pattern": "instruction-based",
-        "workorder_id": "WO-UDS-COMPLIANCE-CODEREF-DOCS-001 (already complete)",
-        "estimated_effort": "0 hours (already done)"
+        "validation_pattern": "instruction-based (INCORRECT - must be direct integration)",
+        "workorder_id": "WO-CODEREF-DOCS-DIRECT-VALIDATION-001 (rework in progress)",
+        "estimated_effort": "2-3 hours (rework)"
+      },
+      "rework_session": {
+        "session_path": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation",
+        "workorder_id": "WO-CODEREF-DOCS-DIRECT-VALIDATION-001",
+        "rework_reason": "First implementation used enhanced instruction-based pattern (Claude executes validation code). Gap report requires TRUE direct integration (tool saves files, runs validators, writes metadata at runtime).",
+        "rework_instructions": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\coderef-docs-direct-validation\\REWORK-INSTRUCTIONS.md",
+        "required_changes": [
+          "DELETE all instruction-based validation code (tool_handlers.py lines 346-385, 816-865)",
+          "Tool saves files directly (no Claude file writes)",
+          "Tool runs validators at runtime (no Claude code execution)",
+          "Tool writes _uds metadata to frontmatter",
+          "Tool returns simple result dict (NO instruction blocks)",
+          "Rewrite tests to verify tool behavior (not Claude behavior)"
+        ]
       }
     },
     {
@@ -102,11 +117,15 @@
 
   "aggregation": {
     "total_agents": 4,
-    "completed": 2,
-    "in_progress": 1,
+    "completed": 1,
+    "in_progress": 2,
     "not_started": 1,
-    "completion_percentage": 50,
-    "phase": "Phase 2: Implementation (coderef-workflow creating workorder)"
+    "completion_percentage": 25,
+    "phase": "Phase 2: Implementation (coderef-workflow + coderef-docs rework in progress)",
+    "current_work": [
+      "coderef-workflow: Implementing 4 gaps (GAP-001, 002, 004, 005) - WO-CODEREF-WORKFLOW-VALIDATOR-INTEGRATION-001 (5.5-7.5 hours)",
+      "coderef-docs: Reworking to direct integration - WO-CODEREF-DOCS-DIRECT-VALIDATION-001 (2-3 hours)"
+    ]
   },
 
   "testing_subdirectory": {

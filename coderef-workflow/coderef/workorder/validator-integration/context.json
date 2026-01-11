@@ -1,0 +1,45 @@
+{
+  "feature_name": "validator-integration",
+  "description": "Complete Papertrail validator integration by adding validation metadata to _uds sections, enabling cross-validation in ExecutionLogValidator, refactoring all integration points to use ValidatorFactory for auto-detection, and implementing centralized consistent error handling across all 19+ validation sites",
+  "goal": "Achieve 100% quality validator integration across all 32 coderef-workflow outputs with proper validation metadata in _uds sections, cross-validation enabled for orphaned task ID detection, factory pattern usage for maintainability, and consistent error handling with clear warn/fail thresholds",
+  "requirements": [
+    "Add validation_score, validation_errors, validation_warnings to analysis.json _uds section after AnalysisValidator call",
+    "Enable enable_cross_validation=True parameter in ExecutionLogValidator call within log_execution function",
+    "Add critical error handling for orphaned task IDs detected by cross-validation",
+    "Refactor all 19+ validator instantiation sites across 8 files to use ValidatorFactory.get_validator()",
+    "Create utils/validation_helpers.py with centralized handle_validation_result() function",
+    "Implement 3-tier validation thresholds: score >= 90 (pass), 50-89 (warn), < 50 (fail)",
+    "Refactor all 19+ error handling blocks to use handle_validation_result() helper"
+  ],
+  "out_of_scope": [
+    "GAP-003 implementation (already complete - PlanValidator called in update_task_status)",
+    "New validator creation (validators exist in Papertrail)",
+    "Markdown validator integration (out of scope for JSON-focused workflow)",
+    "Changes to Papertrail validator implementations (only integration work)"
+  ],
+  "constraints": [
+    "Maintain backward compatibility with existing validation calls",
+    "Follow established graceful degradation pattern (try/except with ImportError)",
+    "Do not break existing 32/32 validation coverage",
+    "Preserve existing logging format and levels",
+    "Use existing logger from logger_config.py",
+    "No changes to tool schemas or MCP interface"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-VALIDATOR-INTEGRATION-001",
+    "workorder_assigned_at": "2026-01-11T01:33:24.083506+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-VALIDATOR-INTEGRATION-001",
+    "feature_id": "validator-integration",
+    "last_updated": "2026-01-11",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-10"
+  }
+}

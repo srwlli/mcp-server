@@ -282,15 +282,37 @@ class PlanningGenerator:
             logger.debug("Launching Task agent for plan generation...")
             # NOTE: Task tool is called via MCP - this would need actual MCP integration
             # For now, fall back to template-based generation with a clear message
-            raise NotImplementedError("Task agent integration not yet implemented")
+            raise NotImplementedError(
+                "Task agent integration not yet implemented. "
+                "To complete: Add Task tool invocation in _generate_plan_with_agent() method. "
+                "See generators/planning_generator.py line 285 for implementation notes."
+            )
 
-        except (NotImplementedError, Exception) as e:
-            logger.error(f"AI agent generation failed: {str(e)}")
-            logger.warning("Falling back to template-based generation")
+        except NotImplementedError as e:
+            logger.warning(f"⚠️  AI agent not available: {str(e)}")
+            logger.info("ℹ️  Using template-based generation (fallback mode)")
+            logger.info("ℹ️  Plan will use generic tasks instead of file-specific details")
             # Fallback to old template method
             return self._generate_plan_internal_fallback(
                 feature_name, context, analysis, template, workorder_id
             )
+        except Exception as e:
+            # Unexpected error during agent launch
+            logger.error(f"❌ Unexpected error during AI plan generation: {str(e)}")
+            logger.warning("⚠️  Falling back to template-based generation")
+            # Still try fallback even on unexpected errors
+            try:
+                return self._generate_plan_internal_fallback(
+                    feature_name, context, analysis, template, workorder_id
+                )
+            except Exception as fallback_error:
+                # If even fallback fails, raise with helpful message
+                raise ValueError(
+                    f"Plan generation failed in both AI and fallback modes.\n"
+                    f"AI error: {str(e)}\n"
+                    f"Fallback error: {str(fallback_error)}\n"
+                    f"Please check logs and ensure context/analysis data is valid."
+                )
 
     def _generate_plan_internal_fallback(
         self,

@@ -973,14 +973,21 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
 
             logger.info(f"UDS metadata injected into analysis.json for workorder: {workorder_id}")
 
-            with open(analysis_file, 'w', encoding='utf-8') as f:
-                json.dump(result, f, indent=2)
-
-            # GAP-003: Validate analysis.json after generation (UDS compliance)
+            # GAP-001: Validate BEFORE saving to add validation metadata to _uds
             try:
+                # Write temp file for validation
+                temp_file = analysis_file.with_suffix('.tmp.json')
+                with open(temp_file, 'w', encoding='utf-8') as f:
+                    json.dump(result, f, indent=2)
+
                 from papertrail.validators.analysis import AnalysisValidator
                 validator = AnalysisValidator()
-                validation_result = validator.validate_file(str(analysis_file))
+                validation_result = validator.validate_file(str(temp_file))
+
+                # GAP-001: Add validation metadata to _uds section
+                result['_uds']['validation_score'] = validation_result.get('score', 0)
+                result['_uds']['validation_errors'] = len(validation_result.get('errors', []))
+                result['_uds']['validation_warnings'] = len(validation_result.get('warnings', []))
 
                 if not validation_result['valid']:
                     logger.warning(f"analysis.json validation failed (score: {validation_result.get('score', 0)})")
@@ -988,10 +995,24 @@ async def handle_analyze_project_for_planning(arguments: dict) -> list[TextConte
                         logger.warning(f"  - {error}")
                 else:
                     logger.info(f"analysis.json validated successfully (score: {validation_result.get('score', 100)})")
+
+                # Clean up temp file
+                temp_file.unlink()
+
             except ImportError:
                 logger.warning("AnalysisValidator not available - skipping validation")
+                result['_uds']['validation_score'] = None
+                result['_uds']['validation_errors'] = None
+                result['_uds']['validation_warnings'] = None
             except Exception as e:
                 logger.warning(f"Analysis validation error: {e} - continuing without validation")
+                result['_uds']['validation_score'] = None
+                result['_uds']['validation_errors'] = None
+                result['_uds']['validation_warnings'] = None
+
+            # Save final analysis.json with validation metadata
+            with open(analysis_file, 'w', encoding='utf-8') as f:
+                json.dump(result, f, indent=2)
 
             # Add metadata to response with workorder
             result['_metadata'] = {

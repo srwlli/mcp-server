@@ -1,0 +1,49 @@
+{
+  "feature_name": "ai-powered-plan-generation",
+  "description": "Replace template-based plan generation in generators/planning_generator.py with AI agent that uses complete codebase context (.coderef/ data + foundation docs) to generate specific, actionable implementation plans grounded in actual codebase structure",
+  "goal": "Generate implementation plans with file-specific tasks (not generic templates), dependency-ordered phases, and explicit coderef ecosystem usage that produces actionable, context-aware plans ready for immediate execution",
+  "requirements": [
+    "AI agent replaces Python template logic in planning_generator.py _generate_plan_internal() method",
+    "Agent uses .coderef/ data: index.json (code inventory), patterns.json (conventions), graph.json (dependencies), coverage.json (test gaps), complexity.json (metrics)",
+    "Agent uses foundation docs: ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md from analysis.json",
+    "Agent explicitly calls coderef MCP tools: coderef_query (dependencies), coderef_impact (change analysis), coderef_patterns (conventions), coderef_complexity (effort estimation)",
+    "Tasks must reference specific files from code inventory with line numbers where applicable",
+    "Pre-flight validation enforces .coderef/ existence (errors if missing with instructions to run populate-coderef.py)",
+    "Post-generation validation verifies plan uses coderef context (tasks reference files, patterns followed, dependencies analyzed)",
+    "Telemetry tracking logs which coderef tools agent used (warns if <5 calls indicating underutilization)",
+    "Maintain existing 10-section plan.json schema structure",
+    "Integrate with existing /create-workorder workflow (Steps 1-9 unchanged)",
+    "Graceful error handling if Task agent unavailable (fallback message, not silent failure)"
+  ],
+  "out_of_scope": [
+    "Changing plan.json schema or section structure",
+    "Modifying validation scoring system or thresholds",
+    "Creating new MCP tools beyond existing coderef-context tools",
+    "Implementing plan execution logic (only generation)",
+    "UI/frontend changes (CLI-only workflow)"
+  ],
+  "constraints": [
+    "Must maintain backward compatibility with existing plan.json format",
+    "Must work with existing validation system (validate_implementation_plan tool)",
+    "Must handle missing .coderef/ gracefully with clear error messages",
+    "No external API dependencies beyond existing MCP infrastructure",
+    "Must complete plan generation in <2 minutes for typical projects"
+  ],
+  "decisions": {},
+  "success_criteria": {},
+  "_metadata": {
+    "workorder_id": "WO-AI-POWERED-PLAN-GENERATION-001",
+    "workorder_assigned_at": "2026-01-11T20:37:57.998190+00:00",
+    "workorder_assigned_by": "gather_context"
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-AI-POWERED-PLAN-GENERATION-001",
+    "feature_id": "ai-powered-plan-generation",
+    "last_updated": "2026-01-11",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-10"
+  }
+}

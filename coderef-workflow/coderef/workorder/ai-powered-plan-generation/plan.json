@@ -1,0 +1,329 @@
+{
+  "META_DOCUMENTATION": {
+    "feature_name": "ai-powered-plan-generation",
+    "workorder_id": "WO-AI-POWERED-PLAN-GENERATION-001",
+    "version": "1.0.0",
+    "status": "planning",
+    "generated_by": "PlanningGenerator",
+    "has_context": true,
+    "has_analysis": true,
+    "uds": {
+      "generated_by": "coderef-workflow v2.0.0",
+      "document_type": "Implementation Plan",
+      "last_updated": "2026-01-11",
+      "ai_assistance": true,
+      "next_review": "2026-02-10"
+    }
+  },
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+    "0_preparation": {},
+    "1_executive_summary": {
+      "purpose": "Replace template-based plan generation in generators/planning_generator.py with AI agent that uses complete codebase context (.coderef/ data + foundation docs) to generate specific, actionable implementation plans grounded in actual codebase structure",
+      "value_proposition": "Generate implementation plans with file-specific tasks (not generic templates), dependency-ordered phases, and explicit coderef ecosystem usage that produces actionable, context-aware plans ready for immediate execution",
+      "real_world_analogy": "Similar to building ai-powered-plan-generation - systematically implementing each requirement to deliver complete functionality",
+      "use_case": "User requests ai-powered-plan-generation \u2192 System implements: AI agent replaces Python template logic in planning_generator.py, uses .coderef/ data for code intelligence, uses foundation docs for architecture context, explicitly calls coderef MCP tools for dependency analysis \u2192 Feature generates specific, actionable plans",
+      "output": "Implemented 11 requirements: AI agent replaces Python template logic in planning_generator.py _generate_plan_internal() method, Agent uses .coderef/ data: index.json (code inventory), patterns.json (conventions), graph.json (dependencies), coverage.json (test gaps), complexity.json (metrics), Agent uses foundation docs: ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md from analysis.json"
+    },
+    "2_risk_assessment": {
+      "overall_risk": "medium",
+      "complexity": "high (complexity: multiple file changes across generators, validators, handlers)",
+      "scope": "11 requirements affecting planning generator, tool handlers, and validation systems",
+      "file_system_risk": "low (standard code changes only)",
+      "dependencies": [
+        "Must maintain backward compatibility with existing plan.json format",
+        "Must work with existing validation system (validate_implementation_plan tool)",
+        "Must handle missing .coderef/ gracefully with clear error messages",
+        "No external API dependencies beyond existing MCP infrastructure",
+        "Must complete plan generation with acceptable performance for typical projects (complexity: low latency requirement)"
+      ],
+      "performance_concerns": [
+        "No significant performance concerns identified - monitor during implementation"
+      ],
+      "security_considerations": [
+        "Follow existing security patterns - review during implementation"
+      ],
+      "breaking_changes": "none (extending existing functionality)"
+    },
+    "3_current_state_analysis": {
+      "affected_files": [
+        "Identify during implementation based on feature scope"
+      ],
+      "dependencies": {
+        "existing_internal": [
+          "Existing modules and components - identify during implementation"
+        ],
+        "existing_external": [],
+        "new_external": [],
+        "new_internal": []
+      },
+      "architecture_context": "Follows existing patterns: Standard implementation patterns"
+    },
+    "4_key_features": {
+      "primary_features": [
+        "AI agent replaces Python template logic in planning_generator.py _generate_plan_internal() method",
+        "Agent uses .coderef/ data: index.json (code inventory), patterns.json (conventions), graph.json (dependencies), coverage.json (test gaps), complexity.json (metrics)",
+        "Agent uses foundation docs: ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md from analysis.json",
+        "Agent explicitly calls coderef MCP tools: coderef_query (dependencies), coderef_impact (change analysis), coderef_patterns (conventions), coderef_complexity (effort estimation)",
+        "Tasks must reference specific files from code inventory with line numbers where applicable"
+      ],
+      "secondary_features": [
+        "Pre-flight validation enforces .coderef/ existence (errors if missing with instructions to run populate-coderef.py)",
+        "Post-generation validation verifies plan uses coderef context (tasks reference files, patterns followed, dependencies analyzed)",
+        "Telemetry tracking logs coderef tool usage by agent (warns if <5 calls indicating underutilization)",
+        "Maintain existing 10-section plan.json schema structure",
+        "Integrate with existing /create-workorder workflow (Steps 1-9 unchanged)",
+        "Graceful error handling if Task agent unavailable (fallback message, not silent failure)"
+      ],
+      "edge_case_handling": [
+        "Empty or null input validation",
+        "Invalid input error handling",
+        "Boundary conditions and limits"
+      ],
+      "configuration_options": [
+        "None"
+      ]
+    },
+    "5_task_id_system": {
+      "tasks": [
+        "SETUP-001: No new dependencies required - verify Task tool available in MCP environment and async support in planning_generator.py",
+        "IMPL-001: Modify generators/planning_generator.py lines 232-285 - Replace _generate_plan_internal() synchronous method with _generate_plan_with_agent() async method that launches Task agent",
+        "IMPL-002: Add 5 coderef data loading methods to generators/planning_generator.py - _load_coderef_index(), _load_coderef_patterns(), _load_coderef_graph(), _load_coderef_coverage(), _load_coderef_complexity() that read from .coderef/ directory",
+        "IMPL-003: Create _build_agent_prompt() method in generators/planning_generator.py - Constructs comprehensive prompt including context, analysis, coderef data, foundation docs, explicit coderef tool usage instructions, and template structure",
+        "IMPL-004: Add _validate_coderef_exists() pre-flight check method to generators/planning_generator.py - Errors if .coderef/index.json, graph.json, or patterns.json missing with instructions to run populate-coderef.py, warns if drift.json shows >10% staleness",
+        "IMPL-005: Add _validate_plan_uses_coderef() post-generation validation method to generators/planning_generator.py - Verifies tasks reference files from index.json, patterns.json conventions mentioned, dependencies analyzed using graph.json, raises ValidationError if not",
+        "IMPL-006: Add _track_coderef_usage() telemetry method to generators/planning_generator.py - Parses agent execution log for coderef_query, coderef_impact, coderef_patterns, coderef_complexity calls, logs usage statistics, warns if <5 total calls",
+        "IMPL-007: Modify tool_handlers.py line 1307 handle_create_plan() - Add async support if needed, call new agent-powered generator methods, add validation step after generation, log telemetry results",
+        "IMPL-008: Update generators/planning_generator.py to add graceful error handling - If Task agent unavailable or fails, provide clear error message (not silent failure), suggest fallback to manual planning",
+        "TEST-001: Create tests/test_ai_plan_generation.py - Mock Task agent, verify _build_agent_prompt() constructs correct prompt, verify coderef data loading methods read correct files, test pre-flight validation errors",
+        "TEST-002: Add integration test in tests/integration/ - Generate real plan with mocked coderef data, verify plan contains file-specific tasks, verify coderef tool usage tracking, verify validation enforces coderef usage",
+        "DOC-001: Update .claude/commands/create-workorder.md - Document AI-powered behavior in Step 4, add note about coderef tool usage requirements, update prerequisites section about .coderef/ population",
+        "DOC-002: Update CLAUDE.md lines 50-80 System Architecture section - Add AI agent integration subsection, explain coderef ecosystem usage enforcement, add before/after plan examples showing improvement"
+      ]
+    },
+    "6_implementation_phases": {
+      "phases": [
+        {
+          "phase": 1,
+          "name": "Phase 1: Core Agent Integration",
+          "description": "Replace template-based generation with AI agent - modify planning_generator.py to launch Task agent with comprehensive context payload",
+          "tasks": [
+            "SETUP-001",
+            "IMPL-001",
+            "IMPL-002",
+            "IMPL-003"
+          ],
+          "deliverables": [
+            "Task agent launches successfully from planning_generator.py",
+            "Agent receives complete context (requirements + coderef data + docs)",
+            "Agent prompt includes explicit coderef tool usage instructions"
+          ],
+          "dependencies": "Sequential - SETUP-001 must complete before IMPL-001, then IMPL-002 and IMPL-003 build on IMPL-001",
+          "rationale": "Foundation methods needed before validation/telemetry can work"
+        },
+        {
+          "phase": 2,
+          "name": "Phase 2: Validation & Enforcement",
+          "description": "Ensure agent uses coderef context - add pre-flight checks, post-generation validation, and telemetry tracking",
+          "tasks": [
+            "IMPL-004",
+            "IMPL-005",
+            "IMPL-006",
+            "IMPL-008"
+          ],
+          "deliverables": [
+            "Pre-flight validation errors if .coderef/ missing",
+            "Post-generation validation verifies plan uses coderef context",
+            "Telemetry logs coderef tool usage",
+            "Graceful error messages if agent fails"
+          ],
+          "dependencies": "Can start in parallel with Phase 1 completion - validation methods independent of agent launch logic",
+          "rationale": "Validation ensures quality but doesn't block core agent implementation"
+        },
+        {
+          "phase": 3,
+          "name": "Phase 3: Integration & Tool Handler Updates",
+          "description": "Wire new agent-powered generator into existing /create-workorder workflow - modify tool_handlers.py to call new methods",
+          "tasks": [
+            "IMPL-007"
+          ],
+          "deliverables": [
+            "handle_create_plan() calls agent-powered generator",
+            "Validation runs after plan generation",
+            "Telemetry results logged to console"
+          ],
+          "dependencies": "Depends on Phase 1 and Phase 2 completion - requires both agent methods and validation methods to exist",
+          "rationale": "Integration is final step connecting all pieces"
+        },
+        {
+          "phase": 4,
+          "name": "Phase 4: Testing",
+          "description": "Verify AI-powered planning works correctly - unit tests for methods, integration test for end-to-end workflow",
+          "tasks": [
+            "TEST-001",
+            "TEST-002"
+          ],
+          "deliverables": [
+            "Unit tests verify coderef data loading",
+            "Unit tests verify prompt construction",
+            "Integration test verifies file-specific plan generation",
+            "All tests passing"
+          ],
+          "dependencies": "Depends on Phase 1, 2, 3 completion - can't test until implementation exists",
+          "rationale": "Testing validates entire implementation before documentation"
+        },
+        {
+          "phase": 5,
+          "name": "Phase 5: Documentation",
+          "description": "Update user-facing and internal documentation to reflect AI-powered planning behavior",
+          "tasks": [
+            "DOC-001",
+            "DOC-002"
+          ],
+          "deliverables": [
+            "create-workorder.md documents AI behavior",
+            "CLAUDE.md explains architecture changes",
+            "Before/after examples show improvement"
+          ],
+          "dependencies": "Can run in parallel with Phase 4 - docs can be written once implementation approach is finalized",
+          "rationale": "Documentation is final polish after working implementation"
+        }
+      ]
+    },
+    "7_testing_strategy": {
+      "unit_tests": [
+        "Test individual functions and methods in isolation",
+        "Verify input validation and error handling",
+        "Test edge cases and boundary conditions",
+        "Achieve minimum 80% code coverage"
+      ],
+      "integration_tests": [
+        "Test component interactions and data flow",
+        "Verify end-to-end functionality",
+        "Test integration with existing systems"
+      ],
+      "end_to_end_tests": [
+        "Not applicable"
+      ],
+      "edge_case_scenarios": [
+        {
+          "scenario": "Empty or null input provided",
+          "setup": "Call function with None or empty string",
+          "expected_behavior": "Function validates input and returns appropriate error",
+          "verification": "Assert error message and status code",
+          "error_handling": "ValueError or ValidationError"
+        },
+        {
+          "scenario": "Invalid input format provided",
+          "setup": "Call function with malformed or incorrect data type",
+          "expected_behavior": "Function validates input type and returns error",
+          "verification": "Assert error message indicates invalid format",
+          "error_handling": "TypeError or ValidationError"
+        },
+        {
+          "scenario": "Boundary conditions at limits",
+          "setup": "Test with minimum and maximum allowed values",
+          "expected_behavior": "Function handles boundary values correctly",
+          "verification": "Assert results are within expected range",
+          "error_handling": "No error expected for valid boundaries"
+        }
+      ]
+    },
+    "8_success_criteria": {
+      "functional_requirements": [
+        {
+          "requirement": "Feature implementation complete",
+          "metric": "All requirements implemented",
+          "target": "100% of specified requirements",
+          "validation": "Manual verification against requirements list"
+        },
+        {
+          "requirement": "Integration successful",
+          "metric": "Feature works with existing system",
+          "target": "No breaking changes to existing functionality",
+          "validation": "Run full test suite"
+        },
+        {
+          "requirement": "AI agent replaces Python template logic in planning_generator.py _generate_plan_internal() method",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: AI agent replaces Python template logic in planning_generator.py _generate_plan_internal() method"
+        },
+        {
+          "requirement": "Agent uses .coderef/ data: index.json (code inventory), patterns.json (conventions), graph.json (dependencies), coverage.json (test gaps), complexity.json (metrics)",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: Agent uses .coderef/ data: index.json (code inventory), patterns.json (conventions), graph.json (dependencies), coverage.json (test gaps), complexity.json (metrics)"
+        },
+        {
+          "requirement": "Agent uses foundation docs: ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md from analysis.json",
+          "metric": "Functionality verified",
+          "target": "Works as specified",
+          "validation": "Test cases for: Agent uses foundation docs: ARCHITECTURE.md, API.md, SCHEMA.md, COMPONENTS.md from analysis.json"
+        }
+      ],
+      "quality_requirements": [
+        {
+          "requirement": "Code coverage",
+          "metric": "Line coverage",
+          "target": ">80%",
+          "validation": "Run coverage tool"
+        },
+        {
+          "requirement": "Code quality",
+          "metric": "Linter passes",
+          "target": "Zero linting errors",
+          "validation": "Run linter"
+        },
+        {
+          "requirement": "Type safety",
+          "metric": "Type checker passes",
+          "target": "Zero type errors",
+          "validation": "Run type checker"
+        }
+      ],
+      "performance_requirements": [
+        {
+          "requirement": "Response time",
+          "metric": "Execution time",
+          "target": "< 1 second for typical operations",
+          "validation": "Performance tests"
+        }
+      ],
+      "security_requirements": [
+        {
+          "requirement": "Input validation",
+          "metric": "All inputs validated",
+          "target": "100% validation coverage",
+          "validation": "Security review"
+        }
+      ]
+    },
+    "9_implementation_checklist": {
+      "pre_implementation": [
+        "\u2610 Review complete plan for gaps or ambiguities",
+        "\u2610 Verify all requirements are clear and testable",
+        "\u2610 Set up development environment with required dependencies"
+      ],
+      "phase_1": [
+        "\u2610 SETUP-001: Create initial project structure and setup development environment with required dependencies"
+      ],
+      "phase_2": [
+        "\u2610 LOGIC-001: Implement core feature functionality following existing project patterns and architecture"
+      ],
+      "phase_3": [
+        "\u2610 TEST-001: Write unit tests for all new functionality with minimum 80% code coverage",
+        "\u2610 TEST-002: Write integration tests to verify end-to-end functionality and component interactions"
+      ],
+      "phase_4": [
+        "\u2610 DOC-001: Update documentation including README, API docs, and inline code comments for all public interfaces"
+      ],
+      "finalization": [
+        "\u2610 All tests passing (unit + integration)",
+        "\u2610 Code review completed and approved",
+        "\u2610 Documentation updated and complete",
+        "\u2610 Changelog entry created with version bump",
+        "\u2610 Final verification against success criteria"
+      ]
+    }
+  }
+}

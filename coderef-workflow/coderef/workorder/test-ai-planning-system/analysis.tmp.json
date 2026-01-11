@@ -1,0 +1,195 @@
+{
+  "foundation_docs": {
+    "available": [
+      "README.md (root)",
+      "API.md (coderef/foundation-docs)",
+      "ARCHITECTURE.md (coderef/foundation-docs)",
+      "COMPONENTS.md (coderef/foundation-docs)",
+      "SCHEMA.md (coderef/foundation-docs)"
+    ],
+    "missing": [
+      "USER-GUIDE.md"
+    ]
+  },
+  "foundation_doc_content": {
+    "ARCHITECTURE.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Architecture\n\n## Dependency Graph\n\n```mermaid\n\ngraph LR\n    file_C__Users_willh__mcp_servers_coderef_workflow_validation_py[\"C:\\Users\\willh\\.mcp-servers...\"]:::fileStyle\n    file_boundaries[\"boundaries\"]:::fileStyle\n    file_validate_project_path_input[\"validate_project_path_input\"]:::fileStyle\n    file_isinstance[\"isinstance\"]:::fileStyle\n    file_ValueError[\"ValueError\"]:::fileStyle\n    file_len[\"len\"]:::fileStyle\n    file_bytes[\"bytes\"]:::fileStyle\n    file_validate_version_format[\"validate",
+      "headers": [
+        "Architecture",
+        "Dependency Graph",
+        "Core Components",
+        "Functions (5721)",
+        "Classes (3399)",
+        "Components (0)",
+        "Module Organization",
+        "`C:\\Users\\willh\\.mcp-servers\\coderef-workflow/`",
+        "`C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.venv\\Lib\\site-packages/`",
+        "`C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.venv\\Lib\\site-packages\\adodbapi/`"
+      ],
+      "size": 12526
+    },
+    "API.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# API Reference\n\n**Total Functions:** 5721\n\n## Functions\n\n### `randomstring()`\n\n- **File:** `C:/Users/willh/.mcp-servers/coderef-workflow/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`\n- **Line:** 40\n- **Type:** Function\n\n### `helpTestDataType()`\n\n- **File:** `C:/Users/willh/.mcp-servers/coderef-workflow/.venv/Lib/site-packages/adodbapi/test/adodbapitest.py`\n- **Line:** 182\n- **Type:** Function\n\n### `Python()`\n\n- **File:** `C:/Users/willh/.mcp-servers/coderef-workflow/.venv/Lib/site-pack",
+      "headers": [
+        "API Reference",
+        "Functions",
+        "`randomstring()`",
+        "`helpTestDataType()`",
+        "`Python()`",
+        "`os()`",
+        "`maketemp()`",
+        "`_cleanup_function()`",
+        "`getcleanupfunction()`",
+        "`find_ado_path()`"
+      ],
+      "size": 1541422
+    },
+    "COMPONENTS.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Components Reference - coderef-workflow\n\n**Generated:** 2025-12-31\n**Version:** 1.2.0\n\n---\n\n## Purpose\n\nThis document describes the **module and package architecture** of coderef-workflow. Since this is a backend MCP server (not a UI application), \"components\" refer to Python modules, generators, and tool handlers rather than UI components.\n\n## Overview\n\ncoderef-workflow is organized into **4 primary module groups**:\n\n1. **Core Modules** (`server.py`, `src/`) - MCP server and tool implementati",
+      "headers": [
+        "Components Reference - coderef-workflow",
+        "Purpose",
+        "Overview",
+        "What: Module Structure",
+        "1. Core Modules",
+        "MCP server instance",
+        "Tool definitions",
+        "Tool call handler",
+        "Handler map (dispatcher pattern)",
+        "Individual handlers"
+      ],
+      "size": 13724
+    },
+    "SCHEMA.md": {
+      "location": "coderef\\foundation-docs",
+      "preview": "# Schema Reference\n\n**Total Types:** 0\n\n## Interfaces\n\n_No interfaces found_\n\n## Type Definitions\n\n_No type definitions found_\n\n## Enums\n\n_No enums found_\n\n---\n**Generated from:** `.coderef/index.json`\n**Date:** 2025-12-31\n",
+      "headers": [
+        "Schema Reference",
+        "Interfaces",
+        "Type Definitions",
+        "Enums"
+      ],
+      "size": 223
+    },
+    "README.md": {
+      "location": "root",
+      "preview": "# coderef-workflow\n\n**Enterprise-grade MCP server for AI-powered feature lifecycle management**\n\n[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](https://github.com/willh/coderef-workflow)\n[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)\n[![MCP](https://img.shields.io/badge/MCP-1.0%2B-green.svg)](https://modelcontextprotocol.io)\n[![Status](https://img.shields.io/badge/status-production-brightgreen.svg)]()\n\n---\n\n## What's New in",
+      "headers": [
+        "coderef-workflow",
+        "What's New in v1.2.0",
+        "Purpose",
+        "Overview",
+        "Quick Start",
+        "Installation",
+        "or with uv",
+        "Start the MCP server",
+        "In Claude Code, run:",
+        "Usage"
+      ],
+      "size": 15252
+    }
+  },
+  "inventory_data": {
+    "source": "coderef_index",
+    "total_elements": 19306,
+    "by_type": {
+      "function": 5723,
+      "method": 10184,
+      "class": 3399
+    },
+    "files": 953,
+    "utilization": ".coderef/index.json (preprocessed)"
+  },
+  "coding_standards": {
+    "available": [],
+    "missing": [
+      "BEHAVIOR-STANDARDS.md",
+      "COMPONENT-PATTERN.md",
+      "UI-STANDARDS.md",
+      "UX-PATTERNS.md",
+      "COMPONENT-INDEX.md"
+    ]
+  },
+  "reference_components": {
+    "primary": null,
+    "secondary": [],
+    "total_found": 0,
+    "note": "Using fallback - coderef tools unavailable"
+  },
+  "key_patterns_identified": [],
+  "technology_stack": {
+    "language": "Python",
+    "framework": "unknown",
+    "database": "unknown",
+    "testing": "unknown",
+    "build": "unknown"
+  },
+  "project_structure": {
+    "main_directories": [
+      ".coderef",
+      "generators",
+      "tests",
+      "coderef\\reference-sheets",
+      "coderef\\schemas",
+      "coderef\\reference-sheets\\.jsdoc"
+    ],
+    "file_counts": {
+      "tests": 18,
+      "generators": 17,
+      ".coderef": 14,
+      "coderef\\reference-sheets": 12,
+      "coderef\\schemas": 11,
+      "coderef\\reference-sheets\\.jsdoc": 10,
+      "coderef\\foundation-docs": 6,
+      "tests\\integration": 6,
+      "coderef\\docs\\guides": 6,
+      "coderef\\docs\\reports": 6
+    },
+    "organization_pattern": "unknown"
+  },
+  "gaps_and_risks": [
+    "Low test coverage: 45% (target: \u226580%)",
+    "3 files have no test coverage",
+    "Missing foundation docs: USER-GUIDE.md",
+    "No coding standards directory found (coderef/standards/)",
+    "No CI configuration found (.github/workflows/, .gitlab-ci.yml, etc.)"
+  ],
+  "dependency_analysis": null,
+  "impact_analysis": null,
+  "complexity_analysis": null,
+  "architecture_diagram": null,
+  "telemetry_summary": {
+    "total_sources_used": 1,
+    "coderef_file_reads": {
+      "count": 1,
+      "percentage": 100.0,
+      "files": [
+        ".coderef/index.json"
+      ]
+    },
+    "mcp_tool_calls": {
+      "count": 0,
+      "success_count": 0,
+      "percentage": 0.0,
+      "tools": []
+    },
+    "foundation_doc_reads": {
+      "count": 0,
+      "percentage": 0.0,
+      "docs": []
+    }
+  },
+  "_uds": {
+    "generated_by": "coderef-workflow v2.0.0",
+    "document_type": "Project Analysis",
+    "workorder_id": "WO-TEST-AI-PLANNING-SYSTEM-001",
+    "feature_id": "test-ai-planning-system",
+    "last_updated": "2026-01-11",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-10"
+  }
+}

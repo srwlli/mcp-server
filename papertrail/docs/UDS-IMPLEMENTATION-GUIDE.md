@@ -923,6 +923,77 @@ else:
 
 ---
 
+### Example: ResourceSheetValidator (RSMS v2.0)
+
+**Category:** resource_sheet
+**Schema:** `schemas/documentation/resource-sheet-metadata-schema.json`
+**File:** `papertrail/validators/resource_sheet.py`
+
+**Purpose:** Validates resource sheets (documentation for individual components, services, controllers, etc.) against RSMS v2.0 standards.
+
+**Required Fields:**
+- Base UDS: `agent`, `date`, `task`
+- RSMS: `subject`, `parent_project`, `category`
+
+**Optional Fields:**
+- `version` (semver format: 1.0.0)
+- `related_files` (array of file paths)
+- `related_docs` (array of .md files)
+- `workorder` (format: WO-{CATEGORY}-{ID}-###)
+- `tags` (array of strings)
+- `status` (DRAFT, REVIEW, APPROVED, ARCHIVED)
+
+**Key Features:**
+- Category enum validation (service, controller, model, utility, integration, component, middleware, validator, schema, config, other)
+- Semver version format validation
+- File path format validation for related_files
+- Markdown file validation for related_docs (.md extension required)
+- Workorder ID format validation
+- Filename convention checking ({Subject}-RESOURCE-SHEET.md)
+- Recommended sections checking (Executive Summary, Audience & Intent, Quick Reference, Architecture, Dependencies, Usage, Testing)
+- Legacy field warning ('component' deprecated in favor of 'subject')
+
+**Usage:**
+```python
+from papertrail.validators.resource_sheet import ResourceSheetValidator
+
+validator = ResourceSheetValidator()
+result = validator.validate_file("docs/AuthService-RESOURCE-SHEET.md")
+
+if result.valid:
+    print(f"✅ Valid - Score: {result.score}/100")
+else:
+    print(f"❌ Invalid - Score: {result.score}/100")
+    for error in result.errors:
+        print(f"  - {error.message}")
+    for warning in result.warnings:
+        print(f"  ⚠️  {warning}")
+```
+
+**Example Frontmatter:**
+```yaml
+---
+agent: coderef-assistant
+date: "2026-01-10"
+task: CONSOLIDATE
+subject: AuthService
+parent_project: backend-api
+category: service
+version: "1.0.0"
+related_files:
+  - src/auth/auth.service.ts
+  - src/auth/token.service.ts
+related_docs:
+  - UserController-RESOURCE-SHEET.md
+workorder: WO-AUTH-SYSTEM-001
+status: APPROVED
+---
+```
+
+**Tests:** `tests/validators/test_resource_sheet.py` (12 tests, 100% passing)
+
+---
+
 ## Example: Complete Implementation
 
 See `papertrail/validators/infrastructure.py` for a complete example implementation including:

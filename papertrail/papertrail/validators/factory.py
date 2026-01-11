@@ -161,7 +161,7 @@ class ValidatorFactory:
     def _create_validator(cls, validator_type: str, schemas_dir: Optional[Path] = None) -> BaseUDSValidator:
         """Create validator instance based on type"""
         # Import validators dynamically to avoid circular imports
-        from . import foundation, workorder, system, standards, session, infrastructure, migration, user_facing, general, execution_log, analysis
+        from . import foundation, workorder, system, standards, session, infrastructure, migration, user_facing, general, execution_log, analysis, resource_sheet
 
         validator_map = {
             "foundation": foundation.FoundationDocValidator,
@@ -175,7 +175,7 @@ class ValidatorFactory:
             "general": general.GeneralMarkdownValidator,
             "execution_log": execution_log.ExecutionLogValidator,  # New: execution-log.json
             "analysis": analysis.AnalysisValidator,  # New: analysis.json
-            "resource_sheet": None,  # Will use existing resource-sheets/validate.ps1 for now
+            "resource_sheet": resource_sheet.ResourceSheetValidator,  # New: resource sheet validator
             "plan": None,  # Will use existing plans/validate.py for now
         }
 

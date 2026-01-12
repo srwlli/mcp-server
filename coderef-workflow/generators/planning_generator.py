@@ -230,6 +230,50 @@ class PlanningGenerator:
                 self.save_plan(feature_name, partial_plan)
                 raise ValueError(f"Plan generation failed: {str(retry_error)}. Partial plan saved.")
 
+    def _parse_agent_json_response(self, response_text: str) -> Dict[str, Any]:
+        """
+        Parse JSON from Task agent response, handling markdown code fences.
+
+        Args:
+            response_text: Raw response text from Task agent
+
+        Returns:
+            Parsed JSON dictionary
+
+        Raises:
+            ValueError: If JSON cannot be extracted or parsed
+        """
+        import re
+
+        # Try to extract JSON from markdown code fences
+        # Patterns: ```json\n{...}\n``` or ```\n{...}\n``` or raw {...}
+        patterns = [
+            r'```json\s*\n(.*?)\n```',  # ```json ... ```
+            r'```\s*\n(.*?)\n```',       # ``` ... ```
+            r'(\{[\s\S]*\})',             # Raw JSON object
+        ]
+
+        json_text = None
+        for pattern in patterns:
+            match = re.search(pattern, response_text, re.DOTALL)
+            if match:
+                json_text = match.group(1).strip()
+                logger.debug(f"Extracted JSON using pattern: {pattern}")
+                break
+
+        if not json_text:
+            raise ValueError("Could not extract JSON from agent response - no JSON pattern found")
+
+        # Parse JSON
+        try:
+            plan_data = json.loads(json_text)
+            logger.info("✅ Successfully parsed JSON from agent response")
+            return plan_data
+        except json.JSONDecodeError as e:
+            logger.error(f"❌ JSON parsing failed: {str(e)}")
+            logger.debug(f"Failed JSON text (first 500 chars): {json_text[:500]}")
+            raise ValueError(f"Invalid JSON in agent response: {str(e)}")
+
     async def _generate_plan_with_agent(
         self,
         feature_name: str,

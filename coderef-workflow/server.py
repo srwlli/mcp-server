@@ -518,6 +518,29 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
+            name='finalize_plan_from_agent',
+            description='Finalize plan generation by parsing Task agent response, saving to plan.json, and auto-validating. Called automatically by Claude Code after Task agent completes in /create-workorder workflow.',
+            inputSchema={
+                'type': 'object',
+                'properties': {
+                    'project_path': {
+                        'type': 'string',
+                        'description': 'Absolute path to project directory'
+                    },
+                    'feature_name': {
+                        'type': 'string',
+                        'description': 'Feature name (alphanumeric, hyphens, underscores only)',
+                        'pattern': '^[a-zA-Z0-9_-]+$'
+                    },
+                    'agent_response': {
+                        'type': 'string',
+                        'description': 'Raw text response from Task agent containing plan JSON'
+                    }
+                },
+                'required': ['project_path', 'feature_name', 'agent_response']
+            }
+        ),
+        Tool(
             name='generate_deliverables_template',
             description='Generate DELIVERABLES.md template from plan.json structure with phase/task checklists and metric placeholders. Automatically called by /create-plan workflow. Saves to coderef/workorder/{feature-name}/DELIVERABLES.md.',
             inputSchema={

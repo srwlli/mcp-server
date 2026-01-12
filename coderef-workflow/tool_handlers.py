@@ -1350,15 +1350,11 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
 
         if agent_prompt:
             message += "⚠️  Note: Plan used template generation (fallback mode)\n"
-            message += "🤖 AI-POWERED PLANNING ENABLED - Automatically proceeding:\n\n"
-            message += "INSTRUCTIONS FOR CLAUDE CODE:\n"
-            message += "1. Launch Task agent with the agent_prompt from response data\n"
-            message += "2. Agent will generate file-specific implementation plan\n"
-            message += "3. Parse agent response to extract plan.json\n"
-            message += "4. Overwrite template plan with AI-generated version\n"
-            message += "5. Re-validate the new plan with /validate-plan\n"
-            message += "6. Report results to user\n\n"
-            message += "DO NOT ASK FOR CONFIRMATION - PROCEED AUTOMATICALLY.\n\n"
+            message += "🤖 AI-POWERED PLANNING: Agent prompt ready\n\n"
+            message += "📋 Next Step: Call finalize_plan_from_agent with Task agent response\n"
+            message += "   1. Launch Task agent with agent_prompt\n"
+            message += "   2. Call: finalize_plan_from_agent(project_path, feature_name, agent_response)\n"
+            message += "   3. Tool will parse, validate, and save final plan\n\n"
 
         message += f"Next: /validate-plan or /align-plan to continue"
 
@@ -1391,6 +1387,83 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
         raise ValueError(f"Failed to generate plan: {str(e)}")
 
 
+@log_invocation
+@mcp_error_handler
+async def handle_finalize_plan_from_agent(arguments: dict) -> list[TextContent]:
+    """
+    Finalize plan generation by parsing Task agent response.
+
+    This tool receives the raw Task agent response, parses the JSON,
+    validates it, and saves it to plan.json. Called automatically by
+    Claude Code after Task agent completes.
+
+    Args:
+        project_path: Project root directory
+        feature_name: Feature name
+        agent_response: Raw text response from Task agent
+
+    Returns:
+        Success response with validation score
+    """
+    # Validate inputs
+    project_path = validate_project_path_input(arguments.get('project_path', ''))
+    project_path_obj = Path(project_path).resolve()
+    feature_name = validate_feature_name_input(arguments.get('feature_name', ''))
+    agent_response = arguments.get('agent_response', '')
+
+    if not agent_response or len(agent_response.strip()) < 50:
+        raise ValueError("agent_response is required and must contain substantial content")
+
+    try:
+        # Initialize generator
+        generator = PlanningGenerator(project_path_obj)
+
+        # Parse agent response to extract JSON
+        plan_data = generator._parse_agent_json_response(agent_response)
+
+        # Save plan to file
+        generator.save_plan(feature_name, plan_data)
+        plan_file = project_path_obj / "coderef" / "workorder" / feature_name / "plan.json"
+
+        logger.info(f"✅ Plan saved to: {plan_file}")
+
+        # Auto-validate the plan
+        try:
+            from validators.plan_validator import LegacyPlanValidator
+            validator = LegacyPlanValidator(str(plan_file))
+            validation_result = validator.validate()
+
+            validation_score = validation_result.get('score', 0)
+            validation_status = "PASS" if validation_result.get('approved', False) else "FAIL"
+            issues_count = len(validation_result.get('issues', []))
+
+            logger.info(f"📊 Validation: {validation_status} ({validation_score}/100) - {issues_count} issues")
+
+            return format_success_response(
+                f"✅ Plan finalized and validated\n\n"
+                f"Feature: {feature_name}\n"
+                f"Plan file: {plan_file}\n"
+                f"Validation: {validation_status} ({validation_score}/100)\n"
+                f"Issues: {issues_count}\n\n"
+                f"{'✅ Plan approved - ready for implementation' if validation_result.get('approved') else '⚠️  Plan needs revision'}"
+            )
+
+        except Exception as val_error:
+            logger.warning(f"⚠️  Validation failed: {str(val_error)}")
+            return format_success_response(
+                f"✅ Plan saved (validation unavailable)\n\n"
+                f"Feature: {feature_name}\n"
+                f"Plan file: {plan_file}\n\n"
+                f"Note: Auto-validation failed: {str(val_error)}\n"
+                f"Run /validate-plan manually to check plan quality"
+            )
+
+    except ValueError as e:
+        logger.error(f"❌ Plan finalization failed: {str(e)}")
+        raise ValueError(f"Failed to finalize plan: {str(e)}")
+    except Exception as e:
+        logger.error(f"❌ Unexpected error: {str(e)}")
+        raise ValueError(f"Unexpected error during plan finalization: {str(e)}")
 
 
 @log_invocation
@@ -4579,6 +4652,7 @@ TOOL_HANDLERS = {
     'validate_implementation_plan': handle_validate_implementation_plan,
     'generate_plan_review_report': handle_generate_plan_review_report,
     'create_plan': handle_create_plan,
+    'finalize_plan_from_agent': handle_finalize_plan_from_agent,
     'generate_deliverables_template': handle_generate_deliverables_template,
     'update_deliverables': handle_update_deliverables,
     'generate_agent_communication': handle_generate_agent_communication,

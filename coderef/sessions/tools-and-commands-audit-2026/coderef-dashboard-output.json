@@ -1,0 +1,117 @@
+{
+  "agent_id": "coderef-dashboard",
+  "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [],
+  "slash_commands": [
+    {
+      "command": "/widget-architect",
+      "file": "widget-architect.md",
+      "description": "Activate widget-architect persona for expert guidance on CodeRef Dashboard widget architecture, lifecycle management, bundle system, and integration patterns",
+      "status": "active"
+    }
+  ],
+  "dashboard_features": {
+    "core_library": {
+      "package": "@coderef-dashboard/core",
+      "exports": [
+        {
+          "name": "api",
+          "type": "API Client",
+          "description": "REST API client for session, attachments, responses, prompts, export, and config management",
+          "methods": [
+            "getSession",
+            "setPrompt",
+            "clearPrompt",
+            "listAttachments",
+            "addAttachmentText",
+            "clearAttachments",
+            "addResponse",
+            "getResponsesSummary",
+            "clearResponses",
+            "getPreloadedPrompts",
+            "usePreloadedPrompt",
+            "addPreloadedPrompt",
+            "exportLlmFriendly",
+            "exportLlmFriendlyPrompt",
+            "exportLlmFriendlyAttachments",
+            "exportLlmFriendlyResponses",
+            "getConfig"
+          ]
+        },
+        {
+          "name": "hooks",
+          "type": "React Hooks",
+          "description": "Custom React hooks for session state management",
+          "exports": ["useSession", "useSessionRefresh"]
+        },
+        {
+          "name": "utils",
+          "type": "Utilities",
+          "description": "Helper utilities for clipboard and file handling",
+          "exports": ["clipboard", "fileHandlers"]
+        },
+        {
+          "name": "ErrorBoundary",
+          "type": "React Component",
+          "description": "Error isolation component for widget error handling"
+        }
+      ]
+    },
+    "dashboard_package": {
+      "package": "@coderef-dashboard/dashboard",
+      "type": "Next.js 16 PWA Application",
+      "api_routes": [
+        "/api/workorders",
+        "/api/workorders/[workorderId]",
+        "/api/stubs",
+        "/api/coderef/projects",
+        "/api/coderef/projects/[id]",
+        "/api/coderef/tree",
+        "/api/coderef/file",
+        "/api/coderef/notes",
+        "/api/sessions",
+        "/api/sessions/create",
+        "/api/sessions/output",
+        "/api/sessions/context-discovery",
+        "/api/scan"
+      ],
+      "pages": [
+        "/",
+        "/assistant",
+        "/explorer",
+        "/metrics",
+        "/notes",
+        "/notes-standalone",
+        "/prompts",
+        "/resources",
+        "/sessions",
+        "/sessions/create",
+        "/settings",
+        "/user",
+        "/viewer/full"
+      ],
+      "notes": "Scanner-related API routes (/api/scanner/*) and /scanner page excluded per audit instructions"
+    },
+    "electron_package": {
+      "package": "coderef-dashboard",
+      "type": "Electron Desktop Wrapper",
+      "build_targets": ["nsis", "portable"],
+      "features": ["IPC filesystem integration", "native OS integration", "dual distribution (installer + portable)"]
+    }
+  },
+  "widget_system": {
+    "architecture": "IIFE bundle system with global window.CodeRefCore",
+    "lifecycle_hooks": ["onEnable", "onDisable", "onSettingsChange", "onError"],
+    "core_apis": ["api client", "React hooks", "utilities", "ErrorBoundary"],
+    "typescript_types": ["IScriptboardWidget", "WidgetConfig", "WidgetStatus", "WidgetSettingsChangePayload", "WidgetRenderProps", "WidgetLoaderError"]
+  },
+  "totals": {
+    "tools": 0,
+    "commands": 1,
+    "api_routes": 13,
+    "pages": 13,
+    "core_exports": 4
+  },
+  "notes": "CodeRef Dashboard is a UI/frontend system (not an MCP server), so it has no MCP tools. It provides a modular widget system, Next.js PWA, and Electron desktop app for visualizing CodeRef development resources. Scanner functionality (packages/coderef-core) excluded per audit instructions - will be audited separately by coderef-scanner agent."
+}

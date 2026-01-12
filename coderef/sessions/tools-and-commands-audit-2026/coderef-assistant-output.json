@@ -1,0 +1,19 @@
+{
+  "agent_id": "coderef-assistant",
+  "project_path": "C:\\Users\\willh\\Desktop\\assistant",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [],
+  "slash_commands": [
+    {
+      "command": "/archive-file",
+      "file": "archive-file.md",
+      "description": "Archive files to assistant/coderef/archived/{project}/ organized by project",
+      "status": "active"
+    }
+  ],
+  "totals": {
+    "tools": 0,
+    "commands": 1
+  },
+  "notes": "Assistant is an orchestrator project with no MCP tools. It has one slash command for archiving files to the coderef/archived directory organized by project."
+}

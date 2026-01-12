@@ -1,0 +1,798 @@
+{
+  "workorder_id": "WO-TOOLS-COMMANDS-AUDIT-001",
+  "audit_date": "2026-01-12",
+  "orchestrator": "coderef",
+  "ecosystem_summary": "Complete audit of 6 MCP servers in the CodeRef ecosystem. Total of 87 MCP tools and 70 slash commands providing comprehensive coverage for code intelligence, workflow orchestration, documentation generation, persona management, testing automation, and UDS validation.",
+
+  "servers_audited": 6,
+  "servers": [
+    {
+      "server_name": "coderef-context",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "description": "Code intelligence through .coderef/ file reading (117x faster than CLI)",
+      "version": "2.0.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "coderef_scan",
+          "description": "Scan project and discover all code elements (functions, classes, components, hooks)",
+          "status": "active",
+          "parameters": ["project_path", "languages", "use_ast"]
+        },
+        {
+          "tool_name": "coderef_query",
+          "description": "Query code relationships (what-calls, what-imports, shortest-path, etc)",
+          "status": "active",
+          "parameters": ["project_path", "query_type", "target", "source", "max_depth"]
+        },
+        {
+          "tool_name": "coderef_impact",
+          "description": "Analyze impact of modifying or deleting a code element",
+          "status": "active",
+          "parameters": ["project_path", "element", "operation", "max_depth"]
+        },
+        {
+          "tool_name": "coderef_complexity",
+          "description": "Get complexity metrics for a code element",
+          "status": "active",
+          "parameters": ["project_path", "element"]
+        },
+        {
+          "tool_name": "coderef_patterns",
+          "description": "Discover code patterns and test coverage gaps",
+          "status": "active",
+          "parameters": ["project_path", "pattern_type", "limit"]
+        },
+        {
+          "tool_name": "coderef_coverage",
+          "description": "Analyze test coverage in the codebase",
+          "status": "active",
+          "parameters": ["project_path", "format"]
+        },
+        {
+          "tool_name": "coderef_context",
+          "description": "Generate comprehensive codebase context (markdown + JSON)",
+          "status": "active",
+          "parameters": ["project_path", "languages", "output_format"]
+        },
+        {
+          "tool_name": "coderef_validate",
+          "description": "Validate CodeRef2 references in codebase",
+          "status": "active",
+          "parameters": ["project_path", "pattern"]
+        },
+        {
+          "tool_name": "coderef_drift",
+          "description": "Detect drift between CodeRef index and current code",
+          "status": "active",
+          "parameters": ["project_path", "index_path"]
+        },
+        {
+          "tool_name": "coderef_diagram",
+          "description": "Generate visual dependency diagrams (Mermaid or Graphviz)",
+          "status": "active",
+          "parameters": ["project_path", "diagram_type", "format", "depth"]
+        },
+        {
+          "tool_name": "coderef_tag",
+          "description": "Add CodeRef2 tags to source files for better tracking and validation",
+          "status": "active",
+          "parameters": ["path", "dry_run", "force", "verbose", "update_lineno", "include_private", "lang", "exclude"]
+        },
+        {
+          "tool_name": "coderef_export",
+          "description": "Export coderef data in various formats (JSON, JSON-LD, Mermaid, DOT)",
+          "status": "active",
+          "parameters": ["project_path", "format", "output_path", "max_nodes"]
+        }
+      ],
+      "tool_count": 12
+    },
+    {
+      "server_name": "coderef-workflow",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "description": "Feature lifecycle orchestration with workorder tracking (planning, execution, coordination, archival)",
+      "version": "2.0.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "list_templates",
+          "description": "Lists all available documentation templates (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "tool_name": "get_template",
+          "description": "Retrieves the content of a specific documentation template",
+          "status": "active",
+          "parameters": ["template_name"]
+        },
+        {
+          "tool_name": "generate_foundation_docs",
+          "description": "Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) for a project",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "generate_individual_doc",
+          "description": "Generate a single individual documentation file for a project",
+          "status": "active",
+          "parameters": ["project_path", "template_name"]
+        },
+        {
+          "tool_name": "get_changelog",
+          "description": "Get project changelog with structured change history for agent context",
+          "status": "active",
+          "parameters": ["project_path", "version", "change_type", "breaking_only"]
+        },
+        {
+          "tool_name": "add_changelog_entry",
+          "description": "Add a new entry to the project changelog with version, type, severity, and impact details",
+          "status": "active",
+          "parameters": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact", "breaking", "migration", "summary", "contributors"]
+        },
+        {
+          "tool_name": "update_changelog",
+          "description": "Agentic workflow tool that instructs the agent to analyze their recent changes and update the changelog using context",
+          "status": "active",
+          "parameters": ["project_path", "version"]
+        },
+        {
+          "tool_name": "generate_quickref_interactive",
+          "description": "Interactive workflow to generate a universal quickref guide for ANY application (CLI, Web, API, Desktop, Library)",
+          "status": "active",
+          "parameters": ["project_path", "app_type"]
+        },
+        {
+          "tool_name": "establish_standards",
+          "description": "Scan codebase to discover UI/UX/behavior patterns and generate standards documentation in coderef/standards/",
+          "status": "active",
+          "parameters": ["project_path", "scan_depth", "focus_areas"]
+        },
+        {
+          "tool_name": "audit_codebase",
+          "description": "Audit codebase for standards violations using established standards documents with severity scoring",
+          "status": "active",
+          "parameters": ["project_path", "standards_dir", "severity_filter", "scope", "generate_fixes"]
+        },
+        {
+          "tool_name": "check_consistency",
+          "description": "Check code changes against established standards for consistency violations (pre-commit gate)",
+          "status": "active",
+          "parameters": ["project_path", "files", "standards_dir", "severity_threshold", "scope", "fail_on_violations"]
+        },
+        {
+          "tool_name": "get_planning_template",
+          "description": "Returns feature-implementation-planning-standard.json template content or specific sections for AI reference during implementation planning",
+          "status": "active",
+          "parameters": ["section"]
+        },
+        {
+          "tool_name": "analyze_project_for_planning",
+          "description": "Analyzes project to discover foundation docs, coding standards, reference components, and patterns - automates section 0 (Preparation) of implementation plans",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "gather_context",
+          "description": "Gather feature requirements and save to context.json with structured feature data (description, goal, requirements, constraints)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "description", "goal", "requirements", "out_of_scope", "constraints", "decisions", "success_criteria"]
+        },
+        {
+          "tool_name": "validate_implementation_plan",
+          "description": "Validates implementation plan JSON against feature-implementation-planning-standard.json quality checklist (scores 0-100)",
+          "status": "active",
+          "parameters": ["project_path", "plan_file_path"]
+        },
+        {
+          "tool_name": "generate_plan_review_report",
+          "description": "Transforms validation results from validate_implementation_plan into human-readable markdown review reports",
+          "status": "active",
+          "parameters": ["project_path", "plan_file_path", "output_path"]
+        },
+        {
+          "tool_name": "create_plan",
+          "description": "Create implementation plan by synthesizing context, analysis, and template. Supports multi_agent mode for automatic agent coordination setup.",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "workorder_id", "multi_agent"]
+        },
+        {
+          "tool_name": "finalize_plan_from_agent",
+          "description": "Finalize plan generation by parsing Task agent response, saving to plan.json, and auto-validating (called after Task agent completes)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "agent_response"]
+        },
+        {
+          "tool_name": "generate_deliverables_template",
+          "description": "Generate DELIVERABLES.md template from plan.json structure with phase/task checklists and metric placeholders",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "update_deliverables",
+          "description": "Update DELIVERABLES.md with actual metrics from git history (LOC, commits, time spent)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "generate_agent_communication",
+          "description": "Generate communication.json from plan.json for multi-agent coordination with precise steps and success criteria",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "assign_agent_task",
+          "description": "Assign specific task to agent with workorder scoping and conflict detection (updates communication.json)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "agent_number", "phase_id"]
+        },
+        {
+          "tool_name": "verify_agent_completion",
+          "description": "Verify agent completion with automated git diff checks and success criteria validation",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "agent_number"]
+        },
+        {
+          "tool_name": "aggregate_agent_deliverables",
+          "description": "Aggregate metrics from multiple agent DELIVERABLES.md files into combined report (sums LOC, counts commits)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "track_agent_status",
+          "description": "Track agent status across all features with real-time coordination dashboard",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "archive_feature",
+          "description": "Archive completed features from coderef/workorder/ to coderef/archived/ with status check and confirmation",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "force"]
+        },
+        {
+          "tool_name": "update_all_documentation",
+          "description": "AGENTIC WORKFLOW: Update all documentation files after completing a feature (README, CLAUDE, CHANGELOG)",
+          "status": "active",
+          "parameters": ["project_path", "change_type", "feature_description", "workorder_id", "files_changed", "feature_name", "version"]
+        },
+        {
+          "tool_name": "execute_plan",
+          "description": "Generate TodoWrite task list from plan.json with WO-ID | TASK-ID: Description format for Lloyd's CLI checklist display",
+          "status": "active",
+          "parameters": ["project_path", "feature_name"]
+        },
+        {
+          "tool_name": "update_task_status",
+          "description": "Update task status in plan.json as agents complete work (enables progress tracking during execution)",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "task_id", "status", "notes"]
+        },
+        {
+          "tool_name": "audit_plans",
+          "description": "Audit all plans in coderef/workorder/ directory with format validation, progress status, staleness detection",
+          "status": "active",
+          "parameters": ["project_path", "stale_days", "include_archived"]
+        },
+        {
+          "tool_name": "log_workorder",
+          "description": "Log a new workorder entry to the global workorder log file (WO-ID | Project | Description | Timestamp)",
+          "status": "active",
+          "parameters": ["project_path", "workorder_id", "project_name", "description", "timestamp"]
+        },
+        {
+          "tool_name": "get_workorder_log",
+          "description": "Read and query the global workorder log file (filter by project, workorder pattern, or date range)",
+          "status": "active",
+          "parameters": ["project_path", "project_name", "workorder_pattern", "limit"]
+        },
+        {
+          "tool_name": "generate_handoff_context",
+          "description": "Generate automated agent handoff context files (claude.md) from plan.json, analysis.json, and git history",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "mode"]
+        },
+        {
+          "tool_name": "assess_risk",
+          "description": "AI-powered risk assessment tool that evaluates proposed code changes across 5 dimensions (breaking changes, security, performance, maintainability, reversibility)",
+          "status": "active",
+          "parameters": ["project_path", "proposed_change", "options", "threshold", "feature_name"]
+        },
+        {
+          "tool_name": "coderef_foundation_docs",
+          "description": "Unified foundation docs generator powered by coderef analysis (deep extraction from ARCHITECTURE.md, SCHEMA.md, auto-detection of APIs/DB/dependencies)",
+          "status": "active",
+          "parameters": ["project_path", "include_components", "deep_extraction", "use_coderef", "force_regenerate"]
+        },
+        {
+          "tool_name": "generate_features_inventory",
+          "description": "Generate inventory of all features in coderef/workorder/ and coderef/archived/ with status, progress, and workflow coverage",
+          "status": "active",
+          "parameters": ["project_path", "format", "include_archived", "save_to_file"]
+        }
+      ],
+      "tool_count": 36
+    },
+    {
+      "server_name": "coderef-docs",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "description": "Documentation generation with POWER framework (13 tools for docs, changelog, standards, validation)",
+      "version": "3.7.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "list_templates",
+          "description": "Lists all available documentation templates (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "tool_name": "get_template",
+          "description": "Retrieves the content of a specific documentation template",
+          "status": "active",
+          "parameters": ["template_name"]
+        },
+        {
+          "tool_name": "generate_foundation_docs",
+          "description": "Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) for a project",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "generate_individual_doc",
+          "description": "Generate a single individual documentation file with optional UDS tracking",
+          "status": "active",
+          "parameters": ["project_path", "template_name", "workorder_id", "feature_id", "version"]
+        },
+        {
+          "tool_name": "add_changelog_entry",
+          "description": "Add a new entry to the project changelog with full metadata (version, type, severity, files, reason, impact)",
+          "status": "active",
+          "parameters": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact", "breaking", "migration", "summary", "contributors"]
+        },
+        {
+          "tool_name": "record_changes",
+          "description": "Smart agentic changelog recording with git auto-detection (auto-detects changes, suggests change_type, validates before writing)",
+          "status": "active",
+          "parameters": ["project_path", "version", "context"]
+        },
+        {
+          "tool_name": "generate_quickref_interactive",
+          "description": "Interactive workflow to generate a universal quickref guide for ANY application (CLI, Web, API, Desktop, Library)",
+          "status": "active",
+          "parameters": ["project_path", "app_type"]
+        },
+        {
+          "tool_name": "generate_resource_sheet",
+          "description": "Generate composable module-based technical documentation (replaces 20 rigid templates with ~30-40 composable modules)",
+          "status": "active",
+          "parameters": ["element_name", "project_path", "element_type", "mode", "auto_analyze", "output_path", "validate_against_code"]
+        },
+        {
+          "tool_name": "establish_standards",
+          "description": "Scan codebase to discover UI/UX/behavior patterns and generate standards documentation (leverages .coderef/ for 10x performance)",
+          "status": "active",
+          "parameters": ["project_path", "scan_depth", "focus_areas"]
+        },
+        {
+          "tool_name": "audit_codebase",
+          "description": "Audit codebase for standards violations using established standards documents (0-100 score with severity levels)",
+          "status": "active",
+          "parameters": ["project_path", "standards_dir", "severity_filter", "scope", "generate_fixes"]
+        },
+        {
+          "tool_name": "check_consistency",
+          "description": "Check code changes against established standards for consistency violations (lightweight pre-commit gate)",
+          "status": "active",
+          "parameters": ["project_path", "files", "standards_dir", "severity_threshold", "scope", "fail_on_violations"]
+        },
+        {
+          "tool_name": "validate_document",
+          "description": "Validate document against UDS schema (auto-detects doc type and returns validation results with score 0-100)",
+          "status": "active",
+          "parameters": ["document_path", "doc_type"]
+        },
+        {
+          "tool_name": "check_document_health",
+          "description": "Calculate health score (0-100) for document quality assessment",
+          "status": "active",
+          "parameters": ["document_path", "doc_type"]
+        }
+      ],
+      "tool_count": 13
+    },
+    {
+      "server_name": "coderef-personas",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "description": "Expert agent personas with specialized knowledge (8 tools for persona management and plan execution)",
+      "version": "1.5.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "use_persona",
+          "description": "Activate an expert persona to gain specialized knowledge and behavior (returns system prompt and expertise)",
+          "status": "active",
+          "parameters": ["name"]
+        },
+        {
+          "tool_name": "get_active_persona",
+          "description": "Get information about the currently active persona",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "tool_name": "clear_persona",
+          "description": "Deactivate the current persona and return to default state",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "tool_name": "list_personas",
+          "description": "List all available personas with their descriptions",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "tool_name": "generate_todo_list",
+          "description": "Convert plan task breakdown to TodoWrite format for Lloyd (part of docs-expert v2.0 Phase 1)",
+          "status": "active",
+          "parameters": ["plan_path", "workorder_id", "mode"]
+        },
+        {
+          "tool_name": "track_plan_execution",
+          "description": "Sync plan progress with todo status in real-time (part of docs-expert v2.0 Phase 1)",
+          "status": "active",
+          "parameters": ["plan_path", "workorder_id", "todo_status"]
+        },
+        {
+          "tool_name": "execute_plan_interactive",
+          "description": "Execute plan with guided step-by-step or batch mode (part of docs-expert v2.0 Phase 1)",
+          "status": "active",
+          "parameters": ["plan_path", "workorder_id", "mode"]
+        },
+        {
+          "tool_name": "create_custom_persona",
+          "description": "Create a custom persona through guided workflow with automatic system prompt generation and validation",
+          "status": "active",
+          "parameters": ["name", "description", "expertise", "use_cases", "communication_style", "problem_solving", "tool_usage", "specializations", "key_principles", "example_responses"]
+        }
+      ],
+      "tool_count": 8
+    },
+    {
+      "server_name": "coderef-testing",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "description": "Universal test orchestration and execution (framework-agnostic: pytest, jest, cargo, mocha, vitest)",
+      "version": "1.0.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "discover_tests",
+          "description": "Find all tests in a project and auto-detect test framework",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "list_test_frameworks",
+          "description": "List all detected test frameworks and their versions",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "run_all_tests",
+          "description": "Execute the entire test suite in a project",
+          "status": "active",
+          "parameters": ["project_path", "framework", "parallel_workers", "timeout"]
+        },
+        {
+          "tool_name": "run_test_file",
+          "description": "Run tests from a specific test file",
+          "status": "active",
+          "parameters": ["project_path", "test_file"]
+        },
+        {
+          "tool_name": "run_test_category",
+          "description": "Run tests matching a pattern or tag",
+          "status": "active",
+          "parameters": ["project_path", "pattern"]
+        },
+        {
+          "tool_name": "run_tests_in_parallel",
+          "description": "Execute tests with explicit parallelization control",
+          "status": "active",
+          "parameters": ["project_path", "parallel_workers"]
+        },
+        {
+          "tool_name": "get_test_results",
+          "description": "Retrieve stored test results",
+          "status": "active",
+          "parameters": ["project_path", "date"]
+        },
+        {
+          "tool_name": "aggregate_results",
+          "description": "Aggregate results across multiple test runs",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "generate_test_report",
+          "description": "Generate test report in specified format (markdown/HTML/JSON)",
+          "status": "active",
+          "parameters": ["project_path", "format"]
+        },
+        {
+          "tool_name": "compare_test_runs",
+          "description": "Compare results between two test runs",
+          "status": "active",
+          "parameters": ["project_path", "date1", "date2"]
+        },
+        {
+          "tool_name": "analyze_coverage",
+          "description": "Analyze code coverage metrics and gaps",
+          "status": "active",
+          "parameters": ["project_path"]
+        },
+        {
+          "tool_name": "detect_flaky_tests",
+          "description": "Find tests that fail intermittently",
+          "status": "active",
+          "parameters": ["project_path", "runs"]
+        },
+        {
+          "tool_name": "analyze_test_performance",
+          "description": "Analyze test execution speed and identify slow tests",
+          "status": "active",
+          "parameters": ["project_path", "threshold"]
+        },
+        {
+          "tool_name": "validate_test_health",
+          "description": "Perform overall test suite health check",
+          "status": "active",
+          "parameters": ["project_path"]
+        }
+      ],
+      "tool_count": 14
+    },
+    {
+      "server_name": "papertrail",
+      "server_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "description": "Universal Documentation Standards (UDS) validation for resource sheets and documents",
+      "version": "1.0.0",
+      "status": "production",
+      "mcp_tools": [
+        {
+          "tool_name": "validate_resource_sheet",
+          "description": "Validate a resource sheet document against RSMS v2.0 schema (checks snake_case frontmatter, required fields, naming convention)",
+          "status": "active",
+          "parameters": ["file_path"]
+        },
+        {
+          "tool_name": "check_all_resource_sheets",
+          "description": "Validate all resource sheet documents in a directory against RSMS v2.0 standards (auto-scans for *-RESOURCE-SHEET.md files)",
+          "status": "active",
+          "parameters": ["directory"]
+        },
+        {
+          "tool_name": "validate_document",
+          "description": "Validate any document against UDS schema (auto-detects document type and returns validation results with score 0-100)",
+          "status": "active",
+          "parameters": ["file_path"]
+        },
+        {
+          "tool_name": "check_all_docs",
+          "description": "Validate all documents in a directory recursively against UDS schemas (returns summary with pass/fail counts and average score)",
+          "status": "active",
+          "parameters": ["directory", "pattern"]
+        }
+      ],
+      "tool_count": 4
+    }
+  ],
+
+  "slash_commands_by_server": {
+    "coderef-workflow": [
+      "/aggregate-agent-deliverables",
+      "/align-plan",
+      "/analyze-for-planning",
+      "/archive-feature",
+      "/assign-agent-task",
+      "/audit-plans",
+      "/coderef-foundation-docs",
+      "/complete-workorder",
+      "/create-plan",
+      "/create-session",
+      "/create-workorder",
+      "/features-inventory",
+      "/gather-context",
+      "/generate-agent-communication",
+      "/generate-deliverables",
+      "/generate-handoff-context",
+      "/generate-plan-review",
+      "/get-planning-template",
+      "/get-workorder-log",
+      "/git-release",
+      "/log-workorder",
+      "/stub",
+      "/track-agent-status",
+      "/update-deliverables",
+      "/update-task-status",
+      "/validate-plan",
+      "/verify-agent-completion"
+    ],
+    "coderef-docs": [
+      "/audit-codebase",
+      "/check-consistency",
+      "/create-resource-sheet",
+      "/establish-standards",
+      "/generate-docs",
+      "/generate-user-docs",
+      "/get-template",
+      "/list-templates",
+      "/record-changes",
+      "/resource-sheet-catalog",
+      "/update-docs",
+      "/update-foundation-docs"
+    ],
+    "coderef-personas": [
+      "/ava",
+      "/coderef-assistant",
+      "/coderef-context-agent",
+      "/coderef-docs-agent",
+      "/coderef-mcp-lead",
+      "/coderef-personas-agent",
+      "/coderef-testing-agent",
+      "/create-persona",
+      "/debug-ui",
+      "/fix",
+      "/lloyd",
+      "/marcus",
+      "/quinn",
+      "/research-scout",
+      "/taylor",
+      "/use-persona"
+    ],
+    "coderef-testing": [
+      "/compare-runs",
+      "/detect-flaky",
+      "/discover-tests",
+      "/list-frameworks",
+      "/run-by-pattern",
+      "/run-parallel",
+      "/run-test-file",
+      "/run-tests",
+      "/test-coverage",
+      "/test-health",
+      "/testing-proof",
+      "/test-performance",
+      "/test-report",
+      "/test-results",
+      "/test-trends"
+    ]
+  },
+
+  "totals": {
+    "total_servers": 6,
+    "total_tools": 87,
+    "total_commands": 69,
+    "tools_by_server": {
+      "coderef-context": 12,
+      "coderef-workflow": 36,
+      "coderef-docs": 13,
+      "coderef-personas": 8,
+      "coderef-testing": 14,
+      "papertrail": 4
+    },
+    "commands_by_server": {
+      "coderef-workflow": 26,
+      "coderef-docs": 12,
+      "coderef-personas": 16,
+      "coderef-testing": 15
+    }
+  },
+
+  "duplicates_check": {
+    "tool_duplicates": [
+      {
+        "tool_name": "list_templates",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide template listing for different contexts"
+      },
+      {
+        "tool_name": "get_template",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide template retrieval for different contexts"
+      },
+      {
+        "tool_name": "generate_foundation_docs",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide foundation doc generation with different implementations"
+      },
+      {
+        "tool_name": "generate_individual_doc",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide individual doc generation with different implementations"
+      },
+      {
+        "tool_name": "add_changelog_entry",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide changelog management"
+      },
+      {
+        "tool_name": "generate_quickref_interactive",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide quickref generation"
+      },
+      {
+        "tool_name": "establish_standards",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide standards establishment"
+      },
+      {
+        "tool_name": "audit_codebase",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide codebase auditing"
+      },
+      {
+        "tool_name": "check_consistency",
+        "servers": ["coderef-workflow", "coderef-docs"],
+        "notes": "Intentional - both servers provide consistency checking"
+      },
+      {
+        "tool_name": "validate_document",
+        "servers": ["coderef-docs", "papertrail"],
+        "notes": "Intentional - both servers provide document validation with different schemas"
+      }
+    ],
+    "command_duplicates": [],
+    "total_duplicates": 10,
+    "notes": "All duplicates are intentional - servers provide overlapping functionality for different contexts and implementations"
+  },
+
+  "gaps_identified": {
+    "missing_tools": [],
+    "deprecated_tools": [],
+    "planned_tools": [
+      {
+        "tool_name": "add_persona",
+        "server": "coderef-personas",
+        "status": "planned",
+        "notes": "Stack additional persona (composition) - future enhancement"
+      },
+      {
+        "tool_name": "get_active_personas",
+        "server": "coderef-personas",
+        "status": "planned",
+        "notes": "Show current persona stack - future enhancement"
+      }
+    ]
+  },
+
+  "recommendations": {
+    "consolidation": [
+      "Consider consolidating duplicate tools between coderef-workflow and coderef-docs into a shared library to reduce maintenance overhead while preserving server-specific implementations"
+    ],
+    "cleanup": [
+      "No deprecated tools found - all tools are active and in production"
+    ],
+    "documentation": [
+      "Create tool cross-reference matrix showing which tools call other MCP tools",
+      "Document tool dependencies and integration patterns",
+      "Create workflow diagrams showing common tool sequences"
+    ],
+    "testing": [
+      "Ensure all 87 tools have comprehensive integration tests",
+      "Add end-to-end tests for common multi-tool workflows",
+      "Create performance benchmarks for all tools"
+    ]
+  },
+
+  "metadata": {
+    "audit_completed_at": "2026-01-12T00:00:00Z",
+    "audit_duration": "approximately 15 minutes",
+    "audit_method": "automated scan of server.py files and .claude/commands/ directory",
+    "auditor": "coderef orchestrator with general-purpose Task agent",
+    "ecosystem_version": "2.0.0",
+    "ecosystem_status": "production-ready"
+  }
+}

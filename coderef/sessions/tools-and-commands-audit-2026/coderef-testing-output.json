@@ -1,0 +1,97 @@
+{
+  "agent_id": "coderef-testing",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "discover_tests",
+      "description": "Find all tests in a project and auto-detect test framework",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "list_test_frameworks",
+      "description": "List all detected test frameworks and their versions",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "run_all_tests",
+      "description": "Execute the entire test suite in a project",
+      "status": "active",
+      "parameters": ["project_path", "framework", "parallel_workers", "timeout"]
+    },
+    {
+      "tool_name": "run_test_file",
+      "description": "Run tests from a specific test file",
+      "status": "active",
+      "parameters": ["project_path", "test_file"]
+    },
+    {
+      "tool_name": "run_test_category",
+      "description": "Run tests matching a pattern or tag",
+      "status": "active",
+      "parameters": ["project_path", "pattern"]
+    },
+    {
+      "tool_name": "run_tests_in_parallel",
+      "description": "Execute tests with explicit parallelization control",
+      "status": "active",
+      "parameters": ["project_path", "parallel_workers"]
+    },
+    {
+      "tool_name": "get_test_results",
+      "description": "Retrieve stored test results",
+      "status": "active",
+      "parameters": ["project_path", "date"]
+    },
+    {
+      "tool_name": "aggregate_results",
+      "description": "Aggregate results across multiple test runs",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "generate_test_report",
+      "description": "Generate test report in specified format (markdown/html/json)",
+      "status": "active",
+      "parameters": ["project_path", "format"]
+    },
+    {
+      "tool_name": "compare_test_runs",
+      "description": "Compare results between two test runs",
+      "status": "active",
+      "parameters": ["project_path", "date1", "date2"]
+    },
+    {
+      "tool_name": "analyze_coverage",
+      "description": "Analyze code coverage metrics and gaps",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "detect_flaky_tests",
+      "description": "Find tests that fail intermittently",
+      "status": "active",
+      "parameters": ["project_path", "runs"]
+    },
+    {
+      "tool_name": "analyze_test_performance",
+      "description": "Analyze test execution speed and identify slow tests",
+      "status": "active",
+      "parameters": ["project_path", "threshold"]
+    },
+    {
+      "tool_name": "validate_test_health",
+      "description": "Perform overall test suite health check",
+      "status": "active",
+      "parameters": ["project_path"]
+    }
+  ],
+  "slash_commands": [],
+  "totals": {
+    "tools": 14,
+    "commands": 0
+  },
+  "notes": "coderef-testing has 14 active MCP tools across 4 categories (Discovery: 2, Execution: 4, Management: 4, Analysis: 4). No slash commands are currently implemented - the .claude/commands/ directory exists but is empty. README.md mentions commands like /discover-tests, /run-tests, etc., but these appear to be documentation references to the MCP tools rather than actual slash command files."
+}

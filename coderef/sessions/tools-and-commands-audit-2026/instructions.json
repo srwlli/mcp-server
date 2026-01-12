@@ -1,0 +1,118 @@
+{
+  "workorder_id": "WO-TOOLS-COMMANDS-AUDIT-001",
+  "task": "Audit Tools and Commands Across Coderef Ecosystem",
+  "description": "Each agent audits their own tools and slash commands. Orchestrator synthesizes into master comprehensive list.",
+
+  "orchestrator_instructions": {
+    "role": "Aggregate all agent outputs into single comprehensive master list of tools and commands",
+    "steps": {
+      "step_1": "READ all 9 agent output files from this session directory",
+      "step_2": "SYNTHESIZE into master JSON with structure: { ecosystem_summary, tools_by_server, commands_by_server, totals, duplicates_check, gaps_identified }",
+      "step_3": "VALIDATE no tools/commands are missing or duplicated across servers",
+      "step_4": "CREATE orchestrator-master-list.json with complete ecosystem inventory",
+      "step_5": "UPDATE communication.json orchestrator.status to 'complete'"
+    },
+    "output_requirements": {
+      "format": "JSON",
+      "structure": {
+        "ecosystem_summary": "Overview of entire ecosystem state",
+        "tools_by_server": "Array of {server, tool_count, tools[]}",
+        "commands_by_server": "Array of {server, command_count, commands[]}",
+        "totals": {
+          "total_servers": "number",
+          "total_tools": "number",
+          "total_commands": "number"
+        },
+        "duplicates_check": "Any duplicates found across servers",
+        "gaps_identified": "Missing or deprecated items",
+        "recommendations": "Consolidation or cleanup suggestions"
+      }
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Audit YOUR OWN project's MCP tools and slash commands",
+    "steps": {
+      "step_1": "READ your project's mcp-config.json (if exists) to identify MCP tools",
+      "step_2": "READ your project's .claude/commands/ directory to list slash commands",
+      "step_3": "READ your project's package.json or src/ to identify tool implementations",
+      "step_4": "CATEGORIZE tools as: active, deprecated, planned",
+      "step_5": "CATEGORIZE commands as: active, deprecated, alias",
+      "step_6": "CREATE output JSON at your designated output_file path",
+      "step_7": "UPDATE communication.json: change your status from 'not_started' to 'complete'",
+      "step_8": "UPDATE communication.json: increment aggregation.completed, decrement aggregation.not_started"
+    },
+    "output_requirements": {
+      "format": "JSON",
+      "structure": {
+        "agent_id": "your agent ID from communication.json",
+        "project_path": "your absolute project path",
+        "audit_date": "2026-01-12",
+        "mcp_tools": [
+          {
+            "tool_name": "tool_function_name",
+            "description": "what it does",
+            "status": "active|deprecated|planned",
+            "parameters": ["param1", "param2"]
+          }
+        ],
+        "slash_commands": [
+          {
+            "command": "/command-name",
+            "file": "command-name.md",
+            "description": "what it does",
+            "status": "active|deprecated|alias"
+          }
+        ],
+        "totals": {
+          "tools": 0,
+          "commands": 0
+        }
+      }
+    }
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "agent_example": {
+      "agent_id": "coderef-workflow",
+      "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "audit_date": "2026-01-12",
+      "mcp_tools": [
+        {
+          "tool_name": "gather_context",
+          "description": "Gather feature requirements and save to context.json",
+          "status": "active",
+          "parameters": ["project_path", "feature_name", "description", "goal", "requirements"]
+        }
+      ],
+      "slash_commands": [
+        {
+          "command": "/gather-context",
+          "file": "gather-context.md",
+          "description": "Gather feature requirements",
+          "status": "active"
+        }
+      ],
+      "totals": {
+        "tools": 1,
+        "commands": 1
+      }
+    }
+  },
+
+  "quality_standards": {
+    "completeness": "Every tool and command in your project must be listed",
+    "accuracy": "Status must reflect actual current state (not aspirational)",
+    "format": "Must be valid JSON matching output_template structure"
+  },
+
+  "special_notes": {
+    "coderef-context": "Tools only, no slash commands expected",
+    "papertrail": "May have validators instead of MCP tools",
+    "coderef-assistant": "Orchestrator project, may only have slash commands",
+    "coderef-dashboard": "UI project - audit dashboard components only, DO NOT include scanner",
+    "coderef-scanner": "Audit packages/coderef-core directory only - independent scanning system within dashboard monorepo"
+  }
+}

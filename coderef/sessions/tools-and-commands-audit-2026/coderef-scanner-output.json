@@ -1,0 +1,410 @@
+{
+  "agent_id": "coderef-scanner",
+  "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+  "audit_date": "2026-01-12",
+  "project_type": "TypeScript Library",
+  "note": "coderef-scanner is a core TypeScript library, not an MCP server. It provides scanning, analysis, and file generation functions exported as a package. No MCP tools or slash commands exist.",
+
+  "exported_functions": [
+    {
+      "category": "Scanner",
+      "functions": [
+        {
+          "function_name": "scanCurrentElements",
+          "description": "Main scanning function - analyze code elements in TypeScript/JavaScript files",
+          "status": "active",
+          "parameters": ["directory", "languages", "options"]
+        },
+        {
+          "function_name": "LANGUAGE_PATTERNS",
+          "description": "Pattern definitions by language for code scanning",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "DEFAULT_EXCLUDE_PATTERNS",
+          "description": "Default directory exclusions (node_modules, dist, etc)",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "File Generation (Phase 1: Core Files)",
+      "functions": [
+        {
+          "function_name": "saveIndex",
+          "description": "Save scan results to .coderef/index.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        },
+        {
+          "function_name": "generateContext",
+          "description": "Generate .coderef/context.json and context.md files",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        },
+        {
+          "function_name": "buildDependencyGraph",
+          "description": "Build dependency graph and save to .coderef/graph.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        }
+      ]
+    },
+    {
+      "category": "File Generation (Phase 2: Analysis Reports)",
+      "functions": [
+        {
+          "function_name": "detectPatterns",
+          "description": "Detect code patterns (handlers, decorators, errors, tests, API endpoints) and save to .coderef/reports/patterns.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        },
+        {
+          "function_name": "analyzeCoverage",
+          "description": "Analyze test coverage and save to .coderef/reports/coverage.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        },
+        {
+          "function_name": "validateReferences",
+          "description": "Validate references and detect broken imports, save to .coderef/reports/validation.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        },
+        {
+          "function_name": "detectDrift",
+          "description": "Detect code changes since last scan, save to .coderef/reports/drift.json",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        }
+      ]
+    },
+    {
+      "category": "File Generation (Phase 3: Diagrams)",
+      "functions": [
+        {
+          "function_name": "generateDiagrams",
+          "description": "Generate visual dependency diagrams (Mermaid + Graphviz) in .coderef/diagrams/",
+          "status": "active",
+          "parameters": ["projectPath", "elements"]
+        }
+      ]
+    },
+    {
+      "category": "Analyzer (Relationship Detection)",
+      "functions": [
+        {
+          "function_name": "ImportParser",
+          "description": "Parse import statements and detect import relationships",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "CallDetector",
+          "description": "Detect function call expressions and relationships",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "GraphBuilder",
+          "description": "Build dependency graph from parsed elements",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "GraphAnalyzer",
+          "description": "Analyze dependency graph (traversal, circular dependencies)",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "AnalyzerService",
+          "description": "Orchestration layer for analysis pipeline",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Analyzer (Graph Query Helpers)",
+      "functions": [
+        {
+          "function_name": "getImportsForElement",
+          "description": "Get all imports for a specific element",
+          "status": "active",
+          "parameters": ["elementId", "graph"]
+        },
+        {
+          "function_name": "getExportsForElement",
+          "description": "Get all exports from a specific element",
+          "status": "active",
+          "parameters": ["elementId", "graph"]
+        },
+        {
+          "function_name": "getConsumersForElement",
+          "description": "Get all consumers/dependents of an element",
+          "status": "active",
+          "parameters": ["elementId", "graph"]
+        },
+        {
+          "function_name": "getDependenciesForElement",
+          "description": "Get all dependencies of an element",
+          "status": "active",
+          "parameters": ["elementId", "graph"]
+        },
+        {
+          "function_name": "getElementCharacteristics",
+          "description": "Get characteristics and metadata for an element",
+          "status": "active",
+          "parameters": ["elementId", "graph"]
+        },
+        {
+          "function_name": "calculateAutoFillRate",
+          "description": "Calculate auto-fill coverage rate for elements",
+          "status": "active",
+          "parameters": ["graph"]
+        },
+        {
+          "function_name": "parseNodeId",
+          "description": "Parse graph node ID into file path and element name",
+          "status": "active",
+          "parameters": ["nodeId"]
+        }
+      ]
+    },
+    {
+      "category": "Context (Tracking & Traversal)",
+      "functions": [
+        {
+          "function_name": "ContextTracker",
+          "description": "Track context history and entry points",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "MultiHopTraversal",
+          "description": "Multi-hop graph traversal for deep dependency analysis",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "FuzzyResolver",
+          "description": "Fuzzy matching for element resolution and drift detection",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "ImpactSimulator",
+          "description": "Simulate impact and blast radius of code changes",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "ComplexityScorer",
+          "description": "Calculate complexity scores for code elements",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "TestPatternAnalyzer",
+          "description": "Analyze test patterns and test file relationships",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "ContextGenerator",
+          "description": "Generate context for code elements and dependencies",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "BreakingChangeDetector",
+          "description": "Detect breaking changes in function signatures",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Export (Graph Visualization)",
+      "functions": [
+        {
+          "function_name": "GraphExporter",
+          "description": "Export dependency graphs in various formats (JSON, Mermaid, DOT, Protobuf)",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Indexer (CodeRef2 Indexing)",
+      "functions": [
+        {
+          "function_name": "IndexStore",
+          "description": "Primary index management for CodeRef2 references",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "MetadataIndex",
+          "description": "Metadata category indexing",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "RelationshipIndex",
+          "description": "Dependency graph index for relationships",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "QueryEngine",
+          "description": "Multi-dimensional query engine for indexed data",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "IndexerService",
+          "description": "Orchestration layer for indexing pipeline",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Parser & Validator",
+      "functions": [
+        {
+          "function_name": "Parser",
+          "description": "Parse CodeRef2 reference syntax",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "QueryExecutor",
+          "description": "Execute queries against indexed data",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "Validator",
+          "description": "Validate CodeRef2 references and syntax",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Search (Client-Safe)",
+      "functions": [
+        {
+          "function_name": "SearchEngine",
+          "description": "Client-safe search engine for browser/client components",
+          "status": "active",
+          "parameters": []
+        },
+        {
+          "function_name": "searchEngine",
+          "description": "Singleton search engine instance",
+          "status": "active",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "category": "Adapter (Format Conversion)",
+      "functions": [
+        {
+          "function_name": "convertGraphToElements",
+          "description": "Convert graph format to elements format",
+          "status": "active",
+          "parameters": ["graph"]
+        },
+        {
+          "function_name": "getConversionStats",
+          "description": "Get conversion statistics",
+          "status": "active",
+          "parameters": ["result"]
+        }
+      ]
+    },
+    {
+      "category": "Integration (AI/RAG - Disabled)",
+      "note": "Integration module temporarily disabled - missing AI dependencies (OpenAI, Anthropic, vector stores)",
+      "functions": [
+        {
+          "function_name": "AIPromptGenerator",
+          "description": "Generate AI prompts from code context",
+          "status": "disabled",
+          "parameters": []
+        },
+        {
+          "function_name": "VectorStore",
+          "description": "Vector database integration (Pinecone, Chroma, SQLite)",
+          "status": "disabled",
+          "parameters": []
+        },
+        {
+          "function_name": "LLMProvider",
+          "description": "LLM provider integration (OpenAI, Anthropic)",
+          "status": "disabled",
+          "parameters": []
+        },
+        {
+          "function_name": "SemanticSearch",
+          "description": "Semantic code search using embeddings",
+          "status": "disabled",
+          "parameters": []
+        },
+        {
+          "function_name": "RAG (Retrieval-Augmented Generation)",
+          "description": "Complete RAG pipeline for code Q&A",
+          "status": "disabled",
+          "parameters": []
+        }
+      ]
+    }
+  ],
+
+  "mcp_tools": [],
+  "slash_commands": [],
+
+  "totals": {
+    "exported_functions": 48,
+    "active_functions": 43,
+    "disabled_functions": 5,
+    "mcp_tools": 0,
+    "slash_commands": 0
+  },
+
+  "architecture_notes": {
+    "package_type": "Monorepo package (@coderef/core)",
+    "version": "2.0.0",
+    "deployment": "Published as npm package, consumed by dashboard and other projects",
+    "primary_consumers": ["@coderef-dashboard/dashboard", "MCP servers"],
+    "key_features": [
+      "AST-based code scanning (TypeScript/JavaScript)",
+      "Dependency graph generation",
+      "Pattern detection (handlers, decorators, tests, API endpoints)",
+      "Test coverage analysis",
+      "Reference validation",
+      "Drift detection",
+      "Visual diagram generation (Mermaid, Graphviz)",
+      "CodeRef2 indexing and query system",
+      "Multi-hop traversal",
+      "Breaking change detection",
+      "Impact simulation",
+      "Client-safe search engine"
+    ],
+    "file_outputs": "16 files generated in .coderef/ directory (index.json, context.json, graph.json, reports/, diagrams/)",
+    "performance": "3-6x faster than Python subprocess, parallel execution with Promise.all()"
+  },
+
+  "scanner_status": {
+    "phase_0": "Directories - Python script (CLI only, UI blocked on Windows)",
+    "phase_1": "Scan - TypeScript (COMPLETE - 541 elements, ~1185ms)",
+    "phase_2": "File Generation - TypeScript (COMPLETE - 16 files, 3-6x faster)"
+  }
+}

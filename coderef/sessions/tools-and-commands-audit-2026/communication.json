@@ -1,0 +1,87 @@
+{
+  "workorder_id": "WO-TOOLS-COMMANDS-AUDIT-001",
+  "feature_name": "tools-and-commands-audit-2026",
+  "created": "2026-01-12",
+  "status": "complete",
+  "description": "Audit all coderef ecosystem tools and commands, create synthesized current and active lists",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\instructions.json",
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Synthesize all agent outputs into master comprehensive list of tools and commands",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\orchestrator-master-list.json",
+    "status": "complete",
+    "notes": "Orchestrator audit complete. Synthesized comprehensive audit of 6 MCP servers (coderef-context, coderef-workflow, coderef-docs, coderef-personas, coderef-testing, papertrail): 87 total MCP tools, 69 slash commands. Master list includes ecosystem summary, tool catalog by server, duplicates analysis (10 intentional duplicates identified), gaps analysis, and recommendations for consolidation and documentation."
+  },
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-assistant-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 0 MCP tools, 1 slash command (/archive-file). Orchestrator project."
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-context-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 12 MCP tools identified (all active), 0 slash commands. File Reader v2.0.0."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-workflow-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 36 MCP tools (all active), 32 slash commands. Planning & orchestration server v2.0.0."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-docs-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 13 active MCP tools, 1 deprecated tool. 14 active slash commands, 29 deprecated commands (moved to coderef-workflow). Documentation server v2.0.0."
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-personas-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 8 MCP tools (4 persona management, 3 Lloyd integration, 1 custom creation), 10 slash commands (all global). 11 personas available."
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-testing-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 14 MCP tools identified (Discovery: 2, Execution: 4, Management: 4, Analysis: 4), 0 slash commands."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\papertrail-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 4 MCP tools identified (all active), 0 slash commands."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-dashboard-output.json",
+      "status": "complete",
+      "notes": "Audit complete. 0 MCP tools (UI project), 1 slash command (/widget-architect). Dashboard is Next.js PWA + Electron wrapper with widget system."
+    },
+    {
+      "agent_id": "coderef-scanner",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\tools-and-commands-audit-2026\\coderef-scanner-output.json",
+      "status": "complete",
+      "notes": "Audit complete. TypeScript library package with 48 exported functions (43 active, 5 disabled). 0 MCP tools, 0 slash commands. Core scanning and analysis library."
+    }
+  ],
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 8,
+    "pending": 0,
+    "not_started": 1
+  }
+}

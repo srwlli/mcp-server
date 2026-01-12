@@ -1,0 +1,37 @@
+{
+  "agent_id": "papertrail",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "validate_resource_sheet",
+      "description": "Validate a resource sheet document against RSMS v2.0 schema. Checks snake_case frontmatter, required fields (subject, parent_project, category), naming convention (-RESOURCE-SHEET.md suffix), and recommended sections. Returns score (0-100), errors, and warnings.",
+      "status": "active",
+      "parameters": ["file_path"]
+    },
+    {
+      "tool_name": "check_all_resource_sheets",
+      "description": "Validate all resource sheet documents in a directory against RSMS v2.0 standards. Automatically scans for files ending with -RESOURCE-SHEET.md. Returns summary with pass/fail counts, average score, and detailed results per file.",
+      "status": "active",
+      "parameters": ["directory"]
+    },
+    {
+      "tool_name": "validate_document",
+      "description": "Validate any document against UDS schema. Auto-detects document type (foundation, workorder, system, session, etc.) and returns validation results with score (0-100), errors, and warnings. For resource sheets, use validate_resource_sheet instead.",
+      "status": "active",
+      "parameters": ["file_path"]
+    },
+    {
+      "tool_name": "check_all_docs",
+      "description": "Validate all documents in a directory recursively against UDS schemas. Returns summary with pass/fail counts and average score. For resource sheets only, use check_all_resource_sheets instead.",
+      "status": "active",
+      "parameters": ["directory", "pattern"]
+    }
+  ],
+  "slash_commands": [],
+  "totals": {
+    "tools": 4,
+    "commands": 0
+  },
+  "notes": "Papertrail is a validation-focused MCP server. No slash commands as this is a pure MCP tool server. All 4 tools are actively used for UDS (Universal Documentation Standards) and RSMS (Resource Sheet Metadata Standards) validation across the CodeRef ecosystem."
+}

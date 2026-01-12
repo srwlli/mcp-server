@@ -1,0 +1,453 @@
+{
+  "agent_id": "coderef-docs",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "list_templates",
+      "description": "Lists all available documentation templates (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)",
+      "status": "active",
+      "parameters": []
+    },
+    {
+      "tool_name": "get_template",
+      "description": "Retrieves the content of a specific documentation template",
+      "status": "active",
+      "parameters": ["template_name"]
+    },
+    {
+      "tool_name": "generate_foundation_docs",
+      "description": "Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) for a project. Sequential generation with .coderef/ context injection.",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "generate_individual_doc",
+      "description": "Generate a single individual documentation file for a project. Returns the template - Claude will generate and save the document.",
+      "status": "active",
+      "parameters": ["project_path", "template_name", "workorder_id", "feature_id", "version"]
+    },
+    {
+      "tool_name": "add_changelog_entry",
+      "description": "Add a new entry to the project changelog. Requires all change details including version, type, title, description, files, reason, and impact.",
+      "status": "active",
+      "parameters": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact", "breaking", "migration", "summary", "contributors"]
+    },
+    {
+      "tool_name": "record_changes",
+      "description": "Smart agentic changelog recording with git auto-detection. Auto-detects changed files, suggests change_type from commit messages, calculates severity from scope.",
+      "status": "active",
+      "parameters": ["project_path", "version", "context"]
+    },
+    {
+      "tool_name": "generate_quickref_interactive",
+      "description": "Interactive workflow to generate a universal quickref guide for ANY application (CLI, Web, API, Desktop, Library).",
+      "status": "active",
+      "parameters": ["project_path", "app_type"]
+    },
+    {
+      "tool_name": "generate_resource_sheet",
+      "description": "Generate composable module-based technical documentation for code elements. Replaces rigid templates with ~30-40 small modules that compose intelligently.",
+      "status": "active",
+      "parameters": ["element_name", "project_path", "element_type", "mode", "auto_analyze", "output_path", "validate_against_code"]
+    },
+    {
+      "tool_name": "establish_standards",
+      "description": "Scan codebase to discover UI/UX/behavior patterns and generate standards documentation. Creates 4 markdown files in coderef/standards/. Uses .coderef/ data for 10x performance boost.",
+      "status": "active",
+      "parameters": ["project_path", "scan_depth", "focus_areas"]
+    },
+    {
+      "tool_name": "audit_codebase",
+      "description": "Audit codebase for standards violations using established standards documents. Scans all source files, compares against standards, and generates comprehensive compliance report.",
+      "status": "active",
+      "parameters": ["project_path", "standards_dir", "severity_filter", "scope", "generate_fixes"]
+    },
+    {
+      "tool_name": "check_consistency",
+      "description": "Check code changes against established standards for consistency violations. Lightweight quality gate for pre-commit checks and CI/CD pipelines.",
+      "status": "active",
+      "parameters": ["project_path", "files", "standards_dir", "severity_threshold", "scope", "fail_on_violations"]
+    },
+    {
+      "tool_name": "validate_document",
+      "description": "Validate document against UDS (Universal Documentation Standards) schema. Checks for required sections, metadata format, returns validation errors/warnings.",
+      "status": "active",
+      "parameters": ["document_path", "doc_type"]
+    },
+    {
+      "tool_name": "check_document_health",
+      "description": "Calculate health score (0-100) for document based on 4 factors: Traceability (40%), Completeness (30%), Freshness (20%), Validation (10%).",
+      "status": "active",
+      "parameters": ["document_path", "doc_type"]
+    },
+    {
+      "tool_name": "update_changelog",
+      "description": "Agentic workflow to analyze recent changes and update changelog automatically (deprecated - replaced by record_changes)",
+      "status": "deprecated",
+      "parameters": ["project_path", "version"]
+    }
+  ],
+  "slash_commands": [
+    {
+      "command": "/generate-docs",
+      "file": "commands.json entry",
+      "description": "Generate foundation documentation for current project",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/generate-user-guide",
+      "file": "commands.json entry",
+      "description": "Generate USER-GUIDE documentation for current project",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/generate-quickref",
+      "file": "commands.json entry",
+      "description": "Generate scannable quickref guide for any application",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/generate-my-guide",
+      "file": "commands.json entry",
+      "description": "Generate my-guide quick reference documentation",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/list-templates",
+      "file": "commands.json entry",
+      "description": "List all available POWER framework documentation templates",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/get-template",
+      "file": "commands.json entry",
+      "description": "Get the content of a specific POWER framework documentation template",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/update-docs",
+      "file": "commands.json entry",
+      "description": "Update all documentation files after feature completion",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/update-foundation-docs",
+      "file": "commands.json entry",
+      "description": "Update foundation docs (API.md, user-guide.md, etc.) after implementing features",
+      "status": "active",
+      "category": "documentation"
+    },
+    {
+      "command": "/add-changelog",
+      "file": "commands.json entry",
+      "description": "Add a new entry to the project changelog",
+      "status": "active",
+      "category": "changelog"
+    },
+    {
+      "command": "/get-changelog",
+      "file": "commands.json entry",
+      "description": "Get changelog entries for current project with optional filters",
+      "status": "active",
+      "category": "changelog"
+    },
+    {
+      "command": "/update-changelog",
+      "file": "commands.json entry",
+      "description": "Agentic workflow to analyze recent changes and update changelog automatically",
+      "status": "deprecated",
+      "category": "changelog",
+      "notes": "Deprecated - replaced by record_changes tool"
+    },
+    {
+      "command": "/establish-standards",
+      "file": "commands.json entry",
+      "description": "Extract UI/UX/behavior standards from current project",
+      "status": "active",
+      "category": "standards"
+    },
+    {
+      "command": "/audit-codebase",
+      "file": "commands.json entry",
+      "description": "Audit current project for standards compliance",
+      "status": "active",
+      "category": "standards"
+    },
+    {
+      "command": "/check-consistency",
+      "file": "commands.json entry",
+      "description": "Quick consistency check on modified files (pre-commit gate)",
+      "status": "active",
+      "category": "standards"
+    },
+    {
+      "command": "/analyze-for-planning",
+      "file": "commands.json entry",
+      "description": "Analyze project for implementation planning (discovers docs, standards, patterns)",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/create-plan",
+      "file": "commands.json entry",
+      "description": "Create implementation plan by synthesizing context, analysis, and template",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/create-workorder",
+      "file": "commands.json entry",
+      "description": "Create new workorder with full planning workflow (gather, analyze, plan, validate)",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/gather-context",
+      "file": "commands.json entry",
+      "description": "Gather feature requirements and context before planning implementation",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/get-planning-template",
+      "file": "commands.json entry",
+      "description": "Get feature implementation planning template for AI reference",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/validate-plan",
+      "file": "commands.json entry",
+      "description": "Validate implementation plan quality (scores 0-100, identifies issues)",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/generate-plan-review",
+      "file": "commands.json entry",
+      "description": "Generate markdown review report from validation results",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/execute-plan",
+      "file": "commands.json entry",
+      "description": "Generate TodoWrite task list from plan.json for execution tracking",
+      "status": "deprecated",
+      "category": "planning",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/generate-deliverables",
+      "file": "commands.json entry",
+      "description": "Generate DELIVERABLES.md template from plan.json structure",
+      "status": "deprecated",
+      "category": "deliverables",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/update-deliverables",
+      "file": "commands.json entry",
+      "description": "Update DELIVERABLES.md with actual metrics from git history",
+      "status": "deprecated",
+      "category": "deliverables",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/archive-feature",
+      "file": "commands.json entry",
+      "description": "Archive completed features from working to archived directory",
+      "status": "deprecated",
+      "category": "archive",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/generate-agent-communication",
+      "file": "commands.json entry",
+      "description": "Generate multi-agent communication.json from plan.json",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/assign-agent-task",
+      "file": "commands.json entry",
+      "description": "Assign specific task to agent with workorder scoping",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/verify-agent-completion",
+      "file": "commands.json entry",
+      "description": "Verify agent completion with automated checks",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/aggregate-agent-deliverables",
+      "file": "commands.json entry",
+      "description": "Aggregate metrics from multiple agent DELIVERABLES.md files",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/track-agent-status",
+      "file": "commands.json entry",
+      "description": "Track agent status across features with real-time dashboard",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/generate-handoff-context",
+      "file": "commands.json entry",
+      "description": "Generate automated agent handoff context for seamless agent-to-agent transitions",
+      "status": "deprecated",
+      "category": "agent-coordination",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/log-workorder",
+      "file": "commands.json entry",
+      "description": "Log workorder entry to global workorder activity log",
+      "status": "deprecated",
+      "category": "workorder",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/get-workorder-log",
+      "file": "commands.json entry",
+      "description": "View and query the global workorder activity log",
+      "status": "deprecated",
+      "category": "workorder",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/api-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive API endpoint inventory",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/database-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive database schema inventory",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/dependency-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive project dependency inventory",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/inventory-manifest",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive project file inventory manifest",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/quick-inventory",
+      "file": "commands.json entry",
+      "description": "Run all 7 inventory tools for complete project snapshot",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/config-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive configuration file inventory with secret detection",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/documentation-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive documentation file inventory with quality metrics",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/test-inventory",
+      "file": "commands.json entry",
+      "description": "Generate comprehensive test file inventory with coverage analysis",
+      "status": "deprecated",
+      "category": "inventory",
+      "notes": "Moved to coderef-workflow MCP server"
+    },
+    {
+      "command": "/llm-prompt",
+      "file": "commands.json entry",
+      "description": "Generate structured prompt for multi-LLM querying with JSON output schema",
+      "status": "deprecated",
+      "category": "llm-workflow",
+      "notes": "Experimental - may be moved or removed"
+    },
+    {
+      "command": "/consolidate",
+      "file": "commands.json entry",
+      "description": "Parse and consolidate multiple LLM responses into unified output",
+      "status": "deprecated",
+      "category": "llm-workflow",
+      "notes": "Experimental - may be moved or removed"
+    }
+  ],
+  "totals": {
+    "tools": 14,
+    "tools_active": 13,
+    "tools_deprecated": 1,
+    "commands": 43,
+    "commands_active": 14,
+    "commands_deprecated": 29
+  },
+  "notes": {
+    "server_version": "2.0.0",
+    "focus": "Documentation generation with POWER framework templates",
+    "major_migration": "v2.0.0 moved 25+ planning/workflow tools to coderef-workflow MCP server",
+    "active_features": [
+      "Foundation docs generation (5 docs with .coderef/ context injection)",
+      "Resource sheet generation (composable module-based system)",
+      "Interactive quickref generation (5 app types)",
+      "Standards establishment and compliance auditing",
+      "Changelog management with git auto-detection",
+      "Document validation against UDS schema",
+      "Papertrail validator integration (v3.7.0)"
+    ],
+    "recent_updates": [
+      "v3.7.0: Direct validation integration for foundation + standards docs",
+      "v3.6.0: Papertrail validators integration",
+      "v3.5.0: .coderef/ integration for 10x performance boost",
+      "v3.4.0: Resource sheet MCP tool with composable modules",
+      "v3.2.0: Sequential generation with context injection"
+    ]
+  }
+}

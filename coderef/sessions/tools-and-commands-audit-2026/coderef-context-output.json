@@ -1,0 +1,85 @@
+{
+  "agent_id": "coderef-context",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "coderef_scan",
+      "description": "Scan project and discover all code elements (functions, classes, components, hooks)",
+      "status": "active",
+      "parameters": ["project_path", "languages", "use_ast"]
+    },
+    {
+      "tool_name": "coderef_query",
+      "description": "Query code relationships (what-calls, what-imports, shortest-path, etc)",
+      "status": "active",
+      "parameters": ["project_path", "query_type", "target", "source", "max_depth"]
+    },
+    {
+      "tool_name": "coderef_impact",
+      "description": "Analyze impact of modifying or deleting a code element",
+      "status": "active",
+      "parameters": ["project_path", "element", "operation", "max_depth"]
+    },
+    {
+      "tool_name": "coderef_complexity",
+      "description": "Get complexity metrics for a code element",
+      "status": "active",
+      "parameters": ["project_path", "element"]
+    },
+    {
+      "tool_name": "coderef_patterns",
+      "description": "Discover code patterns and test coverage gaps",
+      "status": "active",
+      "parameters": ["project_path", "pattern_type", "limit"]
+    },
+    {
+      "tool_name": "coderef_coverage",
+      "description": "Analyze test coverage in the codebase",
+      "status": "active",
+      "parameters": ["project_path", "format"]
+    },
+    {
+      "tool_name": "coderef_context",
+      "description": "Generate comprehensive codebase context (markdown + JSON)",
+      "status": "active",
+      "parameters": ["project_path", "languages", "output_format"]
+    },
+    {
+      "tool_name": "coderef_validate",
+      "description": "Validate CodeRef2 references in codebase",
+      "status": "active",
+      "parameters": ["project_path", "pattern"]
+    },
+    {
+      "tool_name": "coderef_drift",
+      "description": "Detect drift between CodeRef index and current code",
+      "status": "active",
+      "parameters": ["project_path", "index_path"]
+    },
+    {
+      "tool_name": "coderef_diagram",
+      "description": "Generate visual dependency diagrams (Mermaid or Graphviz)",
+      "status": "active",
+      "parameters": ["project_path", "diagram_type", "format", "depth"]
+    },
+    {
+      "tool_name": "coderef_tag",
+      "description": "Add CodeRef2 tags to source files for better tracking and validation",
+      "status": "active",
+      "parameters": ["path", "dry_run", "force", "verbose", "update_lineno", "include_private", "lang", "exclude"]
+    },
+    {
+      "tool_name": "coderef_export",
+      "description": "Export coderef data in various formats (JSON, JSON-LD, Mermaid, DOT)",
+      "status": "active",
+      "parameters": ["project_path", "format", "output_path", "max_nodes"]
+    }
+  ],
+  "slash_commands": [],
+  "totals": {
+    "tools": 12,
+    "commands": 0
+  },
+  "notes": "coderef-context is a pure MCP server with no slash commands. All 12 tools are active and operational as of v2.0.0 (File Reader refactor completed 2026-01-10). Tools read from pre-scanned .coderef/ directory structure for 117x performance improvement over CLI subprocess approach."
+}

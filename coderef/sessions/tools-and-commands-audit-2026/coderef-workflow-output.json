@@ -1,0 +1,421 @@
+{
+  "agent_id": "coderef-workflow",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "list_templates",
+      "description": "Lists all available documentation templates (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)",
+      "status": "active",
+      "parameters": []
+    },
+    {
+      "tool_name": "get_template",
+      "description": "Retrieves the content of a specific documentation template",
+      "status": "active",
+      "parameters": ["template_name"]
+    },
+    {
+      "tool_name": "generate_foundation_docs",
+      "description": "Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) for a project",
+      "status": "active",
+      "parameters": ["project_path"]
+    },
+    {
+      "tool_name": "generate_individual_doc",
+      "description": "Generate a single individual documentation file for a project",
+      "status": "active",
+      "parameters": ["project_path", "template_name"]
+    },
+    {
+      "tool_name": "get_changelog",
+      "description": "Get project changelog with structured change history for agent context",
+      "status": "active",
+      "parameters": ["project_path", "version", "change_type", "breaking_only"]
+    },
+    {
+      "tool_name": "add_changelog_entry",
+      "description": "Add a new entry to the project changelog",
+      "status": "active",
+      "parameters": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact", "breaking", "migration", "summary", "contributors"]
+    },
+    {
+      "tool_name": "update_changelog",
+      "description": "Agentic workflow tool that instructs the agent to analyze their recent changes and update the changelog",
+      "status": "active",
+      "parameters": ["project_path", "version"]
+    },
+    {
+      "tool_name": "generate_quickref_interactive",
+      "description": "Interactive workflow to generate a universal quickref guide for ANY application",
+      "status": "active",
+      "parameters": ["project_path", "app_type"]
+    },
+    {
+      "tool_name": "establish_standards",
+      "description": "Scan codebase to discover UI/UX/behavior patterns and generate standards documentation",
+      "status": "active",
+      "parameters": ["project_path", "scan_depth", "focus_areas"]
+    },
+    {
+      "tool_name": "audit_codebase",
+      "description": "Audit codebase for standards violations using established standards documents",
+      "status": "active",
+      "parameters": ["project_path", "standards_dir", "severity_filter", "scope", "generate_fixes"]
+    },
+    {
+      "tool_name": "check_consistency",
+      "description": "Check code changes against established standards for consistency violations",
+      "status": "active",
+      "parameters": ["project_path", "files", "standards_dir", "severity_threshold", "scope", "fail_on_violations"]
+    },
+    {
+      "tool_name": "get_planning_template",
+      "description": "Returns feature-implementation-planning-standard.json template content or specific sections",
+      "status": "active",
+      "parameters": ["section"]
+    },
+    {
+      "tool_name": "analyze_project_for_planning",
+      "description": "Analyzes project to discover foundation docs, coding standards, reference components, and patterns",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "gather_context",
+      "description": "Gather feature requirements and save to context.json",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "description", "goal", "requirements", "out_of_scope", "constraints", "decisions", "success_criteria"]
+    },
+    {
+      "tool_name": "validate_implementation_plan",
+      "description": "Validates implementation plan JSON against feature-implementation-planning-standard.json quality checklist",
+      "status": "active",
+      "parameters": ["project_path", "plan_file_path"]
+    },
+    {
+      "tool_name": "generate_plan_review_report",
+      "description": "Transforms validation results from validate_implementation_plan into human-readable markdown review reports",
+      "status": "active",
+      "parameters": ["project_path", "plan_file_path", "output_path"]
+    },
+    {
+      "tool_name": "create_plan",
+      "description": "Create implementation plan by synthesizing context, analysis, and template",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "workorder_id", "multi_agent"]
+    },
+    {
+      "tool_name": "finalize_plan_from_agent",
+      "description": "Finalize plan generation by parsing Task agent response, saving to plan.json, and auto-validating",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "agent_response"]
+    },
+    {
+      "tool_name": "generate_deliverables_template",
+      "description": "Generate DELIVERABLES.md template from plan.json structure with phase/task checklists",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "update_deliverables",
+      "description": "Update DELIVERABLES.md with actual metrics from git history (LOC, commits, time spent)",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "generate_agent_communication",
+      "description": "Generate communication.json from plan.json for multi-agent coordination",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "assign_agent_task",
+      "description": "Assign specific task to agent with workorder scoping and conflict detection",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "agent_number", "phase_id"]
+    },
+    {
+      "tool_name": "verify_agent_completion",
+      "description": "Verify agent completion with automated git diff checks and success criteria validation",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "agent_number"]
+    },
+    {
+      "tool_name": "aggregate_agent_deliverables",
+      "description": "Aggregate metrics from multiple agent DELIVERABLES.md files into combined report",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "track_agent_status",
+      "description": "Track agent status across all features with real-time coordination dashboard",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "archive_feature",
+      "description": "Archive completed features from coderef/workorder/ to coderef/archived/",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "force"]
+    },
+    {
+      "tool_name": "update_all_documentation",
+      "description": "AGENTIC WORKFLOW: Update all documentation files after completing a feature",
+      "status": "active",
+      "parameters": ["project_path", "change_type", "feature_description", "workorder_id", "files_changed", "feature_name", "version"]
+    },
+    {
+      "tool_name": "execute_plan",
+      "description": "Generate TodoWrite task list from plan.json with WO-ID | TASK-ID format",
+      "status": "active",
+      "parameters": ["project_path", "feature_name"]
+    },
+    {
+      "tool_name": "update_task_status",
+      "description": "Update task status in plan.json as agents complete work",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "task_id", "status", "notes"]
+    },
+    {
+      "tool_name": "audit_plans",
+      "description": "Audit all plans in coderef/workorder/ directory",
+      "status": "active",
+      "parameters": ["project_path", "stale_days", "include_archived"]
+    },
+    {
+      "tool_name": "log_workorder",
+      "description": "Log a new workorder entry to the global workorder log file",
+      "status": "active",
+      "parameters": ["project_path", "workorder_id", "project_name", "description", "timestamp"]
+    },
+    {
+      "tool_name": "get_workorder_log",
+      "description": "Read and query the global workorder log file",
+      "status": "active",
+      "parameters": ["project_path", "project_name", "workorder_pattern", "limit"]
+    },
+    {
+      "tool_name": "generate_handoff_context",
+      "description": "Generate automated agent handoff context files (claude.md) from plan.json",
+      "status": "active",
+      "parameters": ["project_path", "feature_name", "mode"]
+    },
+    {
+      "tool_name": "assess_risk",
+      "description": "AI-powered risk assessment tool that evaluates proposed code changes across 5 dimensions",
+      "status": "active",
+      "parameters": ["project_path", "proposed_change", "options", "threshold", "feature_name"]
+    },
+    {
+      "tool_name": "coderef_foundation_docs",
+      "description": "Unified foundation docs generator powered by coderef analysis",
+      "status": "active",
+      "parameters": ["project_path", "include_components", "deep_extraction", "use_coderef", "force_regenerate"]
+    },
+    {
+      "tool_name": "generate_features_inventory",
+      "description": "Generate inventory of all features in coderef/workorder/ and coderef/archived/",
+      "status": "active",
+      "parameters": ["project_path", "format", "include_archived", "save_to_file"]
+    }
+  ],
+  "slash_commands": [
+    {
+      "command": "/aggregate-agent-deliverables",
+      "file": "aggregate-agent-deliverables.md",
+      "description": "Aggregate metrics from multiple agent DELIVERABLES.md files",
+      "status": "active"
+    },
+    {
+      "command": "/align-plan",
+      "file": "align-plan.md",
+      "description": "Align plan with todo list for tracking",
+      "status": "active"
+    },
+    {
+      "command": "/analyze-for-planning",
+      "file": "analyze-for-planning.md",
+      "description": "Analyze project structure for planning",
+      "status": "active"
+    },
+    {
+      "command": "/archive-feature",
+      "file": "archive-feature.md",
+      "description": "Archive completed feature",
+      "status": "active"
+    },
+    {
+      "command": "/assign-agent-task",
+      "file": "assign-agent-task.md",
+      "description": "Assign task to specific agent (1-10)",
+      "status": "active"
+    },
+    {
+      "command": "/audit-codebase",
+      "file": "audit-codebase.md",
+      "description": "Audit codebase against standards",
+      "status": "active"
+    },
+    {
+      "command": "/audit-plans",
+      "file": "audit-plans.md",
+      "description": "Health check on all plans",
+      "status": "active"
+    },
+    {
+      "command": "/check-consistency",
+      "file": "check-consistency.md",
+      "description": "Check changes against standards (pre-commit)",
+      "status": "active"
+    },
+    {
+      "command": "/complete-workorder",
+      "file": "complete-workorder.md",
+      "description": "Autonomous feature implementation command",
+      "status": "active"
+    },
+    {
+      "command": "/create-plan",
+      "file": "create-plan.md",
+      "description": "Create plan from existing context",
+      "status": "active"
+    },
+    {
+      "command": "/create-workorder",
+      "file": "create-workorder.md",
+      "description": "Gather context → analyze → create plan",
+      "status": "active"
+    },
+    {
+      "command": "/establish-standards",
+      "file": "establish-standards.md",
+      "description": "Scan codebase and establish UI/UX/behavior standards",
+      "status": "active"
+    },
+    {
+      "command": "/features-inventory",
+      "file": "features-inventory.md",
+      "description": "List all active & archived features",
+      "status": "active"
+    },
+    {
+      "command": "/gather-context",
+      "file": "gather-context.md",
+      "description": "Collect feature requirements",
+      "status": "active"
+    },
+    {
+      "command": "/generate-agent-communication",
+      "file": "generate-agent-communication.md",
+      "description": "Create multi-agent coordination file",
+      "status": "active"
+    },
+    {
+      "command": "/generate-deliverables",
+      "file": "generate-deliverables.md",
+      "description": "Create DELIVERABLES.md template",
+      "status": "active"
+    },
+    {
+      "command": "/generate-handoff-context",
+      "file": "generate-handoff-context.md",
+      "description": "Create claude.md for agent handoffs",
+      "status": "active"
+    },
+    {
+      "command": "/generate-plan-review",
+      "file": "generate-plan-review.md",
+      "description": "Generate markdown review report",
+      "status": "active"
+    },
+    {
+      "command": "/get-planning-template",
+      "file": "get-planning-template.md",
+      "description": "View 10-section plan template",
+      "status": "active"
+    },
+    {
+      "command": "/get-workorder-log",
+      "file": "get-workorder-log.md",
+      "description": "Query workorder history",
+      "status": "active"
+    },
+    {
+      "command": "/log-workorder",
+      "file": "log-workorder.md",
+      "description": "Add to global workorder log",
+      "status": "active"
+    },
+    {
+      "command": "/track-agent-status",
+      "file": "track-agent-status.md",
+      "description": "View agent assignment dashboard",
+      "status": "active"
+    },
+    {
+      "command": "/update-deliverables",
+      "file": "update-deliverables.md",
+      "description": "Update metrics from git history",
+      "status": "active"
+    },
+    {
+      "command": "/update-docs",
+      "file": "update-docs.md",
+      "description": "Update README/CHANGELOG/CLAUDE.md",
+      "status": "active"
+    },
+    {
+      "command": "/update-foundation-docs",
+      "file": "update-foundation-docs.md",
+      "description": "Regenerate existing foundation docs",
+      "status": "active"
+    },
+    {
+      "command": "/update-task-status",
+      "file": "update-task-status.md",
+      "description": "Track individual task progress",
+      "status": "active"
+    },
+    {
+      "command": "/validate-plan",
+      "file": "validate-plan.md",
+      "description": "Score existing plan quality",
+      "status": "active"
+    },
+    {
+      "command": "/verify-agent-completion",
+      "file": "verify-agent-completion.md",
+      "description": "Validate agent work completion",
+      "status": "active"
+    },
+    {
+      "command": "/coderef-foundation-docs",
+      "file": "coderef-foundation-docs.md",
+      "description": "Generate ARCHITECTURE/SCHEMA/API/COMPONENTS",
+      "status": "active"
+    },
+    {
+      "command": "/generate-docs",
+      "file": "generate-docs.md",
+      "description": "Generate foundation docs",
+      "status": "active"
+    },
+    {
+      "command": "/list-templates",
+      "file": "list-templates.md",
+      "description": "List available doc templates",
+      "status": "active"
+    },
+    {
+      "command": "/get-template",
+      "file": "get-template.md",
+      "description": "View specific template content",
+      "status": "active"
+    }
+  ],
+  "totals": {
+    "tools": 36,
+    "commands": 32
+  }
+}

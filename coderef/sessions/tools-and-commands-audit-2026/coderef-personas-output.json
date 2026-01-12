@@ -1,0 +1,149 @@
+{
+  "agent_id": "coderef-personas",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+  "audit_date": "2026-01-12",
+  "mcp_tools": [
+    {
+      "tool_name": "use_persona",
+      "description": "Activate an expert persona to gain specialized knowledge and behavior. Returns the persona's system prompt and expertise.",
+      "status": "active",
+      "parameters": ["name"]
+    },
+    {
+      "tool_name": "get_active_persona",
+      "description": "Get information about the currently active persona.",
+      "status": "active",
+      "parameters": []
+    },
+    {
+      "tool_name": "clear_persona",
+      "description": "Deactivate the current persona and return to default state.",
+      "status": "active",
+      "parameters": []
+    },
+    {
+      "tool_name": "list_personas",
+      "description": "List all available personas with their descriptions.",
+      "status": "active",
+      "parameters": []
+    },
+    {
+      "tool_name": "generate_todo_list",
+      "description": "Convert plan task breakdown to TodoWrite format for Lloyd. Part of docs-expert v2.0 Phase 1.",
+      "status": "active",
+      "parameters": ["plan_path", "workorder_id", "mode"]
+    },
+    {
+      "tool_name": "track_plan_execution",
+      "description": "Sync plan progress with todo status in real-time. Part of docs-expert v2.0 Phase 1.",
+      "status": "active",
+      "parameters": ["plan_path", "workorder_id", "todo_status"]
+    },
+    {
+      "tool_name": "execute_plan_interactive",
+      "description": "Execute plan with guided step-by-step or batch mode. Part of docs-expert v2.0 Phase 1.",
+      "status": "active",
+      "parameters": ["plan_path", "workorder_id", "mode"]
+    },
+    {
+      "tool_name": "create_custom_persona",
+      "description": "Create a custom persona through guided workflow with automatic system prompt generation and validation. Users provide expertise, communication style, and use cases - the system generates a complete persona definition.",
+      "status": "active",
+      "parameters": ["name", "description", "expertise", "use_cases", "communication_style", "problem_solving", "tool_usage", "specializations", "key_principles", "example_responses"]
+    }
+  ],
+  "slash_commands": [
+    {
+      "command": "/lloyd",
+      "file": "lloyd.md",
+      "description": "Activate Lloyd, the AI project coordinator and technical leader persona",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/ava",
+      "file": "ava.md",
+      "description": "Activate Ava, the Frontend Specialist persona (React, CSS/Tailwind, accessibility, responsive design)",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/marcus",
+      "file": "marcus.md",
+      "description": "Activate Marcus, the Backend Specialist persona (REST/GraphQL APIs, databases, auth, security)",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/quinn",
+      "file": "quinn.md",
+      "description": "Activate Quinn, the Testing Specialist persona (unit, integration, E2E, TDD, coverage analysis)",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/taylor",
+      "file": "taylor.md",
+      "description": "Activate Taylor, the General Purpose Agent persona (balanced code, test, docs capabilities)",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/research-scout",
+      "file": "research-scout.md",
+      "description": "Activate the research-scout persona - Research specialist who investigates topics and compiles findings",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/coderef-mcp-lead",
+      "file": "coderef-mcp-lead.md",
+      "description": "Activate the coderef-mcp-lead persona - Lead system architect with deep knowledge of all 5 MCP servers",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/coderef-personas-agent",
+      "file": "coderef-personas-agent.md",
+      "description": "Activate the coderef-personas-agent persona - Persona system specialist with expertise in coderef-personas MCP server",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/use-persona",
+      "file": "use-persona.md",
+      "description": "Generic command to activate any expert persona by name",
+      "status": "active",
+      "location": "global"
+    },
+    {
+      "command": "/create-persona",
+      "file": "create-persona.md",
+      "description": "Create a custom persona through guided workflow with automatic system prompt generation and validation",
+      "status": "active",
+      "location": "global"
+    }
+  ],
+  "totals": {
+    "tools": 8,
+    "commands": 10
+  },
+  "notes": {
+    "personas_available": [
+      "lloyd",
+      "ava",
+      "marcus",
+      "quinn",
+      "taylor",
+      "research-scout",
+      "coderef-mcp-lead",
+      "coderef-context-agent",
+      "coderef-docs-agent",
+      "coderef-testing-agent",
+      "coderef-personas-agent"
+    ],
+    "personas_count": 11,
+    "commands_location": "All slash commands are in the global ~/.claude/commands/ directory, not in project-local .claude/commands/",
+    "lloyd_integration": "Phase 1 Lloyd Integration tools (generate_todo_list, track_plan_execution, execute_plan_interactive) are active and operational"
+  }
+}

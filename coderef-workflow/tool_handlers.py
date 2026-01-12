@@ -1337,21 +1337,42 @@ async def handle_create_plan(arguments: dict) -> list[TextContent]:
             }
         )
 
+        # Check if AI agent prompt was generated
+        prompt_file = project_path / 'coderef' / 'workorder' / feature_name / 'agent-prompt.txt'
+        agent_prompt = None
+        if prompt_file.exists():
+            agent_prompt = prompt_file.read_text(encoding='utf-8')
+            logger.info("📝 AI agent prompt available for plan generation")
+
         # Build success message (concise to prevent stalls)
         message = f"✅ Plan created: {workorder_id}\n"
         message += f"Location: coderef/workorder/{feature_name}/plan.json\n\n"
+
+        if agent_prompt:
+            message += "⚠️  Note: Plan used template generation (fallback mode)\n"
+            message += "💡 AI-powered prompt is available in response data\n"
+            message += "   To generate AI-powered plan: Use the agent_prompt from this response\n\n"
+
         message += f"Next: /validate-plan or /align-plan to continue"
 
+        response_data = {
+            'feature_name': feature_name,
+            'workorder_id': workorder_id,
+            'plan_file': str(plan_file),
+            'plan_status': plan.get('META_DOCUMENTATION', {}).get('status', 'unknown'),
+            'has_context': context is not None,
+            'has_analysis': analysis is not None,
+            'multi_agent_mode': multi_agent
+        }
+
+        # Include agent prompt if available
+        if agent_prompt:
+            response_data['agent_prompt'] = agent_prompt
+            response_data['agent_prompt_file'] = str(prompt_file)
+            response_data['use_ai_planning'] = True
+
         return format_success_response(
-            data={
-                'feature_name': feature_name,
-                'workorder_id': workorder_id,
-                'plan_file': str(plan_file),
-                'plan_status': plan.get('META_DOCUMENTATION', {}).get('status', 'unknown'),
-                'has_context': context is not None,
-                'has_analysis': analysis is not None,
-                'multi_agent_mode': multi_agent
-            },
+            data=response_data,
             message=message
         )
 

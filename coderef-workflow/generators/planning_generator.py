@@ -280,6 +280,13 @@ class PlanningGenerator:
         # Launch Task agent
         try:
             logger.debug("Launching Task agent for plan generation...")
+
+            # Save prompt to file for Claude Code to use
+            prompt_file = self.project_path / "coderef" / "workorder" / feature_name / "agent-prompt.txt"
+            prompt_file.parent.mkdir(parents=True, exist_ok=True)
+            prompt_file.write_text(agent_prompt, encoding='utf-8')
+            logger.info(f"📝 Saved agent prompt to: {prompt_file}")
+
             # NOTE: Task tool is called via MCP - this would need actual MCP integration
             # For now, fall back to template-based generation with a clear message
             raise NotImplementedError(

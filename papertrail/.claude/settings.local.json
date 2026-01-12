@@ -32,6 +32,8 @@
     "coderef-context",
     "coderef-docs",
     "coderef-workflow",
-    "coderef-testing"
-  ]
+    "coderef-testing",
+    "papertrail"
+  ],
+  "enableAllProjectMcpServers": true
 }

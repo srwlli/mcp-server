@@ -1,3 +1,4 @@
+WO-TOOLS-COMMANDS-AUDIT-001 | coderef-ecosystem | Audit all tools and commands across ecosystem, synthesize master list | 2026-01-12T00:00:00+00:00
 WO-ADD-TIMESTAMP-AND-ENFORCE-NO-EMOJIS-001 | coderef-docs | Archived feature: Add Timestamp And Enforce No ... | 2026-01-10T09:52:34.045795+00:00
 WO-CONTEXT-INDEX-001 | coderef-ecosystem | Context file discovery and cataloging | 2026-01-05T04:46:15.169291+00:00
 WO-SCANNER-001 | coderef-ecosystem | CodeRef scanner integration - Phase 1 | 2026-01-05T04:19:38.845530+00:00

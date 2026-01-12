@@ -1,66 +1,65 @@
-# API Reference
+# API Reference - coderef-docs
 
-**Version:** 3.4.0
-**Last Updated:** 2026-01-10
-**Server:** coderef-docs
+**Project:** coderef-docs (MCP Server)
+**Version:** 3.7.0
+**Last Updated:** 2026-01-11
 **Protocol:** MCP (Model Context Protocol) 1.0
 
 ---
 
 ## Purpose
 
-This document provides the technical API reference for the **coderef-docs MCP server**. It defines all 13 tools available through the MCP protocol, their input schemas, expected outputs, and integration patterns. This reference enables AI agents and developers to effectively use the documentation generation capabilities.
-
----
+This document provides the complete MCP tool interface reference for coderef-docs, a documentation generation server that provides 13 specialized tools for foundation docs, changelog management, standards enforcement, and composable resource sheets.
 
 ## Overview
 
-The coderef-docs server exposes 13 MCP tools organized into 4 functional domains:
+**What's Included:**
+- 13 MCP tool endpoints with complete schemas
+- Direct validation integration details (WO-CODEREF-DOCS-DIRECT-VALIDATION-001)
+- Request/response examples
+- Error handling patterns
+- Tool orchestration workflows
 
-1. **Documentation Generation** (4 tools) - Foundation docs using POWER framework
-2. **Resource Sheets** (1 tool) - Composable module-based documentation (NEW in v3.4.0)
-3. **Changelog Management** (3 tools) - Version tracking and change recording
-4. **Standards & Compliance** (3 tools) - Code pattern enforcement
-5. **Validation** (2 tools) - Document health checks
-
-All tools follow JSON-RPC 2.0 over stdio and return structured `TextContent` responses.
-
----
-
-## Authentication & Access
-
-**Authentication:** None required (local stdio-based MCP server)
-**Authorization:** File system permissions (read/write to project directories)
-**Rate Limits:** No rate limiting (local execution)
+**Not Included:**
+- Internal implementation details (see ARCHITECTURE.md)
+- Setup/deployment (see README.md)
 
 ---
 
-## Tool Catalog
+## Authentication & Transport
 
-### 1. Documentation Generation
+**Protocol:** JSON-RPC 2.0 over stdio
+**Authentication:** None (local MCP server)
+**Content-Type:** application/json
 
-#### 1.1 `list_templates`
+### Connection
 
-Lists all available POWER framework templates.
+The server runs as a subprocess and communicates via standard input/output:
 
-**Input Schema:**
-```json
+```python
+# From .mcp.json configuration
 {
-  "type": "object",
-  "properties": {},
-  "required": []
+  "coderef-docs": {
+    "command": "python",
+    "args": ["C:/Users/willh/.mcp-servers/coderef-docs/server.py"],
+    "cwd": "C:/Users/willh/.mcp-servers/coderef-docs"
+  }
 }
 ```
 
-**Output:**
-```
-Available templates: readme, architecture, api, components, schema, user-guide, my-guide
-```
+---
 
-**Example:**
+## Tool Endpoints
+
+### 1. Template Management
+
+#### list_templates
+
+List all available POWER framework templates.
+
+**Request:**
 ```json
 {
-  "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
     "name": "list_templates",
@@ -69,77 +68,66 @@ Available templates: readme, architecture, api, components, schema, user-guide, 
 }
 ```
 
----
-
-#### 1.2 `get_template`
-
-Retrieves the raw POWER framework template content.
-
-**Input Schema:**
+**Response:**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "template_name": {
-      "type": "string",
-      "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"]
+  "result": [
+    {
+      "type": "text",
+      "text": "Available templates: readme, architecture, api, components, schema, user-guide, my-guide"
     }
-  },
-  "required": ["template_name"]
+  ]
 }
 ```
 
-**Output:**
-Raw template content with POWER framework structure and AI guidance placeholders.
+---
 
-**Example:**
+#### get_template
+
+Retrieve specific template content.
+
+**Parameters:**
+- `template_name` (string, required): One of readme, architecture, api, components, my-guide, schema, user-guide
+
+**Request:**
 ```json
 {
-  "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
     "name": "get_template",
     "arguments": {
-      "template_name": "api"
+      "template_name": "readme"
     }
   }
 }
 ```
 
----
-
-#### 1.3 `generate_foundation_docs`
-
-Generates all 5 foundation documents sequentially with context injection.
-
-**Input Schema:**
+**Response:**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": {
-      "type": "string",
-      "description": "Absolute path to the project directory"
+  "result": [
+    {
+      "type": "text",
+      "text": "framework: POWER\npurpose: Generate README.md as the discovery entry document.\n..."
     }
-  },
-  "required": ["project_path"]
+  ]
 }
 ```
 
-**Output:**
-Sequential generation plan with [1/5] through [5/5] progress indicators.
+---
 
-**Generation Sequence:**
-1. API.md
-2. SCHEMA.md
-3. COMPONENTS.md
-4. ARCHITECTURE.md
-5. README.md
+### 2. Foundation Documentation
 
-**Example:**
+#### generate_foundation_docs
+
+Generate all 5 foundation documents (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) with sequential workflow and .coderef/ integration.
+
+**Parameters:**
+- `project_path` (string, required): Absolute path to project directory
+
+**Request:**
 ```json
 {
-  "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
     "name": "generate_foundation_docs",
@@ -150,415 +138,319 @@ Sequential generation plan with [1/5] through [5/5] progress indicators.
 }
 ```
 
----
-
-#### 1.4 `generate_individual_doc`
-
-Generates a single foundation document with optional UDS metadata.
-
-**Input Schema:**
+**Response:**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": {
-      "type": "string",
-      "description": "Absolute path to the project directory"
-    },
-    "template_name": {
-      "type": "string",
-      "enum": ["readme", "architecture", "api", "components", "my-guide", "schema", "user-guide"]
-    },
-    "workorder_id": {
-      "type": "string",
-      "description": "Optional: Workorder ID for UDS tracking (e.g., WO-FEATURE-001)"
-    },
-    "feature_id": {
-      "type": "string",
-      "description": "Optional: Feature ID for UDS tracking"
-    },
-    "version": {
-      "type": "string",
-      "description": "Optional: Document version (default: 1.0.0)"
+  "result": [
+    {
+      "type": "text",
+      "text": "Foundation Documentation Generation Plan\n\n.coderef/ resources: ✅ Available\n\nDocuments to generate (5):\n1. API.md\n2. SCHEMA.md\n3. COMPONENTS.md\n4. ARCHITECTURE.md\n5. README.md\n\nWorkflow: Read .coderef/ files → Extract elements → Populate templates"
     }
-  },
-  "required": ["project_path", "template_name"]
+  ]
 }
 ```
 
-**Output:**
-Template content with extraction instructions and save path.
+---
 
-**Example:**
+#### generate_individual_doc
+
+Generate a single documentation file with **direct validation integration** (v3.7.0).
+
+**Parameters:**
+- `project_path` (string, required): Absolute path to project directory
+- `template_name` (string, required): Template to generate
+- `workorder_id` (string, optional): Workorder ID for UDS tracking (enables Papertrail if PAPERTRAIL_ENABLED=true)
+- `feature_id` (string, optional): Feature ID for UDS tracking (defaults to template_name)
+- `version` (string, optional): Document version (default: 1.0.0)
+
+**Request:**
 ```json
 {
-  "jsonrpc": "2.0",
   "method": "tools/call",
   "params": {
     "name": "generate_individual_doc",
     "arguments": {
       "project_path": "C:/Users/willh/.mcp-servers/coderef-docs",
-      "template_name": "schema"
+      "template_name": "readme"
     }
   }
 }
 ```
 
----
-
-### 2. Resource Sheet Generation (NEW in v3.4.0)
-
-#### 2.1 `generate_resource_sheet`
-
-Generates composable module-based documentation in 3 formats (Markdown, JSON Schema, JSDoc).
-
-**Input Schema:**
+**Response (Direct Validation - v3.7.0):**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": {
-      "type": "string",
-      "description": "Absolute path to project directory"
-    },
-    "element_name": {
-      "type": "string",
-      "description": "Name of element to document (e.g., 'AuthService', 'UserModel')"
-    },
-    "mode": {
-      "type": "string",
-      "enum": ["reverse-engineer", "template", "refresh"],
-      "description": "Generation mode"
-    },
-    "output_format": {
-      "type": "string",
-      "enum": ["markdown", "json", "jsdoc", "all"],
-      "description": "Output format (default: markdown)"
+  "result": [
+    {
+      "type": "text",
+      "text": "✅ Generated and saved README.md\n\n📁 Location: C:/Users/willh/.mcp-servers/coderef-docs/README.md\n📄 Template: readme\n\n📊 Validation: 95/100\n  ✅ 0 errors, 1 warnings\n  • Metadata written to frontmatter _uds section\n\n✅ Validation passed (score: 95, threshold: 90)"
     }
-  },
-  "required": ["project_path", "element_name", "mode"]
+  ]
 }
 ```
 
-**Modes:**
-- `reverse-engineer`: Analyze existing code and generate docs
-- `template`: Generate scaffolding for new element
-- `refresh`: Update existing docs with current code state
-
-**Output:**
-Composable documentation with 4 universal modules + conditional modules based on detected characteristics.
-
-**Example:**
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "tools/call",
-  "params": {
-    "name": "generate_resource_sheet",
-    "arguments": {
-      "project_path": "C:/Users/willh/.mcp-servers/coderef-docs",
-      "element_name": "FoundationGenerator",
-      "mode": "reverse-engineer",
-      "output_format": "all"
-    }
-  }
-}
-```
+**Key Feature (WO-CODEREF-DOCS-DIRECT-VALIDATION-001):**
+- Tool executes validation at runtime (NOT Claude)
+- Tool saves file → runs validator → writes `_uds` metadata to frontmatter
+- Returns simple result message (NO instruction blocks)
 
 ---
 
 ### 3. Changelog Management
 
-#### 3.1 `add_changelog_entry`
+#### add_changelog_entry
 
-Manually adds a changelog entry with full metadata.
+Manually add changelog entry with all details.
 
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
-    "change_type": {
-      "type": "string",
-      "enum": ["bugfix", "enhancement", "feature", "breaking_change", "deprecation", "security"]
-    },
-    "severity": {
-      "type": "string",
-      "enum": ["critical", "major", "minor", "patch"]
-    },
-    "title": { "type": "string" },
-    "description": { "type": "string" },
-    "files": { "type": "array", "items": { "type": "string" } },
-    "reason": { "type": "string" },
-    "impact": { "type": "string" },
-    "breaking": { "type": "boolean", "default": false },
-    "migration": { "type": "string" },
-    "contributors": { "type": "array", "items": { "type": "string" } }
-  },
-  "required": ["project_path", "version", "change_type", "severity", "title", "description", "files", "reason", "impact"]
-}
-```
-
-**Output:**
-Confirmation with entry summary and CHANGELOG.json path.
+**Parameters:**
+- `project_path` (string, required)
+- `version` (string, required): Pattern `^\d+\.\d+\.\d+$`
+- `change_type` (string, required): bugfix, enhancement, feature, breaking_change, deprecation, security
+- `severity` (string, required): critical, major, minor, patch
+- `title` (string, required): Short description
+- `description` (string, required): Detailed description
+- `files` (array[string], required): List of affected files
+- `reason` (string, required): Why change was made
+- `impact` (string, required): Impact on users/system
+- `breaking` (boolean, optional): Default false
+- `migration` (string, optional): Migration guide for breaking changes
+- `summary` (string, optional): Version summary
+- `contributors` (array[string], optional): List of contributors
 
 ---
 
-#### 3.2 `record_changes`
+#### record_changes
 
-Smart agentic changelog recording with git auto-detection and AI confirmation.
+Smart agentic changelog recording with git auto-detection (recommended).
 
-**Input Schema:**
+**Parameters:**
+- `project_path` (string, required)
+- `version` (string, required): Pattern `^\d+\.\d+\.\d+$`
+- `context` (object, optional): Manual context for git-less environments
+
+**Request:**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "version": { "type": "string" },
-    "workorder_id": { "type": "string" }
-  },
-  "required": ["project_path", "version"]
-}
-```
-
-**Workflow:**
-1. Auto-detects git changes
-2. Suggests change_type and severity
-3. Extracts file list from git diff
-4. AI agent confirms/adjusts details
-5. Writes to CHANGELOG.json
-
-**Output:**
-Change suggestion with confirmation prompt.
-
----
-
-### 4. Standards & Compliance
-
-#### 4.1 `establish_standards`
-
-Extracts coding standards from existing codebase using .coderef/ data.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "focus_areas": {
-      "type": "array",
-      "items": { "enum": ["ui_components", "behavior_patterns", "ux_flows", "all"] },
-      "default": ["all"]
-    },
-    "scan_depth": {
-      "type": "string",
-      "enum": ["quick", "standard", "deep"],
-      "default": "standard"
+  "method": "tools/call",
+  "params": {
+    "name": "record_changes",
+    "arguments": {
+      "project_path": "C:/Users/willh/.mcp-servers/coderef-docs",
+      "version": "3.7.0"
     }
-  },
-  "required": ["project_path"]
+  }
 }
 ```
 
-**Output:**
-4 markdown files in `coderef/standards/`:
-- ui-patterns.md
-- behavior-patterns.md
-- ux-patterns.md
-- coding-conventions.md
-
-**Performance:**
-- With .coderef/: ~50ms (10x faster)
-- Without .coderef/: ~5-60 seconds (full scan)
-
----
-
-#### 4.2 `audit_codebase`
-
-Validates codebase compliance against established standards.
-
-**Input Schema:**
+**Response:**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "scope": {
-      "type": "array",
-      "items": { "enum": ["ui_patterns", "behavior_patterns", "ux_patterns", "all"] },
-      "default": ["all"]
-    },
-    "severity_filter": {
-      "type": "string",
-      "enum": ["critical", "major", "minor", "all"],
-      "default": "all"
-    },
-    "generate_fixes": { "type": "boolean", "default": true },
-    "standards_dir": { "type": "string", "default": "coderef/standards" }
-  },
-  "required": ["project_path"]
-}
-```
-
-**Output:**
-Compliance report with 0-100 score, violations by severity, and fix suggestions.
-
----
-
-#### 4.3 `check_consistency`
-
-Pre-commit gate for staged file changes.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "files": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Files to check (auto-detects git changes if omitted)"
-    },
-    "scope": {
-      "type": "array",
-      "items": { "enum": ["ui_patterns", "behavior_patterns", "ux_patterns", "all"] },
-      "default": ["all"]
-    },
-    "severity_threshold": {
-      "type": "string",
-      "enum": ["critical", "major", "minor"],
-      "default": "major"
-    },
-    "fail_on_violations": { "type": "boolean", "default": true },
-    "standards_dir": { "type": "string", "default": "coderef/standards" }
-  },
-  "required": ["project_path"]
-}
-```
-
-**Output:**
-Pass/fail status with violation details for modified files only.
-
----
-
-### 5. Validation
-
-#### 5.1 `validate_document`
-
-Validates document against UDS (Universal Document Standard) schema.
-
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "document_path": { "type": "string" },
-    "document_type": {
-      "type": "string",
-      "enum": ["plan", "context", "analysis", "deliverables", "claude"],
-      "description": "Type of document to validate"
+  "result": [
+    {
+      "type": "text",
+      "text": "📊 Git Auto-Detection Results:\n\nFiles changed (staged): 2\n  • tool_handlers.py\n  • tests/test_direct_validation.py\n\nSuggested change_type: feature\nCalculated severity: major\n\n✅ Confirm to create changelog entry?"
     }
-  },
-  "required": ["project_path", "document_path", "document_type"]
+  ]
 }
 ```
-
-**Output:**
-Validation result with schema compliance status.
 
 ---
 
-#### 5.2 `check_document_health`
+### 4. Quick Reference
 
-Calculates document health score (0-100) based on completeness and quality.
+#### generate_quickref_interactive
 
-**Input Schema:**
-```json
-{
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "document_path": { "type": "string" },
-    "document_type": {
-      "type": "string",
-      "enum": ["plan", "context", "deliverables", "architecture", "readme"]
-    }
-  },
-  "required": ["project_path", "document_path", "document_type"]
-}
-```
+Interactive workflow to generate universal quickref guide for any application type.
 
-**Output:**
-Health score with breakdown:
-- Completeness (40%)
-- Quality (30%)
-- Freshness (20%)
-- Standards compliance (10%)
+**Parameters:**
+- `project_path` (string, required)
+- `app_type` (string, optional): cli, web, api, desktop, library (can be inferred)
 
 ---
 
-### 6. Quickref Generation
+### 5. Resource Sheets
 
-#### 6.1 `generate_quickref_interactive`
+#### generate_resource_sheet
 
-Interactive workflow to generate universal quickref guide.
+Generate composable module-based technical documentation with auto-detection and 3-format output.
 
-**Input Schema:**
+**Parameters:**
+- `element_name` (string, required): Code element name
+- `project_path` (string, required)
+- `element_type` (string, optional): component, hook, service (auto-detected)
+- `mode` (string, optional): reverse-engineer, template, refresh (default: reverse-engineer)
+- `auto_analyze` (boolean, optional): Use coderef_scan (default: true)
+- `output_path` (string, optional): Custom output directory
+- `validate_against_code` (boolean, optional): Drift detection (default: true)
+
+---
+
+### 6. Standards & Compliance
+
+#### establish_standards
+
+Scan codebase to discover and document coding standards (run ONCE per project).
+
+**Parameters:**
+- `project_path` (string, required)
+- `scan_depth` (string, optional): quick, standard, deep (default: standard)
+- `focus_areas` (array[string], optional): ui_components, behavior_patterns, ux_flows, all (default: ["all"])
+
+**Response (Direct Validation - v3.7.0):**
 ```json
 {
-  "type": "object",
-  "properties": {
-    "project_path": { "type": "string" },
-    "app_type": {
-      "type": "string",
-      "enum": ["cli", "web", "api", "desktop", "library"],
-      "description": "Type of application (can be inferred from user responses)"
+  "result": [
+    {
+      "type": "text",
+      "text": "✅ Standards establishment completed successfully!\n\n📊 RESULTS:\nFiles Created: 3\nTotal Patterns Discovered: 15\n\n📋 VALIDATION RESULTS:\n  ✅ PASSED ui-patterns.md: 94/100\n  ✅ PASSED behavior-patterns.md: 92/100\n  ✅ PASSED ux-patterns.md: 91/100\n\n💾 Validation metadata saved to frontmatter _uds sections"
     }
-  },
-  "required": ["project_path"]
+  ]
 }
 ```
 
-**Output:**
-Interview questions for AI to ask user → generates scannable quickref.md (150-250 lines).
+---
+
+#### audit_codebase
+
+Audit codebase for standards violations (requires established standards).
+
+**Parameters:**
+- `project_path` (string, required)
+- `standards_dir` (string, optional): Default "coderef/standards"
+- `severity_filter` (string, optional): critical, major, minor, all (default: all)
+- `scope` (array[string], optional): ui_patterns, behavior_patterns, ux_patterns, all
+- `generate_fixes` (boolean, optional): Default true
+
+---
+
+#### check_consistency
+
+Pre-commit gate for modified files (lightweight quality check).
+
+**Parameters:**
+- `project_path` (string, required)
+- `files` (array[string], optional): Files to check (auto-detects git changes)
+- `standards_dir` (string, optional): Default "coderef/standards"
+- `severity_threshold` (string, optional): critical, major, minor (default: major)
+- `scope` (array[string], optional): ui_patterns, behavior_patterns, ux_patterns, all
+- `fail_on_violations` (boolean, optional): Default true
+
+---
+
+### 7. Document Validation
+
+#### validate_document
+
+Validate document against UDS (Universal Documentation Standards) schema.
+
+**Parameters:**
+- `document_path` (string, required): Absolute path to document file
+- `doc_type` (string, required): plan, deliverables, architecture, readme, api
+
+---
+
+#### check_document_health
+
+Calculate document health score (0-100) based on traceability, completeness, freshness, and validation.
+
+**Parameters:**
+- `document_path` (string, required)
+- `doc_type` (string, required): plan, deliverables, architecture, readme, api
+
+**Response:**
+```json
+{
+  "result": [
+    {
+      "type": "text",
+      "text": "Document Health Score: 92/100\n\nBreakdown:\n  • Traceability (40%): 38/40\n  • Completeness (30%): 28/30\n  • Freshness (20%): 18/20\n  • Validation (10%): 8/10\n\nStatus: HEALTHY"
+    }
+  ]
+}
+```
 
 ---
 
 ## Error Handling
 
-All tools return standardized error responses:
+### Error Response Format
 
 ```json
 {
-  "type": "text",
-  "text": "❌ Error: [Error message]\n\nDetails: [Stack trace or context]\n\nSuggestion: [How to fix]"
+  "error": {
+    "code": -32602,
+    "message": "Invalid params",
+    "data": {
+      "details": "project_path is required"
+    }
+  }
 }
 ```
 
-**Common Errors:**
-- `Invalid project path` - Path doesn't exist or isn't accessible
-- `Template not found` - Invalid template_name provided
-- `CHANGELOG.json validation failed` - Invalid JSON schema
-- `Standards not established` - Run establish_standards first
-- `Git repository required` - record_changes needs git
+### Common Error Codes
+
+| Code | Message | Description |
+|------|---------|-------------|
+| -32600 | Invalid Request | Malformed JSON-RPC request |
+| -32601 | Method not found | Unknown tool name |
+| -32602 | Invalid params | Missing or invalid parameters |
+| -32603 | Internal error | Server-side error during execution |
+
+---
+
+## Tool Orchestration Workflows
+
+### Workflow 1: Complete Foundation Documentation
+
+```
+1. generate_foundation_docs (returns plan)
+2. For each template in plan:
+   - generate_individual_doc (generates + validates)
+3. Verify all 5 docs exist with _uds metadata
+```
+
+### Workflow 2: Standards Establishment & Compliance
+
+```
+1. establish_standards (scan_depth: standard)
+2. audit_codebase (severity_filter: major)
+3. For CI/CD: check_consistency (auto-detects git changes)
+```
+
+### Workflow 3: Feature Documentation Lifecycle
+
+```
+1. generate_individual_doc (workorder_id: WO-FEATURE-001)
+2. add_changelog_entry (version: 1.1.0, change_type: feature)
+3. validate_document (doc_type: api)
+4. check_document_health (verify score >= 90)
+```
+
+---
+
+## Versioning
+
+**API Version:** Follows MCP protocol 1.0
+**Tool Schema Version:** 1.0.0
+
+**Version History:**
+- v3.7.0 (2026-01-11): Direct validation integration (WO-CODEREF-DOCS-DIRECT-VALIDATION-001)
+- v3.6.0 (2026-01-10): Papertrail validators integration (deprecated)
+- v3.5.0: .coderef/ integration for foundation docs
+- v3.4.0: Resource sheet MCP tool
 
 ---
 
 ## References
 
-- **Server Implementation:** [server.py](../../server.py)
-- **Tool Handlers:** [tool_handlers.py](../../tool_handlers.py)
-- **POWER Framework:** [templates/power/](../../templates/power/)
-- **Standards System:** [CLAUDE.md](../../CLAUDE.md#standards--compliance-system)
-- **UDS Specification:** [CLAUDE.md](../../CLAUDE.md#universal-document-standard-uds)
-- **MCP Specification:** https://spec.modelcontextprotocol.io/
+- **ARCHITECTURE.md** - Internal implementation details
+- **README.md** - Setup and usage guide
+- **SCHEMA.md** - Data structures and schemas
+- **COMPONENTS.md** - Key modules and components
+- **MCP Specification** - https://spec.modelcontextprotocol.io/
 
 ---
 
-**Maintained by:** coderef-docs MCP server
-**Generated:** 2026-01-10
-**AI Assistance:** Claude Code (Sonnet 4.5)
+**Maintained by:** willh, Claude Code AI
+**Last API Update:** 2026-01-11 (v3.7.0 - Direct Validation Integration)
+**Status:** ✅ Production Ready

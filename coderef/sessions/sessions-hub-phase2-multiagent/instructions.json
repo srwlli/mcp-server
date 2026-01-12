@@ -1,0 +1,97 @@
+{
+  "workorder_id": "WO-SESSIONS-HUB-002",
+  "task": "Multi-Agent Sessions Hub Phase 2 Implementation",
+  "description": "Build Sessions Hub UI with parallel execution - Creator builds System 1 (session creation), Monitor builds System 2 (session monitoring), Integration connects both systems",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate parallel agent execution and verify deliverables",
+    "phases": {
+      "phase_1_kickoff": {
+        "description": "Launch Creator and Monitor agents in parallel",
+        "steps": {
+          "step_1": "READ communication.json to identify agent roster",
+          "step_2": "VERIFY forbidden_files lists prevent conflicts",
+          "step_3": "HANDOFF context files to Agent 1 (Creator) and Agent 2 (Monitor)",
+          "step_4": "MONITOR agent status updates in communication.json"
+        }
+      },
+      "phase_2_verification": {
+        "description": "Verify Creator and Monitor deliverables",
+        "steps": {
+          "step_1": "READ creator-deliverables.md and monitor-deliverables.md",
+          "step_2": "VERIFY no forbidden file violations occurred",
+          "step_3": "VALIDATE component file structure matches design",
+          "step_4": "UPDATE communication.json aggregation counts"
+        }
+      },
+      "phase_3_integration": {
+        "description": "Launch Integration agent after Creator + Monitor complete",
+        "steps": {
+          "step_1": "VERIFY both Creator and Monitor status = 'complete'",
+          "step_2": "HANDOFF context file to Agent 3 (Integration)",
+          "step_3": "MONITOR integration progress",
+          "step_4": "CREATE orchestrator-output.json with final synthesis"
+        }
+      }
+    },
+    "output_format": "json",
+    "output_template": {
+      "session_id": "sessions-hub-phase2-multiagent",
+      "agents_launched": 3,
+      "parallel_execution": true,
+      "creator_status": "complete|in_progress|not_started",
+      "monitor_status": "complete|in_progress|not_started",
+      "integration_status": "complete|in_progress|blocked",
+      "forbidden_file_violations": 0,
+      "deliverables_verified": true,
+      "next_steps": "Integration phase ready | Creator pending | Monitor pending"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Execute assigned sprint(s) following context file (CLAUDE.md) in your agent subdirectory",
+    "phases": {
+      "phase_1_read_context": {
+        "description": "Read your CLAUDE.md file for workorder-specific instructions",
+        "steps": {
+          "step_1": "READ communication.json to find your agent_id and context_file path",
+          "step_2": "READ your context_file (agent1/CLAUDE.md, agent2/CLAUDE.md, or agent3/CLAUDE.md)",
+          "step_3": "IDENTIFY your forbidden_files list",
+          "step_4": "CONFIRM your output_directory and phases"
+        }
+      },
+      "phase_2_execute": {
+        "description": "Execute your assigned sprint(s) following CLAUDE.md instructions",
+        "steps": {
+          "step_1": "FOLLOW sprint tasks defined in your CLAUDE.md",
+          "step_2": "CREATE components in your output_directory only",
+          "step_3": "AVOID touching any files in forbidden_files list",
+          "step_4": "UPDATE communication.json status as you progress (not_started → in_progress → complete)"
+        }
+      },
+      "phase_3_deliverables": {
+        "description": "Document what you built",
+        "steps": {
+          "step_1": "CREATE deliverables markdown file at your output_file path",
+          "step_2": "LIST components created, files modified, challenges faced",
+          "step_3": "UPDATE communication.json with final status = 'complete'",
+          "step_4": "NOTIFY orchestrator of completion"
+        }
+      }
+    },
+    "output_format": "markdown",
+    "output_template": "# {Agent Role} Deliverables\n\n## Components Created\n- ComponentName (path)\n\n## Files Modified\n- file.tsx (changes)\n\n## Challenges\n- Challenge and solution\n\n## Status\nComplete | In Progress | Blocked"
+  },
+
+  "quality_standards": {
+    "completeness": "All components in CLAUDE.md sprint tasks must be created",
+    "accuracy": "No forbidden file violations, components in correct output_directory",
+    "format": "TypeScript + React components following existing patterns in PromptingWorkflow/"
+  },
+
+  "coordination_protocol": {
+    "forbidden_file_enforcement": "CRITICAL - Agents must not modify files in their forbidden_files list. Orchestrator verifies via git diff.",
+    "parallel_safety": "Creator writes to SessionCreation/, Monitor writes to SessionMonitoring/ - no file conflicts possible",
+    "integration_dependency": "Integration agent BLOCKED until Creator + Monitor both report status = 'complete'"
+  }
+}

@@ -6,23 +6,23 @@
 
   "orchestrator_instructions": {
     "task": "Verify testing results after coderef-workflow and coderef-docs complete integration",
-    "prerequisite_status": "✅ BOTH COMPLETE - coderef-workflow (3/4 gaps) and coderef-docs (direct validation) done",
+    "prerequisite_status": "✅ BOTH COMPLETE - coderef-workflow (4/4 gaps) and coderef-docs (direct validation) done",
     "steps": [
       "Read coderef-testing integration-verification-report.json",
-      "Verify 5/9 integration tests pass (GAP-001, 002, 005 tests)",
-      "Verify 4/9 tests remain XFAIL (GAP-003, GAP-004 related)",
-      "Verify total test count: 20/24 passing (15 unit + 5/9 integration), 4 XFAIL",
+      "Verify 8/9 integration tests pass (all except GAP-003)",
+      "Verify 1/9 test remains XFAIL (GAP-003 not applicable)",
+      "Verify total test count: 23/24 passing (15 unit + 8/9 integration), 1 XFAIL",
       "Verify no unexpected failures",
       "Create orchestrator-testing-verification.md",
       "Update parent session communication.json",
       "Mark validator-integration session as complete"
     ],
     "success_criteria": [
-      "5/9 integration tests pass (GAP-001, GAP-002, GAP-005 verified)",
-      "4/9 integration tests XFAIL documented (GAP-003 not implemented, GAP-004 partial)",
+      "8/9 integration tests pass (all GAP-001, 002, 004, 005 tests verified)",
+      "1/9 integration test XFAIL documented (GAP-003 not applicable)",
       "No regression in 15 unit tests",
-      "Total: 20/24 passing, 4 XFAIL",
-      "Integration partially verified (3/4 gaps complete)"
+      "Total: 23/24 passing, 1 XFAIL",
+      "Integration fully verified (4/4 applicable gaps complete)"
     ]
   },
 
@@ -34,12 +34,12 @@
     "context": {
       "background": "During WO-PAPERTRAIL-SCHEMA-ADDITIONS-001 testing, we created 9 integration tests that are marked XFAIL because validators weren't integrated into workflows yet. After coderef-workflow and coderef-docs implemented integration, we need to verify test results.",
       "implementation_status": {
-        "coderef_workflow": "3/4 gaps complete (GAP-001, GAP-002, GAP-005), GAP-004 partial (2/19 sites)",
+        "coderef_workflow": "4/4 gaps complete (GAP-001, GAP-002, GAP-004, GAP-005) - all 19 validator sites refactored to ValidatorFactory",
         "coderef_docs": "Direct validation integration complete (8 templates validated with _uds metadata)",
-        "current_test_status": "5/9 integration tests passing, 4 XFAIL"
+        "current_test_status": "15/15 unit tests passing, 5/9 integration tests passing, 4 XFAIL remain"
       },
       "test_file": "C:\\Users\\willh\\.mcp-servers\\papertrail\\tests\\validators\\test_workflow_integration.py",
-      "expected_result": "Verify which XFAIL tests now pass based on completed gaps, document remaining failures tied to GAP-004 partial"
+      "expected_result": "Verify 8/9 integration tests pass (all except GAP-003), 1 XFAIL remains (update_task_status function doesn't exist)"
     },
 
     "step_1_verify_prerequisite": {
@@ -56,11 +56,12 @@
     "step_2_review_integration": {
       "description": "Review what was implemented by both agents",
       "coderef_workflow_completed": {
-        "gaps_complete": ["GAP-001", "GAP-002", "GAP-005"],
-        "gaps_partial": "GAP-004 (2/19 sites - analysis.json and execution log validation only)",
-        "gaps_remaining": "GAP-004 (17 sites across 7 generator files - documented for future work)",
-        "files_modified": ["utils/validation_helpers.py (NEW)", "tool_handlers.py", "tests/validators/test_workflow_integration.py"],
-        "tests_passing": "15/15 unit, 5/9 integration (4 XFAIL expected)"
+        "gaps_complete": ["GAP-001", "GAP-002", "GAP-004", "GAP-005"],
+        "gap_004_details": "19/19 sites refactored to ValidatorFactory (6 generators, handler_helpers.py, tool_handlers.py)",
+        "gaps_not_applicable": ["GAP-003 (update_task_status function doesn't exist in coderef-workflow)"],
+        "files_modified": ["utils/validation_helpers.py (NEW)", "tool_handlers.py", "handler_helpers.py", "generators/* (6 files)", "tests/validators/test_workflow_integration.py"],
+        "commits": "7 commits (588e070 = GAP-004 complete)",
+        "tests_passing": "15/15 unit, 5/9 integration (4 XFAIL before GAP-004 completion)"
       },
       "coderef_docs_completed": {
         "gaps_complete": ["GAP-001 (direct validation)"],
@@ -82,16 +83,16 @@
           "test_analysis_output_includes_validation_metadata (GAP-001 complete)",
           "test_execute_plan_calls_validator (GAP-002 complete)",
           "test_execute_plan_enables_cross_validation (GAP-002 complete)",
-          "test_workflow_warns_on_low_validation_score (GAP-005 complete)"
+          "test_workflows_use_factory_for_auto_detection (GAP-004 complete - 19/19 sites refactored)",
+          "test_workflow_warns_on_low_validation_score (GAP-005 complete)",
+          "test_workflow_continues_with_warnings (GAP-005 complete)",
+          "test_workflow_rejects_critical_failures (GAP-005 complete)"
         ],
         "xfail_tests": [
-          "test_update_task_status_validates_before_update (GAP-003 not implemented - update_task_status doesn't exist in coderef-workflow)",
-          "test_workflows_use_factory_for_auto_detection (GAP-004 partial - only 2/19 sites use factory)",
-          "test_workflow_continues_with_warnings (GAP-005 related but depends on GAP-004)",
-          "test_workflow_rejects_critical_failures (GAP-005 related but depends on GAP-004)"
+          "test_update_task_status_validates_before_update (GAP-003 not applicable - update_task_status function doesn't exist in coderef-workflow)"
         ]
       },
-      "expected_result": "5/9 passing, 4 XFAIL (based on current implementation status)"
+      "expected_result": "8/9 passing, 1 XFAIL (GAP-003 not applicable)"
     },
 
     "step_4_verify_no_regression": {
@@ -108,7 +109,7 @@
       "commands": [
         "pytest tests/validators/ -v --tb=short"
       ],
-      "expected_result": "20/24 tests passing (15/15 unit + 5/9 integration), 4 XFAIL remaining"
+      "expected_result": "23/24 tests passing (15/15 unit + 8/9 integration), 1 XFAIL (GAP-003)"
     },
 
     "step_6_verify_coverage": {
@@ -132,10 +133,10 @@
       "report_structure": {
         "summary": {
           "total_tests": 24,
-          "passing": 20,
-          "xfail": 4,
+          "passing": 23,
+          "xfail": 1,
           "failing": 0,
-          "xfail_removed": 5,
+          "xfail_removed": 8,
           "regression": false
         },
         "integration_tests": {
@@ -143,15 +144,15 @@
           "test_analysis_output_includes_validation_metadata": "PASS (GAP-001)",
           "test_execute_plan_calls_validator": "PASS (GAP-002)",
           "test_execute_plan_enables_cross_validation": "PASS (GAP-002)",
+          "test_workflows_use_factory_for_auto_detection": "PASS (GAP-004 - 19/19 sites refactored)",
           "test_workflow_warns_on_low_validation_score": "PASS (GAP-005)",
-          "test_update_task_status_validates_before_update": "XFAIL (GAP-003 not implemented)",
-          "test_workflows_use_factory_for_auto_detection": "XFAIL (GAP-004 partial - 2/19 sites)",
-          "test_workflow_continues_with_warnings": "XFAIL (depends on GAP-004)",
-          "test_workflow_rejects_critical_failures": "XFAIL (depends on GAP-004)"
+          "test_workflow_continues_with_warnings": "PASS (GAP-005)",
+          "test_workflow_rejects_critical_failures": "PASS (GAP-005)",
+          "test_update_task_status_validates_before_update": "XFAIL (GAP-003 not applicable - function doesn't exist)"
         },
         "unit_tests": {
           "test_validators.py": "15/15 passing",
-          "test_factory.py": "5/5 passing (updated with GAP-004 partial implementation)"
+          "test_factory.py": "5/5 passing"
         },
         "coverage": {
           "analysis_validator": "XX%",
@@ -161,11 +162,11 @@
         "gaps_verified": [
           "GAP-001: analyze_project_for_planning calls AnalysisValidator ✅ COMPLETE",
           "GAP-002: execute_plan calls ExecutionLogValidator with cross-validation ✅ COMPLETE",
-          "GAP-003: update_task_status validates before updating ❌ NOT IMPLEMENTED (function doesn't exist)",
-          "GAP-004: Workflows use ValidatorFactory for auto-detection ⚠️ PARTIAL (2/19 sites, 17 remaining)",
+          "GAP-003: update_task_status validates before updating ❌ NOT APPLICABLE (function doesn't exist in coderef-workflow)",
+          "GAP-004: Workflows use ValidatorFactory for auto-detection ✅ COMPLETE (19/19 sites refactored)",
           "GAP-005: Consistent error handling implemented ✅ COMPLETE"
         ],
-        "integration_status": "PARTIAL - 3/4 gaps complete, GAP-004 has 17 remaining sites for future work"
+        "integration_status": "COMPLETE - 4/4 applicable gaps implemented (GAP-003 not applicable)"
       }
     },
 
@@ -199,10 +200,10 @@
 
   "success_criteria": {
     "critical": [
-      "5/9 integration tests pass (tests for GAP-001, GAP-002, GAP-005)",
-      "4/9 integration tests remain XFAIL (GAP-003 not implemented, GAP-004 partial)",
+      "8/9 integration tests pass (all tests except GAP-003)",
+      "1/9 integration test XFAIL (GAP-003 not applicable - function doesn't exist)",
       "No regression in 15 unit tests (15/15 passing)",
-      "Total: 20/24 tests passing, 4 XFAIL documented",
+      "Total: 23/24 tests passing, 1 XFAIL (GAP-003)",
       "No unexpected failures"
     ],
     "optional": [

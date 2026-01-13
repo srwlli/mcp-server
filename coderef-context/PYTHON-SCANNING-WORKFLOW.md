@@ -43,12 +43,38 @@ py: [
 
 **Accuracy:** 85% (regex-based)
 
-### 2. The populate-coderef.py Script Already Uses Python
+### 2. **NEW (2026-01-13):** All 10 Languages Now Default!
+
+**Recent Update:** The dashboard and core now scan **all 10 supported languages by default:**
+
+```typescript
+// packages/dashboard/src/app/api/scanner/lib/scanExecutor.ts:246
+['ts', 'tsx', 'js', 'jsx', 'py', 'go', 'rs', 'java', 'cpp', 'c']
+
+// packages/dashboard/src/app/api/scan/route.ts:146
+lang: options.lang || ['ts', 'tsx', 'js', 'jsx', 'py', 'go', 'rs', 'java', 'cpp', 'c']
+
+// packages/coderef-core/src/context/context-generator.ts:71
+const languages = options.languages || ['ts', 'tsx', 'js', 'jsx', 'py', 'go', 'rs', 'java', 'cpp', 'c'];
+```
+
+**Impact:**
+- ✅ Scanner UI automatically includes Python
+- ✅ API routes automatically include Python
+- ✅ Context generation automatically includes Python
+- ✅ **No need to specify `--lang py` anymore!**
+
+### 3. The populate-coderef.py Script Already Uses Python
 
 **Location:** `scripts/populate-coderef.py` (line 62)
 
 ```python
 lang = "py,ts,tsx,js,jsx"  # Support both Python and TypeScript projects
+```
+
+**Recommendation:** Update this to match the new defaults:
+```python
+lang = "py,ts,tsx,js,jsx,go,rs,java,cpp,c"  # All 10 supported languages
 ```
 
 **Line 81:**

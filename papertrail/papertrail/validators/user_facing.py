@@ -64,3 +64,55 @@ class UserFacingDocValidator(BaseUDSValidator):
             warnings.append("Consider specifying 'audience' field for better targeting")
 
         return (errors, warnings)
+
+
+class UserGuideValidator(UserFacingDocValidator):
+    """Validates user guide documents (doc_type: guide)"""
+
+    doc_category = "user-guide"
+
+    def validate_specific(self, frontmatter: dict, content: str, file_path: Optional[Path] = None) -> tuple[list[ValidationError], list[str]]:
+        """Guide-specific validation"""
+        errors, warnings = super().validate_specific(frontmatter, content, file_path)
+
+        # Guides should have examples section
+        if "## Examples" not in content and "# Examples" not in content:
+            warnings.append("User guides should include an Examples section")
+
+        # Check doc_type is 'guide'
+        doc_type = frontmatter.get('doc_type')
+        if doc_type and doc_type != 'guide':
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MAJOR,
+                message=f"Expected doc_type 'guide', got '{doc_type}'",
+                field="doc_type"
+            ))
+
+        return (errors, warnings)
+
+
+class QuickrefValidator(UserFacingDocValidator):
+    """Validates quickref/quickstart documents"""
+
+    doc_category = "quickref"
+
+    def validate_specific(self, frontmatter: dict, content: str, file_path: Optional[Path] = None) -> tuple[list[ValidationError], list[str]]:
+        """Quickref-specific validation"""
+        errors, warnings = super().validate_specific(frontmatter, content, file_path)
+
+        # Check doc_type is 'quickstart' or 'reference'
+        doc_type = frontmatter.get('doc_type')
+        if doc_type and doc_type not in ['quickstart', 'reference']:
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MAJOR,
+                message=f"Expected doc_type 'quickstart' or 'reference', got '{doc_type}'",
+                field="doc_type"
+            ))
+
+        # Quickstart should be concise (< 500 lines)
+        if doc_type == 'quickstart':
+            line_count = len(content.split('\n'))
+            if line_count > 500:
+                warnings.append(f"Quickstart docs should be concise (current: {line_count} lines, recommended: < 500)")
+
+        return (errors, warnings)

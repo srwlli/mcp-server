@@ -53,6 +53,9 @@ import tool_handlers
 # Import logging (ARCH-003)
 from logger_config import logger, log_tool_call
 
+# Import MCP integration constants (WO-GENERATION-ENHANCEMENT-001)
+import constants
+
 # Get server directory
 SERVER_DIR = Path(__file__).parent
 TEMPLATES_DIR = SERVER_DIR / Paths.TEMPLATES_DIR
@@ -67,6 +70,29 @@ app = Server("coderef-docs")
 
 # Log server initialization
 logger.info(f"MCP server starting", extra={'version': __version__, 'mcp_version': __mcp_version__})
+
+
+async def check_coderef_context_health() -> bool:
+    """
+    Check if coderef-context MCP server is available.
+
+    Attempts a minimal coderef_scan call to verify availability.
+    Sets global CODEREF_CONTEXT_AVAILABLE flag based on result.
+
+    Returns:
+        bool: True if coderef-context is available, False otherwise
+    """
+    try:
+        logger.info("Performing coderef-context health check...")
+        # TODO: Implement actual MCP call to coderef_scan when mcp_orchestrator is ready
+        # For now, set to False as placeholder
+        constants.CODEREF_CONTEXT_AVAILABLE = False
+        logger.warning("coderef-context health check: MCP server not configured yet. Tools will run in template-only mode.")
+        return False
+    except Exception as e:
+        constants.CODEREF_CONTEXT_AVAILABLE = False
+        logger.warning(f"coderef-context health check failed: {str(e)}. Tools will run in template-only mode.")
+        return False
 
 
 @app.list_tools()
@@ -106,6 +132,11 @@ async def list_tools() -> list[Tool]:
                     "project_path": {
                         "type": "string",
                         "description": "Absolute path to the project directory"
+                    },
+                    "auto_validate": {
+                        "type": "boolean",
+                        "description": "Automatically validate generated docs with Papertrail (default: true). Set to false to skip validation.",
+                        "default": True
                     }
                 },
                 "required": ["project_path"]
@@ -137,6 +168,11 @@ async def list_tools() -> list[Tool]:
                     "version": {
                         "type": "string",
                         "description": "Optional: Document version (default: 1.0.0)"
+                    },
+                    "auto_validate": {
+                        "type": "boolean",
+                        "description": "Automatically validate generated doc with Papertrail (default: true). Set to false to skip validation.",
+                        "default": True
                     }
                 },
                 "required": ["project_path", "template_name"]
@@ -278,6 +314,11 @@ async def list_tools() -> list[Tool]:
                         "type": "string",
                         "enum": ["cli", "web", "api", "desktop", "library"],
                         "description": "Optional: Type of application (can be inferred from user responses)"
+                    },
+                    "auto_validate": {
+                        "type": "boolean",
+                        "description": "Automatically validate generated quickref with Papertrail (default: true). Set to false to skip validation.",
+                        "default": True
                     }
                 },
                 "required": ["project_path"]
@@ -320,6 +361,11 @@ async def list_tools() -> list[Tool]:
                         "type": "boolean",
                         "description": "Compare generated docs against actual code for drift detection (default: true)",
                         "default": true
+                    },
+                    "auto_validate": {
+                        "type": "boolean",
+                        "description": "Automatically validate generated resource sheet with Papertrail (default: true). Set to false to skip validation.",
+                        "default": True
                     }
                 },
                 "required": ["element_name", "project_path"]
@@ -349,6 +395,11 @@ async def list_tools() -> list[Tool]:
                         },
                         "description": "Areas to analyze: ui_components (buttons, modals, forms), behavior_patterns (errors, loading), ux_flows (navigation, permissions), or all",
                         "default": ["all"]
+                    },
+                    "auto_validate": {
+                        "type": "boolean",
+                        "description": "Automatically validate generated standards docs with Papertrail (default: true). Set to false to skip validation.",
+                        "default": True
                     }
                 },
                 "required": ["project_path"]
@@ -512,6 +563,10 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 async def main() -> None:
     """Run the server using stdio transport."""
     logger.info("Starting MCP server main loop")
+
+    # Run health check for coderef-context MCP (WO-GENERATION-ENHANCEMENT-001)
+    await check_coderef_context_health()
+
     try:
         async with stdio_server() as (read_stream, write_stream):
             await app.run(

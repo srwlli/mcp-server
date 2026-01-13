@@ -245,15 +245,19 @@ def process_query_response(response: Dict[str, Any]) -> Dict[str, List[str]]:
     return processed
 
 
-def check_coderef_resources(project_path: Path) -> Dict[str, Any]:
+def check_coderef_resources(project_path: Path, drift_result: Dict[str, Any] = None) -> Dict[str, Any]:
     """
     Check if .coderef/ resources exist (NO scanning fallback).
 
+    DRIFT-004 (WO-GENERATION-ENHANCEMENT-001): Optionally include drift status
+    in the return dictionary.
+
     Args:
         project_path: Absolute path to project directory
+        drift_result: Optional drift check result from call_coderef_drift()
 
     Returns:
-        Dict with resource status and available files
+        Dict with resource status, available files, and optional drift info
     """
     coderef_dir = Path(project_path) / ".coderef"
 
@@ -261,7 +265,8 @@ def check_coderef_resources(project_path: Path) -> Dict[str, Any]:
         return {
             'resources_available': False,
             'missing': ['.coderef/ directory'],
-            'warning': 'Run coderef_scan to generate code intelligence files first'
+            'warning': 'Run coderef_scan to generate code intelligence files first',
+            'drift': None
         }
 
     # Check for key files
@@ -293,12 +298,16 @@ def check_coderef_resources(project_path: Path) -> Dict[str, Any]:
         else:
             missing.append(name)
 
-    return {
+    # DRIFT-004: Include drift info if provided (WO-GENERATION-ENHANCEMENT-001)
+    result = {
         'resources_available': len(available) > 0,
         'available': available,
         'missing': missing,
-        'coderef_dir': str(coderef_dir)
+        'coderef_dir': str(coderef_dir),
+        'drift': drift_result if drift_result else None
     }
+
+    return result
 
 
 def get_template_context_files(template_name: str) -> List[str]:

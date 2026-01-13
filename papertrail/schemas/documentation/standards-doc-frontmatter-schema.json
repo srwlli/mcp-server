@@ -81,6 +81,17 @@
           "description": "Optional: Document title",
           "minLength": 1,
           "maxLength": 200
+        },
+        "required_sections": {
+          "type": "object",
+          "description": "Required sections for standards documentation",
+          "properties": {
+            "standards": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Overview", "Standards", "Validation", "Enforcement", "Exceptions"]
+            }
+          }
         }
       }
     }

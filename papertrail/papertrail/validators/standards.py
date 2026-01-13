@@ -84,6 +84,10 @@ class StandardsDocValidator(BaseUDSValidator):
                 "Enforcement field is very short. Specify how standards are enforced (e.g., 'Automated validators', 'Manual review')."
             )
 
+        # Validate patterns/examples in standards doc
+        pattern_errors = self.pattern_validation(content)
+        errors.extend(pattern_errors)
+
         return (errors, warnings)
 
     def _check_standards_sections(self, content: str) -> list[str]:
@@ -94,3 +98,56 @@ class StandardsDocValidator(BaseUDSValidator):
             if f"# {section}" not in content and f"## {section}" not in content:
                 missing.append(section)
         return missing
+
+    def pattern_validation(self, content: str) -> list[ValidationError]:
+        """
+        Validate that standards docs include patterns and examples
+
+        Standards should demonstrate good/bad examples with clear markers:
+        - Good examples: ✅, [PASS], [GOOD], "correct:"
+        - Bad examples: ❌, [FAIL], [BAD], "incorrect:"
+
+        Args:
+            content: Full document content
+
+        Returns:
+            List of ValidationError for missing patterns
+        """
+        errors = []
+
+        # Check for example markers
+        good_markers = ['✅', '[PASS]', '[GOOD]', 'correct:', 'Good example:', 'Valid:']
+        bad_markers = ['❌', '[FAIL]', '[BAD]', 'incorrect:', 'Bad example:', 'Invalid:']
+
+        has_good_examples = any(marker in content for marker in good_markers)
+        has_bad_examples = any(marker in content for marker in bad_markers)
+
+        # Standards docs should show both good and bad examples
+        if not has_good_examples and not has_bad_examples:
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MINOR,
+                message="Standards doc should include example patterns (good/bad examples with markers like ✅/❌)",
+                field="content"
+            ))
+        elif not has_good_examples:
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MINOR,
+                message="Standards doc should include good examples (use markers: ✅, [PASS], [GOOD])",
+                field="content"
+            ))
+        elif not has_bad_examples:
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MINOR,
+                message="Standards doc should include bad examples (use markers: ❌, [FAIL], [BAD])",
+                field="content"
+            ))
+
+        # Check for code blocks (standards should show concrete examples)
+        if '```' not in content:
+            errors.append(ValidationError(
+                severity=ValidationSeverity.MINOR,
+                message="Standards doc should include code examples (use fenced code blocks)",
+                field="content"
+            ))
+
+        return errors

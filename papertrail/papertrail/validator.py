@@ -41,11 +41,13 @@ class ValidationResult:
         errors: List of validation errors (all severities)
         warnings: List of warning messages
         score: Validation score (0-100)
+        completeness: Optional completeness percentage (0-100) for section coverage
     """
     valid: bool
     errors: list[ValidationError]
     warnings: list[str]
     score: int  # 0-100
+    completeness: Optional[int] = None  # 0-100, section coverage percentage
 
 
 class UDSValidator:

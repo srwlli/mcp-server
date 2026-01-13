@@ -169,6 +169,10 @@ class BaseUDSValidator(UDSValidator):
             schema_errors = self._validate_against_schema(frontmatter)
             errors.extend(schema_errors)
 
+        # Validate required sections (POWER framework, etc.)
+        section_errors = self._validate_sections(frontmatter, content)
+        errors.extend(section_errors)
+
         # Category-specific validation
         specific_errors, specific_warnings = self.validate_specific(frontmatter, content, file_path)
         errors.extend(specific_errors)
@@ -177,6 +181,9 @@ class BaseUDSValidator(UDSValidator):
         # Calculate score
         score = self._calculate_score(errors, warnings)
 
+        # Calculate completeness
+        completeness = self._calculate_completeness(frontmatter, content)
+
         # Valid if no CRITICAL errors
         valid = not any(e.severity == ValidationSeverity.CRITICAL for e in errors)
 
@@ -184,7 +191,8 @@ class BaseUDSValidator(UDSValidator):
             valid=valid,
             errors=errors,
             warnings=warnings,
-            score=score
+            score=score,
+            completeness=completeness
         )
 
     def _extract_frontmatter(self, content: str) -> Optional[dict]:
@@ -219,6 +227,171 @@ class BaseUDSValidator(UDSValidator):
                 severity=ValidationSeverity.CRITICAL,
                 message=f"Schema validation error: {str(e)}"
             ))
+
+        return errors
+
+    def _validate_sections(self, frontmatter: dict, content: str) -> list[ValidationError]:
+        """
+        Validate required sections based on doc_type from schema
+
+        Checks if document contains required markdown sections based on
+        doc_type field in frontmatter. Required sections are defined in
+        the schema's required_sections field.
+
+        Args:
+            frontmatter: Parsed YAML frontmatter containing doc_type
+            content: Full document content to search for sections
+
+        Returns:
+            List of ValidationError for missing required sections
+        """
+        errors = []
+
+        # Get doc_type from frontmatter
+        doc_type = frontmatter.get('doc_type')
+        if not doc_type:
+            # No doc_type means no section requirements
+            return errors
+
+        # Get required sections from schema
+        if not self.schema or 'properties' not in self.schema:
+            return errors
+
+        required_sections_prop = self.schema.get('properties', {}).get('required_sections', {})
+        if not required_sections_prop:
+            return errors
+
+        # Get sections for this specific doc_type
+        doc_type_sections = required_sections_prop.get('properties', {}).get(doc_type, {})
+        required_sections = doc_type_sections.get('default', [])
+
+        if not required_sections:
+            # No required sections defined for this doc_type
+            return errors
+
+        # Check each required section
+        for section in required_sections:
+            # Look for markdown headings: ## Section or # Section
+            section_pattern = rf'^#+\s+{re.escape(section)}'
+            if not re.search(section_pattern, content, re.MULTILINE | re.IGNORECASE):
+                errors.append(ValidationError(
+                    severity=ValidationSeverity.MAJOR,
+                    message=f"Missing required {doc_type} section: {section}",
+                    field="content"
+                ))
+
+        return errors
+
+    def _extract_code_blocks(self, content: str) -> list[dict]:
+        """
+        Extract code blocks from markdown
+
+        Args:
+            content: Markdown content
+
+        Returns:
+            List of dicts with 'language' and 'code' keys
+        """
+        code_blocks = []
+
+        # Pattern for fenced code blocks: ```language\ncode\n```
+        pattern = r'```(\w+)\n(.*?)\n```'
+
+        for match in re.finditer(pattern, content, re.DOTALL):
+            language = match.group(1)
+            code = match.group(2)
+            code_blocks.append({
+                'language': language,
+                'code': code
+            })
+
+        return code_blocks
+
+    def code_example_validation(self, frontmatter: dict, content: str, project_path: Optional[Path] = None) -> list[ValidationError]:
+        """
+        Validate code examples against actual code via coderef-context
+
+        For API docs: Verifies endpoint examples match actual endpoints
+        For COMPONENTS docs: Verifies component prop examples match actual props
+
+        Args:
+            frontmatter: Parsed YAML frontmatter
+            content: Full document content
+            project_path: Optional project path for .coderef/index.json lookup
+
+        Returns:
+            List of ValidationError for outdated examples (WARNING severity)
+        """
+        errors = []
+
+        # Only validate for specific doc types
+        doc_type = frontmatter.get('doc_type')
+        if doc_type not in ['api', 'components']:
+            return errors
+
+        # Extract code blocks
+        code_blocks = self._extract_code_blocks(content)
+        if not code_blocks:
+            # No code examples to validate
+            return errors
+
+        # For API docs, look for HTTP method + path patterns
+        if doc_type == 'api':
+            endpoint_pattern = r'(GET|POST|PUT|DELETE|PATCH)\s+(/[\w/{}:-]+)'
+
+            for block in code_blocks:
+                code = block['code']
+
+                # Find endpoint references in code examples
+                for match in re.finditer(endpoint_pattern, code):
+                    method = match.group(1)
+                    path = match.group(2)
+                    endpoint = f"{method} {path}"
+
+                    # Try to verify endpoint exists
+                    # This would call coderef-context in production
+                    # For now, we'll add a placeholder that can be enhanced
+                    # when coderef-context MCP integration is available
+
+                    # NOTE: This is a simplified version. Full implementation
+                    # would call coderef_query MCP tool:
+                    # try:
+                    #     result = await call_mcp_tool("coderef-context", "coderef_query", {
+                    #         "project_path": str(project_path),
+                    #         "query_type": "endpoints"
+                    #     })
+                    #     actual_endpoints = result.get('endpoints', [])
+                    #     if endpoint not in actual_endpoints:
+                    #         errors.append(ValidationError(
+                    #             severity=ValidationSeverity.WARNING,
+                    #             message=f"Code example references endpoint '{endpoint}' which may not exist. Verify against actual API.",
+                    #             field="content"
+                    #         ))
+                    # except Exception:
+                    #     # Graceful degradation if coderef-context unavailable
+                    #     pass
+
+                    pass  # Placeholder for MCP integration
+
+        # For COMPONENTS docs, look for component prop usage
+        elif doc_type == 'components':
+            # Look for JSX/TSX component usage patterns
+            component_pattern = r'<(\w+)\s+([^>]+)>'
+
+            for block in code_blocks:
+                if block['language'] not in ['jsx', 'tsx', 'javascript', 'typescript']:
+                    continue
+
+                code = block['code']
+
+                # Find component usage
+                for match in re.finditer(component_pattern, code):
+                    component_name = match.group(1)
+                    props_str = match.group(2)
+
+                    # NOTE: Full implementation would call coderef_query
+                    # to get actual component props and verify
+                    pass  # Placeholder for MCP integration
 
         return errors
 
@@ -265,3 +438,50 @@ class BaseUDSValidator(UDSValidator):
         score -= len(warnings) * 2
 
         return max(0, min(100, score))
+
+    def _calculate_completeness(self, frontmatter: dict, content: str) -> Optional[int]:
+        """
+        Calculate completeness percentage (0-100) based on section coverage
+
+        Completeness measures how many required sections are present.
+        Only calculated if doc_type has required_sections defined.
+
+        Args:
+            frontmatter: Parsed YAML frontmatter
+            content: Full document content
+
+        Returns:
+            Completeness percentage (0-100) or None if not applicable
+        """
+        # Get doc_type from frontmatter
+        doc_type = frontmatter.get('doc_type')
+        if not doc_type:
+            return None
+
+        # Get required sections from schema
+        if not self.schema or 'properties' not in self.schema:
+            return None
+
+        required_sections_prop = self.schema.get('properties', {}).get('required_sections', {})
+        if not required_sections_prop:
+            return None
+
+        # Get sections for this specific doc_type
+        doc_type_sections = required_sections_prop.get('properties', {}).get(doc_type, {})
+        required_sections = doc_type_sections.get('default', [])
+
+        if not required_sections:
+            # No required sections = 100% complete by default
+            return 100
+
+        # Count present sections
+        present_count = 0
+        for section in required_sections:
+            # Look for markdown headings: ## Section or # Section
+            section_pattern = rf'^#+\s+{re.escape(section)}'
+            if re.search(section_pattern, content, re.MULTILINE | re.IGNORECASE):
+                present_count += 1
+
+        # Calculate percentage
+        completeness = int((present_count / len(required_sections)) * 100)
+        return completeness

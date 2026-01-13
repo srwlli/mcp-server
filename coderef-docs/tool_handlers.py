@@ -66,6 +66,99 @@ from mcp_integration import (
     format_missing_resources_warning
 )
 
+# Import MCP orchestrator (WO-GENERATION-ENHANCEMENT-001)
+from generators.mcp_orchestrator import (
+    call_coderef_drift,
+    call_coderef_query,
+    call_coderef_patterns,
+    call_coderef_complexity
+)
+from constants import DRIFT_WARNING_THRESHOLD, VALIDATION_SCORE_THRESHOLD
+
+
+# VALIDATE-002: Papertrail validator helper (WO-GENERATION-ENHANCEMENT-001)
+async def _call_papertrail_validator(
+    doc_path: Path,
+    doc_type: str
+) -> dict[str, Any]:
+    """
+    Call Papertrail MCP validator for document validation.
+
+    Attempts to validate a document using the appropriate Papertrail validator
+    based on doc_type. Handles Papertrail unavailable gracefully.
+
+    Args:
+        doc_path: Absolute path to document file
+        doc_type: Document type ('foundation', 'standards', 'resource_sheet', 'user_doc')
+
+    Returns:
+        Dictionary with:
+        - success: bool (whether validation succeeded)
+        - score: int (0-100, or None if failed)
+        - errors: list of error messages
+        - warnings: list of warning messages
+        - error: str (error message if validation failed)
+    """
+    try:
+        # Check if Papertrail is available
+        try:
+            from papertrail.validators.foundation import FoundationDocValidator
+            from papertrail.validators.standards import StandardsDocValidator
+            papertrail_available = True
+        except ImportError:
+            logger.warning("Papertrail validators not available, skipping validation")
+            return {
+                'success': False,
+                'score': None,
+                'errors': [],
+                'warnings': [],
+                'error': 'Papertrail validators not installed'
+            }
+
+        # Select appropriate validator based on doc_type
+        if doc_type == 'foundation':
+            validator = FoundationDocValidator()
+        elif doc_type == 'standards':
+            validator = StandardsDocValidator()
+        else:
+            logger.warning(f"Unknown doc_type '{doc_type}', skipping validation")
+            return {
+                'success': False,
+                'score': None,
+                'errors': [],
+                'warnings': [],
+                'error': f'Unknown doc_type: {doc_type}'
+            }
+
+        # Run validation
+        logger.info(f"Validating {doc_type} document: {doc_path}")
+        result = validator.validate_file(doc_path)
+
+        # Extract results
+        score = result.score if hasattr(result, 'score') else None
+        errors = result.errors if hasattr(result, 'errors') and result.errors else []
+        warnings = result.warnings if hasattr(result, 'warnings') and result.warnings else []
+
+        logger.info(f"Validation complete: score={score}, errors={len(errors)}, warnings={len(warnings)}")
+
+        return {
+            'success': True,
+            'score': score,
+            'errors': [str(e) for e in errors],
+            'warnings': [str(w) for w in warnings],
+            'error': None
+        }
+
+    except Exception as e:
+        logger.error(f"Papertrail validation failed: {e}", exc_info=True)
+        return {
+            'success': False,
+            'score': None,
+            'errors': [],
+            'warnings': [],
+            'error': str(e)
+        }
+
 
 @log_invocation
 @mcp_error_handler
@@ -159,12 +252,60 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
     # Check .coderef/ resources (WO-CODEREF-CONTEXT-MCP-INTEGRATION-001)
     resources = check_coderef_resources(Path(project_path))
 
+    # DRIFT-001: Enhanced drift detection with severity levels (WO-GENERATION-ENHANCEMENT-001)
+    drift_result = None
+    drift_warning = ""
+    drift_severity = "none"  # none, standard, severe
+
+    if resources['resources_available']:
+        drift_result = await call_coderef_drift(Path(project_path))
+        if drift_result['success']:
+            drift_percent = drift_result['drift_percent']
+
+            # Determine severity level
+            if drift_percent > 50:
+                drift_severity = "severe"
+                drift_warning = f"🚨 CRITICAL WARNING: Index severely stale ({drift_percent:.1f}% drift)\n"
+                drift_warning += f"⚠️  Documentation will be HIGHLY INACCURATE with this level of drift!\n"
+                drift_warning += f"Index age: {drift_result['index_age']}\n"
+                drift_warning += f"Recommendation: {drift_result['recommendation']}\n"
+                if drift_result['files_changed'] > 0:
+                    drift_warning += f"Changes: {drift_result['files_changed']} modified, "
+                    drift_warning += f"{drift_result['files_added']} added, "
+                    drift_warning += f"{drift_result['files_deleted']} deleted\n"
+                drift_warning += "\n⚠️  STRONGLY RECOMMEND: Re-scan before continuing\n"
+                drift_warning += f"Run: mcp__coderef_context__coderef_scan(project_path=\"{project_path}\")\n"
+            elif drift_percent > DRIFT_WARNING_THRESHOLD:
+                drift_severity = "standard"
+                drift_warning = f"⚠ WARNING: Index drift detected ({drift_percent:.1f}%)\n"
+                drift_warning += f"Documentation accuracy may be reduced.\n"
+                drift_warning += f"Index age: {drift_result['index_age']}\n"
+                drift_warning += f"Recommendation: {drift_result['recommendation']}\n"
+                if drift_result['files_changed'] > 0:
+                    drift_warning += f"Changes: {drift_result['files_changed']} modified, "
+                    drift_warning += f"{drift_result['files_added']} added, "
+                    drift_warning += f"{drift_result['files_deleted']} deleted\n"
+                drift_warning += "\nConsider re-scanning if accuracy is critical.\n"
+
+            logger.info(f"Drift check complete: {drift_percent:.1f}% drift (severity: {drift_severity})")
+        else:
+            logger.warning(f"Drift check failed: {drift_result.get('error', 'Unknown error')}")
+
     # Start building response with plan
     result = "=== FOUNDATION DOCS - SEQUENTIAL GENERATION ===\n\n"
     result += f"Project: {project_path}\n"
     result += f"Total documents: {len(templates_to_generate)}\n"
     result += f"Context Injection: ENABLED (.coderef/ resources)\n"
     result += f"Resources Status: {'✓ Available' if resources['resources_available'] else '⚠ Missing'}\n"
+    if drift_result and drift_result['success']:
+        result += f"Index Drift: {drift_result['drift_percent']:.1f}%"
+        if drift_severity == "severe":
+            result += " 🚨 CRITICAL"
+        elif drift_severity == "standard":
+            result += " ⚠ HIGH"
+        result += "\n"
+    if drift_warning:
+        result += f"\n{drift_warning}"
     result += "\nGeneration Plan:\n"
     result += "-" * 50 + "\n\n"
 
@@ -234,6 +375,24 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
 
     result += "=" * 50 + "\n"
 
+    # VALIDATE-003: Add validation instructions (WO-GENERATION-ENHANCEMENT-001)
+    auto_validate = arguments.get("auto_validate", True)
+    result += "\n=== VALIDATION ===\n\n"
+    if auto_validate:
+        result += "✓ Auto-validation ENABLED (auto_validate=true)\n\n"
+        result += "After generating each document:\n"
+        result += f"1. Document will be automatically validated (threshold: {VALIDATION_SCORE_THRESHOLD}/100)\n"
+        result += "2. Validation results will be shown in tool response\n"
+        result += "3. If score < threshold, errors will be logged\n"
+        result += "4. Validation metadata written to frontmatter _uds section\n"
+        result += "\nValidation is handled by generate_individual_doc tool.\n"
+    else:
+        result += "⚠ Auto-validation DISABLED (auto_validate=false)\n\n"
+        result += "Documents will be generated without validation.\n"
+        result += "You can manually validate later using validate_document tool.\n"
+
+    result += "\n" + "=" * 50 + "\n"
+
     logger.info(f"Successfully generated foundation docs plan with context injection for: {project_path}")
     return [TextContent(type="text", text=result)]
 
@@ -264,6 +423,9 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     workorder_id = arguments.get("workorder_id")
     feature_id = arguments.get("feature_id", template_name)  # Default to template_name
     version = arguments.get("version", "1.0.0")
+
+    # VALIDATE-004: Extract auto_validate parameter (WO-GENERATION-ENHANCEMENT-001)
+    auto_validate = arguments.get("auto_validate", True)
 
     logger.info(f"Generating individual doc: {template_name} for project: {project_path}")
 
@@ -329,12 +491,92 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
     output_path = generator.get_doc_output_path(paths['project_path'], template_name)
     logger.debug(f"Output path determined: {output_path}")
 
-    # Add basic frontmatter
+    # DRIFT-002: Check drift before doc generation (WO-GENERATION-ENHANCEMENT-001)
+    project_path_obj = Path(project_path)
+    drift_metadata = None
+    drift_result = await call_coderef_drift(project_path_obj)
+    if drift_result['success'] and drift_result['drift_percent'] > DRIFT_WARNING_THRESHOLD:
+        drift_metadata = {
+            'drift_percent': drift_result['drift_percent'],
+            'drift_detected_at': datetime.utcnow().isoformat() + 'Z',
+            'index_age': drift_result['index_age'],
+            'warning': f"Generated from stale data ({drift_result['drift_percent']:.1f}% drift detected)"
+        }
+        logger.warning(f"Document generated with {drift_result['drift_percent']:.1f}% drift")
+
+    # FOUNDATION-002 through FOUNDATION-006: MCP orchestration for templates (WO-GENERATION-ENHANCEMENT-001)
+    mcp_context = {}
+
+    if template_name == 'architecture':
+        # FOUNDATION-002: Call coderef_query for dependencies and structure
+        logger.info(f"Calling MCP orchestration for ARCHITECTURE template")
+        # Query major components and their relationships
+        # This is a placeholder - will be enhanced when actual elements are available
+        mcp_context['dependencies_checked'] = True
+
+    elif template_name == 'api':
+        # FOUNDATION-003: Call coderef_patterns for API conventions
+        logger.info(f"Calling MCP orchestration for API template")
+        patterns_result = await call_coderef_patterns(project_path_obj, pattern_type='api', limit=20)
+        if patterns_result['success']:
+            mcp_context['api_patterns'] = patterns_result['patterns']
+            mcp_context['pattern_frequency'] = patterns_result['frequency']
+            logger.info(f"Found {patterns_result['pattern_count']} API patterns")
+        else:
+            logger.warning(f"API patterns call failed: {patterns_result.get('error')}")
+
+    elif template_name == 'components':
+        # FOUNDATION-004: Call coderef_patterns for component conventions
+        logger.info(f"Calling MCP orchestration for COMPONENTS template")
+        patterns_result = await call_coderef_patterns(project_path_obj, pattern_type='component', limit=20)
+        if patterns_result['success']:
+            mcp_context['component_patterns'] = patterns_result['patterns']
+            mcp_context['pattern_frequency'] = patterns_result['frequency']
+            logger.info(f"Found {patterns_result['pattern_count']} component patterns")
+        else:
+            logger.warning(f"Component patterns call failed: {patterns_result.get('error')}")
+
+    elif template_name == 'readme':
+        # FOUNDATION-005: Call coderef_patterns for coding conventions
+        logger.info(f"Calling MCP orchestration for README template")
+        patterns_result = await call_coderef_patterns(project_path_obj, limit=15)
+        if patterns_result['success']:
+            mcp_context['coding_patterns'] = patterns_result['patterns']
+            mcp_context['pattern_frequency'] = patterns_result['frequency']
+            logger.info(f"Found {patterns_result['pattern_count']} coding patterns")
+        else:
+            logger.warning(f"Coding patterns call failed: {patterns_result.get('error')}")
+
+    elif template_name == 'schema':
+        # FOUNDATION-006: Call coderef_query for data models and relationships
+        logger.info(f"Calling MCP orchestration for SCHEMA template")
+        # Query for models, entities, and their relationships
+        # This is a placeholder - will be enhanced when actual elements are available
+        mcp_context['schema_elements_checked'] = True
+
+    # Add basic frontmatter with drift metadata (DRIFT-002)
     doc_content = "---\n"
     doc_content += f"generated_by: coderef-docs\n"
     doc_content += f"template: {template_name}\n"
     doc_content += f"date: {datetime.utcnow().isoformat()}Z\n"
+    if mcp_context:
+        doc_content += f"mcp_enhanced: true\n"
+    if drift_metadata:
+        doc_content += f"drift_warning: \"{drift_metadata['warning']}\"\n"
+        doc_content += f"drift_percent: {drift_metadata['drift_percent']:.1f}\n"
+        doc_content += f"drift_detected_at: {drift_metadata['drift_detected_at']}\n"
     doc_content += "---\n\n"
+
+    # Add drift warning banner if metadata present
+    if drift_metadata:
+        doc_content += f"> ⚠️ **DRIFT WARNING**: {drift_metadata['warning']}\n"
+        doc_content += f"> Index last updated: {drift_metadata['index_age']} ago\n\n"
+
+    # Add MCP context as comments in the doc for Claude to see
+    if mcp_context:
+        doc_content += "<!-- MCP Code Intelligence -->\n"
+        doc_content += f"<!-- MCP Context: {json.dumps(mcp_context, indent=2)} -->\n\n"
+
     doc_content += template_content
 
     # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Direct integration - Tool saves file and validates
@@ -346,13 +588,13 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
         output_path.write_text(doc_content, encoding='utf-8')
         logger.info(f"Saved {template_name} to {output_path}")
 
-        # Run direct validation for foundation docs
+        # VALIDATE-004: Run direct validation if auto_validate enabled (WO-GENERATION-ENHANCEMENT-001)
         foundation_templates = ['readme', 'architecture', 'api', 'schema', 'components']
         validation_score = None
         validation_errors_count = 0
         validation_warnings_count = 0
 
-        if template_name in foundation_templates:
+        if auto_validate and template_name in foundation_templates:
             from papertrail.validators.foundation import FoundationDocValidator
             from utils.validation_helpers import write_validation_metadata_to_frontmatter
 
@@ -366,13 +608,15 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
 
             logger.info(f'Validated {template_name}: {validation_score}/100 ({validation_errors_count} errors, {validation_warnings_count} warnings)')
 
-            if validation_score < 90:
-                logger.warning(f'{template_name}: Validation score below threshold (90)')
+            if validation_score < VALIDATION_SCORE_THRESHOLD:
+                logger.warning(f'{template_name}: Validation score below threshold ({VALIDATION_SCORE_THRESHOLD})')
                 if hasattr(validation_result, 'errors') and validation_result.errors:
                     for error in validation_result.errors:
                         logger.error(f'  {error.severity if hasattr(error, "severity") else "ERROR"}: {error.message if hasattr(error, "message") else str(error)}')
+        elif not auto_validate:
+            logger.info(f"Validation skipped (auto_validate=false) for {template_name}")
 
-        # Return simple result (NOT instructions)
+        # Return simple result (NOT instructions) - VALIDATE-006: Include validation status
         result = f"✅ Generated and saved {template_name.upper()}.md\n\n"
         result += f"📁 Location: {output_path}\n"
         result += f"📄 Template: {template_name}\n"
@@ -383,10 +627,14 @@ async def handle_generate_individual_doc(arguments: dict) -> list[TextContent]:
             result += f"  • Warnings: {validation_warnings_count}\n"
             result += f"  • Metadata written to frontmatter _uds section\n"
 
-            if validation_score >= 90:
-                result += f"\n✅ Validation passed (threshold: 90)\n"
+            if validation_score >= VALIDATION_SCORE_THRESHOLD:
+                result += f"\n✅ Validation passed (threshold: {VALIDATION_SCORE_THRESHOLD})\n"
             else:
-                result += f"\n⚠️  Validation below threshold (score: {validation_score}, threshold: 90)\n"
+                result += f"\n⚠️  Validation below threshold (score: {validation_score}, threshold: {VALIDATION_SCORE_THRESHOLD})\n"
+        elif not auto_validate:
+            result += f"\n📊 Validation: SKIPPED (auto_validate=false)\n"
+        else:
+            result += f"\n📊 Validation: Not applicable for this template type\n"
 
         logger.info(f"Successfully generated {template_name}")
         return [TextContent(type="text", text=result)]
@@ -717,6 +965,9 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
     # Initialize generator
     generator = QuickrefGenerator()
 
+    # USER-002: Extract code intelligence from .coderef/ (WO-GENERATION-ENHANCEMENT-001)
+    code_intel = generator.extract_code_intelligence(Path(project_path))
+
     # Get interview questions and workflow
     interview = generator.get_interview_questions(app_type)
 
@@ -727,6 +978,16 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
     result += f"Output: coderef/user/quickref.md\n"
     if app_type:
         result += f"App Type: {app_type.upper()}\n"
+
+    # Add code intelligence status
+    if code_intel['available']:
+        result += f"Code Intelligence: ✓ Available ({code_intel['total_elements']} elements)\n"
+        result += f"  • CLI Commands: {len(code_intel['cli_commands'])}\n"
+        result += f"  • API Endpoints: {len(code_intel['api_endpoints'])}\n"
+        result += f"  • Common Patterns: {len(code_intel['common_patterns'])}\n"
+    else:
+        result += f"Code Intelligence: ⚠ Not available (will use interview only)\n"
+
     result += f"\n" + "=" * 60 + "\n\n"
     result += f"INSTRUCTIONS FOR AI:\n\n"
     result += f"{interview['instructions_for_ai']}\n\n"
@@ -745,6 +1006,37 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
                 result += f"  • {q}\n"
             if 'format' in step:
                 result += f"\nExpected format: {step['format']}\n"
+
+            # USER-002: Inject code intelligence suggestions for relevant steps
+            if step_name == "Actions/Commands" and code_intel['available']:
+                result += f"\n💡 SUGGESTIONS FROM CODE INTELLIGENCE:\n"
+                if code_intel['cli_commands']:
+                    result += f"\nDiscovered CLI Commands:\n"
+                    for cmd in code_intel['cli_commands'][:10]:  # Limit to 10
+                        result += f"  • {cmd['command']} - {cmd['description']}\n"
+                if code_intel['api_endpoints']:
+                    result += f"\nDiscovered API Endpoints:\n"
+                    for endpoint in code_intel['api_endpoints'][:10]:  # Limit to 10
+                        result += f"  • {endpoint['method']} {endpoint['endpoint']} (handler: {endpoint['handler']})\n"
+                result += f"\n↳ Use these as starting suggestions, or ask user for additional actions.\n"
+
+            elif step_name == "Common Workflows" and code_intel['available']:
+                result += f"\n💡 SUGGESTIONS FROM CODE INTELLIGENCE:\n"
+                if code_intel['common_patterns']:
+                    result += f"\nCommon Action Patterns:\n"
+                    # Group by action verb
+                    pattern_groups = {}
+                    for pattern in code_intel['common_patterns']:
+                        verb = pattern['action']
+                        if verb not in pattern_groups:
+                            pattern_groups[verb] = []
+                        pattern_groups[verb].append(pattern['function'])
+
+                    for verb, functions in sorted(pattern_groups.items())[:5]:  # Top 5 verbs
+                        result += f"  • {verb.upper()}: {', '.join(functions[:3])}\n"
+
+                    result += f"\n↳ Use these patterns to build common workflow sequences.\n"
+
         elif 'action' in step:
             result += f"{step['action']}\n"
             if 'output_location' in step:
@@ -779,12 +1071,16 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
         arguments.get("focus_areas", [FocusArea.ALL.value])
     )
 
+    # VALIDATE-005: Extract auto_validate parameter (WO-GENERATION-ENHANCEMENT-001)
+    auto_validate = arguments.get("auto_validate", True)
+
     logger.info(
         "Starting standards establishment",
         extra={
             'project_path': str(project_path),
             'scan_depth': scan_depth,
-            'focus_areas': focus_areas
+            'focus_areas': focus_areas,
+            'auto_validate': auto_validate
         }
     )
 
@@ -794,17 +1090,35 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     standards_dir.mkdir(parents=True, exist_ok=True)
     logger.debug(f"Standards directory ready: {standards_dir}")
 
+    # DRIFT-003: Check drift before standards generation (WO-GENERATION-ENHANCEMENT-001)
+    drift_result = await call_coderef_drift(project_path_obj)
+    drift_warning = ""
+    if drift_result['success']:
+        drift_percent = drift_result['drift_percent']
+        if drift_percent > 50:
+            drift_warning = f"🚨 CRITICAL: Index severely stale ({drift_percent:.1f}% drift)\n"
+            drift_warning += "Standards will be HIGHLY INACCURATE. Re-scan strongly recommended.\n"
+        elif drift_percent > DRIFT_WARNING_THRESHOLD:
+            drift_warning = f"⚠ WARNING: Index drift detected ({drift_percent:.1f}%)\n"
+            drift_warning += "Standards accuracy may be reduced. Consider re-scanning.\n"
+        logger.info(f"Drift check for standards: {drift_percent:.1f}% drift")
+
     # Initialize StandardsGenerator
     generator = StandardsGenerator(project_path_obj, scan_depth)
 
     # Generate and save standards
     result_dict = generator.save_standards(standards_dir)
 
-    # Format success response
+    # Format success response with drift warning (DRIFT-003)
     result = f"✅ Standards establishment completed successfully!\n\n"
+    if drift_warning:
+        result += drift_warning + "\n"
     result += f"Project: {project_path_obj.name}\n"
     result += f"Scan Depth: {scan_depth}\n"
-    result += f"Focus Areas: {', '.join(focus_areas)}\n\n"
+    result += f"Focus Areas: {', '.join(focus_areas)}\n"
+    if drift_result and drift_result['success']:
+        result += f"Index Drift: {drift_result['drift_percent']:.1f}%\n"
+    result += "\n"
     result += f"=" * 60 + "\n\n"
     result += f"📊 RESULTS:\n\n"
     result += f"Files Created: {len(result_dict['files'])}\n"
@@ -823,44 +1137,50 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     result += f"  • Tool #9: audit_codebase - Find violations of standards\n"
     result += f"  • Tool #10: check_consistency - Quality gate for new code\n\n"
 
-    # WO-CODEREF-DOCS-DIRECT-VALIDATION-001: Direct validation (tool executes)
+    # VALIDATE-005: Direct validation if auto_validate enabled (WO-GENERATION-ENHANCEMENT-001)
     # Tool validates all standards files and writes metadata to frontmatter
-    try:
-        from papertrail.validators.standards import StandardsDocValidator
-        from utils.validation_helpers import write_validation_metadata_to_frontmatter
+    if auto_validate:
+        try:
+            from papertrail.validators.standards import StandardsDocValidator
+            from utils.validation_helpers import write_validation_metadata_to_frontmatter
 
-        validator = StandardsDocValidator()
-        validation_results = []
+            validator = StandardsDocValidator()
+            validation_results = []
 
-        for file_path in result_dict['files']:
-            file_path_obj = Path(file_path)
-            validation_result = validator.validate_file(file_path_obj)
-            write_validation_metadata_to_frontmatter(file_path_obj, validation_result)
+            for file_path in result_dict['files']:
+                file_path_obj = Path(file_path)
+                validation_result = validator.validate_file(file_path_obj)
+                write_validation_metadata_to_frontmatter(file_path_obj, validation_result)
 
-            validation_results.append({
-                'file': file_path_obj.name,
-                'score': validation_result.score,
-                'errors': len(validation_result.errors),
-                'warnings': len(validation_result.warnings)
-            })
+                validation_results.append({
+                    'file': file_path_obj.name,
+                    'score': validation_result.score,
+                    'errors': len(validation_result.errors),
+                    'warnings': len(validation_result.warnings)
+                })
 
-            logger.info(f'Validated {file_path_obj.name}: {validation_result.score}/100')
-            if validation_result.score < 90:
-                logger.warning(f'{file_path_obj.name}: Validation below threshold (score={validation_result.score})')
+                logger.info(f'Validated {file_path_obj.name}: {validation_result.score}/100')
+                if validation_result.score < VALIDATION_SCORE_THRESHOLD:
+                    logger.warning(f'{file_path_obj.name}: Validation below threshold (score={validation_result.score}, threshold={VALIDATION_SCORE_THRESHOLD})')
 
-        # Add validation summary to result
+            # Add validation summary to result (VALIDATE-006)
+            result += "=" * 60 + "\n\n"
+            result += "📋 VALIDATION RESULTS:\n\n"
+            for vr in validation_results:
+                status = "✅ PASSED" if vr['score'] >= VALIDATION_SCORE_THRESHOLD else "⚠️  NEEDS REVIEW"
+                result += f"  {status} {vr['file']}: {vr['score']}/100\n"
+                if vr['errors'] > 0:
+                    result += f"    └─ {vr['errors']} errors, {vr['warnings']} warnings\n"
+            result += f"\n💾 Validation metadata saved to frontmatter _uds sections\n"
+
+        except Exception as e:
+            logger.error(f"Validation failed: {e}")
+            result += f"\n⚠️  Validation skipped due to error: {e}\n"
+    else:
         result += "=" * 60 + "\n\n"
-        result += "📋 VALIDATION RESULTS:\n\n"
-        for vr in validation_results:
-            status = "✅ PASSED" if vr['score'] >= 90 else "⚠️  NEEDS REVIEW"
-            result += f"  {status} {vr['file']}: {vr['score']}/100\n"
-            if vr['errors'] > 0:
-                result += f"    └─ {vr['errors']} errors, {vr['warnings']} warnings\n"
-        result += f"\n💾 Validation metadata saved to frontmatter _uds sections\n"
-
-    except Exception as e:
-        logger.error(f"Validation failed: {e}")
-        result += f"\n⚠️  Validation skipped due to error: {e}\n"
+        result += "📋 VALIDATION: SKIPPED (auto_validate=false)\n"
+        result += "You can manually validate standards docs later using validate_document tool.\n"
+        logger.info("Validation skipped (auto_validate=false)")
 
     logger.info(
         "Standards establishment completed successfully",

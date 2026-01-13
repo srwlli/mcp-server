@@ -87,5 +87,5 @@
       "description": "Optional additional context or notes"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

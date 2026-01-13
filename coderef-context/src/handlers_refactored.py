@@ -24,7 +24,7 @@ async def handle_coderef_scan(args: dict) -> List[TextContent]:
                 text=json.dumps({
                     "success": False,
                     "error": "No scan data found. Run scan first to create .coderef/ directory.",
-                    "hint": "Use dashboard scanner or run: coderef scan " + project_path
+                    "hint": "Use dashboard scanner or run: python scripts/populate-coderef.py " + project_path
                 }, indent=2)
             )]
 
@@ -335,5 +335,244 @@ async def handle_coderef_export(args: dict) -> List[TextContent]:
 
     except FileNotFoundError:
         return [TextContent(type="text", text=f"Error: Export not found. Run full scan with populate-coderef.py")]
+    except Exception as e:
+        return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+
+async def handle_validate_coderef_outputs(args: dict) -> List[TextContent]:
+    """Validate .coderef/ files against schemas"""
+    project_path = args.get("project_path", ".")
+
+    try:
+        reader = CodeRefReader(project_path)
+
+        if not reader.exists():
+            return [TextContent(
+                type="text",
+                text=json.dumps({
+                    "success": False,
+                    "error": "No .coderef/ directory found",
+                    "hint": "Run scan first: coderef scan " + project_path
+                }, indent=2)
+            )]
+
+        # Files to validate
+        files_to_validate = [
+            ".coderef/index.json",
+            ".coderef/graph.json",
+            ".coderef/context.json"
+        ]
+
+        validation_results = []
+        total_score = 0
+        errors_found = []
+
+        from pathlib import Path
+        for file_rel_path in files_to_validate:
+            file_path = Path(project_path) / file_rel_path
+
+            if not file_path.exists():
+                validation_results.append({
+                    "file": file_rel_path,
+                    "exists": False,
+                    "score": 0,
+                    "errors": [f"File not found: {file_rel_path}"]
+                })
+                errors_found.append(f"Missing file: {file_rel_path}")
+                continue
+
+            # Basic validation (structure check)
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+
+                # Validate index.json structure
+                if "index.json" in file_rel_path:
+                    if not isinstance(data, list):
+                        errors_found.append(f"index.json must be an array, got {type(data).__name__}")
+                        score = 50
+                    else:
+                        # Check element structure
+                        required_fields = ["name", "type", "file", "line"]
+                        valid_elements = sum(1 for e in data if all(f in e for f in required_fields))
+                        score = int((valid_elements / len(data) * 100)) if data else 100
+
+                # Validate graph.json structure
+                elif "graph.json" in file_rel_path:
+                    if not isinstance(data, dict):
+                        errors_found.append(f"graph.json must be an object, got {type(data).__name__}")
+                        score = 50
+                    elif "nodes" not in data or "edges" not in data:
+                        errors_found.append("graph.json missing 'nodes' or 'edges' fields")
+                        score = 70
+                    else:
+                        score = 100
+
+                # Validate context.json structure
+                elif "context.json" in file_rel_path:
+                    if not isinstance(data, dict):
+                        errors_found.append(f"context.json must be an object, got {type(data).__name__}")
+                        score = 50
+                    else:
+                        # Optional fields check
+                        recommended_fields = ["projectPath", "version", "generatedAt"]
+                        has_fields = sum(1 for f in recommended_fields if f in data)
+                        score = int((has_fields / len(recommended_fields)) * 100)
+
+                validation_results.append({
+                    "file": file_rel_path,
+                    "exists": True,
+                    "score": score,
+                    "errors": []
+                })
+                total_score += score
+
+            except json.JSONDecodeError as e:
+                errors_found.append(f"Invalid JSON in {file_rel_path}: {str(e)}")
+                validation_results.append({
+                    "file": file_rel_path,
+                    "exists": True,
+                    "score": 0,
+                    "errors": [f"JSON parse error: {str(e)}"]
+                })
+
+        average_score = int(total_score / len(files_to_validate)) if files_to_validate else 0
+
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "success": average_score >= 80,
+                "average_score": average_score,
+                "validation_results": validation_results,
+                "errors": errors_found,
+                "note": "Basic validation only. For full schema validation, integrate with Papertrail MCP validate_document tool."
+            }, indent=2)
+        )]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "success": False,
+                "error": str(e)
+            }, indent=2)
+        )]
+
+
+async def handle_generate_foundation_docs(args: dict) -> List[TextContent]:
+    """Generate foundation documentation from index.json"""
+    project_path = args.get("project_path", ".")
+    doc_types = args.get("docs", ["api", "schema", "components"])
+    output_dir = args.get("output_dir", "coderef/foundation-docs")
+
+    try:
+        reader = CodeRefReader(project_path)
+
+        if not reader.exists():
+            return [TextContent(
+                type="text",
+                text=json.dumps({
+                    "success": False,
+                    "error": "No scan data found. Run scan first to create .coderef/ directory.",
+                    "hint": "Use dashboard scanner or run: coderef scan " + project_path
+                }, indent=2)
+            )]
+
+        # Get index data
+        index_data = reader.get_index()
+
+        if not index_data:
+            return [TextContent(
+                type="text",
+                text=json.dumps({
+                    "success": False,
+                    "error": "Index is empty - no elements to document"
+                }, indent=2)
+            )]
+
+        # Generate docs
+        from .foundation_doc_generator import generate_foundation_docs
+
+        result = generate_foundation_docs(
+            project_path=project_path,
+            index_data=index_data,
+            doc_types=doc_types,
+            output_dir=output_dir
+        )
+
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "success": result["success"],
+                "generated_files": result["generated_files"],
+                "file_count": len(result["generated_files"]),
+                "errors": result["errors"]
+            }, indent=2)
+        )]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "success": False,
+                "error": str(e)
+            }, indent=2)
+        )]
+
+
+async def handle_coderef_incremental_scan(args: dict) -> List[TextContent]:
+    """Perform incremental scan (only re-scan files with detected drift, merge with existing index)"""
+    project_path = args.get("project_path", ".")
+
+    try:
+        reader = CodeRefReader(project_path)
+        drift = reader.get_drift()
+
+        # Extract unique changed files from drift report
+        changed_files = set()
+
+        for element in drift.get("changes", {}).get("added", []):
+            if "file" in element:
+                changed_files.add(element["file"])
+
+        for element in drift.get("changes", {}).get("modified", []):
+            if "file" in element:
+                changed_files.add(element["file"])
+
+        for element in drift.get("changes", {}).get("removed", []):
+            if "file" in element:
+                changed_files.add(element["file"])
+
+        changed_files_list = sorted(list(changed_files))
+
+        # Return analysis + CLI command for incremental re-scan
+        # (Read-only server can't modify .coderef/index.json directly)
+
+        if not changed_files_list:
+            return [TextContent(
+                type="text",
+                text=json.dumps({
+                    "success": True,
+                    "drift_detected": False,
+                    "changed_files": [],
+                    "message": "No drift detected - index is up to date"
+                }, indent=2)
+            )]
+
+        return [TextContent(
+            type="text",
+            text=json.dumps({
+                "success": True,
+                "drift_detected": True,
+                "changed_files": changed_files_list,
+                "changed_files_count": len(changed_files_list),
+                "recommendation": "Re-scan only changed files to update index",
+                "cli_command": f"python scripts/populate-coderef.py {project_path}",
+                "note": "Read-only MCP server cannot modify index.json. Use CLI for incremental updates."
+            }, indent=2)
+        )]
+
+    except FileNotFoundError:
+        return [TextContent(type="text", text="Error: No drift data found. Run full scan with populate-coderef.py")]
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]

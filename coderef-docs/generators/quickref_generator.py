@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Dict, List, Optional
 import sys
+import json
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -29,6 +30,107 @@ class QuickrefGenerator(BaseGenerator):
         """Initialize quickref generator."""
         # Don't need templates_dir since we generate dynamically
         self.templates_dir = None
+
+    def extract_code_intelligence(self, project_path: Path) -> Dict[str, any]:
+        """
+        USER-001: Extract CLI entry points, API routes, and common commands from .coderef/index.json.
+
+        Reads .coderef/index.json to discover:
+        - CLI entry points (functions with __name__ == '__main__')
+        - API routes (functions decorated with @app.route, @router.get, etc.)
+        - Common command patterns from function names
+
+        Args:
+            project_path: Absolute path to project directory
+
+        Returns:
+            Dictionary with extracted CLI commands, API endpoints, and patterns
+        """
+        coderef_index = project_path / ".coderef" / "index.json"
+
+        if not coderef_index.exists():
+            logger.warning(f".coderef/index.json not found at {coderef_index}")
+            return {
+                'cli_commands': [],
+                'api_endpoints': [],
+                'common_patterns': [],
+                'available': False
+            }
+
+        try:
+            with open(coderef_index, 'r', encoding='utf-8') as f:
+                index_data = json.load(f)
+
+            cli_commands = []
+            api_endpoints = []
+            common_patterns = []
+
+            for element in index_data:
+                element_type = element.get('type', '')
+                name = element.get('name', '')
+                file_path = element.get('file', '')
+
+                # Extract CLI entry points (main functions, CLI decorators)
+                if element_type == 'function':
+                    # Look for main entry points
+                    if name == 'main' or '__main__' in file_path:
+                        cli_commands.append({
+                            'command': name,
+                            'file': file_path,
+                            'description': f"Entry point: {name}"
+                        })
+                    # Look for CLI command patterns (click, argparse, etc.)
+                    if any(pattern in name.lower() for pattern in ['cmd_', 'command_', 'cli_']):
+                        cli_commands.append({
+                            'command': name.replace('cmd_', '').replace('command_', '').replace('cli_', ''),
+                            'file': file_path,
+                            'description': f"CLI command: {name}"
+                        })
+
+                # Extract API endpoints (route decorators, HTTP methods)
+                if element_type == 'function':
+                    # Look for API route patterns
+                    if any(pattern in name.lower() for pattern in ['get_', 'post_', 'put_', 'delete_', 'patch_']):
+                        method = name.split('_')[0].upper()
+                        endpoint = '/' + name.split('_', 1)[1].replace('_', '/')
+                        api_endpoints.append({
+                            'method': method,
+                            'endpoint': endpoint,
+                            'handler': name,
+                            'file': file_path
+                        })
+
+                # Extract common patterns from function names
+                if element_type == 'function' and len(name) > 3:
+                    # Common action verbs
+                    verbs = ['create', 'read', 'update', 'delete', 'list', 'get', 'set', 'add', 'remove']
+                    for verb in verbs:
+                        if name.lower().startswith(verb):
+                            common_patterns.append({
+                                'action': verb,
+                                'function': name,
+                                'file': file_path
+                            })
+
+            logger.info(f"Extracted {len(cli_commands)} CLI commands, {len(api_endpoints)} API endpoints")
+
+            return {
+                'cli_commands': cli_commands,
+                'api_endpoints': api_endpoints,
+                'common_patterns': common_patterns,
+                'available': True,
+                'total_elements': len(index_data)
+            }
+
+        except Exception as e:
+            logger.error(f"Failed to extract code intelligence: {e}", exc_info=True)
+            return {
+                'cli_commands': [],
+                'api_endpoints': [],
+                'common_patterns': [],
+                'available': False,
+                'error': str(e)
+            }
 
     def get_interview_questions(self, app_type: Optional[str] = None) -> Dict[str, any]:
         """

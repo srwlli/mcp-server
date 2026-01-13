@@ -68,9 +68,13 @@ class ValidatorFactory:
         r".*/SUMMARY-.*\.md$": "migration",
 
         # User-facing docs
-        r".*/USER-GUIDE\.md$": "user_facing",
+        r".*/USER-GUIDE\.md$": "user_guide",
+        r".*-GUIDE\.md$": "user_guide",
         r".*/TUTORIAL-.*\.md$": "user_facing",
         r".*/HOW-TO-.*\.md$": "user_facing",
+        r".*/QUICKSTART\.md$": "quickref",
+        r".*/QUICKREF\.md$": "quickref",
+        r".*-QUICKREF\.md$": "quickref",
     }
 
     @classmethod
@@ -138,6 +142,12 @@ class ValidatorFactory:
             doc_type = frontmatter.get('doc_type')
             if doc_type in ['readme', 'architecture', 'api', 'schema', 'components']:
                 return "foundation"
+            elif doc_type == 'guide':
+                return "user_guide"
+            elif doc_type in ['quickstart', 'reference']:
+                return "quickref"
+            elif doc_type in ['tutorial', 'faq', 'troubleshooting']:
+                return "user_facing"
 
             # Check category field (resource sheets)
             if 'subject' in frontmatter and 'parent_project' in frontmatter and 'category' in frontmatter:
@@ -172,6 +182,8 @@ class ValidatorFactory:
             "infrastructure": infrastructure.InfrastructureDocValidator,
             "migration": migration.MigrationDocValidator,
             "user_facing": user_facing.UserFacingDocValidator,
+            "user_guide": user_facing.UserGuideValidator,
+            "quickref": user_facing.QuickrefValidator,
             "general": general.GeneralMarkdownValidator,
             "execution_log": execution_log.ExecutionLogValidator,  # New: execution-log.json
             "analysis": analysis.AnalysisValidator,  # New: analysis.json

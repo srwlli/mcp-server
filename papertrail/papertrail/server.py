@@ -13,6 +13,7 @@ from mcp.server import Server
 from mcp.types import Tool, TextContent
 
 from papertrail.validators.factory import ValidatorFactory
+from papertrail.tools.sync_schemas import SchemaSyncTool
 
 # Initialize MCP server
 app = Server("papertrail")
@@ -105,6 +106,29 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["directory"]
             }
+        ),
+        Tool(
+            name="validate_schema_completeness",
+            description="Validate that a JSON schema has required_sections defined for all doc_types. Reports completeness, issues, and section counts per doc_type. Use this to ensure schema-template synchronization.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "schema_name": {
+                        "type": "string",
+                        "description": "Name of schema file (e.g., 'foundation-doc-frontmatter-schema.json')"
+                    }
+                },
+                "required": ["schema_name"]
+            }
+        ),
+        Tool(
+            name="validate_all_schemas",
+            description="Validate all JSON schemas in schemas/documentation/ directory. Returns summary report with pass/fail counts and lists issues for each schema. Use this for batch schema validation.",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
         )
     ]
 
@@ -123,6 +147,10 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         return await validate_document(arguments)
     elif name == "check_all_docs":
         return await check_all_docs(arguments)
+    elif name == "validate_schema_completeness":
+        return await validate_schema_completeness(arguments)
+    elif name == "validate_all_schemas":
+        return await validate_all_schemas(arguments)
     else:
         raise ValueError(f"Unknown tool: {name}")
 
@@ -376,6 +404,8 @@ async def validate_document(arguments: dict) -> list[TextContent]:
         response = f"# Validation Results: {file_path.name}\n\n"
         response += f"**Valid:** {'Yes' if result.valid else 'No'}\n"
         response += f"**Score:** {result.score}/100\n"
+        if result.completeness is not None:
+            response += f"**Completeness:** {result.completeness}%\n"
         response += f"**Category:** {validator.doc_category}\n\n"
         
         if result.errors:
@@ -480,11 +510,48 @@ async def check_all_docs(arguments: dict) -> list[TextContent]:
             response += f"\n"
         
         return [TextContent(type="text", text=response)]
-        
+
     except Exception as e:
         return [TextContent(
             type="text",
             text=f"Error checking documents: {str(e)}"
+        )]
+
+
+async def validate_schema_completeness(arguments: dict) -> list[TextContent]:
+    """Validate a single schema for completeness."""
+    schema_name = arguments["schema_name"]
+
+    try:
+        tool = SchemaSyncTool()
+        report = tool.generate_schema_report(schema_name)
+
+        return [TextContent(type="text", text=report)]
+
+    except FileNotFoundError as e:
+        return [TextContent(
+            type="text",
+            text=f"Error: {str(e)}"
+        )]
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating schema: {str(e)}"
+        )]
+
+
+async def validate_all_schemas(arguments: dict) -> list[TextContent]:
+    """Validate all schemas in directory."""
+    try:
+        tool = SchemaSyncTool()
+        report = tool.validate_all_schemas()
+
+        return [TextContent(type="text", text=report)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating schemas: {str(e)}"
         )]
 
 

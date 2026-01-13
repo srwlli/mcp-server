@@ -39,6 +39,10 @@ __all__ = [
     'validate_expert_domain',
     'validate_expert_capabilities',
     'validate_context_expert_inputs',
+    # MCP Integration validation (WO-GENERATION-ENHANCEMENT-001)
+    'validate_drift_threshold',
+    'validate_auto_validate_flag',
+    'validate_mcp_timeout',
 ]
 
 
@@ -772,3 +776,71 @@ def validate_context_expert_inputs(arguments: dict) -> dict:
         validate_expert_capabilities(arguments['capabilities'])
 
     return arguments
+
+
+# MCP Integration Validation Functions (WO-GENERATION-ENHANCEMENT-001)
+
+def validate_drift_threshold(value: int) -> int:
+    """
+    Validate drift threshold percentage.
+
+    Args:
+        value: Drift threshold percentage (0-100)
+
+    Returns:
+        Validated threshold value
+
+    Raises:
+        ValueError: If threshold is out of range
+    """
+    if not isinstance(value, int):
+        raise ValueError('drift_threshold must be an integer')
+
+    if value < 0 or value > 100:
+        raise ValueError(f'drift_threshold must be between 0 and 100, got {value}')
+
+    return value
+
+
+def validate_auto_validate_flag(value: bool) -> bool:
+    """
+    Validate auto_validate boolean flag.
+
+    Args:
+        value: Auto-validate flag
+
+    Returns:
+        Validated flag value
+
+    Raises:
+        ValueError: If value is not a boolean
+    """
+    if not isinstance(value, bool):
+        raise ValueError(f'auto_validate must be a boolean, got {type(value).__name__}')
+
+    return value
+
+
+def validate_mcp_timeout(ms: int) -> int:
+    """
+    Validate MCP timeout in milliseconds.
+
+    Args:
+        ms: Timeout in milliseconds
+
+    Returns:
+        Validated timeout value
+
+    Raises:
+        ValueError: If timeout is invalid
+    """
+    if not isinstance(ms, int):
+        raise ValueError('mcp_timeout_ms must be an integer')
+
+    if ms < 1000:
+        raise ValueError(f'mcp_timeout_ms must be at least 1000ms (1 second), got {ms}ms')
+
+    if ms > 600000:
+        raise ValueError(f'mcp_timeout_ms must not exceed 600000ms (10 minutes), got {ms}ms')
+
+    return ms

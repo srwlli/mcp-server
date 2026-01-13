@@ -38,6 +38,21 @@ class FoundationDocValidator(BaseUDSValidator):
         if missing_power:
             warnings.append(f"Missing recommended POWER framework sections: {', '.join(missing_power)}")
 
+        # Validate code examples for API and COMPONENTS docs
+        doc_type = frontmatter.get('doc_type')
+        if doc_type in ['api', 'components']:
+            try:
+                # Determine project path from file_path if available
+                project_path = file_path.parent if file_path else None
+
+                # Call code example validation
+                example_errors = self.code_example_validation(frontmatter, content, project_path)
+                errors.extend(example_errors)
+
+            except Exception as e:
+                # Graceful degradation if code example validation fails
+                warnings.append(f"Code example validation skipped: {str(e)}")
+
         # Check doc_type matches filename if file_path provided
         if file_path:
             expected_type = self._infer_doc_type_from_filename(file_path)

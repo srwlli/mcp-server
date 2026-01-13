@@ -50,9 +50,12 @@ from src.handlers_refactored import (
     handle_coderef_context,
     handle_coderef_validate,
     handle_coderef_drift,
+    handle_coderef_incremental_scan,
     handle_coderef_diagram,
     handle_coderef_tag,
     handle_coderef_export,
+    handle_generate_foundation_docs,
+    handle_validate_coderef_outputs,
 )
 
 # Initialize MCP server
@@ -282,6 +285,20 @@ async def list_tools() -> List[Tool]:
             }
         ),
         Tool(
+            name="coderef_incremental_scan",
+            description="Perform incremental scan (only re-scan files with detected drift, merge with existing index)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Project root"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
             name="coderef_diagram",
             description="Generate visual dependency diagrams (Mermaid or Graphviz)",
             inputSchema={
@@ -387,6 +404,45 @@ async def list_tools() -> List[Tool]:
                 "required": ["project_path", "format"]
             }
         ),
+        Tool(
+            name="generate_foundation_docs",
+            description="Auto-generate foundation documentation (API.md, SCHEMA.md, COMPONENTS.md) from .coderef/index.json",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project root"
+                    },
+                    "docs": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Doc types to generate: api, schema, components, readme",
+                        "default": ["api", "schema", "components"]
+                    },
+                    "output_dir": {
+                        "type": "string",
+                        "description": "Output directory for generated docs",
+                        "default": "coderef/foundation-docs"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
+            name="validate_coderef_outputs",
+            description="Validate .coderef/ files against schemas using Papertrail MCP validation",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project root"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
     ]
 
 
@@ -419,12 +475,18 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             return await handle_coderef_validate(arguments)
         elif name == "coderef_drift":
             return await handle_coderef_drift(arguments)
+        elif name == "coderef_incremental_scan":
+            return await handle_coderef_incremental_scan(arguments)
         elif name == "coderef_diagram":
             return await handle_coderef_diagram(arguments)
         elif name == "coderef_tag":
             return await handle_coderef_tag(arguments)
         elif name == "coderef_export":
             return await handle_coderef_export(arguments)
+        elif name == "generate_foundation_docs":
+            return await handle_generate_foundation_docs(arguments)
+        elif name == "validate_coderef_outputs":
+            return await handle_validate_coderef_outputs(arguments)
         else:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
 

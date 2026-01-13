@@ -78,6 +78,42 @@
             "1 hour",
             "30 mins"
           ]
+        },
+        "required_sections": {
+          "type": "object",
+          "description": "Required sections based on doc_type for user-facing docs",
+          "properties": {
+            "guide": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Overview", "Prerequisites", "Steps", "Examples", "Troubleshooting"]
+            },
+            "tutorial": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Introduction", "Prerequisites", "Step-by-Step Instructions", "Verification", "Next Steps"]
+            },
+            "faq": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Questions & Answers"]
+            },
+            "quickstart": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Quick Start", "Installation", "Basic Usage", "Next Steps"]
+            },
+            "reference": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Reference", "Parameters", "Examples", "See Also"]
+            },
+            "troubleshooting": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Common Issues", "Solutions", "Prevention"]
+            }
+          }
         }
       }
     }

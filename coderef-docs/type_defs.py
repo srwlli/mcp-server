@@ -87,6 +87,10 @@ __all__ = [
     'ProposedChangeDict',
     'RiskAssessmentDict',
     'RiskAssessmentResultDict',
+    # MCP Integration types (WO-GENERATION-ENHANCEMENT-001)
+    'MCPQueryResultDict',
+    'MCPPatternsResultDict',
+    'DriftCheckResultDict',
 ]
 
 
@@ -827,3 +831,42 @@ class RiskAssessmentResultDict(TypedDict):
     recommended_option: str  # Best option ID (if multi-option)
     duration_ms: float  # Assessment duration in milliseconds
     success: bool
+
+
+# MCP Integration TypedDicts (WO-GENERATION-ENHANCEMENT-001)
+
+class MCPQueryResultDict(TypedDict, total=False):
+    """Return type for call_coderef_query MCP orchestration function."""
+    query_type: str  # Query type: calls, calls-me, imports, imports-me, depends-on, depends-on-me
+    target: str  # Element being queried
+    relationships: List[Dict[str, Any]]  # List of relationships found
+    depth: int  # Traversal depth used
+    element_count: int  # Number of related elements found
+    success: bool  # Whether query succeeded
+    error: Optional[str]  # Error message if query failed
+
+
+class MCPPatternsResultDict(TypedDict, total=False):
+    """Return type for call_coderef_patterns MCP orchestration function."""
+    pattern_type: Optional[str]  # Pattern type filter used (None for all patterns)
+    patterns: List[Dict[str, Any]]  # List of detected patterns with metadata
+    frequency: Dict[str, int]  # Pattern frequency counts
+    locations: Dict[str, List[str]]  # Pattern locations in codebase
+    violations: List[Dict[str, Any]]  # Consistency violations detected
+    pattern_count: int  # Total patterns found
+    success: bool  # Whether patterns analysis succeeded
+    error: Optional[str]  # Error message if analysis failed
+
+
+class DriftCheckResultDict(TypedDict, total=False):
+    """Return type for call_coderef_drift MCP orchestration function."""
+    drift_percent: float  # Percentage drift from index (0-100)
+    stale: bool  # Whether index is considered stale
+    index_age: str  # Age of index file (human-readable)
+    index_modified: str  # ISO 8601 timestamp of index last modification
+    recommendation: str  # Action recommendation: 'ok', 'refresh', 'urgent_refresh'
+    files_changed: int  # Number of files that changed
+    files_added: int  # Number of files added
+    files_deleted: int  # Number of files deleted
+    success: bool  # Whether drift check succeeded
+    error: Optional[str]  # Error message if drift check failed

@@ -43,6 +43,11 @@ __all__ = [
     'MAX_PATH_LENGTH',
     'TEMPLATE_NAME_PATTERN',
     'VERSION_PATTERN',
+    # MCP Integration constants
+    'CODEREF_CONTEXT_AVAILABLE',
+    'VALIDATION_SCORE_THRESHOLD',
+    'DRIFT_WARNING_THRESHOLD',
+    'MCP_TIMEOUT_MS',
     # Security constants
     'EXCLUDE_DIRS',
     'MAX_FILE_SIZE',
@@ -180,6 +185,12 @@ class SeverityThreshold(str, Enum):
 MAX_PATH_LENGTH = 1000
 TEMPLATE_NAME_PATTERN = r'^[a-zA-Z0-9_-]+$'
 VERSION_PATTERN = r'^\d+\.\d+\.\d+$'
+
+# MCP Integration constants (WO-GENERATION-ENHANCEMENT-001)
+CODEREF_CONTEXT_AVAILABLE = False  # Set by health check at startup
+VALIDATION_SCORE_THRESHOLD = 90  # Minimum score required for Papertrail validation
+DRIFT_WARNING_THRESHOLD = 10  # Drift percentage that triggers user warning
+MCP_TIMEOUT_MS = 30000  # Timeout for MCP tool calls (30 seconds)
 
 # Standards scanner security constants (SEC-004, SEC-007, SEC-008)
 EXCLUDE_DIRS = ['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '__pycache__', '.venv', 'venv', 'vendor']

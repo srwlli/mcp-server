@@ -13,7 +13,8 @@
       "mcp__coderef-workflow__validate_implementation_plan",
       "Bash(python:*)",
       "SlashCommand(/create-plan generation-enhancement-001)",
-      "Bash(env)"
+      "Bash(env)",
+      "mcp__coderef-personas__execute_plan_interactive"
     ],
     "deny": [],
     "ask": []

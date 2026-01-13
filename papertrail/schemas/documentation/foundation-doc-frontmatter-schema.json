@@ -90,6 +90,37 @@
             "APPROVED",
             "DRAFT"
           ]
+        },
+        "required_sections": {
+          "type": "object",
+          "description": "Required sections based on doc_type for POWER framework compliance",
+          "properties": {
+            "readme": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Purpose", "Overview", "What/Why/When", "Examples", "References"]
+            },
+            "architecture": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["System Overview", "Key Components", "Design Decisions", "Integration Points"]
+            },
+            "api": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Endpoints", "Authentication", "Request/Response Examples", "Error Codes"]
+            },
+            "schema": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Data Models", "Field Descriptions", "Validation Rules", "Relationships"]
+            },
+            "components": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["Component Catalog", "Props/Parameters", "Usage Examples", "Dependencies"]
+            }
+          }
         }
       }
     }

@@ -393,7 +393,7 @@ async def list_tools() -> list[Tool]:
                     "auto_analyze": {
                         "type": "boolean",
                         "description": "Use coderef_scan for auto-fill from code analysis (default: true)",
-                        "default": true
+                        "default": True
                     },
                     "output_path": {
                         "type": "string",
@@ -402,7 +402,7 @@ async def list_tools() -> list[Tool]:
                     "validate_against_code": {
                         "type": "boolean",
                         "description": "Compare generated docs against actual code for drift detection (default: true)",
-                        "default": true
+                        "default": True
                     },
                     "auto_validate": {
                         "type": "boolean",

@@ -49,7 +49,7 @@ const greet = () => "hello";
         """Test that API doc with code examples is processed (placeholder validation)"""
         api_doc = """---
 agent: Test Agent
-date: 2026-01-12
+date: "2026-01-12"
 task: CREATE
 workorder_id: WO-TEST-001
 generated_by: coderef-docs v1.0.0
@@ -80,6 +80,14 @@ DELETE /api/users/{id}
 ## Authentication
 
 All endpoints require authentication.
+
+## Request/Response Examples
+
+Example request and response formats.
+
+## Error Codes
+
+Common error codes returned by the API.
 """
         api_file = tmp_path / "API.md"
         api_file.write_text(api_doc)
@@ -95,7 +103,7 @@ All endpoints require authentication.
         """Test that COMPONENTS doc with JSX examples is processed"""
         components_doc = """---
 agent: Test Agent
-date: 2026-01-12
+date: "2026-01-12"
 task: CREATE
 workorder_id: WO-TEST-001
 generated_by: coderef-docs v1.0.0
@@ -105,7 +113,17 @@ doc_type: components
 
 # Test Components
 
-## Button Component
+## Component Catalog
+
+Button and Input components.
+
+## Props/Parameters
+
+Props documented inline.
+
+## Usage Examples
+
+### Button Component
 
 ```tsx
 import { Button } from './components';
@@ -122,7 +140,7 @@ function App() {
 }
 ```
 
-## Input Component
+### Input Component
 
 ```jsx
 <Input
@@ -131,6 +149,10 @@ function App() {
   onChange={handleChange}
 />
 ```
+
+## Dependencies
+
+React 18+
 """
         comp_file = tmp_path / "COMPONENTS.md"
         comp_file.write_text(components_doc)

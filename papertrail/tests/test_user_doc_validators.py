@@ -22,7 +22,7 @@ class TestUserFacingDocValidator:
         """Test validation of valid user guide"""
         guide = """---
 agent: Test Agent
-date: 2026-01-13
+date: "2026-01-13"
 task: CREATE
 audience: developers
 doc_type: guide
@@ -219,7 +219,7 @@ class TestQuickrefValidator:
         """Test valid quickstart document"""
         quickstart = """---
 agent: Test Agent
-date: 2026-01-13
+date: "2026-01-13"
 task: CREATE
 audience: developers
 doc_type: quickstart
@@ -251,7 +251,7 @@ Where to go from here.
         """Test valid reference document"""
         reference = """---
 agent: Test Agent
-date: 2026-01-13
+date: "2026-01-13"
 task: CREATE
 audience: developers
 doc_type: reference

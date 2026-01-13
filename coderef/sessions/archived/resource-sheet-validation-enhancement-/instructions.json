@@ -1,0 +1,61 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-VALIDATION-001",
+  "task": "Enhance Resource Sheet Validation System",
+  "description": "Add directory location and filename format validation to prevent resource sheets from being created in wrong directories with incorrect naming conventions (ALL-CAPS vs PascalCase-with-hyphens)",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate validation enhancement across papertrail (validator), coderef-docs (generator), and assistant (standards doc)",
+    "steps": {
+      "step_1": "READ communication.json to understand agent assignments",
+      "step_2": "MONITOR agent progress (papertrail, coderef-docs, coderef-assistant)",
+      "step_3": "VERIFY all agents completed their tasks",
+      "step_4": "SYNTHESIZE outputs into master validation enhancement report",
+      "step_5": "CREATE orchestrator-output.md with: validation coverage improvements, test results, integration verification"
+    }
+  },
+
+  "agent_instructions": {
+    "papertrail_instructions": {
+      "role": "Enhance ResourceSheetValidator with directory and naming checks",
+      "steps": {
+        "step_1": "READ C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\validators\\resource_sheet.py",
+        "step_2": "ENHANCE validate_specific() method to add checks for: (1) Directory location must contain 'resources-sheets' or 'resource-sheets', (2) Filename format must match PascalCase-with-hyphens regex: ^[A-Z][a-z0-9]*(-[A-Z][a-z0-9]*)*-RESOURCE-SHEET$, (3) Subject field consistency with filename",
+        "step_3": "UPDATE existing filename warning (line 143-148) to ERROR severity for ALL-CAPS naming",
+        "step_4": "TEST validator against existing resource sheets",
+        "step_5": "CREATE papertrail-output.md with: code changes made, validation rules added, test results"
+      }
+    },
+    "coderef_docs_instructions": {
+      "role": "Enhance ResourceSheetGenerator to enforce correct location and naming",
+      "steps": {
+        "step_1": "READ C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\resource_sheet_generator.py",
+        "step_2": "ENHANCE generate() method to: (1) Auto-generate filename from subject field using PascalCase-with-hyphens, (2) Ensure output directory is coderef/resources-sheets/, (3) Validate before saving using ResourceSheetValidator",
+        "step_3": "ADD helper function: convert_subject_to_filename(subject: str) -> str that converts 'Auth Service' to 'Auth-Service-RESOURCE-SHEET.md'",
+        "step_4": "TEST generator with sample subjects",
+        "step_5": "CREATE coderef-docs-output.md with: code changes made, filename generation logic, test results"
+      }
+    },
+    "coderef_assistant_instructions": {
+      "role": "Update existing RESOURCE-SHEET-STANDARDS.md with directory location and filename format rules",
+      "steps": {
+        "step_1": "READ C:\\Users\\willh\\.mcp-servers\\papertrail\\standards\\documentation\\resource-sheet-standards.md",
+        "step_2": "ADD directory location section after line 46: 'Directory Location' section specifying coderef/resources-sheets/ (not coderef/reference-sheets/) with examples",
+        "step_3": "ENHANCE 'Naming Convention' section (lines 26-31) to explicitly define: PascalCase-with-hyphens format (Auth-Service-RESOURCE-SHEET.md) vs incorrect ALL-CAPS format (AUTH-SERVICE-RESOURCE-SHEET.md)",
+        "step_4": "ADD examples to 'Valid' section showing: Widget-System-RESOURCE-SHEET.md, File-Api-Route-RESOURCE-SHEET.md",
+        "step_5": "ADD examples to 'Invalid' section showing: FILE-API-ROUTE-RESOURCE-SHEET.md (ALL-CAPS), file-api-route-RESOURCE-SHEET.md (lowercase)",
+        "step_6": "UPDATE 'Validation Rules' section (line 263) to include directory location check and filename format check",
+        "step_7": "CREATE coderef-assistant-output.md documenting changes made to standards doc"
+      }
+    }
+  },
+
+  "output_format": "markdown",
+
+  "output_template": "# Agent Output Report\n\n## Changes Made\n- List of code changes\n- Files modified\n\n## Validation Rules Added\n- Directory location check\n- Filename format check\n- Subject consistency check\n\n## Test Results\n- Validation test results\n- Generator test results\n\n## Next Steps\n- Any follow-up actions needed",
+
+  "quality_standards": {
+    "completeness": "All three agents (papertrail, coderef-docs, coderef-assistant) must complete their tasks. Validator must check directory + filename. Generator must auto-generate correct paths. Standards doc must define all rules.",
+    "accuracy": "Regex patterns must correctly identify PascalCase-with-hyphens. Directory checks must validate against correct path. Subject-to-filename conversion must be accurate.",
+    "format": "Outputs in markdown. Code changes clearly documented. Test results included. Examples provided."
+  }
+}

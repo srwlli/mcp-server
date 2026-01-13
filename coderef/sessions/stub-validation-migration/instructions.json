@@ -1,0 +1,65 @@
+{
+  "workorder_id": "WO-STUB-VALIDATION-MIGRATION-001",
+  "task": "Migrate Stub Validation from Assistant to Papertrail",
+  "description": "Move stub schema and validator from assistant project to papertrail MCP server, expose as MCP tool, update assistant to use tool instead of local script",
+
+  "orchestrator_instructions": {
+    "role": "Verify migration completeness and integration",
+    "steps": {
+      "step_1": "READ papertrail-output.md, coderef-docs-output.md, and coderef-assistant-output.md",
+      "step_2": "VERIFY stub-schema.json moved to papertrail/schemas/",
+      "step_3": "VERIFY validate_stub tool exposed in papertrail MCP server",
+      "step_4": "VERIFY coderef-docs updated generators/templates if needed",
+      "step_5": "VERIFY assistant files removed and documentation updated",
+      "step_6": "CREATE migration summary with before/after architecture"
+    }
+  },
+
+  "agent_instructions": {
+    "papertrail": {
+      "role": "Implement stub validation in papertrail",
+      "steps": {
+        "step_1": "COPY C:\\Users\\willh\\Desktop\\assistant\\stub-schema.json to C:\\Users\\willh\\.mcp-servers\\papertrail\\schemas\\stub-schema.json",
+        "step_2": "CREATE C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\validators\\stub.py with StubValidator class (follow ResourceSheetValidator pattern)",
+        "step_3": "ADD validate_stub tool to papertrail/tool_handlers.py",
+        "step_4": "REGISTER validate_stub tool in papertrail/server.py",
+        "step_5": "CREATE output report at papertrail-output.md"
+      }
+    },
+    "coderef-docs": {
+      "role": "Update documentation generators to reference new schema location",
+      "steps": {
+        "step_1": "SEARCH for any references to stub-schema.json in generators/",
+        "step_2": "UPDATE any generators that reference stub schema to use papertrail/schemas/stub-schema.json",
+        "step_3": "CHECK if stub generator tool exists, create if needed",
+        "step_4": "UPDATE templates if they reference stub validation",
+        "step_5": "CREATE output report at coderef-docs-output.md"
+      }
+    },
+    "coderef-assistant": {
+      "role": "Remove stub validation files from assistant",
+      "steps": {
+        "step_1": "REMOVE C:\\Users\\willh\\Desktop\\assistant\\validate-stubs.py",
+        "step_2": "REMOVE C:\\Users\\willh\\Desktop\\assistant\\stub-schema.json",
+        "step_3": "UPDATE CLAUDE.md to reference papertrail validate_stub tool",
+        "step_4": "UPDATE Validate-Stubs-RESOURCE-SHEET.md or archive it",
+        "step_5": "CREATE output report at coderef-assistant-output.md"
+      }
+    }
+  },
+
+  "output_format": "markdown",
+
+  "output_template": {
+    "orchestrator": "# Migration Summary\n\n## Before\n- stub-schema.json in assistant\n- validate-stubs.py in assistant\n\n## After\n- stub-schema.json in papertrail/schemas/\n- StubValidator in papertrail/validators/\n- validate_stub MCP tool exposed\n- coderef-docs generators updated\n- assistant files removed\n\n## Integration Test\n- [ ] Tool callable from assistant\n- [ ] Validation results correct\n- [ ] Auto-fill behavior preserved",
+    "papertrail": "# Papertrail Implementation Report\n\n## Files Created\n- schemas/stub-schema.json\n- validators/stub.py\n\n## Tool Registration\n- tool_handlers.py updated\n- server.py updated\n\n## Validation Features\n- Schema compliance\n- Auto-fill defaults\n- stub_id format validation",
+    "coderef-docs": "# Coderef-Docs Update Report\n\n## Search Results\n- References to stub-schema.json found\n\n## Files Updated\n- Generator files updated with new schema path\n\n## Templates\n- Template references updated if needed\n\n## Tools\n- Stub generator verified/created",
+    "coderef-assistant": "# Assistant Update Report\n\n## Files Removed\n- validate-stubs.py\n- stub-schema.json\n\n## Documentation Updated\n- CLAUDE.md updated\n- Resource sheet archived\n\n## Integration\n- Ready to use papertrail validate_stub tool"
+  },
+
+  "quality_standards": {
+    "completeness": "All files moved, tool exposed, assistant updated",
+    "accuracy": "Validation behavior identical to original script",
+    "format": "Follow ResourceSheetValidator pattern for consistency"
+  }
+}

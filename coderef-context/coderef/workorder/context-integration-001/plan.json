@@ -1,0 +1,679 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "2.0.0",
+    "workorder_id": "WO-CONTEXT-INTEGRATION-001",
+    "feature_name": "context-integration-001",
+    "created": "2026-01-12",
+    "status": "approved",
+    "source_session": "WO-DOCS-CONSOLIDATION-001",
+    "plan_quality_score": 95
+  },
+
+  "0_PREPARATION": {
+    "foundation_docs": {
+      "available": [
+        "README.md - User-facing overview of coderef-context MCP server",
+        "CLAUDE.md - AI context documentation (595 lines, v2.0.0)",
+        "ARCHITECTURE.md - System architecture (625 lines, manually written)",
+        "API.md - MCP tool reference (625 lines, all 12 tools documented)",
+        "COMPONENTS.md - Handler catalog (661 lines, code examples)",
+        "SCHEMA.md - Data schemas (incomplete - missing .coderef/ formats)"
+      ],
+      "missing": [
+        "INTEGRATION.md - No integration examples for coderef-docs",
+        "quickref.md - No tool cheat sheet"
+      ]
+    },
+    "coding_standards": {
+      "available": [
+        "Handler pattern - All tools follow async/await subprocess pattern",
+        "CodeRefReader class - Unified file access for .coderef/ data",
+        "MCP protocol - JSON-RPC 2.0 over stdio",
+        "Error handling - Consistent try/except, timeout, JSON parse patterns"
+      ],
+      "missing": [
+        "Testing standards - No formal testing doc (will infer from structure)",
+        "Documentation standards - POWER framework not formally documented"
+      ]
+    },
+    "reference_components": {
+      "primary": "handle_coderef_scan in src/handlers_refactored.py - Model for all handler patterns",
+      "secondary": [
+        "CodeRefReader.get_index() - File reading pattern to extend",
+        "ARCHITECTURE.md - Template for INTEGRATION.md structure",
+        "API.md - Format for documenting new tools"
+      ]
+    },
+    "key_patterns_identified": [
+      "Handler Pattern: async def handle_tool(args) → validate → read .coderef/ → transform → return JSON",
+      "CodeRefReader Pattern: _load_json() and _load_text() methods for all file access",
+      "Tool Registration: (1) Define in @app.list_tools(), (2) Implement handler, (3) Route in @app.call_tool()",
+      "Documentation Pattern: POWER framework (Purpose, Overview, What/Why/When, Examples, References)",
+      "Validation Pattern: Check file exists → Return error with fix command if missing"
+    ],
+    "technology_stack": {
+      "languages": ["Python 3.11+"],
+      "frameworks": ["MCP SDK 1.0", "asyncio"],
+      "key_libraries": [
+        "mcp@1.0.0",
+        "json (stdlib)",
+        "pathlib (stdlib)",
+        "ast (stdlib - for P1-2 Python scanning)"
+      ]
+    },
+    "gaps_and_risks": [
+      "SCHEMA.md incomplete - will need actual .coderef/ file samples for schemas",
+      "Python AST scanning (P1-2) is new capability - may require research",
+      "Incremental scan (P1-1) requires designing merge logic for index.json",
+      "Papertrail validation integration (P2-3) depends on WO-VALIDATION-ENHANCEMENT-001 completion",
+      "No formal test suite - will create basic integration tests"
+    ]
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "purpose": "Enable coderef-docs to successfully integrate with coderef-context by providing complete documentation (SCHEMA.md for .coderef/ formats, INTEGRATION.md for usage examples) and expanding capabilities (Python scanning, incremental updates, foundation doc generation, validation integration)",
+    "value_proposition": [
+      "Unblocks WO-GENERATION-ENHANCEMENT-001 - coderef-docs can implement MCP tool orchestration using INTEGRATION.md examples",
+      "Complete developer reference - SCHEMA.md documents all .coderef/ file formats (index.json, graph.json, context.json, reports/, diagrams/)",
+      "Self-documenting server - Python scanning enables coderef-context to scan itself (index.json no longer empty)",
+      "10-100x faster updates - Incremental scanning via drift detection for active development",
+      "Quality assurance - Papertrail validation integration catches malformed .coderef/ data early"
+    ],
+    "real_world_analogy": "Like completing an API documentation website: Currently we have endpoint descriptions (API.md) but missing data format specs (SCHEMA.md) and integration guide (INTEGRATION.md). Developers can see what tools exist but don't know how to call them or what data looks like. This fills those gaps plus adds faster refresh (incremental) and quality checks (validation).",
+    "use_case": "Developer reads stub.json for consolidate-foundation-docs-workflow → Checks INTEGRATION.md for how coderef-docs should call coderef_scan → Copies example code → Filters elements by type using examples → Populates POWER templates → Validates output using validate_coderef_outputs → Foundation docs generated with real code data",
+    "output": [
+      "Enhanced SCHEMA.md with 6 new sections (.coderef/ file formats)",
+      "New INTEGRATION.md with 5 Python code examples",
+      "New quickref.md with 12-tool cheat sheet",
+      "New coderef_incremental_scan MCP tool",
+      "Python AST scanner module (P1-2)",
+      "New generate_foundation_docs MCP tool (P2-2)",
+      "New validate_coderef_outputs MCP tool (P2-3)",
+      "Updated tests/ directory with integration tests"
+    ]
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "overall_risk": "medium",
+    "complexity": "high (15-20 files affected, 2000-2500 new lines, mix of documentation + new capabilities + testing)",
+    "scope": "Large - 15-20 files affected (7 new files, 8-13 modified), all MCP tool users benefit",
+    "file_system_risk": "low (mostly documentation writes, no destructive operations)",
+    "dependencies": [
+      "No new external dependencies for P0 (documentation)",
+      "ast module (stdlib) for P1-2 Python scanning",
+      "Papertrail MCP server for P2-3 validation (external dependency)"
+    ],
+    "performance_concerns": [
+      "Incremental scan (P1-1) must be faster than full scan - target 10x+",
+      "Python AST scanning (P1-2) adds overhead - benchmark against TypeScript scan",
+      "New tools shouldn't slow down existing operations - maintain 3ms avg response"
+    ],
+    "security_considerations": [
+      "Validate file paths in new tools (no path traversal)",
+      "Error messages shouldn't leak sensitive paths",
+      "Papertrail validation should validate JSON structure only (no code execution)"
+    ],
+    "breaking_changes": "none (all additions, no modifications to existing tool behavior)"
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "affected_files": [
+      "NEW: coderef/foundation-docs/SCHEMA.md (P0-1) - Add .coderef/ file format definitions",
+      "NEW: coderef/foundation-docs/INTEGRATION.md (P0-2) - coderef-docs integration examples",
+      "NEW: coderef/foundation-docs/quickref.md (P2-1) - Tool cheat sheet",
+      "MODIFIED: server.py:69-390 (P0, P1, P2) - Add 3 new MCP tools (incremental_scan, generate_foundation_docs, validate_coderef_outputs)",
+      "MODIFIED: src/handlers_refactored.py:340+ (P1-1, P2-2, P2-3) - Add 3 new handler functions",
+      "NEW: src/python_scanner.py (P1-2) - Python AST scanning module",
+      "MODIFIED: src/coderef_reader.py:140-162 (P1-1, P1-2) - Add methods: get_drifted_files(), scan_python_files()",
+      "NEW: src/foundation_doc_generator.py (P2-2) - Foundation doc generation logic",
+      "NEW: tests/test_integration.py (All) - Integration tests for new features",
+      "MODIFIED: CLAUDE.md:11-12,28-29 (All) - Update version to 2.1.0, add new tool descriptions",
+      "MODIFIED: API.md:12-25,600+ (All) - Document 3 new tools with schemas",
+      "MODIFIED: COMPONENTS.md:660+ (All) - Add new handler components to catalog",
+      "MODIFIED: README.md:20-30 (All) - Update feature list with new capabilities"
+    ],
+    "existing_architecture": {
+      "pattern": "MCP server → Tool handlers → CodeRefReader → .coderef/ files",
+      "handler_template": "async def handle_tool(args) → validate → CodeRefReader.method() → format JSON → return",
+      "data_flow": "Agent calls tool → server.py routes → handler validates → CodeRefReader reads file → JSON returned",
+      "current_tools": "12 tools (scan, query, impact, complexity, patterns, coverage, context, validate, drift, diagram, tag, export)"
+    },
+    "integration_points": [
+      "coderef-docs will consume INTEGRATION.md examples (WO-GENERATION-ENHANCEMENT-001)",
+      "Papertrail will provide validation schemas (WO-VALIDATION-ENHANCEMENT-001)",
+      "coderef-workflow may use incremental scan for faster planning analysis"
+    ]
+  },
+
+  "4_KEY_FEATURES": {
+    "P0_critical": [
+      {
+        "id": "P0-1-SCHEMA",
+        "title": "Complete SCHEMA.md with .coderef/ file formats",
+        "description": "Add 6 new sections to SCHEMA.md documenting index.json, graph.json, context.json, reports/, diagrams/, exports/ formats with JSON schemas, examples, field descriptions",
+        "must_have": [
+          "index.json schema: elements array structure, metadata fields (version, generatedAt, projectPath, totalElements, elementsByType)",
+          "graph.json schema: nodes object, edges object, relationship format",
+          "context.json schema: project summary fields, metadata",
+          "reports/ schema: patterns.json, coverage.json, validation.json, drift.json formats",
+          "diagrams/ schema: mermaid and dot format descriptions",
+          "exports/ schema: graph.json, graph.jsonld, diagram-wrapped.md formats"
+        ],
+        "success_criteria": "Developer can understand any .coderef/ file by reading SCHEMA.md - no reverse engineering needed"
+      },
+      {
+        "id": "P0-2-INTEGRATION",
+        "title": "Create INTEGRATION.md with coderef-docs usage examples",
+        "description": "New documentation file with 5 Python code examples showing how coderef-docs should call coderef-context tools",
+        "must_have": [
+          "Example 1: Calling coderef_scan and reading index.json",
+          "Example 2: Filtering elements by type (functions for API.md, classes for SCHEMA.md, components for COMPONENTS.md)",
+          "Example 3: Using coderef_query for relationship analysis (what-calls-me, depends-on)",
+          "Example 4: Error handling for missing .coderef/ data (file check, user instructions)",
+          "Example 5: End-to-end workflow (scan → query → filter → populate template → write doc)"
+        ],
+        "success_criteria": "coderef-docs developer can copy-paste examples and successfully integrate - zero ambiguity"
+      }
+    ],
+    "P1_high": [
+      {
+        "id": "P1-1-INCREMENTAL",
+        "title": "Add incremental scan via drift detection",
+        "description": "New MCP tool coderef_incremental_scan that uses drift detection to scan only changed files and merge with existing index.json",
+        "must_have": [
+          "Enhance coderef_drift handler to return list of changed files (not just count)",
+          "New tool: coderef_incremental_scan(project_path) in server.py",
+          "New handler: handle_coderef_incremental_scan in handlers_refactored.py",
+          "Logic: (1) Read existing index.json, (2) Call drift detection, (3) Scan only changed files, (4) Merge results, (5) Write updated index.json",
+          "Performance: 10x+ faster than full scan for <10% file changes"
+        ],
+        "success_criteria": "Agent calls incremental_scan after editing 3 files → Only those 3 files re-scanned → index.json updated → 10x faster than full scan"
+      },
+      {
+        "id": "P1-2-PYTHON",
+        "title": "Support Python code scanning",
+        "description": "Add Python AST scanning capability using ast module to scan Python files and populate index.json",
+        "must_have": [
+          "New module: src/python_scanner.py with scan_python_file(file_path) function",
+          "Extract functions, classes, methods from Python AST",
+          "Format as index.json elements (name, type, file, line)",
+          "Integrate with coderef_scan tool (auto-detect .py files)",
+          "coderef-context can scan itself (index.json contains 140+ elements from server.py, handlers, CodeRefReader)"
+        ],
+        "success_criteria": "Run coderef_scan on coderef-context → index.json populated with Python functions/classes → No longer empty → Self-documenting server"
+      }
+    ],
+    "P2_medium": [
+      {
+        "id": "P2-1-QUICKREF",
+        "title": "Add quickref.md tool cheat sheet",
+        "description": "New documentation file with 12-tool quick reference (name, purpose, example parameters)",
+        "must_have": [
+          "All 12 tools listed (15 after new tools added)",
+          "Format: Table with columns (Tool, Purpose, Example Parameters)",
+          "Organized by category (Scan, Query, Analysis, Export, Generation, Validation)",
+          "Copy-paste examples for common use cases",
+          "Auto-generated from server.py tool schemas (script to regenerate)"
+        ],
+        "success_criteria": "Agent quickly finds tool they need in <30 seconds by scanning quickref.md"
+      },
+      {
+        "id": "P2-2-GENERATE",
+        "title": "Add generate_foundation_docs tool",
+        "description": "New MCP tool to auto-generate foundation docs (API.md, SCHEMA.md, COMPONENTS.md) from .coderef/index.json",
+        "must_have": [
+          "New tool: generate_foundation_docs(project_path, docs=['api','schema','components'])",
+          "New module: src/foundation_doc_generator.py with generation logic",
+          "Read index.json, group by type (functions → API.md, classes → SCHEMA.md, components → COMPONENTS.md)",
+          "Simple templates (lists only, not full POWER framework)",
+          "Write to coderef/foundation-docs/ directory"
+        ],
+        "success_criteria": "Agent calls generate_foundation_docs → API.md populated with real function list → SCHEMA.md with real class list → COMPONENTS.md with real component list"
+      },
+      {
+        "id": "P2-3-VALIDATE",
+        "title": "Add validate_coderef_outputs tool (Papertrail integration)",
+        "description": "New MCP tool to validate .coderef/ files against schemas in Papertrail",
+        "must_have": [
+          "New tool: validate_coderef_outputs(project_path)",
+          "Call Papertrail MCP validate_document for index.json, graph.json, context.json",
+          "Return validation score (0-100), errors, warnings",
+          "Clear error messages with fix instructions",
+          "Integration test: generate .coderef/ → validate → confirm pass"
+        ],
+        "success_criteria": "Agent generates .coderef/ → Calls validate_coderef_outputs → Score 85/100 → Errors identified → Agent fixes → Re-validates → Score 100/100"
+      }
+    ]
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "workorder_id": "WO-CONTEXT-INTEGRATION-001",
+    "task_naming_convention": "WO-CONTEXT-INTEGRATION-001-{PHASE}-{SEQ}",
+    "examples": [
+      "WO-CONTEXT-INTEGRATION-001-P0-001 (First P0 task)",
+      "WO-CONTEXT-INTEGRATION-001-P1-001 (First P1 task)",
+      "WO-CONTEXT-INTEGRATION-001-P2-001 (First P2 task)"
+    ],
+    "task_categories": {
+      "P0": "Critical documentation (SCHEMA.md, INTEGRATION.md)",
+      "P1": "High-priority capabilities (incremental scan, Python scanning)",
+      "P2": "Medium-priority enhancements (quickref, generate tool, validate tool)",
+      "TEST": "Integration tests for all features"
+    }
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_0_p0_critical": {
+      "title": "P0 Critical Documentation",
+      "complexity": "low",
+      "description": "Complete SCHEMA.md and create INTEGRATION.md - blocking requirements for coderef-docs",
+      "tasks": [
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-001",
+          "title": "Enhance SCHEMA.md with index.json format definition",
+          "description": "Add section to SCHEMA.md documenting index.json structure: version, generatedAt, projectPath, totalElements, elementsByType, elements array (name, type, file, line, parameters)",
+          "files_affected": ["coderef/foundation-docs/SCHEMA.md"],
+          "approach": "Read actual .coderef/index.json samples from coderef-intelligence/ directory → Extract schema → Write JSON schema definition → Add example data → Add field descriptions",
+          "complexity": "low",
+          "dependencies": []
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-002",
+          "title": "Enhance SCHEMA.md with graph.json format definition",
+          "description": "Add section documenting graph.json structure: nodes object (id → element data), edges object (id → array of dependency ids)",
+          "files_affected": ["coderef/foundation-docs/SCHEMA.md"],
+          "approach": "Read actual graph.json samples → Document nodes structure → Document edges structure → Add traversal examples",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-001"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-003",
+          "title": "Enhance SCHEMA.md with context.json and reports/ formats",
+          "description": "Add sections for context.json, reports/patterns.json, reports/coverage.json, reports/validation.json, reports/drift.json",
+          "files_affected": ["coderef/foundation-docs/SCHEMA.md"],
+          "approach": "Document each reports/ file format → Add use cases → Add example queries",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-002"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-004",
+          "title": "Enhance SCHEMA.md with diagrams/ and exports/ formats",
+          "description": "Add sections for diagrams/*.mmd, diagrams/*.dot, exports/graph.json, exports/graph.jsonld, exports/diagram-wrapped.md",
+          "files_affected": ["coderef/foundation-docs/SCHEMA.md"],
+          "approach": "Document Mermaid and DOT formats → Document export formats → Add embedding examples",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-003"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-005",
+          "title": "Create INTEGRATION.md with Example 1 (scan + read index.json)",
+          "description": "Create INTEGRATION.md file with first example showing how to call coderef_scan and read index.json",
+          "files_affected": ["NEW: coderef/foundation-docs/INTEGRATION.md"],
+          "approach": "Create file with POWER framework structure → Add Python code example: import mcp client → call coderef_scan → read index.json → parse elements",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-004"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-006",
+          "title": "Add INTEGRATION.md Example 2-3 (filter + query)",
+          "description": "Add Example 2 (filtering elements by type) and Example 3 (using coderef_query for relationships)",
+          "files_affected": ["coderef/foundation-docs/INTEGRATION.md"],
+          "approach": "Example 2: Filter elements where type='function' → Group for API.md → Example 3: Call coderef_query with 'calls-me' → Build dependency graph",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-005"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P0-007",
+          "title": "Add INTEGRATION.md Example 4-5 (error handling + end-to-end)",
+          "description": "Add Example 4 (error handling for missing .coderef/) and Example 5 (full workflow)",
+          "files_affected": ["coderef/foundation-docs/INTEGRATION.md"],
+          "approach": "Example 4: Check .coderef/index.json exists → Return error with 'Run coderef_scan first' → Example 5: Full workflow from scan to doc generation",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-006"]
+        }
+      ],
+      "deliverables": [
+        "Enhanced SCHEMA.md with 6 new sections (index.json, graph.json, context.json, reports/, diagrams/, exports/)",
+        "New INTEGRATION.md with 5 Python code examples"
+      ],
+      "success_criteria": [
+        "SCHEMA.md is complete reference for all .coderef/ files",
+        "Developer can understand any .coderef/ file without reverse engineering",
+        "INTEGRATION.md examples are copy-pasteable and working",
+        "coderef-docs developer can integrate without questions"
+      ]
+    },
+
+    "phase_1_p1_capabilities": {
+      "title": "P1 High-Priority Capabilities",
+      "complexity": "medium",
+      "description": "Add incremental scan and Python scanning - expand server capabilities",
+      "tasks": [
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-001",
+          "title": "Enhance coderef_drift to return changed files list",
+          "description": "Modify handle_coderef_drift to return list of changed files (not just count) for incremental scan",
+          "files_affected": ["src/handlers_refactored.py:261-280"],
+          "approach": "Read drift.json → Extract changed_files array → Return in JSON response → Update API.md with new response format",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P0-007"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-002",
+          "title": "Add coderef_incremental_scan tool to server.py",
+          "description": "Add new MCP tool definition for coderef_incremental_scan in @app.list_tools()",
+          "files_affected": ["server.py:69-390"],
+          "approach": "Add Tool definition with inputSchema: project_path (required) → Add to list_tools() return array",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-001"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-003",
+          "title": "Implement handle_coderef_incremental_scan handler",
+          "description": "Add handler function in handlers_refactored.py: read index.json → call drift → scan changed files → merge → write index.json",
+          "files_affected": ["src/handlers_refactored.py:340+"],
+          "approach": "Read existing index.json → Call coderef_drift for changed files → For each changed file: re-scan → Remove old elements → Add new elements → Write updated index.json",
+          "complexity": "medium",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-002"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-004",
+          "title": "Add route for incremental_scan in @app.call_tool()",
+          "description": "Add elif branch in call_tool() to route coderef_incremental_scan to handler",
+          "files_affected": ["server.py:400-433"],
+          "approach": "Add elif name == 'coderef_incremental_scan': return await handle_coderef_incremental_scan(arguments)",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-003"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-005",
+          "title": "Create src/python_scanner.py module",
+          "description": "New module with scan_python_file(file_path) function using ast module to extract functions, classes, methods",
+          "files_affected": ["NEW: src/python_scanner.py"],
+          "approach": "Import ast → Read file → ast.parse() → ast.walk() to find FunctionDef, ClassDef → Extract name, line, parameters → Return as index.json element format",
+          "complexity": "medium",
+          "dependencies": []
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-006",
+          "title": "Integrate python_scanner into coderef_scan tool",
+          "description": "Modify handle_coderef_scan to auto-detect .py files and call python_scanner",
+          "files_affected": ["src/handlers_refactored.py:14-50"],
+          "approach": "After reading index.json → If languages includes 'python' or 'py' → Find .py files → Call python_scanner.scan_python_file() → Merge results",
+          "complexity": "medium",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-005"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P1-007",
+          "title": "Add scan_python_files() method to CodeRefReader",
+          "description": "Add method to CodeRefReader class to scan Python files in project",
+          "files_affected": ["src/coderef_reader.py:140-162"],
+          "approach": "Add method scan_python_files(self, project_path) → Use pathlib to find .py files → Call python_scanner for each → Return elements array",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-006"]
+        }
+      ],
+      "deliverables": [
+        "coderef_incremental_scan tool (MCP tool + handler)",
+        "Python AST scanning support (src/python_scanner.py)",
+        "Enhanced coderef_scan with Python support",
+        "Self-documenting server (index.json populated for coderef-context)"
+      ],
+      "success_criteria": [
+        "Incremental scan is 10x+ faster than full scan for <10% file changes",
+        "Python files scanned and added to index.json",
+        "coderef-context can scan itself (index.json not empty)",
+        "All new features documented in API.md and COMPONENTS.md"
+      ]
+    },
+
+    "phase_2_p2_enhancements": {
+      "title": "P2 Medium-Priority Enhancements",
+      "complexity": "medium",
+      "description": "Add quickref, generate tool, and validate tool - quality of life improvements",
+      "tasks": [
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-001",
+          "title": "Create quickref.md with tool table",
+          "description": "New documentation file with 15-tool quick reference table (name, purpose, example)",
+          "files_affected": ["NEW: coderef/foundation-docs/quickref.md"],
+          "approach": "Create markdown file → Add table header (Tool | Purpose | Example) → Add row for each tool from server.py schemas → Organize by category",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P1-007"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-002",
+          "title": "Create src/foundation_doc_generator.py module",
+          "description": "New module with generate_api_md(), generate_schema_md(), generate_components_md() functions",
+          "files_affected": ["NEW: src/foundation_doc_generator.py"],
+          "approach": "Read index.json → Group by type (functions for API, classes for SCHEMA, components for COMPONENTS) → Use simple templates (lists only) → Return markdown strings",
+          "complexity": "medium",
+          "dependencies": []
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-003",
+          "title": "Add generate_foundation_docs tool to server.py",
+          "description": "Add MCP tool definition for generate_foundation_docs(project_path, docs=['api','schema','components'])",
+          "files_affected": ["server.py:69-390"],
+          "approach": "Add Tool definition with inputSchema: project_path (required), docs (optional array) → Add to list_tools()",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P2-002"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-004",
+          "title": "Implement handle_generate_foundation_docs handler",
+          "description": "Add handler in handlers_refactored.py: call foundation_doc_generator → write docs to coderef/foundation-docs/",
+          "files_affected": ["src/handlers_refactored.py:340+"],
+          "approach": "Read index.json → For each doc in docs array: call generator function → Write to coderef/foundation-docs/{doc}.md → Return success",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P2-003"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-005",
+          "title": "Add validate_coderef_outputs tool to server.py",
+          "description": "Add MCP tool definition for validate_coderef_outputs(project_path)",
+          "files_affected": ["server.py:69-390"],
+          "approach": "Add Tool definition with inputSchema: project_path (required) → Add to list_tools()",
+          "complexity": "low",
+          "dependencies": []
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-006",
+          "title": "Implement handle_validate_coderef_outputs handler",
+          "description": "Add handler that calls Papertrail MCP validate_document for .coderef/ files",
+          "files_affected": ["src/handlers_refactored.py:340+"],
+          "approach": "For each .coderef/ file (index.json, graph.json, context.json) → Call Papertrail validate_document → Aggregate scores → Return validation report",
+          "complexity": "medium",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P2-005"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-P2-007",
+          "title": "Add routes for new tools in @app.call_tool()",
+          "description": "Add elif branches for generate_foundation_docs and validate_coderef_outputs",
+          "files_affected": ["server.py:400-433"],
+          "approach": "Add elif name == 'generate_foundation_docs' and elif name == 'validate_coderef_outputs' branches",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P2-004", "WO-CONTEXT-INTEGRATION-001-P2-006"]
+        }
+      ],
+      "deliverables": [
+        "quickref.md with 15-tool cheat sheet",
+        "generate_foundation_docs tool (MCP tool + handler + generator module)",
+        "validate_coderef_outputs tool (MCP tool + handler)"
+      ],
+      "success_criteria": [
+        "quickref.md is easy to scan (agent finds tool in <30 seconds)",
+        "generate_foundation_docs produces valid markdown docs",
+        "validate_coderef_outputs returns 0-100 score with clear errors"
+      ]
+    },
+
+    "phase_3_testing": {
+      "title": "Testing & Documentation",
+      "complexity": "low",
+      "description": "Add integration tests and update all documentation",
+      "tasks": [
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-TEST-001",
+          "title": "Create tests/test_integration.py",
+          "description": "New test file with integration tests for all new features",
+          "files_affected": ["NEW: tests/test_integration.py"],
+          "approach": "Test incremental_scan (create dummy change → scan → verify only changed files) → Test python_scanner (scan coderef-context → verify elements) → Test generate_foundation_docs (generate → verify markdown) → Test validate_coderef_outputs (validate good/bad data)",
+          "complexity": "medium",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-P2-007"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-TEST-002",
+          "title": "Update API.md with new tools",
+          "description": "Add sections for incremental_scan, generate_foundation_docs, validate_coderef_outputs to API.md",
+          "files_affected": ["coderef/foundation-docs/API.md:600+"],
+          "approach": "For each new tool: add section with inputSchema, response example, use case → Follow existing format",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-TEST-001"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-TEST-003",
+          "title": "Update COMPONENTS.md with new handlers",
+          "description": "Add new handler sections to COMPONENTS.md catalog",
+          "files_affected": ["coderef/foundation-docs/COMPONENTS.md:660+"],
+          "approach": "Add handle_coderef_incremental_scan, handle_generate_foundation_docs, handle_validate_coderef_outputs sections → Follow handler pattern template",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-TEST-002"]
+        },
+        {
+          "id": "WO-CONTEXT-INTEGRATION-001-TEST-004",
+          "title": "Update CLAUDE.md and README.md",
+          "description": "Update version to 2.1.0, add new features to feature list",
+          "files_affected": ["CLAUDE.md:11-12,28-29", "README.md:20-30"],
+          "approach": "CLAUDE.md: Update version → Add new tools to list → README.md: Add new capabilities to feature section",
+          "complexity": "low",
+          "dependencies": ["WO-CONTEXT-INTEGRATION-001-TEST-003"]
+        }
+      ],
+      "deliverables": [
+        "tests/test_integration.py with 10+ integration tests",
+        "Updated API.md with 3 new tool sections",
+        "Updated COMPONENTS.md with 3 new handler sections",
+        "Updated CLAUDE.md and README.md with v2.1.0"
+      ],
+      "success_criteria": [
+        "All integration tests pass",
+        "All documentation updated consistently",
+        "Version bumped to 2.1.0 across all files"
+      ]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": [
+      {
+        "component": "python_scanner.scan_python_file()",
+        "test_cases": [
+          "Scan file with functions → Verify functions extracted",
+          "Scan file with classes → Verify classes extracted",
+          "Scan file with methods → Verify methods extracted with class context",
+          "Scan file with invalid syntax → Verify error handling"
+        ]
+      },
+      {
+        "component": "foundation_doc_generator.generate_api_md()",
+        "test_cases": [
+          "Generate API.md from index.json → Verify functions listed",
+          "Generate with no functions → Verify empty state message",
+          "Generate with invalid index.json → Verify error handling"
+        ]
+      }
+    ],
+    "integration_tests": [
+      {
+        "workflow": "Incremental scan",
+        "test_cases": [
+          "Create project → Full scan → Edit 1 file → Incremental scan → Verify only 1 file re-scanned",
+          "Edit 10% of files → Verify incremental scan 10x+ faster than full scan",
+          "Edit file not in index → Verify added to index"
+        ]
+      },
+      {
+        "workflow": "Python scanning",
+        "test_cases": [
+          "Scan coderef-context → Verify server.py functions in index.json",
+          "Scan handlers_refactored.py → Verify handlers in index.json",
+          "Scan CodeRefReader → Verify methods in index.json"
+        ]
+      },
+      {
+        "workflow": "Foundation doc generation",
+        "test_cases": [
+          "Generate API.md → Verify markdown valid",
+          "Generate SCHEMA.md → Verify classes listed",
+          "Generate all docs → Verify all 3 files created"
+        ]
+      },
+      {
+        "workflow": "Validation",
+        "test_cases": [
+          "Validate good .coderef/ → Verify score 95-100",
+          "Validate malformed index.json → Verify errors detected",
+          "Validate missing files → Verify clear error messages"
+        ]
+      }
+    ],
+    "manual_tests": [
+      "Read SCHEMA.md → Verify all .coderef/ formats documented",
+      "Read INTEGRATION.md → Copy-paste Example 1 → Verify works",
+      "Read quickref.md → Find coderef_query in <30 seconds",
+      "coderef-docs developer uses INTEGRATION.md → Verify can integrate without questions"
+    ],
+    "performance_benchmarks": [
+      {
+        "metric": "Incremental scan speedup",
+        "target": "10x+ faster than full scan for <10% file changes",
+        "measurement": "Time full scan vs incremental scan on 100-file project with 5 changes"
+      },
+      {
+        "metric": "Python scan performance",
+        "target": "Similar to TypeScript scan (<5% overhead)",
+        "measurement": "Time Python scan vs TypeScript scan on equivalent codebases"
+      }
+    ]
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "documentation_quality": [
+      "SCHEMA.md is complete reference for all .coderef/ files (index, graph, context, reports, diagrams, exports)",
+      "Developer can understand any .coderef/ file by reading SCHEMA.md without reverse engineering",
+      "INTEGRATION.md has 5 working Python code examples",
+      "coderef-docs developer can integrate using INTEGRATION.md examples without asking questions",
+      "quickref.md enables finding any tool in <30 seconds"
+    ],
+    "integration_success": [
+      "WO-GENERATION-ENHANCEMENT-001 blocked on INTEGRATION.md → Unblocked after completion",
+      "coderef-docs successfully calls coderef_scan using INTEGRATION.md Example 1",
+      "coderef-docs filters elements by type using INTEGRATION.md Example 2",
+      "coderef-docs handles missing .coderef/ using INTEGRATION.md Example 4"
+    ],
+    "performance": [
+      "Incremental scan is 10x+ faster than full scan for <10% file changes",
+      "Python scanning overhead <5% compared to TypeScript scanning",
+      "New tools don't slow down existing operations (maintain 3ms avg response)"
+    ],
+    "coverage": [
+      "Python scanning enables self-documentation (index.json contains 140+ elements from coderef-context)",
+      "coderef-context can scan itself without external dependencies",
+      "All new tools have integration tests (10+ tests total)"
+    ],
+    "validation": [
+      "validate_coderef_outputs returns 0-100 score",
+      "Good .coderef/ data scores 95-100",
+      "Malformed .coderef/ data scores <70 with clear errors",
+      "Error messages include fix instructions"
+    ],
+    "acceptance_criteria": [
+      "All 27 tasks completed",
+      "All integration tests pass (10+)",
+      "Documentation updated (API.md, COMPONENTS.md, CLAUDE.md, README.md)",
+      "Version bumped to 2.1.0",
+      "WO-GENERATION-ENHANCEMENT-001 unblocked (can proceed with coderef-docs integration)"
+    ]
+  }
+}

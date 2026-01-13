@@ -23,6 +23,30 @@ async def list_tools() -> list[Tool]:
     """List available Papertrail MCP tools."""
     return [
         Tool(
+            name="validate_stub",
+            description="Validate a stub.json file against stub-schema.json. Checks required fields, format validation (stub_id, feature_name, dates), and optionally auto-fills missing fields with defaults. Returns validation results and optionally updated stub content.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Absolute path to stub.json file"
+                    },
+                    "auto_fill": {
+                        "type": "boolean",
+                        "description": "Auto-fill missing required fields with defaults (default: false)",
+                        "default": False
+                    },
+                    "save": {
+                        "type": "boolean",
+                        "description": "Save updated stub to file if auto_fill is true (default: false)",
+                        "default": False
+                    }
+                },
+                "required": ["file_path"]
+            }
+        ),
+        Tool(
             name="validate_resource_sheet",
             description="Validate a resource sheet document against RSMS v2.0 schema. Checks snake_case frontmatter, required fields (subject, parent_project, category), naming convention (-RESOURCE-SHEET.md suffix), and recommended sections. Returns score (0-100), errors, and warnings. Use this for /create-resource-sheet workflow validation.",
             inputSchema={
@@ -89,7 +113,9 @@ async def list_tools() -> list[Tool]:
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Handle MCP tool calls."""
 
-    if name == "validate_resource_sheet":
+    if name == "validate_stub":
+        return await validate_stub(arguments)
+    elif name == "validate_resource_sheet":
         return await validate_resource_sheet(arguments)
     elif name == "check_all_resource_sheets":
         return await check_all_resource_sheets(arguments)
@@ -99,6 +125,79 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         return await check_all_docs(arguments)
     else:
         raise ValueError(f"Unknown tool: {name}")
+
+
+async def validate_stub(arguments: dict) -> list[TextContent]:
+    """Validate a stub.json file."""
+    file_path = Path(arguments["file_path"])
+    auto_fill = arguments.get("auto_fill", False)
+    save = arguments.get("save", False)
+
+    if not file_path.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: File not found: {file_path}"
+        )]
+
+    # Enforce naming convention
+    if not file_path.name == "stub.json":
+        return [TextContent(
+            type="text",
+            text=f"Error: Stub file must be named 'stub.json'\n\nGot: {file_path.name}\n\nPlease rename the file to stub.json"
+        )]
+
+    try:
+        from papertrail.validators.stub import StubValidator
+        validator = StubValidator()
+
+        # Validate
+        is_valid, errors, warnings, updated_stub = validator.validate_file(file_path, auto_fill=auto_fill)
+
+        # Save if requested
+        if save and updated_stub and auto_fill:
+            validator.save_stub(updated_stub, file_path)
+
+        # Format response
+        response = f"# Stub Validation: {file_path.parent.name}/stub.json\n\n"
+        response += f"**Valid:** {'Yes [PASS]' if is_valid else 'No [FAIL]'}\n"
+        response += f"**Auto-fill:** {'Enabled' if auto_fill else 'Disabled'}\n"
+        if save and updated_stub:
+            response += f"**Saved:** Yes (updated stub saved to file)\n"
+        response += "\n"
+
+        if errors:
+            response += f"## Errors ({len(errors)})\n\n"
+            for error in errors:
+                response += f"- [ERROR] {error}\n"
+            response += "\n**Fix these errors to achieve stub schema compliance.**\n"
+
+        if warnings:
+            response += f"\n## Warnings ({len(warnings)})\n\n"
+            for warning in warnings:
+                response += f"- [WARN] {warning}\n"
+
+        if auto_fill and updated_stub:
+            response += f"\n## Auto-filled Fields\n\n"
+            response += "```json\n"
+            response += json.dumps(updated_stub, indent=2, ensure_ascii=False)
+            response += "\n```\n"
+            if save:
+                response += "\n[INFO] Updated stub has been saved to file.\n"
+            else:
+                response += "\n[INFO] Updated stub shown above. Use save=true to write to file.\n"
+
+        if is_valid:
+            response += "\n[PASS] Stub is valid and conforms to stub-schema.json!\n"
+        else:
+            response += f"\n[FAIL] Stub failed validation. Fix {len(errors)} error(s) above.\n"
+
+        return [TextContent(type="text", text=response)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating stub: {str(e)}"
+        )]
 
 
 async def validate_resource_sheet(arguments: dict) -> list[TextContent]:

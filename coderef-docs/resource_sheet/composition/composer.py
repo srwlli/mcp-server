@@ -220,6 +220,7 @@ version: 1.0.0
         schema: Dict[str, Any],
         jsdoc: List[str],
         output_path: str,
+        filename: str | None = None,
     ) -> Dict[str, str]:
         """
         Save all output formats to files.
@@ -230,6 +231,7 @@ version: 1.0.0
             schema: JSON schema
             jsdoc: JSDoc lines
             output_path: Output directory
+            filename: Optional filename override (default: uses element_name.lower())
 
         Returns:
             Paths to created files
@@ -239,11 +241,19 @@ version: 1.0.0
         output_dir = Path(output_path)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Use lowercase element name for all files
-        file_base = element_name.lower()
+        # Use provided filename or generate from element_name
+        if filename:
+            # Use provided filename (e.g., 'Auth-Service-RESOURCE-SHEET.md')
+            file_base = filename.replace('-RESOURCE-SHEET.md', '')
+        else:
+            # Legacy: Use lowercase element name for all files
+            file_base = element_name.lower()
 
-        # Markdown
-        md_path = output_dir / f"{file_base}.md"
+        # Markdown - use full filename if provided
+        if filename:
+            md_path = output_dir / filename
+        else:
+            md_path = output_dir / f"{file_base}.md"
         md_path.write_text(markdown, encoding="utf-8")
 
         # Schema (save in same directory as markdown)

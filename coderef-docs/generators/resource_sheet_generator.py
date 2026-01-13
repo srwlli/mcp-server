@@ -44,6 +44,60 @@ from resource_sheet.modules.conditional import (
 )
 
 
+def convert_subject_to_filename(subject: str) -> str:
+    """
+    Convert subject field to proper resource sheet filename.
+
+    Converts 'Auth Service' or 'AuthService' to 'Auth-Service-RESOURCE-SHEET.md'
+    following PascalCase-with-hyphens format.
+
+    Args:
+        subject: Subject string (e.g., 'Auth Service', 'AuthService', 'Widget System')
+
+    Returns:
+        Properly formatted filename (e.g., 'Auth-Service-RESOURCE-SHEET.md')
+
+    Examples:
+        >>> convert_subject_to_filename('Auth Service')
+        'Auth-Service-RESOURCE-SHEET.md'
+        >>> convert_subject_to_filename('AuthService')
+        'Auth-Service-RESOURCE-SHEET.md'
+        >>> convert_subject_to_filename('Widget System')
+        'Widget-System-RESOURCE-SHEET.md'
+        >>> convert_subject_to_filename('File API Route')
+        'File-Api-Route-RESOURCE-SHEET.md'
+    """
+    import re
+
+    # Handle empty/invalid input
+    if not subject or not subject.strip():
+        raise ValueError("Subject cannot be empty")
+
+    subject = subject.strip()
+
+    # If subject has spaces, split by spaces and capitalize each word
+    if ' ' in subject:
+        words = subject.split()
+        # Capitalize first letter of each word, lowercase the rest
+        pascal_words = [word.capitalize() for word in words]
+        component_name = '-'.join(pascal_words)
+    else:
+        # Handle camelCase or PascalCase: insert hyphens before capital letters
+        # e.g., 'AuthService' -> 'Auth-Service', 'FileAPIRoute' -> 'File-API-Route'
+
+        # Insert hyphen before uppercase letters that follow lowercase or are followed by lowercase
+        result = re.sub(r'([a-z])([A-Z])', r'\1-\2', subject)  # lowercase followed by uppercase
+        result = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1-\2', result)  # multiple caps followed by cap+lowercase
+
+        # Ensure first letter is capitalized
+        if result and result[0].islower():
+            result = result[0].upper() + result[1:]
+
+        component_name = result
+
+    return f"{component_name}-RESOURCE-SHEET.md"
+
+
 class ResourceSheetGenerator:
     """
     Main generator for resource sheet documentation.
@@ -105,17 +159,24 @@ class ResourceSheetGenerator:
         Generate resource sheet documentation for a code element.
 
         Args:
-            element_name: Name of element to document
+            element_name: Name of element to document (will be converted to PascalCase-with-hyphens)
             project_path: Path to project root
             element_type: Optional manual element type override
             mode: Generation mode (reverse-engineer, template, refresh)
             auto_analyze: Use coderef_scan for auto-fill (default: True)
-            output_path: Where to save output (default: coderef/reference-sheets/{element_name}/)
+            output_path: Where to save output (default: coderef/resources-sheets/)
             validate_against_code: Compare docs to code (default: True)
 
         Returns:
             Generation result with paths, metadata, and warnings
         """
+        # Generate proper filename from element_name (subject field)
+        filename = convert_subject_to_filename(element_name)
+
+        # Set default output directory to coderef/resources-sheets/
+        if output_path is None:
+            output_path = f"{project_path}/coderef/resources-sheets"
+
         # Step 1: WHAT IS THIS? - Analyze and detect
         analysis = await self._analyze_element(
             element_name, project_path, auto_analyze, element_type
@@ -130,12 +191,15 @@ class ResourceSheetGenerator:
             modules,
             analysis,
             mode,
-            output_path or f"{project_path}/coderef/reference-sheets/{element_name.lower()}",
+            output_path,
+            filename,
         )
 
         # Build result
         result = {
             "element_name": element_name,
+            "generated_filename": filename,
+            "output_directory": output_path,
             "mode": mode,
             "characteristics": analysis["characteristics"],
             "selected_modules": [m.id for m in modules],
@@ -144,6 +208,7 @@ class ResourceSheetGenerator:
             "outputs": outputs,
             "warnings": analysis.get("warnings", []),
             "generated_at": datetime.now().isoformat(),
+            "validation_note": "Generated files should be validated using papertrail's ResourceSheetValidator MCP tool",
         }
 
         return result
@@ -193,6 +258,7 @@ class ResourceSheetGenerator:
         analysis: Dict[str, Any],
         mode: GenerationMode,
         output_path: str,
+        filename: str,
     ) -> Dict[str, str]:
         """Step 3: Compose and save documentation in all formats."""
         # Extract module-specific data
@@ -221,13 +287,14 @@ class ResourceSheetGenerator:
             extracted_data,
         )
 
-        # Save all outputs
+        # Save all outputs using the proper filename
         output_paths = self.composer.save_outputs(
             element_name,
             markdown,
             schema,
             jsdoc,
             output_path,
+            filename,
         )
 
         return output_paths

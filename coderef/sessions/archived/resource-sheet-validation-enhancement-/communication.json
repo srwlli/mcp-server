@@ -1,0 +1,51 @@
+{
+  "workorder_id": "WO-RESOURCE-SHEET-VALIDATION-001",
+  "feature_name": "resource-sheet-validation-enhancement",
+  "created": "2026-01-12",
+  "status": "not_started",
+  "description": "Enhance resource sheet validation to check directory location and filename format (PascalCase-with-hyphens vs ALL-CAPS)",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\resource-sheet-validation-enhancement\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate validation enhancement across papertrail and coderef-docs",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\resource-sheet-validation-enhancement\\orchestrator-output.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "role": "Enhance ResourceSheetValidator to check directory location and filename format",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\resource-sheet-validation-enhancement\\papertrail-output.md",
+      "status": "completed",
+      "notes": "Enhanced validators/resource_sheet.py with directory location check, PascalCase-with-hyphens format validation, and upgraded ALL-CAPS filename to MAJOR error. All tests passing."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Enhance ResourceSheetGenerator to enforce correct location and naming",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\resource-sheet-validation-enhancement\\coderef-docs-output.md",
+      "status": "completed",
+      "notes": "Enhanced generators/resource_sheet_generator.py with convert_subject_to_filename() helper, auto-generation of correct paths, and pre-save validation integration."
+    },
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "role": "Create RESOURCE-SHEET-STANDARDS.md documentation",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\resource-sheet-validation-enhancement\\coderef-assistant-output.md",
+      "status": "completed",
+      "notes": "Verified all updates already present in standards doc. Created output report documenting directory location rules, PascalCase-with-hyphens format, and validation rules."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  }
+}

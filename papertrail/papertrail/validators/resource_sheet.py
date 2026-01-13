@@ -139,23 +139,78 @@ class ResourceSheetValidator(BaseUDSValidator):
                 f"Missing recommended sections: {', '.join(missing_sections)}"
             )
 
-        # Check if filename follows convention (if file_path provided)
+        # Check directory location and filename format (if file_path provided)
         if file_path:
-            filename = file_path.name
-            if not filename.endswith('-RESOURCE-SHEET.md'):
-                warnings.append(
-                    f"Filename '{filename}' doesn't follow convention: {{Subject}}-RESOURCE-SHEET.md"
-                )
+            # 1. DIRECTORY LOCATION CHECK
+            # Resource sheets must be in coderef/resources-sheets/ directory
+            parent_dir = file_path.parent.name
 
-            # Check if subject matches filename
-            subject = frontmatter.get('subject')
-            if subject and filename.startswith(subject):
-                # Good match
-                pass
-            elif subject:
-                warnings.append(
-                    f"Subject '{subject}' doesn't match filename prefix '{filename}'"
-                )
+            if parent_dir != "resources-sheets":
+                errors.append(ValidationError(
+                    severity=ValidationSeverity.MAJOR,
+                    message=f"File must be in 'coderef/resources-sheets/' directory (found in '{parent_dir}/')",
+                    field="file_location"
+                ))
+
+            # Check for deprecated directory name
+            if "reference-sheets" in str(file_path):
+                errors.append(ValidationError(
+                    severity=ValidationSeverity.MAJOR,
+                    message="Deprecated directory 'reference-sheets' - use 'resources-sheets' instead",
+                    field="file_location"
+                ))
+
+            # 2. FILENAME FORMAT VALIDATION
+            filename = file_path.name
+
+            # Check suffix
+            if not filename.endswith('-RESOURCE-SHEET.md'):
+                errors.append(ValidationError(
+                    severity=ValidationSeverity.MAJOR,
+                    message=f"Filename '{filename}' must end with '-RESOURCE-SHEET.md'",
+                    field="filename"
+                ))
+            else:
+                # Extract component name from filename
+                component_name = filename.replace('-RESOURCE-SHEET.md', '')
+
+                # 3. PASCALCASE-WITH-HYPHENS FORMAT CHECK
+                # Pattern: ^[A-Z][a-z0-9]*(-[A-Z][a-z0-9]*)*$
+                # Examples: Auth-Service, Widget-System, File-Api-Route
+
+                # Check for ALL-CAPS format (MAJOR ERROR - upgraded from WARNING)
+                if component_name.replace('-', '').isupper() and component_name.replace('-', '').isalpha():
+                    errors.append(ValidationError(
+                        severity=ValidationSeverity.MAJOR,
+                        message=f"ALL-CAPS filename '{component_name}' - use PascalCase-with-hyphens (e.g., 'Auth-Service', not 'AUTH-SERVICE')",
+                        field="filename"
+                    ))
+                # Check for lowercase format
+                elif component_name.replace('-', '').islower():
+                    errors.append(ValidationError(
+                        severity=ValidationSeverity.MAJOR,
+                        message=f"lowercase filename '{component_name}' - use PascalCase-with-hyphens (e.g., 'Auth-Service', not 'auth-service')",
+                        field="filename"
+                    ))
+                # Check PascalCase-with-hyphens pattern
+                elif not re.match(r'^[A-Z][a-z0-9]*(-[A-Z][a-z0-9]*)*$', component_name):
+                    errors.append(ValidationError(
+                        severity=ValidationSeverity.MAJOR,
+                        message=f"Invalid filename format '{component_name}' - use PascalCase-with-hyphens (e.g., 'Auth-Service', 'Widget-System', 'File-Api-Route')",
+                        field="filename"
+                    ))
+
+                # 4. SUBJECT CONSISTENCY CHECK
+                subject = frontmatter.get('subject')
+                if subject:
+                    # Convert subject to expected filename format
+                    # Example: "Auth Service" -> "Auth-Service"
+                    expected_component = self._convert_subject_to_filename(subject)
+
+                    if component_name != expected_component:
+                        warnings.append(
+                            f"Filename component '{component_name}' doesn't match subject '{subject}' (expected: '{expected_component}-RESOURCE-SHEET.md')"
+                        )
 
         # Validate status if present
         status = frontmatter.get('status')
@@ -175,3 +230,32 @@ class ResourceSheetValidator(BaseUDSValidator):
                 missing.append(section)
 
         return missing
+
+    def _convert_subject_to_filename(self, subject: str) -> str:
+        """
+        Convert subject field to expected filename component.
+
+        Converts subject to PascalCase-with-hyphens format:
+        - "Auth Service" -> "Auth-Service"
+        - "Widget System" -> "Widget-System"
+        - "File API Route" -> "File-Api-Route"
+
+        Args:
+            subject: Subject field from YAML frontmatter
+
+        Returns:
+            Expected filename component (without -RESOURCE-SHEET.md suffix)
+        """
+        # Split by spaces and hyphens
+        words = re.split(r'[\s-]+', subject.strip())
+
+        # Convert each word to PascalCase (first letter uppercase, rest lowercase)
+        pascal_words = []
+        for word in words:
+            if word:  # Skip empty strings
+                # Handle acronyms like "API" -> "Api"
+                pascal_word = word[0].upper() + word[1:].lower()
+                pascal_words.append(pascal_word)
+
+        # Join with hyphens
+        return '-'.join(pascal_words)

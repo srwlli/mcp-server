@@ -1,0 +1,184 @@
+{
+  "workorder_id": "WO-DOCS-CONSOLIDATION-001",
+  "task": "Foundation Docs Consolidation Review",
+  "description": "coderef-docs and coderef-context agents review their contributions to foundation docs workflow, assess output quality using .coderef/ data, and propose improvements for standardizing all documentation types (foundation, user, standards)",
+
+  "prerequisites": {
+    "user_actions": [
+      "User runs coderef_scan on C:\\Users\\willh\\.mcp-servers\\coderef-docs to generate .coderef/index.json",
+      "User runs coderef_scan on C:\\Users\\willh\\.mcp-servers\\coderef-context to generate .coderef/index.json"
+    ],
+    "required_files": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.coderef\\index.json",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-context\\.coderef\\index.json",
+      "C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\consolidate-foundation-docs-workflow\\stub.json"
+    ]
+  },
+
+  "orchestrator_instructions": {
+    "role": "Synthesize findings from all three agents and create unified recommendations for consolidating foundation docs workflow with validation integration",
+    "steps": {
+      "step_1": "READ all agent output files (coderef-docs-output.json, coderef-context-output.json, papertrail-output.json)",
+      "step_2": "ANALYZE findings - identify common themes, gaps, and improvement opportunities across doc generation, code analysis, and validation",
+      "step_3": "SYNTHESIZE recommendations - create prioritized list of changes needed (doc generation + coderef integration + validation)",
+      "step_4": "CREATE orchestrator-output.json with unified analysis and actionable next steps"
+    }
+  },
+
+  "agent_instructions": {
+    "coderef-docs": {
+      "role": "Review your own implementation, assess output quality, and propose improvements",
+      "context": "You are coderef-docs MCP server. Review your tools for generating foundation, user, and standards docs.",
+      "steps": {
+        "step_1": "READ your own .coderef/index.json at C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.coderef\\index.json",
+        "step_2": "ANALYZE your current implementation - What tools do you provide? How do they generate docs? What data sources do you use?",
+        "step_3": "ASSESS output quality - Are docs template-driven or code-driven? Do they contain real data or placeholders? What's missing?",
+        "step_4": "IDENTIFY integration gaps - Where could you leverage .coderef/ data? Which coderef-context tools could enhance your output?",
+        "step_5": "PROPOSE improvements - Specific suggestions for: foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS), user docs (user-guide, my-guide, quickref), standards docs (ui-patterns, behavior-patterns, ux-patterns, testing-patterns)",
+        "step_6": "CREATE coderef-docs-output.json following output_template"
+      },
+      "tools_to_leverage": [
+        "Read tool to analyze your own codebase",
+        "Grep tool to find patterns in your implementation",
+        "Reference .coderef/index.json for self-assessment"
+      ]
+    },
+    "coderef-context": {
+      "role": "Review your capabilities, assess integration points, and propose how you can enhance documentation",
+      "context": "You are coderef-context MCP server. Review your code analysis tools and how they can improve documentation generation.",
+      "steps": {
+        "step_1": "READ your own .coderef/index.json at C:\\Users\\willh\\.mcp-servers\\coderef-context\\.coderef\\index.json",
+        "step_2": "ANALYZE your capabilities - What tools do you provide? (coderef_query, coderef_patterns, coderef_complexity, coderef_coverage, coderef_impact) What data do you generate in .coderef/ directory?",
+        "step_3": "ASSESS .coderef/ data quality - What's in index.json? How accurate is your AST analysis? What patterns can you detect?",
+        "step_4": "IDENTIFY integration opportunities - How can coderef-docs consume your data? What specific tools are most valuable for docs? What's the ideal dependency chain?",
+        "step_5": "PROPOSE improvements - How can your tools enhance: foundation docs (auto-detect APIs, schemas, components), user docs (real examples from code), standards docs (discover patterns via coderef_patterns)",
+        "step_6": "CREATE coderef-context-output.json following output_template"
+      },
+      "tools_to_leverage": [
+        "Read tool to analyze your own codebase",
+        "Grep tool to find patterns in your implementation",
+        "Reference .coderef/index.json for self-assessment"
+      ]
+    },
+    "papertrail": {
+      "role": "Validate documentation outputs against UDS standards and propose validation integration into doc generation workflow",
+      "context": "You are Papertrail MCP server. You provide UDS (Unified Documentation Standard) validation schemas and tools. Review how documentation can be validated during generation.",
+      "steps": {
+        "step_1": "READ your validation schemas at C:\\Users\\willh\\.mcp-servers\\papertrail\\schemas\\",
+        "step_2": "ANALYZE validation capabilities - What document types can you validate? What schemas exist? (resource sheets, sessions, foundation docs, etc.)",
+        "step_3": "ASSESS integration gaps - Where in the doc generation workflow should validation occur? What new schemas are needed for foundation/user/standards docs?",
+        "step_4": "IDENTIFY validation requirements - For each doc type (foundation, user, standards), what should be validated? Required fields? Format rules? Quality standards?",
+        "step_5": "PROPOSE validation integration - How should coderef-docs call your validation tools? Should validation be automatic or on-demand? What error reporting format?",
+        "step_6": "CREATE papertrail-output.json following output_template"
+      },
+      "tools_to_leverage": [
+        "Read tool to review your schemas and validators",
+        "Grep tool to find existing validation patterns",
+        "validate_resource_sheet, validate_document tools as reference"
+      ]
+    }
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "agent_output_structure": {
+      "agent_id": "coderef-docs | coderef-context | papertrail",
+      "review_date": "2026-01-12",
+      "current_implementation": {
+        "tools_provided": ["list of tools"],
+        "data_sources": ["what you read from"],
+        "generation_approach": "template-driven | code-driven | hybrid",
+        "strengths": ["what works well"],
+        "weaknesses": ["what needs improvement"]
+      },
+      "output_quality_assessment": {
+        "foundation_docs": {
+          "README": "assessment",
+          "ARCHITECTURE": "assessment",
+          "API": "assessment",
+          "SCHEMA": "assessment",
+          "COMPONENTS": "assessment"
+        },
+        "user_docs": {
+          "user_guide": "assessment",
+          "my_guide": "assessment",
+          "quickref": "assessment"
+        },
+        "standards_docs": {
+          "ui_patterns": "assessment",
+          "behavior_patterns": "assessment",
+          "ux_patterns": "assessment",
+          "testing_patterns": "assessment"
+        },
+        "overall_quality": "High | Medium | Low",
+        "key_issues": ["specific problems identified"]
+      },
+      "integration_analysis": {
+        "current_integration": "description of how you integrate with other tools now",
+        "missing_integration": "what's not connected that should be",
+        "ideal_dependency_chain": "step-by-step flow",
+        "coderef_tools_to_leverage": {
+          "coderef_query": "how this could be used",
+          "coderef_patterns": "how this could be used",
+          "coderef_complexity": "how this could be used",
+          "coderef_coverage": "how this could be used",
+          "coderef_impact": "how this could be used"
+        }
+      },
+      "improvement_suggestions": [
+        {
+          "category": "foundation | user | standards | integration | architecture",
+          "priority": "high | medium | low",
+          "suggestion": "specific actionable improvement",
+          "rationale": "why this matters",
+          "implementation_approach": "how to implement",
+          "impact": "expected benefit"
+        }
+      ]
+    },
+    "orchestrator_output_structure": {
+      "session_id": "WO-DOCS-CONSOLIDATION-001",
+      "synthesis_date": "2026-01-12",
+      "agent_summaries": {
+        "coderef-docs": "key findings from coderef-docs review",
+        "coderef-context": "key findings from coderef-context review",
+        "papertrail": "key findings from papertrail validation review"
+      },
+      "common_themes": ["patterns found across both reviews"],
+      "critical_gaps": ["most important missing pieces"],
+      "unified_recommendations": [
+        {
+          "priority": "P0 | P1 | P2",
+          "recommendation": "specific action",
+          "affects": ["which doc types"],
+          "requires": ["which tools/changes"],
+          "benefit": "expected improvement"
+        }
+      ],
+      "next_steps": {
+        "immediate": ["actions to take now"],
+        "short_term": ["actions within 1-2 weeks"],
+        "long_term": ["strategic improvements"]
+      }
+    }
+  },
+
+  "quality_standards": {
+    "completeness": "All sections of output template must be filled with specific, actionable details. No generic statements.",
+    "accuracy": "Self-assessment based on actual code in .coderef/index.json. Reference specific functions, tools, files.",
+    "format": "Valid JSON matching output_template structure. No truncated or malformed JSON.",
+    "specificity": "Concrete examples, file paths, function names, tool names. Avoid vague descriptions."
+  },
+
+  "documentation_types_in_scope": [
+    "Foundation docs: README, ARCHITECTURE, API, SCHEMA, COMPONENTS",
+    "User docs: user-guide.md, my-guide.md, quickref",
+    "Standards docs: ui-patterns, behavior-patterns, ux-patterns, testing-patterns, api-patterns, architecture-patterns"
+  ],
+
+  "reference_materials": {
+    "stub_file": "C:\\Users\\willh\\Desktop\\assistant\\coderef\\working\\consolidate-foundation-docs-workflow\\stub.json",
+    "session_template": "C:\\Users\\willh\\Desktop\\assistant\\session-requirements-template.json"
+  }
+}

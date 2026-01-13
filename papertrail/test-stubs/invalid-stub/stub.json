@@ -1,0 +1,9 @@
+{
+  "stub_id": "INVALID",
+  "feature_name": "INVALID_NAME",
+  "description": "Test",
+  "category": "invalid-category",
+  "priority": "ultra",
+  "status": "promoted",
+  "created": "01/12/2026"
+}

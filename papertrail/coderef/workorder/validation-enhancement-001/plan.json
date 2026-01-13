@@ -1,0 +1,610 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "2.0.0",
+    "workorder_id": "WO-VALIDATION-ENHANCEMENT-001",
+    "status": "pending_implementation",
+    "generated_by": "Claude Sonnet 4.5",
+    "generated_date": "2026-01-12",
+    "source_session": "WO-DOCS-CONSOLIDATION-001",
+    "feature_name": "validation-enhancement-001",
+    "description": "Transform Papertrail from post-generation validation to real-time integrated quality gates with POWER framework enforcement, code example validation, and 100% documentation coverage"
+  },
+
+  "0_PREPARATION": {
+    "foundation_docs": {
+      "available": [
+        "README.md - Papertrail overview and UDS/RSMS standards",
+        "CLAUDE.md - System architecture and design decisions"
+      ],
+      "missing": [
+        "API.md - MCP tool reference documentation",
+        "ARCHITECTURE.md - Detailed validator hierarchy and flow"
+      ]
+    },
+    "coding_standards": {
+      "available": [
+        "standards/documentation/global-documentation-standards.md - UDS 3-tier hierarchy",
+        "standards/documentation/resource-sheet-standards.md - RSMS v2.0 specification"
+      ],
+      "missing": []
+    },
+    "reference_components": {
+      "primary": "papertrail/validators/foundation.py - FoundationDocValidator extends BaseUDSValidator with POWER framework validation structure",
+      "secondary": [
+        "papertrail/validators/base.py - BaseUDSValidator provides schema validation, scoring, and extensibility patterns",
+        "papertrail/validators/factory.py - ValidatorFactory auto-detection with 30+ path patterns",
+        "papertrail/server.py - MCP tool handlers with validation response formatting"
+      ]
+    },
+    "key_patterns_identified": [
+      "All validators extend BaseUDSValidator and override validate_specific() for category-specific checks",
+      "Schema hierarchy uses allOf pattern to extend base-frontmatter-schema.json",
+      "Validation scoring: CRITICAL -50, MAJOR -20, MINOR -10, WARNING -5 points from base score of 100",
+      "ValidatorFactory uses path patterns + frontmatter inspection for auto-detection",
+      "MCP tools format validation results as markdown with score, errors, warnings, and status icons",
+      "All validators integrated via ValidatorFactory.PATH_PATTERNS registry"
+    ],
+    "technology_stack": {
+      "languages": ["Python 3.10+"],
+      "frameworks": ["MCP SDK", "Jinja2 (for template parsing)"],
+      "key_libraries": [
+        "jsonschema@4.x - JSON Schema Draft-07 validation",
+        "pyyaml@6.x - YAML frontmatter parsing",
+        "pydantic@2.x - ValidationResult dataclasses"
+      ]
+    },
+    "gaps_and_risks": [
+      "No integration tests for coderef-context MCP tool orchestration (code example validation P0-2 requires this)",
+      "Schema-template sync tool (P1-1) requires parsing Jinja2 templates from external coderef-docs server",
+      "Pattern validation (P2-1) requires coderef_patterns MCP tool - dependency on coderef-context server availability",
+      "Completeness metric (P2-2) requires .coderef/index.json parsing - assumes index.json exists and is current"
+    ]
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "purpose": "Enable Papertrail to enforce documentation quality standards at generation time by adding POWER framework section validation, code example verification via coderef-context, and expanding validation coverage from 72% to 100% of all documentation types",
+    "value_proposition": [
+      "Prevents non-compliant documentation from being created (shift-left quality enforcement)",
+      "Catches outdated code examples automatically by validating against actual code",
+      "Eliminates schema-template drift through automated synchronization"
+    ],
+    "real_world_analogy": "Like a spell-checker that runs while you type (real-time validation) instead of after you finish writing (post-generation validation). Plus it checks your code examples match actual code, similar to how a compiler catches type errors before runtime.",
+    "use_case": "Developer calls coderef-docs generate_foundation_docs → coderef-docs generates README.md → Before writing file, calls papertrail.validate_document() → Papertrail checks: (1) UDS frontmatter present and valid, (2) POWER framework sections (Purpose, Overview, Examples) exist, (3) Code examples in markdown match actual API endpoints via coderef-context → Returns score 98/100 with 1 warning (missing References section) → coderef-docs writes file with confidence → Documentation is compliant from creation",
+    "output": [
+      "Updated JSON schemas with required_sections for POWER framework enforcement",
+      "Code example validation integrated into BaseUDSValidator",
+      "sync_schemas_from_templates MCP tool",
+      "New validators: UserGuideValidator, QuickrefValidator, FeaturesValidator, ResourceSheetValidator",
+      "Completeness percentage metric in ValidationResult",
+      "Pre-commit hook template and GitHub Actions workflow",
+      "100% validation coverage (18/18 doc types)"
+    ]
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "overall_risk": "medium",
+    "complexity": "high (7 enhancements across 4 priority tiers, ~25 files affected, requires integration with 2 external MCP servers)",
+    "scope": "Large - 25 files (10 schemas, 11 validators, 1 server, 3 new tools), integration with coderef-docs and coderef-context MCP servers",
+    "file_system_risk": "low (only reads/writes JSON schemas and Python validator files, no runtime file system operations)",
+    "dependencies": [
+      "coderef-context MCP server - Required for P0-2 (code example validation) and P2-1 (pattern validation)",
+      "coderef-docs MCP server - Required for P1-1 (schema-template sync) to read Jinja2 templates",
+      "jsonschema@4.x - Existing dependency for Draft-07 validation",
+      "pyyaml@6.x - Existing dependency for frontmatter parsing"
+    ],
+    "performance_concerns": [
+      "P0-2 code example validation calls coderef-context MCP tools (coderef_query) - adds ~100-300ms per validation",
+      "P1-1 schema-template sync parses Jinja2 files - one-time operation, not in validation hot path",
+      "P2-1 pattern validation calls coderef_patterns - adds ~200-500ms for standards docs only"
+    ],
+    "security_considerations": [
+      "Code example extraction uses regex on markdown - ensure regex is not vulnerable to ReDoS attacks",
+      "Schema-template sync reads external template files - validate file paths to prevent directory traversal",
+      "MCP tool calls to coderef-context - ensure proper error handling if external server unavailable"
+    ],
+    "breaking_changes": "minor (schema changes add new required_sections fields, but all schemas use additionalProperties: true for backward compatibility. ValidationResult gains new completeness field, but this is additive - existing consumers unaffected)"
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "affected_files": [
+      "MODIFIED: schemas/documentation/base-frontmatter-schema.json - Add recommended_sections guidance",
+      "MODIFIED: schemas/documentation/foundation-doc-frontmatter-schema.json - Add required_sections with POWER framework sections per doc_type (readme, architecture, api, schema, components)",
+      "MODIFIED: schemas/documentation/user-facing-doc-frontmatter-schema.json - Add required_sections based on doc_type (guide, tutorial, troubleshooting)",
+      "MODIFIED: schemas/documentation/standards-doc-frontmatter-schema.json - Add required_sections for pattern structure",
+      "MODIFIED: papertrail/validators/base.py:186-202 - Enhance _validate_sections() to support doc-type-specific section requirements from schema",
+      "MODIFIED: papertrail/validators/base.py:~220 - Add code_example_validation() method for P0-2",
+      "MODIFIED: papertrail/validators/foundation.py:~50 - Override validate_specific() to call code_example_validation() for API/COMPONENTS docs",
+      "MODIFIED: papertrail/validators/standards.py:~45 - Add pattern_validation() for P2-1",
+      "MODIFIED: papertrail/validator.py:35-48 - Add completeness field to ValidationResult dataclass",
+      "NEW: papertrail/validators/user_guide.py - UserGuideValidator for user-guide.md validation",
+      "NEW: papertrail/validators/quickref.py - QuickrefValidator for quickref.md validation",
+      "NEW: papertrail/validators/features.py - FeaturesValidator for features.md validation",
+      "MODIFIED: papertrail/validators/resource_sheet.py - Enhance with RSMS v2.0 completeness checks",
+      "MODIFIED: papertrail/validators/factory.py:26-74 - Add path patterns for new validators",
+      "NEW: papertrail/tools/sync_schemas.py - Schema-template synchronization tool for P1-1",
+      "MODIFIED: papertrail/server.py:21-85 - Add sync_schemas_from_templates MCP tool registration",
+      "NEW: templates/pre-commit-hook.sh - Pre-commit hook template for P2-3",
+      "NEW: templates/validate-docs.yml - GitHub Actions workflow template for P2-3",
+      "MODIFIED: papertrail/README.md - Document new MCP tools and setup instructions",
+      "NEW: tests/test_power_framework_validation.py - Tests for P0-1",
+      "NEW: tests/test_code_example_validation.py - Tests for P0-2",
+      "NEW: tests/test_schema_sync.py - Tests for P1-1",
+      "NEW: tests/test_user_doc_validators.py - Tests for P1-2",
+      "NEW: tests/test_pattern_validation.py - Tests for P2-1",
+      "NEW: tests/test_completeness_metric.py - Tests for P2-2"
+    ],
+    "dependencies": {
+      "existing_internal": [
+        "papertrail.validators.base.BaseUDSValidator - Base class for all validators, provides schema loading, frontmatter extraction, scoring",
+        "papertrail.validators.factory.ValidatorFactory - Auto-detection registry for mapping file paths to validators",
+        "papertrail.validator.ValidationResult - Dataclass for validation results (will add completeness field)",
+        "papertrail.server - MCP server for tool registration"
+      ],
+      "existing_external": [
+        "jsonschema@4.x - Draft-07 schema validation",
+        "pyyaml@6.x - YAML frontmatter parsing",
+        "pydantic@2.x - Dataclass validation",
+        "mcp@1.0.0 - MCP SDK for tool registration"
+      ],
+      "new_external": [
+        "jinja2@3.x - Required for P1-1 schema-template sync (parse Jinja2 templates from coderef-docs)"
+      ],
+      "new_internal": [
+        "papertrail.tools.sync_schemas - Schema-template synchronization tool",
+        "papertrail.validators.user_guide - UserGuideValidator",
+        "papertrail.validators.quickref - QuickrefValidator",
+        "papertrail.validators.features - FeaturesValidator"
+      ]
+    },
+    "architecture_context": "Papertrail operates at the validation layer (post-generation quality gates). This enhancement transforms it to support real-time validation by being callable during doc generation. Validators follow inheritance pattern: BaseUDSValidator (schema validation + scoring) → CategoryValidator (content validation). ValidatorFactory provides auto-detection. MCP tools expose validation to external agents. Integration points: (1) coderef-docs calls validate_document before writing files, (2) coderef-context provides code intelligence for example validation, (3) Schema-template sync keeps validation rules in sync with generation templates."
+  },
+
+  "4_KEY_FEATURES": {
+    "primary_features": [
+      "POWER framework enforcement: Foundation doc schemas require Purpose, Overview, What/Why/When, Examples, References sections. Missing sections flagged as MAJOR error (-20 points). Applies to all 5 foundation doc types (README, ARCHITECTURE, API, SCHEMA, COMPONENTS).",
+      "Code example validation: Extract code blocks from markdown, query coderef-context for actual API endpoints/component props, verify examples match reality. Outdated examples flagged as WARNING (-5 points) with suggested corrections.",
+      "100% validation coverage: Add validators for user docs (user-guide, my-guide, quickref, features) and resource sheets. Coverage increases from 72% (13/18) to 100% (18/18).",
+      "Schema-template synchronization: New sync_schemas_from_templates MCP tool parses Jinja2 templates from coderef-docs, extracts required sections, auto-updates schemas. Prevents schema-template drift.",
+      "Completeness percentage metric: ValidationResult includes completeness field (0-100%) showing percentage of elements documented (e.g., 45/50 components = 90% complete). Actionable metric for improving docs."
+    ],
+    "secondary_features": [
+      "Pattern validation for standards docs: Compare documented patterns vs discovered patterns from coderef_patterns. Flag missing/obsolete patterns as WARNING.",
+      "Doc-type-specific section validation: Each foundation doc type has tailored required sections (API docs require Endpoints + Authentication, ARCHITECTURE requires System Overview + Key Components).",
+      "Pre-commit hook and CI/CD templates: Provide ready-to-use validation automation for git workflows. Prevent non-compliant docs from entering codebase."
+    ],
+    "edge_case_handling": [
+      "Graceful degradation if coderef-context unavailable: Code example validation skips with INFO message instead of failing validation",
+      "Backward compatibility for existing schemas: All schema changes additive (required_sections is new field, additionalProperties: true preserves existing docs)",
+      "Handle malformed code blocks: Code example validation skips invalid syntax blocks with WARNING instead of crashing"
+    ],
+    "configuration_options": [
+      "ValidationResult.completeness can be disabled via validator constructor flag for performance",
+      "Code example validation can skip specific languages via ignore_languages parameter"
+    ]
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "prefixes_used": ["SETUP", "SCHEMA", "VALIDATOR", "TOOL", "TEST", "DOC"],
+    "conventions": {
+      "SETUP": "Initial setup, dependencies, configuration (3 tasks)",
+      "SCHEMA": "JSON schema updates for POWER framework and doc-type-specific sections (4 tasks)",
+      "VALIDATOR": "Validator implementation - base enhancements and new validators (8 tasks)",
+      "TOOL": "MCP tool creation for schema sync and CI/CD templates (3 tasks)",
+      "TEST": "Unit and integration tests for all enhancements (6 tasks)",
+      "DOC": "Documentation updates for new features (2 tasks)"
+    },
+    "workorder_id": "WO-VALIDATION-ENHANCEMENT-001",
+    "total_estimated_tasks": 26
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_preparation": {
+      "description": "Setup dependencies and prepare foundation for validation enhancements",
+      "complexity": "low",
+      "tasks": [
+        {
+          "id": "SETUP-001",
+          "description": "Add jinja2@3.x dependency to pyproject.toml dependencies section for P1-1 schema-template sync tool that will parse Jinja2 templates from coderef-docs templates/power/ directory",
+          "depends_on": [],
+          "validation": "pyproject.toml contains jinja2>=3.0.0,<4.0.0 in dependencies array"
+        },
+        {
+          "id": "SETUP-002",
+          "description": "Create tests/fixtures/ directory with sample compliant and non-compliant docs for testing POWER framework validation (compliant: has all 5 sections, non-compliant: missing Examples section)",
+          "depends_on": [],
+          "validation": "tests/fixtures/compliant_readme.md and tests/fixtures/missing_examples_readme.md exist"
+        },
+        {
+          "id": "SETUP-003",
+          "description": "Create templates/ directory for P2-3 pre-commit hook and GitHub Actions workflow templates with subdirectories git-hooks/ and github-actions/",
+          "depends_on": [],
+          "validation": "templates/git-hooks/ and templates/github-actions/ directories exist"
+        }
+      ]
+    },
+
+    "phase_2_power_framework_enforcement": {
+      "description": "P0-1: Add POWER framework section validation to foundation doc schemas",
+      "complexity": "medium",
+      "depends_on_phases": ["phase_1_preparation"],
+      "tasks": [
+        {
+          "id": "SCHEMA-001",
+          "description": "Update schemas/documentation/foundation-doc-frontmatter-schema.json to add required_sections field with doc_type-specific arrays: for doc_type='readme' require ['Purpose', 'Overview', 'What/Why/When', 'Examples', 'References'], for 'architecture' require ['System Overview', 'Key Components', 'Design Decisions', 'Integration Points'], for 'api' require ['Endpoints', 'Authentication', 'Request/Response Examples', 'Error Codes'], for 'schema' require ['Data Models', 'Field Descriptions', 'Validation Rules', 'Relationships'], for 'components' require ['Component Catalog', 'Props/Parameters', 'Usage Examples', 'Dependencies']",
+          "depends_on": ["SETUP-002"],
+          "validation": "foundation-doc-frontmatter-schema.json has required_sections with 5 doc_type mappings, each specifying 4-5 required section names"
+        },
+        {
+          "id": "VALIDATOR-001",
+          "description": "Enhance papertrail/validators/base.py _validate_sections() method (lines 186-202) to read required_sections from schema based on doc_type field in frontmatter, then check document content for markdown headings matching required section names using regex pattern r'^#+\\s+{section_name}' with case-insensitive flag, flag missing sections as MAJOR error with severity=ValidationSeverity.MAJOR and message 'Missing required {doc_type} section: {section_name}'",
+          "depends_on": ["SCHEMA-001"],
+          "validation": "_validate_sections() reads required_sections from schema, iterates over expected sections, uses regex to find markdown headings, returns ValidationError list with MAJOR severity for missing sections"
+        },
+        {
+          "id": "TEST-001",
+          "description": "Create tests/test_power_framework_validation.py with test cases: (1) test_readme_with_all_sections_passes - validates compliant README with all 5 POWER sections scores 100/100, (2) test_readme_missing_examples_fails - validates README missing Examples section gets MAJOR error and score ≤ 80, (3) test_architecture_sections_enforced - validates ARCHITECTURE doc requires System Overview + Key Components + Design Decisions + Integration Points, (4) test_api_sections_enforced - validates API doc requires Endpoints + Authentication + Request/Response Examples + Error Codes",
+          "depends_on": ["VALIDATOR-001"],
+          "validation": "4 test cases pass, covering all 5 foundation doc types with both compliant and non-compliant examples"
+        }
+      ]
+    },
+
+    "phase_3_code_example_validation": {
+      "description": "P0-2: Add code example validation using coderef-context integration",
+      "complexity": "high",
+      "depends_on_phases": ["phase_1_preparation"],
+      "tasks": [
+        {
+          "id": "VALIDATOR-002",
+          "description": "Add code_example_validation() method to papertrail/validators/base.py (around line 220 after _validate_sections) that: (1) extracts code blocks from markdown content using regex r'```(\\w+)\\n(.*?)\\n```' with DOTALL flag, (2) for doc_type='api' calls coderef_query tool with query_type='endpoints' to get actual API endpoints list, (3) parses code examples for HTTP method + path patterns (e.g., 'POST /api/users'), (4) compares example endpoints vs actual endpoints from coderef_query, (5) flags outdated examples as WARNING with message 'Code example references non-existent endpoint: {endpoint}. Available endpoints: {actual_list}', (6) returns list of ValidationError with severity=ValidationSeverity.WARNING",
+          "depends_on": ["VALIDATOR-001"],
+          "validation": "code_example_validation() method exists, extracts code blocks, calls coderef_query for API docs, compares examples vs reality, returns ValidationError list for mismatches"
+        },
+        {
+          "id": "VALIDATOR-003",
+          "description": "Enhance papertrail/validators/foundation.py validate_specific() method (around line 50) to call self.code_example_validation(content, frontmatter, file_path) for doc_type in ['api', 'components'], append returned errors to validation results, wrap coderef_query MCP call in try-except to catch connection errors and add INFO message 'Code example validation skipped: coderef-context unavailable' instead of failing validation",
+          "depends_on": ["VALIDATOR-002"],
+          "validation": "FoundationDocValidator.validate_specific() calls code_example_validation for API and COMPONENTS docs, gracefully handles coderef-context unavailability"
+        },
+        {
+          "id": "TEST-002",
+          "description": "Create tests/test_code_example_validation.py with test cases: (1) test_api_doc_with_valid_examples_passes - API doc with code examples matching actual endpoints from mocked coderef_query scores high, (2) test_api_doc_with_outdated_examples_warns - API doc with code example showing non-existent endpoint gets WARNING with suggestion, (3) test_components_doc_validates_props - COMPONENTS doc code examples verified against component props from coderef_query, (4) test_graceful_degradation_when_coderef_unavailable - validation continues with INFO message when coderef_query raises ConnectionError, (5) test_malformed_code_blocks_skipped - invalid syntax in code blocks doesn't crash validation",
+          "depends_on": ["VALIDATOR-003"],
+          "validation": "5 test cases pass with mocked coderef-context responses covering success, outdated examples, unavailability, and edge cases"
+        }
+      ]
+    },
+
+    "phase_4_schema_template_sync": {
+      "description": "P1-1: Create schema-template synchronization tool",
+      "complexity": "high",
+      "depends_on_phases": ["phase_2_power_framework_enforcement"],
+      "tasks": [
+        {
+          "id": "TOOL-001",
+          "description": "Create papertrail/tools/sync_schemas.py with SchemaSyncTool class that: (1) accepts templates_dir parameter pointing to coderef-docs/templates/power/, (2) uses jinja2.Environment to load template files (readme.j2, architecture.j2, api.j2, schema.j2, components.j2), (3) parses template AST to extract section headings (look for '## ' patterns in template content), (4) generates required_sections arrays for each doc type, (5) loads existing foundation-doc-frontmatter-schema.json, (6) merges/updates required_sections field, (7) writes updated schema back to schemas/documentation/, (8) returns SyncResult with counts of templates processed, schemas updated, sections added/removed",
+          "depends_on": ["SCHEMA-001"],
+          "validation": "papertrail/tools/sync_schemas.py exists with SchemaSyncTool class, sync() method loads Jinja2 templates, extracts sections, updates schemas, returns SyncResult"
+        },
+        {
+          "id": "TOOL-002",
+          "description": "Add sync_schemas_from_templates MCP tool to papertrail/server.py list_tools() (around line 85) with inputSchema requiring templates_dir (string, absolute path to coderef-docs/templates/power/), and add async handler sync_schemas_from_templates(arguments) that: (1) instantiates SchemaSyncTool, (2) calls sync(arguments['templates_dir']), (3) formats result as markdown with '## Schema Sync Results' showing templates_processed, schemas_updated, sections_added, sections_removed, (4) returns TextContent with formatted results",
+          "depends_on": ["TOOL-001"],
+          "validation": "MCP tool sync_schemas_from_templates registered in server.py, handler calls SchemaSyncTool.sync(), returns formatted markdown results"
+        },
+        {
+          "id": "TEST-003",
+          "description": "Create tests/test_schema_sync.py with test cases: (1) test_sync_extracts_sections_from_templates - mocked Jinja2 templates with section headings correctly extracted, (2) test_sync_updates_schema_file - schema JSON file updated with new required_sections, (3) test_sync_detects_drift - comparing template sections vs schema sections flags differences, (4) test_sync_handles_missing_templates_dir - graceful error if templates directory not found, (5) test_sync_mcp_tool_integration - end-to-end test calling MCP tool handler returns expected markdown format",
+          "depends_on": ["TOOL-002"],
+          "validation": "5 test cases pass covering section extraction, schema updates, drift detection, error handling, and MCP integration"
+        }
+      ]
+    },
+
+    "phase_5_expanded_validation_coverage": {
+      "description": "P1-2: Extend validation coverage to user docs and resource sheets (72% → 100%)",
+      "complexity": "medium",
+      "depends_on_phases": ["phase_2_power_framework_enforcement"],
+      "tasks": [
+        {
+          "id": "SCHEMA-002",
+          "description": "Update schemas/documentation/user-facing-doc-frontmatter-schema.json to add required_sections field with doc_type-specific arrays: for doc_type='guide' require ['Overview', 'Getting Started', 'Examples'], for 'tutorial' require ['Prerequisites', 'Steps', 'Verification', 'Next Steps'], for 'troubleshooting' require ['Common Issues', 'Solutions'], for 'quickstart' require ['Installation', 'Quick Start', 'Next Steps'], for 'reference' require ['Command Reference', 'Parameters', 'Examples']",
+          "depends_on": ["SCHEMA-001"],
+          "validation": "user-facing-doc-frontmatter-schema.json has required_sections with 5 doc_type mappings"
+        },
+        {
+          "id": "VALIDATOR-004",
+          "description": "Create papertrail/validators/user_guide.py with UserGuideValidator class extending BaseUDSValidator, set schema_name='user-facing-doc-frontmatter-schema.json', set doc_category='user_facing', override validate_specific() to enforce section requirements based on doc_type from frontmatter using inherited _validate_sections() method",
+          "depends_on": ["SCHEMA-002"],
+          "validation": "UserGuideValidator class exists, extends BaseUDSValidator, validates user-facing docs with required sections"
+        },
+        {
+          "id": "VALIDATOR-005",
+          "description": "Create papertrail/validators/quickref.py with QuickrefValidator class extending BaseUDSValidator, same structure as UserGuideValidator but with doc_category='quickref', add custom validation for reference structure (check for command tables using regex for markdown table syntax |---|---|)",
+          "depends_on": ["VALIDATOR-004"],
+          "validation": "QuickrefValidator class exists, validates quickref docs including table structure checks"
+        },
+        {
+          "id": "VALIDATOR-006",
+          "description": "Update papertrail/validators/factory.py PATH_PATTERNS dictionary (lines 27-74) to add mappings: r'.*/USER-GUIDE\\.md$': 'user_facing', r'.*/QUICKREF\\.md$': 'quickref', r'.*/FEATURES\\.md$': 'user_facing', r'.*/my-guide\\.md$': 'user_facing', and update _create_validator() method (lines 161-187) to import and map 'user_facing' → UserGuideValidator, 'quickref' → QuickrefValidator",
+          "depends_on": ["VALIDATOR-005"],
+          "validation": "ValidatorFactory.PATH_PATTERNS includes 4 new user doc patterns, _create_validator() maps to new validators"
+        },
+        {
+          "id": "TEST-004",
+          "description": "Create tests/test_user_doc_validators.py with test cases: (1) test_user_guide_requires_overview_getting_started_examples - user guide missing Getting Started section fails validation, (2) test_tutorial_requires_prerequisites_steps_verification - tutorial doc structure validated, (3) test_quickref_validates_command_tables - quickref without markdown tables gets warning, (4) test_factory_auto_detects_user_docs - ValidatorFactory.get_validator() returns UserGuideValidator for USER-GUIDE.md path, (5) test_validation_coverage_reaches_100_percent - verify 18/18 doc types have validators",
+          "depends_on": ["VALIDATOR-006"],
+          "validation": "5 test cases pass, coverage metric shows 100% (18/18 doc types validated)"
+        }
+      ]
+    },
+
+    "phase_6_pattern_validation": {
+      "description": "P2-1: Add pattern validation for standards docs",
+      "complexity": "medium",
+      "depends_on_phases": ["phase_2_power_framework_enforcement"],
+      "tasks": [
+        {
+          "id": "VALIDATOR-007",
+          "description": "Add pattern_validation() method to papertrail/validators/standards.py StandardsDocValidator class (around line 45) that: (1) calls coderef_patterns MCP tool to get discovered patterns list, (2) extracts documented pattern names from standards doc content using regex r'^##\\s+(.+?)\\s+Pattern' to find pattern section headings, (3) compares discovered_patterns vs documented_patterns sets, (4) flags missing patterns (in code, not in doc) as WARNING with message 'Pattern found in code but not documented: {pattern_name}', (5) flags obsolete patterns (in doc, not in code) as WARNING with message 'Documented pattern not found in code: {pattern_name}. Consider removing or verifying.', (6) returns list of ValidationError",
+          "depends_on": ["VALIDATOR-001"],
+          "validation": "pattern_validation() method exists, calls coderef_patterns, extracts documented patterns, compares sets, returns ValidationError list for discrepancies"
+        },
+        {
+          "id": "SCHEMA-003",
+          "description": "Update schemas/documentation/standards-doc-frontmatter-schema.json to add required_sections: ['Purpose', 'Scope', 'Pattern Catalog', 'Implementation Guidelines', 'Examples'] for all standards docs, add optional pattern_count field to track number of patterns documented",
+          "depends_on": ["SCHEMA-001"],
+          "validation": "standards-doc-frontmatter-schema.json has required_sections array and optional pattern_count field"
+        },
+        {
+          "id": "TEST-005",
+          "description": "Create tests/test_pattern_validation.py with test cases: (1) test_standards_doc_with_all_patterns_passes - standards doc documenting all discovered patterns scores high, (2) test_missing_patterns_flagged - standards doc missing 3 patterns found by coderef_patterns gets 3 WARNINGs, (3) test_obsolete_patterns_flagged - standards doc with pattern not found in code gets WARNING to remove, (4) test_graceful_degradation_when_coderef_unavailable - pattern validation skips with INFO message if coderef_patterns unavailable",
+          "depends_on": ["VALIDATOR-007", "SCHEMA-003"],
+          "validation": "4 test cases pass with mocked coderef_patterns responses covering pattern sync and edge cases"
+        }
+      ]
+    },
+
+    "phase_7_completeness_metric": {
+      "description": "P2-2: Add completeness percentage metric to validation results",
+      "complexity": "medium",
+      "depends_on_phases": ["phase_2_power_framework_enforcement"],
+      "tasks": [
+        {
+          "id": "VALIDATOR-008",
+          "description": "Update papertrail/validator.py ValidationResult dataclass (lines 35-48) to add completeness: Optional[int] field with default None, add calculate_completeness() helper method that accepts total_elements: int, documented_elements: int and returns int percentage (documented / total * 100), update __post_init__ to validate completeness is 0-100 if provided",
+          "depends_on": [],
+          "validation": "ValidationResult has completeness field, calculate_completeness() helper method, validation for 0-100 range"
+        },
+        {
+          "id": "VALIDATOR-009",
+          "description": "Enhance papertrail/validators/foundation.py FoundationDocValidator.validate_specific() to calculate completeness for foundation docs: (1) for doc_type='api' read .coderef/index.json, count total functions with 'endpoint' in metadata, count documented endpoints in API.md by parsing markdown for endpoint sections, set result.completeness = documented/total * 100, (2) for doc_type='components' count total components in index.json, count documented components by parsing COMPONENTS.md for component headings, (3) for doc_type='readme' calculate based on POWER framework sections present (5 sections = 100%, 4 sections = 80%, etc.), (4) wrap .coderef/index.json reads in try-except to gracefully handle missing file",
+          "depends_on": ["VALIDATOR-008"],
+          "validation": "FoundationDocValidator calculates completeness for API, COMPONENTS, README docs based on index.json or section count, handles missing index.json gracefully"
+        },
+        {
+          "id": "SCHEMA-004",
+          "description": "Update papertrail/server.py validate_document and check_all_docs MCP tool handlers (lines 259-389) to include completeness in formatted markdown responses: after 'Score: {score}/100' line add 'Completeness: {completeness}%' line if completeness is not None, add explanation '(Completeness: percentage of elements documented)' in summary section",
+          "depends_on": ["VALIDATOR-009"],
+          "validation": "MCP tool responses include completeness percentage in formatted output when available"
+        },
+        {
+          "id": "TEST-006",
+          "description": "Create tests/test_completeness_metric.py with test cases: (1) test_api_doc_completeness_calculated - API.md documenting 45/50 endpoints returns completeness=90%, (2) test_components_doc_completeness_calculated - COMPONENTS.md documenting 23/30 components returns completeness=76%, (3) test_readme_completeness_based_on_sections - README with 4/5 POWER sections returns completeness=80%, (4) test_completeness_handles_missing_index - validation continues with completeness=None if .coderef/index.json missing, (5) test_mcp_response_includes_completeness - validate_document MCP tool returns markdown with 'Completeness: 85%' line",
+          "depends_on": ["SCHEMA-004"],
+          "validation": "5 test cases pass covering completeness calculation for all foundation doc types and MCP response formatting"
+        }
+      ]
+    },
+
+    "phase_8_cicd_automation": {
+      "description": "P2-3: Create pre-commit hook template and GitHub Actions workflow for automatic validation",
+      "complexity": "low",
+      "depends_on_phases": ["phase_1_preparation"],
+      "tasks": [
+        {
+          "id": "TOOL-003",
+          "description": "Create templates/git-hooks/pre-commit with bash script that: (1) uses git diff --cached --name-only --diff-filter=ACM to get staged markdown files, (2) filters for *.md files, (3) loops over each file calling python -m papertrail.server validate_document --file-path {file}, (4) parses validation score from output, (5) exits with code 1 if any file scores < 90, (6) includes usage comment at top explaining installation: 'Copy to .git/hooks/pre-commit and chmod +x', (7) includes optional AUTO_FIX=true mode that adds missing frontmatter fields before validation",
+          "depends_on": ["SETUP-003"],
+          "validation": "templates/git-hooks/pre-commit script exists, validates staged markdown files, exits 1 if score < 90, includes installation instructions"
+        },
+        {
+          "id": "TOOL-004",
+          "description": "Create templates/github-actions/validate-docs.yml with GitHub Actions workflow that: (1) triggers on push and pull_request events, (2) filters for paths: ['**/*.md'] to only run when markdown files change, (3) checks out repository, (4) sets up Python 3.10+, (5) installs papertrail with pip install -e ., (6) runs papertrail check_all_docs on changed files using github.event.before and github.event.after to get diff, (7) fails workflow if average score < 90, (8) posts validation results as PR comment using github-script action",
+          "depends_on": ["SETUP-003"],
+          "validation": "templates/github-actions/validate-docs.yml exists, runs on push/PR, validates changed markdown files, fails if score < 90, posts results to PR"
+        },
+        {
+          "id": "DOC-001",
+          "description": "Update papertrail/README.md to add new section '## CI/CD Integration' (after '## MCP Tools' section) documenting: (1) pre-commit hook installation steps with code block showing cp command and chmod +x, (2) GitHub Actions workflow setup with code block showing workflow file creation, (3) example validation output, (4) configuration options (score threshold, auto-fix mode), (5) troubleshooting common issues (MCP server not found, Python version mismatch)",
+          "depends_on": ["TOOL-003", "TOOL-004"],
+          "validation": "README.md has '## CI/CD Integration' section with installation instructions for pre-commit hook and GitHub Actions workflow"
+        }
+      ]
+    },
+
+    "phase_9_documentation": {
+      "description": "Update documentation for all new features and create DELIVERABLES.md",
+      "complexity": "low",
+      "depends_on_phases": ["phase_2_power_framework_enforcement", "phase_3_code_example_validation", "phase_4_schema_template_sync", "phase_5_expanded_validation_coverage", "phase_6_pattern_validation", "phase_7_completeness_metric", "phase_8_cicd_automation"],
+      "tasks": [
+        {
+          "id": "DOC-002",
+          "description": "Update papertrail/README.md to document new MCP tools and features: (1) add sync_schemas_from_templates to '## MCP Tools' section with parameters and example usage, (2) update validate_document and check_all_docs tool descriptions to mention POWER framework validation and completeness metric, (3) add new section '## Validation Features' documenting: POWER framework enforcement (what sections are required per doc type), code example validation (how it works, what it checks), pattern validation for standards docs, completeness percentage metric (how it's calculated), (4) update validation scoring explanation to include new error types from section validation",
+          "depends_on": ["DOC-001"],
+          "validation": "README.md documents sync_schemas_from_templates tool, updated tool descriptions mention new features, new '## Validation Features' section explains all enhancements"
+        },
+        {
+          "id": "DOC-003",
+          "description": "Create coderef/workorder/validation-enhancement-001/DELIVERABLES.md from template with sections: Feature Overview (summarize 7 enhancements), Implementation Summary (P0: 2 complete, P1: 2 complete, P2: 3 complete), Files Changed (25 files: 4 schemas, 8 validators, 1 server, 3 tools, 6 tests, 2 docs, 1 templates), Success Metrics (validation coverage 72%→100%, POWER framework enforced, code examples validated, schema-template drift eliminated), Integration Points (coderef-docs calls validate_document, coderef-context provides code intelligence), Known Limitations (code example validation requires coderef-context availability, completeness metric requires .coderef/index.json), Next Steps (integrate with coderef-docs generation workflow in WO-GENERATION-ENHANCEMENT-001)",
+          "depends_on": ["DOC-002"],
+          "validation": "DELIVERABLES.md exists with all sections filled, references all 7 enhancements, includes metrics and integration points"
+        }
+      ]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": {
+      "description": "Test individual validator methods and schema validation",
+      "test_files": [
+        "tests/test_power_framework_validation.py - Test POWER framework section requirements for all 5 foundation doc types",
+        "tests/test_code_example_validation.py - Test code example extraction, coderef-context integration, and outdated example detection",
+        "tests/test_schema_sync.py - Test Jinja2 template parsing, section extraction, and schema updates",
+        "tests/test_user_doc_validators.py - Test user doc validators and coverage metric",
+        "tests/test_pattern_validation.py - Test pattern discovery and comparison for standards docs",
+        "tests/test_completeness_metric.py - Test completeness calculation for all doc types"
+      ],
+      "coverage_target": "90% code coverage for all new validator methods and MCP tools",
+      "key_scenarios": [
+        "Compliant docs with all required sections pass validation",
+        "Non-compliant docs missing sections get appropriate errors",
+        "Code examples matching reality pass, outdated examples warned",
+        "Graceful degradation when external MCP servers unavailable",
+        "Edge cases: malformed markdown, missing files, invalid schemas"
+      ]
+    },
+    "integration_tests": {
+      "description": "Test end-to-end validation workflows with MCP tool calls",
+      "test_scenarios": [
+        "Generate foundation doc with coderef-docs → validate with Papertrail → check POWER framework compliance",
+        "Validate API doc with code examples → verify coderef-context called → check outdated example warnings",
+        "Run sync_schemas_from_templates MCP tool → verify schema files updated → validate docs against new schemas",
+        "Run check_all_docs on directory with mixed doc types → verify all 18 doc types validated → check coverage 100%",
+        "Trigger pre-commit hook with staged non-compliant doc → verify hook blocks commit → check error message actionable"
+      ],
+      "external_dependencies": [
+        "Mock coderef-context MCP server for code example validation tests",
+        "Mock coderef-docs templates directory for schema sync tests"
+      ]
+    },
+    "validation_tests": {
+      "description": "Validate that validation itself works correctly (meta-testing)",
+      "test_scenarios": [
+        "Validate this plan.json against plan validator → expect score 100/100",
+        "Validate DELIVERABLES.md against workorder validator → expect compliant",
+        "Run self-validation: validate Papertrail's own documentation → expect all pass",
+        "Test validation scoring algorithm: inject errors with known severities → verify score calculations correct"
+      ]
+    }
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "functional_requirements": [
+      "All 5 foundation doc types (README, ARCHITECTURE, API, SCHEMA, COMPONENTS) require POWER framework sections per doc type",
+      "Missing POWER sections flagged as MAJOR error (-20 points) in validation results",
+      "Code examples in API and COMPONENTS docs validated against actual code via coderef-context",
+      "Outdated code examples flagged as WARNING (-5 points) with suggested corrections",
+      "sync_schemas_from_templates MCP tool parses Jinja2 templates and updates schemas",
+      "User doc validators (UserGuide, Quickref, Features) created and integrated",
+      "Resource sheet validator enhanced with completeness checks",
+      "Validation coverage reaches 100% (18/18 doc types)",
+      "ValidationResult includes completeness percentage (0-100%)",
+      "Pre-commit hook template validates staged markdown files",
+      "GitHub Actions workflow validates changed markdown files on push/PR"
+    ],
+    "non_functional_requirements": [
+      "Code example validation adds < 300ms per doc",
+      "Pattern validation adds < 500ms per standards doc",
+      "Schema sync tool completes in < 5 seconds for 5 templates",
+      "Validation gracefully degrades if external MCP servers unavailable",
+      "All error messages actionable with clear next steps",
+      "Backward compatibility: existing validation APIs unchanged",
+      "Test coverage ≥ 90% for all new code"
+    ],
+    "deliverable_checklist": [
+      "✓ foundation-doc-frontmatter-schema.json updated with required_sections",
+      "✓ user-facing-doc-frontmatter-schema.json updated with required_sections",
+      "✓ standards-doc-frontmatter-schema.json updated with required_sections",
+      "✓ BaseUDSValidator._validate_sections() enhanced for doc-type-specific sections",
+      "✓ BaseUDSValidator.code_example_validation() method added",
+      "✓ FoundationDocValidator calls code_example_validation for API/COMPONENTS",
+      "✓ StandardsDocValidator.pattern_validation() method added",
+      "✓ ValidationResult.completeness field added",
+      "✓ UserGuideValidator, QuickrefValidator, FeaturesValidator created",
+      "✓ ValidatorFactory updated with new path patterns",
+      "✓ sync_schemas_from_templates MCP tool created",
+      "✓ Pre-commit hook template created",
+      "✓ GitHub Actions workflow template created",
+      "✓ README.md updated with new features",
+      "✓ DELIVERABLES.md created",
+      "✓ All unit tests pass (6 test files, 30+ test cases)",
+      "✓ All integration tests pass (5 end-to-end scenarios)",
+      "✓ Validation coverage metric shows 100% (18/18 doc types)"
+    ],
+    "acceptance_criteria": [
+      "Generate README.md with coderef-docs → validate with Papertrail → score 98/100 with 1 WARNING for missing optional References section",
+      "Validate API.md with outdated endpoint example → get WARNING 'Code example references non-existent endpoint: POST /api/old-endpoint. Available endpoints: ...'",
+      "Run sync_schemas_from_templates → foundation-doc-frontmatter-schema.json updated with sections from templates → validation enforces new sections",
+      "Run check_all_docs on project → all 18 doc types validated → coverage 100%",
+      "Commit non-compliant doc with pre-commit hook installed → commit blocked with clear error message",
+      "Push PR with non-compliant doc → GitHub Actions workflow fails → validation results posted as PR comment"
+    ]
+  },
+
+  "9_DEPENDENCIES_AND_INTEGRATION": {
+    "internal_dependencies": [
+      {
+        "component": "papertrail.validators.base.BaseUDSValidator",
+        "relationship": "All validators extend BaseUDSValidator for schema validation and scoring",
+        "integration_point": "Override validate_specific() method for category-specific checks"
+      },
+      {
+        "component": "papertrail.validators.factory.ValidatorFactory",
+        "relationship": "Registry for mapping file paths to validators via PATH_PATTERNS",
+        "integration_point": "Add new path patterns for user doc validators, update _create_validator() map"
+      },
+      {
+        "component": "papertrail.validator.ValidationResult",
+        "relationship": "Dataclass for validation results returned by all validators",
+        "integration_point": "Add completeness field (backward compatible - optional field)"
+      },
+      {
+        "component": "papertrail.server MCP tools",
+        "relationship": "Expose validation via MCP protocol to external agents",
+        "integration_point": "Add sync_schemas_from_templates tool, update validate_document response format"
+      }
+    ],
+    "external_dependencies": [
+      {
+        "service": "coderef-context MCP server",
+        "purpose": "Provides code intelligence for code example validation (P0-2) and pattern validation (P2-1)",
+        "integration_method": "Call coderef_query(query_type='endpoints') and coderef_patterns() tools via MCP",
+        "fallback_strategy": "Graceful degradation - skip code/pattern validation with INFO message if unavailable",
+        "data_flow": "Papertrail calls coderef_query → receives endpoints list → compares with doc examples → flags mismatches"
+      },
+      {
+        "service": "coderef-docs MCP server",
+        "purpose": "Provides POWER framework Jinja2 templates for schema sync (P1-1)",
+        "integration_method": "Read templates from coderef-docs/templates/power/ directory via file system",
+        "fallback_strategy": "Fail with clear error if templates_dir not accessible - no graceful degradation (schema sync is user-initiated, not real-time)",
+        "data_flow": "User calls sync_schemas_from_templates(templates_dir) → Papertrail parses templates → updates schemas → returns sync report"
+      },
+      {
+        "library": "jinja2@3.x",
+        "purpose": "Parse Jinja2 templates to extract section structure for schema sync",
+        "integration_method": "Use jinja2.Environment to load templates, parse AST for section headings",
+        "installation": "Add to pyproject.toml dependencies: jinja2>=3.0.0,<4.0.0"
+      }
+    ],
+    "integration_sequence": [
+      "Step 1: User generates doc with coderef-docs (or manually creates doc)",
+      "Step 2: User calls papertrail.validate_document(file_path) MCP tool",
+      "Step 3: Papertrail ValidatorFactory auto-detects doc type from path/frontmatter",
+      "Step 4: Appropriate validator loads schema, validates frontmatter (UDS Tier 1-3)",
+      "Step 5: Validator calls _validate_sections() to check required POWER framework sections",
+      "Step 6: For API/COMPONENTS docs, validator calls code_example_validation() → calls coderef-context coderef_query",
+      "Step 7: For standards docs, validator calls pattern_validation() → calls coderef-context coderef_patterns",
+      "Step 8: Validator calculates score (100 - errors) and completeness percentage (if applicable)",
+      "Step 9: Papertrail returns ValidationResult with score, errors, warnings, completeness",
+      "Step 10: MCP tool formats result as markdown and returns to caller (agent or user)"
+    ],
+    "backwards_compatibility": [
+      "All schema changes additive: required_sections is new field, existing docs unaffected",
+      "ValidationResult.completeness is optional field with default None - existing consumers work unchanged",
+      "Existing MCP tools (validate_document, check_all_docs) signatures unchanged - only response format enhanced",
+      "New validators added to ValidatorFactory - existing validators unaffected",
+      "No breaking changes to public APIs"
+    ]
+  }
+}

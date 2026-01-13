@@ -22,27 +22,114 @@ Resource sheets are lightweight documentation artifacts that capture essential c
 
 **Historical Note:** The term `REFERENCE-SHEET` was previously used but is now deprecated. All documentation should use `RESOURCE-SHEET` for consistency.
 
+### Format Requirements
+
+**Component Name Format:** PascalCase-with-hyphens
+
+The component name portion must follow **PascalCase-with-hyphens** format:
+- Each word starts with a capital letter
+- Words are separated by hyphens (not underscores or spaces)
+- Subsequent letters in each word are lowercase
+- No ALL-CAPS component names (except for the `-RESOURCE-SHEET` suffix)
+
+**Pattern Breakdown:**
+```
+Auth-Service-RESOURCE-SHEET.md
+^    ^       ^
+|    |       |
+|    |       +-- Suffix (always ALL-CAPS)
+|    +---------- Second word (PascalCase)
++--------------- First word (PascalCase)
+```
+
+**Valid Format (PascalCase-with-hyphens):**
+- `Auth-Service` ✅
+- `Widget-System` ✅
+- `File-Api-Route` ✅
+- `User-Controller` ✅
+
+**Invalid Formats:**
+- `AUTH-SERVICE` ❌ (ALL-CAPS - should be `Auth-Service`)
+- `auth-service` ❌ (lowercase - should be `Auth-Service`)
+- `AuthService` ❌ (no hyphens for multi-word - should be `Auth-Service`)
+- `auth_service` ❌ (snake_case - should be `Auth-Service`)
+- `authService` ❌ (camelCase - should be `Auth-Service`)
+
 ### Rules
 
-1. **Component name MUST match subject**: If documenting `AuthService`, filename is `AuthService-RESOURCE-SHEET.md`
-2. **Use exact casing**: Match the component's actual name (e.g., `UserController`, not `usercontroller`)
-3. **Suffix required**: Must end with `-RESOURCE-SHEET.md`
-4. **No spaces**: Use hyphens for multi-word components (e.g., `API-Gateway-RESOURCE-SHEET.md`)
+1. **Component name MUST match subject**: If documenting `AuthService`, filename is `Auth-Service-RESOURCE-SHEET.md`
+2. **Use PascalCase-with-hyphens**: Each word capitalized, separated by hyphens (e.g., `User-Controller`, not `USER-CONTROLLER`)
+3. **Suffix required**: Must end with `-RESOURCE-SHEET.md` (suffix is always ALL-CAPS)
+4. **No spaces**: Use hyphens for multi-word components (e.g., `Api-Gateway-RESOURCE-SHEET.md`)
+5. **Match actual component name**: If code uses `AuthService`, convert to `Auth-Service` for filename
 
 ### Examples
 
-✅ **Valid:**
-- `AuthService-RESOURCE-SHEET.md`
-- `UserController-RESOURCE-SHEET.md`
-- `Database-Migration-RESOURCE-SHEET.md`
-- `API-Gateway-RESOURCE-SHEET.md`
+✅ **Valid (PascalCase-with-hyphens):**
+- `Auth-Service-RESOURCE-SHEET.md` (PascalCase with hyphens)
+- `User-Controller-RESOURCE-SHEET.md` (PascalCase with hyphens)
+- `Widget-System-RESOURCE-SHEET.md` (PascalCase with hyphens)
+- `File-Api-Route-RESOURCE-SHEET.md` (PascalCase with hyphens, multi-word)
+- `Database-Migration-RESOURCE-SHEET.md` (PascalCase with hyphens)
+- `Api-Gateway-RESOURCE-SHEET.md` (PascalCase with hyphens)
 
 ❌ **Invalid:**
-- `auth-service-RESOURCE-SHEET.md` (wrong casing)
-- `AuthService.md` (missing suffix)
+- `AUTH-SERVICE-RESOURCE-SHEET.md` (ALL-CAPS component name - should be `Auth-Service-RESOURCE-SHEET.md`)
+- `FILE-API-ROUTE-RESOURCE-SHEET.md` (ALL-CAPS component name - should be `File-Api-Route-RESOURCE-SHEET.md`)
+- `USER-CONTROLLER-RESOURCE-SHEET.md` (ALL-CAPS component name - should be `User-Controller-RESOURCE-SHEET.md`)
+- `auth-service-RESOURCE-SHEET.md` (lowercase component name - should be `Auth-Service-RESOURCE-SHEET.md`)
+- `file-api-route-RESOURCE-SHEET.md` (lowercase component name - should be `File-Api-Route-RESOURCE-SHEET.md`)
+- `AuthService-RESOURCE-SHEET.md` (no hyphens for multi-word - should be `Auth-Service-RESOURCE-SHEET.md`)
+- `authService-RESOURCE-SHEET.md` (camelCase - should be `Auth-Service-RESOURCE-SHEET.md`)
+- `auth_service-RESOURCE-SHEET.md` (snake_case - should be `Auth-Service-RESOURCE-SHEET.md`)
+- `Auth-Service.md` (missing suffix)
 - `auth service RESOURCE SHEET.md` (spaces not allowed)
-- `AuthService-RESOURCE.md` (incomplete suffix)
-- `AuthService-REFERENCE-SHEET.md` (deprecated - use RESOURCE-SHEET)
+- `Auth-Service-RESOURCE.md` (incomplete suffix)
+- `Auth-Service-REFERENCE-SHEET.md` (deprecated - use RESOURCE-SHEET)
+
+---
+
+## Directory Location
+
+### Standard Location
+
+All resource sheets MUST be stored in the standardized directory:
+
+```
+coderef/resources-sheets/
+```
+
+**Rules:**
+
+1. **Consistent naming**: Directory must be named `resources-sheets` (plural, with hyphen)
+2. **Not `reference-sheets`**: Historical directory name is deprecated
+3. **Project-level directory**: Located at project root under `coderef/` folder
+4. **No subdirectories**: All resource sheets in single directory for easy discovery
+
+### Examples
+
+✅ **Valid Paths:**
+- `coderef/resources-sheets/Auth-Service-RESOURCE-SHEET.md`
+- `coderef/resources-sheets/Widget-System-RESOURCE-SHEET.md`
+- `coderef/resources-sheets/File-Api-Route-RESOURCE-SHEET.md`
+
+❌ **Invalid Paths:**
+- `docs/Auth-Service-RESOURCE-SHEET.md` (wrong directory)
+- `coderef/reference-sheets/Auth-Service-RESOURCE-SHEET.md` (deprecated directory name)
+- `coderef/Auth-Service-RESOURCE-SHEET.md` (missing `resources-sheets/` subdirectory)
+- `coderef/resources-sheets/auth/Auth-Service-RESOURCE-SHEET.md` (no subdirectories allowed)
+
+### Rationale
+
+**Centralized Discovery:**
+- Single location makes all resource sheets easy to find
+- Prevents duplication across different directories
+- Simplifies validation and tooling
+
+**Consistent Naming:**
+- `resources-sheets` matches terminology (resource sheets, not reference sheets)
+- Plural form indicates collection of multiple sheets
+- Hyphenated for consistency with filename convention
 
 ---
 
@@ -267,21 +354,49 @@ The validator checks:
 1. **YAML Front Matter**
    - Starts with `---`
    - Contains required fields: `agent`, `date`, `task`, `subject`, `parent_project`, `category`
+   - All fields use `snake_case` naming (e.g., `parent_project`, not `parentProject`)
    - Date format: `YYYY-MM-DD`
    - Task is valid enum value
 
-2. **Naming Convention**
-   - Filename matches pattern: `{Component}-RESOURCE-SHEET.md`
-   - Component name in filename matches YAML `subject` field
+2. **Directory Location**
+   - File must be located in `coderef/resources-sheets/` directory
+   - Not in deprecated `coderef/reference-sheets/` directory
+   - Not in project root or other directories (e.g., `docs/`)
+   - No subdirectories allowed under `resources-sheets/`
 
-3. **UDS Headers**
+3. **Naming Convention**
+   - Filename matches pattern: `{Component}-RESOURCE-SHEET.md`
+   - Component name uses **PascalCase-with-hyphens** format
+   - Component name in filename matches YAML `subject` field
+   - **Format Validation:**
+     - ✅ Valid: `Auth-Service-RESOURCE-SHEET.md` (PascalCase-with-hyphens)
+     - ❌ Invalid: `AUTH-SERVICE-RESOURCE-SHEET.md` (ALL-CAPS)
+     - ❌ Invalid: `auth-service-RESOURCE-SHEET.md` (lowercase)
+     - ❌ Invalid: `AuthService-RESOURCE-SHEET.md` (missing hyphens for multi-word)
+
+4. **UDS Headers**
    - Contains `Executive Summary` section
    - Contains `Audience & Intent` section
    - Contains `Quick Reference` section
 
-4. **No Emojis**
+5. **No Emojis**
    - Document must not contain any emoji characters
    - Use text markers instead: [WARN], [INFO], [DEPRECATED], [PASS], [FAIL]
+
+### Validation Severity Levels
+
+The validator assigns severity levels to violations:
+
+- **ERROR**: Critical violations that must be fixed
+  - Missing required YAML fields
+  - Wrong directory location
+  - ALL-CAPS filename format
+  - Missing required sections
+
+- **WARNING**: Recommended fixes (non-blocking)
+  - Missing optional fields
+  - Minor formatting issues
+  - Deprecated patterns still functional
 
 ### Exit Codes
 

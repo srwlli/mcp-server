@@ -1,0 +1,48 @@
+{
+  "workorder_id": "WO-STUB-VALIDATION-MIGRATION-001",
+  "feature_name": "stub-validation-migration",
+  "created": "2026-01-12",
+  "status": "complete",
+  "description": "Migrate stub schema and validator from assistant to papertrail MCP server, following pattern where assistant uses tools rather than exposing them",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\stub-validation-migration\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate migration and verify integration",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\stub-validation-migration\\orchestrator-output.md",
+    "status": "complete",
+    "notes": "Verified all migrations. Schema in papertrail, tool exposed, assistant files removed. Architecture aligned."
+  },
+
+  "agents": [
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\stub-validation-migration\\papertrail-output.md",
+      "status": "complete",
+      "notes": "Migrated stub-schema.json and created StubValidator. Exposed validate_stub MCP tool."
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\wellh\\.mcp-servers\\coderef\\sessions\\stub-validation-migration\\coderef-docs-output.md",
+      "status": "complete",
+      "notes": "Updated schema to Orchestrator Stub Schema v2.0. No generator changes needed."
+    },
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\stub-validation-migration\\coderef-assistant-output.md",
+      "status": "complete",
+      "notes": "Removed validate-stubs.py and stub-schema.json. Updated CLAUDE.md. Archived resource sheet."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  }
+}

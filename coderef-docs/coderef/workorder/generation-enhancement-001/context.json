@@ -1,0 +1,174 @@
+{
+  "workorder_id": "WO-GENERATION-ENHANCEMENT-001",
+  "feature_name": "generation-enhancement-001",
+  "source_session": "WO-DOCS-CONSOLIDATION-001",
+  "created": "2026-01-12",
+  "description": "Implement 7 enhancements to coderef-docs MCP server to achieve code-driven documentation. Transform from hybrid approach (template + file reads) to full tool orchestration (template + MCP tool calls). Target: Foundation docs 70%→85%, User docs 40%→75%, Standards docs 55%→80%.",
+
+  "requirements": {
+    "P0_critical": [
+      {
+        "id": "P0-1",
+        "title": "Add coderef-context tool orchestration to generate_foundation_docs",
+        "rationale": "Currently reads .coderef/ files but doesn't call coderef-context MCP tools. This limits semantic analysis and relationship discovery. Need direct tool calls for: query (relationships), patterns (semantic analysis), complexity (priority), coverage (gaps), impact (criticality).",
+        "implementation": "Modify handle_generate_foundation_docs and handle_generate_individual_doc to call coderef_query, coderef_patterns, coderef_complexity, coderef_coverage, coderef_impact. For ARCHITECTURE: query depends-on/depends-on-me for components. For API: query calls/calls-me for endpoints. For COMPONENTS: query imports-me for usage. For README: impact analysis for critical features. Add query results to template context.",
+        "success_criteria": [
+          "generate_foundation_docs calls coderef_query for dependency analysis",
+          "generate_foundation_docs calls coderef_patterns for convention detection",
+          "generate_foundation_docs calls coderef_complexity to prioritize components",
+          "generate_foundation_docs calls coderef_coverage to show test gaps",
+          "generate_foundation_docs calls coderef_impact to identify critical components",
+          "ARCHITECTURE.md includes real dependency graphs from coderef_query",
+          "API.md shows endpoint relationships and call chains",
+          "COMPONENTS.md prioritizes complex components first",
+          "README features section highlights high-impact functionality",
+          "Foundation docs quality increases from 70% to 85%+"
+        ],
+        "impact": "Foundation docs accuracy increases from 70% to 85%+. Real dependency data replaces manual inference. Automatic detection of breaking changes, critical paths, circular dependencies."
+      },
+      {
+        "id": "P0-2",
+        "title": "Integrate Papertrail validation into doc generation workflow",
+        "rationale": "Currently validation is post-generation, requiring manual user action. Users often forget to validate, leading to non-compliant docs. Automatic validation during generation ensures 100% UDS compliance.",
+        "implementation": "Add auto_validate parameter to all doc generation tools (default: true). After generating doc content, call papertrail.validate_document() via MCP. If validation fails, log errors, optionally attempt fixes (add missing frontmatter), re-validate. Only write file if score >= 90 or user forces write. Return validation result in tool response.",
+        "success_criteria": [
+          "auto_validate parameter added to generate_foundation_docs, generate_individual_doc, establish_standards, user doc generators",
+          "After doc generation, papertrail.validate_document() called automatically",
+          "Validation failures logged with clear error messages",
+          "Auto-fix capability for missing frontmatter fields",
+          "Docs only written if validation score >= 90 (configurable threshold)",
+          "Validation result included in tool response",
+          "Validation coverage increases from 72% to 100%"
+        ],
+        "impact": "Ensures all generated docs are UDS-compliant by default. Reduces user burden (no manual validation). Catches errors during generation, not post-generation. 100% validation coverage."
+      }
+    ],
+
+    "P1_high": [
+      {
+        "id": "P1-1",
+        "title": "Add drift detection before doc generation",
+        "rationale": "Documentation can become stale if .coderef/ data is outdated. Currently no freshness check before generating docs. Users may generate docs from old scan data and get inaccurate documentation.",
+        "implementation": "At start of generate_foundation_docs: Call coderef_drift with index_path=.coderef/index.json. If drift > 10%, warn user: 'Index is X% stale. Re-run coderef_scan for accurate docs? (Y/n)'. If user confirms, exit with 'Please run coderef_scan first'. If user declines, add disclaimer to generated docs: 'Generated from potentially stale data (X% drift detected)'. Track drift % in UDS metadata.",
+        "success_criteria": [
+          "generate_foundation_docs calls coderef_drift before generation",
+          "Drift > 10% triggers user warning",
+          "User can choose to exit and re-scan or continue with disclaimer",
+          "Stale docs include drift warning in frontmatter or footer",
+          "Drift percentage tracked in UDS metadata",
+          "Zero stale doc generation without user awareness"
+        ],
+        "impact": "Documentation accuracy guaranteed. Users alerted to stale data before generation. Docs include freshness metadata. Trust in generated documentation increases."
+      },
+      {
+        "id": "P1-2",
+        "title": "Upgrade user docs to use .coderef/ data",
+        "rationale": "User docs (my-guide, user-guide, features, quickref) are currently 100% template-driven with no code intelligence. They contain generic placeholders instead of real project-specific examples.",
+        "implementation": "Modify user doc generators: Read .coderef/index.json to extract CLI entry points, API routes, main features. Use patterns.json for common usage patterns. Call coderef_query to find typical workflows (function call sequences). Generate user-guide with real examples from code. Generate quickref with actual commands/shortcuts. Generate features list from high-level components.",
+        "success_criteria": [
+          "User doc generators read .coderef/index.json",
+          "CLI commands extracted from code (not placeholders)",
+          "API endpoints listed from actual routes",
+          "Usage examples derived from patterns.json",
+          "Workflows discovered via coderef_query",
+          "Quickref shows real commands/shortcuts",
+          "Features list auto-generated from components",
+          "User docs quality increases from 40-55% to 75%+"
+        ],
+        "impact": "User docs quality increases from 40-55% to 75%+. Real examples replace placeholders. Docs auto-update when code changes. Reduces manual documentation effort by 60%."
+      },
+      {
+        "id": "P1-3",
+        "title": "Replace regex-based pattern detection with coderef_patterns semantic analysis",
+        "rationale": "Current standards generator uses regex patterns (button detection, modal detection, error handling regex) which miss complex patterns and produce false positives. coderef_patterns tool provides semantic pattern recognition with AST analysis.",
+        "implementation": "Refactor establish_standards handler: Remove regex pattern matching from StandardsGenerator class. Call coderef_patterns MCP tool with project_path. Process returned patterns (UI patterns, API patterns, architecture patterns, testing patterns). Generate standards docs with pattern frequency, usage locations, consistency violations. Add recommendations for pattern unification where inconsistencies found.",
+        "success_criteria": [
+          "Regex pattern matching removed from StandardsGenerator",
+          "establish_standards calls coderef_patterns MCP tool",
+          "Semantic patterns replace regex heuristics",
+          "Pattern frequency analysis included in standards docs",
+          "Usage locations listed for each pattern",
+          "Consistency violations automatically detected",
+          "Recommendations for pattern unification generated",
+          "Standards docs quality increases from 55-60% to 80%+"
+        ],
+        "impact": "Standards docs quality increases from 55-60% to 80%+. Semantic patterns replace regex heuristics. Automatic consistency violation detection. Pattern usage frequency analysis enables evidence-based standards."
+      }
+    ],
+
+    "P2_medium": [
+      {
+        "id": "P2-1",
+        "title": "Consolidate 3 foundation doc tools → 1 unified tool",
+        "rationale": "Currently 3 tools for foundation docs: generate_foundation_docs, generate_individual_doc, coderef_foundation_docs. User confusion about which to use. Maintenance burden across multiple implementations.",
+        "implementation": "Keep generate_foundation_docs as primary tool. Deprecate coderef_foundation_docs with redirect to generate_foundation_docs. Make generate_individual_doc internal-only (called by generate_foundation_docs, not exposed to users). Update slash commands to use generate_foundation_docs. Add deprecation warnings for 2 versions, then remove in v4.0.",
+        "success_criteria": [
+          "generate_foundation_docs is single public API",
+          "coderef_foundation_docs redirects with deprecation warning",
+          "generate_individual_doc marked internal-only",
+          "Slash commands updated to use generate_foundation_docs",
+          "Deprecation warnings added with migration instructions",
+          "Documentation updated to reflect single tool",
+          "Migration guide created for existing users"
+        ],
+        "impact": "Single source of truth for foundation docs. Reduced user confusion. Simplified maintenance. Clear migration path."
+      },
+      {
+        "id": "P2-2",
+        "title": "Add coderef-context health check at tool initialization",
+        "rationale": "Tools assume coderef-context MCP is available but don't verify. If coderef-context unavailable, tools fail mid-generation with unclear errors. Better to fail fast with clear message.",
+        "implementation": "At server startup (server.py initialization): Try to call coderef_scan with minimal test. If available, set CODEREF_CONTEXT_AVAILABLE=True. If unavailable, set CODEREF_CONTEXT_AVAILABLE=False and log warning. Tool handlers check flag before attempting coderef calls. If unavailable, return clear error: 'coderef-context MCP not available. Install at: [link]'.",
+        "success_criteria": [
+          "Health check runs at server startup",
+          "CODEREF_CONTEXT_AVAILABLE flag set based on health check",
+          "Tool handlers check flag before coderef-context calls",
+          "Clear error message if coderef-context unavailable",
+          "Installation instructions provided in error",
+          "Graceful degradation to template-only mode possible",
+          "No mid-generation failures due to missing dependency"
+        ],
+        "impact": "Better error messages for missing dependencies. Users know immediately if coderef-context required. Graceful degradation possible. Reduced troubleshooting time."
+      }
+    ]
+  },
+
+  "technical_context": {
+    "current_implementation": "13 tools across foundation/user/standards docs. Hybrid approach: template-driven with .coderef/ file reads. No direct MCP tool calls to coderef-context. Validation coverage 72% (user docs not validated).",
+    "current_quality": "Foundation 75%, User 40%, Standards 55-60%",
+    "integration_gaps": "Reads .coderef/ files but doesn't orchestrate coderef-context tools. No validation integration. User docs template-only. Standards use regex not semantic analysis.",
+    "tool_handlers": "tool_handlers.py with decorators for logging and error handling. Backward compatibility maintained with graceful degradation."
+  },
+
+  "constraints": [
+    "Maintain backward compatibility for existing tool APIs",
+    "Graceful degradation if coderef-context unavailable",
+    "Performance: Tool orchestration shouldn't significantly slow generation",
+    "Validation: auto_validate must be configurable (can be disabled)",
+    "Breaking changes: Use deprecation warnings, not immediate removal"
+  ],
+
+  "success_metrics": {
+    "quality_improvement": "Foundation 70%→85%, User 40%→75%, Standards 55%→80%",
+    "validation_coverage": "72%→100% (all doc types validated)",
+    "code_intelligence": "100% of docs use real code data, not placeholders",
+    "tool_consolidation": "3 foundation doc tools → 1 unified tool"
+  },
+
+  "deliverables": [
+    "Enhanced generate_foundation_docs with coderef-context orchestration",
+    "Papertrail validation integration in all doc generators",
+    "Drift detection before generation",
+    "User docs with .coderef/ data integration",
+    "Semantic standards docs (coderef_patterns, not regex)",
+    "Consolidated foundation doc tool API",
+    "Health check for coderef-context dependency",
+    "Updated tests for all new features",
+    "DELIVERABLES.md with before/after quality metrics"
+  ],
+
+  "related_workorders": [
+    "WO-CONTEXT-INTEGRATION-001 (coderef-context) - Provides INTEGRATION.md examples to consume",
+    "WO-VALIDATION-ENHANCEMENT-001 (papertrail) - Provides validation tools and schemas",
+    "WO-DOCS-CONSOLIDATION-001 (session) - Source of all requirements"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "stub_id": "STUB-001",
+  "feature_name": "test-feature-001",
+  "description": "Test feature for stub validation",
+  "category": "feature",
+  "priority": "medium",
+  "status": "planning",
+  "created": "2026-01-12"
+}

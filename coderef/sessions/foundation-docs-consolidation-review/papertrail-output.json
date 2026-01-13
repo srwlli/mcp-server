@@ -1,0 +1,148 @@
+{
+  "agent_id": "papertrail",
+  "review_date": "2026-01-12",
+  "current_implementation": {
+    "tools_provided": [
+      "validate_resource_sheet - RSMS v2.0 compliance validation",
+      "check_all_resource_sheets - Batch RSMS validation",
+      "validate_document - Universal UDS validation with auto-detection",
+      "check_all_docs - Batch UDS validation"
+    ],
+    "data_sources": [
+      "schemas/documentation/*.json - 10 UDS frontmatter schemas",
+      "schemas/planning/plan.schema.json - Plan.json validation",
+      "schemas/sessions/communication-schema.json - Session validation",
+      "validators/*.py - 11 validator implementations",
+      "standards/documentation/*.md - Documentation standards"
+    ],
+    "generation_approach": "Schema-driven validation with auto-detection",
+    "strengths": [
+      "Comprehensive UDS schema coverage: 10 document types (foundation, workorder, system, standards, user-facing, migration, infrastructure, session, resource sheets, general)",
+      "Auto-detection via ValidatorFactory: 30+ path patterns + frontmatter inspection",
+      "Hierarchical schema design: allOf pattern for extending base-frontmatter-schema.json",
+      "4-tier severity system: CRITICAL (missing required fields), MAJOR (invalid format), MINOR (missing recommended), WARNING (style issues)",
+      "0-100 scoring algorithm with clear weighting: CRITICAL -50, MAJOR -20, MINOR -10, WARNING -5",
+      "MCP tool integration: 4 tools for single/batch validation",
+      "RSMS v2.0 enforcement: Validates resource sheets with snake_case, required metadata, naming convention",
+      "Global Documentation Standards: Headers (YAML frontmatter), Footers (metadata), No Emojis policy"
+    ],
+    "weaknesses": [
+      "No integration with coderef-docs generation workflow - validation happens post-generation",
+      "Missing real-time validation during doc creation",
+      "No automated schema generation for new doc types",
+      "Limited content validation - focuses on frontmatter, minimal section checking",
+      "No quality metrics beyond score (e.g., readability, completeness percentage)",
+      "Missing integration with coderef-context for validating code examples in docs",
+      "No CI/CD integration examples or pre-commit hooks",
+      "Validation schemas not auto-generated from POWER framework templates"
+    ]
+  },
+  "output_quality_assessment": {
+    "foundation_docs": {
+      "README": "Schema exists (foundation-doc-frontmatter-schema.json). Validates: workorder_id, generated_by, feature_id, doc_type='readme'. Missing: POWER framework section validation (Purpose, Overview, What/Why/When, Examples, References not enforced).",
+      "ARCHITECTURE": "Schema exists. Validates: workorder_id, doc_type='architecture'. Missing: Architecture-specific sections (System Overview, Key Components, Design Decisions, Integration Points).",
+      "API": "Schema exists. Validates: workorder_id, doc_type='api'. Missing: API-specific sections (Endpoints, Authentication, Request/Response Examples, Error Codes).",
+      "SCHEMA": "Schema exists. Validates: workorder_id, doc_type='schema'. Missing: Schema-specific sections (Data Models, Field Descriptions, Validation Rules, Relationships).",
+      "COMPONENTS": "Schema exists. Validates: workorder_id, doc_type='components'. Missing: Components-specific sections (Component Catalog, Props/Parameters, Usage Examples, Dependencies)."
+    },
+    "user_docs": {
+      "user_guide": "Schema exists (user-facing-doc-frontmatter-schema.json). Validates: audience (enum), doc_type='guide', difficulty (enum), estimated_time (pattern). Good coverage.",
+      "my_guide": "Schema exists. Validates: audience, doc_type. Missing: Quick Start section validation.",
+      "quickref": "Schema exists. Validates: audience, doc_type='reference'. Missing: Reference structure validation (no enforcement of command tables, parameter lists)."
+    },
+    "standards_docs": {
+      "ui_patterns": "Schema exists (standards-doc-frontmatter-schema.json). Validates: scope, version (semver), enforcement, category='documentation'. Missing: Pattern structure validation (no enforcement of Pattern Name, Use Case, Example sections).",
+      "behavior_patterns": "Schema exists. Validates: scope, version, enforcement. Missing: Behavior pattern sections (Trigger Conditions, Expected Behavior, Anti-patterns).",
+      "ux_patterns": "Schema exists. Validates: scope, version, enforcement. Missing: UX pattern sections (Design Rationale, Implementation Guidelines, Accessibility Notes).",
+      "testing_patterns": "Schema exists. Validates: scope, version, enforcement. Missing: Testing pattern sections (Test Strategy, Coverage Requirements, Example Tests)."
+    },
+    "overall_quality": "Medium-High",
+    "key_issues": [
+      "Frontmatter validation is excellent (10 doc types, auto-detection, scoring)",
+      "Content/section validation is minimal - only basic markdown heading checks",
+      "No POWER framework enforcement - can't verify Purpose, Overview, Examples, References sections exist",
+      "No doc-type-specific section validation (e.g., API docs must have Endpoints section)",
+      "No integration with doc generation - validation is post-generation only",
+      "Missing validation for code examples (can't verify code snippets are valid/tested)",
+      "No automated schema updates when new doc types added to coderef-docs"
+    ]
+  },
+  "integration_analysis": {
+    "current_integration": "Papertrail operates as standalone validation layer. ValidatorFactory auto-detects doc type via path patterns + frontmatter inspection. MCP tools (validate_document, check_all_docs) provide on-demand validation. No integration with coderef-docs generation workflow.",
+    "missing_integration": "1. No real-time validation during doc generation (coderef-docs generates, user manually validates after). 2. No schema-template sync (POWER framework templates in coderef-docs not reflected in Papertrail schemas). 3. No code example validation (can't verify code snippets using coderef-context). 4. No CI/CD hooks (validation not automated in git workflows).",
+    "ideal_dependency_chain": "Step 1: User requests doc generation via coderef-docs tool. Step 2: coderef-docs generates doc content using POWER framework template + .coderef/ data. Step 3: coderef-docs AUTOMATICALLY calls papertrail.validate_document() before writing file. Step 4: If validation fails (score < 90), coderef-docs reports errors to user, optionally fixes issues, re-validates. Step 5: If validation passes, coderef-docs writes file with UDS-compliant frontmatter. Step 6: Optional: Post-generation batch validation via check_all_docs for quality assurance.",
+    "coderef_tools_to_leverage": {
+      "coderef_query": "Not currently used. COULD USE FOR: Validating API docs - query for actual API endpoints, verify doc covers all endpoints. Validating COMPONENTS docs - query for components, verify all are documented.",
+      "coderef_patterns": "Not currently used. COULD USE FOR: Validating standards docs - use coderef_patterns to discover actual patterns in code, verify standards docs match reality. Example: If code has 12 React hooks patterns but ui-patterns.md only documents 5, flag as incomplete.",
+      "coderef_complexity": "Not currently used. COULD USE FOR: Validating architecture docs - identify high-complexity components via coderef_complexity, verify they're documented in ARCHITECTURE.md. Flag missing critical component docs.",
+      "coderef_coverage": "Not currently used. COULD USE FOR: Validating README/testing docs - use coderef_coverage to show actual test coverage, verify documentation claims match reality. Flag discrepancies.",
+      "coderef_impact": "Not currently used. COULD USE FOR: Validating dependency diagrams in ARCHITECTURE.md - use coderef_impact to verify dependency graphs are accurate. Flag outdated/incorrect diagrams."
+    }
+  },
+  "improvement_suggestions": [
+    {
+      "category": "integration",
+      "priority": "high",
+      "suggestion": "Integrate validation into coderef-docs generation workflow - auto-validate before writing files",
+      "rationale": "Currently validation is post-generation, requiring manual user action. Users often forget to validate, leading to non-compliant docs. Automatic validation during generation ensures 100% UDS compliance.",
+      "implementation_approach": "1. Add optional auto_validate parameter to coderef-docs tools (default: true). 2. After generating doc content, coderef-docs calls papertrail.validate_document() via MCP. 3. If validation fails, coderef-docs logs errors, optionally attempts fixes (e.g., add missing frontmatter fields), re-validates. 4. Only write file if validation passes (score >= 90) or user forces write. 5. Return validation result in tool response.",
+      "impact": "Ensures all generated docs are UDS-compliant by default. Reduces user burden (no manual validation). Catches errors early (during generation, not post-generation)."
+    },
+    {
+      "category": "foundation",
+      "priority": "high",
+      "suggestion": "Add POWER framework section validation to foundation doc schemas",
+      "rationale": "Foundation docs use POWER framework (Purpose, Overview, What/Why/When, Examples, References) but schemas only validate frontmatter, not sections. Can't enforce framework compliance.",
+      "implementation_approach": "1. Update foundation-doc-frontmatter-schema.json with required_sections array. 2. For README: ['Purpose', 'Overview', 'What/Why/When', 'Examples', 'References']. 3. For ARCHITECTURE: ['System Overview', 'Key Components', 'Design Decisions', 'Integration Points']. 4. BaseUDSValidator._validate_sections() already checks for markdown headings - extend to enforce doc-type-specific sections. 5. Reduce score if required sections missing (MAJOR error, -20 points).",
+      "impact": "Enforces POWER framework compliance. Ensures foundation docs have consistent structure. Improves doc quality (forces complete documentation)."
+    },
+    {
+      "category": "foundation",
+      "priority": "medium",
+      "suggestion": "Validate code examples in docs using coderef-context",
+      "rationale": "Documentation often includes code examples (API usage, component props, function signatures) that become outdated. No mechanism to verify examples match actual code.",
+      "implementation_approach": "1. Add code_example_validation to validator. 2. Extract code blocks from markdown (regex for ```language blocks). 3. For API docs: Query coderef-context for actual API endpoints, verify examples use real endpoints. 4. For COMPONENTS docs: Query for component props, verify examples show correct props. 5. Flag outdated examples as WARNING (-5 points each). 6. Optional: Suggest corrections based on .coderef/index.json data.",
+      "impact": "Catches outdated code examples. Improves doc accuracy. Reduces user confusion from incorrect examples."
+    },
+    {
+      "category": "standards",
+      "priority": "medium",
+      "suggestion": "Auto-generate pattern validation schemas from coderef_patterns output",
+      "rationale": "Standards docs (ui-patterns, behavior-patterns, etc.) document code patterns but validation is minimal. No verification that documented patterns match discovered patterns from coderef_patterns.",
+      "implementation_approach": "1. Add pattern_validation to StandardsDocValidator. 2. Call coderef_patterns tool for project. 3. Compare documented patterns in standards doc vs discovered patterns. 4. Flag missing patterns (discovered but not documented) as WARNING. 5. Flag obsolete patterns (documented but not found in code) as WARNING. 6. Suggest adding missing patterns to standards doc.",
+      "impact": "Ensures standards docs stay in sync with actual code patterns. Reduces pattern drift (docs diverging from reality)."
+    },
+    {
+      "category": "integration",
+      "priority": "medium",
+      "suggestion": "Create schema-template synchronization tool",
+      "rationale": "POWER framework templates live in coderef-docs/templates/power/. UDS schemas live in papertrail/schemas/documentation/. No sync mechanism - changes to templates don't update schemas, causing drift.",
+      "implementation_approach": "1. Create sync_schemas_from_templates tool in papertrail. 2. Parse POWER framework templates (Jinja2 files). 3. Extract required sections from template structure. 4. Auto-generate/update JSON schemas with required_sections arrays. 5. Run sync tool whenever templates change (manual or CI/CD). 6. Flag schema drift if templates updated but schemas not synced.",
+      "impact": "Eliminates schema-template drift. Ensures validation enforces actual template structure. Reduces maintenance burden (schemas auto-update from templates)."
+    },
+    {
+      "category": "user",
+      "priority": "medium",
+      "suggestion": "Add tutorial structure validation for user-facing docs",
+      "rationale": "Tutorial docs (doc_type='tutorial') should follow tutorial structure (Prerequisites, Steps, Verification, Next Steps) but no validation enforces this.",
+      "implementation_approach": "1. Extend user-facing-doc-frontmatter-schema.json with tutorial_sections. 2. If doc_type='tutorial', require sections: ['Prerequisites', 'Steps', 'Verification', 'Next Steps']. 3. For doc_type='guide', require: ['Overview', 'Getting Started', 'Examples']. 4. For doc_type='troubleshooting', require: ['Common Issues', 'Solutions']. 5. Validate section presence in UserFacingDocValidator.",
+      "impact": "Ensures consistent user doc structure. Improves user experience (predictable doc format)."
+    },
+    {
+      "category": "architecture",
+      "priority": "low",
+      "suggestion": "Add completeness percentage metric to validation results",
+      "rationale": "Current ValidationResult only has score (0-100) based on errors. No metric for completeness (e.g., 80% of components documented, 3/5 POWER sections present).",
+      "implementation_approach": "1. Add completeness field to ValidationResult. 2. For foundation docs: Calculate percentage of .coderef/index.json elements documented (e.g., 45/50 components = 90% complete). 3. For API docs: Calculate percentage of endpoints documented. 4. For standards docs: Calculate percentage of discovered patterns documented. 5. Return completeness alongside score in validation response.",
+      "impact": "Provides actionable metric for improving docs (\"Your API docs are 60% complete, document 12 more endpoints\"). Helps prioritize doc work."
+    },
+    {
+      "category": "integration",
+      "priority": "low",
+      "suggestion": "Create pre-commit hook template for automatic validation",
+      "rationale": "Validation currently on-demand. Users can commit non-compliant docs. Need automated validation in CI/CD.",
+      "implementation_approach": "1. Create .github/workflows/validate-docs.yml template. 2. On push/PR, run check_all_docs on changed files. 3. Fail CI if any doc has score < 90. 4. Create pre-commit hook script: .git/hooks/pre-commit calls validate_document on staged .md files. 5. Provide setup instructions in Papertrail README. 6. Optional: Auto-fix mode (hook auto-adds missing frontmatter fields before commit).",
+      "impact": "Prevents non-compliant docs from entering codebase. Enforces UDS compliance at source control level. Reduces manual validation burden."
+    }
+  ]
+}

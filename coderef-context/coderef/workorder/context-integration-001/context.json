@@ -1,0 +1,157 @@
+{
+  "workorder_id": "WO-CONTEXT-INTEGRATION-001",
+  "feature_name": "context-integration-001",
+  "source_session": "WO-DOCS-CONSOLIDATION-001",
+  "created": "2026-01-12",
+  "description": "Implement 7 enhancements to coderef-context MCP server identified in foundation docs consolidation review session. Focus: Better integration with coderef-docs, complete documentation, and expanded capabilities.",
+
+  "requirements": {
+    "P0_critical": [
+      {
+        "id": "P0-1",
+        "title": "Enhance SCHEMA.md with complete .coderef/ file format definitions",
+        "rationale": "Current SCHEMA.md is incomplete - doesn't document index.json, graph.json, context.json structures. Agents and users need this reference.",
+        "implementation": "Generate SCHEMA.md section for each .coderef/ file type with JSON schema, example data, field descriptions. Source from CodeRefReader class and actual .coderef/ samples.",
+        "success_criteria": [
+          "SCHEMA.md documents index.json structure (elements array, metadata fields)",
+          "SCHEMA.md documents graph.json structure (nodes, edges, relationships)",
+          "SCHEMA.md documents context.json structure (project overview fields)",
+          "Each schema includes: JSON schema definition, example data, field descriptions",
+          "SCHEMA.md references added for reports/ and diagrams/ outputs"
+        ],
+        "impact": "Clearer developer onboarding, easier debugging, reference documentation for coderef-docs integration"
+      },
+      {
+        "id": "P0-2",
+        "title": "Create INTEGRATION.md with coderef-docs usage examples",
+        "rationale": "No documented pattern for how coderef-docs should call coderef-context tools. This is blocking consolidation.",
+        "implementation": "Add INTEGRATION.md with code examples: (1) coderef-docs calls coderef_scan, (2) filters elements by type, (3) populates POWER templates. Include error handling for missing .coderef/.",
+        "success_criteria": [
+          "INTEGRATION.md created with Python code examples",
+          "Example 1: Calling coderef_scan and reading index.json",
+          "Example 2: Filtering elements by type (API endpoints, schemas, components)",
+          "Example 3: Using coderef_query for relationship analysis",
+          "Example 4: Error handling for missing .coderef/ data",
+          "Example 5: End-to-end workflow: scan → query → populate template"
+        ],
+        "impact": "Enables consolidation workflow, provides reference implementation, reduces integration friction"
+      }
+    ],
+
+    "P1_high": [
+      {
+        "id": "P1-1",
+        "title": "Add incremental scan support via drift detection",
+        "rationale": "Current workflow: full re-scan on every change (slow for large projects). Drift detection exists but not actionable.",
+        "implementation": "Enhance coderef_drift to return changed elements only. New tool: coderef_incremental_scan(project_path) - scans only drifted files, merges with index.json. Faster for incremental updates.",
+        "success_criteria": [
+          "coderef_drift returns list of changed files",
+          "coderef_incremental_scan tool added to MCP server",
+          "Incremental scan only processes drifted files",
+          "Results merged with existing index.json",
+          "10-100x faster refresh for small changes documented"
+        ],
+        "impact": "10-100x faster refresh for active development, reduces latency for agents calling scan during implementation"
+      },
+      {
+        "id": "P1-2",
+        "title": "Support Python code scanning (not just TypeScript)",
+        "rationale": "coderef-context is Python but CLI only scans TypeScript - index.json empty for itself. Limits self-documentation.",
+        "implementation": "Add Python AST scanner (use ast module) or integrate with external tool (pylint, mypy). Populate index.json with Python elements (functions, classes, methods).",
+        "success_criteria": [
+          "Python files scanned and added to index.json",
+          "Python functions, classes, methods extracted",
+          "coderef-context can scan itself (self-documenting)",
+          "index.json no longer empty for Python projects",
+          "Documentation updated with Python support"
+        ],
+        "impact": "Self-documenting server, complete coverage, enables Python project analysis"
+      }
+    ],
+
+    "P2_medium": [
+      {
+        "id": "P2-1",
+        "title": "Add quickref.md for coderef-context tools (cheat sheet)",
+        "rationale": "11 tools with different schemas - hard to remember. Quickref would help agents and users.",
+        "implementation": "Generate quickref.md with 1-line description + example call for each tool. Format: Tool | Purpose | Example Args. Auto-generate from tool schemas in server.py.",
+        "success_criteria": [
+          "quickref.md created with all 12 tools",
+          "Each tool has: name, 1-line purpose, example parameters",
+          "Organized by category (scan, query, analysis, export)",
+          "Auto-generated from server.py tool schemas",
+          "Easy copy-paste examples for common use cases"
+        ],
+        "impact": "Faster tool discovery, reduced cognitive load, easier onboarding"
+      },
+      {
+        "id": "P2-2",
+        "title": "Add generate_foundation_docs tool (auto-doc generation capability)",
+        "rationale": "coderef-context has all data needed (API endpoints, schemas, components from index.json) but no doc generation capability. Currently docs are manually written.",
+        "implementation": "New MCP tool: generate_foundation_docs(project_path, docs=['readme','api','schema','components']). Reads .coderef/index.json, groups by type, populates templates, writes to coderef/foundation-docs/.",
+        "success_criteria": [
+          "generate_foundation_docs tool added to MCP server",
+          "Accepts project_path and optional docs array",
+          "Reads index.json and groups elements by type",
+          "Populates templates (minimal - just lists, not full POWER framework)",
+          "Writes foundation docs to coderef/foundation-docs/ directory"
+        ],
+        "impact": "Automated foundation doc updates, consistency across projects, leverages existing .coderef/ data"
+      },
+      {
+        "id": "P2-3",
+        "title": "Validate .coderef/ outputs against schemas in Papertrail",
+        "rationale": "No validation of .coderef/ file formats - malformed data causes silent failures in consuming tools.",
+        "implementation": "Add JSON schemas for index.json, graph.json, context.json to Papertrail. New tool: validate_coderef_outputs(project_path) - calls Papertrail validation, reports errors.",
+        "success_criteria": [
+          "validate_coderef_outputs tool added",
+          "Calls Papertrail MCP validate_document for .coderef/ files",
+          "Reports validation errors with clear messages",
+          "Returns validation score (0-100)",
+          "Integration test: generate .coderef/ → validate → confirm pass"
+        ],
+        "impact": "Early error detection, better debugging, prevents downstream failures in coderef-docs/workflow"
+      }
+    ]
+  },
+
+  "technical_context": {
+    "current_implementation": "Read-only MCP server with 12 tools (v2.0 file reader, 117x faster than CLI). Reads pre-scanned .coderef/ files. Tools: scan, query, impact, complexity, patterns, coverage, context, validate, drift, diagram, tag, export.",
+    "current_quality": "High for API/ARCHITECTURE/COMPONENTS (manually written), Medium for SCHEMA (incomplete)",
+    "integration_gaps": "coderef-docs doesn't call coderef-context tools - only reads files. No integration examples. No self-scanning (Python not supported).",
+    "data_sources": ".coderef/index.json (primary), .coderef/graph.json (relationships), .coderef/reports/ (patterns, coverage, drift), .coderef/diagrams/ (mermaid/dot)"
+  },
+
+  "constraints": [
+    "Maintain backward compatibility - existing tools must continue working",
+    "No breaking changes to .coderef/ file formats",
+    "Performance: New features shouldn't slow down existing operations",
+    "Documentation: All new features must be documented in SCHEMA.md or INTEGRATION.md",
+    "Testing: Integration tests for new features required"
+  ],
+
+  "success_metrics": {
+    "documentation_quality": "SCHEMA.md complete with all .coderef/ formats + INTEGRATION.md with working examples",
+    "integration_success": "coderef-docs can successfully call coderef-context tools using INTEGRATION.md examples",
+    "performance": "Incremental scan 10x+ faster than full re-scan for small changes",
+    "coverage": "Python scanning enables self-documentation (index.json not empty)"
+  },
+
+  "deliverables": [
+    "Enhanced SCHEMA.md with .coderef/ file format definitions",
+    "New INTEGRATION.md with coderef-docs integration examples",
+    "coderef_incremental_scan tool implementation",
+    "Python code scanning support",
+    "quickref.md tool reference",
+    "generate_foundation_docs tool (optional - P2)",
+    "validate_coderef_outputs tool integration with Papertrail",
+    "Updated tests for all new features",
+    "DELIVERABLES.md with implementation metrics"
+  ],
+
+  "related_workorders": [
+    "WO-GENERATION-ENHANCEMENT-001 (coderef-docs) - Will consume INTEGRATION.md examples",
+    "WO-VALIDATION-ENHANCEMENT-001 (papertrail) - Will provide validation schemas for .coderef/ files",
+    "WO-DOCS-CONSOLIDATION-001 (session) - Source of all requirements"
+  ]
+}

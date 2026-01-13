@@ -1,0 +1,190 @@
+{
+  "agent_id": "coderef-docs",
+  "review_date": "2026-01-12",
+  "current_implementation": {
+    "tools_provided": [
+      "list_templates",
+      "get_template",
+      "generate_foundation_docs",
+      "generate_individual_doc",
+      "generate_quickref_interactive",
+      "generate_resource_sheet",
+      "add_changelog_entry",
+      "record_changes",
+      "establish_standards",
+      "audit_codebase",
+      "check_consistency",
+      "validate_document",
+      "check_document_health"
+    ],
+    "data_sources": [
+      ".coderef/index.json - Code elements inventory (functions, classes, components)",
+      ".coderef/context.md - Human-readable project summary",
+      ".coderef/context.json - Structured project overview",
+      ".coderef/graph.json - Dependency graph",
+      ".coderef/reports/patterns.json - Code patterns and conventions",
+      ".coderef/diagrams/ - Mermaid diagrams (dependencies, calls, imports)",
+      "POWER framework templates (8 templates in templates/power/)",
+      "Git repository (for changelog auto-detection via record_changes tool)",
+      "Project file scanning (for standards establishment)"
+    ],
+    "generation_approach": "Hybrid - Template-driven with .coderef/ data injection",
+    "strengths": [
+      "POWER framework provides consistent structure across all doc types",
+      "Sequential foundation doc generation (v3.2.0) eliminates timeout errors",
+      ".coderef/ integration (v3.5.0) reduces scan time from 5-60s to <50ms per file",
+      "Standards generator (v3.3.0) leverages .coderef/index.json for 10x performance boost",
+      "Agentic record_changes tool with git auto-detection reduces manual effort",
+      "Resource sheet generator (v3.4.0) provides composable module-based documentation",
+      "Comprehensive validation integration (v3.6.0 + v3.7.0) with Papertrail validators",
+      "13 specialized tools covering all documentation domains (foundation, user, standards, changelog)",
+      "Tool handlers architecture (tool_handlers.py) with decorators for logging and error handling",
+      "Backward compatibility maintained - graceful degradation when .coderef/ unavailable"
+    ],
+    "weaknesses": [
+      "Partial .coderef/ integration - only foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS) use pre-generated data",
+      "User docs (my-guide, user-guide, features, quickref) still template-only, no code intelligence",
+      "Standards docs (ui-patterns, behavior-patterns, ux-patterns) use .coderef/index.json but don't leverage full pattern analysis",
+      "Validation coverage only 72% (13/18 outputs) - user docs and resource sheets not validated",
+      "No direct MCP tool calls to coderef-context during doc generation - only file reads",
+      "Unclear tool naming - 3 tools for foundation docs (generate_foundation_docs, generate_individual_doc, coderef_foundation_docs)",
+      "Missing integration with coderef_patterns, coderef_complexity, coderef_coverage, coderef_impact tools",
+      "No auto-detection of documentation needs based on code complexity or coverage gaps",
+      "Resource sheet generator (v3.4.0) only 50% auto-fill rate in Phase 1",
+      "Documentation quality depends on .coderef/ freshness - no drift detection before generation"
+    ]
+  },
+  "output_quality_assessment": {
+    "foundation_docs": {
+      "README": "Medium-High - Uses context.md and patterns.json, but still relies on Claude to extract relevant data. Contains real project overview but may miss nuanced details. Sequential generation works well. Score: 75/100",
+      "ARCHITECTURE": "Medium - Uses context.json, graph.json, and diagrams/, but Claude must manually read and synthesize multiple files. Dependency diagrams help but no automatic architecture pattern detection. Score: 70/100",
+      "API": "Medium-Low - Filters index.json for endpoints/routes, but detection is regex-based not semantic. Misses complex API patterns, middleware chains, authentication flows. Score: 60/100",
+      "SCHEMA": "Medium - Filters index.json for models/entities with context.json for relationships. Basic schema documentation works but misses validation rules, constraints, migrations. Score: 65/100",
+      "COMPONENTS": "Medium - Filters index.json for UI components with patterns.json. Component list is accurate but missing props analysis, state management, event handlers. Score: 65/100"
+    },
+    "user_docs": {
+      "user_guide": "Low - Template-only, no code intelligence. Relies entirely on Claude filling placeholders with generic guidance. No real examples from codebase. Score: 40/100",
+      "my_guide": "Low - Template-only, no code intelligence. Similar to user_guide - generic guidance without project-specific details. Score: 40/100",
+      "quickref": "Medium - Interactive generator asks questions about app type (CLI, Web, API, Desktop, Library), but still template-driven. No automatic detection of common commands, shortcuts, workflows. Score: 55/100"
+    },
+    "standards_docs": {
+      "ui_patterns": "Medium - Uses .coderef/index.json to find component files (10x faster in v3.3.0), but pattern extraction is regex-based. Detects buttons, modals, forms but misses complex patterns like compound components, render props. Score: 60/100",
+      "behavior_patterns": "Medium - Detects error handling, loading states, toast notifications via regex. Misses state machine patterns, async workflows, data fetching strategies. Score: 55/100",
+      "ux_patterns": "Medium - Detects color schemes, theme systems, basic UX elements. Misses responsive design patterns, accessibility patterns, interaction flows. Score: 55/100",
+      "testing_patterns": "Low - Not currently generated. Placeholder in documentation but no implementation. Could leverage coderef_coverage and coderef_patterns. Score: 20/100"
+    },
+    "overall_quality": "Medium",
+    "key_issues": [
+      "Foundation docs use .coderef/ files but lack semantic analysis - Claude reads raw data and infers meaning",
+      "User docs completely template-driven - no code-driven content, all placeholders",
+      "Standards docs use basic regex patterns - miss complex architectural patterns",
+      "No validation for user docs (my-guide, user-guide, features, quickref) or resource sheets",
+      "Missing integration with coderef-context MCP tools (query, patterns, complexity, coverage, impact)",
+      "No automatic documentation priority based on code complexity or test coverage gaps",
+      "Resource sheets only 50% auto-filled - still requires significant manual completion",
+      "Documentation can become stale if .coderef/ data is outdated - no freshness check"
+    ]
+  },
+  "integration_analysis": {
+    "current_integration": "File-based .coderef/ integration for foundation docs only. Tools read pre-generated .coderef/ files (index.json, context.md, context.json, graph.json, patterns.json, diagrams/) during doc generation. Standards generator also reads .coderef/index.json for component discovery. No direct MCP tool calls to coderef-context. Integration is one-way: coderef-docs reads files but doesn't orchestrate coderef-context tools.",
+    "missing_integration": "Direct MCP tool orchestration with coderef-context. Currently tools only READ .coderef/ files. Missing: (1) coderef_query calls for relationship analysis, (2) coderef_patterns calls for pattern discovery, (3) coderef_complexity calls for documentation priority, (4) coderef_coverage calls for test gap identification, (5) coderef_impact calls for critical component detection. Also missing: user docs and standards docs don't leverage .coderef/ data at all.",
+    "ideal_dependency_chain": "Step 1: User runs coderef_scan to generate .coderef/ structure (all 16 outputs). Step 2: coderef-docs checks .coderef/ freshness via coderef_drift. Step 3: For foundation docs - read .coderef/ files + call coderef_query for relationship analysis + call coderef_patterns for convention detection. Step 4: For user docs - call coderef_query to find common workflows + use patterns.json for examples + extract real commands from code. Step 5: For standards docs - call coderef_patterns (not just read patterns.json) + call coderef_complexity to prioritize patterns by usage + validate patterns across codebase. Step 6: For all docs - call coderef_coverage to identify documentation gaps + call coderef_impact to prioritize critical components. Step 7: Validate output with Papertrail validators. Step 8: Write documentation with UDS metadata.",
+    "coderef_tools_to_leverage": {
+      "coderef_query": "Extract API endpoint dependencies (what calls this route?), component usage (what imports this component?), data flow (what depends on this schema?). Use for ARCHITECTURE.md dependency diagrams, API.md endpoint relationships, COMPONENTS.md usage examples. Query types: calls, calls-me, imports, imports-me, depends-on, depends-on-me.",
+      "coderef_patterns": "Discover UI patterns (compound components, render props, hooks patterns), API patterns (REST conventions, error handling, middleware chains), architecture patterns (layering, separation of concerns), testing patterns (test structure, mocking strategies). Use for standards docs generation - not just regex detection but semantic pattern recognition. Output: pattern frequency, usage locations, consistency violations.",
+      "coderef_complexity": "Identify complex components that need detailed documentation. Complexity metrics: cyclomatic complexity, cognitive complexity, nesting depth, parameter count. Use to prioritize documentation effort - high complexity components get detailed COMPONENTS.md entries, quickref examples, architecture diagrams. Auto-flag components with complexity > threshold for mandatory documentation.",
+      "coderef_coverage": "Identify test coverage gaps and use in documentation. Show coverage % in COMPONENTS.md component tables, flag untested functions in API.md, suggest test examples in quickref for low-coverage areas. Integration: read .coderef/reports/coverage.json during doc generation, highlight coverage gaps in generated docs, suggest documentation additions for untested code paths.",
+      "coderef_impact": "Analyze component criticality for documentation focus. Impact analysis identifies: (1) highly-coupled components (many dependents), (2) foundational utilities (widely imported), (3) breaking change risks (refactoring this breaks what?). Use to prioritize: README.md features section (highlight high-impact features), ARCHITECTURE.md (document critical components first), API.md (prioritize widely-used endpoints). Operation types: modify, delete, refactor."
+    }
+  },
+  "improvement_suggestions": [
+    {
+      "category": "foundation",
+      "priority": "high",
+      "suggestion": "Upgrade foundation docs to use coderef_query for relationship analysis",
+      "rationale": "Current implementation reads .coderef/ files but Claude manually infers relationships. Direct coderef_query calls would provide accurate dependency graphs, call chains, import relationships for ARCHITECTURE.md and API.md.",
+      "implementation_approach": "Modify handle_generate_foundation_docs and handle_generate_individual_doc to call coderef_query MCP tool. For ARCHITECTURE template: query depends-on and depends-on-me for all major components. For API template: query calls and calls-me for each endpoint. For COMPONENTS template: query imports-me to show usage examples. Add query results to template context alongside .coderef/ files.",
+      "impact": "Foundation docs accuracy increases from 70% to 85%+. Real dependency data replaces manual inference. Automatic detection of breaking changes, critical paths, circular dependencies."
+    },
+    {
+      "category": "user",
+      "priority": "high",
+      "suggestion": "Integrate .coderef/ data into user docs generation (my-guide, user-guide, features, quickref)",
+      "rationale": "User docs are currently 100% template-driven with no code intelligence. They contain generic placeholders instead of real project-specific examples. Adding .coderef/ integration would provide: real CLI commands from code, actual API endpoints, working code examples, project-specific workflows.",
+      "implementation_approach": "Step 1: Read .coderef/index.json to extract CLI entry points, API routes, main features. Step 2: Use patterns.json to identify common usage patterns. Step 3: Call coderef_query to find typical workflows (what functions call each other in sequence?). Step 4: Generate user-guide with real examples. Step 5: Generate quickref with actual commands/shortcuts from code. Step 6: Generate features list from high-level components in index.json.",
+      "impact": "User docs quality increases from 40-55% to 75%+. Real examples replace placeholders. Docs auto-update when code changes. Reduces manual documentation effort by 60%."
+    },
+    {
+      "category": "standards",
+      "priority": "high",
+      "suggestion": "Replace regex-based pattern detection with coderef_patterns MCP tool calls",
+      "rationale": "Current standards generator uses regex patterns (button detection, modal detection, error handling regex) which miss complex patterns and produce false positives. coderef_patterns tool provides semantic pattern recognition with AST analysis, pattern frequency, consistency checking.",
+      "implementation_approach": "Refactor establish_standards handler: (1) Remove regex pattern matching from StandardsGenerator class, (2) Call coderef_patterns MCP tool with project_path, (3) Process returned patterns (UI patterns, API patterns, architecture patterns, testing patterns), (4) Generate standards docs with pattern frequency, usage locations, consistency violations, (5) Add recommendations for pattern unification where inconsistencies found.",
+      "impact": "Standards docs quality increases from 55-60% to 80%+. Semantic patterns replace regex heuristics. Automatic consistency violation detection. Pattern usage frequency analysis enables evidence-based standards."
+    },
+    {
+      "category": "integration",
+      "priority": "high",
+      "suggestion": "Add coderef_complexity integration for documentation priority",
+      "rationale": "Currently all components/functions documented equally. High-complexity code needs detailed docs, simple code needs minimal docs. coderef_complexity tool identifies complex code that needs documentation focus.",
+      "implementation_approach": "Before generating foundation docs: (1) Call coderef_complexity for all components/functions in index.json, (2) Sort by complexity score (cyclomatic, cognitive), (3) Flag complexity > 10 as 'detailed docs required', (4) Generate COMPONENTS.md with complexity-based ordering (complex first), (5) Add complexity badges in documentation (🟢 simple, 🟡 moderate, 🔴 complex), (6) Auto-generate 'needs detailed examples' markers for high complexity.",
+      "impact": "Documentation effort focuses on high-value targets. Complex code gets thorough docs, simple code gets basic docs. Automatic documentation priority reduces manual triage by 70%."
+    },
+    {
+      "category": "integration",
+      "priority": "medium",
+      "suggestion": "Add coderef_coverage integration for test gap identification",
+      "rationale": "Documentation should highlight test coverage gaps to guide developers. Current docs don't show which features are tested vs untested.",
+      "implementation_approach": "During doc generation: (1) Read .coderef/reports/coverage.json, (2) For each component/function in documentation, add coverage badge (✅ >80%, ⚠️ 50-80%, ❌ <50%), (3) In quickref, prioritize examples for low-coverage areas, (4) In COMPONENTS.md, flag untested components with 'No tests - contributions welcome', (5) In API.md, show endpoint coverage % in tables.",
+      "impact": "Documentation drives testing improvements. Developers see coverage gaps at documentation time. Contributions guided toward untested areas. Integration between docs and testing creates feedback loop."
+    },
+    {
+      "category": "integration",
+      "priority": "medium",
+      "suggestion": "Add coderef_impact integration for critical component detection",
+      "rationale": "Not all components are equally important. High-impact components (widely used, many dependents) deserve prominent documentation. Low-impact utilities can be documented minimally.",
+      "implementation_approach": "Before generating docs: (1) Call coderef_impact with operation=modify for all major components, (2) Sort components by impact score (number of dependents, breaking change risk), (3) Prioritize high-impact components in README.md features section, (4) In ARCHITECTURE.md, lead with critical components, (5) Add impact badges (🔴 critical, 🟡 important, 🟢 utility), (6) Generate 'Breaking Change Risk' warnings for high-impact components.",
+      "impact": "Documentation reflects component importance. Critical components documented first and thoroughly. README features section shows high-impact functionality. Developers understand breaking change risks before refactoring."
+    },
+    {
+      "category": "foundation",
+      "priority": "medium",
+      "suggestion": "Add drift detection before doc generation",
+      "rationale": "Documentation can become stale if .coderef/ data is outdated. Currently no freshness check before generating docs. Users may generate docs from old scan data and get inaccurate documentation.",
+      "implementation_approach": "At start of generate_foundation_docs: (1) Call coderef_drift with index_path=.coderef/index.json, (2) If drift > 10%, warn user: 'Index is X% stale. Re-run coderef_scan for accurate docs? (Y/n)', (3) If user confirms, exit with 'Please run coderef_scan first', (4) If user declines, add disclaimer to generated docs: 'Generated from potentially stale data (X% drift detected)', (5) Track drift in UDS metadata.",
+      "impact": "Documentation accuracy guaranteed. Users alerted to stale data before generation. Docs include freshness metadata. Trust in generated documentation increases."
+    },
+    {
+      "category": "standards",
+      "priority": "medium",
+      "suggestion": "Implement testing-patterns standard doc generation",
+      "rationale": "Testing patterns standard is documented in scope but not implemented (score: 20/100). Tests are code too and have patterns: test structure, mocking strategies, assertion styles, fixture patterns.",
+      "implementation_approach": "Create testing_patterns standard generator: (1) Call coderef_patterns with focus on test files, (2) Detect patterns: test structure (describe/it vs test/expect), mocking (jest.mock vs sinon), assertions (expect vs assert), fixtures (beforeEach vs factory functions), (3) Analyze test coverage patterns (integration vs unit test ratio), (4) Generate testing-patterns.md with discovered conventions, (5) Validate with Papertrail testing-patterns validator.",
+      "impact": "Complete standards coverage (4/4 instead of 3/4). Testing conventions documented and enforced. New developers follow established test patterns. Consistency in test code improves."
+    },
+    {
+      "category": "user",
+      "priority": "medium",
+      "suggestion": "Extend validation coverage to user docs and resource sheets",
+      "rationale": "Validation coverage currently 72% (13/18 outputs). User docs (my-guide, user-guide, features, quickref) and resource sheets not validated. This creates quality inconsistency - foundation docs validated, user docs not validated.",
+      "implementation_approach": "Phase 1: Create Papertrail validators for user doc types (UserGuideValidator, QuickrefValidator, FeaturesValidator). Phase 2: Update tool_handlers.py to include validation blocks for generate_quickref_interactive and user doc generation. Phase 3: Create ResourceSheetValidator for generate_resource_sheet outputs. Phase 4: Add validation to UDS metadata for all doc types. Target: 100% validation coverage (18/18).",
+      "impact": "Quality consistency across all documentation types. User docs held to same standards as foundation docs. Validation scores in UDS metadata enable quality tracking. Automatic quality gates prevent low-quality docs."
+    },
+    {
+      "category": "architecture",
+      "priority": "low",
+      "suggestion": "Consolidate foundation doc tools (3 tools → 1 unified tool)",
+      "rationale": "Currently 3 tools for foundation docs: generate_foundation_docs, generate_individual_doc, coderef_foundation_docs. User confusion about which to use. Maintenance burden across multiple implementations.",
+      "implementation_approach": "Step 1: Keep generate_foundation_docs as primary tool. Step 2: Deprecate coderef_foundation_docs with redirect to generate_foundation_docs. Step 3: Make generate_individual_doc internal-only (called by generate_foundation_docs, not exposed to users). Step 4: Update slash commands to use generate_foundation_docs. Step 5: Add deprecation warnings for 2 versions, then remove in v4.0.",
+      "impact": "Single source of truth for foundation docs. Reduced user confusion. Simplified maintenance. Clear migration path. Breaking change managed with deprecation warnings."
+    },
+    {
+      "category": "integration",
+      "priority": "low",
+      "suggestion": "Add coderef-context health check at tool initialization",
+      "rationale": "Tools assume coderef-context MCP is available but don't verify. If coderef-context unavailable, tools fail mid-generation with unclear errors. Better to fail fast with clear message.",
+      "implementation_approach": "At server startup (server.py initialization): (1) Try to call coderef_scan with minimal test, (2) If available, set CODEREF_CONTEXT_AVAILABLE=True, (3) If unavailable, set CODEREF_CONTEXT_AVAILABLE=False and log warning, (4) Tool handlers check flag before attempting coderef calls, (5) If unavailable, return clear error: 'coderef-context MCP not available. Install at: [link]'.",
+      "impact": "Better error messages for missing dependencies. Users know immediately if coderef-context required. Graceful degradation possible for template-only mode. Reduced troubleshooting time."
+    }
+  ]
+}

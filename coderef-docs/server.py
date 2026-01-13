@@ -143,6 +143,36 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
+            name="coderef_foundation_docs",
+            description="Unified foundation docs generator powered by coderef analysis. Automatically generates ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md (UI projects), API.md, and project-context.json with real code intelligence.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project directory"
+                    },
+                    "include_components": {
+                        "type": "boolean",
+                        "description": "Generate COMPONENTS.md (None = auto-detect UI project)"
+                    },
+                    "deep_extraction": {
+                        "type": "boolean",
+                        "description": "Enable deep extraction from existing docs (vs shallow preview). Default: true"
+                    },
+                    "use_coderef": {
+                        "type": "boolean",
+                        "description": "DEPRECATED - Always False, kept for backward compatibility. Default: false"
+                    },
+                    "force_regenerate": {
+                        "type": "boolean",
+                        "description": "Regenerate all docs even if they already exist. Default: false"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
             name="add_changelog_entry",
             description="Add a new entry to the project changelog. Requires all change details including version, type, title, description, files, reason, and impact.",
             inputSchema={

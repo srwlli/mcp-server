@@ -1,0 +1,25 @@
+{
+  "workorder_id": "WO-GENERATION-ENHANCEMENT-001",
+  "feature_name": "generation-enhancement-001",
+  "created": "2026-01-12",
+  "status": "pending_plan",
+  "description": "Transform doc generation from hybrid (template + file reads) to full tool orchestration (template + MCP calls). Target: Foundation 70%→85%, User 40%→75%, Standards 55%→80%",
+
+  "handoff": {
+    "from": "orchestrator",
+    "to": "coderef-docs agent",
+    "instructions": "Review context.json for detailed requirements. Run /create-plan to generate implementation plan covering all 7 changes (2 P0, 3 P1, 2 P2). P0-1 (coderef-context orchestration) depends on WO-CONTEXT-INTEGRATION-001 INTEGRATION.md. P0-2 (Papertrail validation) depends on WO-VALIDATION-ENHANCEMENT-001. May need to coordinate timing.",
+    "priority": "P0 critical - Foundation docs consolidation depends on this",
+    "dependencies": ["WO-CONTEXT-INTEGRATION-001 (INTEGRATION.md examples)", "WO-VALIDATION-ENHANCEMENT-001 (POWER framework schemas)"],
+    "status": "pending_plan"
+  },
+
+  "communication_log": [
+    {
+      "timestamp": "2026-01-12T00:00:00Z",
+      "from": "orchestrator",
+      "message": "Workorder created from WO-DOCS-CONSOLIDATION-001 session findings. coderef-docs agent identified critical gap: reads .coderef/ files but doesn't call MCP tools. 7 enhancements needed to achieve code-driven documentation. P0-1 adds tool orchestration. P0-2 integrates validation. Quality targets: Foundation 85%, User 75%, Standards 80%.",
+      "phase": "planning"
+    }
+  ]
+}

@@ -1,0 +1,645 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "2.0.0",
+    "workorder_id": "WO-GENERATION-ENHANCEMENT-001",
+    "feature_name": "generation-enhancement-001",
+    "created": "2026-01-12",
+    "status": "planning_complete",
+    "source_session": "WO-DOCS-CONSOLIDATION-001",
+    "_uds": {
+      "generated_by": "coderef-workflow v1.7.0",
+      "document_type": "Implementation Plan",
+      "workorder_id": "WO-GENERATION-ENHANCEMENT-001",
+      "feature_id": "generation-enhancement-001",
+      "last_updated": "2026-01-12",
+      "ai_assistance": true,
+      "status": "DRAFT",
+      "next_review": "2026-02-11"
+    }
+  },
+
+  "UNIVERSAL_PLANNING_STRUCTURE": {
+
+  "0_preparation": {
+    "foundation_docs": {
+      "available": [
+        "README.md - coderef-docs overview and tool catalog",
+        "CLAUDE.md - AI context documentation (v3.7.0)",
+        "ARCHITECTURE.md - Not found (missing)",
+        "API.md - Not found (missing)"
+      ],
+      "missing": [
+        "ARCHITECTURE.md - Would help understand MCP tool handler architecture",
+        "API.md - Would document tool schemas and integration patterns"
+      ]
+    },
+    "coding_standards": {
+      "available": [
+        "POWER framework templates (templates/power/*.txt)",
+        "Tool handler patterns (tool_handlers.py with decorators)",
+        "Error handling (error_responses.py - ErrorResponse factory)",
+        "Validation patterns (validation.py - input validation at boundaries)",
+        "Logging standards (logger_config.py - structured logging)"
+      ],
+      "missing": [
+        "Testing standards (inferred from existing tests/)",
+        "MCP integration patterns (will create INTEGRATION.md examples as part of this workorder)"
+      ]
+    },
+    "reference_components": {
+      "primary": "handle_generate_foundation_docs (tool_handlers.py:128-242) - Primary target for P0-1 coderef-context orchestration",
+      "secondary": [
+        "handle_establish_standards (tool_handlers.py:766-878) - Example of .coderef/ integration, target for P1-3 coderef_patterns upgrade",
+        "handle_record_changes (tool_handlers.py:558-700) - Example of agentic tool with git auto-detection",
+        "StandardsGenerator (generators/standards_generator.py) - Target for P1-3 regex replacement",
+        "mcp_integration.py - .coderef/ integration helpers, needs MCP tool orchestration upgrade"
+      ]
+    },
+    "key_patterns_identified": [
+      "All handlers: @log_invocation → @mcp_error_handler → validate inputs → work → return TextContent → automatic error handling",
+      "Sequential generation (v3.2.0): generate_foundation_docs calls generate_individual_doc 5 times to avoid timeout",
+      ".coderef/ file reads (v3.5.0): check_coderef_resources → get_template_context_files → Claude reads files → populate templates",
+      "Validation integration (v3.6.0 + v3.7.0): PAPERTRAIL_ENABLED flag → validation instructions in tool output → Claude executes validation",
+      "All types named [Feature]ResultDict (type_defs.py) for consistent return types"
+    ],
+    "technology_stack": {
+      "languages": ["Python 3.10+"],
+      "frameworks": ["MCP SDK 1.0+", "POWER framework (custom doc templates)"],
+      "key_libraries": [
+        "mcp@1.0+ - MCP protocol",
+        "jsonschema@4.0+ - JSON validation",
+        "pytest@8.0+ - Testing",
+        "pathlib - File operations"
+      ],
+      "mcp_dependencies": [
+        "coderef-context MCP - Code intelligence (scan, query, patterns, complexity, coverage, impact, drift)",
+        "papertrail MCP - UDS validation (validate_document, validate_resource_sheet)"
+      ]
+    },
+    "gaps_and_risks": [
+      "P0-1 depends on WO-CONTEXT-INTEGRATION-001 (coderef-context) completing INTEGRATION.md with MCP call examples",
+      "P0-2 depends on WO-VALIDATION-ENHANCEMENT-001 (papertrail) completing POWER framework schemas",
+      "No ARCHITECTURE.md - will infer handler architecture from existing code",
+      "Validation integration changed from instruction-based to dual-pattern (v3.7.0) - need to understand both approaches",
+      "Tool consolidation (P2-1) is breaking change - needs careful deprecation warnings"
+    ]
+  },
+
+  "1_executive_summary": {
+    "purpose": "Transform coderef-docs from hybrid documentation generation (template + file reads) to full tool orchestration (template + MCP calls) to achieve code-driven documentation with 85%+ accuracy for foundation docs, 75%+ for user docs, and 80%+ for standards docs",
+    "value_proposition": [
+      "Foundation doc accuracy increases from 70% to 85%+ through direct coderef-context MCP tool calls (query, patterns, complexity, coverage, impact) instead of manual file reading and inference",
+      "User docs become code-driven (40%→75% quality) by extracting real CLI commands, API endpoints, and workflows from .coderef/ data instead of generic placeholders",
+      "Standards docs use semantic pattern analysis (55%→80% quality) via coderef_patterns MCP tool instead of error-prone regex detection",
+      "100% validation coverage (up from 72%) with automatic Papertrail integration ensures all generated docs are UDS-compliant by default"
+    ],
+    "real_world_analogy": "Like upgrading from a GPS that only shows a static map (file reads) to one that provides real-time traffic data and route optimization (MCP tool orchestration). The map shows roads, but real-time data reveals fastest routes, construction locations, and suggests better alternatives based on current conditions.",
+    "use_case": "User runs /generate-docs → coderef-docs checks .coderef/ freshness via drift detection → calls coderef_query for dependency analysis → calls coderef_patterns for code conventions → calls coderef_complexity to prioritize components → calls coderef_coverage to identify test gaps → calls coderef_impact to highlight critical components → generates README/ARCHITECTURE/API/COMPONENTS/SCHEMA with real code intelligence → automatically validates via Papertrail → returns docs with 85%+ accuracy and UDS compliance",
+    "output": [
+      "Enhanced generate_foundation_docs tool with 5 coderef-context MCP tool integrations (query, patterns, complexity, coverage, impact)",
+      "Papertrail validation integration in all 13 doc generation tools (auto_validate parameter, score threshold enforcement)",
+      "Drift detection system to prevent stale documentation generation",
+      "User doc generators upgraded with .coderef/ data extraction",
+      "Standards generator refactored from regex to coderef_patterns semantic analysis",
+      "Consolidated foundation doc tool API (3 tools → 1 with deprecation warnings)",
+      "coderef-context health check at server startup",
+      "INTEGRATION.md examples showing how to call each coderef-context MCP tool",
+      "Updated tests covering all new MCP orchestration features",
+      "DELIVERABLES.md tracking quality improvements (before/after metrics)"
+    ]
+  },
+
+  "2_risk_assessment": {
+    "overall_risk": "high",
+    "complexity": "very_high (40+ files affected across tool_handlers.py, mcp_integration.py, all generators, all 13 tool schemas in server.py, ~2500 lines of code changes, new MCP orchestration patterns)",
+    "scope": "Large - 40+ files, all 13 tools must be upgraded with MCP orchestration and validation integration, breaking changes for tool consolidation (P2-1)",
+    "file_system_risk": "medium (reads/writes .coderef/ files, generates documentation files, validates with Papertrail, calls external MCP services)",
+    "dependencies": [
+      "coderef-context MCP@2.0+ - Must be installed and operational for tool orchestration",
+      "papertrail MCP@1.0+ - Must be available for validation integration",
+      "WO-CONTEXT-INTEGRATION-001 - Blocks P0-1 until INTEGRATION.md examples complete",
+      "WO-VALIDATION-ENHANCEMENT-001 - Blocks P0-2 until POWER framework schemas complete",
+      "Python 3.10+, mcp@1.0+, jsonschema@4.0+, pytest@8.0+"
+    ],
+    "performance_concerns": [
+      "MCP tool orchestration adds network overhead - each coderef_query/patterns/complexity call is a separate MCP request (~50-200ms per call)",
+      "Foundation doc generation may increase from <5 seconds to ~10-15 seconds due to multiple sequential MCP calls (query for each component, patterns for conventions, complexity for prioritization)",
+      "Mitigation: Cache MCP responses within single doc generation run, parallelize independent calls where possible",
+      "Drift detection adds ~50ms overhead but prevents generating from stale data (acceptable trade-off)"
+    ],
+    "security_considerations": [
+      "MCP tool calls to coderef-context are local (no remote API), low security risk",
+      "Validation with Papertrail is also local MCP call",
+      "Input validation still required at tool boundaries (validate_project_path_input, validate_template_name_input) to prevent directory traversal",
+      "No new secrets or credentials introduced"
+    ],
+    "breaking_changes": "minor for most tools (new parameters are optional with defaults), major for P2-1 tool consolidation (coderef_foundation_docs deprecated, generate_individual_doc becomes internal-only). Breaking changes managed with: (1) Deprecation warnings for 2 versions, (2) Migration guide in README, (3) Slash commands updated to use new unified tool, (4) Old tools redirect with warnings before removal in v4.0"
+  },
+
+  "3_current_state_analysis": {
+    "affected_files": [
+      "MODIFIED: tool_handlers.py:128-242 - handle_generate_foundation_docs upgraded with coderef-context MCP orchestration (P0-1)",
+      "MODIFIED: tool_handlers.py:243-400 - handle_generate_individual_doc upgraded with coderef-context calls and Papertrail validation (P0-1, P0-2)",
+      "MODIFIED: tool_handlers.py:766-878 - handle_establish_standards upgraded from regex to coderef_patterns MCP tool (P1-3)",
+      "MODIFIED: tool_handlers.py:701-765 - handle_generate_quickref_interactive upgraded with .coderef/ data (P1-2)",
+      "MODIFIED: tool_handlers.py - Add auto_validate parameter to all 13 tool handlers (P0-2)",
+      "MODIFIED: tool_handlers.py - Add drift detection to foundation doc handlers (P1-1)",
+      "MODIFIED: tool_handlers.py:1349-1400 - handle_coderef_foundation_docs deprecated with redirect (P2-1)",
+      "MODIFIED: mcp_integration.py - Upgrade from file reads to MCP tool orchestration patterns",
+      "NEW: mcp_integration.py:add_mcp_orchestration_helpers() - Functions for calling coderef_query, coderef_patterns, coderef_complexity, coderef_coverage, coderef_impact",
+      "MODIFIED: generators/standards_generator.py - Remove regex patterns, integrate coderef_patterns MCP tool (P1-3)",
+      "MODIFIED: generators/quickref_generator.py - Add .coderef/ data extraction for CLI commands, API endpoints (P1-2)",
+      "MODIFIED: generators/foundation_generator.py - If used, upgrade with MCP orchestration (P0-1)",
+      "MODIFIED: server.py - Add coderef-context health check at startup (P2-2)",
+      "MODIFIED: server.py - Add auto_validate parameter to all tool schemas (P0-2)",
+      "MODIFIED: server.py - Update generate_individual_doc schema to mark internal-only (P2-1)",
+      "MODIFIED: constants.py - Add CODEREF_CONTEXT_AVAILABLE flag, validation thresholds",
+      "MODIFIED: validation.py - Add validate_drift_threshold, validate_auto_validate_flag if needed",
+      "NEW: generators/mcp_orchestrator.py - Centralized MCP tool calling logic (query, patterns, complexity, coverage, impact, drift)",
+      "MODIFIED: type_defs.py - Add MCPQueryResultDict, MCPPatternsResultDict, DriftCheckResultDict types",
+      "NEW: tests/test_mcp_orchestration.py - Tests for MCP tool calling (query, patterns, complexity, coverage, impact)",
+      "NEW: tests/test_validation_integration.py - Tests for Papertrail auto-validation",
+      "NEW: tests/test_drift_detection.py - Tests for drift detection before generation",
+      "MODIFIED: tests/test_tool_handlers.py - Update all handler tests for new parameters (auto_validate, drift checks)",
+      "NEW: docs/INTEGRATION.md - Examples showing how to call each coderef-context MCP tool from doc generation",
+      "MODIFIED: README.md - Update tool catalog with new capabilities (MCP orchestration, validation integration)",
+      "MODIFIED: CLAUDE.md - Add v4.0.0 section documenting this enhancement (WO-GENERATION-ENHANCEMENT-001)",
+      "MODIFIED: .claude/commands/generate-docs.md - Update to reflect MCP orchestration features",
+      "MODIFIED: .claude/commands/establish-standards.md - Update for coderef_patterns integration",
+      "NEW: coderef/workorder/generation-enhancement-001/DELIVERABLES.md - Track before/after quality metrics"
+    ],
+    "dependencies": {
+      "existing_internal": [
+        "FoundationGenerator (generators/foundation_generator.py) - May need MCP orchestration upgrade",
+        "StandardsGenerator (generators/standards_generator.py) - Refactor from regex to MCP patterns",
+        "QuickrefGenerator (generators/quickref_generator.py) - Add .coderef/ data extraction",
+        "mcp_integration.py - Upgrade from file reads to MCP orchestration",
+        "Tool handler decorators (@log_invocation, @mcp_error_handler) - Reused for new handlers",
+        "Validation helpers (validation.py) - Add new validation functions",
+        "Type definitions (type_defs.py) - Add new result types for MCP responses"
+      ],
+      "existing_external": [
+        "mcp@1.0+ - MCP protocol SDK",
+        "jsonschema@4.0+ - JSON validation",
+        "pytest@8.0+ - Testing framework",
+        "Python 3.10+ standard library (pathlib, json, datetime)"
+      ],
+      "new_external": [
+        "None - All dependencies already present or are MCP services (coderef-context, papertrail)"
+      ],
+      "new_internal": [
+        "mcp_orchestrator.py - Centralized MCP tool calling logic",
+        "MCPQueryResultDict, MCPPatternsResultDict, DriftCheckResultDict - New type definitions",
+        "Health check logic in server.py startup"
+      ]
+    },
+    "architecture_context": "MCP server architecture with stateless tool handlers. Current pattern: handlers read .coderef/ files directly. New pattern: handlers orchestrate coderef-context MCP tools for semantic analysis. Architecture layers: (1) Tool handlers (tool_handlers.py) - Entry points with validation, (2) Generators (generators/*.py) - Business logic for doc generation, (3) MCP orchestrator (NEW: mcp_orchestrator.py) - Centralized MCP tool calling, (4) Templates (templates/power/*.txt) - POWER framework doc structure. Integration points: (1) coderef-context MCP for code intelligence (query, patterns, complexity, coverage, impact, drift), (2) Papertrail MCP for validation (validate_document). Backward compatibility: graceful degradation if coderef-context unavailable (health check sets flag, handlers fallback to file-only mode with warning)."
+  },
+
+  "4_key_features": {
+    "primary_features": [
+      "P0-1: coderef-context MCP tool orchestration in generate_foundation_docs - Calls coderef_query for dependency analysis (depends-on, calls, imports relationships), coderef_patterns for code conventions, coderef_complexity for component prioritization, coderef_coverage for test gap identification, coderef_impact for critical component detection",
+      "P0-2: Papertrail validation integration - auto_validate parameter (default: true) in all 13 doc generation tools, automatic validate_document call after generation, score >= 90 threshold enforcement, auto-fix for missing frontmatter, validation result in tool response",
+      "P1-1: Drift detection before doc generation - Calls coderef_drift at start of generate_foundation_docs, warns user if drift > 10%, allows exit for re-scan or continue with disclaimer, tracks drift % in UDS metadata",
+      "P1-2: User docs upgraded with .coderef/ data - Reads index.json for CLI entry points, API routes, main features, uses patterns.json for usage examples, calls coderef_query for workflow discovery, generates real examples instead of placeholders",
+      "P1-3: Standards docs upgraded with coderef_patterns - Replaces regex pattern matching with semantic coderef_patterns MCP tool, provides pattern frequency, usage locations, consistency violations, recommendations for unification"
+    ],
+    "secondary_features": [
+      "P2-1: Tool consolidation - generate_foundation_docs becomes single public API, coderef_foundation_docs deprecated with redirect, generate_individual_doc marked internal-only, slash commands updated, migration guide created",
+      "P2-2: coderef-context health check - Runs at server startup, sets CODEREF_CONTEXT_AVAILABLE flag, tool handlers check flag before MCP calls, clear error if unavailable with installation instructions, graceful degradation to template-only mode",
+      "INTEGRATION.md examples - Documents how to call each coderef-context MCP tool (query, patterns, complexity, coverage, impact, drift) with request/response examples for future tool developers"
+    ],
+    "edge_case_handling": [
+      ".coderef/ directory missing - Drift detection fails gracefully with error: 'Run coderef_scan first to generate .coderef/ structure'",
+      "coderef-context MCP unavailable - Health check detects at startup, tool handlers return clear error with installation link instead of mid-generation failure",
+      "Papertrail MCP unavailable - auto_validate degrades gracefully (generates docs without validation, logs warning)",
+      "Validation score < 90 - Tool returns validation errors, optionally attempts auto-fix (add missing frontmatter), user can force write with auto_validate=false",
+      "Drift > 50% - Additional strong warning: 'Index severely stale (X% drift). Docs will be highly inaccurate without re-scan'",
+      "Multiple sequential MCP calls timeout - Implement timeout handling with partial results, provide progress indicators"
+    ],
+    "configuration_options": [
+      "auto_validate (bool, default: true) - Enable/disable automatic Papertrail validation",
+      "validation_threshold (int, default: 90) - Minimum score required to write docs",
+      "drift_threshold (int, default: 10) - Drift % that triggers user warning",
+      "allow_stale_docs (bool, default: false) - Allow doc generation even with high drift",
+      "mcp_timeout_ms (int, default: 30000) - Timeout for individual MCP tool calls"
+    ]
+  },
+
+  "5_task_id_system": {
+    "prefixes": {
+      "SETUP": "Initial setup, health checks, configuration (4 tasks)",
+      "ORCH": "MCP orchestration infrastructure (8 tasks)",
+      "VALIDATE": "Papertrail validation integration (6 tasks)",
+      "DRIFT": "Drift detection implementation (4 tasks)",
+      "FOUNDATION": "Foundation docs MCP upgrade (6 tasks)",
+      "USER": "User docs .coderef/ integration (5 tasks)",
+      "STANDARDS": "Standards docs coderef_patterns upgrade (5 tasks)",
+      "CONSOLIDATE": "Tool consolidation (4 tasks)",
+      "TEST": "Testing all new features (10 tasks)",
+      "DOC": "Documentation updates (4 tasks)"
+    },
+    "format": "PREFIX-NNN (e.g., SETUP-001, ORCH-002)",
+    "task_description_rules": {
+      "start_with_imperative_verb": "Create, Add, Implement, Update, Refactor, Write",
+      "be_specific": "Include file name, function name, line range if applicable",
+      "be_testable": "Clear completion criteria (e.g., 'Returns X when Y')",
+      "minimum_length": "20 words for quality and completeness"
+    },
+    "example_good": "ORCH-001: Create mcp_orchestrator.py with call_coderef_query() function that takes project_path, query_type, target and returns structured query results with error handling for MCP unavailable",
+    "example_bad": "ORCH-001: Add MCP calls"
+  },
+
+  "6_implementation_phases": {
+    "phase_1_foundation": {
+      "title": "Phase 1: Foundation - MCP Orchestration Infrastructure",
+      "purpose": "Build centralized MCP orchestration layer before upgrading individual tools. Create mcp_orchestrator.py with functions for calling all coderef-context tools, add health check, update type definitions.",
+      "complexity": "high",
+      "task_count_range": "12 tasks (SETUP + ORCH)",
+      "tasks": [
+        "SETUP-001: Add coderef-context health check in server.py startup - Try minimal coderef_scan call, set CODEREF_CONTEXT_AVAILABLE global flag (True/False), log warning if unavailable, ensure graceful degradation for all handlers",
+        "SETUP-002: Add CODEREF_CONTEXT_AVAILABLE flag to constants.py with default False, add VALIDATION_SCORE_THRESHOLD = 90, DRIFT_WARNING_THRESHOLD = 10, MCP_TIMEOUT_MS = 30000 configuration constants",
+        "SETUP-003: Update type_defs.py with MCPQueryResultDict (query_type, target, relationships, depth), MCPPatternsResultDict (pattern_type, frequency, locations, violations), DriftCheckResultDict (drift_percent, stale, index_age, recommendation)",
+        "SETUP-004: Update validation.py with validate_drift_threshold(value: int), validate_auto_validate_flag(value: bool), validate_mcp_timeout(ms: int) input validation functions following existing patterns",
+        "ORCH-001: Create generators/mcp_orchestrator.py with call_coderef_query(project_path: Path, query_type: str, target: str, max_depth: int = 3) function that calls mcp__coderef_context__coderef_query MCP tool, handles errors (tool unavailable, timeout), returns MCPQueryResultDict",
+        "ORCH-002: Add call_coderef_patterns(project_path: Path, pattern_type: str = None, limit: int = 10) to mcp_orchestrator.py - Calls mcp__coderef_context__coderef_patterns, returns MCPPatternsResultDict with pattern frequency, usage locations, consistency violations",
+        "ORCH-003: Add call_coderef_complexity(project_path: Path, element: str) to mcp_orchestrator.py - Calls mcp__coderef_context__coderef_complexity, returns complexity metrics (cyclomatic, cognitive, nesting, parameters)",
+        "ORCH-004: Add call_coderef_coverage(project_path: Path, format: str = 'summary') to mcp_orchestrator.py - Calls mcp__coderef_context__coderef_coverage, returns test coverage data (% coverage, untested files, gaps)",
+        "ORCH-005: Add call_coderef_impact(project_path: Path, element: str, operation: str = 'modify') to mcp_orchestrator.py - Calls mcp__coderef_context__coderef_impact, returns impact analysis (dependents, breaking change risk, criticality)",
+        "ORCH-006: Add call_coderef_drift(project_path: Path, index_path: str = '.coderef/index.json') to mcp_orchestrator.py - Calls mcp__coderef_context__coderef_drift, returns DriftCheckResultDict with drift %, staleness, recommendation",
+        "ORCH-007: Add error handling wrapper _handle_mcp_error() to mcp_orchestrator.py - Catches MCP tool unavailable, timeout, invalid response, returns user-friendly error with installation instructions or retry guidance",
+        "ORCH-008: Add caching layer to mcp_orchestrator.py - Cache MCP responses within single doc generation run (cache key: tool_name + parameters), short TTL for cache expiry, reduces redundant MCP calls for same component"
+      ],
+      "completion_criteria": "mcp_orchestrator.py exists with 6 MCP calling functions (query, patterns, complexity, coverage, impact, drift), all return typed dicts, error handling covers unavailable/timeout cases, health check runs at startup, caching reduces redundant calls"
+    },
+    "phase_2_core_implementation": {
+      "title": "Phase 2: Core Implementation - P0 Critical Features (Orchestration + Validation)",
+      "purpose": "Implement P0-1 (coderef-context orchestration in foundation docs) and P0-2 (Papertrail validation integration) as critical dependencies for all other enhancements.",
+      "complexity": "very_high",
+      "task_count_range": "12 tasks (FOUNDATION + VALIDATE)",
+      "tasks": [
+        "FOUNDATION-001: Modify handle_generate_foundation_docs in tool_handlers.py to call call_coderef_drift() before generation - If drift > DRIFT_WARNING_THRESHOLD, warn user with stale data message, allow exit or continue with disclaimer",
+        "FOUNDATION-002: Upgrade handle_generate_individual_doc for ARCHITECTURE template - Call call_coderef_query(query_type='depends-on') for each major component, build real dependency graph, inject into template context alongside .coderef/graph.json",
+        "FOUNDATION-003: Upgrade handle_generate_individual_doc for API template - Call call_coderef_query(query_type='calls') for each endpoint to show call chains, call call_coderef_patterns for API conventions (REST patterns, error handling), inject real relationship data",
+        "FOUNDATION-004: Upgrade handle_generate_individual_doc for COMPONENTS template - Call call_coderef_query(query_type='imports-me') to show component usage, call call_coderef_complexity to prioritize complex components first, inject usage examples and complexity badges",
+        "FOUNDATION-005: Upgrade handle_generate_individual_doc for README template - Call call_coderef_impact(operation='modify') for top 5 features to identify critical functionality, call call_coderef_patterns for project conventions, highlight high-impact features in features section",
+        "FOUNDATION-006: Upgrade handle_generate_individual_doc for SCHEMA template - Call call_coderef_query(query_type='depends-on') for model relationships, inject entity relationship data into template alongside .coderef/context.json",
+        "VALIDATE-001: Add auto_validate parameter (bool, default: true) to all 13 tool schemas in server.py - generate_foundation_docs, generate_individual_doc, establish_standards, generate_quickref_interactive, plus user doc generators",
+        "VALIDATE-002: Create _call_papertrail_validator(doc_path: Path, doc_type: str) helper in tool_handlers.py - Calls mcp__papertrail__validate_document, returns validation score + errors + warnings, handles Papertrail unavailable gracefully",
+        "VALIDATE-003: Integrate validation in handle_generate_foundation_docs - After generating each doc, if auto_validate=True, call _call_papertrail_validator(), if score < VALIDATION_SCORE_THRESHOLD, log errors and attempt auto-fix (add missing frontmatter)",
+        "VALIDATE-004: Integrate validation in handle_generate_individual_doc - Same pattern as VALIDATE-003, call validator after doc generation, check threshold, auto-fix, return validation result in tool response",
+        "VALIDATE-005: Integrate validation in handle_establish_standards - Validate ui-patterns.md, behavior-patterns.md, ux-patterns.md after generation using StandardsDocValidator from Papertrail",
+        "VALIDATE-006: Update tool response format to include validation results - Add validation_score, validation_errors, validation_warnings, validation_status (PASS/FAIL/SKIPPED) to all TextContent responses where auto_validate used"
+      ],
+      "completion_criteria": "Foundation docs (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) call coderef-context MCP tools for query/patterns/complexity/impact analysis, all 13 doc generators support auto_validate parameter, Papertrail validation runs automatically when enabled, score threshold enforced, validation results included in responses"
+    },
+    "phase_3_high_priority": {
+      "title": "Phase 3: High Priority Enhancements (Drift + User Docs + Standards)",
+      "purpose": "Implement P1-1 (drift detection), P1-2 (user docs .coderef/ integration), P1-3 (standards semantic patterns). These build on Phase 2 MCP orchestration infrastructure.",
+      "complexity": "high",
+      "task_count_range": "14 tasks (DRIFT + USER + STANDARDS)",
+      "tasks": [
+        "DRIFT-001: Enhance handle_generate_foundation_docs drift detection - Call call_coderef_drift() before any generation, if drift > 50%, show strong warning 'Index severely stale, docs highly inaccurate', if drift > 10%, show standard warning, allow user choice (exit or continue)",
+        "DRIFT-002: Add drift metadata to generated docs - If user continues with stale index, add frontmatter warning: 'Generated from stale data (X% drift detected on YYYY-MM-DD)', track drift_percent in UDS _uds.drift_metadata field",
+        "DRIFT-003: Add drift check to handle_establish_standards - Standards docs also need fresh data, same drift warning logic as foundation docs",
+        "DRIFT-004: Update mcp_integration.py check_coderef_resources() - Include drift check in resource availability check, return drift status alongside resource availability",
+        "USER-001: Modify generators/quickref_generator.py to read .coderef/index.json - Extract CLI entry points (functions with __name__ == '__main__'), API routes (functions decorated with @app.route or similar), common commands from code",
+        "USER-002: Upgrade handle_generate_quickref_interactive to inject real examples - Use extracted CLI commands and API endpoints from USER-001, replace placeholder commands with actual project commands, call call_coderef_patterns for common workflows",
+        "USER-003: Create user doc generator for my-guide.md with .coderef/ integration - Read index.json for project structure, patterns.json for coding conventions, generate my-guide with real file paths and component names",
+        "USER-004: Create user doc generator for user-guide.md with .coderef/ integration - Call call_coderef_query to discover typical workflows (function call sequences), extract API usage from patterns.json, generate user-guide with real workflow examples",
+        "USER-005: Create user doc generator for features.md with .coderef/ integration - Read index.json for high-level components, call call_coderef_impact to identify critical features, generate features list with real component names and impact ratings",
+        "STANDARDS-001: Refactor generators/standards_generator.py - Remove all regex pattern matching (_button_pattern, _modal_pattern, _error_pattern, etc.), replace with call_coderef_patterns MCP tool",
+        "STANDARDS-002: Update handle_establish_standards to use call_coderef_patterns - Call with pattern_type=None (all patterns), process returned UI patterns, API patterns, architecture patterns, testing patterns",
+        "STANDARDS-003: Enhance standards output with pattern frequency - Include how many times each pattern appears (from coderef_patterns frequency data), sort patterns by usage (most common first)",
+        "STANDARDS-004: Add consistency violation detection - Use coderef_patterns violations data to identify inconsistent patterns (e.g., Button vs button vs <Button>), generate recommendations for unification",
+        "STANDARDS-005: Implement testing-patterns standard doc - Call call_coderef_patterns with focus on test files, detect test structure (describe/it vs test/expect), mocking patterns, assertion styles, generate testing-patterns.md (completes 4/4 standards coverage)"
+      ],
+      "completion_criteria": "Drift detection warns users before stale doc generation, user docs (my-guide, user-guide, quickref, features) extract real data from .coderef/, standards docs use semantic coderef_patterns instead of regex, pattern frequency and violations included, testing-patterns.md implemented"
+    },
+    "phase_4_medium_priority": {
+      "title": "Phase 4: Medium Priority Features (Tool Consolidation + Health Check)",
+      "purpose": "Implement P2-1 (consolidate foundation doc tools) and P2-2 (coderef-context health check enhancements). Lower priority cleanup and developer experience improvements.",
+      "complexity": "medium",
+      "task_count_range": "8 tasks (CONSOLIDATE)",
+      "tasks": [
+        "CONSOLIDATE-001: Mark generate_individual_doc as internal-only in server.py - Update tool schema description: 'INTERNAL USE ONLY - Called by generate_foundation_docs. Use generate_foundation_docs for public API'",
+        "CONSOLIDATE-002: Deprecate coderef_foundation_docs tool - Add deprecation warning in handle_coderef_foundation_docs: 'DEPRECATED: Use generate_foundation_docs instead. Will be removed in v4.0', redirect to handle_generate_foundation_docs",
+        "CONSOLIDATE-003: Update all slash commands to use generate_foundation_docs - Modify .claude/commands/generate-docs.md, remove references to coderef_foundation_docs and generate_individual_doc, document generate_foundation_docs as single public API",
+        "CONSOLIDATE-004: Create migration guide for tool consolidation - Add section to README.md: 'Tool Migration Guide', list deprecated tools, show old vs new usage, provide removal plan (v3.8 deprecation warnings, v4.0 removal)",
+        "CONSOLIDATE-005: Enhance coderef-context health check in server.py - Add retry logic (3 attempts with exponential backoff), more detailed error messages ('coderef-context MCP not responding. Install: [link]'), log health check result with timestamp",
+        "CONSOLIDATE-006: Add graceful degradation logic to all MCP-dependent handlers - Check CODEREF_CONTEXT_AVAILABLE flag before calling MCP tools, if False, return warning: 'Running in template-only mode. Install coderef-context for code-driven docs: [link]'",
+        "CONSOLIDATE-007: Update tool response format for health check failures - Include coderef_context_available: bool in tool responses, show clear installation instructions if unavailable",
+        "CONSOLIDATE-008: Add MCP dependency status to list_templates output - Show 'coderef-context: ✓ Available' or '✗ Unavailable (install: [link])' in tool listing"
+      ],
+      "completion_criteria": "generate_foundation_docs is single public API, coderef_foundation_docs deprecated with redirect and warnings, generate_individual_doc marked internal-only, migration guide created, health check enhanced with retry and detailed errors, graceful degradation when coderef-context unavailable"
+    },
+    "phase_5_testing": {
+      "title": "Phase 5: Testing - Comprehensive Test Coverage",
+      "purpose": "Test all new features: MCP orchestration, validation integration, drift detection, user docs, standards upgrade, tool consolidation. Ensure all edge cases handled.",
+      "complexity": "high",
+      "task_count_range": "10 tasks (TEST)",
+      "tasks": [
+        "TEST-001: Create tests/test_mcp_orchestration.py - Test all 6 MCP calling functions (query, patterns, complexity, coverage, impact, drift), verify correct MCP tool invocation, handle errors (unavailable, timeout), verify response parsing",
+        "TEST-002: Create tests/test_validation_integration.py - Test auto_validate parameter in all 13 tools, verify Papertrail validation called, score threshold enforcement, auto-fix functionality, validation results in responses",
+        "TEST-003: Create tests/test_drift_detection.py - Test drift warning for 10%, 50% thresholds, user choice to exit or continue, drift metadata in generated docs, drift check in foundation and standards handlers",
+        "TEST-004: Test foundation docs MCP orchestration - Verify handle_generate_foundation_docs calls coderef_query/patterns/complexity/impact, verify ARCHITECTURE includes real dependencies, API shows call chains, COMPONENTS prioritizes complex first",
+        "TEST-005: Test user docs .coderef/ integration - Verify quickref extracts real CLI commands, my-guide uses real file paths, user-guide shows real workflows, features list has impact ratings",
+        "TEST-006: Test standards semantic patterns - Verify establish_standards calls coderef_patterns (not regex), pattern frequency included, consistency violations detected, testing-patterns.md generated",
+        "TEST-007: Test tool consolidation - Verify coderef_foundation_docs shows deprecation warning and redirects, generate_individual_doc marked internal, slash commands use generate_foundation_docs",
+        "TEST-008: Test health check and graceful degradation - Mock coderef-context unavailable, verify health check sets flag False, handlers return template-only mode warning, installation instructions shown",
+        "TEST-009: Test edge cases - .coderef/ missing (error), Papertrail unavailable (degrade), validation score < 90 (error + auto-fix), drift > 50% (strong warning), MCP timeout (partial results)",
+        "TEST-010: Integration test full workflow - Run /generate-docs with all features enabled, verify drift check → MCP orchestration → validation → doc output, quality metrics match targets (85%+ foundation, 75%+ user, 80%+ standards)"
+      ],
+      "completion_criteria": "All new features have test coverage, edge cases tested, integration test validates full workflow, test suite passes with no regressions"
+    },
+    "phase_6_documentation": {
+      "title": "Phase 6: Documentation and Finalization",
+      "purpose": "Update all documentation to reflect new capabilities, create INTEGRATION.md examples, update DELIVERABLES.md with quality metrics, prepare for release.",
+      "complexity": "low",
+      "task_count_range": "4 tasks (DOC)",
+      "tasks": [
+        "DOC-001: Create docs/INTEGRATION.md with coderef-context MCP examples - Document how to call each tool (query, patterns, complexity, coverage, impact, drift), show request parameters and response formats, include code examples for each tool",
+        "DOC-002: Update README.md with new capabilities - Add MCP orchestration features to tool catalog, document auto_validate parameter, drift detection, user docs .coderef/ integration, standards semantic patterns, tool consolidation migration guide",
+        "DOC-003: Update CLAUDE.md with v4.0.0 section - Document WO-GENERATION-ENHANCEMENT-001 implementation, quality improvements (Foundation 70%→85%, User 40%→75%, Standards 55%→80%, Validation 72%→100%), breaking changes (tool consolidation), new MCP dependencies",
+        "DOC-004: Create DELIVERABLES.md with before/after metrics - Document quality improvements per doc type, validation coverage increase, MCP integration completion, test coverage, performance benchmarks (doc generation time before/after)"
+      ],
+      "completion_criteria": "INTEGRATION.md complete with examples for all 6 MCP tools, README updated with new capabilities and migration guide, CLAUDE.md documents v4.0.0 changes, DELIVERABLES.md tracks quality metrics"
+    }
+  },
+
+  "7_testing_strategy": {
+    "unit_tests": {
+      "scope": "Individual functions in mcp_orchestrator.py, validation helpers, drift detection logic",
+      "coverage_target": "90% for new code (mcp_orchestrator.py, validation integration, drift detection)",
+      "tests": [
+        "test_call_coderef_query_success() - Verify query function calls MCP tool with correct parameters, parses response into MCPQueryResultDict",
+        "test_call_coderef_query_unavailable() - Verify error handling when coderef-context MCP unavailable, returns user-friendly error",
+        "test_call_coderef_patterns_success() - Verify patterns function returns frequency, locations, violations from MCP response",
+        "test_call_coderef_complexity_timeout() - Verify timeout handling, returns partial results or error after 30s",
+        "test_call_papertrail_validator() - Verify validation helper calls Papertrail, returns score + errors + warnings",
+        "test_drift_detection_above_threshold() - Verify warning shown when drift > 10%, user choice offered",
+        "test_drift_detection_below_threshold() - Verify no warning when drift < 10%, generation proceeds normally",
+        "test_auto_validate_enabled() - Verify validation called when auto_validate=True, score checked",
+        "test_auto_validate_disabled() - Verify validation skipped when auto_validate=False",
+        "test_validation_auto_fix() - Verify auto-fix adds missing frontmatter when score < 90"
+      ]
+    },
+    "integration_tests": {
+      "scope": "Full doc generation workflow with MCP orchestration and validation",
+      "focus": "MCP tool chaining (query → patterns → complexity), validation integration, drift check → generation flow",
+      "tests": [
+        "test_foundation_docs_mcp_orchestration() - Run generate_foundation_docs, verify all MCP tools called (query, patterns, complexity, impact), verify real data in generated ARCHITECTURE/API/COMPONENTS",
+        "test_user_docs_coderef_integration() - Generate quickref/my-guide/user-guide, verify .coderef/ data extracted, real CLI commands present",
+        "test_standards_semantic_patterns() - Run establish_standards, verify coderef_patterns called (not regex), pattern frequency in output",
+        "test_validation_workflow() - Generate doc with auto_validate=True, verify Papertrail called, score checked, doc only written if score >= 90",
+        "test_drift_detection_workflow() - Generate docs with stale .coderef/, verify drift warning, user choice honored, metadata added to docs",
+        "test_graceful_degradation() - Mock coderef-context unavailable, verify template-only mode works, warnings shown, no crashes",
+        "test_tool_consolidation() - Call deprecated coderef_foundation_docs, verify redirect works and warning shown"
+      ]
+    },
+    "end_to_end_tests": {
+      "scope": "Complete user workflows from /generate-docs command to validated output",
+      "when_needed": "Validates full MCP orchestration pipeline and quality improvements",
+      "tests": [
+        "User runs /generate-docs → drift check passes → MCP tools called for each doc → validation runs → docs written with 85%+ accuracy",
+        "User runs /establish-standards → coderef_patterns called → semantic patterns extracted → ui/behavior/ux/testing standards generated → validation passes",
+        "User runs /generate-docs with stale .coderef/ → drift warning shown → user exits → re-runs coderef_scan → docs generated successfully"
+      ]
+    },
+    "edge_case_scenarios": [
+      {
+        "scenario": ".coderef/ directory missing when generating docs",
+        "setup": "Delete .coderef/ directory, run generate_foundation_docs",
+        "expected_behavior": "Drift check fails, clear error: 'Run coderef_scan first to generate .coderef/ structure. See: [docs link]'",
+        "verification": "Tool returns error (not crash), message includes actionable next step",
+        "error_handling": "FileNotFoundError caught, converted to user-friendly error"
+      },
+      {
+        "scenario": "coderef-context MCP unavailable during doc generation",
+        "setup": "Stop coderef-context MCP server, run generate_foundation_docs",
+        "expected_behavior": "Health check flag CODEREF_CONTEXT_AVAILABLE=False, handler returns template-only mode warning: 'Running without code intelligence. Install coderef-context: [link]'",
+        "verification": "Docs generate (degraded mode), warning in response, installation link provided",
+        "error_handling": "MCP call fails, caught by _handle_mcp_error(), returns graceful fallback"
+      },
+      {
+        "scenario": "Papertrail MCP unavailable during validation",
+        "setup": "Stop Papertrail MCP server, run generate_foundation_docs with auto_validate=True",
+        "expected_behavior": "Validation skipped, warning logged: 'Papertrail unavailable, docs generated without validation', docs written anyway",
+        "verification": "Doc generation succeeds, validation_status='SKIPPED' in response",
+        "error_handling": "Validation error caught, degraded to skip validation mode"
+      },
+      {
+        "scenario": "Validation score < 90 but no auto-fix possible",
+        "setup": "Generate doc with invalid content structure (score < 90), auto-fix can't help",
+        "expected_behavior": "Tool returns validation errors: 'Validation failed (score 65/100). Issues: [list]. Fix manually or use auto_validate=false to force write'",
+        "verification": "Doc NOT written, errors clearly listed, user given options (fix or force)",
+        "error_handling": "Score check fails, doc write blocked, errors returned"
+      },
+      {
+        "scenario": "Drift > 50% (severely stale index)",
+        "setup": "Modify many files without re-running coderef_scan, run generate_foundation_docs",
+        "expected_behavior": "Strong warning: 'Index severely stale (63% drift). Docs will be highly inaccurate. STRONGLY recommend re-running coderef_scan. Continue anyway (y/N)'",
+        "verification": "Warning displayed, user choice required, default is N (exit)",
+        "error_handling": "Drift check returns high %, warning shown, user can override"
+      },
+      {
+        "scenario": "Multiple MCP calls timeout during doc generation",
+        "setup": "Slow network, coderef_query times out after 30s",
+        "expected_behavior": "Partial results returned, timeout error logged: 'MCP call to coderef_query timed out after 30s. Using partial data', generation continues with available data",
+        "verification": "Doc generated with partial data, timeout noted in response",
+        "error_handling": "Timeout exception caught, partial results used, error logged"
+      },
+      {
+        "scenario": "Concurrent doc generation requests",
+        "setup": "Run generate_foundation_docs twice in parallel",
+        "expected_behavior": "MCP cache handles concurrent requests, both complete successfully, no race conditions",
+        "verification": "Both docs generated correctly, cache TTL respected",
+        "error_handling": "Thread-safe caching, no data corruption"
+      },
+      {
+        "scenario": "Deprecated tool called (coderef_foundation_docs)",
+        "setup": "Call mcp__coderef-docs__coderef_foundation_docs",
+        "expected_behavior": "Deprecation warning: 'DEPRECATED: coderef_foundation_docs will be removed in v4.0. Use generate_foundation_docs instead. See migration guide: [link]', then redirects to generate_foundation_docs",
+        "verification": "Warning shown, redirect works, docs generated via new tool",
+        "error_handling": "No error - redirect with warning"
+      }
+    ]
+  },
+
+  "8_success_criteria": {
+    "functional_requirements": [
+      {
+        "requirement": "Foundation docs quality improvement",
+        "metric": "Accuracy score (0-100) based on real data vs placeholders, dependency correctness, example validity",
+        "target": "85%+ (up from 70%)",
+        "validation": "Manual review of generated README/ARCHITECTURE/API/COMPONENTS/SCHEMA - verify real dependency graphs, actual API call chains, correct component usage, no placeholders"
+      },
+      {
+        "requirement": "User docs quality improvement",
+        "metric": "Percentage of real examples vs generic placeholders",
+        "target": "75%+ (up from 40-55%)",
+        "validation": "Manual review of my-guide/user-guide/quickref/features - verify real CLI commands, actual API endpoints, working code examples, project-specific workflows"
+      },
+      {
+        "requirement": "Standards docs quality improvement",
+        "metric": "Pattern accuracy (semantic patterns vs regex false positives)",
+        "target": "80%+ (up from 55-60%)",
+        "validation": "Manual review of ui-patterns/behavior-patterns/ux-patterns/testing-patterns - verify pattern frequency data, usage locations accurate, consistency violations real"
+      },
+      {
+        "requirement": "Validation coverage increase",
+        "metric": "Percentage of doc types with automatic validation",
+        "target": "100% (13/13 tools, up from 72%)",
+        "validation": "Test all 13 doc generation tools with auto_validate=True, verify Papertrail called for each, validation results in responses"
+      },
+      {
+        "requirement": "MCP orchestration integration",
+        "metric": "Number of coderef-context MCP tools integrated",
+        "target": "6/6 tools (query, patterns, complexity, coverage, impact, drift)",
+        "validation": "Test each tool called during doc generation, verify response parsed correctly, verify error handling"
+      },
+      {
+        "requirement": "Drift detection before generation",
+        "metric": "Percentage of doc workflows with drift check",
+        "target": "100% (foundation + standards handlers)",
+        "validation": "Test drift check runs before generation, warnings shown at 10% and 50% thresholds, user choice honored"
+      },
+      {
+        "requirement": "Tool consolidation completion",
+        "metric": "Deprecated tools show warnings and redirect",
+        "target": "100% (coderef_foundation_docs deprecated, generate_individual_doc internal)",
+        "validation": "Call deprecated tool, verify warning shown, verify redirect works, verify migration guide exists in README"
+      }
+    ],
+    "technical_requirements": [
+      {
+        "requirement": "Test coverage for new code",
+        "metric": "Line coverage % for mcp_orchestrator.py, validation integration, drift detection",
+        "target": "90%+",
+        "validation": "Run pytest with coverage report, verify 90%+ coverage for all new modules"
+      },
+      {
+        "requirement": "No regressions in existing tests",
+        "metric": "Existing test suite pass rate",
+        "target": "100% (all tests pass)",
+        "validation": "Run full test suite, verify no failures in existing tests"
+      },
+      {
+        "requirement": "Performance acceptable",
+        "metric": "Foundation doc generation time with MCP orchestration",
+        "target": "<15 seconds (acceptable increase from <5s)",
+        "validation": "Benchmark generate_foundation_docs, verify total time < 15s for typical project"
+      },
+      {
+        "requirement": "Graceful degradation",
+        "metric": "Docs generate successfully when coderef-context unavailable",
+        "target": "100% (template-only mode works with clear warnings)",
+        "validation": "Stop coderef-context, run generate_foundation_docs, verify docs generated with warnings"
+      }
+    ],
+    "documentation_requirements": [
+      {
+        "requirement": "INTEGRATION.md with MCP examples",
+        "metric": "Complete examples for all 6 MCP tools",
+        "target": "6/6 tools documented (query, patterns, complexity, coverage, impact, drift)",
+        "validation": "Review INTEGRATION.md, verify each tool has request/response example, code snippets, clear explanations"
+      },
+      {
+        "requirement": "Migration guide for tool consolidation",
+        "metric": "README includes migration guide section",
+        "target": "Complete guide with old→new mapping",
+        "validation": "Review README, verify migration guide lists deprecated tools, shows usage examples, removal plan clear"
+      },
+      {
+        "requirement": "DELIVERABLES.md with metrics",
+        "metric": "Before/after quality metrics tracked",
+        "target": "Complete metrics for all 7 enhancements",
+        "validation": "Review DELIVERABLES.md, verify quality improvements documented (Foundation 70%→85%, User 40%→75%, Standards 55%→80%, Validation 72%→100%)"
+      },
+      {
+        "requirement": "CLAUDE.md updated with v4.0.0",
+        "metric": "Version section documents all changes",
+        "target": "Complete v4.0.0 section with WO-GENERATION-ENHANCEMENT-001",
+        "validation": "Review CLAUDE.md, verify v4.0.0 section exists, breaking changes noted, new capabilities documented"
+      }
+    ],
+    "completion_definition": "All 56 tasks complete across 6 phases, all tests passing (90%+ coverage for new code), foundation docs achieve 85%+ quality, user docs 75%+, standards docs 80%+, validation coverage 100%, INTEGRATION.md with MCP examples complete, migration guide in README, DELIVERABLES.md tracking all metrics, CLAUDE.md updated with v4.0.0 section, performance benchmarks meet targets (<15s doc generation), graceful degradation verified when coderef-context unavailable"
+  },
+
+  "9_implementation_checklist": {
+    "phase_1_foundation": [
+      "[ ] SETUP-001: Health check in server.py",
+      "[ ] SETUP-002: Configuration constants",
+      "[ ] SETUP-003: Type definitions",
+      "[ ] SETUP-004: Validation functions",
+      "[ ] ORCH-001: call_coderef_query",
+      "[ ] ORCH-002: call_coderef_patterns",
+      "[ ] ORCH-003: call_coderef_complexity",
+      "[ ] ORCH-004: call_coderef_coverage",
+      "[ ] ORCH-005: call_coderef_impact",
+      "[ ] ORCH-006: call_coderef_drift",
+      "[ ] ORCH-007: Error handling wrapper",
+      "[ ] ORCH-008: MCP response caching"
+    ],
+    "phase_2_core_implementation": [
+      "[ ] FOUNDATION-001: Drift check in generate_foundation_docs",
+      "[ ] FOUNDATION-002: ARCHITECTURE MCP upgrade",
+      "[ ] FOUNDATION-003: API MCP upgrade",
+      "[ ] FOUNDATION-004: COMPONENTS MCP upgrade",
+      "[ ] FOUNDATION-005: README MCP upgrade",
+      "[ ] FOUNDATION-006: SCHEMA MCP upgrade",
+      "[ ] VALIDATE-001: auto_validate parameter in all tools",
+      "[ ] VALIDATE-002: Papertrail validator helper",
+      "[ ] VALIDATE-003: Validation in generate_foundation_docs",
+      "[ ] VALIDATE-004: Validation in generate_individual_doc",
+      "[ ] VALIDATE-005: Validation in establish_standards",
+      "[ ] VALIDATE-006: Validation results in responses"
+    ],
+    "phase_3_high_priority": [
+      "[ ] DRIFT-001: Enhanced drift detection",
+      "[ ] DRIFT-002: Drift metadata in docs",
+      "[ ] DRIFT-003: Drift check in standards",
+      "[ ] DRIFT-004: Drift in resource check",
+      "[ ] USER-001: Quickref .coderef/ extraction",
+      "[ ] USER-002: Quickref real examples",
+      "[ ] USER-003: my-guide generator",
+      "[ ] USER-004: user-guide generator",
+      "[ ] USER-005: features generator",
+      "[ ] STANDARDS-001: Refactor to MCP patterns",
+      "[ ] STANDARDS-002: Use coderef_patterns",
+      "[ ] STANDARDS-003: Pattern frequency",
+      "[ ] STANDARDS-004: Consistency violations",
+      "[ ] STANDARDS-005: testing-patterns doc"
+    ],
+    "phase_4_medium_priority": [
+      "[ ] CONSOLIDATE-001: Mark generate_individual_doc internal",
+      "[ ] CONSOLIDATE-002: Deprecate coderef_foundation_docs",
+      "[ ] CONSOLIDATE-003: Update slash commands",
+      "[ ] CONSOLIDATE-004: Migration guide",
+      "[ ] CONSOLIDATE-005: Enhanced health check",
+      "[ ] CONSOLIDATE-006: Graceful degradation",
+      "[ ] CONSOLIDATE-007: Health check in responses",
+      "[ ] CONSOLIDATE-008: MCP status in list_templates"
+    ],
+    "phase_5_testing": [
+      "[ ] TEST-001: MCP orchestration tests",
+      "[ ] TEST-002: Validation integration tests",
+      "[ ] TEST-003: Drift detection tests",
+      "[ ] TEST-004: Foundation docs MCP tests",
+      "[ ] TEST-005: User docs integration tests",
+      "[ ] TEST-006: Standards semantic tests",
+      "[ ] TEST-007: Tool consolidation tests",
+      "[ ] TEST-008: Health check tests",
+      "[ ] TEST-009: Edge case tests",
+      "[ ] TEST-010: Full workflow integration test"
+    ],
+    "phase_6_documentation": [
+      "[ ] DOC-001: INTEGRATION.md with examples",
+      "[ ] DOC-002: README updates",
+      "[ ] DOC-003: CLAUDE.md v4.0.0",
+      "[ ] DOC-004: DELIVERABLES.md metrics"
+    ]
+  }
+
+  }
+}

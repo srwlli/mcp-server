@@ -1029,53 +1029,6 @@ Run after /update-deliverables and before /archive-feature.''',
             }
         ),
         Tool(
-            name='coderef_foundation_docs',
-            description='''Unified foundation docs generator powered by coderef analysis. Generates comprehensive project context for planning workflows by:
-- Deep extraction from existing ARCHITECTURE.md, SCHEMA.md (patterns, decisions, constraints)
-- Auto-detection of API endpoints, database schemas, dependencies
-- Git activity analysis (recent commits, active files, contributors)
-- Code pattern detection via coderef-mcp integration (handlers, decorators, error handling)
-- Similar feature discovery from coderef/archived/
-
-Outputs:
-- ARCHITECTURE.md (patterns, decisions, constraints)
-- SCHEMA.md (entities, relationships)
-- COMPONENTS.md (component hierarchy - for UI projects only)
-- project-context.json (structured context for planning)
-
-Replaces: api_inventory, database_inventory, dependency_inventory, config_inventory, test_inventory, inventory_manifest, documentation_inventory''',
-            inputSchema={
-                'type': 'object',
-                'properties': {
-                    'project_path': {
-                        'type': 'string',
-                        'description': 'Absolute path to project directory'
-                    },
-                    'include_components': {
-                        'type': 'boolean',
-                        'description': 'Generate COMPONENTS.md for UI/frontend projects. Default: auto-detect based on project type',
-                        'default': None
-                    },
-                    'deep_extraction': {
-                        'type': 'boolean',
-                        'description': 'Enable deep extraction from existing foundation docs (vs shallow 500-char preview). Default: true',
-                        'default': True
-                    },
-                    'use_coderef': {
-                        'type': 'boolean',
-                        'description': 'Use coderef-mcp for code pattern detection. Default: true',
-                        'default': True
-                    },
-                    'force_regenerate': {
-                        'type': 'boolean',
-                        'description': 'Regenerate existing docs even if they exist. Use after code changes to update documentation. Default: false',
-                        'default': False
-                    }
-                },
-                'required': ['project_path']
-            }
-        ),
-        Tool(
             name='generate_features_inventory',
             description='Generate inventory of all features in coderef/workorder/ and coderef/archived/. Returns structured list of features with status, progress, workorder tracking, and workflow coverage. Supports JSON and markdown output formats.',
             inputSchema={

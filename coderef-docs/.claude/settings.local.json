@@ -11,7 +11,9 @@
       "mcp__coderef-workflow__analyze_project_for_planning",
       "mcp__coderef-workflow__create_plan",
       "mcp__coderef-workflow__validate_implementation_plan",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "SlashCommand(/create-plan generation-enhancement-001)",
+      "Bash(env)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,230 @@
+{
+  "session_id": "WO-DOCS-CONSOLIDATION-001",
+  "synthesis_date": "2026-01-12",
+
+  "agent_summaries": {
+    "coderef-docs": "Reviewed 13 tools across foundation/user/standards docs. Hybrid approach (template + .coderef/) works well for foundation docs (75% quality) but user docs remain template-only (40% quality). Critical gap: reads .coderef/ files but doesn't orchestrate coderef-context MCP tools (query, patterns, complexity, coverage, impact). Standards docs use regex instead of semantic pattern analysis. Validation coverage 72% (user docs not validated). 11 improvement suggestions with clear priorities.",
+
+    "coderef-context": "Reviewed 12 MCP tools with 117x performance improvement (v2.0 file reader). Rich code intelligence available (scan/query/impact/patterns/complexity/coverage/drift/diagrams) but NOT consumed by coderef-docs - critical integration gap. Foundation docs manually written (not auto-generated). SCHEMA.md incomplete (missing .coderef/ file format definitions). Python code not scanned (index.json empty for itself). 8 improvement suggestions focused on integration and foundation doc enhancement.",
+
+    "papertrail": "Reviewed 4 MCP tools and 10 UDS schemas with excellent frontmatter validation (0-100 scoring, auto-detection, 10 doc types). Minimal content/section validation - can't enforce POWER framework structure. No integration with coderef-docs generation workflow (validation is post-generation only). No code example validation via coderef-context. 8 improvement suggestions focused on real-time validation integration and POWER framework enforcement."
+  },
+
+  "common_themes": [
+    "Critical Integration Gap: coderef-docs reads .coderef/ files but doesn't orchestrate coderef-context MCP tools",
+    "Partial .coderef/ Usage: Foundation docs leverage pre-scanned data (75% quality), user docs template-only (40% quality), standards docs regex-only (55-60% quality)",
+    "Post-Generation Validation: Papertrail validation happens after doc creation, not during - misses opportunity for real-time quality gates",
+    "Template vs Code-Driven: Foundation docs hybrid approach (template structure + code data), but user/standards docs purely template-driven",
+    "Semantic Analysis Gap: Standards docs use regex patterns instead of coderef_patterns semantic AST-based analysis",
+    "Missing Tool Orchestration: coderef-docs should call coderef_query (relationships), coderef_patterns (semantic patterns), coderef_complexity (priority), coderef_coverage (gaps), coderef_impact (criticality)",
+    "Content vs Frontmatter: Papertrail excels at frontmatter validation but lacks POWER framework section enforcement",
+    "Schema-Template Drift: POWER framework templates in coderef-docs not synchronized with UDS schemas in Papertrail"
+  ],
+
+  "critical_gaps": [
+    "No direct coderef-context tool orchestration - coderef-docs only reads files, doesn't call tools",
+    "User docs completely template-driven - zero code intelligence, all placeholders",
+    "Standards docs use regex not semantic analysis - miss complex patterns, produce false positives",
+    "Validation is post-generation - no real-time quality gates, users often forget to validate",
+    "No POWER framework section validation - frontmatter validated but content structure not enforced",
+    "No code example validation - docs contain outdated/incorrect code snippets with no verification",
+    "Schema-template sync missing - template changes don't update validation schemas"
+  ],
+
+  "unified_recommendations": [
+    {
+      "priority": "P0",
+      "recommendation": "Integrate coderef-context tool orchestration into coderef-docs generate_foundation_docs",
+      "affects": ["Foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)"],
+      "requires": ["coderef_query for relationship analysis", "coderef_patterns for semantic pattern detection", "coderef_complexity for documentation priority", "coderef_coverage for test gap identification", "coderef_impact for critical component detection"],
+      "benefit": "Foundation docs quality increases from 70% to 85%+. Real dependency data replaces manual inference. Automatic detection of breaking changes, critical paths, circular dependencies. Semantic pattern recognition replaces regex heuristics.",
+      "implementation": "Modify handle_generate_foundation_docs to: (1) Call coderef_query for dependency graphs (ARCHITECTURE.md), (2) Call coderef_patterns for convention detection (standards docs), (3) Call coderef_complexity to prioritize complex components (COMPONENTS.md), (4) Call coderef_coverage to show test gaps (API.md tables), (5) Call coderef_impact to identify critical components (README features). Add query results to template context alongside .coderef/ files."
+    },
+    {
+      "priority": "P0",
+      "recommendation": "Integrate Papertrail validation into coderef-docs generation workflow - auto-validate before writing files",
+      "affects": ["All documentation types (foundation, user, standards)"],
+      "requires": ["papertrail.validate_document() MCP tool", "Auto-fix capability for common errors", "Validation score threshold (default: 90)"],
+      "benefit": "Ensures all generated docs are UDS-compliant by default. Reduces user burden (no manual validation). Catches errors during generation, not post-generation. 100% validation coverage (currently 72%).",
+      "implementation": "Add auto_validate parameter to coderef-docs tools (default: true). After generating doc content: (1) Call papertrail.validate_document() via MCP, (2) If validation fails, log errors and optionally attempt fixes (add missing frontmatter), (3) Re-validate after fixes, (4) Only write file if score >= 90 or user forces write, (5) Return validation result in tool response."
+    },
+    {
+      "priority": "P0",
+      "recommendation": "Add POWER framework section validation to Papertrail foundation doc schemas",
+      "affects": ["Foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)"],
+      "requires": ["Update foundation-doc-frontmatter-schema.json with required_sections array", "Extend BaseUDSValidator._validate_sections() to enforce doc-type-specific sections"],
+      "benefit": "Enforces POWER framework compliance. Ensures foundation docs have consistent structure (Purpose, Overview, What/Why/When, Examples, References). Improves doc quality by forcing complete documentation.",
+      "implementation": "Update schemas: (1) README requires ['Purpose', 'Overview', 'What/Why/When', 'Examples', 'References'], (2) ARCHITECTURE requires ['System Overview', 'Key Components', 'Design Decisions', 'Integration Points'], (3) API requires ['Endpoints', 'Authentication', 'Request/Response Examples', 'Error Codes'], (4) SCHEMA requires ['Data Models', 'Field Descriptions', 'Validation Rules', 'Relationships'], (5) COMPONENTS requires ['Component Catalog', 'Props/Parameters', 'Usage Examples', 'Dependencies']. Flag missing sections as MAJOR error (-20 points)."
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Upgrade user docs to use .coderef/ data (my-guide, user-guide, features, quickref)",
+      "affects": ["User docs"],
+      "requires": ["Read .coderef/index.json for CLI entry points and API routes", "Call coderef_query for typical workflows", "Use patterns.json for usage examples"],
+      "benefit": "User docs quality increases from 40-55% to 75%+. Real examples replace placeholders. Docs auto-update when code changes. Reduces manual documentation effort by 60%.",
+      "implementation": "Modify user doc generators: (1) Read .coderef/index.json to extract CLI commands, API endpoints, main features, (2) Use patterns.json for common usage patterns, (3) Call coderef_query to find typical workflows (function call sequences), (4) Generate user-guide with real examples from code, (5) Generate quickref with actual commands/shortcuts, (6) Generate features list from high-level components."
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Replace regex-based pattern detection with coderef_patterns semantic analysis in standards docs",
+      "affects": ["Standards docs (ui-patterns, behavior-patterns, ux-patterns, testing-patterns)"],
+      "requires": ["coderef_patterns MCP tool calls", "Remove regex pattern matching from StandardsGenerator"],
+      "benefit": "Standards docs quality increases from 55-60% to 80%+. Semantic patterns replace regex heuristics. Automatic consistency violation detection. Pattern usage frequency analysis enables evidence-based standards.",
+      "implementation": "Refactor establish_standards handler: (1) Remove regex pattern matching, (2) Call coderef_patterns with project_path, (3) Process returned patterns (UI/API/architecture/testing), (4) Generate standards docs with pattern frequency, usage locations, consistency violations, (5) Add recommendations for pattern unification where inconsistencies found."
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Add code example validation using coderef-context in Papertrail validators",
+      "affects": ["All docs with code examples"],
+      "requires": ["coderef_query to verify API endpoints", "coderef-context element lookup for component props/signatures"],
+      "benefit": "Catches outdated code examples. Improves doc accuracy. Reduces user confusion from incorrect examples. Automatic suggestions for fixing outdated examples.",
+      "implementation": "Add code_example_validation to BaseUDSValidator: (1) Extract code blocks from markdown (regex for ```language blocks), (2) For API docs: Query coderef-context for actual endpoints, verify examples use real endpoints, (3) For COMPONENTS docs: Query for component props, verify examples show correct props, (4) Flag outdated examples as WARNING (-5 points each), (5) Suggest corrections based on .coderef/index.json data."
+    },
+    {
+      "priority": "P1",
+      "recommendation": "Create schema-template synchronization tool to eliminate drift",
+      "affects": ["Foundation doc validation schemas"],
+      "requires": ["Parse POWER framework templates (Jinja2)", "Auto-generate/update JSON schemas from template structure"],
+      "benefit": "Eliminates schema-template drift. Ensures validation enforces actual template structure. Reduces maintenance burden (schemas auto-update from templates).",
+      "implementation": "Create sync_schemas_from_templates tool in Papertrail: (1) Parse POWER framework templates from coderef-docs/templates/power/, (2) Extract required sections from template structure, (3) Auto-generate/update JSON schemas with required_sections arrays, (4) Run sync tool whenever templates change (manual or CI/CD), (5) Flag schema drift if templates updated but schemas not synced."
+    },
+    {
+      "priority": "P2",
+      "recommendation": "Enhance SCHEMA.md with complete .coderef/ file format definitions",
+      "affects": ["coderef-context SCHEMA.md"],
+      "requires": ["Document index.json, graph.json, context.json structures", "Add JSON schema definitions and examples"],
+      "benefit": "Clearer developer onboarding. Easier debugging. Reference documentation for coderef-docs integration. Enables schema validation of .coderef/ outputs.",
+      "implementation": "Generate SCHEMA.md section for each .coderef/ file type with: (1) JSON schema from CodeRefReader class, (2) Example data from actual .coderef/ samples, (3) Field descriptions with types and purpose, (4) Usage patterns for consuming tools."
+    },
+    {
+      "priority": "P2",
+      "recommendation": "Add coderef-context + coderef-docs integration examples and documentation",
+      "affects": ["Integration patterns between servers"],
+      "requires": ["Create INTEGRATION.md with code examples", "Error handling patterns for missing .coderef/"],
+      "benefit": "Enables consolidation workflow. Provides reference implementation. Reduces integration friction. Clear patterns for other MCP server integrations.",
+      "implementation": "Add INTEGRATION.md to coderef-context with examples: (1) coderef-docs calls coderef_scan, (2) Filters elements by type (API/schema/component), (3) Populates POWER templates with filtered data, (4) Error handling for missing .coderef/, (5) Drift detection before generation."
+    },
+    {
+      "priority": "P2",
+      "recommendation": "Add drift detection before doc generation in coderef-docs",
+      "affects": ["Foundation docs generation"],
+      "requires": ["coderef_drift tool call", "User warning for stale data (> 10% drift)"],
+      "benefit": "Documentation accuracy guaranteed. Users alerted to stale data before generation. Docs include freshness metadata. Trust in generated documentation increases.",
+      "implementation": "At start of generate_foundation_docs: (1) Call coderef_drift with index_path=.coderef/index.json, (2) If drift > 10%, warn user: 'Index is X% stale. Re-run coderef_scan for accurate docs? (Y/n)', (3) If user confirms, exit with 'Please run coderef_scan first', (4) If user declines, add disclaimer to generated docs: 'Generated from potentially stale data (X% drift detected)', (5) Track drift % in UDS metadata."
+    },
+    {
+      "priority": "P2",
+      "recommendation": "Implement testing-patterns standard doc generation",
+      "affects": ["Standards docs"],
+      "requires": ["coderef_patterns focus on test files", "Detect test structure, mocking, assertions, fixtures"],
+      "benefit": "Complete standards coverage (4/4 instead of 3/4). Testing conventions documented and enforced. New developers follow established test patterns. Consistency in test code improves.",
+      "implementation": "Create testing_patterns standard generator: (1) Call coderef_patterns focused on test files (**/*.test.*, **/*.spec.*), (2) Detect patterns: test structure (describe/it vs test/expect), mocking (jest.mock vs sinon), assertions (expect vs assert), fixtures (beforeEach vs factory functions), (3) Analyze test coverage patterns (integration vs unit test ratio), (4) Generate testing-patterns.md with discovered conventions, (5) Validate with Papertrail testing-patterns validator."
+    },
+    {
+      "priority": "P3",
+      "recommendation": "Consolidate foundation doc tools (3 tools → 1 unified tool)",
+      "affects": ["Tool naming and user experience"],
+      "requires": ["Keep generate_foundation_docs as primary", "Deprecate coderef_foundation_docs with redirect", "Make generate_individual_doc internal-only"],
+      "benefit": "Single source of truth for foundation docs. Reduced user confusion. Simplified maintenance. Clear migration path.",
+      "implementation": "Step 1: Keep generate_foundation_docs as primary tool. Step 2: Deprecate coderef_foundation_docs with redirect to generate_foundation_docs. Step 3: Make generate_individual_doc internal-only (called by generate_foundation_docs, not exposed to users). Step 4: Update slash commands to use generate_foundation_docs. Step 5: Add deprecation warnings for 2 versions, then remove in v4.0."
+    }
+  ],
+
+  "next_steps": {
+    "immediate": [
+      "Implement P0-1: Integrate coderef-context tool orchestration into generate_foundation_docs (foundation docs quality 70% → 85%)",
+      "Implement P0-2: Integrate Papertrail validation into doc generation workflow (real-time quality gates)",
+      "Implement P0-3: Add POWER framework section validation to Papertrail schemas (enforce framework compliance)",
+      "Update STUB-063 (consolidate-foundation-docs-workflow) with P0 recommendations as Phase 1 implementation plan"
+    ],
+    "short_term": [
+      "Implement P1-1: Upgrade user docs to use .coderef/ data (quality 40% → 75%)",
+      "Implement P1-2: Replace regex with coderef_patterns in standards docs (quality 55% → 80%)",
+      "Implement P1-3: Add code example validation in Papertrail",
+      "Implement P1-4: Create schema-template sync tool (eliminate drift)",
+      "Create WO-DOCS-CONSOLIDATION-002 for Phase 2 implementation (P1 priorities)"
+    ],
+    "long_term": [
+      "Implement P2 recommendations: SCHEMA.md enhancement, INTEGRATION.md creation, drift detection, testing-patterns",
+      "Implement P3 recommendation: Consolidate foundation doc tools (deprecation path)",
+      "Expand validation integration to CI/CD (pre-commit hooks, GitHub Actions)",
+      "Add incremental scan support via drift detection (10-100x faster refresh)",
+      "Support Python code scanning in coderef-context (currently TypeScript only)"
+    ]
+  },
+
+  "implementation_priority_matrix": {
+    "P0_critical_foundation": {
+      "recommendations": ["P0-1 coderef-context orchestration", "P0-2 Papertrail integration", "P0-3 POWER framework validation"],
+      "estimated_effort": "High (3-4 weeks)",
+      "expected_impact": "Critical - Establishes unified workflow with code intelligence + validation",
+      "dependencies": "None - can start immediately",
+      "success_metrics": ["Foundation docs quality 70% → 85%", "Validation coverage 72% → 100%", "Real-time quality gates active"]
+    },
+    "P1_expand_coverage": {
+      "recommendations": ["P1-1 User docs .coderef/", "P1-2 Semantic standards", "P1-3 Code example validation", "P1-4 Schema sync"],
+      "estimated_effort": "Medium (2-3 weeks)",
+      "expected_impact": "High - Extends code intelligence to all doc types",
+      "dependencies": "Requires P0-1 (coderef-context orchestration) and P0-2 (validation integration)",
+      "success_metrics": ["User docs quality 40% → 75%", "Standards docs quality 55% → 80%", "Zero schema-template drift", "100% code example accuracy"]
+    },
+    "P2_documentation_infrastructure": {
+      "recommendations": ["P2-1 SCHEMA.md", "P2-2 INTEGRATION.md", "P2-3 Drift detection", "P2-4 testing-patterns"],
+      "estimated_effort": "Low-Medium (1-2 weeks)",
+      "expected_impact": "Medium - Improves developer experience and documentation completeness",
+      "dependencies": "Requires P0-1 and P1-2",
+      "success_metrics": ["Complete .coderef/ schema reference", "Integration examples published", "Zero stale doc generation", "4/4 standards coverage"]
+    },
+    "P3_consolidation_cleanup": {
+      "recommendations": ["P3-1 Tool consolidation"],
+      "estimated_effort": "Low (1 week)",
+      "expected_impact": "Low-Medium - Reduces user confusion, simplifies maintenance",
+      "dependencies": "Requires P0 complete (stable API before consolidation)",
+      "success_metrics": ["Single foundation doc tool", "Zero user confusion incidents", "Simplified maintenance burden"]
+    }
+  },
+
+  "success_criteria": {
+    "phase_1_complete": [
+      "coderef-docs calls coderef_query, coderef_patterns, coderef_complexity, coderef_coverage, coderef_impact",
+      "Papertrail validation integrated into doc generation (auto-validate before write)",
+      "POWER framework sections enforced via schema validation",
+      "Foundation docs quality >= 85%",
+      "Validation coverage = 100%"
+    ],
+    "phase_2_complete": [
+      "User docs leverage .coderef/ data (quality >= 75%)",
+      "Standards docs use semantic analysis (quality >= 80%)",
+      "Code examples validated against actual code",
+      "Schema-template drift = 0%"
+    ],
+    "full_consolidation_complete": [
+      "All doc types use code intelligence + validation",
+      "Single unified generate_foundation_docs tool",
+      "SCHEMA.md complete with .coderef/ schemas",
+      "INTEGRATION.md published with examples",
+      "testing-patterns implemented (4/4 standards)",
+      "Drift detection active before generation"
+    ]
+  },
+
+  "risk_assessment": {
+    "high_risk": [
+      "Breaking changes to coderef-docs tool signatures (mitigation: maintain backward compatibility)",
+      "Performance degradation from additional MCP tool calls (mitigation: cache .coderef/ reads, parallel tool calls)",
+      "Validation failures blocking doc generation (mitigation: configurable threshold, force-write option)"
+    ],
+    "medium_risk": [
+      "Schema-template sync complexity (mitigation: start with manual sync, automate incrementally)",
+      "coderef-context tool orchestration reliability (mitigation: graceful degradation if tools unavailable)",
+      "User resistance to stricter validation (mitigation: phased rollout, clear error messages, auto-fix)"
+    ],
+    "low_risk": [
+      "Tool consolidation breaking existing workflows (mitigation: deprecation warnings, redirects)",
+      "POWER framework section validation too strict (mitigation: configurable required sections)",
+      "Drift detection false positives (mitigation: adjustable drift threshold)"
+    ]
+  },
+
+  "conclusion": "All three agents identified the same critical gap: coderef-docs reads .coderef/ files but doesn't orchestrate coderef-context MCP tools. This is the primary blocker for achieving code-driven documentation across all doc types. The recommended solution is clear: (P0) Integrate coderef-context tool orchestration, Papertrail validation, and POWER framework enforcement as foundational changes. Then (P1) extend code intelligence to user/standards docs with semantic analysis and code example validation. Finally (P2-P3) add documentation infrastructure and consolidation cleanup. Success depends on: (1) MCP tool orchestration working reliably, (2) Validation integration not blocking workflows, (3) Schema-template sync preventing drift. Expected outcome: Foundation docs 70% → 85% quality, User docs 40% → 75%, Standards docs 55% → 80%, Validation coverage 72% → 100%."
+}

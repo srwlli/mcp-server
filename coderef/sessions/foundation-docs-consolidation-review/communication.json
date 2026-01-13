@@ -1,0 +1,48 @@
+{
+  "workorder_id": "WO-DOCS-CONSOLIDATION-001",
+  "feature_name": "foundation-docs-consolidation-review",
+  "created": "2026-01-12",
+  "status": "not_started",
+  "description": "coderef-docs and coderef-context agents review their contributions to foundation docs workflow, assess output quality using .coderef/ data, and propose improvements for standardizing all documentation types (foundation, user, standards)",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-consolidation-review\\instructions.json",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Synthesize findings from coderef-docs and coderef-context reviews, aggregate improvement suggestions, create unified recommendations",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-consolidation-review\\orchestrator-output.json",
+    "status": "complete",
+    "notes": "Synthesized findings from all 3 agents. Critical gap identified: coderef-docs reads .coderef/ files but doesn't orchestrate coderef-context MCP tools. Created 12 unified recommendations across 4 priority tiers (P0-P3) with clear implementation paths. Success metrics defined: Foundation docs 70%→85%, User docs 40%→75%, Standards docs 55%→80%, Validation 72%→100%. Next: Implement P0 recommendations (coderef-context orchestration + Papertrail integration + POWER framework validation)."
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-consolidation-review\\coderef-docs-output.json",
+      "status": "complete",
+      "notes": "Reviewed 13 tools, assessed foundation/user/standards docs quality, identified 11 improvement suggestions across 5 categories (foundation, user, standards, integration, architecture). Key findings: partial .coderef/ integration (foundation docs only), user docs template-only, standards use regex not semantic analysis, missing coderef-context MCP tool orchestration. Priority improvements: add coderef_query for relationships, integrate .coderef/ into user docs, replace regex with coderef_patterns, add complexity/coverage/impact analysis."
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-consolidation-review\\coderef-context-output.json",
+      "status": "complete",
+      "notes": "Reviewed 12 MCP tools (v2.0 file reader, 117x faster than CLI), assessed .coderef/ data sources (index.json, graph.json, reports/, diagrams/, exports/), and foundation docs quality (high for API/ARCHITECTURE/COMPONENTS, medium for SCHEMA). Identified 8 improvement suggestions across 5 categories (foundation, integration, architecture, standards, user). Key findings: rich code intelligence available (scan/query/impact/patterns/complexity/coverage/drift/diagrams) but NOT consumed by coderef-docs (critical integration gap), foundation docs manually written (not auto-generated), SCHEMA.md incomplete (missing .coderef/ file format definitions), no Python code scanning (index.json empty for itself). Priority improvements: enhance SCHEMA.md with .coderef/ schemas, create integration examples for coderef-docs, add generate_foundation_docs tool, support incremental scans via drift detection."
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-consolidation-review\\papertrail-output.json",
+      "status": "complete",
+      "notes": "Reviewed 4 MCP tools, 10 UDS schemas, 11 validators, and validation integration. Assessed validation coverage for foundation/user/standards docs. Identified 8 improvement suggestions across 4 categories (integration, foundation, standards, user, architecture). Key findings: excellent frontmatter validation (10 doc types, auto-detection, 0-100 scoring) but minimal content/section validation, no POWER framework enforcement, no integration with coderef-docs generation workflow, no code example validation via coderef-context. Priority improvements: integrate validation into coderef-docs workflow (auto-validate before write), add POWER framework section validation, validate code examples using coderef-context, sync schemas from templates."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 3,
+    "pending": 0,
+    "not_started": 0
+  }
+}

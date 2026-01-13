@@ -144,7 +144,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="generate_individual_doc",
-            description="Generate a single individual documentation file for a project. Returns the template - Claude will generate and save the document. Phase 4: Optional Papertrail UDS parameters for workorder tracking.",
+            description="[INTERNAL] Generate a single individual documentation file. Called by generate_foundation_docs for sequential generation. Not recommended for direct use - use generate_foundation_docs instead. CONSOLIDATE-001 (WO-GENERATION-ENHANCEMENT-001): Marked as internal tool.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -180,7 +180,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="coderef_foundation_docs",
-            description="Unified foundation docs generator powered by coderef analysis. Automatically generates ARCHITECTURE.md, SCHEMA.md, COMPONENTS.md (UI projects), API.md, and project-context.json with real code intelligence.",
+            description="[DEPRECATED] Use generate_foundation_docs instead. CONSOLIDATE-002 (WO-GENERATION-ENHANCEMENT-001): This tool is deprecated and will be removed in v5.0.0. It has been superseded by generate_foundation_docs which offers better MCP integration, drift detection, and sequential generation. Migration: Replace coderef_foundation_docs(path) with generate_foundation_docs(path).",
             inputSchema={
                 "type": "object",
                 "properties": {

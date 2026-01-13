@@ -1138,6 +1138,156 @@ async def handle_generate_my_guide(arguments: dict) -> list[TextContent]:
 
 @log_invocation
 @mcp_error_handler
+async def handle_generate_user_guide(arguments: dict) -> list[TextContent]:
+    """
+    USER-004: Handle generate_user_guide tool call (WO-GENERATION-ENHANCEMENT-001).
+
+    Generates USER-GUIDE.md using real MCP tool and slash command data from .coderef/.
+
+    Uses @log_invocation and @mcp_error_handler decorators for automatic
+    logging and error handling (ARCH-004, ARCH-005).
+    """
+    # Validate inputs (REF-003)
+    project_path = validate_project_path_input(arguments.get("project_path", ""))
+
+    # Initialize generator
+    generator = UserGuideGenerator(TEMPLATES_DIR)
+    project_path_obj = Path(project_path)
+
+    logger.info(f"Generating USER-GUIDE.md for project: {project_path}")
+
+    # USER-004: Extract MCP tools and slash commands from .coderef/
+    mcp_tools = generator.extract_mcp_tools(project_path_obj)
+    slash_commands = generator.extract_slash_commands(project_path_obj)
+
+    # Build status report
+    result = f"📋 USER-GUIDE.md Generator\n"
+    result += f"=" * 60 + "\n\n"
+    result += f"Project: {project_path_obj.name}\n"
+    result += f"Output: coderef/user/USER-GUIDE.md\n"
+    result += f"Type: Comprehensive onboarding documentation\n\n"
+
+    # Add extraction status
+    if mcp_tools['available']:
+        result += f"MCP Tools: ✓ Discovered {mcp_tools['total_tools']} tools\n"
+    else:
+        result += f"MCP Tools: ⚠ Not available\n"
+        result += f"  Run: mcp__coderef_context__coderef_scan(project_path=\"{project_path}\")\n"
+
+    if slash_commands['available']:
+        result += f"Slash Commands: ✓ Discovered {slash_commands['total_commands']} commands\n"
+    else:
+        result += f"Slash Commands: ⚠ Not available (.claude/commands/ not found)\n"
+
+    result += f"\n" + "=" * 60 + "\n\n"
+
+    # USER-004: Generate USER-GUIDE.md content
+    user_guide_content = generator.generate_user_guide(
+        project_path_obj,
+        mcp_tools=mcp_tools,
+        slash_commands=slash_commands
+    )
+
+    # Save the file
+    try:
+        saved_path = generator.save_user_guide(user_guide_content, project_path_obj)
+        result += f"✅ SUCCESS: USER-GUIDE.md generated and saved\n\n"
+        result += f"Location: {saved_path}\n"
+        result += f"Lines: {len(user_guide_content.splitlines())}\n"
+        result += f"Sections: 10 (Introduction → Quick Reference)\n\n"
+        result += f"=" * 60 + "\n\n"
+        result += f"📄 SECTIONS INCLUDED:\n\n"
+        result += f"1. Introduction\n"
+        result += f"2. Prerequisites (with verification commands)\n"
+        result += f"3. Installation (step-by-step)\n"
+        result += f"4. Architecture (MCP protocol flow)\n"
+        result += f"5. MCP Tools Reference (categorized)\n"
+        result += f"6. Slash Commands\n"
+        result += f"7. Common Workflows\n"
+        result += f"8. Best Practices (Do/Don't/Tips)\n"
+        result += f"9. Troubleshooting\n"
+        result += f"10. Quick Reference (operations table)\n"
+    except Exception as e:
+        result += f"❌ ERROR: Failed to save USER-GUIDE.md\n\n"
+        result += f"Error: {str(e)}\n"
+        logger.error(f"Failed to save USER-GUIDE.md: {e}", exc_info=True)
+
+    logger.info(f"USER-GUIDE.md generation complete")
+    return [TextContent(type="text", text=result)]
+
+
+@log_invocation
+@mcp_error_handler
+async def handle_generate_features(arguments: dict) -> list[TextContent]:
+    """
+    USER-005: Handle generate_features tool call (WO-GENERATION-ENHANCEMENT-001).
+
+    Generates FEATURES.md inventory by scanning coderef/workorder and coderef/archived.
+
+    Uses @log_invocation and @mcp_error_handler decorators for automatic
+    logging and error handling (ARCH-004, ARCH-005).
+    """
+    # Validate inputs (REF-003)
+    project_path = validate_project_path_input(arguments.get("project_path", ""))
+
+    # Initialize generator
+    generator = UserGuideGenerator(TEMPLATES_DIR)
+    project_path_obj = Path(project_path)
+
+    logger.info(f"Generating FEATURES.md for project: {project_path}")
+
+    # Build status report
+    result = f"📋 FEATURES.md Generator\n"
+    result += f"=" * 60 + "\n\n"
+    result += f"Project: {project_path_obj.name}\n"
+    result += f"Output: coderef/user/FEATURES.md\n"
+    result += f"Type: Features inventory with workorder tracking\n\n"
+
+    # Check directories
+    workorder_dir = project_path_obj / "coderef" / "workorder"
+    archived_dir = project_path_obj / "coderef" / "archived"
+
+    result += f"Scanning:\n"
+    if workorder_dir.exists():
+        active_count = sum(1 for d in workorder_dir.iterdir() if d.is_dir())
+        result += f"  • coderef/workorder/: ✓ Found {active_count} active features\n"
+    else:
+        result += f"  • coderef/workorder/: ⚠ Not found\n"
+
+    if archived_dir.exists():
+        archived_count = sum(1 for d in archived_dir.iterdir() if d.is_dir())
+        result += f"  • coderef/archived/: ✓ Found {archived_count} archived features\n"
+    else:
+        result += f"  • coderef/archived/: ⚠ Not found\n"
+
+    result += f"\n" + "=" * 60 + "\n\n"
+
+    # USER-005: Generate FEATURES.md content
+    features_content = generator.generate_features(project_path_obj)
+
+    # Save the file
+    try:
+        saved_path = generator.save_features(features_content, project_path_obj)
+        result += f"✅ SUCCESS: FEATURES.md generated and saved\n\n"
+        result += f"Location: {saved_path}\n"
+        result += f"Lines: {len(features_content.splitlines())}\n\n"
+        result += f"=" * 60 + "\n\n"
+        result += f"📄 CONTENTS:\n\n"
+        result += f"• Executive Summary (metrics table)\n"
+        result += f"• Active Features (workorder tracking)\n"
+        result += f"• Archived Features (completion history)\n"
+        result += f"• Usage Notes (lifecycle workflow)\n"
+    except Exception as e:
+        result += f"❌ ERROR: Failed to save FEATURES.md\n\n"
+        result += f"Error: {str(e)}\n"
+        logger.error(f"Failed to save FEATURES.md: {e}", exc_info=True)
+
+    logger.info(f"FEATURES.md generation complete")
+    return [TextContent(type="text", text=result)]
+
+
+@log_invocation
+@mcp_error_handler
 async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     """
     Handle establish_standards tool call.
@@ -1189,8 +1339,12 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     # Initialize StandardsGenerator
     generator = StandardsGenerator(project_path_obj, scan_depth)
 
-    # Generate and save standards
-    result_dict = generator.save_standards(standards_dir)
+    # STANDARDS-001, STANDARDS-002: Fetch MCP patterns for semantic analysis (WO-GENERATION-ENHANCEMENT-001)
+    mcp_patterns_result = await generator.fetch_mcp_patterns(pattern_type=None, limit=50)
+    mcp_patterns_available = mcp_patterns_result['success']
+
+    # Generate and save standards (with MCP pattern data if available)
+    result_dict = generator.save_standards(standards_dir, mcp_patterns=mcp_patterns_result if mcp_patterns_available else None)
 
     # Format success response with drift warning (DRIFT-003)
     result = f"✅ Standards establishment completed successfully!\n\n"
@@ -1209,7 +1363,29 @@ async def handle_establish_standards(arguments: dict) -> list[TextContent]:
     result += f"  • UI Patterns: {result_dict['ui_patterns_count']}\n"
     result += f"  • Behavior Patterns: {result_dict['behavior_patterns_count']}\n"
     result += f"  • UX Patterns: {result_dict['ux_patterns_count']}\n"
-    result += f"Components Indexed: {result_dict['components_count']}\n\n"
+    result += f"Components Indexed: {result_dict['components_count']}\n"
+
+    # STANDARDS-002, STANDARDS-003: Show MCP pattern data (WO-GENERATION-ENHANCEMENT-001)
+    if mcp_patterns_available:
+        result += f"\n🔍 MCP PATTERN ANALYSIS:\n\n"
+        result += f"  • Total Patterns: {mcp_patterns_result['pattern_count']}\n"
+
+        # STANDARDS-003: Show pattern frequency
+        if mcp_patterns_result['frequency']:
+            top_patterns = sorted(mcp_patterns_result['frequency'].items(), key=lambda x: x[1], reverse=True)[:5]
+            result += f"  • Top Patterns:\n"
+            for pattern, count in top_patterns:
+                result += f"    - {pattern}: {count} occurrences\n"
+
+        # STANDARDS-004: Show consistency violations
+        if mcp_patterns_result['violations']:
+            result += f"  • Consistency Violations: {len(mcp_patterns_result['violations'])}\n"
+    else:
+        result += f"\n⚠ MCP Pattern Analysis: Not available\n"
+        if 'error' in mcp_patterns_result:
+            result += f"  Reason: {mcp_patterns_result['error']}\n"
+
+    result += f"\n"
     result += f"=" * 60 + "\n\n"
     result += f"📁 STANDARDS DOCUMENTS:\n\n"
     for file_path in result_dict['files']:
@@ -1753,6 +1929,9 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
     """
     Handle coderef_foundation_docs tool call.
 
+    CONSOLIDATE-002 (WO-GENERATION-ENHANCEMENT-001): DEPRECATED tool.
+    Use generate_foundation_docs instead.
+
     Unified foundation docs generator powered by coderef analysis. Generates:
     - ARCHITECTURE.md (patterns, decisions, constraints)
     - SCHEMA.md (entities, relationships)
@@ -1762,9 +1941,22 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
     Replaces: api_inventory, database_inventory, dependency_inventory,
               config_inventory, test_inventory, inventory_manifest, documentation_inventory
     """
+    # CONSOLIDATE-002: Show deprecation warning
+    logger.warning("coderef_foundation_docs is deprecated. Use generate_foundation_docs instead.")
+
     # Validate project_path
     project_path = validate_project_path_input(arguments.get('project_path', ''))
     project_path_obj = Path(project_path).resolve()
+
+    # Add deprecation notice to output
+    deprecation_warning = "⚠️ DEPRECATION WARNING ⚠️\n\n"
+    deprecation_warning += "The 'coderef_foundation_docs' tool is deprecated and will be removed in v5.0.0.\n"
+    deprecation_warning += "Please use 'generate_foundation_docs' instead for:\n"
+    deprecation_warning += "  • Better MCP integration with drift detection\n"
+    deprecation_warning += "  • Sequential generation (no timeouts)\n"
+    deprecation_warning += "  • Enhanced validation support\n\n"
+    deprecation_warning += "Migration: Replace coderef_foundation_docs(path) with generate_foundation_docs(path)\n\n"
+    deprecation_warning += "=" * 60 + "\n\n"
 
     # Get optional parameters
     include_components = arguments.get('include_components')  # None = auto-detect
@@ -1862,23 +2054,30 @@ async def handle_coderef_foundation_docs(arguments: dict) -> list[TextContent]:
         if len(files_skipped) > 5:
             message += f"  ... and {len(files_skipped) - 5} more"
 
-    return [TextContent(type="text", text=json.dumps({"success": True, "data": summary, "message": message}, indent=2))]
+    # CONSOLIDATE-002: Prepend deprecation warning to message
+    final_message = deprecation_warning + message
+
+    return [TextContent(type="text", text=json.dumps({"success": True, "data": summary, "message": final_message}, indent=2))]
 
 
 # =============================================================================
-# Tool handlers registry - MINIMAL (13 documentation tools)
+# Tool handlers registry - ENHANCED (16 documentation tools)
+# WO-GENERATION-ENHANCEMENT-001: Added user doc generators (USER-003, USER-004, USER-005)
 # =============================================================================
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
     'get_template': handle_get_template,
     'generate_foundation_docs': handle_generate_foundation_docs,
-    'generate_individual_doc': handle_generate_individual_doc,
-    'coderef_foundation_docs': handle_coderef_foundation_docs,  # Automated generator
+    'generate_individual_doc': handle_generate_individual_doc,  # CONSOLIDATE-001: Internal tool
+    'coderef_foundation_docs': handle_coderef_foundation_docs,  # CONSOLIDATE-002: DEPRECATED
     'add_changelog_entry': handle_add_changelog_entry,
     'record_changes': handle_record_changes,
-    'generate_quickref_interactive': handle_generate_quickref_interactive,
+    'generate_quickref_interactive': handle_generate_quickref_interactive,  # USER-002: Enhanced
+    'generate_my_guide': handle_generate_my_guide,  # USER-003: New
+    'generate_user_guide': handle_generate_user_guide,  # USER-004: New
+    'generate_features': handle_generate_features,  # USER-005: New
     'generate_resource_sheet': handle_generate_resource_sheet,  # WO-RESOURCE-SHEET-MCP-TOOL-001
-    'establish_standards': handle_establish_standards,
+    'establish_standards': handle_establish_standards,  # STANDARDS-001: Enhanced with MCP
     'audit_codebase': handle_audit_codebase,
     'check_consistency': handle_check_consistency,
     'validate_document': handle_validate_document,

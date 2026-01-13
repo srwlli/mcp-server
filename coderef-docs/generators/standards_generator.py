@@ -21,6 +21,9 @@ from type_defs import (
 )
 from logger_config import logger, log_security_event
 
+# STANDARDS-001, STANDARDS-002: Import MCP orchestrator (WO-GENERATION-ENHANCEMENT-001)
+from generators.mcp_orchestrator import call_coderef_patterns
+
 
 class StandardsGenerator:
     """
@@ -54,6 +57,67 @@ class StandardsGenerator:
         self._theme_export = re.compile(r'export\s+const\s+Themes\s*[:=]', re.MULTILINE)
 
         logger.debug(f"Initialized StandardsGenerator for {project_path} with depth={scan_depth}")
+
+    async def fetch_mcp_patterns(self, pattern_type: str = None, limit: int = 50) -> Dict:
+        """
+        STANDARDS-002: Fetch code patterns from coderef-context MCP tool.
+
+        Calls call_coderef_patterns to discover:
+        - Coding conventions and patterns
+        - Pattern frequency across codebase
+        - Pattern locations
+        - Consistency violations
+
+        Args:
+            pattern_type: Optional pattern type filter
+            limit: Maximum results (default: 50)
+
+        Returns:
+            Dictionary with patterns, frequency, locations, violations
+        """
+        logger.info(f"Fetching MCP patterns (type={pattern_type}, limit={limit})")
+
+        try:
+            result = await call_coderef_patterns(
+                self.project_path,
+                pattern_type=pattern_type,
+                limit=limit
+            )
+
+            if result['success']:
+                logger.info(f"MCP patterns fetched: {result['pattern_count']} patterns found")
+                # STANDARDS-003: Pattern frequency tracking
+                return {
+                    'patterns': result.get('patterns', []),
+                    'frequency': result.get('frequency', {}),
+                    'locations': result.get('locations', {}),
+                    'violations': result.get('violations', []),  # STANDARDS-004
+                    'pattern_count': result.get('pattern_count', 0),
+                    'success': True
+                }
+            else:
+                logger.warning(f"MCP patterns fetch failed: {result.get('error', 'Unknown error')}")
+                return {
+                    'patterns': [],
+                    'frequency': {},
+                    'locations': {},
+                    'violations': [],
+                    'pattern_count': 0,
+                    'success': False,
+                    'error': result.get('error')
+                }
+
+        except Exception as e:
+            logger.error(f"Failed to fetch MCP patterns: {e}", exc_info=True)
+            return {
+                'patterns': [],
+                'frequency': {},
+                'locations': {},
+                'violations': [],
+                'pattern_count': 0,
+                'success': False,
+                'error': str(e)
+            }
 
     def _read_coderef_index(self, index_path: Path) -> Dict[str, List[Path]]:
         """
@@ -1097,12 +1161,125 @@ This document defines the UX patterns discovered in the {project_name} codebase.
 
         return doc
 
-    def save_standards(self, standards_dir: Path) -> StandardsResultDict:
+    def generate_testing_patterns_doc(self, mcp_patterns: Dict, files: Dict[str, List[Path]]) -> str:
+        """
+        STANDARDS-005: Generate testing-patterns.md from MCP pattern data.
+
+        Creates documentation about testing patterns discovered in the codebase,
+        including test file patterns, coverage patterns, and testing conventions.
+
+        Args:
+            mcp_patterns: MCP patterns data from call_coderef_patterns
+            files: Files grouped by type
+
+        Returns:
+            Markdown content for testing-patterns.md
+        """
+        logger.info("Generating testing-patterns.md")
+
+        doc = "# Testing Patterns\n\n"
+        doc += f"**Generated:** {datetime.now().strftime('%Y-%m-%d')}\n"
+        doc += f"**Project:** {self.project_path.name}\n\n"
+        doc += "---\n\n"
+
+        # Summary
+        doc += "## Summary\n\n"
+        doc += "This document catalogs testing patterns and conventions discovered in the codebase.\n\n"
+        doc += f"- **Total Patterns Analyzed:** {mcp_patterns.get('pattern_count', 0)}\n"
+        doc += f"- **Pattern Sources:** MCP semantic analysis + file analysis\n\n"
+        doc += "---\n\n"
+
+        # Test File Patterns
+        doc += "## Test File Patterns\n\n"
+
+        test_files = []
+        for ext in ['tsx', 'jsx', 'ts', 'js']:
+            if ext in files:
+                test_files.extend([f for f in files[ext] if 'test' in f.name.lower() or 'spec' in f.name.lower()])
+
+        if test_files:
+            doc += f"**Test Files Found:** {len(test_files)}\n\n"
+            doc += "### Naming Conventions\n\n"
+
+            # Analyze naming patterns
+            spec_count = sum(1 for f in test_files if '.spec.' in f.name)
+            test_count = sum(1 for f in test_files if '.test.' in f.name)
+
+            doc += f"- `.spec.*` files: {spec_count}\n"
+            doc += f"- `.test.*` files: {test_count}\n\n"
+
+            doc += "### Common Test Patterns\n\n"
+        else:
+            doc += "*(No test files discovered in scan)*\n\n"
+
+        # Pattern Frequency (STANDARDS-003)
+        if mcp_patterns.get('frequency'):
+            doc += "---\n\n"
+            doc += "## Pattern Frequency\n\n"
+            doc += "Most commonly used patterns across the codebase:\n\n"
+
+            top_patterns = sorted(mcp_patterns['frequency'].items(), key=lambda x: x[1], reverse=True)[:10]
+            doc += "| Pattern | Occurrences |\n"
+            doc += "|---------|-------------|\n"
+            for pattern, count in top_patterns:
+                doc += f"| `{pattern}` | {count} |\n"
+            doc += "\n"
+
+        # Consistency Violations (STANDARDS-004)
+        if mcp_patterns.get('violations'):
+            doc += "---\n\n"
+            doc += "## Consistency Violations\n\n"
+            doc += f"**Total Violations Found:** {len(mcp_patterns['violations'])}\n\n"
+
+            if len(mcp_patterns['violations']) > 0:
+                doc += "### Top Violations\n\n"
+                for i, violation in enumerate(mcp_patterns['violations'][:5], 1):
+                    doc += f"{i}. {violation.get('description', 'Unknown violation')}\n"
+                    if 'location' in violation:
+                        doc += f"   - Location: {violation['location']}\n"
+                doc += "\n"
+
+        # Testing Recommendations
+        doc += "---\n\n"
+        doc += "## Recommendations\n\n"
+        doc += "Based on the analysis:\n\n"
+
+        if test_files:
+            coverage_ratio = len(test_files) / max(sum(len(files[ext]) for ext in ['tsx', 'jsx', 'ts', 'js'] if ext in files), 1)
+            doc += f"- **Current Test Coverage (file-based):** ~{coverage_ratio * 100:.1f}%\n"
+
+            if coverage_ratio < 0.3:
+                doc += "  - ⚠️ Low test coverage detected. Consider adding more tests.\n"
+            elif coverage_ratio < 0.6:
+                doc += "  - 💡 Moderate test coverage. Aim for 70-80% for critical paths.\n"
+            else:
+                doc += "  - ✅ Good test coverage. Maintain consistency.\n"
+        else:
+            doc += "- ⚠️ No test files detected. Consider adding test infrastructure.\n"
+
+        doc += "\n"
+
+        # Testing Tools & Frameworks
+        doc += "---\n\n"
+        doc += "## Testing Tools\n\n"
+        doc += "Detected testing frameworks and tools:\n\n"
+        doc += "*(Analysis based on imports and package.json dependencies)*\n\n"
+
+        # Footer
+        doc += "---\n\n"
+        doc += "*Generated by coderef-docs establish_standards tool with MCP pattern analysis*\n"
+
+        return doc
+
+    def save_standards(self, standards_dir: Path, mcp_patterns: Dict = None) -> StandardsResultDict:
         """
         Save all generated standards documents to disk.
 
+        STANDARDS-001: Enhanced with MCP pattern integration (WO-GENERATION-ENHANCEMENT-001)
+
         Args:
             standards_dir: Directory to save standards documents
+            mcp_patterns: Optional MCP patterns data from call_coderef_patterns
 
         Returns:
             StandardsResultDict with save results
@@ -1153,6 +1330,14 @@ This document defines the UX patterns discovered in the {project_name} codebase.
         component_path = standards_dir / Files.COMPONENT_INDEX
         component_path.write_text(component_doc, encoding='utf-8')
         saved_files.append(str(component_path))
+
+        # STANDARDS-005: Generate testing-patterns.md (WO-GENERATION-ENHANCEMENT-001)
+        if mcp_patterns and mcp_patterns.get('success'):
+            testing_doc = self.generate_testing_patterns_doc(mcp_patterns, files)
+            testing_path = standards_dir / "testing-patterns.md"
+            testing_path.write_text(testing_doc, encoding='utf-8')
+            saved_files.append(str(testing_path))
+            logger.info("Generated testing-patterns.md with MCP pattern data")
 
         # Calculate totals
         ui_count = (len(ui_patterns.get('buttons', {}).get('sizes', [])) +

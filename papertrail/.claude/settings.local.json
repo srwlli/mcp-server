@@ -24,9 +24,11 @@
       "mcp__coderef-workflow__create_plan",
       "Bash(find schemas -name \"*.json\" -type f -exec sh -c 'echo \"\"=== {} ===\"\" && jq -r \"\".properties | keys[]\"\" {} 2>/dev/null | grep -i \"\"agent\\|date\\|task\\|front\"\" | head -5' ;)",
       "Bash(cat:*)",
-      "mcp__coderef-context__coderef_scan"
+      "mcp__coderef-context__coderef_scan",
+      "mcp__papertrail__validate_resource_sheet"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "coderef-personas",
     "coderef-context",
@@ -34,6 +36,5 @@
     "coderef-workflow",
     "coderef-testing",
     "papertrail"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

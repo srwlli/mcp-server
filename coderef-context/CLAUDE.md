@@ -1,10 +1,10 @@
 # coderef-context - AI Context Documentation
 
 **Project:** coderef-context (MCP Server)
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Status:** ✅ Production
 **Created:** 2025-12-23
-**Last Updated:** 2026-01-10
+**Last Updated:** 2026-01-13
 
 ---
 
@@ -14,7 +14,14 @@
 
 **Core Innovation:** Replaced CLI subprocess calls (1,100 lines, 350ms avg) with direct file reader (450 lines, 3ms avg) - same functionality, 117x performance improvement, zero breaking changes.
 
-**Latest Update (v2.0.0 - 2026-01-10):**
+**Latest Update (v2.1.0 - 2026-01-13):**
+- ✅ Added incremental scan support (10x+ faster for small changes)
+- ✅ Added foundation docs generation tool (auto-generates API/SCHEMA/COMPONENTS.md)
+- ✅ Added .coderef/ output validation tool
+- ✅ Added comprehensive quickref.md (15-tool cheat sheet)
+- ✅ Documented Python scanning workflow (CLI already supports all 10 languages)
+
+**Previous Update (v2.0.0 - 2026-01-10):**
 - ✅ Refactored from CLI subprocess to .coderef/ file reader
 - ✅ 117x performance improvement (3ms vs 350ms average)
 - ✅ Reduced code from 1,100 → 450 lines

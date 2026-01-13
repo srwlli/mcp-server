@@ -531,17 +531,25 @@ async def handle_coderef_incremental_scan(args: dict) -> List[TextContent]:
         # Extract unique changed files from drift report
         changed_files = set()
 
-        for element in drift.get("changes", {}).get("added", []):
-            if "file" in element:
-                changed_files.add(element["file"])
+        # Handle different drift formats (dict or array)
+        if isinstance(drift, dict):
+            # Dict format with "changes" key
+            for element in drift.get("changes", {}).get("added", []):
+                if "file" in element:
+                    changed_files.add(element["file"])
 
-        for element in drift.get("changes", {}).get("modified", []):
-            if "file" in element:
-                changed_files.add(element["file"])
+            for element in drift.get("changes", {}).get("modified", []):
+                if "file" in element:
+                    changed_files.add(element["file"])
 
-        for element in drift.get("changes", {}).get("removed", []):
-            if "file" in element:
-                changed_files.add(element["file"])
+            for element in drift.get("changes", {}).get("removed", []):
+                if "file" in element:
+                    changed_files.add(element["file"])
+        elif isinstance(drift, list):
+            # Array format - each item is a changed element
+            for element in drift:
+                if isinstance(element, dict) and "file" in element:
+                    changed_files.add(element["file"])
 
         changed_files_list = sorted(list(changed_files))
 

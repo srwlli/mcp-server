@@ -187,6 +187,17 @@ async def handle_list_templates(arguments: dict) -> list[TextContent]:
         logger.warning("No templates found in templates directory")
         result = "No templates found in templates/power/"
 
+    # CONSOLIDATE-008: Add MCP status (WO-GENERATION-ENHANCEMENT-001)
+    result += f"\n\n" + "=" * 60 + "\n"
+    result += f"\n🔧 MCP INTEGRATION STATUS:\n\n"
+    if CODEREF_CONTEXT_AVAILABLE:
+        result += f"  • coderef-context MCP: ✅ Available\n"
+        result += f"  • Enhanced Features: Drift detection, pattern analysis, semantic insights\n"
+    else:
+        result += f"  • coderef-context MCP: ⚠️ Unavailable\n"
+        result += f"  • Fallback Mode: Template-only generation (reduced accuracy)\n"
+        result += f"  • Recommendation: Start coderef-context MCP server for full features\n"
+
     return [TextContent(type="text", text=result)]
 
 

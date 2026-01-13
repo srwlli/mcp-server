@@ -325,6 +325,48 @@ async def list_tools() -> list[Tool]:
             }
         ),
         Tool(
+            name="generate_my_guide",
+            description="USER-003 (WO-GENERATION-ENHANCEMENT-001): Generate my-guide.md - concise 60-80 line reference with MCP tools and slash commands. Auto-discovers tools from .coderef/index.json and commands from .claude/commands/. Categorizes by function (Documentation, Changelog, Standards, etc.).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project directory"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
+            name="generate_user_guide",
+            description="USER-004 (WO-GENERATION-ENHANCEMENT-001): Generate USER-GUIDE.md - comprehensive 10-section onboarding guide with Prerequisites, Installation, Architecture, Tools Reference, Commands, Workflows, Best Practices, Troubleshooting, and Quick Reference. Leverages .coderef/ data for 75%+ auto-fill.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project directory"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
+            name="generate_features",
+            description="USER-005 (WO-GENERATION-ENHANCEMENT-001): Generate FEATURES.md - features inventory with workorder tracking. Scans coderef/workorder/ and coderef/archived/ directories, extracts workorder IDs and status from plan.json files, generates executive summary with metrics and feature lifecycle documentation.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Absolute path to project directory"
+                    }
+                },
+                "required": ["project_path"]
+            }
+        ),
+        Tool(
             name="generate_resource_sheet",
             description="Generate composable module-based technical documentation for code elements. Replaces rigid templates with ~30-40 small modules that compose intelligently. Auto-detects code characteristics, selects appropriate modules, and generates markdown + JSON schema + JSDoc outputs. WO-RESOURCE-SHEET-MCP-TOOL-001",
             inputSchema={

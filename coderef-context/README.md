@@ -1,26 +1,28 @@
 # coderef-context MCP Server
 
 **Project:** coderef-context
-**Version:** 1.1.0
+**Version:** 2.1.0
 **Status:** ✅ Production
-**Last Updated:** 2025-12-30
+**Last Updated:** 2026-01-13
 **Maintainer:** willh, Claude Code AI
 
-**Expose @coderef/core CLI tools to Claude agents as standardized MCP tools**
+**High-performance read-only code intelligence for AI agents via MCP protocol**
 
 ---
 
 ## Purpose
 
-The coderef-context MCP server provides AI agents with real-time code intelligence during feature implementation. It bridges Claude agents and the @coderef/core TypeScript analysis engine, enabling agents to:
+The coderef-context MCP server provides AI agents with fast code intelligence by reading pre-scanned .coderef/ data structures. It enables agents to:
 
 - **Discover** what code elements exist before implementing new features
 - **Understand** dependencies and relationships before refactoring
 - **Assess** impact and risk before making breaking changes
 - **Estimate** effort based on complexity metrics
 - **Learn** from existing patterns to avoid reimplementation
+- **Generate** foundation documentation automatically from code structure
+- **Validate** .coderef/ outputs for data integrity
 
-**Core Innovation:** Eliminates "blind coding" by giving agents full codebase context through 11 MCP tools.
+**Core Innovation:** Eliminates "blind coding" by giving agents full codebase context through 15 MCP tools with 117x performance improvement over CLI subprocess calls.
 
 ---
 

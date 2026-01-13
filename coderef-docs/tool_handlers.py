@@ -27,6 +27,7 @@ from generators.review_formatter import ReviewFormatter
 from generators.planning_generator import PlanningGenerator
 from generators.risk_generator import RiskGenerator
 from generators.resource_sheet_generator import ResourceSheetGenerator
+from generators.user_guide_generator import UserGuideGenerator  # USER-003 (WO-GENERATION-ENHANCEMENT-001)
 from constants import Paths, Files, ScanDepth, FocusArea, AuditSeverity, AuditScope, PlanningPaths
 from validation import (
     validate_project_path_input,
@@ -1050,6 +1051,88 @@ async def handle_generate_quickref_interactive(arguments: dict) -> list[TextCont
     result += f"Save to: {project_path}/coderef/user/quickref.md\n"
 
     logger.info(f"Quickref generation workflow initiated")
+    return [TextContent(type="text", text=result)]
+
+
+@log_invocation
+@mcp_error_handler
+async def handle_generate_my_guide(arguments: dict) -> list[TextContent]:
+    """
+    USER-003: Handle generate_my_guide tool call (WO-GENERATION-ENHANCEMENT-001).
+
+    Generates my-guide.md using real MCP tool and slash command data from .coderef/.
+
+    Uses @log_invocation and @mcp_error_handler decorators for automatic
+    logging and error handling (ARCH-004, ARCH-005).
+    """
+    # Validate inputs (REF-003)
+    project_path = validate_project_path_input(arguments.get("project_path", ""))
+
+    # Initialize generator
+    generator = UserGuideGenerator(TEMPLATES_DIR)
+    project_path_obj = Path(project_path)
+
+    logger.info(f"Generating my-guide.md for project: {project_path}")
+
+    # USER-003: Extract MCP tools and slash commands from .coderef/
+    mcp_tools = generator.extract_mcp_tools(project_path_obj)
+    slash_commands = generator.extract_slash_commands(project_path_obj)
+
+    # Build status report
+    result = f"📋 my-guide.md Generator\n"
+    result += f"=" * 60 + "\n\n"
+    result += f"Project: {project_path_obj.name}\n"
+    result += f"Output: coderef/user/my-guide.md\n\n"
+
+    # Add extraction status
+    if mcp_tools['available']:
+        result += f"MCP Tools: ✓ Discovered {mcp_tools['total_tools']} tools\n"
+        # Show category breakdown
+        categories = {}
+        for tool in mcp_tools['tools']:
+            cat = tool['category']
+            categories[cat] = categories.get(cat, 0) + 1
+        for cat, count in sorted(categories.items()):
+            result += f"  • {cat}: {count} tools\n"
+    else:
+        result += f"MCP Tools: ⚠ Not available\n"
+        result += f"  Reason: {mcp_tools.get('error', '.coderef/index.json not found')}\n"
+        result += f"  Run: mcp__coderef_context__coderef_scan(project_path=\"{project_path}\")\n"
+
+    result += f"\n"
+
+    if slash_commands['available']:
+        result += f"Slash Commands: ✓ Discovered {slash_commands['total_commands']} commands\n"
+    else:
+        result += f"Slash Commands: ⚠ Not available (.claude/commands/ not found)\n"
+
+    result += f"\n" + "=" * 60 + "\n\n"
+
+    # USER-003: Generate my-guide.md content
+    my_guide_content = generator.generate_my_guide(
+        project_path_obj,
+        mcp_tools=mcp_tools,
+        slash_commands=slash_commands
+    )
+
+    # Save the file
+    try:
+        saved_path = generator.save_my_guide(my_guide_content, project_path_obj)
+        result += f"✅ SUCCESS: my-guide.md generated and saved\n\n"
+        result += f"Location: {saved_path}\n"
+        result += f"Lines: {len(my_guide_content.splitlines())}\n"
+        result += f"Target: 60-80 lines (concise quick reference)\n\n"
+        result += f"=" * 60 + "\n\n"
+        result += f"📄 PREVIEW:\n\n"
+        result += my_guide_content[:800]  # Show first 800 chars
+        if len(my_guide_content) > 800:
+            result += f"\n\n... (truncated, see full file at {saved_path})"
+    except Exception as e:
+        result += f"❌ ERROR: Failed to save my-guide.md\n\n"
+        result += f"Error: {str(e)}\n"
+        logger.error(f"Failed to save my-guide.md: {e}", exc_info=True)
+
+    logger.info(f"my-guide.md generation complete")
     return [TextContent(type="text", text=result)]
 
 

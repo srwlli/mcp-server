@@ -459,67 +459,6 @@ async def handle_validate_coderef_outputs(args: dict) -> List[TextContent]:
         )]
 
 
-async def handle_generate_foundation_docs(args: dict) -> List[TextContent]:
-    """Generate foundation documentation from index.json"""
-    project_path = args.get("project_path", ".")
-    doc_types = args.get("docs", ["api", "schema", "components"])
-    output_dir = args.get("output_dir", "coderef/foundation-docs")
-
-    try:
-        reader = CodeRefReader(project_path)
-
-        if not reader.exists():
-            return [TextContent(
-                type="text",
-                text=json.dumps({
-                    "success": False,
-                    "error": "No scan data found. Run scan first to create .coderef/ directory.",
-                    "hint": "Use dashboard scanner or run: coderef scan " + project_path
-                }, indent=2)
-            )]
-
-        # Get index data
-        index_data = reader.get_index()
-
-        if not index_data:
-            return [TextContent(
-                type="text",
-                text=json.dumps({
-                    "success": False,
-                    "error": "Index is empty - no elements to document"
-                }, indent=2)
-            )]
-
-        # Generate docs
-        from .foundation_doc_generator import generate_foundation_docs
-
-        result = generate_foundation_docs(
-            project_path=project_path,
-            index_data=index_data,
-            doc_types=doc_types,
-            output_dir=output_dir
-        )
-
-        return [TextContent(
-            type="text",
-            text=json.dumps({
-                "success": result["success"],
-                "generated_files": result["generated_files"],
-                "file_count": len(result["generated_files"]),
-                "errors": result["errors"]
-            }, indent=2)
-        )]
-
-    except Exception as e:
-        return [TextContent(
-            type="text",
-            text=json.dumps({
-                "success": False,
-                "error": str(e)
-            }, indent=2)
-        )]
-
-
 async def handle_coderef_incremental_scan(args: dict) -> List[TextContent]:
     """Perform incremental scan (only re-scan files with detected drift, merge with existing index)"""
     project_path = args.get("project_path", ".")

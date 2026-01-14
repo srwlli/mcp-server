@@ -343,5 +343,5 @@ python scripts/populate-coderef.py /path/to/django/project
 **Kept Files (P1, P2 work):**
 - ✅ `coderef_incremental_scan` tool (P1-1) - Valid enhancement
 - ✅ `quickref.md` (P2-1) - Useful documentation
-- ✅ `generate_foundation_docs` tool (P2-2) - Valid enhancement
+- ❌ `generate_foundation_docs` tool (P2-2) - REMOVED in WO-FOUNDATION-DOCS-CLEANUP-001, consolidated to coderef-docs
 - ✅ `validate_coderef_outputs` tool (P2-3) - Valid enhancement

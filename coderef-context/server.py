@@ -54,7 +54,6 @@ from src.handlers_refactored import (
     handle_coderef_diagram,
     handle_coderef_tag,
     handle_coderef_export,
-    handle_generate_foundation_docs,
     handle_validate_coderef_outputs,
 )
 
@@ -405,31 +404,6 @@ async def list_tools() -> List[Tool]:
             }
         ),
         Tool(
-            name="generate_foundation_docs",
-            description="Auto-generate foundation documentation (API.md, SCHEMA.md, COMPONENTS.md) from .coderef/index.json",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "project_path": {
-                        "type": "string",
-                        "description": "Absolute path to project root"
-                    },
-                    "docs": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Doc types to generate: api, schema, components, readme",
-                        "default": ["api", "schema", "components"]
-                    },
-                    "output_dir": {
-                        "type": "string",
-                        "description": "Output directory for generated docs",
-                        "default": "coderef/foundation-docs"
-                    }
-                },
-                "required": ["project_path"]
-            }
-        ),
-        Tool(
             name="validate_coderef_outputs",
             description="Validate .coderef/ files against schemas using Papertrail MCP validation",
             inputSchema={
@@ -483,8 +457,6 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             return await handle_coderef_tag(arguments)
         elif name == "coderef_export":
             return await handle_coderef_export(arguments)
-        elif name == "generate_foundation_docs":
-            return await handle_generate_foundation_docs(arguments)
         elif name == "validate_coderef_outputs":
             return await handle_validate_coderef_outputs(arguments)
         else:

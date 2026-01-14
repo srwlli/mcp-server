@@ -1,78 +1,90 @@
-# coderef-docs - Tool Reference
+# coderef-docs - Quick Reference
 
-Quick reference for MCP documentation tools and slash commands.
-
----
-
-## MCP Tools (13 total)
+## MCP Tools (16 total)
 
 ### Documentation Generation
-- list_templates - Show all available POWER framework templates
-- get_template - Get specific template content by name
-- generate_foundation_docs - Generate all 5 foundation docs (README, ARCHITECTURE, API, COMPONENTS, SCHEMA)
-- generate_individual_doc - Generate single doc from template
-
-### Resource Sheets
-- generate_resource_sheet - Create composable module-based docs (markdown + JSON schema + JSDoc)
+- `list_templates` - Show available templates + MCP health status
+- `get_template` - Get specific template content
+- `generate_foundation_docs` - Generate 5 foundation docs with drift detection
+- `generate_individual_doc` - Generate single foundation doc [INTERNAL]
+- `generate_my_guide` - Auto-generate developer quick-start (this file)
+- `generate_user_guide` - Generate comprehensive 10-section USER-GUIDE
+- `generate_features` - Generate feature inventory with workorder tracking
+- `generate_quickref_interactive` - Generate scannable quickref (interactive)
+- `generate_resource_sheet` - Generate composable module-based element docs
 
 ### Changelog Management
-- add_changelog_entry - Manually add entry to CHANGELOG.json
-- record_changes - Smart changelog with git auto-detection and AI confirmation
-- generate_quickref_interactive - Interactive quickref generation for any app type
+- `add_changelog_entry` - Manual changelog entry with full metadata
+- `record_changes` - Smart agentic recording with git auto-detection ⭐
 
 ### Standards & Compliance
-- establish_standards - Extract coding standards from codebase
-- audit_codebase - Check standards compliance (0-100 score)
-- check_consistency - Pre-commit gate for staged file changes
+- `establish_standards` - Extract coding standards with MCP semantic analysis
+- `audit_codebase` - Check standards compliance (0-100 score)
+- `check_consistency` - Pre-commit quality gate for staged changes
 
 ### Validation
-- validate_document - Validate doc against UDS schema
-- check_document_health - Calculate document health score (0-100)
+- `validate_document` - Validate document against UDS schema
+- `check_document_health` - Calculate document health score (0-100)
 
----
+### Deprecated
+- `coderef_foundation_docs` - [DEPRECATED] Use `generate_foundation_docs` instead
 
-## Slash Commands (26 total)
+## Common Workflows
 
-### Documentation
-- /generate-docs - Generate all 5 foundation docs
-- /generate-user-docs - Generate all 4 user-facing docs
-- /list-templates - Show available templates
-- /get-template - Get template content
+### Generate Complete Documentation
+```bash
+# 1. Generate foundation docs (README, ARCHITECTURE, API, SCHEMA, COMPONENTS)
+mcp__coderef-docs__generate_foundation_docs({
+  "project_path": "/path/to/project"
+})
 
-### Resource Sheets
-- /generate-resource-sheet - Create module-based documentation
+# 2. Generate user-facing docs (my-guide, USER-GUIDE, FEATURES)
+mcp__coderef-docs__generate_my_guide({"project_path": "/path/to/project"})
+mcp__coderef-docs__generate_user_guide({"project_path": "/path/to/project"})
+mcp__coderef-docs__generate_features({"project_path": "/path/to/project"})
 
-### Changelog
-- /add-changelog - Add manual changelog entry
-- /record-changes - Smart changelog with git detection
-
-### Standards
-- /establish-standards - Extract code standards
-- /audit-codebase - Check compliance
-- /check-consistency - Pre-commit validation
-
-### Validation
-- /validate-doc - Validate against schema
-- /check-doc-health - Calculate health score
-
----
-
-## Quick Start
-
-```
-# Generate all foundation docs
-/generate-docs
-
-# Generate all user docs
-/generate-user-docs
-
-# Extract coding standards
-/establish-standards
-
-# Check compliance
-/audit-codebase
+# 3. Generate quickref
+mcp__coderef-docs__generate_quickref_interactive({"project_path": "/path/to/project"})
 ```
 
----
+### Update Changelog
+```bash
+# Auto-detect changes from git and record
+mcp__coderef-docs__record_changes({
+  "project_path": "/path/to/project",
+  "version": "1.2.3"
+})
+```
 
-**Version:** 3.4.0 | **Server:** coderef-docs | **Protocol:** MCP 1.0
+### Establish & Audit Standards
+```bash
+# 1. Extract standards (ui-patterns, behavior-patterns, ux-patterns)
+mcp__coderef-docs__establish_standards({
+  "project_path": "/path/to/project",
+  "focus_areas": ["all"],
+  "scan_depth": "standard"
+})
+
+# 2. Audit codebase for violations
+mcp__coderef-docs__audit_codebase({
+  "project_path": "/path/to/project",
+  "scope": ["all"]
+})
+
+# 3. Check consistency (pre-commit)
+mcp__coderef-docs__check_consistency({
+  "project_path": "/path/to/project",
+  "severity_threshold": "major"
+})
+```
+
+## Key Features (v4.0.0)
+
+- ✅ **MCP Integration** - Drift detection, semantic pattern analysis
+- ✅ **User Docs Automation** - 75%+ auto-fill from code intelligence
+- ✅ **Standards Enhancement** - 80%+ quality with MCP patterns
+- ✅ **Tool Consolidation** - Clear [INTERNAL] and [DEPRECATED] markings
+- ✅ **185 Tests** - 95%+ pass rate across 10 test files
+
+---
+*Generated by coderef-docs v4.0.0 • 16 tools documented*

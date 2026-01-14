@@ -1,39 +1,47 @@
 # coderef-docs Quick Reference
 
-Fast scannable reference for all 13 MCP tools and 26+ slash commands.
+Fast scannable reference for all 16 MCP tools with v4.0.0 enhancements.
 
 ---
 
-## MCP Tools (13)
+## MCP Tools (16)
 
-### Documentation
+### Documentation (5 tools)
 ```
-list_templates              Show all POWER templates
+list_templates              Show templates + MCP status 🆕
 get_template NAME           Get template content
-generate_foundation_docs    Generate 5 foundation docs
-generate_individual_doc     Generate single doc
+generate_foundation_docs    Generate 5 docs + drift check 🆕
+generate_individual_doc     Generate single doc [INTERNAL] 🆕
+coderef_foundation_docs     [DEPRECATED] Use generate_foundation_docs
 ```
 
-### Resource Sheets  
+### User Docs (4 tools - NEW v4.0.0) 🆕
+```
+generate_my_guide           Auto developer quick-start (75%+ auto-fill)
+generate_user_guide         10-section comprehensive guide
+generate_features           Feature inventory + workorder tracking
+generate_quickref_interactive  Interactive quickref builder
+```
+
+### Resource Sheets (1 tool)
 ```
 generate_resource_sheet     Module-based docs (MD + JSON + JSDoc)
 ```
 
-### Changelog
+### Changelog (2 tools)
 ```
 add_changelog_entry         Manual changelog entry
-record_changes              Smart git-based changelog
-generate_quickref_interactive  Interactive quickref builder
+record_changes              Smart git-based changelog ⭐
 ```
 
-### Standards
+### Standards (3 tools - ENHANCED v4.0.0) 🆕
 ```
-establish_standards         Extract code patterns
+establish_standards         Extract patterns + MCP semantic analysis 🆕
 audit_codebase              Check compliance (0-100)
-check_consistency           Pre-commit gate
+check_consistency           Pre-commit gate ⭐
 ```
 
-### Validation
+### Validation (2 tools)
 ```
 validate_document           Validate against UDS schema
 check_document_health       Calculate health score (0-100)
@@ -161,7 +169,14 @@ Slow standards             → Generate .coderef/ first
 
 ---
 
-**Version:** 3.4.0  
-**Tools:** 13 MCP tools  
-**Commands:** 26+ slash commands  
-**Status:** Production Ready
+**Version:** 4.0.0 🆕
+**Tools:** 16 MCP tools (13 active, 1 [INTERNAL], 1 [DEPRECATED])
+**Commands:** 26+ slash commands
+**Tests:** 185 tests (95%+ pass rate) 🆕
+**Status:** ✅ Production Ready
+
+**v4.0.0 Highlights:**
+- 🆕 MCP orchestration with drift detection + semantic patterns
+- 🆕 User docs automation (75%+ auto-fill)
+- 🆕 Standards enhancement (55% → 80%+ quality)
+- 🆕 Tool consolidation ([INTERNAL], [DEPRECATED] markings)

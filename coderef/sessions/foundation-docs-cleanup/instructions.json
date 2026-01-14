@@ -1,0 +1,117 @@
+{
+  "workorder_id": "WO-FOUNDATION-DOCS-CLEANUP-001",
+  "task": "Remove generate_foundation_docs from coderef-context and coderef-workflow",
+  "description": "Delete all generate_foundation_docs code from coderef-context and coderef-workflow servers to establish coderef-docs as the single source of truth for foundation documentation generation.",
+
+  "context": {
+    "problem": "generate_foundation_docs tool exists in 3 servers (coderef-docs, coderef-context, coderef-workflow). This creates confusion and duplication.",
+    "solution": "Keep tool ONLY in coderef-docs. Delete from coderef-context and coderef-workflow.",
+    "discovered": "2026-01-13 - coderef-context agent already implemented generate_foundation_docs on Jan 13 01:03 despite scope change. Must roll back."
+  },
+
+  "orchestrator_instructions": {
+    "role": "Verification and final confirmation that consolidation is complete",
+    "steps": {
+      "step_1": "READ agent output files after both agents complete deletions",
+      "step_2": "VERIFY no generate_foundation_docs references remain in coderef-context or coderef-workflow",
+      "step_3": "VERIFY coderef-docs still has generate_foundation_docs tool",
+      "step_4": "CREATE orchestrator-output.md with verification report and final architecture diagram"
+    },
+    "output_format": "markdown",
+    "verification_checklist": [
+      "grep -r 'generate_foundation_docs' coderef-context returns NO results",
+      "grep -r 'generate_foundation_docs' coderef-workflow returns NO results",
+      "grep -r 'generate_foundation_docs' coderef-docs returns results (tool still exists)",
+      "Both agents updated their documentation to reflect removal",
+      "Migration guide created for users"
+    ]
+  },
+
+  "agent_instructions": {
+    "role": "Delete generate_foundation_docs tool, handler, and generator files from your server",
+    "steps": {
+      "step_1": "READ your server.py and identify all generate_foundation_docs references",
+      "step_2": "DELETE tool definition from server.py",
+      "step_3": "DELETE route/handler mapping from server.py",
+      "step_4": "DELETE handler function from handlers file",
+      "step_5": "DELETE generator module file (if exists)",
+      "step_6": "DELETE import statements",
+      "step_7": "UPDATE API.md and documentation to remove generate_foundation_docs",
+      "step_8": "ADD migration note: 'Use coderef-docs server for foundation doc generation'",
+      "step_9": "CREATE output file listing all deletions performed",
+      "step_10": "UPDATE status in communication.json to 'complete'"
+    },
+    "output_format": "markdown",
+    "safety_rules": [
+      "DO NOT delete any other tools - only generate_foundation_docs",
+      "DO NOT modify coderef-docs server (not your responsibility)",
+      "VERIFY each deletion before proceeding to next",
+      "CREATE git commit after deletions complete"
+    ]
+  },
+
+  "coderef_context_specific": {
+    "files_to_delete": [
+      "server.py:408 - Tool definition",
+      "server.py:486-487 - Route mapping",
+      "server.py:57 - Import statement (handle_generate_foundation_docs)",
+      "src/handlers_refactored.py:462+ - Handler function",
+      "src/foundation_doc_generator.py - Entire file (11KB, created Jan 13 01:03)"
+    ],
+    "documentation_to_update": [
+      "coderef/foundation-docs/API.md - Remove generate_foundation_docs section",
+      "coderef/foundation-docs/COMPONENTS.md - Remove handle_generate_foundation_docs section",
+      "README.md - Remove generate_foundation_docs from tool list"
+    ],
+    "note": "This code was implemented on Jan 13 01:03 as part of WO-CONTEXT-INTEGRATION-001 P2-2 before scope change. Must be rolled back."
+  },
+
+  "coderef_workflow_specific": {
+    "files_to_delete": [
+      "server.py:89+ - Tool definition",
+      "tool_handlers.py - handle_generate_foundation_docs function",
+      "generators/coderef_foundation_generator.py - Entire file"
+    ],
+    "documentation_to_update": [
+      "coderef/ALL-RESOURCES-LIST.md - Remove /update-foundation-docs entry",
+      "coderef/ALL-RESOURCES-REFERNCE-SHEET.md - Remove /update-foundation-docs entry",
+      "coderef/foundation-docs/API.md - Remove generate_foundation_docs section",
+      "coderef/reference-sheets/SERVER.md - Remove generate_foundation_docs entry",
+      "coderef/reference-sheets/TOOL-HANDLERS.md - Remove handle_generate_foundation_docs entry",
+      "RESOURCE-SHEET.md - Update coderef-docs shared tool definition note"
+    ]
+  },
+
+  "output_template": {
+    "agent_output": {
+      "format": "markdown",
+      "sections": [
+        "## Deletions Performed",
+        "- List each file modified or deleted",
+        "- Show line numbers for code removed",
+        "",
+        "## Documentation Updated",
+        "- List each doc file updated",
+        "- Show what was removed/changed",
+        "",
+        "## Verification",
+        "- Run: grep -r 'generate_foundation_docs' . --include='*.py'",
+        "- Result should be empty (no matches)",
+        "",
+        "## Migration Note Added",
+        "- Show where migration note was added",
+        "- Content: 'Use coderef-docs server for foundation doc generation'",
+        "",
+        "## Git Commit",
+        "- Commit message used",
+        "- Files included in commit"
+      ]
+    }
+  },
+
+  "quality_standards": {
+    "completeness": "All 5 types of changes complete: tool definition, route, import, handler, generator file",
+    "accuracy": "grep returns zero results for generate_foundation_docs in your server",
+    "format": "Markdown output with clear sections showing what was deleted"
+  }
+}

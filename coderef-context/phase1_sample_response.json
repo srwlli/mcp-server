@@ -1,0 +1,191 @@
+{
+  "success": true,
+  "format": "json",
+  "context": {
+    "version": "2.0.0",
+    "generatedAt": "2026-01-13T02:48:12.367Z",
+    "projectPath": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+    "statistics": {
+      "totalElements": 0,
+      "totalFiles": 0,
+      "elementsByType": {},
+      "filesByExtension": {}
+    },
+    "topFiles": []
+  },
+  "visual_architecture": "# coderef-context Dependency Diagram\n\nGenerated: populate-coderef\n\n## Architecture Overview\n\n```mermaid\n\ngraph LR\n    file_C__Users_willh__mcp_servers_coderef_context_server_py[\"C:\\Users\\willh\\.mcp-servers...\"]:::fileStyle\n    file_directory[\"directory\"]:::fileStyle\n    file_overhead[\"overhead\"]:::fileStyle\n    file_operations[\"operations\"]:::fileStyle\n    file_handlers[\"handlers\"]:::fileStyle\n    file_Server[\"Server\"]:::fileStyle\n    file_print[\"print\"]:::fileStyle\n    file_list_tools[\"list_tools\"]:::fileStyle\n    file_Tool[\"Tool\"]:::fileStyle\n    file_call_tool[\"call_tool\"]:::fileStyle\n    file_handle_coderef_scan[\"handle_coderef_scan\"]:::fileStyle\n    file_handle_coderef_query[\"handle_coderef_query\"]:::fileStyle\n    file_handle_coderef_impact[\"handle_coderef_impact\"]:::fileStyle\n    file_handle_coderef_complexity[\"handle_coderef_complexity\"]:::fileStyle\n    file_handle_coderef_patterns[\"handle_coderef_patterns\"]:::fileStyle\n    file_handle_coderef_coverage[\"handle_coderef_coverage\"]:::fileStyle\n    file_handle_coderef_context[\"handle_coderef_context\"]:::fileStyle\n    file_handle_coderef_validate[\"handle_coderef_validate\"]:::fileStyle\n    file_handle_coderef_drift[\"handle_coderef_drift\"]:::fileStyle\n    file_handle_coderef_incremental_scan[\"handle_coderef_incremental_...\"]:::fileStyle\n    file_handle_coderef_diagram[\"handle_coderef_diagram\"]:::fileStyle\n    file_handle_coderef_tag[\"handle_coderef_tag\"]:::fileStyle\n    file_handle_coderef_export[\"handle_coderef_export\"]:::fileStyle\n    file_handle_generate_foundation_docs[\"handle_generate_foundation_...\"]:::fileStyle\n    file_handle_validate_coderef_outputs[\"handle_validate_coderef_out...\"]:::fileStyle\n    file_TextContent[\"TextContent\"]:::fileStyle\n    file_main[\"main\"]:::fileStyle\n    file_stdio_server[\"stdio_server\"]:::fileStyle\n    file_run[\"run\"]:::fileStyle\n    file_create_initialization_options[\"create_initialization_options\"]:::fileStyle\n    file_C__Users_willh__mcp_servers_coderef_context_run_integration_tests_py[\"C:\\Users\\willh\\.mcp-servers...\"]:::fileStyle\n    file_Path[\"Path\"]:::fileStyle\n    file_exists[\"exists\"]:::fileStyle\n    file_str[\"str\"]:::fileStyle\n    file_extend[\"extend\"]:::fileStyle\n    file_append[\"append\"]:::fileStyle\n    file_index[\"index\"]:::fileStyle\n    file_len[\"len\"]:::fileStyle\n    file_exit[\"exit\"]:::fileStyle\n\n    %% Style definitions\n    classDef functionStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px\n    classDef classStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px\n    classDef componentStyle fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px\n    classDef fileStyle fill:#f5f5f5,stroke:#616161,stroke-width:2px\n\n\n Diagram Summary:\n   Format: mermaid\n   Nodes: 39\n   Edges: 0\n   Direction: LR\n\n Tip: Render at https://mermaid.live or in GitHub markdown\n\n```\n\n## Usage\n\nRender this diagram at:\n- https://mermaid.live\n- GitHub markdown\n- VSCode with Mermaid extension\n",
+  "elements_by_type": {
+    "counts": {
+      "function": 59,
+      "method": 147,
+      "class": 44
+    },
+    "samples": {
+      "function": [
+        {
+          "name": "export_coderef",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/processors/export_processor.py",
+          "line": 26
+        },
+        {
+          "name": "validate_export_format",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/processors/export_processor.py",
+          "line": 156
+        },
+        {
+          "name": "query_elements",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 82
+        },
+        {
+          "name": "generate_foundation_docs",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/foundation_doc_generator.py",
+          "line": 301
+        },
+        {
+          "name": "handle_coderef_scan",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/handlers_refactored.py",
+          "line": 14
+        }
+      ],
+      "method": [
+        {
+          "name": "__init__",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 17
+        },
+        {
+          "name": "_load_json",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 21
+        },
+        {
+          "name": "_load_text",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 30
+        },
+        {
+          "name": "get_index",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 39
+        },
+        {
+          "name": "get_graph",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 43
+        }
+      ],
+      "class": [
+        {
+          "name": "CodeRefReader",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+          "line": 14
+        },
+        {
+          "name": "FoundationDocGenerator",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/src/foundation_doc_generator.py",
+          "line": 13
+        },
+        {
+          "name": "MockTestResults",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/conftest.py",
+          "line": 45
+        },
+        {
+          "name": "TestConcurrency",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_edge_cases.py",
+          "line": 39
+        },
+        {
+          "name": "TestPermissionErrors",
+          "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_edge_cases.py",
+          "line": 114
+        }
+      ]
+    },
+    "total": 250
+  },
+  "complexity_hotspots": [
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_tools.py",
+      "total_complexity": 69,
+      "function_count": 57,
+      "max_complexity": 4
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/src/handlers_refactored.py",
+      "total_complexity": 60,
+      "function_count": 15,
+      "max_complexity": 4
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_processor.py",
+      "total_complexity": 42,
+      "function_count": 27,
+      "max_complexity": 4
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_tools_integration.py",
+      "total_complexity": 21,
+      "function_count": 21,
+      "max_complexity": 1
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_integration.py",
+      "total_complexity": 20,
+      "function_count": 11,
+      "max_complexity": 4
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+      "total_complexity": 18,
+      "function_count": 18,
+      "max_complexity": 1
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_edge_cases.py",
+      "total_complexity": 14,
+      "function_count": 14,
+      "max_complexity": 1
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/test_workflow_integration.py",
+      "total_complexity": 14,
+      "function_count": 14,
+      "max_complexity": 1
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/src/foundation_doc_generator.py",
+      "total_complexity": 9,
+      "function_count": 9,
+      "max_complexity": 1
+    },
+    {
+      "file": "C:/Users/willh/.mcp-servers/coderef-context/tests/conftest.py",
+      "total_complexity": 8,
+      "function_count": 8,
+      "max_complexity": 1
+    }
+  ],
+  "documentation_summary": {
+    "coverage_percent": 0.0,
+    "documented_elements": 0,
+    "total_elements": 250,
+    "gaps": {
+      "undocumented_count": 250,
+      "files_with_gaps": [
+        "C:/Users/willh/.mcp-servers/coderef-context/processors/export_processor.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/run_integration_tests.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/server.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/src/coderef_reader.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/src/foundation_doc_generator.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/src/handlers_refactored.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/tests/conftest.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/tests/test_coderef_usage_trace.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_edge_cases.py",
+        "C:/Users/willh/.mcp-servers/coderef-context/tests/test_export_processor.py"
+      ]
+    },
+    "quality_score": 11
+  }
+}

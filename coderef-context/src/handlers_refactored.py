@@ -223,12 +223,20 @@ async def handle_coderef_context(args: dict) -> List[TextContent]:
         reader = CodeRefReader(project_path)
         context = reader.get_context(format=output_format)
 
+        # Try to include visual architecture diagram
+        visual_arch = None
+        try:
+            visual_arch = reader._load_text("exports/diagram-wrapped.md")
+        except FileNotFoundError:
+            pass  # File doesn't exist yet, no problem
+
         return [TextContent(
             type="text",
             text=json.dumps({
                 "success": True,
                 "format": output_format,
-                "context": context
+                "context": context,
+                "visual_architecture": visual_arch
             }, indent=2) if output_format == "json" else context
         )]
 

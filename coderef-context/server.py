@@ -221,7 +221,7 @@ async def list_tools() -> List[Tool]:
         ),
         Tool(
             name="coderef_context",
-            description="Generate comprehensive codebase context (markdown + JSON)",
+            description="Generate comprehensive codebase context with visual architecture diagram. Returns project metadata, stats, and ready-to-render Mermaid diagram in single call.",
             inputSchema={
                 "type": "object",
                 "properties": {

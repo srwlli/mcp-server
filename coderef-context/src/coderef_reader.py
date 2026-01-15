@@ -159,3 +159,15 @@ class CodeRefReader:
             "has_patterns": (self.coderef_dir / "reports/patterns.json").exists(),
             "has_coverage": (self.coderef_dir / "reports/coverage.json").exists(),
         }
+
+    def get_diagram_wrapped(self) -> str:
+        """Get the ready-to-use diagram with usage instructions.
+
+        This is a pre-formatted Mermaid diagram that includes:
+        - Complete architecture visualization
+        - Styling and formatting
+        - Usage instructions for rendering
+
+        Perfect for embedding in agent responses or documentation.
+        """
+        return self._load_text("exports/diagram-wrapped.md")

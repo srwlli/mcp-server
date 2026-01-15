@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "format": "json",
+  "context": {
+    "version": "2.0.0",
+    "generatedAt": "2026-01-13T02:48:12.367Z",
+    "projectPath": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+    "statistics": {
+      "totalElements": 0,
+      "totalFiles": 0,
+      "elementsByType": {},
+      "filesByExtension": {}
+    },
+    "topFiles": []
+  },
+  "visual_architecture": "# coderef-context Dependency Diagram\n\nGenerated: populate-coderef\n\n## Architecture Overview\n\n```mermaid\n\ngraph LR\n    file_C__Users_willh__mcp_servers_coderef_context_server_py[\"C:\\Users\\willh\\.mcp-servers...\"]:::fileStyle\n    file_directory[\"directory\"]:::fileStyle\n    file_overhead[\"overhead\"]:::fileStyle\n    file_operations[\"operations\"]:::fileStyle\n    file_handlers[\"handlers\"]:::fileStyle\n    file_Server[\"Server\"]:::fileStyle\n    file_print[\"print\"]:::fileStyle\n    file_list_tools[\"list_tools\"]:::fileStyle\n    file_Tool[\"Tool\"]:::fileStyle\n    file_call_tool[\"call_tool\"]:::fileStyle\n    file_handle_coderef_scan[\"handle_coderef_scan\"]:::fileStyle\n    file_handle_coderef_query[\"handle_coderef_query\"]:::fileStyle\n    file_handle_coderef_impact[\"handle_coderef_impact\"]:::fileStyle\n    file_handle_coderef_complexity[\"handle_coderef_complexity\"]:::fileStyle\n    file_handle_coderef_patterns[\"handle_coderef_patterns\"]:::fileStyle\n    file_handle_coderef_coverage[\"handle_coderef_coverage\"]:::fileStyle\n    file_handle_coderef_context[\"handle_coderef_context\"]:::fileStyle\n    file_handle_coderef_validate[\"handle_coderef_validate\"]:::fileStyle\n    file_handle_coderef_drift[\"handle_coderef_drift\"]:::fileStyle\n    file_handle_coderef_incremental_scan[\"handle_coderef_incremental_...\"]:::fileStyle\n    file_handle_coderef_diagram[\"handle_coderef_diagram\"]:::fileStyle\n    file_handle_coderef_tag[\"handle_coderef_tag\"]:::fileStyle\n    file_handle_coderef_export[\"handle_coderef_export\"]:::fileStyle\n    file_handle_generate_foundation_docs[\"handle_generate_foundation_...\"]:::fileStyle\n    file_handle_validate_coderef_outputs[\"handle_validate_coderef_out...\"]:::fileStyle\n    file_TextContent[\"TextContent\"]:::fileStyle\n    file_main[\"main\"]:::fileStyle\n    file_stdio_server[\"stdio_server\"]:::fileStyle\n    file_run[\"run\"]:::fileStyle\n    file_create_initialization_options[\"create_initialization_options\"]:::fileStyle\n    file_C__Users_willh__mcp_servers_coderef_context_run_integration_tests_py[\"C:\\Users\\willh\\.mcp-servers...\"]:::fileStyle\n    file_Path[\"Path\"]:::fileStyle\n    file_exists[\"exists\"]:::fileStyle\n    file_str[\"str\"]:::fileStyle\n    file_extend[\"extend\"]:::fileStyle\n    file_append[\"append\"]:::fileStyle\n    file_index[\"index\"]:::fileStyle\n    file_len[\"len\"]:::fileStyle\n    file_exit[\"exit\"]:::fileStyle\n\n    %% Style definitions\n    classDef functionStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px\n    classDef classStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px\n    classDef componentStyle fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px\n    classDef fileStyle fill:#f5f5f5,stroke:#616161,stroke-width:2px\n\n\n Diagram Summary:\n   Format: mermaid\n   Nodes: 39\n   Edges: 0\n   Direction: LR\n\n Tip: Render at https://mermaid.live or in GitHub markdown\n\n```\n\n## Usage\n\nRender this diagram at:\n- https://mermaid.live\n- GitHub markdown\n- VSCode with Mermaid extension\n"
+}

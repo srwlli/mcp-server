@@ -113,25 +113,25 @@ foreach ($agentDir in $agentDirs) {
 
         # Check for proper markdown structure
         if ($indexContent -notmatch "^# Resources Index") {
-            $warnings += "resources\index.md should start with '# Resources Index' header"
+            $warnings += 'resources\index.md should start with "# Resources Index" header'
         }
 
         # Check that it contains links (not copies)
         if ($indexContent -match "```" -or $indexContent.Length -gt 5000) {
-            $warnings += "resources\index.md appears to contain copied content (should only have links)"
+            $warnings += 'resources\index.md appears to contain copied content (should only have links)'
         }
 
         if ($Verbose -and $warnings.Count -eq 0) {
-            Write-Host "   [OK] resources\index.md format" -ForegroundColor $Green
+            Write-Host '   [OK] resources\index.md format' -ForegroundColor $Green
         }
     }
 
     # Display results for this agent
     if ($issues.Count -eq 0 -and $warnings.Count -eq 0) {
-        Write-Host "   [PASS] All required files and directories present" -ForegroundColor $Green
+        Write-Host '   [PASS] All required files and directories present' -ForegroundColor $Green
         $results.Valid += $agentId
     } elseif ($issues.Count -eq 0) {
-        Write-Host "   [WARN] Structure valid with warnings" -ForegroundColor $Yellow
+        Write-Host '   [WARN] Structure valid with warnings' -ForegroundColor $Yellow
         foreach ($warning in $warnings) {
             Write-Host "      $warning" -ForegroundColor $Yellow
         }
@@ -140,7 +140,7 @@ foreach ($agentDir in $agentDirs) {
             Warnings = $warnings
         }
     } else {
-        Write-Host "   [FAIL] Structure incomplete" -ForegroundColor $Red
+        Write-Host '   [FAIL] Structure incomplete' -ForegroundColor $Red
         foreach ($issue in $issues) {
             Write-Host "      $issue" -ForegroundColor $Red
         }

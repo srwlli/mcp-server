@@ -36,11 +36,17 @@ if (-not $ajvInstalled) {
 # Paths
 $papertrailRoot = "C:\Users\willh\.mcp-servers\papertrail"
 $sessionsDir = "C:\Users\willh\.mcp-servers\coderef\sessions"
-$schemaPath = Join-Path $papertrailRoot "schemas\sessions\communication-schema.json"
+$sessionSchemaPath = Join-Path $papertrailRoot "schemas\sessions\communication-schema.json"
+$agentCommSchemaPath = Join-Path $papertrailRoot "schemas\sessions\agent-communication-schema.json"
 
-# Verify schema exists
-if (-not (Test-Path $schemaPath)) {
-    Write-Host "`nSchema not found: $schemaPath" -ForegroundColor $Red
+# Verify schemas exist
+if (-not (Test-Path $sessionSchemaPath)) {
+    Write-Host "`nSchema not found: $sessionSchemaPath" -ForegroundColor $Red
+    exit 1
+}
+
+if (-not (Test-Path $agentCommSchemaPath)) {
+    Write-Host "`nSchema not found: $agentCommSchemaPath" -ForegroundColor $Red
     exit 1
 }
 
@@ -75,6 +81,25 @@ $typoFixes = @{
 foreach ($file in $commFiles) {
     $sessionName = $file.Directory.Name
     $relativePath = $file.FullName.Replace($sessionsDir + "\", "")
+
+    # Detect file depth: session-level (depth 1) vs agent-level (depth 2+)
+    $pathParts = $relativePath -split '\\'
+    $depth = $pathParts.Count - 1  # Subtract 1 for the filename itself
+
+    # Choose schema based on depth
+    if ($depth -eq 1) {
+        # Session-level: sessions/{session-name}/communication.json
+        $schemaPath = $sessionSchemaPath
+        $schemaType = "Session"
+    } else {
+        # Agent-level: sessions/{session-name}/{agent-id}/communication.json
+        $schemaPath = $agentCommSchemaPath
+        $schemaType = "Agent"
+    }
+
+    if ($Verbose) {
+        Write-Host "[INFO] Validating $relativePath (depth=$depth, type=$schemaType)" -ForegroundColor $Cyan
+    }
 
     # Read and parse JSON
     try {

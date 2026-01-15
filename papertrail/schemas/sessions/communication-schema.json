@@ -68,8 +68,26 @@
       "patternProperties": {
         "^phase_[1-9]$": {
           "type": "object",
-          "required": ["status", "progress", "lead_agents"],
+          "required": ["status", "lead_agents"],
+          "additionalProperties": true,
           "properties": {
+            "name": {
+              "type": "string",
+              "description": "Optional: Phase name"
+            },
+            "duration": {
+              "type": "string",
+              "description": "Optional: Estimated duration (e.g., 'Week 1-2')"
+            },
+            "started": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Optional: Phase start date in YYYY-MM-DD format"
+            },
+            "description": {
+              "type": "string",
+              "description": "Optional: Detailed phase description"
+            },
             "status": {
               "type": "string",
               "enum": ["not_started", "in_progress", "complete"],
@@ -88,6 +106,15 @@
               "type": "array",
               "items": {"type": "string"},
               "description": "Optional criteria to advance to next phase"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Optional: Other phases this phase depends on"
+            },
+            "success_metrics": {
+              "type": "object",
+              "description": "Optional: Phase-specific success metrics"
             }
           }
         }
@@ -104,10 +131,22 @@
       ]
     },
 
+    "progress_doc": {
+      "type": "string",
+      "pattern": "^C:\\\\",
+      "description": "Optional: Absolute Windows path to progress tracking document (e.g., phase1-progress.md)"
+    },
+
+    "session_doc": {
+      "type": "string",
+      "pattern": "^C:\\\\",
+      "description": "Optional: Absolute Windows path to main session documentation file"
+    },
+
     "orchestrator": {
       "type": "object",
       "required": ["agent_id", "agent_path", "role", "output_file", "status", "notes"],
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "agent_id": {
           "type": "string",
@@ -158,8 +197,8 @@
       "description": "Array of participating agents (order doesn't matter)",
       "items": {
         "type": "object",
-        "required": ["agent_id", "agent_path", "output_file", "status", "notes"],
-        "additionalProperties": false,
+        "required": ["agent_id", "agent_path", "status", "notes"],
+        "additionalProperties": true,
         "properties": {
           "agent_id": {
             "type": "string",
@@ -217,8 +256,8 @@
     "aggregation": {
       "type": "object",
       "required": ["total_agents", "completed", "pending", "not_started"],
-      "additionalProperties": false,
-      "description": "OPTIONAL - ORCHESTRATOR-COMPUTED: Calculated by orchestrator when reading communication.json. Agents NEVER update this field to avoid file locking conflicts. Orchestrator computes counts dynamically from agents[].status array.",
+      "additionalProperties": true,
+      "description": "OPTIONAL - ORCHESTRATOR-COMPUTED: Calculated by orchestrator when reading communication.json. Agents NEVER update this field to avoid file locking conflicts. Orchestrator computes counts dynamically from agents[].status array. May include phase-specific agent counts (e.g., phase_1_agents, phase_2_agents).",
       "properties": {
         "total_agents": {
           "type": "integer",

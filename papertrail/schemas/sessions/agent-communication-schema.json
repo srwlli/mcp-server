@@ -1,0 +1,262 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://coderef.dev/schemas/agent-communication.json",
+  "title": "Agent Communication File",
+  "description": "Agent-specific task tracking within a session subdirectory. Used in hierarchical multi-agent sessions where each agent has their own workspace.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "workorder_id",
+    "parent_session",
+    "agent_id",
+    "agent_path",
+    "phase",
+    "role",
+    "status",
+    "tasks",
+    "success_metrics",
+    "resources",
+    "outputs",
+    "phase_gate"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "workorder_id": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9-]+-\\d{3}-[A-Z0-9-]+$",
+      "description": "Agent-specific workorder ID (parent workorder + agent suffix). Example: WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT",
+      "examples": [
+        "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT",
+        "WO-AUTH-SYSTEM-001-CODEREF-WORKFLOW"
+      ]
+    },
+
+    "parent_session": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+      "description": "Parent session workorder ID (without agent suffix)",
+      "examples": [
+        "WO-SCANNER-CONTEXT-ENHANCEMENT-001",
+        "WO-AUTH-SYSTEM-001"
+      ]
+    },
+
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Agent identifier matching the subdirectory name",
+      "examples": [
+        "coderef-context",
+        "coderef-core",
+        "coderef-workflow"
+      ]
+    },
+
+    "agent_path": {
+      "type": "string",
+      "pattern": "^C:\\\\",
+      "description": "Absolute Windows path to agent's home project directory",
+      "examples": [
+        "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+        "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core"
+      ]
+    },
+
+    "phase": {
+      "type": "string",
+      "pattern": "^phase_[1-9]$",
+      "description": "Current phase (phase_1, phase_2, etc.)",
+      "examples": ["phase_1", "phase_2", "phase_3"]
+    },
+
+    "role": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "What this agent does in this specific session"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": ["not_started", "in_progress", "complete"],
+      "description": "Agent's current status (self-reported)",
+      "default": "not_started"
+    },
+
+    "started": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Start date in YYYY-MM-DD format"
+    },
+
+    "completed": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Completion date in YYYY-MM-DD format"
+    },
+
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Array of tasks assigned to this agent",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "description", "status"],
+        "additionalProperties": true,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "pattern": "^(task|quickwin)_[0-9]+$",
+            "description": "Unique task identifier (task_1, quickwin_1, etc.)"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 5,
+            "description": "What the agent needs to do"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["not_started", "in_progress", "complete"],
+            "description": "Task status"
+          },
+          "completed": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "Completion date"
+          },
+          "commit": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{7,40}$",
+            "description": "Git commit hash for this task"
+          },
+          "target_files": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Files this task will modify"
+          },
+          "success_criteria": {
+            "type": "string",
+            "description": "How we know this task is complete"
+          },
+          "estimated_effort": {
+            "type": "string",
+            "description": "Time estimate (e.g., '4 hours')"
+          },
+          "implementation": {
+            "type": "string",
+            "description": "Implementation details or approach"
+          },
+          "proof": {
+            "type": "string",
+            "description": "Path to proof document or evidence"
+          }
+        }
+      }
+    },
+
+    "success_metrics": {
+      "type": "object",
+      "description": "Key metrics with baseline, current, target values",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "object",
+          "required": ["baseline", "target", "status"],
+          "properties": {
+            "baseline": {
+              "type": ["string", "number"],
+              "description": "Current/starting value"
+            },
+            "current": {
+              "type": ["string", "number"],
+              "description": "Current value (optional)"
+            },
+            "target": {
+              "type": ["string", "number"],
+              "description": "Goal value"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status description"
+            }
+          }
+        }
+      }
+    },
+
+    "testing_requirements": {
+      "type": "object",
+      "description": "Testing requirements for agent tasks",
+      "additionalProperties": true
+    },
+
+    "resources": {
+      "type": "object",
+      "required": ["index"],
+      "description": "Resource locations (as indexes, not copies)",
+      "properties": {
+        "index": {
+          "type": "string",
+          "const": "resources/index.md",
+          "description": "Must point to resources/index.md"
+        },
+        "primary_spec": {
+          "type": "string",
+          "description": "Path to primary specification document"
+        },
+        "proof_of_concept": {
+          "type": "string",
+          "description": "Path to proof of concept or reference implementation"
+        },
+        "session_plan": {
+          "type": "string",
+          "description": "Path to session master plan"
+        },
+        "phase1_progress": {
+          "type": "string",
+          "description": "Path to phase progress tracking document"
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "outputs": {
+      "type": "object",
+      "required": ["primary_output", "format"],
+      "description": "Output file specifications",
+      "properties": {
+        "primary_output": {
+          "type": "string",
+          "pattern": "^outputs/",
+          "description": "Relative path starting with outputs/"
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format (json, markdown, text, etc.)"
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "phase_gate": {
+      "type": "object",
+      "required": ["required_for_phase_2", "criteria"],
+      "description": "Phase gate validation criteria",
+      "properties": {
+        "required_for_phase_2": {
+          "type": "boolean",
+          "description": "Whether this agent's completion is required before Phase 2"
+        },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string"},
+          "description": "List of criteria that must be met"
+        }
+      }
+    }
+  },
+
+  "$comment": "Agent Communication Schema v1.0.0 - Used in hierarchical multi-agent sessions. Each agent subdirectory contains this file for task tracking. Resources are indexes (links), not copies. Workorder ID includes agent suffix to distinguish from session-level."
+}

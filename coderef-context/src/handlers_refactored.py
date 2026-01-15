@@ -230,13 +230,117 @@ async def handle_coderef_context(args: dict) -> List[TextContent]:
         except FileNotFoundError:
             pass  # File doesn't exist yet, no problem
 
+        # Add elements_by_type breakdown
+        elements_by_type = None
+        try:
+            index = reader.get_index()
+            type_counts = {}
+            type_samples = {}
+
+            for elem in index:
+                elem_type = elem.get("type", "unknown")
+                type_counts[elem_type] = type_counts.get(elem_type, 0) + 1
+
+                # Keep top 5 samples per type
+                if elem_type not in type_samples:
+                    type_samples[elem_type] = []
+                if len(type_samples[elem_type]) < 5:
+                    type_samples[elem_type].append({
+                        "name": elem.get("name"),
+                        "file": elem.get("file"),
+                        "line": elem.get("line")
+                    })
+
+            elements_by_type = {
+                "counts": type_counts,
+                "samples": type_samples,
+                "total": len(index)
+            }
+        except Exception:
+            pass  # Index doesn't exist or parsing failed
+
+        # Add complexity_hotspots (top 10 complex files)
+        complexity_hotspots = None
+        try:
+            complexity_data = reader._load_json("reports/complexity.json")
+            if complexity_data and "functions" in complexity_data:
+                # Group by file and aggregate complexity
+                file_complexity = {}
+                for func in complexity_data["functions"]:
+                    file_path = func.get("file", "unknown")
+                    complexity = func.get("cyclomatic_complexity", 0)
+                    if file_path not in file_complexity:
+                        file_complexity[file_path] = {
+                            "file": file_path,
+                            "total_complexity": 0,
+                            "function_count": 0,
+                            "max_complexity": 0
+                        }
+                    file_complexity[file_path]["total_complexity"] += complexity
+                    file_complexity[file_path]["function_count"] += 1
+                    file_complexity[file_path]["max_complexity"] = max(
+                        file_complexity[file_path]["max_complexity"],
+                        complexity
+                    )
+
+                # Sort by total complexity and take top 10
+                sorted_files = sorted(
+                    file_complexity.values(),
+                    key=lambda x: x["total_complexity"],
+                    reverse=True
+                )
+                complexity_hotspots = sorted_files[:10]
+        except Exception:
+            pass  # Complexity data doesn't exist or parsing failed
+
+        # Add documentation_summary (coverage, gaps, quality score)
+        documentation_summary = None
+        try:
+            index = reader.get_index()
+            total_elements = len(index)
+            documented_elements = 0
+            undocumented_files = set()
+
+            for elem in index:
+                # Check if element has JSDoc/docstring (common doc indicators)
+                if elem.get("jsdoc") or elem.get("docstring") or elem.get("doc"):
+                    documented_elements += 1
+                else:
+                    undocumented_files.add(elem.get("file", "unknown"))
+
+            coverage_percent = (documented_elements / total_elements * 100) if total_elements > 0 else 0
+
+            # Calculate quality score (0-100)
+            # Based on: coverage (70%), gaps (20%), consistency (10%)
+            quality_score = int(
+                (coverage_percent * 0.7) +
+                (max(0, 100 - len(undocumented_files) * 5) * 0.2) +
+                (50 * 0.1)  # Baseline consistency score
+            )
+
+            documentation_summary = {
+                "coverage_percent": round(coverage_percent, 2),
+                "documented_elements": documented_elements,
+                "total_elements": total_elements,
+                "gaps": {
+                    "undocumented_count": total_elements - documented_elements,
+                    "files_with_gaps": sorted(list(undocumented_files))[:10]  # Top 10
+                },
+                "quality_score": quality_score
+            }
+        except Exception:
+            pass  # Index doesn't exist or parsing failed
+
         return [TextContent(
             type="text",
             text=json.dumps({
                 "success": True,
                 "format": output_format,
                 "context": context,
-                "visual_architecture": visual_arch
+                "visual_architecture": visual_arch,
+                "elements_by_type": elements_by_type,
+                "complexity_hotspots": complexity_hotspots,
+                "documentation_summary": documentation_summary
             }, indent=2) if output_format == "json" else context
         )]
 

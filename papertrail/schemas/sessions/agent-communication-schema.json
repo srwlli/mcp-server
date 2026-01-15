@@ -3,7 +3,6 @@
   "$id": "https://coderef.dev/schemas/agent-communication.json",
   "title": "Agent Communication File",
   "description": "Agent-specific task tracking within a session subdirectory. Used in hierarchical multi-agent sessions where each agent has their own workspace.",
-  "version": "1.0.0",
   "type": "object",
   "required": [
     "workorder_id",

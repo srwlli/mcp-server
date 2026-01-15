@@ -3,7 +3,6 @@
   "$id": "https://coderef.dev/schemas/agent-instructions.json",
   "title": "Agent Instructions File",
   "description": "Detailed execution steps for agent within session subdirectory. Provides step-by-step guidance, task specifications, and context templates for autonomous agent execution.",
-  "version": "1.0.0",
   "type": "object",
   "required": [
     "workorder_id",

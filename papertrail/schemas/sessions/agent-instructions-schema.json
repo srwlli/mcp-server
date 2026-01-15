@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://coderef.dev/schemas/agent-instructions.json",
+  "title": "Agent Instructions File",
+  "description": "Detailed execution steps for agent within session subdirectory. Provides step-by-step guidance, task specifications, and context templates for autonomous agent execution.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "workorder_id",
+    "agent_id",
+    "phase",
+    "role",
+    "context",
+    "execution_steps",
+    "tasks",
+    "context_json_template",
+    "success_criteria",
+    "output_requirements",
+    "phase_gate_checklist"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "workorder_id": {
+      "type": "string",
+      "pattern": "^WO-[A-Z0-9-]+-\\d{3}-[A-Z0-9-]+$",
+      "description": "Agent-specific workorder ID matching communication.json",
+      "examples": [
+        "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT"
+      ]
+    },
+
+    "agent_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Agent identifier"
+    },
+
+    "phase": {
+      "type": "string",
+      "pattern": "^phase_[1-9]$",
+      "description": "Current phase"
+    },
+
+    "role": {
+      "type": "string",
+      "minLength": 10,
+      "description": "What agent does in this session"
+    },
+
+    "context": {
+      "type": "object",
+      "required": ["problem", "solution", "impact"],
+      "description": "High-level context for agent understanding",
+      "properties": {
+        "problem": {
+          "type": "string",
+          "minLength": 10,
+          "description": "The problem this agent is solving"
+        },
+        "solution": {
+          "type": "string",
+          "minLength": 10,
+          "description": "High-level solution approach"
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Why this matters / expected impact"
+        }
+      }
+    },
+
+    "execution_steps": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Sequential execution steps for agent",
+      "patternProperties": {
+        "^step_[0-9]+$": {
+          "type": "string",
+          "description": "Step description (e.g., 'READ resources/index.md')"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "tasks": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Detailed task definitions with implementation specs",
+      "patternProperties": {
+        "^(task|quickwin)_[0-9]+": {
+          "type": "object",
+          "properties": {
+            "description": {"type": "string"},
+            "implementation": {"type": "object"},
+            "code_example": {"type": "object"},
+            "validation": {"type": "string"},
+            "detailed_spec": {"type": "string"},
+            "target": {"type": "object"},
+            "testing": {"type": "object"},
+            "success_criteria": {"type": "string"}
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "context_json_template": {
+      "type": "object",
+      "required": ["workorder_id", "feature_name", "requirements", "constraints"],
+      "description": "Template for agent to create their own workorder via /create-workorder",
+      "properties": {
+        "workorder_id": {"type": "string"},
+        "feature_name": {"type": "string"},
+        "requirements": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "constraints": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "technical_context": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+
+    "success_criteria": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Success criteria per task or overall",
+      "additionalProperties": {"type": "string"}
+    },
+
+    "output_requirements": {
+      "type": "object",
+      "required": ["file", "format"],
+      "description": "Output file specifications",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Output file path (relative)"
+        },
+        "format": {
+          "type": "string",
+          "description": "Expected format (json, markdown, text)"
+        },
+        "see_template": {
+          "type": "string",
+          "description": "Reference to template location"
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "phase_gate_checklist": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"},
+      "description": "Items to check before advancing to next phase"
+    }
+  },
+
+  "$comment": "Agent Instructions Schema v1.0.0 - Provides detailed guidance for autonomous agent execution. Includes context, step-by-step execution, task specs with code examples, and context.json template for creating agent's own workorder."
+}

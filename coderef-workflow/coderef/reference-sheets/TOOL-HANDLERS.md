@@ -499,9 +499,9 @@ stateDiagram-v2
 - **handle_list_templates** - List POWER framework templates from TEMPLATES_DIR
 - **handle_get_template** - Read specific template file content
 
-### Documentation Generation (2 handlers)
-- **handle_generate_foundation_docs** - Generate README, ARCHITECTURE, API, COMPONENTS, SCHEMA
+### Documentation Generation (1 handler)
 - **handle_generate_individual_doc** - Generate single doc from template
+- **Note:** Foundation doc generation moved to coderef-docs server
 
 ### Changelog Management (3 handlers)
 - **handle_get_changelog** - Retrieve changelog entries (filtered by version/type)

@@ -1,41 +1,38 @@
 {
-  "workorder_id": "WO-FOUNDATION-DOCS-CLEANUP-001",
-  "feature_name": "foundation-docs-cleanup",
-  "created": "2026-01-13",
-  "status": "not_started",
-  "description": "Remove generate_foundation_docs tool from coderef-context and coderef-workflow servers. Consolidate all foundation doc generation to coderef-docs only (single source of truth).",
-  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\instructions.json",
-
-  "orchestrator": {
-    "agent_id": "coderef-assistant",
-    "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
-    "role": "Verify deletions complete, ensure no references remain, confirm coderef-docs is sole owner",
-    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\orchestrator-output.md",
+    "workorder_id": "WO-FOUNDATION-DOCS-CLEANUP-001",
+    "feature_name": "foundation-docs-cleanup",
+    "created": "2026-01-13",
     "status": "complete",
-    "notes": "✅ Verified both agents complete. Finished coderef-workflow documentation updates. Confirmed: coderef-context (0 refs), coderef-workflow (0 refs), coderef-docs (81 refs - tool intact). Single source of truth established."
-  },
-
-  "agents": [
-    {
-      "agent_id": "coderef-context",
-      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
-      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\coderef-context-output.md",
-      "status": "complete",
-      "notes": "✅ Deleted generate_foundation_docs tool, handler, and foundation_doc_generator.py module. Removed 6 test functions. Updated documentation. All code references removed. Output file created."
+    "description": "Remove generate_foundation_docs tool from coderef-context and coderef-workflow servers. Consolidate all foundation doc generation to coderef-docs only (single source of truth).",
+    "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\instructions.json",
+    "orchestrator": {
+        "agent_id": "coderef-assistant",
+        "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+        "role": "Verify deletions complete, ensure no references remain, confirm coderef-docs is sole owner",
+        "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\orchestrator-output.md",
+        "status": "complete",
+        "notes": "✅ Verified both agents complete. Finished coderef-workflow documentation updates. Confirmed: coderef-context (0 refs), coderef-workflow (0 refs), coderef-docs (81 refs - tool intact). Single source of truth established."
     },
-    {
-      "agent_id": "coderef-workflow",
-      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
-      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\coderef-workflow-output.md",
-      "status": "complete",
-      "notes": "✅ Deleted tool from server.py, handler from tool_handlers.py, generator file. Updated ALL-RESOURCES-LIST.md, ALL-RESOURCES-REFERNCE-SHEET.md, API.md. Orchestrator completed remaining doc updates (SERVER.md, TOOL-HANDLERS.md, RESOURCE-SHEET.md)."
+    "agents": [
+        {
+            "agent_id": "coderef-context",
+            "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+            "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\coderef-context-output.md",
+            "status": "complete",
+            "notes": "✅ Deleted generate_foundation_docs tool, handler, and foundation_doc_generator.py module. Removed 6 test functions. Updated documentation. All code references removed. Output file created."
+        },
+        {
+            "agent_id": "coderef-workflow",
+            "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+            "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\foundation-docs-cleanup\\coderef-workflow-output.md",
+            "status": "complete",
+            "notes": "✅ Deleted tool from server.py, handler from tool_handlers.py, generator file. Updated ALL-RESOURCES-LIST.md, ALL-RESOURCES-REFERNCE-SHEET.md, API.md. Orchestrator completed remaining doc updates (SERVER.md, TOOL-HANDLERS.md, RESOURCE-SHEET.md)."
+        }
+    ],
+    "aggregation": {
+        "total_agents": 2,
+        "completed": 2,
+        "pending": 0,
+        "not_started": 0
     }
-  ],
-
-  "aggregation": {
-    "total_agents": 2,
-    "completed": 2,
-    "pending": 0,
-    "not_started": 0
-  }
 }

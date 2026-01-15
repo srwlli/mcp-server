@@ -23,7 +23,7 @@ ENHANCED_DELIVERABLES_ENABLED = os.getenv("ENHANCED_DELIVERABLES_ENABLED", "true
 
 # Import dependencies
 from typing import Any
-from generators import FoundationGenerator, BaseGenerator, ChangelogGenerator, StandardsGenerator, AuditGenerator
+from generators import BaseGenerator, ChangelogGenerator, StandardsGenerator, AuditGenerator
 from generators.planning_analyzer import PlanningAnalyzer
 from generators.plan_validator import PlanValidator as LegacyPlanValidator  # Deprecated - use Papertrail PlanValidator
 from generators.review_formatter import ReviewFormatter
@@ -115,56 +115,6 @@ async def handle_get_template(arguments: dict) -> list[TextContent]:
 
     logger.info(f"Successfully read template: {template_name}")
     result = f"=== {template_name.upper()} Template ===\n\n{content}"
-    return [TextContent(type="text", text=result)]
-
-
-@log_invocation
-@mcp_error_handler
-async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
-    """
-    Handle generate_foundation_docs tool call.
-
-    Uses @log_invocation and @mcp_error_handler decorators for automatic
-    logging and error handling (ARCH-004, ARCH-005).
-    """
-    # Validate input at boundary (REF-003)
-    project_path = validate_project_path_input(arguments.get("project_path", ""))
-    logger.info(f"Generating foundation docs for project: {project_path}")
-
-    # Initialize foundation generator
-    generator = FoundationGenerator(TEMPLATES_DIR)
-
-    # Prepare paths for generation
-    paths = generator.prepare_generation(project_path)
-
-    # Get generation plan
-    plan = generator.get_generation_plan(project_path)
-
-    # Get all templates
-    logger.debug("Loading all foundation templates")
-    templates = generator.get_templates_for_generation()
-    logger.info(f"Loaded {len(templates)} foundation templates")
-
-    # Build response
-    result = plan + "\n\n" + "=" * 50 + "\n\n"
-    result += "TEMPLATES FOR GENERATION:\n\n"
-
-    for template in templates:
-        if 'error' in template:
-            result += f"ERROR - {template['template_name']}: {template['error']}\n\n"
-        else:
-            result += f"=== {template['template_name'].upper()} ===\n\n"
-            result += f"{template['template_content']}\n\n"
-            result += "-" * 50 + "\n\n"
-
-    result += "\nINSTRUCTIONS:\n"
-    result += "Generate each document in order using the templates above.\n\n"
-    result += "SAVE LOCATIONS (SEC-003):\n"
-    result += f"- README.md → {paths['project_path']}/README.md\n"
-    result += f"- All other docs → {paths['output_dir']}/\n\n"
-    result += "Each document should reference previous documents as indicated in the templates.\n"
-
-    logger.info(f"Successfully generated foundation docs plan for: {project_path}")
     return [TextContent(type="text", text=result)]
 
 
@@ -4513,7 +4463,6 @@ async def handle_generate_features_inventory(arguments: dict) -> list[TextConten
 TOOL_HANDLERS = {
     'list_templates': handle_list_templates,
     'get_template': handle_get_template,
-    'generate_foundation_docs': handle_generate_foundation_docs,
     'generate_individual_doc': handle_generate_individual_doc,
     'get_changelog': handle_get_changelog,
     'add_changelog_entry': handle_add_changelog_entry,

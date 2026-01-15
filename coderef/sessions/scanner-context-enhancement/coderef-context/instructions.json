@@ -1,0 +1,180 @@
+{
+  "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT",
+  "agent_id": "coderef-context",
+  "phase": "phase_1",
+  "role": "Enhance coderef_context MCP tool to expose 100% of .coderef/ resources",
+
+  "context": {
+    "problem": "Currently only 40% of .coderef/ resources are exposed to agents. Diagrams, patterns, docs, and complexity data exist but require multiple tool calls to access.",
+    "solution": "Enhance coderef_context to auto-include all resources in a single response, reducing 6 tool calls to 1.",
+    "impact": "6x fewer tool calls, 95% context quality, enables Phase 2 workflow/docs integration"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md - Understand all resource locations and specifications",
+    "step_2": "READ C:\\Users\\willh\\.mcp-servers\\coderef-context\\CONTEXT-LEVERAGE-ANALYSIS.md - Primary enhancement spec",
+    "step_3": "READ C:\\Users\\willh\\.mcp-servers\\coderef-context\\PROOF-OF-ENHANCEMENT.md - Pattern from Task 1 (complete)",
+    "step_4": "CREATE context.json for /create-workorder workflow (use template below)",
+    "step_5": "RUN /create-workorder in your project to generate plan.json",
+    "step_6": "EXECUTE tasks 2-7 following your generated plan",
+    "step_7": "TEST enhanced coderef_context response (verify all fields present)",
+    "step_8": "CREATE outputs/coderef-context-phase1-output.json (use format in resources/index.md)",
+    "step_9": "UPDATE communication.json status for each completed task",
+    "step_10": "COMMIT and push all changes"
+  },
+
+  "tasks": {
+    "task_2_elements_by_type": {
+      "description": "Add elements_by_type breakdown to coderef_context response",
+      "implementation": {
+        "file": "src/handlers_refactored.py",
+        "function": "handle_coderef_context",
+        "lines": "226-231 (add data loading), 239 (add to response)",
+        "pattern": "Follow visual_architecture pattern from Task 1 (lines 226-231, 239)"
+      },
+      "code_example": {
+        "load_data": "# Load index to count element types\nindex = reader.get_index()\nelement_types = {}\nfor elem in index:\n    elem_type = elem.get('type', 'unknown')\n    element_types[elem_type] = element_types.get(elem_type, 0) + 1",
+        "add_to_response": "\"elements_by_type\": element_types  # Add to response dict"
+      },
+      "validation": "Response includes {\"function\": 89, \"class\": 12, \"method\": 204, ...}"
+    },
+
+    "task_3_complexity_hotspots": {
+      "description": "Add complexity_hotspots array to response",
+      "implementation": {
+        "file_1": "src/coderef_reader.py",
+        "add_method": "get_complexity_hotspots() - Read reports/complexity.json, filter high-complexity files",
+        "file_2": "src/handlers_refactored.py",
+        "use_method": "hotspots = reader.get_complexity_hotspots()"
+      },
+      "code_example": {
+        "coderef_reader_method": "def get_complexity_hotspots(self, threshold=10) -> list:\n    \"\"\"Get files with cyclomatic complexity > threshold.\"\"\"\n    try:\n        complexity = self._load_json('reports/complexity.json')\n        return [f for f in complexity.get('functions', []) if f.get('cyclomatic_complexity', 0) > threshold]\n    except FileNotFoundError:\n        return []",
+        "handler_usage": "hotspots = reader.get_complexity_hotspots(threshold=10)"
+      },
+      "validation": "Response includes array of {file, complexity, lines_of_code}"
+    },
+
+    "task_4_documentation_summary": {
+      "description": "Add documentation_summary to response",
+      "implementation": {
+        "file_1": "src/coderef_reader.py",
+        "add_method": "get_generated_doc(doc_type='readme') - Read generated-docs/{type}.md",
+        "file_2": "src/handlers_refactored.py",
+        "use_method": "doc_summary = reader.get_generated_doc('readme')[:500]  # First 500 chars"
+      },
+      "code_example": {
+        "coderef_reader_method": "def get_generated_doc(self, doc_type: str = 'readme') -> str:\n    \"\"\"Get auto-generated documentation.\"\"\"\n    path = self.coderef_dir / f'generated-docs/{doc_type.upper()}.md'\n    if path.exists():\n        return path.read_text()\n    return None",
+        "handler_usage": "doc_summary = reader.get_generated_doc('readme')[:500] if reader.get_generated_doc('readme') else None"
+      },
+      "validation": "Response includes first 500 chars of README.md (or null if missing)"
+    },
+
+    "task_5_populate_patterns": {
+      "description": "Populate patterns.json with handlers, decorators, imports",
+      "implementation": {
+        "file": "populate-coderef.py (scanner script)",
+        "location": "Add patterns detection logic after scanning",
+        "target_output": ".coderef/reports/patterns.json"
+      },
+      "target_structure": {
+        "handlers": [{"name": "handle_coderef_scan", "file": "src/handlers.py", "line": 14}],
+        "decorators": [{"name": "@app.list_tools", "usage_count": 1}],
+        "common_imports": [{"module": "json", "usage_count": 15}],
+        "naming_conventions": {"functions": "snake_case", "classes": "PascalCase"}
+      },
+      "validation": "patterns.json exists and contains handlers, decorators, imports arrays"
+    },
+
+    "task_6_populate_validation": {
+      "description": "Populate validation.json with CodeRef2 tag coverage",
+      "implementation": {
+        "file": "populate-coderef.py (scanner script)",
+        "location": "Add validation logic after scanning",
+        "target_output": ".coderef/reports/validation.json"
+      },
+      "target_structure": {
+        "coderef2_tags": {
+          "total_elements": 1752,
+          "tagged_elements": 0,
+          "tag_coverage": "0%"
+        },
+        "issues": [{"file": "server.py", "line": 42, "issue": "Missing CodeRef2 tag"}]
+      },
+      "validation": "validation.json exists with tag coverage percentage"
+    },
+
+    "task_7_create_complexity": {
+      "description": "Create complexity.json with pre-computed metrics",
+      "implementation": {
+        "file": "populate-coderef.py (scanner script)",
+        "location": "Add complexity calculation after scanning",
+        "target_output": ".coderef/reports/complexity.json",
+        "library": "Use radon or similar for cyclomatic complexity"
+      },
+      "target_structure": {
+        "functions": [
+          {
+            "name": "handle_coderef_query",
+            "file": "src/handlers.py",
+            "line": 53,
+            "complexity": "medium",
+            "parameters": 3,
+            "lines_of_code": 46,
+            "cyclomatic_complexity": 8
+          }
+        ],
+        "high_complexity": ["handle_coderef_scan (complexity: 15)"]
+      },
+      "validation": "complexity.json exists with cyclomatic complexity per function"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT",
+    "feature_name": "context-tool-enhancements",
+    "requirements": [
+      "Add elements_by_type breakdown showing counts per element type",
+      "Add complexity_hotspots array for high-complexity files",
+      "Add documentation_summary from generated-docs/README.md",
+      "Populate patterns.json with handlers, decorators, common imports",
+      "Populate validation.json with CodeRef2 tag coverage",
+      "Create complexity.json with cyclomatic complexity metrics"
+    ],
+    "constraints": [
+      "Maintain backward compatibility (all new fields optional)",
+      "Response time must stay under 0.1s",
+      "Graceful fallback if reports don't exist (return null, not error)",
+      "Follow pattern from Task 1 (visual_architecture implementation)"
+    ],
+    "technical_context": {
+      "existing_implementation": "src/handlers_refactored.py:119-244 (handle_coderef_context)",
+      "pattern_to_follow": "Lines 226-231 (load data), Line 239 (add to response)",
+      "helper_class": "src/coderef_reader.py (CodeRefReader)",
+      "proof_of_concept": "PROOF-OF-ENHANCEMENT.md (Task 1 complete)"
+    }
+  },
+
+  "success_criteria": {
+    "context_quality": "40% → 95% (all .coderef/ resources exposed)",
+    "tool_calls": "6 → 1 (single coderef_context call gets everything)",
+    "response_time": "≤ 0.1s (room for added data)",
+    "backward_compatible": "Existing code continues working (new fields optional)",
+    "graceful_degradation": "Returns null for missing data, not errors"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-context-phase1-output.json",
+    "format": "JSON with before/after comparison, implementation details, validation results",
+    "see_template": "resources/index.md lines 145-177"
+  },
+
+  "phase_gate_checklist": [
+    "All 7 tasks complete (1 done, 6 remaining)",
+    "coderef_context response includes: elements_by_type, complexity_hotspots, documentation_summary, visual_architecture",
+    "Reports populated: patterns.json, validation.json, complexity.json",
+    "Context quality reaches 95%",
+    "Tool calls reduced to 1",
+    "All tests passing",
+    "Documentation updated"
+  ]
+}

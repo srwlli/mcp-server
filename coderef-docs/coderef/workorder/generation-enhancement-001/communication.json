@@ -20,6 +20,12 @@
       "from": "orchestrator",
       "message": "Workorder created from WO-DOCS-CONSOLIDATION-001 session findings. coderef-docs agent identified critical gap: reads .coderef/ files but doesn't call MCP tools. 7 enhancements needed to achieve code-driven documentation. P0-1 adds tool orchestration. P0-2 integrates validation. Quality targets: Foundation 85%, User 75%, Standards 80%.",
       "phase": "planning"
+    },
+    {
+      "timestamp": "2026-01-13T00:00:00Z",
+      "from": "orchestrator",
+      "message": "SCOPE EXPANSION: P2-1 now includes removing generate_foundation_docs from coderef-workflow server. Foundation doc generation being fully consolidated to coderef-docs (single source of truth). Must delete tool from coderef-workflow: server.py tool definition, tool_handlers.py handler, generators/coderef_foundation_generator.py file. Context.json updated with expanded success criteria.",
+      "phase": "planning_revision"
     }
   ]
 }

@@ -14,7 +14,9 @@
       "Bash(python:*)",
       "SlashCommand(/create-plan generation-enhancement-001)",
       "Bash(env)",
-      "mcp__coderef-personas__execute_plan_interactive"
+      "mcp__coderef-personas__execute_plan_interactive",
+      "mcp__coderef-docs__generate_features",
+      "mcp__coderef-docs__generate_quickref_interactive"
     ],
     "deny": [],
     "ask": []

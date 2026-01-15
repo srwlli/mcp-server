@@ -1,0 +1,327 @@
+{
+  "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001",
+  "task": "Scanner & Context Enhancement with Workflow/Docs Integration",
+  "description": "3-phase enhancement: (1) Core improvements to scanner and context systems, (2) Integration into workflow and docs MCP servers, (3) Advanced accuracy and performance optimizations",
+  "session_doc": "C:\\Users\\willh\\Desktop\\assistant\\scanner-complete-context.md",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate 3-phase enhancement across 4 primary implementation agents (coderef-context, coderef-dashboard, coderef-workflow, coderef-docs) plus 5 support agents",
+
+    "phase_1_orchestration": {
+      "step_1": "READ communication.json to identify Phase 1 agents (coderef-context, coderef-dashboard, papertrail)",
+      "step_2": "MONITOR Phase 1 execution: context tool enhancement + scanner quick wins (22 hours)",
+      "step_3": "VALIDATE Phase 1 outputs: Enhanced coderef_context tool (95% quality), 4 scanner quick wins implemented",
+      "step_4": "CREATE orchestrator-phase1-report.md with success metrics (context calls 6→1, scanner +15% performance)",
+      "step_5": "GATE-CHECK: Phase 1 must achieve 95% context quality before Phase 2 starts"
+    },
+
+    "phase_2_orchestration": {
+      "step_1": "VERIFY Phase 1 complete and validated",
+      "step_2": "MONITOR Phase 2 execution: workflow integration + docs integration",
+      "step_3": "COORDINATE handoffs between coderef-workflow and coderef-context (MCP call replacement)",
+      "step_4": "COORDINATE handoffs between coderef-docs and coderef-dashboard scanner",
+      "step_5": "VALIDATE Phase 2 outputs: 6x faster planning, 95% docs accuracy",
+      "step_6": "CREATE orchestrator-phase2-report.md with integration test results",
+      "step_7": "GATE-CHECK: Integration tests must pass 95%+ before Phase 3 starts"
+    },
+
+    "phase_3_orchestration": {
+      "step_1": "VERIFY Phase 2 complete and validated",
+      "step_2": "MONITOR Phase 3 execution: scanner accuracy (Week 5-7) + performance (Week 8-10)",
+      "step_3": "TRACK reintegration testing by coderef-workflow and coderef-docs",
+      "step_4": "VALIDATE Phase 3 outputs: 95% accuracy, 3-5x faster scanning, 50MB memory cap",
+      "step_5": "CREATE orchestrator-phase3-report.md with final benchmarks",
+      "step_6": "SYNTHESIZE all 3 phases into orchestrator-final-synthesis.md"
+    },
+
+    "final_synthesis": {
+      "step_1": "READ all phase reports (phase1, phase2, phase3)",
+      "step_2": "AGGREGATE success metrics across all 3 phases",
+      "step_3": "DOCUMENT integration points validated",
+      "step_4": "CREATE master success metrics table (context quality, scanner accuracy, workflow speed, docs quality)",
+      "step_5": "WRITE orchestrator-final-synthesis.md at output_file path"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Execute assigned phase tasks following session_doc specifications",
+
+    "execution_pattern": {
+      "step_1": "READ communication.json to find your agent_id entry",
+      "step_2": "READ session_doc (C:\\Users\\willh\\Desktop\\assistant\\scanner-complete-context.md) for detailed task breakdown",
+      "step_3": "IDENTIFY which phase(s) you participate in (phase_1, phase_2, and/or phase_3)",
+      "step_4": "EXECUTE tasks for your assigned phase following session_doc specifications",
+      "step_5": "CREATE output at your designated output_file path (phase-specific if multiple phases)",
+      "step_6": "UPDATE your status in communication.json: not_started → complete",
+      "step_7": "UPDATE aggregation counts in communication.json"
+    },
+
+    "phase_1_agents": {
+      "coderef-context": {
+        "tasks": [
+          "Enhance coderef_context tool to auto-include diagrams, patterns, docs, complexity hotspots",
+          "Add get_generated_docs(), get_diagram_wrapped(), get_element_stats() methods to CodeRefReader",
+          "Populate patterns.json with handlers, decorators, imports",
+          "Populate validation.json with CodeRef2 tag coverage",
+          "Create complexity.json with pre-computed metrics"
+        ],
+        "target_files": [
+          "src/handlers_refactored.py:119-244 (handle_coderef_context)",
+          "src/coderef_reader.py (CodeRefReader class)"
+        ],
+        "output_format": "JSON with before/after coderef_context responses showing 40% → 95% quality improvement",
+        "success_criteria": {
+          "context_tool_calls": "6 → 1 (replace 5 file reads + 1 MCP call)",
+          "context_quality": "40% → 95%",
+          "response_time": "0.3s → 0.05s",
+          "reports_populated": "patterns.json, validation.json, complexity.json (from EMPTY)"
+        }
+      },
+      "coderef-dashboard": {
+        "tasks": [
+          "Quick Win #1: Pattern ordering optimization (4 hours)",
+          "Quick Win #2: Configuration presets (6 hours)",
+          "Quick Win #3: Structured error reporting (8 hours)",
+          "Quick Win #4: Python pattern expansion (4 hours)"
+        ],
+        "target_files": [
+          "packages/coderef-core/src/scanner/scanner.ts:18-44 (LANGUAGE_PATTERNS)",
+          "packages/coderef-core/src/scanner/types.ts (ElementData, ScanOptions, ScanError)",
+          "packages/coderef-core/src/fileGeneration/detectPatterns.ts"
+        ],
+        "output_format": "Markdown report with implementation details + test results for each quick win",
+        "success_criteria": {
+          "scanner_performance": "+15% (pattern ordering)",
+          "configuration_time": "15-30 min → 30 sec (presets)",
+          "python_coverage": "3 patterns → 7 patterns (+30% elements)",
+          "error_resolution_time": "20 min → 5-7 min (structured errors)"
+        }
+      },
+      "papertrail": {
+        "tasks": [
+          "Validate enhanced coderef_context output schema",
+          "Validate populated patterns.json, validation.json, complexity.json schemas",
+          "Validate scanner output with new element types (decorators, properties)",
+          "Report validation results with pass/fail per schema"
+        ],
+        "output_format": "JSON with validation results per file/schema",
+        "success_criteria": {
+          "validation_pass_rate": "100% (all schemas valid)"
+        }
+      }
+    },
+
+    "phase_2_agents": {
+      "coderef-workflow": {
+        "tasks": [
+          "TARGET 1: Eliminate redundant coderef_diagram call in planning_analyzer.py line ~1343-1355",
+          "Extract visual_architecture from existing coderef_context response (no separate diagram call)",
+          "Replace 5 file reads in planning_analyzer.py with single coderef_context MCP call",
+          "Update analyze_project_for_planning() function to use enhanced context data",
+          "Update AI planning prompt (190 lines) to include new context fields: architecture_diagram, visual_architecture, complexity_hotspots, documentation_summary",
+          "Test planning workflow with enhanced context, generate test plan.json",
+          "Measure planning speed improvement (baseline vs enhanced)",
+          "Verify MCP call reduction: 2 calls → 1 call (50% reduction)"
+        ],
+        "target_files": [
+          "generators/planning_analyzer.py:~1343-1355 (eliminate coderef_diagram call)",
+          "planning/planning_analyzer.py:120-180 (analyze_project_for_planning)",
+          "generators/planning_generator.py:176-365 (_build_agent_prompt)"
+        ],
+        "integration_targets": "See phase2-integration-targets.md for detailed specifications",
+        "output_format": "Markdown report with code changes + test plan.json + performance benchmarks",
+        "success_criteria": {
+          "planning_speed": "6x faster (0.3s → 0.05s for context gathering)",
+          "plan_quality": "File-specific tasks with exact line numbers (vs generic placeholders)",
+          "context_completeness": "40% → 95%"
+        }
+      },
+      "coderef-docs": {
+        "tasks": [
+          "TARGET 2: Auto-embed visual_architecture in ARCHITECTURE.md (coderef_foundation_generator.py:~295-320)",
+          "TARGET 3: Add Architecture section to my-guide.md with diagram (user_guide_generator.py)",
+          "TARGET 4: Enhance USER-GUIDE.md Section 3 with visual overview (user_guide_generator.py)",
+          "TARGET 5: Add architectural context to standards docs (standards_generator.py:~61-90)",
+          "Update generate_foundation_docs to use enhanced scanner from coderef-core",
+          "Call coderef_context for both elements + diagram (replace manual file reads)",
+          "Use populated patterns.json for coding conventions in docs",
+          "Use complexity.json for identifying critical modules in ARCHITECTURE.md",
+          "Test all 4 documentation workflows with enhanced context"
+        ],
+        "target_files": [
+          "generators/coderef_foundation_generator.py:~295-320 (ARCHITECTURE.md generation)",
+          "generators/user_guide_generator.py (generate_my_guide - add Architecture section)",
+          "generators/user_guide_generator.py (generate_user_guide - enhance Section 3)",
+          "generators/standards_generator.py:~61-90 (add architectural context)",
+          "docs_handlers/foundation_docs.py (generate_foundation_docs handler)"
+        ],
+        "integration_targets": "See phase2-integration-targets.md for detailed specifications (5 targets)",
+        "output_format": "Markdown report with implementation changes + sample ARCHITECTURE.md showing 95% accuracy",
+        "success_criteria": {
+          "element_detection_accuracy": "85% → 95% (interfaces, decorators, properties detected)",
+          "python_elements_in_docs": "+30% coverage",
+          "generation_speed": "3-5x faster (parallel scanner in Phase 3)",
+          "standards_quality": "55% → 80% (MCP patterns)"
+        }
+      },
+      "coderef-testing": {
+        "tasks": [
+          "Create integration test suite (10+ test cases) for workflow + docs",
+          "Test planning workflow with enhanced context in multiple languages (TS, Python, Go)",
+          "Test foundation docs generation with enhanced scanner",
+          "Run performance benchmarks (before/after for planning and docs generation)",
+          "Validate all integration points between 4 primary agents"
+        ],
+        "output_format": "JSON with test results, pass/fail counts, performance metrics",
+        "success_criteria": {
+          "integration_test_pass_rate": "95%+",
+          "workflow_integration_validated": "Single MCP call works, 6x faster",
+          "docs_integration_validated": "Enhanced scanner used, 95% accuracy"
+        }
+      },
+      "papertrail": {
+        "tasks": [
+          "Validate updated plan.json schema with new context fields",
+          "Validate foundation docs UDS compliance",
+          "Validate integration test outputs",
+          "Report Phase 2 validation results"
+        ],
+        "output_format": "JSON with validation results",
+        "success_criteria": {
+          "validation_pass_rate": "100%"
+        }
+      }
+    },
+
+    "phase_3_agents": {
+      "coderef-dashboard": {
+        "tasks_accuracy": [
+          "P1.1: Implement Hybrid AST + Regex approach (Week 5-7)",
+          "Extend js-call-detector.ts to extract interfaces, type aliases, decorators, class properties",
+          "Add useAST option to ScanOptions (default: false, opt-in)",
+          "Implement regex fallback on AST parse errors",
+          "P1.2: Implement context-aware comment filtering",
+          "Use acorn's onComment callback for accurate comment detection",
+          "Add skipComments: 'smart' | 'basic' | false to ScanOptions",
+          "Test with 20+ TypeScript/JavaScript fixtures"
+        ],
+        "tasks_performance": [
+          "P2.4: Implement parallel file processing with worker threads (Week 8-10)",
+          "Create worker pool (4-8 workers configurable)",
+          "Batch files into chunks (100 files per worker)",
+          "Add parallel, workers, batchSize to ScanOptions",
+          "P2.5: Implement content-aware caching with LRU",
+          "Replace global Map with lru-cache package",
+          "Add content hashing (SHA-256 of first 1KB)",
+          "Implement TTL (1 hour) and LRU eviction (max 1000 entries, 50MB cap)",
+          "Run performance benchmarks: 500 files, 1000 files, 5000 files"
+        ],
+        "target_files": [
+          "packages/coderef-core/src/scanner/scanner.ts (main scanner)",
+          "packages/coderef-core/src/analyzer/js-call-detector.ts (AST parser)",
+          "packages/coderef-core/src/scanner/types.ts (interfaces)"
+        ],
+        "output_format": "Two separate outputs: phase3-accuracy-output.md (markdown) + phase3-performance-output.json (benchmarks)",
+        "success_criteria": {
+          "accuracy": "85% → 95% for TS/JS",
+          "false_negatives": "15% → 5%",
+          "scan_speed_500_files": "1185ms → 300-400ms",
+          "scan_speed_5000_files": "20-30s → 5-8s",
+          "memory_usage": "Unbounded → 50MB cap",
+          "cache_hit_rate": "60% → 80%"
+        }
+      },
+      "coderef-testing": {
+        "tasks": [
+          "Create comprehensive test fixtures for AST parsing (interfaces, decorators, generics)",
+          "Create test fixtures for parallel processing (1000+ files)",
+          "Run accuracy benchmarks: baseline vs hybrid AST",
+          "Run performance benchmarks: sequential vs parallel, with/without caching",
+          "Run memory profiling: LRU cache behavior, eviction patterns",
+          "Create regression test suite to ensure no elements missed"
+        ],
+        "output_format": "JSON with accuracy metrics, performance benchmarks, memory profiles",
+        "success_criteria": {
+          "test_fixtures_created": "50+ (20+ TS/JS, 10+ Python, 10+ performance, 10+ edge cases)",
+          "accuracy_validated": "95%+ detection rate",
+          "performance_validated": "3-5x speedup confirmed",
+          "memory_validated": "50MB cap confirmed"
+        }
+      },
+      "coderef-workflow": {
+        "tasks": [
+          "Re-run planning workflows with accurate scanner (95% vs 85%)",
+          "Verify enhanced context still works after scanner changes",
+          "Measure end-to-end planning improvement (Phase 2 baseline vs Phase 3 final)",
+          "Validate plan.json quality with more accurate element detection"
+        ],
+        "output_format": "Markdown report with reintegration test results",
+        "success_criteria": {
+          "workflow_still_works": "Planning successful with 95% accurate scanner",
+          "no_regressions": "Phase 2 improvements still present"
+        }
+      },
+      "coderef-docs": {
+        "tasks": [
+          "Re-generate foundation docs with fast parallel scanner (3-5x speedup)",
+          "Verify docs quality with 95% accurate scanner",
+          "Measure end-to-end docs generation improvement",
+          "Validate ARCHITECTURE.md and API.md completeness"
+        ],
+        "output_format": "Markdown report with reintegration test results + sample docs",
+        "success_criteria": {
+          "docs_generation_faster": "3-5x speedup confirmed",
+          "docs_quality_improved": "95% accuracy, all interfaces/decorators detected",
+          "no_regressions": "Phase 2 improvements still present"
+        }
+      },
+      "papertrail": {
+        "tasks": [
+          "Validate Phase 3 scanner outputs (new element types from AST)",
+          "Validate performance benchmark output schemas",
+          "Validate final plan.json and foundation docs after reintegration",
+          "Report Phase 3 validation results"
+        ],
+        "output_format": "JSON with validation results",
+        "success_criteria": {
+          "validation_pass_rate": "100%"
+        }
+      }
+    }
+  },
+
+  "output_format": "Mixed: Markdown reports (workflow, docs, dashboard), JSON (context, testing, papertrail, benchmarks)",
+
+  "quality_standards": {
+    "completeness": "All 3 phases executed, all success metrics achieved, no regressions between phases",
+    "accuracy": "Phase 1: 95% context quality. Phase 2: 95%+ integration tests pass. Phase 3: 95% scanner accuracy",
+    "performance": "Phase 1: 6x fewer context calls. Phase 2: 6x faster planning. Phase 3: 3-5x faster scanning",
+    "validation": "100% schema validation pass rate across all phases"
+  },
+
+  "phase_dependencies": {
+    "phase_1": [],
+    "phase_2": ["phase_1"],
+    "phase_3": ["phase_2"]
+  },
+
+  "success_metrics_summary": {
+    "phase_1": {
+      "context_tool_calls": "6 → 1",
+      "context_quality": "40% → 95%",
+      "scanner_performance": "+15%",
+      "python_coverage": "+30%"
+    },
+    "phase_2": {
+      "planning_speed": "6x faster",
+      "docs_accuracy": "85% → 95%",
+      "integration_test_pass_rate": "95%+"
+    },
+    "phase_3": {
+      "scanner_accuracy": "85% → 95%",
+      "scan_speed_500_files": "1185ms → 300-400ms",
+      "scan_speed_5000_files": "20-30s → 5-8s",
+      "memory_usage": "Unbounded → 50MB"
+    }
+  }
+}

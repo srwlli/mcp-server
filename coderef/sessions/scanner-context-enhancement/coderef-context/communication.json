@@ -1,0 +1,106 @@
+{
+  "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CONTEXT",
+  "parent_session": "WO-SCANNER-CONTEXT-ENHANCEMENT-001",
+  "agent_id": "coderef-context",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "phase": "phase_1",
+  "role": "Enhance coderef_context tool to expose 100% of .coderef/ resources",
+  "status": "in_progress",
+  "started": "2026-01-14",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Auto-include visual_architecture in coderef_context response",
+      "status": "complete",
+      "completed": "2026-01-14",
+      "commit": "69aafd0",
+      "proof": "C:\\Users\\willh\\.mcp-servers\\coderef-context\\PROOF-OF-ENHANCEMENT.md"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Add elements_by_type breakdown to response",
+      "status": "not_started",
+      "target_files": ["src/handlers_refactored.py:226-231, 239"],
+      "success_criteria": "Response includes element counts by type (function, class, method, etc.)"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Add complexity_hotspots array to response",
+      "status": "not_started",
+      "target_files": ["src/handlers_refactored.py:226-231, 239", "src/coderef_reader.py"],
+      "success_criteria": "Response includes array of high-complexity files with metrics"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Add documentation_summary to response",
+      "status": "not_started",
+      "target_files": ["src/handlers_refactored.py:226-231, 239", "src/coderef_reader.py"],
+      "success_criteria": "Response includes summary from .coderef/generated-docs/README.md"
+    },
+    {
+      "task_id": "task_5",
+      "description": "Populate patterns.json with handlers, decorators, imports",
+      "status": "not_started",
+      "target_files": ["populate-coderef.py (scanner script)"],
+      "success_criteria": "patterns.json contains handler patterns, decorators, common imports"
+    },
+    {
+      "task_id": "task_6",
+      "description": "Populate validation.json with CodeRef2 tag coverage",
+      "status": "not_started",
+      "target_files": ["populate-coderef.py (scanner script)"],
+      "success_criteria": "validation.json contains tag coverage percentage and issues"
+    },
+    {
+      "task_id": "task_7",
+      "description": "Create complexity.json with pre-computed metrics",
+      "status": "not_started",
+      "target_files": ["populate-coderef.py (scanner script)"],
+      "success_criteria": "complexity.json contains cyclomatic complexity per function"
+    }
+  ],
+
+  "success_metrics": {
+    "context_quality": {
+      "baseline": "40%",
+      "current": "55%",
+      "target": "95%",
+      "status": "38% complete"
+    },
+    "tool_calls_reduced": {
+      "baseline": 6,
+      "current": 5,
+      "target": 1,
+      "status": "20% complete"
+    },
+    "response_time": {
+      "baseline": "0.3s",
+      "current": "0.05s",
+      "target": "0.05s",
+      "status": "100% complete"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md",
+    "primary_spec": "C:\\Users\\willh\\.mcp-servers\\coderef-context\\CONTEXT-LEVERAGE-ANALYSIS.md",
+    "proof_of_concept": "C:\\Users\\willh\\.mcp-servers\\coderef-context\\PROOF-OF-ENHANCEMENT.md",
+    "session_plan": "C:\\Users\\willh\\Desktop\\assistant\\scanner-complete-context.md",
+    "phase1_progress": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\phase1-progress.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-context-phase1-output.json",
+    "format": "JSON with before/after response comparison"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "Context quality must reach 95%",
+      "Tool calls reduced to 1 (from 6)",
+      "All 3 reports populated (patterns, validation, complexity)"
+    ]
+  }
+}

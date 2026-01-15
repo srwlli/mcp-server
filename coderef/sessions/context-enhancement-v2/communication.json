@@ -1,0 +1,57 @@
+{
+  "workorder_id": "WO-CONTEXT-ENHANCEMENT-V2-001",
+  "feature_name": "context-enhancement-v2",
+  "created": "2026-01-15",
+  "status": "not_started",
+  "description": "V2 of scanner-context enhancement using new hierarchical session pattern with agent subdirectories, improved validation, and structured phase gates",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\context-enhancement-v2\\instructions.json",
+
+  "phases": {
+    "phase_1": {
+      "name": "Core Enhancements",
+      "status": "not_started",
+      "lead_agents": ["coderef-context", "coderef-core"],
+      "gate_criteria": [
+        "Context tool quality reaches 95%",
+        "Scanner performance improved by 15%",
+        "All agent outputs validated"
+      ]
+    }
+  },
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate Phase 1 enhancement across 2 primary agents, validate phase gates, synthesize results",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\context-enhancement-v2\\orchestrator-phase1-synthesis.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "role": "Phase 1 Lead: Enhance coderef_context tool from 40% to 95% context quality",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-core",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "role": "Phase 1 Lead: Scanner quick wins (pattern ordering, presets, error reporting)",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 2,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 2,
+    "phase_1_agents": 2
+  }
+}

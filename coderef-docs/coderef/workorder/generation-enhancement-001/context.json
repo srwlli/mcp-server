@@ -99,19 +99,21 @@
     "P2_medium": [
       {
         "id": "P2-1",
-        "title": "Consolidate 3 foundation doc tools → 1 unified tool",
-        "rationale": "Currently 3 tools for foundation docs: generate_foundation_docs, generate_individual_doc, coderef_foundation_docs. User confusion about which to use. Maintenance burden across multiple implementations.",
-        "implementation": "Keep generate_foundation_docs as primary tool. Deprecate coderef_foundation_docs with redirect to generate_foundation_docs. Make generate_individual_doc internal-only (called by generate_foundation_docs, not exposed to users). Update slash commands to use generate_foundation_docs. Add deprecation warnings for 2 versions, then remove in v4.0.",
+        "title": "Consolidate foundation doc tools and remove from coderef-workflow",
+        "rationale": "Foundation doc generation scattered across 3 locations: (1) coderef-docs has generate_foundation_docs, generate_individual_doc, coderef_foundation_docs, (2) coderef-workflow has generate_foundation_docs. User confusion about which to use. Need single source of truth in coderef-docs.",
+        "implementation": "Phase 1 (coderef-docs cleanup): Keep generate_foundation_docs as primary tool. Deprecate coderef_foundation_docs with redirect to generate_foundation_docs. Make generate_individual_doc internal-only. Phase 2 (coderef-workflow removal): Remove generate_foundation_docs tool from coderef-workflow server.py, delete handle_generate_foundation_docs from tool_handlers.py, delete generators/coderef_foundation_generator.py, update documentation. Add migration guide pointing users to coderef-docs.",
         "success_criteria": [
-          "generate_foundation_docs is single public API",
-          "coderef_foundation_docs redirects with deprecation warning",
-          "generate_individual_doc marked internal-only",
-          "Slash commands updated to use generate_foundation_docs",
-          "Deprecation warnings added with migration instructions",
-          "Documentation updated to reflect single tool",
-          "Migration guide created for existing users"
+          "coderef-docs: generate_foundation_docs is single public API",
+          "coderef-docs: coderef_foundation_docs redirects with deprecation warning",
+          "coderef-docs: generate_individual_doc marked internal-only",
+          "coderef-workflow: generate_foundation_docs tool removed from server.py",
+          "coderef-workflow: handle_generate_foundation_docs deleted from tool_handlers.py",
+          "coderef-workflow: generators/coderef_foundation_generator.py deleted",
+          "coderef-workflow: API.md, reference sheets updated (removal documented)",
+          "Migration guide created pointing to coderef-docs",
+          "Slash commands updated to use coderef-docs tool"
         ],
-        "impact": "Single source of truth for foundation docs. Reduced user confusion. Simplified maintenance. Clear migration path."
+        "impact": "Single source of truth for foundation docs in coderef-docs. Eliminates duplication in coderef-workflow. Reduced user confusion. Simplified maintenance. Clear migration path."
       },
       {
         "id": "P2-2",

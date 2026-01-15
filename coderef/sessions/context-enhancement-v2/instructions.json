@@ -1,0 +1,42 @@
+{
+  "workorder_id": "WO-CONTEXT-ENHANCEMENT-V2-001",
+  "task": "Context and Scanner Enhancement V2",
+  "description": "Demonstrate new hierarchical session pattern while enhancing context tool and scanner performance",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate Phase 1 agents, validate phase gates, synthesize results",
+    "steps": {
+      "step_1": "READ agent outputs from coderef-context/outputs/ and coderef-core/outputs/",
+      "step_2": "VALIDATE phase_gate criteria in each agent's communication.json",
+      "step_3": "SYNTHESIZE cross-agent insights and create orchestrator-phase1-synthesis.md",
+      "step_4": "UPDATE session-level communication.json with phase_1 status and aggregation counts"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Execute tasks in isolated subdirectory, update communication.json after each task",
+    "steps": {
+      "step_1": "NAVIGATE to your subdirectory: context-enhancement-v2/{agent-id}/",
+      "step_2": "READ resources/index.md to access all source documents",
+      "step_3": "READ instructions.json for detailed execution steps",
+      "step_4": "USE context_json_template to create workorder in agent home project",
+      "step_5": "EXECUTE tasks as specified in instructions.json",
+      "step_6": "CREATE outputs in outputs/ directory",
+      "step_7": "UPDATE communication.json after EACH task completion",
+      "step_8": "VALIDATE phase_gate checklist before marking phase complete"
+    }
+  },
+
+  "output_format": "json",
+
+  "output_template": {
+    "agent_output": "outputs/{agent-id}-phase1-output.json",
+    "orchestrator_synthesis": "orchestrator-phase1-synthesis.md"
+  },
+
+  "quality_standards": {
+    "completeness": "All tasks in agent communication.json marked complete",
+    "accuracy": "Success metrics met (baseline → target achieved)",
+    "format": "Outputs follow schema, phase gates validated"
+  }
+}

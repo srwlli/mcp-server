@@ -479,9 +479,9 @@ graph TD
 - `list_templates` - List available POWER framework templates
 - `get_template` - Retrieve specific template content
 
-### Documentation Generation (2 tools)
-- `generate_foundation_docs` - Generate README, ARCHITECTURE, API, COMPONENTS, SCHEMA
+### Documentation Generation (1 tool)
 - `generate_individual_doc` - Generate single doc from template
+- **Note:** Foundation doc generation moved to coderef-docs server. Use coderef-docs for README, ARCHITECTURE, API, COMPONENTS, SCHEMA generation.
 
 ### Changelog Management (2 tools)
 - `get_changelog` - Retrieve changelog entries (filtered by version/type)

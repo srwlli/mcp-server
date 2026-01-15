@@ -1,0 +1,85 @@
+{
+  "workorder_id": "WO-CONTEXT-ENHANCEMENT-V2-001-CODEREF-CONTEXT",
+  "parent_session": "WO-CONTEXT-ENHANCEMENT-V2-001",
+  "agent_id": "coderef-context",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "phase": "phase_1",
+  "role": "Enhance coderef_context tool from 40% to 95% context quality",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Auto-include visual_architecture field in coderef_context responses",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Add elements_by_type breakdown (components, functions, methods, constants)",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Add complexity_hotspots array (top 10 complex files)",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Add documentation_summary (coverage, gaps, quality score)",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_5",
+      "description": "Populate patterns.json from scanner analysis",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_6",
+      "description": "Populate validation.json with validation results",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_7",
+      "description": "Create complexity.json with complexity metrics",
+      "status": "not_started"
+    }
+  ],
+
+  "success_metrics": {
+    "context_quality": {
+      "baseline": "40%",
+      "target": "95%",
+      "status": "Not started"
+    },
+    "tool_calls": {
+      "baseline": "6",
+      "target": "1",
+      "status": "Not started"
+    },
+    "response_time": {
+      "baseline": "0.5s",
+      "target": "≤0.1s",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-context-phase1-output.json",
+    "format": "json"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 7 tasks marked complete",
+      "Context quality reaches 95%",
+      "Tool calls reduced from 6 to 1",
+      "Response time ≤ 0.1s",
+      "Output validated by orchestrator"
+    ]
+  }
+}

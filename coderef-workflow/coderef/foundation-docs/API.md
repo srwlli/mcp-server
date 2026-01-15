@@ -33958,12 +33958,6 @@
 - **Line:** 91
 - **Type:** Function
 
-### `handle_generate_foundation_docs()`
-
-- **File:** `C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py`
-- **Line:** 118
-- **Type:** Function
-
 ### `handle_generate_individual_doc()`
 
 - **File:** `C:/Users/willh/.mcp-servers/coderef-workflow/tool_handlers.py`

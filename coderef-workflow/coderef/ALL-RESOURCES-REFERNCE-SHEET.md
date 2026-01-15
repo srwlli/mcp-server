@@ -18,7 +18,6 @@
 | `/check-consistency` | Check code changes against established standards (pre-commit validation) | Workflow | `check_consistency` |
 | `/establish-standards` | Scan codebase to discover patterns and generate standards documentation | Workflow | `establish_standards` |
 | `/update-docs` | Update all documentation files after completing a feature (agentic workflow) | Workflow | `update_all_documentation` |
-| `/update-foundation-docs` | Update foundation documentation (README, ARCHITECTURE, API, SCHEMA) | Docs | `generate_foundation_docs` |
 | `/coderef-foundation-docs` | Generate foundation docs using coderef analysis (hybrid approach) | Workflow | `coderef_foundation_docs` |
 | `/generate-docs` | Generate documentation from coderef data | Docs | `generate_individual_doc` |
 | `/generate-user-docs` | Generate user-facing documentation and guides | Docs | `generate_quickref_interactive` |

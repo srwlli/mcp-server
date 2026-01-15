@@ -1,0 +1,117 @@
+{
+  "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001-CODEREF-CORE",
+  "parent_session": "WO-SCANNER-CONTEXT-ENHANCEMENT-001",
+  "agent_id": "coderef-core",
+  "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+  "phase": "phase_1",
+  "role": "Implement 4 scanner quick wins for immediate impact (22 hours total)",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "quickwin_1",
+      "description": "Pattern ordering optimization",
+      "status": "not_started",
+      "estimated_effort": "4 hours",
+      "target_files": ["src/scanner/scanner.ts:18-44"],
+      "success_criteria": "15% performance improvement (1185ms → ~1000ms for 500 files)",
+      "implementation": "Reorder LANGUAGE_PATTERNS by TYPE_PRIORITY, add exclusive flag"
+    },
+    {
+      "task_id": "quickwin_2",
+      "description": "Configuration presets",
+      "status": "not_started",
+      "estimated_effort": "6 hours",
+      "target_files": ["src/scanner/scanner.ts (new section)", "src/scanner/types.ts"],
+      "success_criteria": "Configuration time 15-30 min → 30 sec, 7 presets defined, auto-detection works",
+      "implementation": "Define 7 presets (nextjs, react, python, monorepo, go, rust, java) with auto-detection"
+    },
+    {
+      "task_id": "quickwin_3",
+      "description": "Structured error reporting",
+      "status": "not_started",
+      "estimated_effort": "8 hours",
+      "target_files": ["src/scanner/types.ts (ScanError interface)", "src/scanner/scanner.ts:552"],
+      "success_criteria": "Error resolution time 20 min → 5-7 min, all errors have suggestions",
+      "implementation": "Create ScanError interface, add suggestion database, return errors array"
+    },
+    {
+      "task_id": "quickwin_4",
+      "description": "Python pattern expansion",
+      "status": "not_started",
+      "estimated_effort": "4 hours",
+      "target_files": ["src/scanner/scanner.ts:18-44 (Python patterns)"],
+      "success_criteria": "+30% Python coverage (3 patterns → 7 patterns)",
+      "implementation": "Add decorators, properties, static methods, nested classes patterns"
+    }
+  ],
+
+  "success_metrics": {
+    "scanner_performance": {
+      "baseline": "1185ms (500 files)",
+      "target": "~1000ms (15% improvement)",
+      "status": "Not started"
+    },
+    "configuration_time": {
+      "baseline": "15-30 minutes",
+      "target": "30 seconds",
+      "status": "Not started"
+    },
+    "error_resolution_time": {
+      "baseline": "20 minutes",
+      "target": "5-7 minutes",
+      "status": "Not started"
+    },
+    "python_coverage": {
+      "baseline": "3 patterns",
+      "target": "7 patterns",
+      "status": "Not started"
+    }
+  },
+
+  "testing_requirements": {
+    "performance_benchmarks": [
+      "500 files: verify 15% improvement",
+      "1000 files: measure improvement",
+      "5000 files: measure improvement"
+    ],
+    "accuracy_tests": [
+      "Python decorator detection: 20 test cases",
+      "Python property detection: 15 test cases",
+      "Python static method detection: 10 test cases",
+      "Python nested class detection: 20 test cases"
+    ],
+    "preset_tests": [
+      "Auto-detection: 20 diverse projects",
+      "Preset exclusions: verify correctness",
+      "Configuration time: measure actual time"
+    ],
+    "error_tests": [
+      "All error types: read, parse, permission, encoding",
+      "Suggestion accuracy: verify all suggestions helpful",
+      "Partial results: ensure non-throwing behavior"
+    ]
+  },
+
+  "resources": {
+    "index": "resources/index.md",
+    "primary_spec": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\coderef\\resources-sheets\\Scanner-Effectiveness-Improvements-RESOURCE-SHEET.md",
+    "session_plan": "C:\\Users\\willh\\Desktop\\assistant\\scanner-complete-context.md",
+    "phase1_progress": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\phase1-progress.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-dashboard-phase1-output.md",
+    "format": "Markdown with implementation details, test results, benchmarks"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "Scanner performance +15% (Quick Win #1 complete)",
+      "Configuration presets working (Quick Win #2 complete)",
+      "Structured errors implemented (Quick Win #3 complete)",
+      "Python patterns expanded to 7 (Quick Win #4 complete)"
+    ]
+  }
+}

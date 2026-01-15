@@ -16,7 +16,7 @@ from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
 
 # Import generators
-from generators import FoundationGenerator, BaseGenerator
+from generators import BaseGenerator
 import json
 import jsonschema
 
@@ -83,20 +83,6 @@ async def list_tools() -> list[Tool]:
                     }
                 },
                 "required": ["template_name"]
-            }
-        ),
-        Tool(
-            name="generate_foundation_docs",
-            description="Generate foundation documentation (README, ARCHITECTURE, API, COMPONENTS, SCHEMA) for a project. Returns templates and generation plan - Claude will generate and save the actual documents.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "project_path": {
-                        "type": "string",
-                        "description": "Absolute path to the project directory"
-                    }
-                },
-                "required": ["project_path"]
             }
         ),
         Tool(

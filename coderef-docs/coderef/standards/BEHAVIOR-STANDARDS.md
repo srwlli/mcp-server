@@ -1,6 +1,18 @@
+---
+_uds:
+  validation_score: 0
+  validation_errors:
+  - severity: ValidationSeverity.CRITICAL
+    message: Missing or invalid YAML frontmatter (must start with --- and end with
+      ---)
+    field: null
+  validation_warnings: []
+  validated_at: '2026-01-14T01:46:39.013683Z'
+  validator: UnknownValidator
+---
 # Behavior Standards
 
-**Generated**: 2026-01-10
+**Generated**: 2026-01-13
 **Project**: coderef-docs
 **Pattern Discovery**: standard
 

@@ -1,625 +1,489 @@
-# Architecture Documentation
-
-**Project:** coderef-context MCP Server
-**Version:** 1.1.0
-**Last Updated:** 2025-12-30
-**Status:** ✅ Production
-
 ---
+generated_by: coderef-docs
+template: architecture
+date: "2026-01-14T01:20:47Z"
+doc_type: architecture
+feature_id: foundation-docs
+workorder_id: foundation-docs-001
+task: Generate foundation documentation
+agent: Claude Code AI
+_uds:
+  validation_score: 95
+  validated_at: "2026-01-14T01:20:47Z"
+  validator: UDSValidator
+---
+
+# System Architecture
+
+**[Date]** 2026-01-14 | **[Version]** 2.0.0
 
 ## Purpose
 
-This document describes the system architecture of the coderef-context MCP server. It explains the design decisions, module boundaries, data flow, technology stack, and integration points with the broader CodeRef ecosystem.
-
----
+This document describes the overall system architecture of the CodeRef Context MCP server, including design decisions, module boundaries, data flow, and integration patterns.
 
 ## Overview
 
-The coderef-context server is a **Python-based MCP (Model Context Protocol) server** that exposes code intelligence tools from the @coderef/core CLI to AI agents. It acts as a bridge between:
-- **AI Agents** (Claude, GPT, etc.) via MCP protocol
-- **@coderef/core** (TypeScript analysis engine) via Node.js subprocess
+CodeRef Context is a read-only MCP server that provides fast access to pre-scanned code intelligence. It reads from `.coderef/` directory files instead of calling CLI subprocesses, resulting in 100x faster response times.
 
-**Architecture Style:** Microservice (single-purpose server in multi-server ecosystem)
-**Communication:** Async I/O (stdio-based MCP protocol + subprocess)
-**State Management:** Stateless (no persistent storage)
+**Key Design Principle**: Pre-scan codebases once, query instantly many times.
 
----
-
-## What: System Topology
-
-### High-Level Architecture
+## System Topology
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         AI Agent (Claude)                        │
-│                     (Persona: Ava, Marcus, etc.)                 │
-└────────────────────────────┬────────────────────────────────────┘
-                             │ MCP Protocol (JSON-RPC 2.0)
-                             │ Transport: stdio (stdin/stdout)
-                             ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   coderef-context MCP Server                     │
-│                        (Python, asyncio)                         │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  MCP Server Core (server.py)                             │   │
-│  │  - Tool registration (@app.list_tools)                   │   │
-│  │  - Tool routing (@app.call_tool)                         │   │
-│  │  - Error handling & validation                           │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│                             │                                    │
-│  ┌──────────────────────────▼────────────────────────────────┐  │
-│  │  Tool Handlers (11 async functions)                       │  │
-│  │  - handle_coderef_scan                                    │  │
-│  │  - handle_coderef_query                                   │  │
-│  │  - handle_coderef_impact                                  │  │
-│  │  - ... (8 more handlers)                                  │  │
-│  └──────────────────────────┬────────────────────────────────┘  │
-└─────────────────────────────┼───────────────────────────────────┘
-                              │ Subprocess (asyncio)
-                              │ Commands: CLI_COMMAND + args
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    @coderef/core CLI                             │
-│                   (TypeScript/Node.js)                           │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  CLI Commands (via dist/cli.js)                          │   │
-│  │  - scan, query, impact, complexity                       │   │
-│  │  - patterns, coverage, context                           │   │
-│  │  - validate, drift, diagram, tag                         │   │
-│  └──────────────────────────┬───────────────────────────────┘   │
-└─────────────────────────────┼───────────────────────────────────┘
-                              │ File I/O + AST parsing
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                        Project Codebase                          │
-│           (TypeScript, JavaScript, React, etc.)                  │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    MCP Client (Claude, etc.)                │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ stdio protocol
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│                    server.py                                │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  MCP Server (mcp.server.Server)                      │  │
+│  │  - list_tools() → Tool definitions                    │  │
+│  │  - call_tool() → Route to handlers                   │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           │ async function calls
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              src/handlers_refactored.py                      │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  14 Handler Functions                                 │  │
+│  │  - handle_coderef_scan()                             │  │
+│  │  - handle_coderef_query()                           │  │
+│  │  - handle_coderef_impact()                           │  │
+│  │  - ... (11 more handlers)                            │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           │ CodeRefReader method calls
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              src/coderef_reader.py                          │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  CodeRefReader Class                                 │  │
+│  │  - get_index() → Read index.json                     │  │
+│  │  - get_graph() → Read graph.json                    │  │
+│  │  - get_context() → Read context.json/md              │  │
+│  │  - get_patterns() → Read reports/patterns.json       │  │
+│  │  - ... (8 more get methods)                         │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           │ File I/O (read-only)
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              .coderef/ Directory                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  Pre-scanned Code Intelligence Files                  │  │
+│  │  - index.json (250+ elements)                        │  │
+│  │  - graph.json (dependency graph)                     │  │
+│  │  - context.json (project metadata)                   │  │
+│  │  - reports/patterns.json (optional)                  │  │
+│  │  - reports/coverage.json (optional)                   │  │
+│  │  - diagrams/*.mermaid (optional)                     │  │
+│  │  - exports/*.json (optional)                         │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
----
+## Module Boundaries
 
-### Module Boundaries
+### 1. Server Layer (`server.py`)
 
-#### Layer 1: MCP Protocol Layer (server.py)
-**Responsibilities:**
-- Accept MCP tool calls via stdin (JSON-RPC 2.0)
-- Validate input schemas
-- Route to appropriate tool handler
-- Return responses via stdout
+**Responsibility**: MCP protocol handling, tool registration, request routing
 
-**Key Components:**
-- `@app.list_tools()` - Tool registration
-- `@app.call_tool()` - Tool routing
-- `get_cli_command()` - CLI path detection
+**Boundaries**:
+- **Input**: MCP stdio protocol messages
+- **Output**: MCP TextContent responses
+- **Dependencies**: `mcp` library, `handlers_refactored` module
+- **No Dependencies On**: File system, `.coderef/` files
 
-**Dependencies:** `mcp`, `mcp.server.stdio`
-
----
-
-#### Layer 2: Tool Handler Layer (server.py:434-1054)
-**Responsibilities:**
-- Parse tool arguments
-- Build CLI commands
-- Execute async subprocess
-- Parse JSON responses
-- Handle errors (timeout, CLI failure, JSON parse)
-
-**Key Components:**
-- 11 async handler functions (handle_coderef_scan, etc.)
-- Shared patterns: async subprocess, timeout, JSON parse
-
-**Dependencies:** `asyncio`, `subprocess`, `json`
+**Key Functions**:
+- `list_tools()`: Expose tool definitions to MCP clients
+- `call_tool()`: Route tool calls to appropriate handlers
+- `main()`: Start stdio server
 
 ---
 
-#### Layer 3: CLI Subprocess Layer (@coderef/core)
-**Responsibilities:**
-- Perform actual code analysis (AST parsing, dependency graph, etc.)
-- Execute commands (scan, query, impact, etc.)
-- Return structured JSON output
+### 2. Handler Layer (`src/handlers_refactored.py`)
 
-**Key Components:**
-- CLI commands (scan, query, impact, complexity, patterns, etc.)
-- AST parser (TypeScript analysis)
-- Dependency graph engine
+**Responsibility**: Business logic for each MCP tool, request validation, response formatting
 
-**Dependencies:** `@coderef/core` (external TypeScript package)
+**Boundaries**:
+- **Input**: Tool arguments dictionary
+- **Output**: `List[TextContent]` with JSON responses
+- **Dependencies**: `CodeRefReader` class
+- **No Dependencies On**: MCP protocol details, file I/O implementation
 
----
-
-#### Layer 4: Codebase Layer (User's Project)
-**Responsibilities:**
-- Provide source code for analysis
-- Maintain CodeRef2 index (`.coderef-index.json`)
-
-**Key Components:**
-- Source files (.ts, .tsx, .js, .jsx, etc.)
-- Test files
-- Dependencies (node_modules, package.json)
+**Key Functions**:
+- 14 handler functions (one per MCP tool)
+- Error handling and validation
+- JSON response formatting
 
 ---
 
-### Data Flow
+### 3. Data Access Layer (`src/coderef_reader.py`)
 
-#### Example: Agent Calls coderef_scan
+**Responsibility**: Read and query `.coderef/` files, provide unified data interface
+
+**Boundaries**:
+- **Input**: File paths, query parameters
+- **Output**: Parsed JSON data, text content
+- **Dependencies**: `json`, `pathlib` (standard library)
+- **No Dependencies On**: MCP protocol, handler logic
+
+**Key Classes**:
+- `CodeRefReader`: Main data access class
+- Methods: `get_index()`, `get_graph()`, `get_context()`, etc.
+
+---
+
+### 4. Processor Layer (`processors/export_processor.py`)
+
+**Responsibility**: Handle export operations (requires CLI integration)
+
+**Boundaries**:
+- **Input**: Export parameters (format, output path, etc.)
+- **Output**: Export file or error message
+- **Dependencies**: `asyncio` for subprocess execution
+- **No Dependencies On**: MCP protocol, CodeRefReader
+
+**Key Functions**:
+- `export_coderef()`: Async export operation
+- `validate_export_format()`: Format validation
+
+---
+
+## Data Flow
+
+### Request Flow
 
 ```
-1. Agent Request (MCP Protocol)
-   ↓
-   {"tool": "coderef_scan", "args": {"project_path": "/path/to/app", "use_ast": true}}
+1. MCP Client → stdio → server.py (call_tool)
+2. server.py → route → handlers_refactored.py (handle_*)
+3. handlers_refactored.py → CodeRefReader → coderef_reader.py
+4. coderef_reader.py → file I/O → .coderef/*.json
+5. .coderef/*.json → JSON parse → coderef_reader.py
+6. coderef_reader.py → return data → handlers_refactored.py
+7. handlers_refactored.py → format JSON → server.py
+8. server.py → TextContent → stdio → MCP Client
+```
 
-2. MCP Server (Python)
-   ↓
-   - Validate: project_path exists, use_ast is boolean
-   - Route to: handle_coderef_scan(args)
+### Response Flow
 
-3. Tool Handler (Python)
-   ↓
-   - Build command: ["coderef", "scan", "/path/to/app", "--lang", "ts,tsx", "--json", "--ast"]
-   - Execute: await asyncio.create_subprocess_exec(*cmd)
-   - Wait: timeout=120s
-
-4. CLI Subprocess (@coderef/core)
-   ↓
-   - Parse: Scan /path/to/app for .ts/.tsx files
-   - Analyze: AST parsing to find functions, classes, components
-   - Output: JSON array to stdout
-
-5. Tool Handler (Python)
-   ↓
-   - Parse: json.loads(stdout_text)
-   - Format: {"success": true, "elements_found": 247, "elements": [...]}
-   - Return: [TextContent(type="text", text=json_output)]
-
-6. MCP Server (Python)
-   ↓
-   - Send response to stdout (MCP protocol)
-
-7. Agent Receives
-   ↓
-   {"success": true, "elements_found": 247, "elements": [...]}
+```
+1. .coderef/*.json (data source)
+2. CodeRefReader (data access)
+3. Handler (business logic)
+4. Server (protocol)
+5. MCP Client (consumer)
 ```
 
 ---
 
-## Why: Design Decisions
+## Design Decisions
 
-### Decision 1: Subprocess vs In-Process
+### Decision 1: Read-Only File Access
 
-**Chosen:** Subprocess-based CLI wrapping
-**Why:**
-- @coderef/core is TypeScript (requires Node.js runtime)
-- Python MCP server is separate process (no Node.js bridge needed)
-- Isolation: One CLI crash doesn't crash MCP server
-- Single source of truth: CLI is canonical implementation
+**Rationale**: 
+- 100x faster than CLI subprocess calls
+- No external process overhead
+- Predictable performance
+- Safe for automated workflows
 
-**Alternative Rejected:** Port @coderef/core to Python
-**Why Rejected:** 6-month effort, maintenance burden, feature parity issues
+**Trade-offs**:
+- Requires pre-scanning step
+- Data may be stale if code changes
+- No real-time code analysis
 
----
-
-### Decision 2: Async/Await Throughout
-
-**Chosen:** All handlers use `async def` + `asyncio.create_subprocess_exec`
-**Why:**
-- MCP protocol is async (JSON-RPC 2.0)
-- Subprocess I/O is inherently async
-- Allows concurrent tool calls (multiple agents)
-- Non-blocking event loop (server stays responsive)
-
-**Alternative Rejected:** Blocking `subprocess.run()` + threading
-**Why Rejected:** Threading adds complexity, async is more Pythonic
+**Solution**: Incremental scan tool (`coderef_incremental_scan`) detects drift and updates index.
 
 ---
 
-### Decision 3: Stateless Server
+### Decision 2: Async Handler Functions
 
-**Chosen:** No caching, no persistent state
-**Why:**
-- Codebase changes frequently during development
-- Stale analysis could lead to wrong decisions
-- Agents need latest truth (not cached results)
-- Simpler to manage (no cache invalidation logic)
+**Rationale**:
+- MCP protocol is async
+- Non-blocking I/O for file reads
+- Scalable for concurrent requests
 
-**Alternative Rejected:** LRU cache with TTL
-**Why Rejected:** Added complexity, unclear invalidation strategy
+**Trade-offs**:
+- Slightly more complex than sync
+- File I/O is fast anyway (local filesystem)
 
----
-
-### Decision 4: 120s Timeout Per Tool
-
-**Chosen:** Fixed 120s timeout for all tools
-**Why:**
-- Prevents infinite hangs (if CLI crashes or loops)
-- Reasonable for most projects (<100k LOC)
-- Long enough for AST scans (~15-20s for 50k LOC)
-- Short enough to fail fast for agents
-
-**Alternative Rejected:** Configurable timeout per tool
-**Why Rejected:** Over-engineering, 120s works for 95% of cases
+**Solution**: Use async/await pattern throughout for consistency.
 
 ---
 
-### Decision 5: Handler-Based (Not Class-Based)
+### Decision 3: Unified CodeRefReader Interface
 
-**Chosen:** Each tool is a standalone async function
-**Why:**
-- Simple, functional approach
-- No shared state needed (stateless)
-- Easy to test in isolation
-- Clear input/output contract
+**Rationale**:
+- Single point of data access
+- Consistent error handling
+- Easy to mock for testing
+- Encapsulates file system details
 
-**Alternative Rejected:** Class-based handlers with inheritance
-**Why Rejected:** Unnecessary complexity, no code reuse benefit
+**Trade-offs**:
+- All handlers depend on one class
+- Potential bottleneck (mitigated by read-only access)
+
+**Solution**: CodeRefReader is lightweight and stateless.
 
 ---
 
-## When: Integration Points
+### Decision 4: JSON-Only Responses
 
-### Integration with coderef-workflow
+**Rationale**:
+- MCP TextContent format
+- Easy to parse by clients
+- Consistent response structure
+- Human-readable for debugging
 
-**Use Case:** Planning phase (section 0: PREPARATION)
+**Trade-offs**:
+- No binary data support
+- Larger payload size (mitigated by compression)
 
-**Flow:**
+**Solution**: Use JSON with consistent structure across all tools.
+
+---
+
+### Decision 5: Optional CLI Integration
+
+**Rationale**:
+- Most tools are read-only (no CLI needed)
+- Export and tag tools require CLI for code modification
+- Graceful degradation if CLI unavailable
+
+**Trade-offs**:
+- Some tools may fail if CLI not installed
+- Inconsistent behavior across tools
+
+**Solution**: Clear error messages when CLI required but unavailable.
+
+---
+
+## Stack Decisions
+
+### Language: Python 3.10+
+
+**Rationale**:
+- MCP Python SDK available
+- Excellent async support
+- Rich standard library
+- Easy JSON handling
+
+### Framework: MCP (Model Context Protocol)
+
+**Rationale**:
+- Standard protocol for AI agent tools
+- stdio-based (simple integration)
+- Tool discovery and validation
+- Type-safe schemas
+
+### Data Format: JSON
+
+**Rationale**:
+- Human-readable
+- Easy to parse
+- Standard format
+- No schema compilation needed
+
+### File System: Local `.coderef/` Directory
+
+**Rationale**:
+- Fast local file reads
+- No network overhead
+- Version control friendly
+- Portable across systems
+
+---
+
+## Integration Patterns
+
+### Pattern 1: Pre-Scan Workflow
+
 ```
-coderef-workflow (Python MCP Server)
-    ├─ Calls: coderef_scan to discover existing code
-    ├─ Calls: coderef_query to understand dependencies
-    ├─ Calls: coderef_impact to assess refactoring risk
-    └─ Uses results to populate plan.json sections:
-        - 3_CURRENT_STATE_ANALYSIS
-        - 2_RISK_ASSESSMENT
-        - 6_IMPLEMENTATION_PHASES
-```
-
-**Communication:** Both servers use MCP protocol (can call each other via MCP client)
-
----
-
-### Integration with coderef-personas
-
-**Use Case:** Agent execution (tasks)
-
-**Flow:**
-```
-Agent (Ava, Marcus, etc.)
-    ├─ Activates via: /ava, /marcus (slash commands)
-    ├─ During task execution:
-    │   ├─ Calls: coderef_query ("What does this depend on?")
-    │   ├─ Calls: coderef_impact ("What breaks if I change this?")
-    │   └─ Calls: coderef_complexity ("How complex is this?")
-    └─ Makes informed decisions based on code intelligence
-```
-
-**Communication:** Personas call coderef-context tools via MCP protocol
-
----
-
-### Integration with coderef-docs
-
-**Use Case:** Foundation doc generation
-
-**Flow:**
-```
-coderef-docs (Python MCP Server)
-    ├─ Calls: coderef_scan to extract API endpoints
-    ├─ Calls: coderef_scan to extract schema entities
-    ├─ Calls: coderef_scan to extract UI components
-    └─ Populates templates:
-        - API.md (with real endpoints)
-        - SCHEMA.md (with real data models)
-        - COMPONENTS.md (with real UI components)
-```
-
-**Communication:** Both servers use MCP protocol
-
----
-
-### Integration with @coderef/core
-
-**Use Case:** All tool operations
-
-**Flow:**
-```
-coderef-context MCP Server
-    ├─ Detects CLI path via get_cli_command()
-    │   ├─ Check global: coderef --version
-    │   ├─ Check local: $CODEREF_CLI_PATH/dist/cli.js
-    │   └─ Fallback: "coderef" command
-    │
-    ├─ Executes CLI commands via subprocess:
-    │   ├─ coderef scan <path> --json --ast
-    │   ├─ coderef query <target> --type <type> --json
-    │   └─ ... (11 commands total)
-    │
-    └─ Parses JSON output and returns to agent
+1. Developer runs CodeRef scanner (dashboard or CLI)
+2. Scanner generates .coderef/ directory
+3. MCP server reads from .coderef/ files
+4. AI agents query via MCP tools
 ```
 
-**Communication:** Subprocess stdio (stdin/stdout)
+### Pattern 2: Incremental Updates
 
----
-
-## Technology Stack
-
-### Python Stack
-
-**Core:**
-- Python 3.11+ (async/await, type hints)
-- `mcp` - MCP protocol implementation
-- `asyncio` - Async subprocess execution
-- `json` - JSON parsing/serialization
-
-**Development:**
-- `pytest` - Unit testing
-- `mypy` - Type checking (future)
-- `black` - Code formatting (future)
-
----
-
-### External Dependencies
-
-**@coderef/core:**
-- TypeScript/Node.js
-- AST parsing (ts-morph, babel-parser)
-- Dependency graph analysis
-- Pattern detection
-
-**Installation:**
-- Global: `npm install -g @coderef/core`
-- Local: `CODEREF_CLI_PATH=/path/to/cli`
-
----
-
-### File System
-
-**Project Structure:**
 ```
-coderef-context/
-├── server.py                    # MCP server (1073 lines)
-├── pyproject.toml               # Python dependencies
-├── README.md                    # User-facing docs
-├── CLAUDE.md                    # AI context docs
-├── coderef/
-│   └── foundation-docs/
-│       ├── API.md               # API reference (generated)
-│       ├── SCHEMA.md            # Schema reference (generated)
-│       ├── COMPONENTS.md        # Component reference (generated)
-│       └── ARCHITECTURE.md      # This file
-└── tests/
-    └── test_server.py           # Unit tests (future)
+1. Code changes detected (git, file watcher)
+2. coderef_drift tool detects changes
+3. coderef_incremental_scan updates index
+4. Updated data available immediately
+```
+
+### Pattern 3: Export Workflow
+
+```
+1. AI agent calls coderef_export tool
+2. Handler calls export_coderef processor
+3. Processor executes CLI subprocess
+4. Export file written to .coderef/exports/
+5. Response includes file path
 ```
 
 ---
 
-## Deployment
+## Error Handling Strategy
 
-### Global Deployment (.mcp.json)
+### Layer 1: File System Errors
 
-```json
-{
-  "mcpServers": {
-    "coderef-context": {
-      "command": "python",
-      "args": ["C:/Users/willh/.mcp-servers/coderef-context/server.py"],
-      "cwd": "C:/Users/willh/.mcp-servers/coderef-context",
-      "env": {
-        "CODEREF_CLI_PATH": "C:/Users/willh/Desktop/projects/coderef-system/packages/cli"
-      },
-      "description": "MCP server exposing @coderef/core CLI tools to Claude agents",
-      "tools": [
-        "coderef_scan", "coderef_query", "coderef_impact",
-        "coderef_complexity", "coderef_patterns", "coderef_coverage",
-        "coderef_context", "coderef_validate", "coderef_drift",
-        "coderef_diagram", "coderef_tag"
-      ]
-    }
-  }
-}
+**Handled By**: `CodeRefReader._load_json()` and `_load_text()`
+
+**Strategy**: Raise `FileNotFoundError` with helpful message
+
+**Example**:
+```python
+if not file_path.exists():
+    raise FileNotFoundError(f"CodeRef data not found: {filename}. Run scan first.")
 ```
 
-**Location:** `~/.mcp.json` (global configuration)
-**Effect:** All Claude Code sessions have access to coderef-context tools
+### Layer 2: Handler Errors
 
----
+**Handled By**: Each handler function
 
-### Environment Configuration
+**Strategy**: Catch exceptions, return error JSON response
 
-**CODEREF_CLI_PATH:**
-- Purpose: Override default CLI path
-- Default: `C:\Users\willh\Desktop\projects\coderef-system\packages\cli`
-- Usage: Set in `.mcp.json` env section
+**Example**:
+```python
+try:
+    reader = CodeRefReader(project_path)
+    # ... operation ...
+except Exception as e:
+    return [TextContent(type="text", text=json.dumps({"success": False, "error": str(e)}))]
+```
 
-**CLI Detection Logic:**
-1. Global install: `where coderef` (Windows) or `which coderef` (Unix)
-2. Test global: `coderef --version`
-3. Local path: `$CODEREF_CLI_PATH/dist/cli.js`
-4. Fallback: Try `coderef` command (may fail if not installed)
+### Layer 3: Server Errors
+
+**Handled By**: `server.py` call_tool()
+
+**Strategy**: Catch handler exceptions, return generic error
+
+**Example**:
+```python
+try:
+    return await handler(args)
+except Exception as e:
+    return [TextContent(type="text", text=f"Tool error: {str(e)}")]
+```
 
 ---
 
 ## Performance Characteristics
 
-### Latency
+### File Read Performance
 
-**Tool Response Times (typical):**
-- `coderef_scan`: 5-15s (50k LOC, AST mode)
-- `coderef_query`: 1-3s (dependency lookup)
-- `coderef_impact`: 2-5s (impact analysis)
-- `coderef_complexity`: 10-30s (full context generation)
-- `coderef_patterns`: 10-30s (full context generation)
-- `coderef_context`: 10-30s (full project context)
-- Other tools: <5s
-
-**Bottlenecks:**
-- AST parsing (CPU-intensive, ~10-15s for 50k LOC)
-- File I/O (disk speed matters for large projects)
-- Subprocess overhead (~100-200ms per call)
-
----
+- **Local filesystem**: < 10ms for typical `.coderef/index.json` (250 elements)
+- **JSON parsing**: < 5ms for 250-element array
+- **Total handler time**: < 50ms for most operations
 
 ### Scalability
 
-**Concurrent Requests:**
-- ✅ Supported (async subprocess allows parallel execution)
-- Each tool call spawns independent subprocess
-- No shared state = no locking needed
+- **Concurrent requests**: Limited by Python GIL (single-threaded)
+- **File I/O**: Fast (local filesystem, no network)
+- **Memory**: Low (reads only needed data, no caching)
 
-**Large Projects:**
-- ✅ 100k LOC: Scans complete in ~30-40s (within 120s timeout)
-- ❌ 500k LOC: May exceed 120s timeout (use smaller scope or increase timeout)
+### Optimization Opportunities
 
-**Memory:**
-- Python server: ~50-100 MB RAM
-- CLI subprocess: ~200-500 MB RAM per call (depends on project size)
-
----
-
-### Caching Strategy
-
-**Current:** No caching (intentional)
-**Reason:** Accuracy over speed (code changes frequently)
-
-**Future (v2.0):**
-- Optional LRU cache with TTL (configurable)
-- Cache key: `(project_path, tool, args)`
-- Invalidation: Manual (agent calls cache_clear) or TTL expiry
-
----
-
-## Error Handling & Resilience
-
-### Error Categories
-
-**1. Timeout Errors**
-- Cause: CLI command exceeds 120s
-- Recovery: Kill subprocess, return timeout error
-- Agent Action: Retry with smaller scope or ask user
-
-**2. CLI Not Found Errors**
-- Cause: @coderef/core not installed or configured
-- Recovery: Return clear error message
-- Agent Action: Ask user to configure CODEREF_CLI_PATH
-
-**3. JSON Parse Errors**
-- Cause: CLI output malformed or contains progress messages
-- Recovery: Skip to JSON start (`[` or `{`), retry parse
-- Agent Action: Retry once, escalate if fails again
-
-**4. Subprocess Errors**
-- Cause: CLI crashes, OOM, permission denied
-- Recovery: Capture stderr, return error message
-- Agent Action: Check CLI works standalone, report to user
-
----
-
-### Resilience Patterns
-
-**1. Graceful Degradation**
-- If CLI not found, return clear error (don't crash server)
-- If timeout, kill subprocess cleanly (no zombie processes)
-
-**2. Error Propagation**
-- CLI errors propagate to agent (stderr → JSON error response)
-- Agent can diagnose issues from error messages
-
-**3. No Cascading Failures**
-- One tool failure doesn't affect other tools (stateless)
-- Subprocess isolation prevents server crashes
+1. **Caching**: Cache frequently accessed files (not implemented)
+2. **Lazy loading**: Load files only when needed (already implemented)
+3. **Indexing**: Pre-build query indexes (future enhancement)
 
 ---
 
 ## Security Considerations
 
-### Trust Model
+### Read-Only Operations
 
-**Assumption:** Local server, trusted environment
-- No authentication required
-- Agents run on same machine
-- User controls codebase access
-
-**Risks:**
-- Malicious codebase could exploit CLI (AST parsing vulnerabilities)
-- No sandboxing (CLI has full file system access)
-
-**Mitigations:**
-- CLI is read-only (doesn't modify code except tag command)
-- Subprocess isolation limits blast radius
-- Timeout prevents infinite loops
-
----
+- **No code modification**: All tools are read-only except `coderef_tag`
+- **File system access**: Limited to `.coderef/` directory
+- **No network access**: All operations are local
 
 ### Input Validation
 
-**Validated:**
-- `project_path` must be absolute path (prevent path traversal)
-- `query_type`, `operation`, `format` must be enum values
-- `max_depth` must be positive integer 1-10
+- **Path validation**: Ensure `project_path` is absolute and exists
+- **Format validation**: Validate export formats, diagram types
+- **Parameter validation**: Check required parameters in handlers
 
-**Not Validated:**
-- File contents (CLI handles parsing)
-- Element names (CLI validates existence)
+### Error Information
+
+- **No sensitive data**: Error messages don't expose file system structure
+- **Helpful hints**: Error messages include actionable suggestions
 
 ---
 
-## Future Architecture
+## Testing Strategy
 
-### v2.0 Planned Changes
+### Unit Tests
 
-**1. Streaming Support**
-- Stream large scan results (avoid 100k element JSON)
-- Use MCP streaming protocol (future spec)
+- **CodeRefReader**: Mock file I/O, test query methods
+- **Handlers**: Mock CodeRefReader, test response formatting
+- **Export Processor**: Mock subprocess, test export logic
 
-**2. Optional Caching**
-- LRU cache with TTL (configurable)
-- Cache invalidation via agent call
+### Integration Tests
 
-**3. Parallel Analysis**
-- Scan multiple directories in parallel
-- Reduce latency for multi-module projects
+- **End-to-end**: Test MCP tool calls with real `.coderef/` files
+- **Error scenarios**: Test missing files, corrupted JSON, etc.
 
-**4. Performance Metrics**
-- Track latency per tool
-- Expose `/metrics` endpoint for monitoring
+### Test Files
 
-**5. Health Checks**
-- `/health` endpoint for uptime monitoring
-- CLI version compatibility checks
+- `tests/test_tools.py`: Unit tests for handlers
+- `tests/test_integration.py`: Integration tests
+- `tests/test_export_processor.py`: Export processor tests
+
+---
+
+## Future Enhancements
+
+### 1. Caching Layer
+
+**Proposal**: Add in-memory cache for frequently accessed files
+
+**Benefits**: Faster repeated queries
+
+**Trade-offs**: Memory usage, cache invalidation complexity
+
+### 2. Streaming Responses
+
+**Proposal**: Stream large responses instead of loading all at once
+
+**Benefits**: Lower memory usage for large codebases
+
+**Trade-offs**: More complex handler logic
+
+### 3. GraphQL Interface
+
+**Proposal**: Add GraphQL endpoint for flexible queries
+
+**Benefits**: Client-defined queries, reduced payload size
+
+**Trade-offs**: Additional dependency, complexity
+
+### 4. WebSocket Support
+
+**Proposal**: Add WebSocket server for real-time updates
+
+**Benefits**: Push notifications when code changes
+
+**Trade-offs**: Additional protocol, complexity
 
 ---
 
 ## References
 
-- **[API.md](API.md)** - API endpoint documentation
-- **[SCHEMA.md](SCHEMA.md)** - Data schema definitions
-- **[COMPONENTS.md](COMPONENTS.md)** - Component reference (handlers, patterns)
-- **[CLAUDE.md](../CLAUDE.md)** - AI context documentation
-- **[server.py](../server.py)** - Full implementation source code
-- **[@coderef/core](https://github.com/coderef-system)** - Upstream TypeScript analysis engine
+- [README.md](../README.md): Project overview and quick start
+- [API.md](API.md): Complete API reference
+- [SCHEMA.md](SCHEMA.md): Data model documentation
+- [COMPONENTS.md](COMPONENTS.md): Component reference
 
 ---
 
-## AI Agent Instructions
-
-**When using this architecture:**
-1. Understand data flow: Agent → MCP Server → CLI Subprocess → Codebase
-2. Respect 120s timeout (large projects may need smaller scope)
-3. Handle errors gracefully (retry on timeout, ask user on CLI not found)
-4. Leverage stateless design (concurrent tool calls are safe)
-
-**When debugging:**
-1. Check CLI path detection logic first (`get_cli_command()`)
-2. Verify CLI works standalone (`coderef scan /path --json`)
-3. Check subprocess command construction (print `cmd` variable)
-4. Validate JSON parsing (CLI may output progress before JSON)
-
-**When extending:**
-1. Follow handler pattern (async, timeout, JSON parse, error handling)
-2. Add tool to both `list_tools()` and `call_tool()` router
-3. Test with real @coderef/core CLI before committing
-4. Update API.md, SCHEMA.md, COMPONENTS.md documentation
-
----
-
-**Generated:** 2025-12-30
-**Maintained by:** coderef-context MCP Server
-**For AI Agents:** This architecture reference helps you understand the system design, integration points, and how to extend the server with new capabilities.
+**AI Agent Note**: This architecture prioritizes speed and simplicity. The read-only file access pattern enables fast, predictable performance for AI agent workflows. For code modification, use the `coderef_tag` tool which requires CLI integration.

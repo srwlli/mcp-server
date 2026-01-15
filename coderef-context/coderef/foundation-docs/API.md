@@ -1,534 +1,580 @@
-# API Documentation
-
-**Project:** coderef-context MCP Server
-**Version:** 1.1.0
-**Last Updated:** 2025-12-30
-**Status:** ✅ Production
-
 ---
+generated_by: coderef-docs
+template: api
+date: "2026-01-14T01:20:46Z"
+doc_type: api
+feature_id: foundation-docs
+workorder_id: foundation-docs-001
+task: Generate foundation documentation
+agent: Claude Code AI
+_uds:
+  validation_score: 95
+  validated_at: "2026-01-14T01:20:46Z"
+  validator: UDSValidator
+---
+
+# API Reference
+
+**[Date]** 2026-01-14 | **[Version]** 2.0.0
 
 ## Purpose
 
-This document describes the MCP (Model Context Protocol) API exposed by the coderef-context server. It provides 11 tools that enable AI agents to understand code structure, dependencies, relationships, impact of changes, complexity metrics, patterns, and test coverage through the @coderef/core CLI.
-
----
+This document provides complete API reference for all MCP tools exposed by the CodeRef Context server. Each tool enables AI agents to query and analyze code intelligence from pre-scanned `.coderef/` data.
 
 ## Overview
 
-The coderef-context server exposes code intelligence tools via the MCP protocol (JSON-RPC 2.0). Each tool wraps a @coderef/core CLI command and returns structured JSON responses suitable for agent consumption.
+The CodeRef Context MCP server exposes 14 tools organized into categories:
+- **Discovery**: Scan and discover code elements
+- **Query**: Query relationships and dependencies
+- **Analysis**: Impact, complexity, patterns, coverage
+- **Generation**: Context, diagrams, exports
+- **Validation**: Reference validation and drift detection
+- **Modification**: Tag source files (requires CLI)
 
-**Base Protocol:** MCP (Model Context Protocol) over stdio
-**Architecture:** Python MCP server → Node.js subprocess (@coderef/core CLI) → JSON response
-**Transport:** Standard I/O (stdin/stdout)
-**Authentication:** None (local server, trusted environment)
+All tools are read-only except `coderef_tag` which modifies source files.
 
----
+## Authentication
 
-## What: API Endpoints
+No authentication required. MCP server runs via stdio and handles requests from configured MCP clients.
+
+## Base URL
+
+MCP tools are accessed via stdio protocol. Configure in MCP client settings:
+```
+{
+  "mcpServers": {
+    "coderef-context": {
+      "command": "python",
+      "args": ["server.py"]
+    }
+  }
+}
+```
+
+## Endpoints
 
 ### 1. coderef_scan
 
-**Purpose:** Discover all code elements (functions, classes, components, hooks)
+**Description**: Scan project and discover all code elements (functions, classes, components, hooks)
 
-**Input Schema:**
+**Request**:
 ```json
 {
-  "project_path": "string (required)",
-  "languages": ["string"] (optional, default: ["ts", "tsx", "js", "jsx"]),
-  "use_ast": "boolean" (optional, default: true)
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "elements_found": 247,
-  "elements": [
-    {
-      "name": "ThemeProvider",
-      "type": "component",
-      "file": "src/theme/ThemeProvider.tsx",
-      "line": 10
-    }
-  ]
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef scan <project_path> --lang <langs> --json [--ast]`
-
----
-
-### 2. coderef_query
-
-**Purpose:** Query code relationships (what-calls, what-imports, shortest-path, etc)
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "query_type": "enum (required)" // calls, calls-me, imports, imports-me, depends-on, depends-on-me
-  "target": "string (required)", // e.g., 'authenticateUser' or 'AuthService#login'
-  "source": "string (optional)", // For path queries
-  "max_depth": "integer (optional, default: 3)"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "query_type": "calls-me",
-  "target": "login",
-  "results": [
-    {
-      "from": "CheckoutComponent",
-      "to": "PaymentGateway",
-      "type": "import",
-      "file": "src/checkout/Checkout.tsx"
-    }
-  ]
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef query <target> --type <type> --depth <depth> --format json`
-
----
-
-### 3. coderef_impact
-
-**Purpose:** Analyze impact of modifying or deleting a code element
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "element": "string (required)", // e.g., 'AuthService'
-  "operation": "enum (optional, default: modify)", // modify, delete, refactor
-  "max_depth": "integer (optional, default: 3)"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "element": "AuthService",
-  "operation": "refactor",
-  "impact": {
-    "affected_files": 12,
-    "risk_level": "MEDIUM",
-    "ripple_effects": [
-      {
-        "file": "src/login/Login.tsx",
-        "impact": "direct call"
-      }
-    ]
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef impact <element> --depth <depth> --format json`
-
----
-
-### 4. coderef_complexity
-
-**Purpose:** Get complexity metrics for a code element
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "element": "string (required)"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "element": "ReportGenerator",
-  "note": "Complexity metrics derived from context generation",
-  "context": {
-    "lines_of_code": 245,
-    "cyclomatic_complexity": 8,
-    "dependencies": 6,
-    "test_coverage": 0.65
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef context <project_path> --lang <langs> --json` (filtered by element)
-
----
-
-### 5. coderef_patterns
-
-**Purpose:** Discover code patterns and test coverage gaps
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "pattern_type": "string (optional)", // Type of pattern to find
-  "limit": "integer (optional, default: 10)"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "pattern_type": "data-fetching",
-  "limit": 5,
-  "patterns": {
-    "React Query pattern": {
-      "files": ["src/api/hooks.ts"],
-      "usage": 23
-    }
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef context <project_path> --lang <langs> --json` (extracts test patterns)
-
----
-
-### 6. coderef_coverage
-
-**Purpose:** Analyze test coverage in the codebase
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "format": "enum (optional, default: summary)" // summary, detailed
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "coverage": {
-    "overall": 0.72,
-    "by_file": {
-      "src/auth.ts": 0.85,
-      "src/checkout.ts": 0.60
-    }
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef coverage --format json`
-
----
-
-### 7. coderef_context
-
-**Purpose:** Generate comprehensive codebase context (markdown + JSON)
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "languages": ["string"] (optional, default: ["ts", "tsx", "js", "jsx"]),
-  "output_format": "enum (optional, default: json)" // json, markdown, both
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "format": "json",
-  "context": {
-    "project_summary": "...",
-    "elements": [...],
-    "dependencies": {...},
-    "test_patterns": {...}
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef context <project_path> --lang <langs>`
-
----
-
-### 8. coderef_validate
-
-**Purpose:** Validate CodeRef2 references in codebase
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "pattern": "string (optional, default: **/*.ts)" // File glob pattern
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "pattern": "**/*.ts",
-  "validation": {
-    "valid_references": 120,
-    "invalid_references": 3,
-    "errors": [...]
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef validate <project_path> --pattern <pattern> --format json`
-
----
-
-### 9. coderef_drift
-
-**Purpose:** Detect drift between CodeRef index and current code
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "index_path": "string (optional, default: .coderef-index.json)"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "drift_report": {
-    "added_elements": 5,
-    "removed_elements": 2,
-    "modified_elements": 8
-  }
-}
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef drift <project_path> --index <index_path> --format json`
-
----
-
-### 10. coderef_diagram
-
-**Purpose:** Generate visual dependency diagrams (Mermaid or Graphviz)
-
-**Input Schema:**
-```json
-{
-  "project_path": "string (required)",
-  "diagram_type": "enum (optional, default: dependencies)", // dependencies, calls, imports, all
-  "format": "enum (optional, default: mermaid)", // mermaid, dot
-  "depth": "integer (optional, default: 2)"
-}
-```
-
-**Response:**
-```
-graph TD
-  A[AuthService] --> B[LoginComponent]
-  A --> C[ProfileComponent]
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef diagram --format <format> --depth <depth>`
-
----
-
-### 11. coderef_tag
-
-**Purpose:** Add CodeRef2 tags to source files for better tracking and validation
-
-**Input Schema:**
-```json
-{
-  "path": "string (required)", // File or directory path
-  "dry_run": "boolean (optional, default: false)",
-  "force": "boolean (optional, default: false)",
-  "verbose": "boolean (optional, default: false)",
-  "update_lineno": "boolean (optional, default: false)",
-  "include_private": "boolean (optional, default: false)",
-  "lang": "string (optional, default: ts,tsx,js,jsx)",
-  "exclude": "string (optional)" // Comma-separated exclusion patterns
-}
-```
-
-**Response:**
-```
-Tagged 45 elements in 12 files:
-- 18 functions (@Fn)
-- 12 classes (@Cl)
-- 15 components (@Cp)
-```
-
-**Timeout:** 120 seconds
-**CLI Command:** `coderef tag <path> [options]`
-
----
-
-## Why: Use Cases
-
-### UC-1: Discovery (scan)
-**Scenario:** Agent needs to understand what exists in a project before implementing a new feature.
-
-**Example:**
-```json
-Request: {"tool": "coderef_scan", "args": {"project_path": "/path/to/app"}}
-Response: {"success": true, "elements_found": 247, "elements": [...]}
-Agent Decision: "ThemeProvider exists, I'll extend it instead of creating a new one"
-```
-
-### UC-2: Dependency Tracing (query)
-**Scenario:** Agent wants to know what depends on a function before refactoring.
-
-**Example:**
-```json
-Request: {"tool": "coderef_query", "args": {"query_type": "calls-me", "target": "login"}}
-Response: {"results": ["signup.ts", "profile.ts", "dashboard.ts"]}
-Agent Decision: "3 files call login(), I need to update all of them"
-```
-
-### UC-3: Risk Assessment (impact)
-**Scenario:** Agent evaluates the risk of deleting a service.
-
-**Example:**
-```json
-Request: {"tool": "coderef_impact", "args": {"element": "AuthService", "operation": "delete"}}
-Response: {"affected_files": 12, "risk_level": "MEDIUM"}
-Agent Decision: "12 files affected, this is risky. I'll create a comprehensive plan first."
-```
-
----
-
-## When: Integration Points
-
-### Integration with coderef-workflow
-The coderef-workflow server calls coderef_scan, coderef_query, and coderef_impact during the planning phase (section 0: PREPARATION) to gather project intelligence before creating implementation plans.
-
-### Integration with coderef-personas
-Expert personas (Ava, Marcus, Quinn, etc.) call coderef_query and coderef_impact tools during task execution to make informed decisions about code changes.
-
-### Integration with coderef-docs
-The coderef-docs server may call coderef_scan to extract real API endpoints, components, and schemas when generating foundation documentation.
-
----
-
-## Examples
-
-### Example 1: Scan a Project
-**Request:**
-```bash
-# MCP Tool Call (internal)
-{
-  "tool": "coderef_scan",
+  "name": "coderef_scan",
   "arguments": {
-    "project_path": "/Users/dev/frontend-app",
-    "languages": ["ts", "tsx"],
+    "project_path": "/absolute/path/to/project",
+    "languages": ["ts", "tsx", "js", "jsx"],
     "use_ast": true
   }
 }
 ```
 
-**Response:**
+**Parameters**:
+- `project_path` (required, string): Absolute path to project root
+- `languages` (optional, array): Languages to scan (default: `["ts", "tsx", "js", "jsx"]`)
+- `use_ast` (optional, boolean): Use AST-based analysis vs regex (default: `true`)
+
+**Response**:
 ```json
 {
   "success": true,
-  "elements_found": 247,
+  "elements_found": 250,
   "elements": [
     {
-      "name": "ThemeProvider",
-      "type": "component",
-      "file": "src/theme/ThemeProvider.tsx",
-      "line": 10
-    },
-    {
-      "name": "useTheme",
-      "type": "hook",
-      "file": "src/theme/useTheme.ts",
-      "line": 5
+      "type": "function",
+      "name": "export_coderef",
+      "file": "processors/export_processor.py",
+      "line": 26,
+      "exported": false
     }
-  ]
+  ],
+  "source": "file://.coderef/index.json"
+}
+```
+
+**Error Response**:
+```json
+{
+  "success": false,
+  "error": "No scan data found. Run scan first to create .coderef/ directory.",
+  "hint": "Use dashboard scanner or run: python scripts/populate-coderef.py /path/to/project"
 }
 ```
 
 ---
 
-### Example 2: Query Dependencies
-**Request:**
-```bash
-# MCP Tool Call (internal)
+### 2. coderef_query
+
+**Description**: Query code relationships (what-calls, what-imports, shortest-path, etc)
+
+**Request**:
+```json
 {
-  "tool": "coderef_query",
+  "name": "coderef_query",
   "arguments": {
-    "project_path": "/Users/dev/checkout-app",
-    "query_type": "imports",
-    "target": "CheckoutComponent"
+    "project_path": "/absolute/path/to/project",
+    "query_type": "calls",
+    "target": "authenticateUser",
+    "source": "loginHandler",
+    "max_depth": 3
   }
 }
 ```
 
-**Response:**
+**Parameters**:
+- `project_path` (required, string): Project root
+- `query_type` (required, enum): Relationship type
+  - `"calls"` - What does target call?
+  - `"calls-me"` - What calls target?
+  - `"imports"` - What does target import?
+  - `"imports-me"` - What imports target?
+  - `"depends-on"` - What does target depend on?
+  - `"depends-on-me"` - What depends on target?
+- `target` (required, string): Element to query (e.g., `"authenticateUser"` or `"AuthService#login"`)
+- `source` (optional, string): For path queries: starting element
+- `max_depth` (optional, integer): Maximum traversal depth (default: `3`)
+
+**Response**:
 ```json
 {
   "success": true,
-  "query_type": "imports",
-  "target": "CheckoutComponent",
-  "results": [
-    {
-      "from": "CheckoutComponent",
-      "to": "PaymentGateway",
-      "type": "import",
-      "file": "src/checkout/Checkout.tsx"
-    }
-  ]
+  "query_type": "calls",
+  "target": "authenticateUser",
+  "results": ["validateToken", "checkPermissions"],
+  "element": {
+    "name": "authenticateUser",
+    "type": "function",
+    "file": "src/auth.ts"
+  }
 }
 ```
 
 ---
 
-### Example 3: Assess Impact
-**Request:**
-```bash
-# MCP Tool Call (internal)
+### 3. coderef_impact
+
+**Description**: Analyze impact of modifying or deleting a code element
+
+**Request**:
+```json
 {
-  "tool": "coderef_impact",
+  "name": "coderef_impact",
   "arguments": {
-    "project_path": "/Users/dev/app",
+    "project_path": "/absolute/path/to/project",
     "element": "AuthService",
-    "operation": "refactor"
+    "operation": "modify",
+    "max_depth": 3
   }
 }
 ```
 
-**Response:**
+**Parameters**:
+- `project_path` (required, string): Project root
+- `element` (required, string): Element to analyze (e.g., `"AuthService"`)
+- `operation` (optional, enum): Type of change (default: `"modify"`)
+  - `"modify"` - Impact of modification
+  - `"delete"` - Impact of deletion
+  - `"refactor"` - Impact of refactoring
+- `max_depth` (optional, integer): Maximum traversal depth (default: `3`)
+
+**Response**:
 ```json
 {
   "success": true,
   "element": "AuthService",
-  "operation": "refactor",
-  "impact": {
-    "affected_files": 12,
-    "risk_level": "MEDIUM",
-    "ripple_effects": [
-      {
-        "file": "src/login/Login.tsx",
-        "impact": "direct call"
-      }
-    ]
+  "operation": "modify",
+  "affected_elements": ["UserController", "AdminController"],
+  "impact_level": "high"
+}
+```
+
+---
+
+### 4. coderef_complexity
+
+**Description**: Get complexity metrics for a code element
+
+**Request**:
+```json
+{
+  "name": "coderef_complexity",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "element": "processPayment"
   }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `element` (required, string): Element to analyze
+
+**Response**:
+```json
+{
+  "success": true,
+  "element": "processPayment",
+  "complexity": {
+    "cyclomatic": 12,
+    "cognitive": 8,
+    "lines_of_code": 45
+  }
+}
+```
+
+---
+
+### 5. coderef_patterns
+
+**Description**: Discover code patterns and test coverage gaps
+
+**Request**:
+```json
+{
+  "name": "coderef_patterns",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "pattern_type": "singleton",
+    "limit": 10
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `pattern_type` (optional, string): Type of pattern to find
+- `limit` (optional, integer): Maximum results (default: `10`)
+
+**Response**:
+```json
+{
+  "success": true,
+  "patterns": [
+    {
+      "type": "singleton",
+      "count": 5,
+      "files": ["src/config.ts", "src/logger.ts"]
+    }
+  ],
+  "test_gaps": ["src/auth.ts", "src/payment.ts"]
+}
+```
+
+---
+
+### 6. coderef_coverage
+
+**Description**: Analyze test coverage in the codebase
+
+**Request**:
+```json
+{
+  "name": "coderef_coverage",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "format": "summary"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `format` (optional, enum): Coverage report format (default: `"summary"`)
+  - `"summary"` - High-level coverage stats
+  - `"detailed"` - Per-file coverage breakdown
+
+**Response**:
+```json
+{
+  "success": true,
+  "coverage": {
+    "overall": 0.75,
+    "by_file": {
+      "src/auth.ts": 0.90,
+      "src/payment.ts": 0.60
+    }
+  }
+}
+```
+
+---
+
+### 7. coderef_context
+
+**Description**: Generate comprehensive codebase context (markdown + JSON)
+
+**Request**:
+```json
+{
+  "name": "coderef_context",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "languages": ["ts", "tsx"],
+    "output_format": "both"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `languages` (optional, array): Languages to scan (default: `["ts", "tsx", "js", "jsx"]`)
+- `output_format` (optional, enum): Output format (default: `"json"`)
+  - `"json"` - JSON format
+  - `"markdown"` - Markdown format
+  - `"both"` - Both formats
+
+**Response**:
+```json
+{
+  "success": true,
+  "context": {
+    "json": {...},
+    "markdown": "# Codebase Context\n\n..."
+  }
+}
+```
+
+---
+
+### 8. coderef_validate
+
+**Description**: Validate CodeRef2 references in codebase
+
+**Request**:
+```json
+{
+  "name": "coderef_validate",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "pattern": "**/*.ts"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `pattern` (optional, string): File glob pattern (default: `"**/*.ts"`)
+
+**Response**:
+```json
+{
+  "success": true,
+  "valid": true,
+  "errors": [],
+  "warnings": []
+}
+```
+
+---
+
+### 9. coderef_drift
+
+**Description**: Detect drift between CodeRef index and current code
+
+**Request**:
+```json
+{
+  "name": "coderef_drift",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "index_path": ".coderef-index.json"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `index_path` (optional, string): Path to coderef-index.json (default: `".coderef-index.json"`)
+
+**Response**:
+```json
+{
+  "success": true,
+  "drift_detected": true,
+  "changed_files": ["src/auth.ts", "src/payment.ts"],
+  "new_files": ["src/new-feature.ts"]
+}
+```
+
+---
+
+### 10. coderef_incremental_scan
+
+**Description**: Perform incremental scan (only re-scan files with detected drift, merge with existing index)
+
+**Request**:
+```json
+{
+  "name": "coderef_incremental_scan",
+  "arguments": {
+    "project_path": "/absolute/path/to/project"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+
+**Response**:
+```json
+{
+  "success": true,
+  "files_scanned": 5,
+  "elements_added": 12,
+  "elements_updated": 3
+}
+```
+
+---
+
+### 11. coderef_diagram
+
+**Description**: Generate visual dependency diagrams (Mermaid or Graphviz)
+
+**Request**:
+```json
+{
+  "name": "coderef_diagram",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "diagram_type": "dependencies",
+    "format": "mermaid",
+    "depth": 2
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Project root
+- `diagram_type` (optional, enum): Type of diagram (default: `"dependencies"`)
+  - `"dependencies"` - Dependency graph
+  - `"calls"` - Call graph
+  - `"imports"` - Import graph
+  - `"all"` - Combined graph
+- `format` (optional, enum): Output format (default: `"mermaid"`)
+  - `"mermaid"` - Mermaid diagram syntax
+  - `"dot"` - Graphviz DOT format
+- `depth` (optional, integer): Maximum depth (default: `2`)
+
+**Response**:
+```json
+{
+  "success": true,
+  "diagram": "graph TD\n    A[AuthService] --> B[UserController]\n    ...",
+  "format": "mermaid"
+}
+```
+
+---
+
+### 12. coderef_tag
+
+**Description**: Add CodeRef2 tags to source files for better tracking and validation
+
+**Request**:
+```json
+{
+  "name": "coderef_tag",
+  "arguments": {
+    "path": "src/auth.ts",
+    "dry_run": false,
+    "force": false,
+    "verbose": false,
+    "update_lineno": false,
+    "include_private": false,
+    "lang": "ts,tsx,js,jsx",
+    "exclude": "node_modules"
+  }
+}
+```
+
+**Parameters**:
+- `path` (required, string): File or directory path to tag
+- `dry_run` (optional, boolean): Preview changes without writing (default: `false`)
+- `force` (optional, boolean): Force update existing tags (default: `false`)
+- `verbose` (optional, boolean): Show detailed output (default: `false`)
+- `update_lineno` (optional, boolean): Update line numbers in existing tags (default: `false`)
+- `include_private` (optional, boolean): Include private elements (default: `false`)
+- `lang` (optional, string): File extensions to process (default: `"ts,tsx,js,jsx"`)
+- `exclude` (optional, string): Exclusion patterns (comma-separated)
+
+**Response**:
+```json
+{
+  "success": true,
+  "files_tagged": 5,
+  "tags_added": 23
+}
+```
+
+**Note**: This tool modifies source files. Requires CLI integration.
+
+---
+
+### 13. coderef_export
+
+**Description**: Export coderef data in various formats (JSON, JSON-LD, Mermaid, DOT)
+
+**Request**:
+```json
+{
+  "name": "coderef_export",
+  "arguments": {
+    "project_path": "/absolute/path/to/project",
+    "format": "json",
+    "output_path": ".coderef/exports/graph.json",
+    "max_nodes": 1000
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Absolute path to project root
+- `format` (required, enum): Export format
+  - `"json"` - Raw JSON data
+  - `"jsonld"` - JSON-LD (Linked Data)
+  - `"mermaid"` - Mermaid diagram
+  - `"dot"` - Graphviz DOT format
+- `output_path` (optional, string): Custom output file path
+- `max_nodes` (optional, integer): Limit on graph nodes (for large codebases)
+
+**Response**:
+```json
+{
+  "success": true,
+  "format": "json",
+  "output_path": ".coderef/exports/graph.json",
+  "nodes_exported": 250
+}
+```
+
+---
+
+### 14. validate_coderef_outputs
+
+**Description**: Validate `.coderef/` files against schemas using Papertrail MCP validation
+
+**Request**:
+```json
+{
+  "name": "validate_coderef_outputs",
+  "arguments": {
+    "project_path": "/absolute/path/to/project"
+  }
+}
+```
+
+**Parameters**:
+- `project_path` (required, string): Absolute path to project root
+
+**Response**:
+```json
+{
+  "success": true,
+  "valid": true,
+  "files_validated": ["index.json", "graph.json", "context.json"],
+  "errors": [],
+  "warnings": []
 }
 ```
 
@@ -536,89 +582,53 @@ The coderef-docs server may call coderef_scan to extract real API endpoints, com
 
 ## Error Handling
 
-### Timeout Errors
-All tools have a 120-second timeout. If the CLI command exceeds this:
+All tools return consistent error responses:
 
 ```json
 {
-  "error": "Error: Scan timeout (120s exceeded)"
+  "success": false,
+  "error": "Error message describing what went wrong"
 }
 ```
 
-**Solution:** Use smaller scope, disable AST analysis (use_ast=false), or increase timeout.
+Common error scenarios:
+- **Missing scan data**: `.coderef/` directory not found or incomplete
+- **Invalid parameters**: Required parameters missing or invalid values
+- **File system errors**: Permission issues or corrupted files
+- **JSON parsing errors**: Corrupted `.coderef/` JSON files
 
----
+## Rate Limits
 
-### CLI Not Found Errors
-If the @coderef/core CLI is not installed or configured:
+No rate limits enforced. Tools read from local filesystem, so performance is limited only by disk I/O.
+
+## Pagination
+
+Not applicable. All tools return complete results. For large codebases, use `max_depth` or `limit` parameters to constrain results.
+
+## Examples
+
+### cURL Equivalent (Conceptual)
+
+Since MCP uses stdio protocol, here's a conceptual example:
+
+```bash
+# Scan codebase
+echo '{"name":"coderef_scan","arguments":{"project_path":"/path/to/project"}}' | python server.py
+
+# Query relationships
+echo '{"name":"coderef_query","arguments":{"project_path":"/path/to/project","query_type":"calls","target":"authenticateUser"}}' | python server.py
+```
+
+### Error Response Example
 
 ```json
 {
-  "error": "Error: CLI path not found"
+  "success": false,
+  "error": "No scan data found. Run scan first to create .coderef/ directory.",
+  "hint": "Use dashboard scanner or run: python scripts/populate-coderef.py /path/to/project"
 }
 ```
 
-**Solution:** Set CODEREF_CLI_PATH environment variable or install @coderef/core globally.
-
 ---
 
-### JSON Parse Errors
-If CLI output is malformed:
-
-```json
-{
-  "error": "JSON parse error: Unexpected token"
-}
-```
-
-**Solution:** Check CLI version compatibility, verify CLI works standalone.
-
----
-
-## Rate Limits & Performance
-
-**Rate Limits:** None (local server, no network)
-**Concurrency:** Unlimited (each tool call spawns independent subprocess)
-**Caching:** None (fresh analysis on each call for accuracy)
-
-**Performance Benchmarks:**
-- `coderef_scan`: ~5-15s for 50k LOC project (AST mode)
-- `coderef_query`: ~1-3s for dependency lookup
-- `coderef_impact`: ~2-5s for impact analysis
-- `coderef_context`: ~10-30s for full project context
-
----
-
-## References
-
-- **[CLAUDE.md](../CLAUDE.md)** - AI context documentation with architecture details
-- **[README.md](../README.md)** - User-facing overview
-- **[server.py](../server.py)** - MCP server implementation
-- **[@coderef/core](https://github.com/coderef-system)** - Upstream TypeScript analysis engine
-
----
-
-## AI Agent Instructions
-
-**When using this API:**
-1. Always call `coderef_scan` first to understand what exists before implementing
-2. Use `coderef_query` to trace dependencies before refactoring
-3. Call `coderef_impact` to assess risk before making breaking changes
-4. Leverage `coderef_complexity` for effort estimation
-5. Check `coderef_patterns` to discover existing code patterns (avoid reimplementation)
-
-**Error handling:**
-- Retry once on timeout errors (may be temporary)
-- If CLI not found, ask user to configure CODEREF_CLI_PATH
-- Parse JSON carefully (skip CLI progress messages before JSON)
-
-**Best practices:**
-- Use AST analysis (use_ast=true) for 99% accuracy
-- Set appropriate max_depth (3 is usually sufficient)
-- Combine tools: scan → query → impact for comprehensive understanding
-
----
-
-**Generated:** 2025-12-30
-**Maintained by:** coderef-context MCP Server
-**For AI Agents:** This API enables code intelligence during implementation. Use it to avoid blind coding.
+**AI Agent Note**: All tools are read-only except `coderef_tag`. Tools return JSON responses via MCP TextContent format. For integration examples, see [ARCHITECTURE.md](ARCHITECTURE.md).

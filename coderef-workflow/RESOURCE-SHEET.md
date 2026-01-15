@@ -66,7 +66,7 @@ coderef-workflow/
 | Integration | Protocol | Purpose |
 |-------------|----------|---------|
 | **coderef-context** | MCP tool calls (coderef_scan, coderef_query, coderef_patterns) | Code intelligence for planning |
-| **coderef-docs** | Shared tool definitions (generate_foundation_docs, add_changelog_entry) | Documentation automation |
+| **coderef-docs** | Shared tool definitions (add_changelog_entry) | Documentation automation. Foundation docs generation consolidated to coderef-docs server only. |
 | **coderef-personas** | No direct integration | Personas activate before execution |
 | **coderef-testing** | No direct integration | Tests run during execution phase |
 | **Lloyd (orchestrator)** | TodoWrite integration | Real-time progress tracking |

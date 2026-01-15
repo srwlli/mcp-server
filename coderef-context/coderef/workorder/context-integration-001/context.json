@@ -3,7 +3,7 @@
   "feature_name": "context-integration-001",
   "source_session": "WO-DOCS-CONSOLIDATION-001",
   "created": "2026-01-12",
-  "description": "Implement 7 enhancements to coderef-context MCP server identified in foundation docs consolidation review session. Focus: Better integration with coderef-docs, complete documentation, and expanded capabilities.",
+  "description": "Implement 6 enhancements to coderef-context MCP server identified in foundation docs consolidation review session. Focus: Better integration with coderef-docs, complete documentation, and expanded capabilities. Note: generate_foundation_docs removed from scope - all doc generation consolidated to coderef-docs server.",
 
   "requirements": {
     "P0_critical": [
@@ -86,20 +86,6 @@
       },
       {
         "id": "P2-2",
-        "title": "Add generate_foundation_docs tool (auto-doc generation capability)",
-        "rationale": "coderef-context has all data needed (API endpoints, schemas, components from index.json) but no doc generation capability. Currently docs are manually written.",
-        "implementation": "New MCP tool: generate_foundation_docs(project_path, docs=['readme','api','schema','components']). Reads .coderef/index.json, groups by type, populates templates, writes to coderef/foundation-docs/.",
-        "success_criteria": [
-          "generate_foundation_docs tool added to MCP server",
-          "Accepts project_path and optional docs array",
-          "Reads index.json and groups elements by type",
-          "Populates templates (minimal - just lists, not full POWER framework)",
-          "Writes foundation docs to coderef/foundation-docs/ directory"
-        ],
-        "impact": "Automated foundation doc updates, consistency across projects, leverages existing .coderef/ data"
-      },
-      {
-        "id": "P2-3",
         "title": "Validate .coderef/ outputs against schemas in Papertrail",
         "rationale": "No validation of .coderef/ file formats - malformed data causes silent failures in consuming tools.",
         "implementation": "Add JSON schemas for index.json, graph.json, context.json to Papertrail. New tool: validate_coderef_outputs(project_path) - calls Papertrail validation, reports errors.",
@@ -143,7 +129,6 @@
     "coderef_incremental_scan tool implementation",
     "Python code scanning support",
     "quickref.md tool reference",
-    "generate_foundation_docs tool (optional - P2)",
     "validate_coderef_outputs tool integration with Papertrail",
     "Updated tests for all new features",
     "DELIVERABLES.md with implementation metrics"

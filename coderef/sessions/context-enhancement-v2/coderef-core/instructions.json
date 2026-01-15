@@ -1,0 +1,121 @@
+{
+  "workorder_id": "WO-CONTEXT-ENHANCEMENT-V2-001-CODEREF-CORE",
+  "agent_id": "coderef-core",
+  "phase": "phase_1",
+  "role": "Implement scanner quick wins for performance, usability, and Python coverage",
+
+  "context": {
+    "problem": "Scanner has 4 quick-win opportunities: (1) pattern order affects performance, (2) manual config takes 5-10 min, (3) error messages lack context, (4) Python coverage at 60%",
+    "solution": "Implement 4 targeted improvements: pattern ordering (+15% perf), config presets (30s setup), structured errors (3x faster debug), Python pattern expansion (+30% coverage)",
+    "impact": "Improves scanner usability and performance with minimal effort (22 hours total implementation)"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access Scanner-Effectiveness-Improvements-RESOURCE-SHEET.md",
+    "step_2": "READ instructions.json (this file) for detailed task specifications",
+    "step_3": "Use context_json_template below to create workorder in coderef-dashboard project",
+    "step_4": "Execute tasks 1-4 in order",
+    "step_5": "CREATE outputs/coderef-dashboard-phase1-quickwins.md with results",
+    "step_6": "UPDATE communication.json after EACH task completion",
+    "step_7": "VALIDATE phase_gate_checklist before marking complete"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Implement pattern ordering (most specific → least specific)",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/pattern-matcher.ts",
+        "changes": [
+          "Sort patterns by specificity score (longer regex = more specific)",
+          "Apply patterns in order (stop at first match)",
+          "Benchmark: 500-file scan time before/after"
+        ]
+      },
+      "validation": "500-file scan time improves by 15% (1185ms → 1007ms)"
+    },
+    "task_2": {
+      "description": "Add configuration presets for common frameworks",
+      "implementation": {
+        "file": "packages/coderef-core/src/config/presets.ts",
+        "changes": [
+          "Create presets: react (tsx, hooks), vue (sfc), node (js/ts), python (py)",
+          "Add preset loader: loadPreset('react')",
+          "Document usage in README"
+        ]
+      },
+      "validation": "User can configure scanner in 30 seconds with loadPreset()"
+    },
+    "task_3": {
+      "description": "Structured error reporting with context",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/error-reporter.ts",
+        "changes": [
+          "Include: file path, line number, error type, code context (3 lines)",
+          "Add suggestions for common errors",
+          "Format as structured JSON"
+        ]
+      },
+      "validation": "Errors include file:line, context snippet, and fix suggestions"
+    },
+    "task_4": {
+      "description": "Expand Python patterns (+30% coverage)",
+      "implementation": {
+        "file": "packages/coderef-core/src/patterns/python.ts",
+        "changes": [
+          "Add decorator patterns (@property, @staticmethod, @dataclass)",
+          "Add type hint patterns (def foo(x: int) -> str:)",
+          "Add async patterns (async def, await, async with)"
+        ]
+      },
+      "validation": "Python coverage reaches 90% (from 60%) on test corpus"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-SCANNER-QUICKWINS-001",
+    "feature_name": "scanner-quickwins",
+    "requirements": [
+      "Pattern ordering for +15% performance",
+      "Configuration presets for 30-second setup",
+      "Structured error reporting with context and suggestions",
+      "Python pattern expansion for +30% coverage"
+    ],
+    "constraints": [
+      "Backward compatible with existing scanner API",
+      "No breaking changes to pattern format",
+      "Maintain < 50MB memory usage"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "500-file scan time reduced by 15% (benchmarked)",
+    "task_2": "Presets allow 30-second configuration (demonstrated)",
+    "task_3": "Errors include file:line, context, suggestions (validated)",
+    "task_4": "Python coverage reaches 90% on test corpus (measured)"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-core-phase1-quickwins.md",
+    "format": "markdown",
+    "structure": {
+      "title": "Scanner Quick Wins - Phase 1 Results",
+      "sections": [
+        "Task 1: Pattern Ordering (+15% performance)",
+        "Task 2: Configuration Presets (30s setup)",
+        "Task 3: Structured Error Reporting",
+        "Task 4: Python Pattern Expansion (+30% coverage)",
+        "Benchmarks and Validation",
+        "Next Steps"
+      ]
+    }
+  },
+
+  "phase_gate_checklist": [
+    "All 4 tasks status='complete'",
+    "Performance improvement +15% (measured)",
+    "Configuration presets tested (30s setup)",
+    "Python coverage 90% (validated)",
+    "Output markdown created and validated",
+    "communication.json updated with completion status"
+  ]
+}

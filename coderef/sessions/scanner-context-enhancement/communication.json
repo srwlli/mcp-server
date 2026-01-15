@@ -1,0 +1,181 @@
+{
+  "workorder_id": "WO-SCANNER-CONTEXT-ENHANCEMENT-001",
+  "feature_name": "scanner-context-enhancement",
+  "created": "2026-01-14",
+  "status": "in_progress",
+  "description": "Comprehensive 3-phase enhancement: (1) Core improvements to scanner and context, (2) Integration into workflow and docs, (3) Advanced accuracy and performance optimizations",
+  "progress_doc": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\phase1-progress.md",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\instructions.json",
+  "session_doc": "C:\\Users\\willh\\Desktop\\assistant\\scanner-complete-context.md",
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate 3-phase enhancement across 4 primary agents, track progress, synthesize results",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\orchestrator-final-synthesis.md",
+    "phase_outputs": {
+      "phase_1": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\orchestrator-phase1-report.md",
+      "phase_2": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\orchestrator-phase2-report.md",
+      "phase_3": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\orchestrator-phase3-report.md"
+    },
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "phases": {
+    "phase_1": {
+      "name": "Core Enhancements",
+      "duration": "Week 1-2",
+      "status": "in_progress",
+      "started": "2026-01-14",
+      "description": "Enhance coderef_context tool (40% → 95% context quality) + Scanner quick wins (pattern ordering, presets, errors, Python patterns)",
+      "progress": "1/11 tasks complete (9%) - diagram-wrapped.md auto-inclusion implemented",
+      "lead_agents": ["coderef-context", "coderef-dashboard"],
+      "success_metrics": {
+        "context_tool_calls": "6 → 1",
+        "context_quality": "40% → 95%",
+        "scanner_performance": "+15%",
+        "python_coverage": "+30%"
+      }
+    },
+    "phase_2": {
+      "name": "Workflow & Docs Integration",
+      "duration": "Week 3-4",
+      "status": "not_started",
+      "description": "Integrate enhanced context into workflow planning (6x faster) + docs generation (95% accuracy)",
+      "lead_agents": ["coderef-workflow", "coderef-docs"],
+      "dependencies": ["phase_1"],
+      "success_metrics": {
+        "planning_speed": "6x faster",
+        "docs_accuracy": "85% → 95%",
+        "integration_tests": "95%+ pass rate"
+      }
+    },
+    "phase_3": {
+      "name": "Scanner Accuracy & Performance",
+      "duration": "Week 5-10",
+      "status": "not_started",
+      "description": "Hybrid AST + Regex (85% → 95% accuracy) + Parallel processing (3-5x faster) + LRU caching (50MB cap)",
+      "lead_agents": ["coderef-dashboard", "coderef-testing"],
+      "dependencies": ["phase_2"],
+      "success_metrics": {
+        "scanner_accuracy": "85% → 95%",
+        "scan_speed_500_files": "1185ms → 300-400ms",
+        "memory_usage": "Unbounded → 50MB cap"
+      }
+    }
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "role": "Track cross-project integration and dependencies across phases",
+      "phases": ["phase_1", "phase_2", "phase_3"],
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-assistant-output.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "role": "Phase 1 Lead: Enhance coderef_context tool, expose 100% of .coderef/ resources, populate empty reports",
+      "phases": ["phase_1"],
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-context-phase1-output.json",
+      "status": "in_progress",
+      "progress": "1/7 tasks complete - diagram-wrapped.md auto-inclusion implemented (commit 69aafd0)",
+      "proof_doc": "C:\\Users\\willh\\.mcp-servers\\coderef-context\\PROOF-OF-ENHANCEMENT.md",
+      "notes": "✅ Task 1 complete: visual_architecture field now auto-included in coderef_context responses. Tool calls reduced from 2→1 for diagram access."
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "role": "Phase 2 Lead: Integrate enhanced context into planning_analyzer.py, update AI planning prompt",
+      "phases": ["phase_2", "phase_3"],
+      "output_files": {
+        "phase_2": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-workflow-phase2-output.md",
+        "phase_3": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-workflow-phase3-reintegration.md"
+      },
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Phase 2 Lead: Integrate enhanced scanner into generate_foundation_docs, leverage enhanced context",
+      "phases": ["phase_2", "phase_3"],
+      "output_files": {
+        "phase_2": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-docs-phase2-output.md",
+        "phase_3": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-docs-phase3-reintegration.md"
+      },
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "role": "Provide specialized expertise for each agent across all phases",
+      "phases": ["phase_1", "phase_2", "phase_3"],
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-personas-output.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "role": "Phase 2-3: Create test fixtures, run benchmarks, performance profiling",
+      "phases": ["phase_2", "phase_3"],
+      "output_files": {
+        "phase_2": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-testing-phase2-integration-tests.json",
+        "phase_3": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-testing-phase3-benchmarks.json"
+      },
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "role": "Validate schemas, outputs, UDS compliance across all phases",
+      "phases": ["phase_1", "phase_2", "phase_3"],
+      "output_files": {
+        "phase_1": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\papertrail-phase1-validation.json",
+        "phase_2": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\papertrail-phase2-validation.json",
+        "phase_3": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\papertrail-phase3-validation.json"
+      },
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-system",
+      "agent_path": "C:\\Users\\willh\\Desktop\\projects\\coderef-system",
+      "role": "System-level orchestration and conflict resolution across phases",
+      "phases": ["phase_1", "phase_2", "phase_3"],
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-system-output.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Phase 1 & 3 Lead: Implement scanner improvements in packages/coderef-core (quick wins, accuracy, performance)",
+      "phases": ["phase_1", "phase_3"],
+      "output_files": {
+        "phase_1": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-dashboard-phase1-output.md",
+        "phase_3_accuracy": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-dashboard-phase3-accuracy-output.md",
+        "phase_3_performance": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-context-enhancement\\coderef-dashboard-phase3-performance-output.json"
+      },
+      "status": "not_started",
+      "notes": "Scanner code location: packages/coderef-core/src/scanner/"
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 9,
+    "phase_1_agents": 3,
+    "phase_2_agents": 4,
+    "phase_3_agents": 4
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "workorder_id": "WO-CONTEXT-ENHANCEMENT-V2-001-CODEREF-CONTEXT",
+  "agent_id": "coderef-context",
+  "phase": "phase_1",
+  "role": "Enhance coderef_context MCP tool to provide 95% complete context in single call",
+
+  "context": {
+    "problem": "coderef_context tool currently provides only 40% of available context, requiring 6+ tool calls to get complete information. Missing: visual_architecture, elements_by_type, complexity_hotspots, documentation_summary, and empty report files (patterns.json, validation.json, complexity.json)",
+    "solution": "Enhance coderef_context to auto-include all available .coderef/ data in single response, populate empty report files, and add structured breakdowns",
+    "impact": "Reduces tool calls from 6 → 1, improves response time to ≤0.1s, provides 95% context quality for planning and documentation generation"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access CONTEXT-LEVERAGE-ANALYSIS.md and PROOF-OF-ENHANCEMENT.md",
+    "step_2": "READ instructions.json (this file) for detailed task specifications",
+    "step_3": "Use context_json_template below to create workorder in coderef-context project",
+    "step_4": "Execute tasks 1-7 in order",
+    "step_5": "CREATE outputs/coderef-context-phase1-output.json with results",
+    "step_6": "UPDATE communication.json after EACH task completion",
+    "step_7": "VALIDATE phase_gate_checklist before marking complete"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Auto-include visual_architecture field in coderef_context responses",
+      "implementation": {
+        "file": "src/tools/coderef_context.py",
+        "changes": [
+          "Read .coderef/diagram-wrapped.md if exists",
+          "Add visual_architecture field to response",
+          "Include full diagram content"
+        ]
+      },
+      "validation": "Tool call returns visual_architecture without separate diagram request"
+    },
+    "task_2": {
+      "description": "Add elements_by_type breakdown",
+      "implementation": {
+        "file": "src/tools/coderef_context.py",
+        "changes": [
+          "Parse .coderef/index.json elements array",
+          "Group by element_type (component, function, method, constant, etc.)",
+          "Return counts and top 5 per type"
+        ]
+      },
+      "validation": "Response includes elements_by_type with accurate counts"
+    },
+    "task_3": {
+      "description": "Add complexity_hotspots array",
+      "implementation": {
+        "file": "src/tools/coderef_context.py",
+        "changes": [
+          "Read .coderef/reports/complexity.json if exists",
+          "Extract top 10 files by cyclomatic_complexity",
+          "Include file path, complexity score, function count"
+        ]
+      },
+      "validation": "Response includes top 10 complex files with scores"
+    },
+    "task_4": {
+      "description": "Add documentation_summary",
+      "implementation": {
+        "file": "src/tools/coderef_context.py",
+        "changes": [
+          "Calculate doc coverage from .coderef/index.json (elements with jsdoc)",
+          "Identify gaps (files without docs)",
+          "Compute quality score (0-100)"
+        ]
+      },
+      "validation": "Response includes documentation_summary with coverage%, gaps, quality_score"
+    },
+    "task_5": {
+      "description": "Populate patterns.json",
+      "implementation": {
+        "file": "src/scanner/pattern_analyzer.py",
+        "changes": [
+          "Extract patterns from index.json",
+          "Write to .coderef/reports/patterns.json",
+          "Include error_handling, state_management, data_flow patterns"
+        ]
+      },
+      "validation": ".coderef/reports/patterns.json exists with 3+ pattern types"
+    },
+    "task_6": {
+      "description": "Populate validation.json",
+      "implementation": {
+        "file": "src/scanner/validator.py",
+        "changes": [
+          "Run validation checks on scanned code",
+          "Write results to .coderef/reports/validation.json",
+          "Include errors, warnings, pass/fail counts"
+        ]
+      },
+      "validation": ".coderef/reports/validation.json exists with validation results"
+    },
+    "task_7": {
+      "description": "Create complexity.json",
+      "implementation": {
+        "file": "src/scanner/complexity_analyzer.py",
+        "changes": [
+          "Calculate cyclomatic complexity for all functions",
+          "Write results to .coderef/reports/complexity.json",
+          "Include per-file and per-function metrics"
+        ]
+      },
+      "validation": ".coderef/reports/complexity.json exists with complexity metrics"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-CONTEXT-TOOL-ENHANCEMENT-001",
+    "feature_name": "context-tool-enhancement",
+    "requirements": [
+      "Auto-include visual_architecture in coderef_context responses",
+      "Add elements_by_type breakdown (components, functions, methods, constants)",
+      "Add complexity_hotspots array (top 10 complex files)",
+      "Add documentation_summary (coverage, gaps, quality score)",
+      "Populate .coderef/reports/patterns.json",
+      "Populate .coderef/reports/validation.json",
+      "Populate .coderef/reports/complexity.json"
+    ],
+    "constraints": [
+      "Maintain response time ≤ 0.1s",
+      "Use existing .coderef/ data (no re-scanning)",
+      "Backward compatible with existing tool calls"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "coderef_context includes visual_architecture without separate call",
+    "task_2": "elements_by_type shows accurate counts per type",
+    "task_3": "complexity_hotspots lists top 10 files with scores",
+    "task_4": "documentation_summary shows coverage%, gaps, quality",
+    "task_5": "patterns.json exists with 3+ pattern types",
+    "task_6": "validation.json exists with validation results",
+    "task_7": "complexity.json exists with per-file and per-function metrics"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-context-phase1-output.json",
+    "format": "json",
+    "structure": {
+      "tasks_completed": 7,
+      "tool_calls_before": 6,
+      "tool_calls_after": 1,
+      "context_quality_before": "40%",
+      "context_quality_after": "95%",
+      "response_time": "≤0.1s",
+      "proof_commit": "git commit hash",
+      "sample_response": "Example coderef_context output showing all new fields"
+    }
+  },
+
+  "phase_gate_checklist": [
+    "All 7 tasks status='complete'",
+    "Context quality verified at 95%",
+    "Tool calls reduced to 1 (proven)",
+    "Response time ≤ 0.1s (measured)",
+    "Output JSON created and validated",
+    "communication.json updated with completion status"
+  ]
+}

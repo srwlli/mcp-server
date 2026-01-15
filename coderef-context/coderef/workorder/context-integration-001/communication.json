@@ -25,6 +25,12 @@
       "from": "coderef-context agent",
       "message": "Implementation plan created with 27 tasks across 4 phases (P0 Critical, P1 High, P2 Medium, Testing). Plan includes: 7 P0 tasks (SCHEMA.md + INTEGRATION.md), 7 P1 tasks (incremental scan + Python scanning), 7 P2 tasks (quickref + generate tool + validate tool), 6 testing tasks. Total complexity: high (15-20 files, 2000-2500 new lines). Ready to begin Phase 0 (P0 Critical Documentation) - blocking requirements for WO-GENERATION-ENHANCEMENT-001.",
       "phase": "planning"
+    },
+    {
+      "timestamp": "2026-01-13T00:00:00Z",
+      "from": "orchestrator",
+      "message": "SCOPE CHANGE: Removed P2-2 (generate_foundation_docs) from workorder. All foundation doc generation will be consolidated into coderef-docs server only. Please update plan.json to remove P2-2 tasks and reduce scope from 7 enhancements to 6. Context.json has been updated to reflect this change.",
+      "phase": "planning_revision"
     }
   ]
 }

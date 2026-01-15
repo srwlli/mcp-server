@@ -8,7 +8,12 @@ Faster, simpler, no external dependencies.
 import json
 from typing import List
 from mcp.types import TextContent
-from .coderef_reader import CodeRefReader
+
+# Support both module and standalone usage
+try:
+    from .coderef_reader import CodeRefReader
+except ImportError:
+    from coderef_reader import CodeRefReader
 
 
 async def handle_coderef_scan(args: dict) -> List[TextContent]:

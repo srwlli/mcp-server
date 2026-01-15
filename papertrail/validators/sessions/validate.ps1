@@ -151,8 +151,8 @@ foreach ($file in $commFiles) {
         }
     }
 
-    # Validate against schema
-    $validationOutput = ajv validate -s $schemaPath -d $file.FullName 2>&1
+    # Validate against schema (use --strict=false to allow union types)
+    $validationOutput = ajv validate -s $schemaPath -d $file.FullName --strict=false 2>&1
 
     if ($LASTEXITCODE -eq 0) {
         Write-Host "[PASS] $relativePath" -ForegroundColor $Green

@@ -17,6 +17,9 @@
 ## Reference Sessions
 - [Context Enhancement V2](../../context-enhancement-v2/) - Phase 1 complete, shows workflow patterns
 
+## Testing Integration
+- [Testing Integration Guide](../../TESTING-INTEGRATION-GUIDE.md) - How to integrate coderef-testing into sessions and workorders
+
 ## Technical Context
 - **Agent Home:** `C:\Users\willh\.mcp-servers\coderef-workflow`
 - **Session:** `C:\Users\willh\.mcp-servers\coderef\sessions\scanner-complete-integration\coderef-workflow`

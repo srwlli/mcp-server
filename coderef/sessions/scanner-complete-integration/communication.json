@@ -9,8 +9,8 @@
   "phases": {
     "phase_1": {
       "name": "Scanner Core Improvements",
-      "status": "not_started",
-      "progress": "0/7 improvements complete (0%)",
+      "status": "in_progress",
+      "progress": "3/7 improvements complete (43%)",
       "lead_agents": ["coderef-core"],
       "gate_criteria": [
         "All 7 scanner improvements implemented (P1.1, P1.2, P2.4, P2.5, P3.7, P3.8, P4.11)",
@@ -63,8 +63,8 @@
       "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
       "role": "Phase 1 Lead: Implement 7 scanner improvements (AST integration, caching, performance, coverage)",
       "phases": ["phase_1"],
-      "status": "not_started",
-      "notes": ""
+      "status": "in_progress",
+      "notes": "Workorder WO-SCANNER-INTEGRATION-001 created. Completed: AST mode test suite, Parallel Processing, LRU Cache. In progress: 4 remaining improvements."
     },
     {
       "agent_id": "coderef-docs",
@@ -87,8 +87,8 @@
   "aggregation": {
     "total_agents": 3,
     "completed": 0,
-    "pending": 0,
-    "not_started": 3,
+    "pending": 1,
+    "not_started": 2,
     "phase_1_agents": 1,
     "phase_2_agents": 1,
     "phase_3_agents": 1

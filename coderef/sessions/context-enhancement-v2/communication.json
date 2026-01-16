@@ -3,7 +3,6 @@
   "feature_name": "context-enhancement-v2",
   "created": "2026-01-15",
   "status": "complete",
-  "completed": "2026-01-15",
   "description": "V2 of scanner-context enhancement using new hierarchical session pattern with agent subdirectories, improved validation, and structured phase gates",
   "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\context-enhancement-v2\\instructions.json",
 

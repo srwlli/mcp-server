@@ -1,0 +1,26 @@
+{
+  "workorder_id": "WO-WORKFLOW-SCANNER-INTEGRATION-001",
+  "feature_name": "workflow-scanner-integration",
+  "description": "Integrate Phase 1 scanner improvements into coderef-workflow planning and execution workflows. Leverage 95% accurate AST scanner data, relationship graphs (dependencies, imports, calledBy), and complexity metrics (ComplexityScorer) to enhance planning accuracy, impact analysis, and execution tracking.",
+  "goal": "Improve planning workflows with full type coverage (interfaces, decorators), automated impact analysis using relationship graphs, and complexity-based effort estimation for execution tracking",
+  "requirements": [
+    "Planning workflows include interfaces, decorators, type aliases from AST scanner",
+    "Impact analysis uses relationship graphs (ElementData.dependencies, ElementData.calledBy, ElementData.imports) for transitive dependencies",
+    "Execution tracking incorporates complexity-based effort estimation using ComplexityScorer",
+    "Backward compatible with pre-Phase 1 scanner data"
+  ],
+  "out_of_scope": [
+    "Breaking changes to workflow API",
+    "Changes to other MCP servers",
+    "UI/dashboard updates"
+  ],
+  "constraints": [
+    "No breaking changes to workflow API",
+    "Handle missing complexity/relationship fields gracefully (backward compatibility)",
+    "Maintain performance - impact analysis must be fast",
+    "All implementations in Python (coderef-workflow is Python-based)",
+    "Must work with existing .coderef/ structure"
+  ],
+  "created_at": "2026-01-16T00:30:00.000Z",
+  "created_by": "Claude Code AI"
+}

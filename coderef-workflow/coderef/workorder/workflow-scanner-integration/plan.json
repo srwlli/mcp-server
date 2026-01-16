@@ -1,0 +1,572 @@
+{
+  "META_DOCUMENTATION": {
+    "workorder_id": "WO-WORKFLOW-SCANNER-INTEGRATION-001",
+    "feature_name": "workflow-scanner-integration",
+    "version": "1.0.0",
+    "status": "planning",
+    "created_at": "2026-01-16T00:30:00.000Z",
+    "updated_at": "2026-01-16T00:30:00.000Z",
+    "generated_by": "Claude Code AI",
+    "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+    "phase": "phase_3",
+    "has_context": true,
+    "has_analysis": true
+  },
+
+  "0_PREPARATION": {
+    "title": "Preparation and Discovery",
+    "overview": "Verify Phase 1 scanner improvements are complete and understand the enhanced ElementData schema with AST scanner types, relationship tracking, and complexity metrics available via ComplexityScorer.",
+    "tasks": [
+      {
+        "task_id": "PREP-001",
+        "title": "Verify Phase 1 scanner completion",
+        "description": "Confirm ElementData schema in coderef-core/src/types/types.ts includes: (1) Extended types: interface, type, decorator, property (2) Relationship fields: dependencies, calledBy, imports (3) ComplexityScorer class available in coderef-core/src/context/complexity-scorer.ts",
+        "complexity": "trivial",
+        "dependencies": [],
+        "files": [
+          "C:/Users/willh/Desktop/coderef-dashboard/packages/coderef-core/src/types/types.ts:229-255",
+          "C:/Users/willh/Desktop/coderef-dashboard/packages/coderef-core/src/context/complexity-scorer.ts:1-80",
+          "C:/Users/willh/Desktop/coderef-dashboard/packages/coderef-core/src/context/types.ts:24-51"
+        ],
+        "acceptance_criteria": [
+          "ElementData.type includes: interface, type, decorator, property",
+          "ElementData has optional fields: dependencies (string[]), calledBy (string[]), imports (ImportDetails[])",
+          "ComplexityScorer.scoreElement() method available with LOC, cyclomaticComplexity, complexityScore (0-10) metrics"
+        ]
+      },
+      {
+        "task_id": "PREP-002",
+        "title": "Review existing coderef integration in planning_analyzer.py",
+        "description": "Examine generators/planning_analyzer.py to understand current .coderef/ file reading (v1.3.0) and MCP tool usage (v1.5.0). Identify where to add new scanner integrations.",
+        "complexity": "low",
+        "dependencies": ["PREP-001"],
+        "files": [
+          "generators/planning_analyzer.py:215 - .coderef/index.json reading",
+          "generators/planning_analyzer.py:397 - coderef_query MCP tool call",
+          "generators/planning_analyzer.py:445 - .coderef/reports/patterns.json reading"
+        ],
+        "acceptance_criteria": [
+          "Understand 3-tier fallback system: .coderef/ files → MCP tools → regex analysis",
+          "Locate methods: identify_patterns(), identify_gaps_and_risks(), analyze_dependencies()",
+          "Document telemetry tracking with emoji logging (📁 file, 🔧 MCP tool)"
+        ]
+      }
+    ]
+  },
+
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Integrate Phase 1 scanner improvements (95% AST accuracy, relationship graphs, complexity metrics) into coderef-workflow's planning, impact analysis, and execution tracking workflows",
+    "why": "Current planning workflows miss 15% of code elements (interfaces, decorators, types), lack automated impact analysis for change ripple effects, and use generic time estimates instead of complexity-aware planning",
+    "scope": "3 task areas: (1) Planning workflows with full type coverage (2) Impact analysis with transitive dependency graphs (3) Execution tracking with complexity-based effort estimation",
+    "user_impact": "AI agents planning features will have 95%+ code coverage visibility, automatically detect breaking changes via dependency analysis, and generate realistic effort estimates based on code complexity",
+    "technical_approach": "Enhance existing coderef-workflow Python modules to read extended ElementData types, call coderef-context MCP tools for relationship/complexity analysis, and gracefully handle backward compatibility with optional fields"
+  },
+
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": {
+      "api_changes": "none - all ElementData fields are optional",
+      "schema_changes": "none - backward compatible additions only",
+      "behavior_changes": "Planning outputs will include more code elements (interfaces, decorators) - additive enhancement"
+    },
+    "backward_compatibility": {
+      "risk_level": "low",
+      "mitigation": "All new fields (dependencies, calledBy, imports, complexity) are optional. Implement null checks before accessing."
+    },
+    "performance_impact": {
+      "area": "Transitive dependency traversal for impact analysis",
+      "risk_level": "medium",
+      "estimated_impact": "O(N*M) where N=elements, M=avg dependencies. Large codebases (>1000 elements) may see 100-500ms overhead",
+      "mitigation": "Implement max_depth=3 limit on traversal, cache relationship graphs, add timeout guards"
+    },
+    "integration_complexity": {
+      "area": "ComplexityScorer is TypeScript, coderef-workflow is Python",
+      "risk_level": "medium",
+      "solution": "Call via MCP tool mcp__coderef_context__coderef_complexity instead of direct import. No Python port needed."
+    },
+    "security_considerations": {
+      "file_access": "Reading .coderef/ files requires file system access - already granted for analysis.json generation",
+      "code_execution": "No dynamic code execution added, only static analysis reads"
+    },
+    "dependency_risks": {
+      "phase_1_completion": "VERIFIED COMPLETE - ElementData schema confirmed with all required fields",
+      "mcp_tools_availability": "Requires coderef-context MCP server running - already dependency for v1.5.0 features"
+    }
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_architecture": {
+      "mcp_server_pattern": "coderef-workflow is MCP server orchestrating feature lifecycle",
+      "generator_classes": "planning_generator.py and planning_analyzer.py handle plan.json creation",
+      "async_mcp_client": "src/mcp_client.py provides async client for calling coderef-context tools"
+    },
+    "existing_coderef_integration": {
+      "v1_3_file_reads": ".coderef/index.json, patterns.json, coverage.json, drift.json",
+      "v1_5_mcp_tools": "coderef_query, coderef_impact, coderef_complexity, coderef_diagram",
+      "telemetry": "Tracks data source usage with get_telemetry_summary()"
+    },
+    "current_limitations": [
+      "Planning workflows read ElementData.type but only check for: function, class, component, hook, method, constant (6 types)",
+      "Missing types: interface (TypeScript interfaces), type (type aliases), decorator (Python/TS decorators), property (class properties)",
+      "No transitive dependency analysis - impact analysis is manual via coderef_impact MCP tool but not integrated into planning",
+      "Generic complexity estimates - plan.json uses estimated_effort without code complexity data",
+      "No high-complexity flagging - refactoring candidates not automatically identified"
+    ],
+    "files_currently_involved": [
+      "generators/planning_analyzer.py - Project analysis with .coderef/ reading",
+      "generators/planning_generator.py - Plan.json creation with 10-section structure",
+      "src/handlers/gather_context.py - Context gathering (likely exists but not verified)",
+      "src/handlers/execute_plan.py - Plan execution step-by-step",
+      "tool_handlers.py - 24 MCP tool implementations"
+    ]
+  },
+
+  "4_KEY_FEATURES": {
+    "must_have": [
+      {
+        "feature": "Full Type Coverage in Planning",
+        "rationale": "95% code coverage requires detecting interfaces, decorators, type aliases",
+        "acceptance": "context.json includes 'Type System' section listing all interfaces/type aliases, 'Decorators' section listing decorator usage patterns"
+      },
+      {
+        "feature": "Transitive Dependency Analysis",
+        "rationale": "Automated impact analysis prevents breaking changes",
+        "acceptance": "Given element name, system generates impact graph with all downstream dependents using ElementData.calledBy traversal"
+      },
+      {
+        "feature": "Complexity-Based Effort Estimation",
+        "rationale": "Realistic planning requires code complexity awareness",
+        "acceptance": "plan.json tasks include complexity: low|medium|high based on ComplexityScorer metrics, high-complexity elements flagged as refactoring candidates"
+      }
+    ],
+    "should_have": [
+      {
+        "feature": "Backward Compatibility Handling",
+        "rationale": "Support projects scanned with pre-Phase 1 scanners",
+        "acceptance": "Graceful null checks for optional fields, no crashes when dependencies/calledBy/complexity missing"
+      },
+      {
+        "feature": "Performance Guardrails",
+        "rationale": "Prevent slow planning on large codebases",
+        "acceptance": "Transitive traversal limited to max_depth=3, timeout guards for MCP tool calls"
+      }
+    ],
+    "wont_have": [
+      "UI/dashboard changes - Phase 3 scope is coderef-workflow backend only",
+      "Breaking changes to existing workflow API",
+      "Python port of ComplexityScorer - use MCP tool instead",
+      "Real-time streaming progress during analysis - use existing telemetry logging"
+    ]
+  },
+
+  "5_TASK_ID_SYSTEM": {
+    "prefix_convention": {
+      "PREP": "Preparation and discovery (Phase 0)",
+      "SETUP": "Setup and configuration",
+      "IMPL": "Implementation",
+      "TEST": "Testing",
+      "DOC": "Documentation",
+      "REVIEW": "Review and validation"
+    },
+    "numbering": "Sequential 3-digit padding (IMPL-001, IMPL-002, etc.)",
+    "cross_referencing": "Use task_id in dependencies array"
+  },
+
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1_planning_workflows": {
+      "title": "Task 1: Planning Workflows with Full Type Coverage",
+      "goal": "Enhance planning to detect and include interfaces, decorators, type aliases",
+      "complexity": "medium",
+      "estimated_scope": "20-25% of total implementation",
+      "tasks": [
+        {
+          "task_id": "IMPL-001",
+          "title": "Add Type System section to gather_context output",
+          "description": "Modify src/handlers/gather_context.py (if exists) or generators/planning_analyzer.py to filter ElementData by type='interface' and type='type'. Add 'Type System' section to context.json with list of interfaces and type aliases.",
+          "complexity": "low",
+          "dependencies": ["PREP-002"],
+          "files": [
+            "src/handlers/gather_context.py - Add filter_by_type('interface')",
+            "generators/planning_analyzer.py - Add get_type_system_elements() method"
+          ],
+          "implementation_notes": "Read .coderef/index.json, filter for type in ['interface', 'type'], format as 'InterfaceName (file:line)' list",
+          "acceptance_criteria": [
+            "context.json has 'type_system' section with interfaces[] and type_aliases[] arrays",
+            "Each entry includes: name, file, line number",
+            "Empty arrays if no TypeScript/JavaScript files detected"
+          ]
+        },
+        {
+          "task_id": "IMPL-002",
+          "title": "Add Decorators section to gather_context output",
+          "description": "Filter ElementData by type='decorator' and add 'Decorators' section to context.json with decorator usage patterns.",
+          "complexity": "low",
+          "dependencies": ["IMPL-001"],
+          "files": [
+            "src/handlers/gather_context.py - Add filter_by_type('decorator')",
+            "generators/planning_analyzer.py - Add get_decorator_elements() method"
+          ],
+          "implementation_notes": "Decorators are Python @decorator or TypeScript @Decorator patterns detected by AST scanner",
+          "acceptance_criteria": [
+            "context.json has 'decorators' section with list of decorators",
+            "Includes decorator name, target (function/class), file, line",
+            "Empty array if no decorators detected"
+          ]
+        },
+        {
+          "task_id": "IMPL-003",
+          "title": "Update plan.json generation to consider type complexity",
+          "description": "Enhance generators/planning_generator.py to count interfaces/decorators when estimating task effort. More types → higher complexity.",
+          "complexity": "low",
+          "dependencies": ["IMPL-002"],
+          "files": [
+            "generators/planning_generator.py - Update _estimate_task_complexity() method"
+          ],
+          "implementation_notes": "Heuristic: >10 interfaces or >5 decorators in feature scope increases complexity from 'low' to 'medium'",
+          "acceptance_criteria": [
+            "plan.json tasks with heavy type usage marked complexity: 'medium' or 'high'",
+            "Planning rationale mentions interface/decorator count in task notes"
+          ]
+        }
+      ]
+    },
+    "phase_2_impact_analysis": {
+      "title": "Task 2: Impact Analysis with Relationship Graphs",
+      "goal": "Implement transitive dependency analysis using ElementData.dependencies and ElementData.calledBy",
+      "complexity": "high",
+      "estimated_scope": "40-50% of total implementation",
+      "tasks": [
+        {
+          "task_id": "IMPL-004",
+          "title": "Create impact_analysis.py module with transitive traversal",
+          "description": "Create new file src/handlers/impact_analysis.py with ImpactAnalyzer class. Implement traverse_dependencies(element_name, max_depth=3) to recursively walk ElementData.calledBy relationships.",
+          "complexity": "high",
+          "dependencies": ["PREP-002"],
+          "files": [
+            "src/handlers/impact_analysis.py - NEW FILE",
+            "Create class ImpactAnalyzer with methods: traverse_dependencies(), calculate_impact_score(), generate_impact_report()"
+          ],
+          "implementation_notes": "Use BFS/DFS traversal with visited set to prevent cycles. Stop at max_depth=3 to prevent performance issues. Return list of affected elements with paths.",
+          "acceptance_criteria": [
+            "ImpactAnalyzer.traverse_dependencies(element, max_depth=3) returns affected_elements[]",
+            "Each element includes: name, type, file, relationship_path (e.g., A → B → C)",
+            "Handles cycles gracefully (no infinite loops)",
+            "Performance: <500ms for 1000-element codebases"
+          ]
+        },
+        {
+          "task_id": "IMPL-005",
+          "title": "Add impact score calculation",
+          "description": "Implement calculate_impact_score() to count total affected elements and categorize as low/medium/high/critical risk.",
+          "complexity": "medium",
+          "dependencies": ["IMPL-004"],
+          "files": [
+            "src/handlers/impact_analysis.py - Add calculate_impact_score() method"
+          ],
+          "implementation_notes": "Score ranges: 0-5 affected = low, 6-15 = medium, 16-50 = high, >50 = critical",
+          "acceptance_criteria": [
+            "Returns impact_score: int and risk_level: 'low'|'medium'|'high'|'critical'",
+            "Considers both direct dependencies and transitive dependencies"
+          ]
+        },
+        {
+          "task_id": "IMPL-006",
+          "title": "Generate impact report with visualization",
+          "description": "Implement generate_impact_report() to create markdown report with impact graph in Mermaid format showing dependency tree.",
+          "complexity": "medium",
+          "dependencies": ["IMPL-005"],
+          "files": [
+            "src/handlers/impact_analysis.py - Add generate_impact_report() method"
+          ],
+          "implementation_notes": "Use Mermaid graph syntax: graph TD; A-->B; B-->C. Limit graph to max_depth=3 levels for readability.",
+          "acceptance_criteria": [
+            "Returns markdown string with: (1) Summary (affected count, risk level) (2) Affected elements list (3) Mermaid dependency graph",
+            "Report saved to coderef/workorder/{feature}/impact-analysis.md"
+          ]
+        },
+        {
+          "task_id": "IMPL-007",
+          "title": "Integrate impact analysis into planning_analyzer.py",
+          "description": "Update generators/planning_analyzer.py to call ImpactAnalyzer when analyzing project. Add impact warnings to analysis.json for high-risk changes.",
+          "complexity": "low",
+          "dependencies": ["IMPL-006"],
+          "files": [
+            "generators/planning_analyzer.py - Add analyze_change_impact() method using ImpactAnalyzer"
+          ],
+          "implementation_notes": "If planning for refactoring/breaking change, automatically run impact analysis and include results in analysis.json gaps_and_risks section",
+          "acceptance_criteria": [
+            "analysis.json includes 'impact_analysis' section if high-risk changes detected",
+            "Warnings logged if impact_score > 15 (high or critical risk)"
+          ]
+        }
+      ]
+    },
+    "phase_3_execution_tracking": {
+      "title": "Task 3: Execution Tracking with Complexity Metrics",
+      "goal": "Integrate ComplexityScorer to flag high-complexity code and adjust effort estimates",
+      "complexity": "medium",
+      "estimated_scope": "30-35% of total implementation",
+      "tasks": [
+        {
+          "task_id": "IMPL-008",
+          "title": "Add complexity calculation to task breakdown",
+          "description": "Update generators/planning_generator.py to call mcp__coderef_context__coderef_complexity for each element in task scope. Store complexity scores in plan.json tasks.",
+          "complexity": "medium",
+          "dependencies": ["PREP-002"],
+          "files": [
+            "generators/planning_generator.py - Add calculate_task_complexity() using MCP tool"
+          ],
+          "implementation_notes": "Call coderef_complexity MCP tool with element names. Get back ComplexityMetrics with LOC, cyclomaticComplexity, complexityScore (0-10), riskLevel. Average scores for multi-element tasks.",
+          "acceptance_criteria": [
+            "plan.json tasks include 'complexity_metrics' field with: avg_complexity_score, max_complexity_score, high_complexity_elements[]",
+            "Complexity data fetched via MCP tool mcp__coderef_context__coderef_complexity"
+          ]
+        },
+        {
+          "task_id": "IMPL-009",
+          "title": "Flag high-complexity elements as refactoring candidates",
+          "description": "Add logic to flag elements with complexityScore >10 or riskLevel='critical' in task notes with refactoring recommendations.",
+          "complexity": "low",
+          "dependencies": ["IMPL-008"],
+          "files": [
+            "generators/planning_generator.py - Add flag_refactoring_candidates() method"
+          ],
+          "implementation_notes": "Add warning in task.notes: 'High complexity detected: ElementName (complexity: 15, risk: critical). Consider refactoring before modification.'",
+          "acceptance_criteria": [
+            "Tasks touching high-complexity code include refactoring warnings in task.notes",
+            "plan.json has 'refactoring_candidates' section listing all elements with complexity >10"
+          ]
+        },
+        {
+          "task_id": "IMPL-010",
+          "title": "Adjust effort estimates based on complexity",
+          "description": "Update complexity calculation in plan.json to use data-driven estimates: low complexity (score 1-5): 1x multiplier, medium (6-10): 1.5x, high (>10): 2x.",
+          "complexity": "low",
+          "dependencies": ["IMPL-009"],
+          "files": [
+            "generators/planning_generator.py - Update _estimate_task_complexity() with multipliers"
+          ],
+          "implementation_notes": "Replace generic 'low|medium|high' with calculated values based on ComplexityScorer data. Note: This violates no-timeline constraint - remove time estimates, keep only complexity levels.",
+          "acceptance_criteria": [
+            "Tasks use complexity: 'low'|'medium'|'high'|'very_high' based on avg_complexity_score",
+            "NO time estimates (hours/minutes) - complexity levels only per no-timeline constraint"
+          ]
+        },
+        {
+          "task_id": "IMPL-011",
+          "title": "Add complexity metrics to deliverables report",
+          "description": "Update src/handlers/execute_plan.py or tool_handlers.py update_deliverables() to include complexity summary: total elements, avg complexity, high-complexity count.",
+          "complexity": "low",
+          "dependencies": ["IMPL-010"],
+          "files": [
+            "tool_handlers.py - Update update_deliverables() to include complexity_summary"
+          ],
+          "implementation_notes": "Read plan.json complexity_metrics, aggregate across all tasks, format as deliverables section",
+          "acceptance_criteria": [
+            "DELIVERABLES.md includes Complexity Summary: Total elements analyzed, Average complexity score, High-complexity elements count, Refactoring recommendations"
+          ]
+        }
+      ]
+    },
+    "phase_4_testing": {
+      "title": "Testing and Validation",
+      "goal": "Comprehensive testing of all 3 task integrations",
+      "complexity": "medium",
+      "estimated_scope": "15-20% of total implementation",
+      "tasks": [
+        {
+          "task_id": "TEST-001",
+          "title": "Create test fixtures with full scanner data",
+          "description": "Create tests/fixtures/sample_index.json with ElementData including interfaces, decorators, dependencies, calledBy fields populated.",
+          "complexity": "low",
+          "dependencies": ["IMPL-011"],
+          "files": [
+            "tests/fixtures/sample_index.json - Sample data with 50 elements including interfaces/decorators",
+            "tests/fixtures/sample_graph.json - Relationship graph for dependency tests"
+          ],
+          "acceptance_criteria": [
+            "Fixtures include: 5 interfaces, 3 decorators, 10 functions with dependencies[] populated, 5 classes with calledBy[] populated"
+          ]
+        },
+        {
+          "task_id": "TEST-002",
+          "title": "Unit tests for type coverage (Task 1)",
+          "description": "Create tests/test_type_coverage.py to verify interfaces/decorators appear in context.json and plan.json considers type complexity.",
+          "complexity": "medium",
+          "dependencies": ["TEST-001"],
+          "files": [
+            "tests/test_type_coverage.py - NEW FILE with test_interface_detection(), test_decorator_detection(), test_type_complexity_estimation()"
+          ],
+          "acceptance_criteria": [
+            "test_interface_detection() verifies 'type_system' section in context.json",
+            "test_decorator_detection() verifies 'decorators' section in context.json",
+            "test_type_complexity_estimation() verifies high type count increases task complexity"
+          ]
+        },
+        {
+          "task_id": "TEST-003",
+          "title": "Unit tests for impact analysis (Task 2)",
+          "description": "Create tests/test_impact_analysis.py to verify transitive dependency traversal, impact scoring, and report generation.",
+          "complexity": "high",
+          "dependencies": ["TEST-001"],
+          "files": [
+            "tests/test_impact_analysis.py - NEW FILE with test_transitive_traversal(), test_impact_scoring(), test_cycle_handling()"
+          ],
+          "acceptance_criteria": [
+            "test_transitive_traversal() verifies calledBy relationships walked correctly",
+            "test_impact_scoring() verifies correct low/medium/high/critical categorization",
+            "test_cycle_handling() verifies no infinite loops on circular dependencies"
+          ]
+        },
+        {
+          "task_id": "TEST-004",
+          "title": "Unit tests for complexity tracking (Task 3)",
+          "description": "Create tests/test_complexity_tracking.py to verify ComplexityScorer integration, refactoring flags, and deliverables metrics.",
+          "complexity": "medium",
+          "dependencies": ["TEST-001"],
+          "files": [
+            "tests/test_complexity_tracking.py - NEW FILE with test_complexity_calculation(), test_refactoring_flags(), test_deliverables_metrics()"
+          ],
+          "acceptance_criteria": [
+            "test_complexity_calculation() verifies MCP tool called and scores stored",
+            "test_refactoring_flags() verifies high-complexity elements flagged in task notes",
+            "test_deliverables_metrics() verifies complexity summary in DELIVERABLES.md"
+          ]
+        },
+        {
+          "task_id": "TEST-005",
+          "title": "Integration test with sample planning scenario",
+          "description": "Run full /create-workorder workflow on test project with interfaces, decorators, complex dependencies. Verify all 3 integrations work end-to-end.",
+          "complexity": "high",
+          "dependencies": ["TEST-002", "TEST-003", "TEST-004"],
+          "files": [
+            "tests/integration/test_scanner_integration.py - END-TO-END TEST"
+          ],
+          "acceptance_criteria": [
+            "Workflow completes successfully from context → analysis → plan → validation",
+            "context.json includes type_system and decorators sections",
+            "analysis.json includes impact_analysis if high-risk changes",
+            "plan.json tasks include complexity_metrics and refactoring_candidates"
+          ]
+        }
+      ]
+    },
+    "phase_5_documentation": {
+      "title": "Documentation Updates",
+      "goal": "Document new scanner integration features",
+      "complexity": "low",
+      "estimated_scope": "5-10% of total implementation",
+      "tasks": [
+        {
+          "task_id": "DOC-001",
+          "title": "Update CLAUDE.md with scanner integration details",
+          "description": "Add v2.1.0 release notes documenting 3 new integrations: full type coverage, impact analysis, complexity tracking.",
+          "complexity": "low",
+          "dependencies": ["TEST-005"],
+          "files": [
+            "CLAUDE.md - Add 'Recent Changes (v2.1.0 - Scanner Integration)' section"
+          ],
+          "acceptance_criteria": [
+            "CLAUDE.md documents all 3 tasks with before/after examples",
+            "Includes usage examples for impact analysis and complexity metrics"
+          ]
+        },
+        {
+          "task_id": "DOC-002",
+          "title": "Update create-workorder.md command documentation",
+          "description": "Document that Step 3 (Analyze Project) now includes type coverage, impact analysis, and complexity metrics from Phase 1 scanner.",
+          "complexity": "trivial",
+          "dependencies": ["DOC-001"],
+          "files": [
+            ".claude/commands/create-workorder.md - Update Step 3 description"
+          ],
+          "acceptance_criteria": [
+            "Command docs mention 'Full type coverage (interfaces, decorators) from AST scanner'",
+            "Note about impact analysis availability for high-risk changes"
+          ]
+        }
+      ]
+    }
+  },
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": {
+      "framework": "pytest",
+      "coverage_target": "80%",
+      "test_files": [
+        "tests/test_type_coverage.py - Type system integration tests",
+        "tests/test_impact_analysis.py - Dependency graph traversal tests",
+        "tests/test_complexity_tracking.py - ComplexityScorer integration tests"
+      ],
+      "mocking_strategy": "Mock MCP tool calls (coderef_complexity, coderef_query) with fixtures"
+    },
+    "integration_tests": {
+      "test_scenarios": [
+        "Full /create-workorder workflow with sample TypeScript project (interfaces, decorators)",
+        "Impact analysis on refactoring scenario with 20+ affected elements",
+        "Complexity tracking on codebase with mix of low/medium/high complexity functions"
+      ],
+      "fixtures": "tests/fixtures/sample_index.json with realistic scanner output"
+    },
+    "backward_compatibility_tests": {
+      "scenario": "Run workflows with ElementData missing optional fields (dependencies, calledBy, complexity)",
+      "acceptance": "No crashes, graceful degradation with warnings logged"
+    },
+    "performance_tests": {
+      "impact_analysis_benchmark": "Transitive traversal on 1000-element codebase should complete in <500ms",
+      "complexity_calculation_benchmark": "Batch complexity calculation for 50 elements should complete in <1000ms"
+    }
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "task_1_planning_workflows": {
+      "criteria": [
+        "context.json includes 'type_system' section with all interfaces and type aliases",
+        "context.json includes 'decorators' section with decorator usage patterns",
+        "plan.json task complexity considers interface/decorator count"
+      ],
+      "verification": "Run /create-workorder on TypeScript project, verify interfaces listed in context.json"
+    },
+    "task_2_impact_analysis": {
+      "criteria": [
+        "ImpactAnalyzer.traverse_dependencies() returns transitive dependents with relationship paths",
+        "Impact score calculated with low/medium/high/critical categorization",
+        "Impact report generated with Mermaid dependency graph",
+        "analysis.json includes impact warnings for high-risk changes"
+      ],
+      "verification": "Call impact analysis on function with deep dependency chain, verify graph generated"
+    },
+    "task_3_complexity_tracking": {
+      "criteria": [
+        "plan.json tasks include complexity_metrics with avg/max scores",
+        "High-complexity elements flagged in task notes with refactoring recommendations",
+        "Task complexity levels calculated from ComplexityScorer data (NOT time estimates)",
+        "DELIVERABLES.md includes complexity summary"
+      ],
+      "verification": "Generate plan for feature touching high-complexity code, verify refactoring flags present"
+    },
+    "backward_compatibility": {
+      "criteria": [
+        "No crashes when ElementData missing dependencies/calledBy/imports fields",
+        "Graceful warnings logged when complexity data unavailable",
+        "Workflows complete successfully with pre-Phase 1 scanner data"
+      ],
+      "verification": "Run workflows with minimal ElementData (type, name, file, line only)"
+    },
+    "performance": {
+      "criteria": [
+        "Impact analysis completes in <500ms for 1000-element codebases",
+        "No degradation in planning speed (remains 5-10x faster with .coderef/)",
+        "MCP tool calls have timeout guards to prevent hangs"
+      ],
+      "verification": "Benchmark impact analysis and complexity calculation on large fixture dataset"
+    },
+    "documentation": {
+      "criteria": [
+        "CLAUDE.md documents v2.1.0 scanner integration features",
+        "create-workorder.md command updated with new capabilities",
+        "outputs/coderef-workflow-phase3-integration.md summary created"
+      ],
+      "verification": "All 3 documentation files updated and committed"
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "workorder_id": "WO-WORKFLOW-SCANNER-INTEGRATION-001",
+  "feature_name": "workflow-scanner-integration",
+  "analyzed_at": "2026-01-16T00:30:00.000Z",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+
+  "project_statistics": {
+    "total_elements": 654,
+    "total_files": 54,
+    "source_files": 17,
+    "element_breakdown": {
+      "methods": 294,
+      "functions": 200,
+      "classes": 160
+    },
+    "coderef_status": "available",
+    "drift_status": "clean"
+  },
+
+  "technology_stack": {
+    "primary_language": "Python",
+    "version": "3.10+",
+    "frameworks": ["MCP (Model Context Protocol) 1.0+"],
+    "async_support": true,
+    "testing": "pytest 8.0+",
+    "validation": "jsonschema 4.0+",
+    "type_checking": "mypy",
+    "linting": "ruff"
+  },
+
+  "architecture_patterns": {
+    "mcp_server": "Orchestrates complete feature lifecycle (context gathering, planning, execution tracking)",
+    "generator_pattern": "Separate generator classes for plan.json and analysis.json generation",
+    "async_io": "Fully async/await based architecture for MCP tool integration",
+    "workorder_centric": "All features tracked with WO-{FEATURE}-{CATEGORY}-### format",
+    "10_section_plans": "Standardized plan.json structure with META_DOCUMENTATION through SUCCESS_CRITERIA sections"
+  },
+
+  "key_integration_points": {
+    "coderef_context_integration": {
+      "status": "partial",
+      "current_usage": [
+        "planning_analyzer.py calls coderef_scan via MCP (v1.5.0)",
+        "planning_analyzer.py reads .coderef/ files for 5-10x faster planning (v1.3.0)"
+      ],
+      "missing_integrations": [
+        "No AST scanner type coverage (interfaces, decorators, types) in planning workflows",
+        "No relationship graph usage (dependencies, calledBy) for impact analysis",
+        "No ComplexityScorer integration for execution tracking"
+      ]
+    },
+    "file_structure": {
+      "tool_handlers": "tool_handlers.py - 24 MCP tool implementations",
+      "generators": [
+        "generators/planning_generator.py - Creates plan.json from context/analysis",
+        "generators/planning_analyzer.py - Analyzes project for planning (reads .coderef/)"
+      ],
+      "src_modules": [
+        "src/plan_executor.py - Executes plans step-by-step",
+        "src/planning_analyzer.py - Likely deprecated, generators/ is canonical",
+        "src/mcp_client.py - Async client for calling coderef-context MCP tools",
+        "src/validators.py - Input validation"
+      ]
+    }
+  },
+
+  "existing_coderef_usage": {
+    "v1_5_mcp_tools": {
+      "file": "generators/planning_analyzer.py",
+      "tools_used": [
+        "analyze_dependencies() - Uses coderef_query for dependency analysis",
+        "analyze_impact() - Uses coderef_impact for change impact assessment",
+        "analyze_complexity() - Uses coderef_complexity for effort estimation",
+        "generate_architecture_diagram() - Uses coderef_diagram for visualization"
+      ],
+      "telemetry_tracking": "Tracks file reads vs MCP calls with emoji logging (📁 file, 🔧 MCP tool, 📄 doc)"
+    },
+    "v1_3_file_reads": {
+      "file": "generators/planning_analyzer.py",
+      "files_read": [
+        ".coderef/index.json - Code inventory",
+        ".coderef/reports/patterns.json - Coding conventions",
+        ".coderef/reports/coverage.json - Test gaps",
+        ".coderef/reports/drift.json - Freshness check"
+      ]
+    }
+  },
+
+  "gaps_and_risks": {
+    "gaps": [
+      {
+        "area": "Planning Workflows",
+        "description": "gather_context does not read AST scanner extended types (interface, type, decorator, property)",
+        "impact": "Planning misses 15% of TypeScript/JavaScript code elements (interfaces, decorators, type aliases)",
+        "files_affected": ["src/handlers/gather_context.py", "generators/planning_generator.py"]
+      },
+      {
+        "area": "Impact Analysis",
+        "description": "No transitive dependency analysis using ElementData.dependencies and ElementData.calledBy",
+        "impact": "Cannot automatically determine ripple effects of code changes",
+        "files_affected": ["src/handlers/impact_analysis.py (missing)", "generators/planning_analyzer.py"]
+      },
+      {
+        "area": "Execution Tracking",
+        "description": "No complexity-based effort estimation using ComplexityScorer",
+        "impact": "Generic time estimates instead of complexity-aware planning",
+        "files_affected": ["src/handlers/execute_plan.py", "generators/planning_generator.py"]
+      }
+    ],
+    "risks": [
+      {
+        "category": "backward_compatibility",
+        "description": "ElementData fields (dependencies, calledBy, imports) are optional",
+        "severity": "low",
+        "mitigation": "Graceful handling of missing fields with fallback logic"
+      },
+      {
+        "category": "performance",
+        "description": "Transitive dependency traversal could be slow for large codebases",
+        "severity": "medium",
+        "mitigation": "Implement max_depth limits and caching for relationship graph traversal"
+      },
+      {
+        "category": "integration_complexity",
+        "description": "ComplexityScorer is TypeScript, coderef-workflow is Python",
+        "severity": "medium",
+        "mitigation": "Call via MCP tools (mcp__coderef_context__coderef_complexity) or replicate logic in Python"
+      }
+    ]
+  },
+
+  "implementation_strategy": {
+    "approach": "Incremental enhancement of existing workflows",
+    "priority": "high",
+    "estimated_complexity": "medium",
+    "files_to_modify": [
+      "src/handlers/gather_context.py - Add Type System and Decorators sections",
+      "generators/planning_generator.py - Integrate complexity metrics for estimates",
+      "src/handlers/impact_analysis.py - CREATE NEW for transitive dependency analysis",
+      "generators/planning_analyzer.py - Enhance with relationship graph queries"
+    ],
+    "backward_compatibility_maintained": true
+  },
+
+  "foundation_docs_status": {
+    "readme": "exists",
+    "architecture": "CLAUDE.md exists (530-600 lines per universal template)",
+    "api": "missing",
+    "components": "not_applicable (Python backend, not UI)",
+    "schema": "missing"
+  },
+
+  "testing_strategy": {
+    "existing_tests": "tests/ directory with pytest",
+    "test_coverage": 45,
+    "untested_modules": [
+      "src/handlers/ (gather_context, impact_analysis)",
+      "generators/planning_generator.py",
+      "src/plan_executor.py"
+    ],
+    "integration_test_needed": true
+  }
+}

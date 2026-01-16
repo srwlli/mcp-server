@@ -145,6 +145,83 @@ class ResourceSheetGenerator:
         self.registry.register(hook_signature_module)
         self.registry.register(hook_side_effects_module)
 
+    def calculate_complexity_stats(self, elements: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Calculate complexity statistics from ElementData with complexity field.
+
+        WO-DOCS-SCANNER-INTEGRATION-001: IMPL-003
+        Reads ElementData.complexity field (from Phase 1 scanner task_5) and calculates:
+        - Average complexity
+        - Max complexity
+        - Hotspot elements (complexity > 10)
+
+        Args:
+            elements: List of ElementData dicts with optional 'complexity' field
+
+        Returns:
+            Dict with avg, max, hotspots, and refactoring recommendations
+
+        Graceful degradation: Returns sensible defaults if complexity field missing.
+        """
+        # Extract complexity values (filter out None/0)
+        complexities = [e.get('complexity', 0) for e in elements if e.get('complexity')]
+
+        if not complexities:
+            # No complexity data - return defaults
+            return {
+                'avg': 0,
+                'max': 0,
+                'hotspots': [],
+                'total_elements': len(elements),
+                'elements_with_complexity': 0,
+                'has_complexity_data': False
+            }
+
+        # Calculate statistics
+        avg_complexity = sum(complexities) / len(complexities)
+        max_complexity = max(complexities)
+
+        # Identify hotspots (complexity > 10)
+        hotspots = [
+            {
+                'name': e['name'],
+                'complexity': e.get('complexity'),
+                'file': e.get('file', 'unknown'),
+                'line': e.get('line', 0),
+                'recommendation': self._get_complexity_recommendation(e.get('complexity', 0))
+            }
+            for e in elements
+            if e.get('complexity', 0) > 10
+        ]
+
+        # Sort hotspots by complexity (highest first)
+        hotspots.sort(key=lambda x: x['complexity'], reverse=True)
+
+        return {
+            'avg': avg_complexity,
+            'max': max_complexity,
+            'hotspots': hotspots,
+            'total_elements': len(elements),
+            'elements_with_complexity': len(complexities),
+            'has_complexity_data': True
+        }
+
+    def _get_complexity_recommendation(self, complexity: int) -> str:
+        """
+        Get refactoring recommendation based on complexity threshold.
+
+        Thresholds:
+        - 1-10: Acceptable
+        - 11-15: MEDIUM priority - Consider simplifying
+        - 16+: HIGH priority - Refactor into smaller functions
+        """
+        if complexity <= 10:
+            return "Acceptable complexity"
+        elif complexity <= 15:
+            return "MEDIUM - Consider simplifying control flow"
+        else:
+            return "HIGH - Refactor into smaller functions"
+
     async def generate(
         self,
         element_name: str,

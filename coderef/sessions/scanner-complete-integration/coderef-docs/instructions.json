@@ -1,0 +1,126 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-DOCS",
+  "agent_id": "coderef-docs",
+  "phase": "phase_2",
+  "role": "Integrate scanner improvements into documentation generation workflows",
+
+  "context": {
+    "problem": "Doc generation tools use 85% accurate scanner data, missing interfaces/decorators/complexity/relationships in generated docs",
+    "solution": "Leverage Phase 1 scanner improvements (95% accuracy, relationships, complexity) to generate more complete and insightful documentation",
+    "impact": "Users get accurate API docs with full type coverage, complexity guidance for refactoring, and architectural insights from relationship data"
+  },
+
+  "execution_steps": {
+    "step_1": "WAIT for Phase 1 completion - check ../coderef-core/communication.json status='complete'",
+    "step_2": "READ resources/index.md to access doc generation tools and scanner output specifications",
+    "step_3": "Use context_json_template to create workorder in coderef-docs project: WO-DOCS-SCANNER-INTEGRATION-001",
+    "step_4": "FOR EACH TASK: Implement integration → Test doc generation → UPDATE communication.json task.status='complete' → REPEAT",
+    "step_5": "AFTER ALL TASKS: Generate sample docs with enhanced data, validate improvements, update communication.json status='complete'",
+    "step_6": "CREATE outputs/coderef-docs-phase2-integration.md with integration summary and sample outputs",
+    "step_7": "VALIDATE phase_gate_checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Foundation Doc Generation - AST Accuracy Integration",
+      "implementation": {
+        "file": "src/handlers/generate_foundation_docs.py",
+        "changes": [
+          "Read ElementData with type filtering: interfaces = [e for e in elements if e['type'] == 'interface']",
+          "Add 'Interfaces' section to API.md with interface definitions",
+          "Add 'Type Aliases' section to API.md with type alias definitions",
+          "Add 'Decorators' section to ARCHITECTURE.md with decorator usage patterns",
+          "Update template: docs/templates/api_template.md to include new sections"
+        ]
+      },
+      "validation": "Generate foundation docs for test project with interfaces/decorators, verify sections appear in API.md and ARCHITECTURE.md"
+    },
+    "task_2": {
+      "description": "Resource Sheet Generation - Complexity Integration",
+      "implementation": {
+        "file": "src/handlers/generate_resource_sheet.py",
+        "changes": [
+          "Read ElementData.complexity field from scanner output",
+          "Add 'Complexity Analysis' section to resource sheets",
+          "Calculate complexity stats: avg, max, hotspots (complexity > 10)",
+          "Add refactoring recommendations based on complexity thresholds",
+          "Include complexity score in element listings"
+        ]
+      },
+      "validation": "Generate resource sheet for complex codebase, verify Complexity Analysis section appears with hotspots and recommendations"
+    },
+    "task_3": {
+      "description": "Architecture Docs - Relationship Integration",
+      "implementation": {
+        "file": "src/handlers/generate_foundation_docs.py (ARCHITECTURE.md generation)",
+        "changes": [
+          "Read ElementData.imports, ElementData.exports, ElementData.dependencies",
+          "Generate dependency graph from relationship data",
+          "Add 'Module Dependencies' section with import/export analysis",
+          "Add 'Coupling Analysis' section showing high-dependency modules",
+          "Add Mermaid diagram of dependency relationships"
+        ]
+      },
+      "validation": "Generate ARCHITECTURE.md for project with complex dependencies, verify Module Dependencies and coupling analysis appear"
+    },
+    "task_4": {
+      "description": "Dynamic Import Warnings",
+      "implementation": {
+        "file": "src/handlers/generate_foundation_docs.py",
+        "changes": [
+          "Check ElementData.dynamicImports for each element",
+          "Add '⚠️ Dynamic Imports' warning sections in API.md where detected",
+          "List dynamic import patterns found (import(), require(), eval)",
+          "Add 'Runtime Considerations' section in ARCHITECTURE.md for dynamic code",
+          "Flag potential issues: tree-shaking, bundling, static analysis limitations"
+        ]
+      },
+      "validation": "Generate docs for project using import(), verify warnings appear with specific patterns listed"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-DOCS-SCANNER-INTEGRATION-001",
+    "feature_name": "docs-scanner-integration",
+    "requirements": [
+      "Foundation docs include interfaces/decorators/type aliases from AST",
+      "Resource sheets show complexity metrics with refactoring guidance",
+      "Architecture docs show dependency graphs from relationship data",
+      "Dynamic import warnings appear where applicable"
+    ],
+    "constraints": [
+      "Backward compatible with old scanner output format",
+      "Handle missing fields gracefully (pre-Phase 1 scanner data)",
+      "Maintain existing doc generation quality for non-enhanced data"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "API.md includes Interfaces and Type Aliases sections, ARCHITECTURE.md includes Decorators section, accuracy validation passes",
+    "task_2": "Resource sheets include Complexity Analysis section with hotspots and recommendations",
+    "task_3": "ARCHITECTURE.md includes Module Dependencies and Coupling Analysis sections with Mermaid diagrams",
+    "task_4": "Dynamic import warnings appear in API.md and ARCHITECTURE.md where applicable"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-docs-phase2-integration.md",
+    "format": "markdown",
+    "sections": [
+      "## Executive Summary",
+      "## Tasks Completed (4/4)",
+      "## Integration Points (which doc generators updated)",
+      "## Sample Outputs (before/after comparisons)",
+      "## Success Metrics Achieved",
+      "## Backward Compatibility Notes",
+      "## Next Steps for Phase 3 (how workflows can leverage this)"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All 4 tasks status='complete' in communication.json",
+    "Sample docs generated showing interfaces/decorators/complexity/relationships",
+    "Backward compatibility verified with old scanner output",
+    "Output created: outputs/coderef-docs-phase2-integration.md",
+    "communication.json updated with status='complete'"
+  ]
+}

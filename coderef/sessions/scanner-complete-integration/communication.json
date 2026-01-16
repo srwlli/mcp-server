@@ -1,0 +1,96 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "feature_name": "scanner-complete-integration",
+  "created": "2026-01-15",
+  "status": "not_started",
+  "description": "Complete scanner improvements across 3 phases: Phase 1 - Scanner core improvements (AST, caching, performance), Phase 2 - Docs integration (leverage scanner outputs), Phase 3 - Workflow integration (planning with enhanced context)",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-complete-integration\\instructions.json",
+
+  "phases": {
+    "phase_1": {
+      "name": "Scanner Core Improvements",
+      "status": "not_started",
+      "progress": "0/7 improvements complete (0%)",
+      "lead_agents": ["coderef-core"],
+      "gate_criteria": [
+        "All 7 scanner improvements implemented (P1.1, P1.2, P2.4, P2.5, P3.7, P3.8, P4.11)",
+        "AST scanner integrated with useAST option",
+        "Performance: 1185ms → 300-400ms (3-5x faster)",
+        "Accuracy: 85% → 95%+",
+        "All outputs validated"
+      ]
+    },
+    "phase_2": {
+      "name": "Docs Integration",
+      "status": "not_started",
+      "progress": "0/4 integrations complete (0%)",
+      "lead_agents": ["coderef-docs"],
+      "dependencies": ["phase_1"],
+      "gate_criteria": [
+        "Foundation docs leverage AST accuracy",
+        "Resource sheets use complexity metrics",
+        "Generated docs include pattern analysis",
+        "All doc generation tools updated"
+      ]
+    },
+    "phase_3": {
+      "name": "Workflow Integration",
+      "status": "not_started",
+      "progress": "0/3 integrations complete (0%)",
+      "lead_agents": ["coderef-workflow"],
+      "dependencies": ["phase_1"],
+      "gate_criteria": [
+        "Planning workflows use enhanced context",
+        "Impact analysis leverages relationships",
+        "Execution tracking uses complexity data",
+        "All workflow tools updated"
+      ]
+    }
+  },
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate 3-phase scanner integration. Validate phase gates, synthesize results across coderef-core, coderef-docs, coderef-workflow.",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\scanner-complete-integration\\orchestrator-synthesis.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-core",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "role": "Phase 1 Lead: Implement 7 scanner improvements (AST integration, caching, performance, coverage)",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Phase 2 Lead: Integrate scanner improvements into foundation docs, resource sheets, and doc generation",
+      "phases": ["phase_2"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "role": "Phase 3 Lead: Integrate scanner improvements into planning, impact analysis, and execution workflows",
+      "phases": ["phase_3"],
+      "status": "not_started",
+      "notes": ""
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 3,
+    "phase_1_agents": 1,
+    "phase_2_agents": 1,
+    "phase_3_agents": 1
+  }
+}

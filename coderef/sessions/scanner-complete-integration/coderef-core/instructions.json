@@ -1,0 +1,186 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-CORE",
+  "agent_id": "coderef-core",
+  "phase": "phase_1",
+  "role": "Implement 7 scanner improvements for 95% accuracy, 3-5x performance, enhanced coverage",
+
+  "context": {
+    "problem": "Scanner has 85% accuracy (missing interfaces, decorators), slow single-threaded processing (1185ms), unbounded memory usage, and coverage gaps",
+    "solution": "Integrate existing AST scanner, add parallel processing, implement LRU caching, enhance ElementData schema, add dynamic code detection",
+    "impact": "Enables coderef-docs and coderef-workflow to generate more accurate documentation and make better planning decisions with richer context"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access Scanner-Effectiveness-Improvements-RESOURCE-SHEET.md and existing AST scanner implementation",
+    "step_2": "READ instructions.json for detailed task specifications (this file)",
+    "step_3": "Use context_json_template to create workorder in coderef-core project: WO-SCANNER-IMPROVEMENTS-PHASE2-001",
+    "step_4": "FOR EACH TASK (task_1 through task_7): Implement changes → Run TypeScript compilation → UPDATE communication.json task.status='complete' → REPEAT",
+    "step_5": "AFTER ALL TASKS COMPLETE: Run full test suite, validate performance benchmarks, update communication.json status='complete'",
+    "step_6": "CREATE outputs/coderef-core-phase1-scanner-improvements.md with implementation summary, metrics, and integration notes",
+    "step_7": "VALIDATE phase_gate_checklist - all 7 criteria must be met"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "P1.1: Hybrid AST + Regex Integration",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/scanner.ts",
+        "changes": [
+          "Add useAST?: boolean to ScanOptions interface",
+          "Import ASTElementScanner from ../analyzer/ast-element-scanner",
+          "Add conditional logic: if (options.useAST) { use AST } else { use regex }",
+          "Add try-catch wrapper: AST fails → fallback to regex",
+          "Update LANGUAGE_PATTERNS to mark which languages support AST (ts, tsx, js, jsx)"
+        ]
+      },
+      "ast_scanner_enhancements": {
+        "file": "packages/coderef-core/src/analyzer/ast-element-scanner.ts",
+        "changes": [
+          "Add interface detection: if (ts.isInterfaceDeclaration(node)) {...}",
+          "Add type alias detection: if (ts.isTypeAliasDeclaration(node)) {...}",
+          "Add decorator detection: ts.canHaveDecorators(node) ? ts.getDecorators(node) : []",
+          "Add class property detection: if (ts.isPropertyDeclaration(node) && currentClass) {...}"
+        ]
+      },
+      "validation": "Compile TypeScript, run scanner on test fixtures with useAST: true, verify interfaces/decorators detected, confirm accuracy reaches 95%+"
+    },
+    "task_2": {
+      "description": "P1.2: Context-Aware Comment Filtering",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/scanner.ts",
+        "changes": [
+          "Add skipComments: 'smart' | 'basic' | false to ScanOptions",
+          "Modify isLineCommented() to accept mode parameter",
+          "For 'smart' mode: use acorn.parse with onComment callback to get accurate comment ranges",
+          "Track string/template literal contexts to avoid false positives on 'https://' patterns",
+          "Track regex literal contexts to avoid false positives on '//' in regex"
+        ]
+      },
+      "validation": "Test on edge cases: JSDoc comments, template strings with //, regex literals with //, multi-line comments with code. Verify false negative reduction by 10-15%"
+    },
+    "task_3": {
+      "description": "P2.4: Parallel File Processing with Worker Threads",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/parallel-scanner.ts (new file)",
+        "changes": [
+          "Create Worker thread pool using Node worker_threads module",
+          "Distribute file list across workers (chunk files into batches)",
+          "Each worker runs scanFile() independently",
+          "Main thread aggregates ElementData[] results from all workers",
+          "Add parallelism: number option to ScanOptions (default: os.cpus().length)"
+        ]
+      },
+      "validation": "Benchmark 500-file scan: target 300-400ms (vs 1185ms baseline). Verify results identical to single-threaded scan."
+    },
+    "task_4": {
+      "description": "P2.5: Content-Aware LRU Caching",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/cache.ts (new file)",
+        "changes": [
+          "Replace Map with LRU cache (use lru-cache npm package)",
+          "Use content hash (crypto.createHash('sha256').update(content)) as cache key instead of mtime",
+          "Add TTL: 1 hour default, configurable via ScanOptions.cacheTTL",
+          "Add max memory: 50MB cap, evict least-recently-used entries",
+          "Track cache hit/miss stats for debugging"
+        ]
+      },
+      "validation": "Verify memory usage stays under 50MB during large scans, verify cache hits on repeated scans, verify invalidation on file changes"
+    },
+    "task_5": {
+      "description": "P3.7: Enhanced ElementData with Relationships",
+      "implementation": {
+        "file": "packages/coderef-core/src/types/types.ts",
+        "changes": [
+          "Extend ElementData interface to add: imports?: string[], exports?: string[], dependencies?: string[], complexity?: number, usedBy?: string[]",
+          "Update scanner to populate these fields from AST analysis",
+          "Track import statements: ts.isImportDeclaration → extract module path",
+          "Track export statements: hasExportModifier → set exports: [moduleName]",
+          "Track function calls within functions → set dependencies: [calledFunctionNames]"
+        ]
+      },
+      "validation": "Scan test fixtures, verify ElementData includes imports/exports/dependencies fields, verify accuracy of relationship tracking"
+    },
+    "task_6": {
+      "description": "P3.8: Dynamic Code Detection",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/scanner.ts",
+        "changes": [
+          "Add regex patterns for dynamic imports: /import\\(['\"](.*?)['\"]\\)/, /require\\(['\"](.*?)['\"]\\)/",
+          "Add detection for eval patterns: /eval\\(/, /Function\\(/",
+          "Store in ElementData.dynamicImports?: string[] field",
+          "Flag elements using dynamic code with warning in reports"
+        ]
+      },
+      "validation": "Test on code with import(), require(), eval(). Verify detection and storage in ElementData."
+    },
+    "task_7": {
+      "description": "P4.11: Progress Reporting",
+      "implementation": {
+        "file": "packages/coderef-core/src/scanner/scanner.ts",
+        "changes": [
+          "Import EventEmitter from 'events'",
+          "Create ScannerEmitter extends EventEmitter",
+          "Emit events: 'start' (totalFiles), 'file:start' (filePath), 'file:complete' (filePath, elements), 'file:error' (filePath, error), 'complete' (allElements)",
+          "Add onProgress?: (event) => void callback to ScanOptions",
+          "Allow streaming partial results via 'file:complete' event"
+        ]
+      },
+      "validation": "Test on large project (5000+ files), verify progress events fire correctly, verify streaming results work, verify no performance degradation"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-SCANNER-IMPROVEMENTS-PHASE2-001",
+    "feature_name": "scanner-improvements-phase2",
+    "requirements": [
+      "AST scanner integration with useAST option",
+      "95%+ accuracy for TypeScript/JavaScript",
+      "3-5x performance improvement via parallelization",
+      "Memory capped at 50MB via LRU caching",
+      "Enhanced ElementData with relationships",
+      "Dynamic import/require detection",
+      "Progress reporting for large projects"
+    ],
+    "constraints": [
+      "Zero breaking changes to existing API",
+      "Maintain backward compatibility with regex-only mode",
+      "TypeScript compilation must pass",
+      "All existing tests must pass"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "TypeScript compiles, scanner.ts has useAST option, ast-element-scanner.ts detects interfaces/decorators/properties, accuracy reaches 95%+",
+    "task_2": "isLineCommented() has smart mode, false negatives reduced by 10-15%, edge cases handled",
+    "task_3": "parallel-scanner.ts created, 500-file scan completes in 300-400ms, results match single-threaded",
+    "task_4": "cache.ts with LRU eviction, memory capped at 50MB, content-hash keys, TTL working",
+    "task_5": "ElementData extended with imports/exports/dependencies/complexity/usedBy fields, scanner populates them",
+    "task_6": "Dynamic imports detected via regex, stored in ElementData.dynamicImports[]",
+    "task_7": "EventEmitter with progress events, onProgress callback working, streaming results enabled"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-core-phase1-scanner-improvements.md",
+    "format": "markdown",
+    "sections": [
+      "## Executive Summary",
+      "## Tasks Completed (7/7)",
+      "## Code Changes (files modified/created, lines added)",
+      "## Success Metrics Achieved (accuracy, performance, memory)",
+      "## Testing Results (compilation, benchmarks, validation)",
+      "## Integration Notes for Phase 2 (what coderef-docs and coderef-workflow can now leverage)",
+      "## Breaking Changes (should be zero)",
+      "## Next Steps (recommendations for ecosystem integration)"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All 7 tasks status='complete' in communication.json",
+    "TypeScript compilation passes with 0 errors",
+    "Performance benchmark: 500 files in 300-400ms",
+    "Accuracy validation: 95%+ on test fixtures",
+    "Memory validation: < 50MB during scan",
+    "Output created: outputs/coderef-core-phase1-scanner-improvements.md",
+    "communication.json updated with status='complete'"
+  ]
+}

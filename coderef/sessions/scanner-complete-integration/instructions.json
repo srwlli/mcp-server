@@ -1,0 +1,38 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "task": "Complete Scanner Ecosystem Integration",
+  "description": "Implement remaining scanner improvements and integrate across coderef-docs and coderef-workflow for complete ecosystem leverage",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate 3 phases sequentially, validate phase gates, synthesize cross-agent results",
+    "steps": {
+      "step_1": "READ all agent outputs from their outputs/ subdirectories",
+      "step_2": "VALIDATE phase gate criteria for each phase",
+      "step_3": "SYNTHESIZE results into orchestrator-synthesis.md with cross-phase integration validation",
+      "step_4": "UPDATE session-level communication.json with phase statuses and completion"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Execute phase-specific tasks in isolated subdirectory, update communication.json incrementally",
+    "steps": {
+      "step_1": "READ resources/index.md to access all source documents and specifications",
+      "step_2": "READ your agent-specific instructions.json for detailed task breakdown",
+      "step_3": "Use context_json_template to create workorder in your agent home project",
+      "step_4": "FOR EACH TASK: Execute implementation → UPDATE communication.json task.status='complete' → REPEAT",
+      "step_5": "AFTER ALL TASKS: Update communication.json status='complete' with completion timestamp",
+      "step_6": "CREATE outputs in outputs/ directory with final results",
+      "step_7": "VALIDATE phase_gate_checklist - all criteria must be met before marking complete"
+    }
+  },
+
+  "output_format": "markdown",
+
+  "output_template": "Each agent creates markdown report in outputs/ subdirectory documenting: (1) Tasks completed, (2) Code changes made, (3) Integration points, (4) Success metrics achieved, (5) Testing results",
+
+  "quality_standards": {
+    "completeness": "All tasks in agent's phase complete, all success metrics achieved, all outputs validated",
+    "accuracy": "Code compiles, tests pass, integration points verified, no breaking changes",
+    "format": "Markdown reports with code snippets, metrics tables, validation results"
+  }
+}

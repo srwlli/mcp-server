@@ -1,0 +1,68 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-WORKFLOW",
+  "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "agent_id": "coderef-workflow",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+  "phase": "phase_3",
+  "role": "Integrate enhanced scanner outputs into planning workflows, impact analysis, and execution tracking",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Update planning workflows (gather_context, create_plan) to use 95% accurate scanner data with full type coverage",
+      "status": "not_started",
+      "implementation": "Modify gather_context to read interfaces/decorators/type aliases from ElementData. Enhance create_plan to consider complexity metrics when estimating task effort and risk."
+    },
+    {
+      "task_id": "task_2",
+      "description": "Enhance impact analysis to leverage relationship data (imports/exports/dependencies) for accurate change impact assessment",
+      "status": "not_started",
+      "implementation": "Update impact analysis functions to use ElementData.dependencies, ElementData.usedBy for transitive dependency analysis. Generate impact graphs showing downstream effects."
+    },
+    {
+      "task_id": "task_3",
+      "description": "Integrate complexity data into execution tracking for refactoring prioritization and risk assessment",
+      "status": "not_started",
+      "implementation": "Add complexity scores to task breakdown, flag high-complexity elements (>10) as refactoring candidates, adjust time estimates based on complexity."
+    }
+  ],
+
+  "success_metrics": {
+    "planning_accuracy": {
+      "baseline": "85% code coverage in plans",
+      "target": "95%+ coverage (includes interfaces, decorators)",
+      "status": "Not started"
+    },
+    "impact_precision": {
+      "baseline": "Manual dependency tracing",
+      "target": "Automated transitive impact analysis",
+      "status": "Not started"
+    },
+    "effort_estimation": {
+      "baseline": "Generic time estimates",
+      "target": "Complexity-based effort estimation",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-workflow-phase3-integration.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": false,
+    "criteria": [
+      "All 3 tasks marked complete",
+      "Planning workflows include full type coverage (interfaces/decorators)",
+      "Impact analysis uses relationship graphs",
+      "Execution tracking incorporates complexity metrics",
+      "Output created: outputs/coderef-workflow-phase3-integration.md"
+    ]
+  }
+}

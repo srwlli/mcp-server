@@ -1,0 +1,81 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-DOCS",
+  "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "agent_id": "coderef-docs",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "phase": "phase_2",
+  "role": "Integrate enhanced scanner outputs into foundation docs, resource sheets, and doc generation workflows",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Update foundation doc generation to leverage 95% AST accuracy (interfaces, decorators, type aliases)",
+      "status": "not_started",
+      "implementation": "Modify generate_foundation_docs to detect and document interfaces, decorators, type aliases in API.md and ARCHITECTURE.md. Use ElementData.type to filter by interface/decorator."
+    },
+    {
+      "task_id": "task_2",
+      "description": "Integrate complexity metrics into resource sheet generation for refactoring guidance",
+      "status": "not_started",
+      "implementation": "Modify generate_resource_sheet to include ElementData.complexity field. Add 'Complexity' section with hotspot identification, refactoring recommendations based on cyclomatic complexity."
+    },
+    {
+      "task_id": "task_3",
+      "description": "Leverage relationship data (imports/exports/dependencies) for architecture documentation",
+      "status": "not_started",
+      "implementation": "Update ARCHITECTURE.md generation to use ElementData.imports/exports/dependencies for dependency graphs, module coupling analysis, architectural insights."
+    },
+    {
+      "task_id": "task_4",
+      "description": "Add dynamic import detection warnings to generated documentation",
+      "status": "not_started",
+      "implementation": "Check ElementData.dynamicImports[] field, add warning sections in docs where dynamic imports detected, flag potential runtime issues."
+    }
+  ],
+
+  "success_metrics": {
+    "doc_accuracy": {
+      "baseline": "85% (missing interfaces, decorators)",
+      "target": "95%+ (complete type coverage)",
+      "status": "Not started"
+    },
+    "complexity_insights": {
+      "baseline": "No complexity data in docs",
+      "target": "Complexity sections with refactoring guidance",
+      "status": "Not started"
+    },
+    "relationship_mapping": {
+      "baseline": "Manual dependency analysis",
+      "target": "Automated dependency graphs from scanner",
+      "status": "Not started"
+    },
+    "dynamic_code_warnings": {
+      "baseline": "No detection",
+      "target": "Warnings flagged in generated docs",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-docs-phase2-integration.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": false,
+    "required_for_phase_3": true,
+    "criteria": [
+      "All 4 tasks marked complete",
+      "Foundation docs include interfaces/decorators/type aliases",
+      "Resource sheets show complexity metrics and hotspots",
+      "Architecture docs show relationship graphs",
+      "Dynamic import warnings appear in generated docs",
+      "Output created: outputs/coderef-docs-phase2-integration.md"
+    ]
+  }
+}

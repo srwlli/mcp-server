@@ -1,0 +1,111 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-WORKFLOW",
+  "agent_id": "coderef-workflow",
+  "phase": "phase_3",
+  "role": "Integrate scanner improvements into planning and execution workflows",
+
+  "context": {
+    "problem": "Planning workflows miss interfaces/decorators in plans, impact analysis is manual, effort estimates ignore complexity",
+    "solution": "Leverage Phase 1 scanner data (95% accuracy, relationships, complexity) for accurate planning, automated impact analysis, complexity-based estimation",
+    "impact": "Better planning decisions, accurate change impact assessment, realistic effort estimates based on code complexity"
+  },
+
+  "execution_steps": {
+    "step_1": "WAIT for Phase 1 completion - check ../coderef-core/communication.json status='complete'",
+    "step_2": "READ resources/index.md to access workflow tools and scanner output specifications",
+    "step_3": "Use context_json_template to create workorder in coderef-workflow project: WO-WORKFLOW-SCANNER-INTEGRATION-001",
+    "step_4": "FOR EACH TASK: Implement integration → Test workflow → UPDATE communication.json task.status='complete' → REPEAT",
+    "step_5": "AFTER ALL TASKS: Run integration tests on sample planning scenarios, update communication.json status='complete'",
+    "step_6": "CREATE outputs/coderef-workflow-phase3-integration.md with integration summary and workflow improvements",
+    "step_7": "VALIDATE phase_gate_checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Planning Workflows - Full Type Coverage",
+      "implementation": {
+        "file": "src/handlers/gather_context.py",
+        "changes": [
+          "Read ElementData filtering by all types including 'interface', 'decorator', 'type'",
+          "Add 'Type System' section to context output with interfaces and type aliases",
+          "Add 'Decorators' section to context output with decorator usage patterns",
+          "Update create_plan.py to consider type complexity when estimating tasks"
+        ]
+      },
+      "validation": "Run gather_context on TypeScript project with interfaces/decorators, verify they appear in context output. Generate plan and verify type-aware task breakdown."
+    },
+    "task_2": {
+      "description": "Impact Analysis - Relationship Graphs",
+      "implementation": {
+        "file": "src/handlers/impact_analysis.py (new or existing)",
+        "changes": [
+          "Read ElementData.dependencies and ElementData.usedBy fields",
+          "Implement transitive dependency traversal: find all downstream dependents",
+          "Generate impact graph: visualize which elements are affected by a change",
+          "Add impact score: count of affected elements",
+          "Output impact report with affected files, functions, and risk level"
+        ]
+      },
+      "validation": "Run impact analysis on function with deep dependency chain, verify transitive dependencies discovered, impact graph generated"
+    },
+    "task_3": {
+      "description": "Execution Tracking - Complexity Metrics",
+      "implementation": {
+        "file": "src/handlers/execute_plan.py",
+        "changes": [
+          "Read ElementData.complexity field for each element in task",
+          "Calculate task complexity score: sum(element.complexity for element in task)",
+          "Adjust time estimates: low complexity (1-5): 1x, medium (6-10): 1.5x, high (>10): 2x multiplier",
+          "Flag high-complexity elements as refactoring candidates in task notes",
+          "Add complexity metrics to deliverables report"
+        ]
+      },
+      "validation": "Generate plan for feature touching high-complexity code, verify time estimates adjusted, refactoring flags present"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-WORKFLOW-SCANNER-INTEGRATION-001",
+    "feature_name": "workflow-scanner-integration",
+    "requirements": [
+      "Planning workflows include interfaces, decorators, type aliases",
+      "Impact analysis uses relationship graphs for transitive dependencies",
+      "Execution tracking incorporates complexity-based effort estimation",
+      "Backward compatible with pre-Phase 1 scanner data"
+    ],
+    "constraints": [
+      "No breaking changes to workflow API",
+      "Handle missing complexity/relationship fields gracefully",
+      "Maintain performance (impact analysis must be fast)"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "gather_context includes Type System and Decorators sections, create_plan considers type complexity",
+    "task_2": "Impact analysis generates transitive dependency graphs, calculates impact scores, produces risk reports",
+    "task_3": "execute_plan adjusts time estimates based on complexity, flags refactoring candidates, includes metrics in deliverables"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-workflow-phase3-integration.md",
+    "format": "markdown",
+    "sections": [
+      "## Executive Summary",
+      "## Tasks Completed (3/3)",
+      "## Integration Points (which workflow tools updated)",
+      "## Workflow Improvements (before/after comparisons)",
+      "## Success Metrics Achieved",
+      "## Performance Impact",
+      "## Ecosystem Integration Complete (full scanner → docs → workflow chain)"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All 3 tasks status='complete' in communication.json",
+    "Planning workflows tested with full type coverage",
+    "Impact analysis tested with relationship graphs",
+    "Execution tracking tested with complexity metrics",
+    "Output created: outputs/coderef-workflow-phase3-integration.md",
+    "communication.json updated with status='complete'"
+  ]
+}

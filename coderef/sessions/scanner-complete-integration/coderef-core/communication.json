@@ -1,0 +1,99 @@
+{
+  "workorder_id": "WO-SCANNER-COMPLETE-INTEGRATION-001-CODEREF-CORE",
+  "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "agent_id": "coderef-core",
+  "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+  "phase": "phase_1",
+  "role": "Implement 7 remaining scanner improvements: AST integration, comment filtering, parallel processing, LRU caching, enhanced relationships, dynamic code detection, progress reporting",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "P1.1: Integrate AST scanner into main scanner.ts with useAST option, add interface/type/decorator/property detection",
+      "status": "not_started",
+      "implementation": "Modify scanner.ts to add useAST option, call ASTElementScanner when enabled, add fallback to regex on errors. Extend ast-element-scanner.ts to detect ts.isInterfaceDeclaration, ts.isTypeAliasDeclaration, ts.getDecorators, class properties."
+    },
+    {
+      "task_id": "task_2",
+      "description": "P1.2: Implement context-aware comment filtering with smart detection of JSDoc, template strings, regex literals",
+      "status": "not_started",
+      "implementation": "Add skipComments: 'smart' | 'basic' | false option. Use acorn onComment callback for smart mode, track string/template/regex context to avoid false positives."
+    },
+    {
+      "task_id": "task_3",
+      "description": "P2.4: Implement parallel file processing with worker thread pool for 3-5x performance boost",
+      "status": "not_started",
+      "implementation": "Create worker thread pool, distribute files across workers, aggregate results. Target: 1185ms → 300-400ms for 500 files."
+    },
+    {
+      "task_id": "task_4",
+      "description": "P2.5: Replace mtime-only caching with content-aware LRU caching with TTL and 50MB cap",
+      "status": "not_started",
+      "implementation": "Use content hash (not just mtime) for cache keys, implement LRU eviction policy, add TTL expiration, cap memory at 50MB."
+    },
+    {
+      "task_id": "task_5",
+      "description": "P3.7: Enhance ElementData with relationships (imports, dependencies, complexity) for richer context",
+      "status": "not_started",
+      "implementation": "Extend ElementData interface to include: imports[], exports[], dependencies[], complexity: number, usedBy[]."
+    },
+    {
+      "task_id": "task_6",
+      "description": "P3.8: Add dynamic code detection layer for import(), require(), eval patterns",
+      "status": "not_started",
+      "implementation": "Add patterns to detect dynamic imports: import(), require(), System.import(). Track in ElementData.dynamicImports[]."
+    },
+    {
+      "task_id": "task_7",
+      "description": "P4.11: Add progress reporting and streaming results for large projects (5000+ files)",
+      "status": "not_started",
+      "implementation": "Implement event emitter for scan progress, emit events for file start/complete/error, allow streaming partial results."
+    }
+  ],
+
+  "success_metrics": {
+    "accuracy": {
+      "baseline": "85%",
+      "target": "95%+",
+      "status": "Not started"
+    },
+    "performance": {
+      "baseline": "1185ms (500 files)",
+      "target": "300-400ms (3-5x faster)",
+      "status": "Not started"
+    },
+    "memory": {
+      "baseline": "Unbounded (Map leak)",
+      "target": "Capped at 50MB (LRU)",
+      "status": "Not started"
+    },
+    "coverage": {
+      "baseline": "7 element types",
+      "target": "12+ types (interfaces, decorators, properties, type aliases)",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-core-phase1-scanner-improvements.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 7 tasks marked complete",
+      "AST scanner integrated with useAST option working",
+      "Performance improvement validated: 3-5x faster",
+      "Accuracy improvement validated: 95%+",
+      "Memory capped at 50MB with LRU",
+      "TypeScript compilation passes, 0 breaking changes",
+      "Output created: outputs/coderef-core-phase1-scanner-improvements.md"
+    ]
+  }
+}

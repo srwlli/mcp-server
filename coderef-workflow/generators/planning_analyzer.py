@@ -453,6 +453,11 @@ class PlanningAnalyzer:
             logger.info("Generating architecture diagram...")
             architecture_diagram = await self.generate_architecture_diagram("dependencies", depth=2)
 
+        # NEW v2.1.0: Scanner Integration - Type System and Decorators
+        # WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-001 & IMPL-002
+        type_system = await self.get_type_system_elements()
+        decorators = await self.get_decorator_elements()
+
         # Build result
         result: PreparationSummaryDict = {
             'foundation_docs': foundation_docs,
@@ -468,7 +473,10 @@ class PlanningAnalyzer:
             'dependency_analysis': dependency_analysis,
             'impact_analysis': impact_analysis,
             'complexity_analysis': complexity_analysis,
-            'architecture_diagram': architecture_diagram
+            'architecture_diagram': architecture_diagram,
+            # NEW v2.1.0: Scanner Integration - Type System and Decorators
+            'type_system': type_system,
+            'decorators': decorators
         }
 
         duration = time.time() - start_time
@@ -1361,6 +1369,114 @@ class PlanningAnalyzer:
             logger.debug(f"coderef_diagram unavailable: {str(e)}")
 
         return None
+
+    async def get_type_system_elements(self) -> dict:
+        """
+        Extract type system elements (interfaces, type aliases) from .coderef/index.json.
+
+        Part of WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-001:
+        Adds full type coverage for planning workflows by detecting TypeScript/JavaScript
+        interfaces and type aliases from AST scanner data.
+
+        Returns:
+            dict with 'interfaces' and 'type_aliases' arrays, each containing
+            {name, file, line} objects
+        """
+        logger.debug("Extracting type system elements...")
+
+        interfaces = []
+        type_aliases = []
+
+        try:
+            # Read .coderef/index.json for element inventory
+            elements = read_coderef_output(str(self.project_path), 'index')
+
+            if not elements:
+                logger.debug("No elements found in .coderef/index.json")
+                return {'interfaces': [], 'type_aliases': []}
+
+            self._track_coderef_file_read('.coderef/index.json (type system)')
+
+            # Filter by type='interface' and type='type'
+            for element in elements:
+                elem_type = element.get('type')
+                name = element.get('name')
+                file_path = element.get('file', '')
+                line = element.get('line', 0)
+
+                # Skip .venv files
+                if '.venv' in file_path or 'node_modules' in file_path:
+                    continue
+
+                if elem_type == 'interface':
+                    interfaces.append({
+                        'name': name,
+                        'file': file_path,
+                        'line': line
+                    })
+                elif elem_type == 'type':
+                    type_aliases.append({
+                        'name': name,
+                        'file': file_path,
+                        'line': line
+                    })
+
+            logger.info(f"Found {len(interfaces)} interfaces, {len(type_aliases)} type aliases")
+
+        except Exception as e:
+            logger.warning(f"Failed to extract type system elements: {str(e)}")
+
+        return {
+            'interfaces': interfaces,
+            'type_aliases': type_aliases
+        }
+
+    async def get_decorator_elements(self) -> list:
+        """
+        Extract decorator usage patterns from .coderef/index.json.
+
+        Part of WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-002:
+        Adds decorator detection for Python @decorator and TypeScript @Decorator patterns.
+
+        Returns:
+            list of {name, target, file, line} objects for each decorator found
+        """
+        logger.debug("Extracting decorator elements...")
+
+        decorators = []
+
+        try:
+            # Read .coderef/index.json for element inventory
+            elements = read_coderef_output(str(self.project_path), 'index')
+
+            if not elements:
+                logger.debug("No elements found in .coderef/index.json")
+                return []
+
+            self._track_coderef_file_read('.coderef/index.json (decorators)')
+
+            # Filter by type='decorator'
+            for element in elements:
+                if element.get('type') == 'decorator':
+                    file_path = element.get('file', '')
+
+                    # Skip .venv files
+                    if '.venv' in file_path or 'node_modules' in file_path:
+                        continue
+
+                    decorators.append({
+                        'name': element.get('name'),
+                        'target': 'function/class',  # Could be enhanced with actual target info
+                        'file': file_path,
+                        'line': element.get('line', 0)
+                    })
+
+            logger.info(f"Found {len(decorators)} decorators")
+
+        except Exception as e:
+            logger.warning(f"Failed to extract decorators: {str(e)}")
+
+        return decorators
 
     def _scan_source_files(self) -> List[Path]:
         """

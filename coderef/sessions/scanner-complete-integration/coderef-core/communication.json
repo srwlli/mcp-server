@@ -11,7 +11,7 @@
     {
       "task_id": "task_1",
       "description": "P1.1: Integrate AST scanner into main scanner.ts with useAST option, add interface/type/decorator/property detection",
-      "status": "not_started",
+      "status": "complete",
       "implementation": "Modify scanner.ts to add useAST option, call ASTElementScanner when enabled, add fallback to regex on errors. Extend ast-element-scanner.ts to detect ts.isInterfaceDeclaration, ts.isTypeAliasDeclaration, ts.getDecorators, class properties."
     },
     {
@@ -23,13 +23,13 @@
     {
       "task_id": "task_3",
       "description": "P2.4: Implement parallel file processing with worker thread pool for 3-5x performance boost",
-      "status": "not_started",
+      "status": "complete",
       "implementation": "Create worker thread pool, distribute files across workers, aggregate results. Target: 1185ms → 300-400ms for 500 files."
     },
     {
       "task_id": "task_4",
       "description": "P2.5: Replace mtime-only caching with content-aware LRU caching with TTL and 50MB cap",
-      "status": "not_started",
+      "status": "complete",
       "implementation": "Use content hash (not just mtime) for cache keys, implement LRU eviction policy, add TTL expiration, cap memory at 50MB."
     },
     {

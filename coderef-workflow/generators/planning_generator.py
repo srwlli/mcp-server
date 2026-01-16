@@ -977,16 +977,42 @@ Generate the complete plan now. Be specific, reference actual files, and use the
         """Generate Section 2: Risk Assessment."""
         requirements_count = len(context.get("requirements", [])) if context else 0
 
-        # Estimate complexity based on requirements count
-        if requirements_count <= 3:
+        # NEW v2.1.0: Scanner Integration - Consider type system complexity
+        # WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-003
+        type_system_count = 0
+        decorator_count = 0
+
+        if analysis:
+            type_system = analysis.get('type_system', {})
+            decorators = analysis.get('decorators', [])
+
+            interfaces = type_system.get('interfaces', [])
+            type_aliases = type_system.get('type_aliases', [])
+
+            type_system_count = len(interfaces) + len(type_aliases)
+            decorator_count = len(decorators)
+
+        # Estimate complexity based on requirements + type system count
+        # Heuristic: >10 interfaces or >5 decorators increases complexity
+        base_complexity = requirements_count
+        if type_system_count > 10:
+            base_complexity += 2  # Heavy type usage increases complexity
+        if decorator_count > 5:
+            base_complexity += 1  # Many decorators suggest complex patterns
+
+        if base_complexity <= 3:
             complexity = "low (estimated 3-5 files, <200 lines)"
             overall_risk = "low"
-        elif requirements_count <= 8:
+        elif base_complexity <= 8:
             complexity = "medium (estimated 5-15 files, 200-1000 lines)"
             overall_risk = "medium"
         else:
             complexity = "high (estimated 15+ files, 1000+ lines)"
             overall_risk = "medium"
+
+        # Add note if type system complexity contributed
+        if type_system_count > 10 or decorator_count > 5:
+            complexity += f" (includes {type_system_count} types, {decorator_count} decorators)"
 
         # Get constraints as dependencies
         constraints = context.get("constraints", []) if context else []

@@ -369,6 +369,23 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
         result += "2. Extract relevant elements based on template type\n"
         result += "3. Populate templates with real code data\n"
         result += "4. Performance: < 50ms per doc (file read only)\n\n"
+
+        # WO-DOCS-SCANNER-INTEGRATION-001: Add AST type filtering instructions
+        result += "ENHANCED SCANNER INTEGRATION (v4.1.0):\n"
+        result += "When reading index.json, filter for enhanced AST types:\n"
+        result += "\nPython filtering examples:\n"
+        result += "```python\n"
+        result += "# Filter for interfaces (TypeScript)\n"
+        result += "interfaces = [e for e in elements if e.get('type') == 'interface']\n\n"
+        result += "# Filter for type aliases\n"
+        result += "type_aliases = [e for e in elements if e.get('type') == 'type']\n\n"
+        result += "# Filter for decorators\n"
+        result += "decorators = [e for e in elements if e.get('type') == 'decorator']\n"
+        result += "```\n\n"
+        result += "NEW SECTIONS TO INCLUDE:\n"
+        result += "- API.md: Add 'Interfaces' and 'Type Aliases' sections\n"
+        result += "- ARCHITECTURE.md: Add 'Decorators' section with usage patterns\n"
+        result += "- Handle gracefully if type field missing (old scanner output)\n\n"
     else:
         result += f"⚠ WARNING: .coderef/ resources not found!\n\n"
         result += f"Missing: {', '.join(resources['missing'])}\n\n"

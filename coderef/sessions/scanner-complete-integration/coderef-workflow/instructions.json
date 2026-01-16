@@ -13,7 +13,7 @@
   "execution_steps": {
     "step_1": "WAIT for Phase 1 completion - check ../coderef-core/communication.json status='complete'",
     "step_2": "READ resources/index.md to access workflow tools and scanner output specifications",
-    "step_3": "Use context_json_template to create workorder in coderef-workflow project: WO-WORKFLOW-SCANNER-INTEGRATION-001",
+    "step_3": "RUN /create-workorder in coderef-workflow project to create WO-WORKFLOW-SCANNER-INTEGRATION-001 workorder using context_json_template (creates coderef/workorder/workflow-scanner-integration/ with context.json, analysis.json, plan.json)",
     "step_4": "FOR EACH TASK: Implement integration → Test workflow → UPDATE communication.json task.status='complete' → REPEAT",
     "step_5": "AFTER ALL TASKS: Run integration tests on sample planning scenarios, update communication.json status='complete'",
     "step_6": "CREATE outputs/coderef-workflow-phase3-integration.md with integration summary and workflow improvements",

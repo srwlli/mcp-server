@@ -37,7 +37,9 @@
       "mcp__coderef-workflow__analyze_project_for_planning",
       "mcp__coderef-workflow__validate_implementation_plan",
       "Bash(git push:*)",
-      "mcp__coderef-context__coderef_scan"
+      "mcp__coderef-context__coderef_scan",
+      "SlashCommand(/create-workorder)",
+      "Bash(if not exist \"coderef\\workorder\\workflow-scanner-integration\" mkdir \"coderef\\workorder\\workflow-scanner-integration\")"
     ],
     "deny": [],
     "ask": []

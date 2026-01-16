@@ -21,6 +21,11 @@ from logger_config import logger
 from constants import EXCLUDE_DIRS, ALLOWED_FILE_EXTENSIONS
 from mcp_client import call_coderef_tool
 
+# NEW v2.1.0: Scanner Integration - Import ImpactAnalyzer
+# WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-007
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from handlers import ImpactAnalyzer
+
 __all__ = ['PlanningAnalyzer']
 
 
@@ -458,6 +463,19 @@ class PlanningAnalyzer:
         type_system = await self.get_type_system_elements()
         decorators = await self.get_decorator_elements()
 
+        # NEW v2.1.0: Scanner Integration - Change Impact Analysis
+        # WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-007
+        # Analyze impact if entry point or critical elements identified
+        change_impact = None
+        if target_element:
+            logger.info(f"Running change impact analysis for: {target_element}")
+            change_impact = await self.analyze_change_impact([target_element], max_depth=3)
+
+            # Add impact warnings to gaps_and_risks if high-risk changes detected
+            if change_impact and change_impact.get('warnings'):
+                for warning in change_impact['warnings']:
+                    gaps_and_risks.append(warning['message'])
+
         # Build result
         result: PreparationSummaryDict = {
             'foundation_docs': foundation_docs,
@@ -474,9 +492,10 @@ class PlanningAnalyzer:
             'impact_analysis': impact_analysis,
             'complexity_analysis': complexity_analysis,
             'architecture_diagram': architecture_diagram,
-            # NEW v2.1.0: Scanner Integration - Type System and Decorators
+            # NEW v2.1.0: Scanner Integration - Type System, Decorators, and Change Impact
             'type_system': type_system,
-            'decorators': decorators
+            'decorators': decorators,
+            'change_impact_analysis': change_impact
         }
 
         duration = time.time() - start_time
@@ -1477,6 +1496,77 @@ class PlanningAnalyzer:
             logger.warning(f"Failed to extract decorators: {str(e)}")
 
         return decorators
+
+    async def analyze_change_impact(self, element_names: List[str] = None, max_depth: int = 3) -> Optional[Dict]:
+        """
+        Analyze impact of changing specific elements using ImpactAnalyzer.
+
+        Part of WO-WORKFLOW-SCANNER-INTEGRATION-001 IMPL-007:
+        Integrates impact analysis into planning workflow to automatically detect
+        high-risk changes and provide warnings in analysis.json.
+
+        Args:
+            element_names: List of element names to analyze (if None, analyzes entry point)
+            max_depth: Maximum dependency traversal depth
+
+        Returns:
+            dict with:
+            - high_risk_changes: List of elements with high/critical impact
+            - impact_reports: Dict mapping element_name -> impact report
+            - warnings: List of warning messages for analysis.json
+        """
+        logger.debug("Analyzing change impact...")
+
+        if not element_names:
+            # No specific elements provided - skip impact analysis
+            logger.debug("No elements specified for impact analysis")
+            return None
+
+        try:
+            analyzer = ImpactAnalyzer(self.project_path)
+
+            high_risk_changes = []
+            impact_reports = {}
+            warnings = []
+
+            for elem_name in element_names:
+                result = analyzer.analyze_element_impact(elem_name, max_depth=max_depth)
+
+                if result:
+                    impact_score = result.get('impact_score', {})
+                    risk_level = impact_score.get('risk_level', 'low')
+                    affected_count = impact_score.get('affected_count', 0)
+
+                    # Flag high and critical risk changes
+                    if risk_level in ['high', 'critical']:
+                        high_risk_changes.append({
+                            'element': elem_name,
+                            'risk_level': risk_level,
+                            'affected_count': affected_count
+                        })
+
+                        warnings.append({
+                            'type': 'high_impact_change',
+                            'element': elem_name,
+                            'message': f"Changing '{elem_name}' affects {affected_count} elements ({risk_level} risk)",
+                            'recommendation': "Review impact report and consider phased implementation"
+                        })
+
+                    # Store impact report
+                    impact_reports[elem_name] = result.get('report', '')
+
+            logger.info(f"Impact analysis complete: {len(high_risk_changes)} high-risk changes detected")
+
+            return {
+                'high_risk_changes': high_risk_changes,
+                'impact_reports': impact_reports,
+                'warnings': warnings,
+                'total_elements_analyzed': len(element_names)
+            }
+
+        except Exception as e:
+            logger.warning(f"Impact analysis failed: {str(e)}")
+            return None
 
     def _scan_source_files(self) -> List[Path]:
         """

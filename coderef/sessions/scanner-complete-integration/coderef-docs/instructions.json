@@ -14,6 +14,7 @@
     "step_1": "WAIT for Phase 1 completion - check ../coderef-core/communication.json status='complete'",
     "step_2": "READ resources/index.md to access doc generation tools and scanner output specifications",
     "step_3": "RUN /create-workorder in coderef-docs project to create WO-DOCS-SCANNER-INTEGRATION-001 workorder using context_json_template (creates coderef/workorder/docs-scanner-integration/ with context.json, analysis.json, plan.json)",
+    "step_3b": "UPDATE communication.json file: (1) Add workorder details to outputs.workorders_created[] array with workorder_id, feature_name, location, plan_path, status='in_progress', created_at timestamp, (2) Update status from 'not_started' to 'in_progress'. This enables session dashboard tracking.",
     "step_4": "FOR EACH TASK: Implement integration → Test doc generation → UPDATE communication.json task.status='complete' → REPEAT",
     "step_5": "AFTER ALL TASKS: Generate sample docs with enhanced data, validate improvements, update communication.json status='complete'",
     "step_6": "CREATE outputs/coderef-docs-phase2-integration.md with integration summary and sample outputs",

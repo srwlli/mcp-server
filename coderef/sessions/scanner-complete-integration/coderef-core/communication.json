@@ -5,7 +5,7 @@
   "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
   "phase": "phase_1",
   "role": "Implement 7 remaining scanner improvements: AST integration, comment filtering, parallel processing, LRU caching, enhanced relationships, dynamic code detection, progress reporting",
-  "status": "not_started",
+  "status": "in_progress",
 
   "tasks": [
     {
@@ -80,6 +80,16 @@
   },
 
   "outputs": {
+    "workorders_created": [
+      {
+        "workorder_id": "WO-SCANNER-INTEGRATION-001",
+        "feature_name": "scanner-integration",
+        "location": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\coderef\\workorder\\scanner-integration",
+        "plan_path": "coderef/workorder/scanner-integration/plan.json",
+        "status": "in_progress",
+        "created_at": "2026-01-15T23:07:00.000Z"
+      }
+    ],
     "primary_output": "outputs/coderef-core-phase1-scanner-improvements.md",
     "format": "markdown"
   },

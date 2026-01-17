@@ -308,6 +308,51 @@ def identify_high_coupling(import_counts: dict[str, int], threshold: int = 5) ->
     return dict(sorted(high_deps.items(), key=lambda x: x[1], reverse=True))
 
 
+def generate_dependency_mermaid(import_counts: dict[str, int], limit: int = 10) -> str:
+    """
+    Generate Mermaid dependency diagram from import data.
+
+    WO-DOCS-SCANNER-INTEGRATION-001: IMPL-007
+    Creates a flowchart showing top N dependencies by usage count.
+    Limits to top N to keep diagrams readable for large codebases.
+
+    Args:
+        import_counts: Dict of module to usage count
+        limit: Maximum number of dependencies to include (default: 10)
+
+    Returns:
+        Mermaid diagram syntax as string
+
+    Example output:
+        ```mermaid
+        graph TD
+          Project --> acorn
+          Project --> typescript
+          Project --> fs/promises
+        ```
+    """
+    if not import_counts:
+        return "```mermaid\ngraph TD\n  Project[No dependencies detected]\n```"
+
+    # Sort by count and take top N
+    sorted_deps = sorted(import_counts.items(), key=lambda x: x[1], reverse=True)[:limit]
+
+    # Build Mermaid diagram
+    lines = ["```mermaid", "graph TD"]
+
+    # Add root node
+    lines.append("  Project[\"Project Root\"]")
+
+    # Add dependency edges
+    for module, count in sorted_deps:
+        # Sanitize module name for Mermaid (replace special chars)
+        safe_module = module.replace('/', '_').replace('@', '_').replace('.', '_')
+        lines.append(f"  Project --> {safe_module}[\"{module}<br/>({count} usages)\"]")
+
+    lines.append("```")
+    return "\n".join(lines)
+
+
 @log_invocation
 @mcp_error_handler
 async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
@@ -495,7 +540,22 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
         result += "  - Import Analysis (total unique modules, high-dependency count)\n"
         result += "  - Coupling Analysis table (module, usage count, category)\n"
         result += "  - Export Analysis (total exports, public API surface)\n"
-        result += "  - Dependency Graph (Mermaid diagram - see next section)\n\n"
+        result += "  - Dependency Graph (Mermaid diagram - see below)\n\n"
+
+        # WO-DOCS-SCANNER-INTEGRATION-001: IMPL-007 - Mermaid diagram instructions
+        result += "MERMAID DEPENDENCY DIAGRAM (v4.1.0):\n"
+        result += "Generate a Mermaid flowchart showing top 10-15 dependencies:\n\n"
+        result += "```mermaid\n"
+        result += "graph TD\n"
+        result += "  Project[\"Project Root\"]\n"
+        result += "  Project --> Module1[\"module-name<br/>(N usages)\"]\n"
+        result += "  Project --> Module2[\"another-module<br/>(N usages)\"]\n"
+        result += "```\n\n"
+        result += "Tips:\n"
+        result += "  - Limit to top 10-15 dependencies (sorted by usage count)\n"
+        result += "  - Sanitize module names (replace /, @, . with _)\n"
+        result += "  - Show usage count in node label\n"
+        result += "  - Keeps diagram readable for large codebases\n\n"
     else:
         result += f"⚠ WARNING: .coderef/ resources not found!\n\n"
         result += f"Missing: {', '.join(resources['missing'])}\n\n"

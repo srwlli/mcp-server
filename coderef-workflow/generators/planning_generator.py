@@ -1061,6 +1061,53 @@ Generate the complete plan now. Be specific, reference actual files, and use the
 
     # ========== End Refactoring Candidate Flagging ==========
 
+    def _calculate_average_complexity(
+        self,
+        analysis: Optional[Dict[str, Any]] = None
+    ) -> Optional[float]:
+        """
+        Calculate average complexity score from analysis data.
+
+        IMPL-010: WO-WORKFLOW-SCANNER-INTEGRATION-001
+        Extracts complexity metrics from analysis to drive effort estimation.
+
+        Args:
+            analysis: Optional analysis data
+
+        Returns:
+            Average complexity score (0-10) or None if unavailable
+        """
+        if not analysis:
+            return None
+
+        try:
+            # Try to extract complexity from preparation summary
+            prep_summary = analysis.get("preparation_summary", {})
+            patterns = prep_summary.get("key_patterns_identified", [])
+
+            if not patterns:
+                return None
+
+            # Use ComplexityEstimator to get actual scores
+            estimator = ComplexityEstimator(self.project_path)
+
+            # Estimate complexity for pattern names (proxy for element complexity)
+            complexity_result = estimator.estimate_task_complexity(patterns[:10])  # Limit to top 10
+
+            avg_score = complexity_result.get("avg_complexity_score")
+
+            if avg_score:
+                logger.debug(f"Calculated average complexity: {avg_score:.1f}")
+                return avg_score
+
+            return None
+
+        except Exception as e:
+            logger.debug(f"Could not calculate average complexity: {str(e)}")
+            return None
+
+    # ========== End Complexity Calculation ==========
+
     def _generate_preparation_section(
         self,
         context: Optional[Dict[str, Any]],
@@ -1123,7 +1170,12 @@ Generate the complete plan now. Be specific, reference actual files, and use the
         context: Optional[Dict[str, Any]],
         analysis: Optional[Dict[str, Any]]
     ) -> Dict[str, Any]:
-        """Generate Section 2: Risk Assessment."""
+        """
+        Generate Section 2: Risk Assessment.
+
+        IMPL-010: Enhanced with data-driven complexity estimation using
+        ComplexityEstimator scores instead of generic heuristics.
+        """
         requirements_count = len(context.get("requirements", [])) if context else 0
 
         # NEW v2.1.0: Scanner Integration - Consider type system complexity
@@ -1141,23 +1193,53 @@ Generate the complete plan now. Be specific, reference actual files, and use the
             type_system_count = len(interfaces) + len(type_aliases)
             decorator_count = len(decorators)
 
-        # Estimate complexity based on requirements + type system count
-        # Heuristic: >10 interfaces or >5 decorators increases complexity
-        base_complexity = requirements_count
-        if type_system_count > 10:
-            base_complexity += 2  # Heavy type usage increases complexity
-        if decorator_count > 5:
-            base_complexity += 1  # Many decorators suggest complex patterns
+        # IMPL-010: Data-driven complexity estimation
+        # Try to get actual complexity scores from analysis
+        avg_complexity_score = self._calculate_average_complexity(analysis)
 
-        if base_complexity <= 3:
-            complexity = "low (estimated 3-5 files, <200 lines)"
-            overall_risk = "low"
-        elif base_complexity <= 8:
-            complexity = "medium (estimated 5-15 files, 200-1000 lines)"
-            overall_risk = "medium"
+        # Map complexity score to levels (no time estimates per no-timeline constraint)
+        if avg_complexity_score is not None:
+            # Data-driven approach using actual complexity scores
+            if avg_complexity_score <= 5:
+                complexity_level = "low"
+                scope_description = "estimated 3-5 files, straightforward implementation"
+                overall_risk = "low"
+            elif avg_complexity_score <= 8:
+                complexity_level = "medium"
+                scope_description = "estimated 5-15 files, moderate complexity"
+                overall_risk = "medium"
+            elif avg_complexity_score <= 10:
+                complexity_level = "high"
+                scope_description = "estimated 15+ files, significant complexity"
+                overall_risk = "medium"
+            else:
+                complexity_level = "very_high"
+                scope_description = "estimated 20+ files, critical complexity requiring careful planning"
+                overall_risk = "high"
+
+            complexity = f"{complexity_level} ({scope_description})"
+            logger.info(f"Data-driven complexity: {complexity_level} (avg score: {avg_complexity_score:.1f})")
+
         else:
-            complexity = "high (estimated 15+ files, 1000+ lines)"
-            overall_risk = "medium"
+            # Fallback to heuristic approach when complexity data unavailable
+            logger.debug("Falling back to heuristic complexity estimation")
+            base_complexity = requirements_count
+
+            # Heuristic: >10 interfaces or >5 decorators increases complexity
+            if type_system_count > 10:
+                base_complexity += 2  # Heavy type usage increases complexity
+            if decorator_count > 5:
+                base_complexity += 1  # Many decorators suggest complex patterns
+
+            if base_complexity <= 3:
+                complexity = "low (estimated 3-5 files)"
+                overall_risk = "low"
+            elif base_complexity <= 8:
+                complexity = "medium (estimated 5-15 files)"
+                overall_risk = "medium"
+            else:
+                complexity = "high (estimated 15+ files)"
+                overall_risk = "medium"
 
         # Add note if type system complexity contributed
         if type_system_count > 10 or decorator_count > 5:

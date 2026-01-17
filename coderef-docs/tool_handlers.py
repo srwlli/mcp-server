@@ -353,6 +353,64 @@ def generate_dependency_mermaid(import_counts: dict[str, int], limit: int = 10) 
     return "\n".join(lines)
 
 
+def detect_dynamic_imports(elements: list[dict]) -> dict[str, Any]:
+    """
+    Detect dynamic imports from ElementData.dynamicImports field.
+
+    WO-DOCS-SCANNER-INTEGRATION-001: IMPL-008
+    Reads ElementData.dynamicImports (from Phase 1 scanner task_6) and formats
+    warnings for documentation generation.
+
+    Args:
+        elements: List of ElementData dicts with optional 'dynamicImports' field
+
+    Returns:
+        Dict with:
+        - has_dynamic_imports: bool
+        - total_dynamic_imports: int
+        - warnings: list of formatted warning dicts
+        - affected_files: list of unique file paths
+
+    Graceful degradation: Returns empty structure if dynamicImports field missing.
+    """
+    warnings = []
+    affected_files = set()
+
+    for element in elements:
+        dynamic_imports = element.get('dynamicImports', [])
+        if not dynamic_imports:
+            continue
+
+        file_path = element.get('file', 'unknown')
+        element_name = element.get('name', 'unknown')
+
+        for imp in dynamic_imports:
+            pattern = imp.get('pattern', 'unknown pattern')
+            location = imp.get('location', 'unknown location')
+            line = imp.get('line', 0)
+
+            warnings.append({
+                'file': file_path,
+                'element': element_name,
+                'line': line,
+                'pattern': pattern,
+                'location': location,
+                'severity': 'medium',  # Dynamic imports are generally medium risk
+                'message': f"Dynamic import detected in {element_name}: {pattern} at {location}",
+                'recommendation': "Consider converting to static import if possible for better tree-shaking and type safety"
+            })
+
+            affected_files.add(file_path)
+
+    return {
+        'has_dynamic_imports': len(warnings) > 0,
+        'total_dynamic_imports': len(warnings),
+        'warnings': warnings,
+        'affected_files': sorted(list(affected_files)),
+        'summary': f"Found {len(warnings)} dynamic import(s) across {len(affected_files)} file(s)" if warnings else "No dynamic imports detected"
+    }
+
+
 @log_invocation
 @mcp_error_handler
 async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
@@ -556,6 +614,39 @@ async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:
         result += "  - Sanitize module names (replace /, @, . with _)\n"
         result += "  - Show usage count in node label\n"
         result += "  - Keeps diagram readable for large codebases\n\n"
+
+        # WO-DOCS-SCANNER-INTEGRATION-001: IMPL-009 - Dynamic Import Warnings
+        result += "DYNAMIC IMPORT WARNINGS (v4.1.0):\n"
+        result += "Check ElementData.dynamicImports field for runtime import detection.\n\n"
+        result += "Python detection example:\n"
+        result += "```python\n"
+        result += "# Detect dynamic imports\n"
+        result += "dynamic_warnings = []\n"
+        result += "for e in elements:\n"
+        result += "    dynamic_imports = e.get('dynamicImports', [])\n"
+        result += "    for imp in dynamic_imports:\n"
+        result += "        dynamic_warnings.append({\n"
+        result += "            'file': e.get('file'),\n"
+        result += "            'element': e.get('name'),\n"
+        result += "            'pattern': imp.get('pattern'),\n"
+        result += "            'location': imp.get('location'),\n"
+        result += "            'line': imp.get('line')\n"
+        result += "        })\n"
+        result += "```\n\n"
+        result += "FOR API.md:\n"
+        result += "If dynamic imports detected, add '## Runtime Considerations' section:\n"
+        result += "  - ⚠️ Dynamic Import Warning: List affected endpoints/functions\n"
+        result += "  - Impact: Lazy loading, bundle splitting, potential runtime errors\n"
+        result += "  - Recommendation: Convert to static imports where possible\n"
+        result += "  - File references with line numbers\n\n"
+        result += "FOR ARCHITECTURE.md:\n"
+        result += "If dynamic imports detected, add '## Dynamic Loading Patterns' section:\n"
+        result += "  - ⚠️ Dynamic Module Loading Detected\n"
+        result += "  - Affected components/modules (table format)\n"
+        result += "  - Loading strategies (lazy, conditional, plugin-based)\n"
+        result += "  - Bundle implications (code splitting, tree-shaking limitations)\n"
+        result += "  - Migration path to static imports if recommended\n\n"
+        result += "Graceful handling: If no dynamic imports, omit these sections.\n\n"
     else:
         result += f"⚠ WARNING: .coderef/ resources not found!\n\n"
         result += f"Missing: {', '.join(resources['missing'])}\n\n"

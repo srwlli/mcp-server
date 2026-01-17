@@ -3,26 +3,36 @@
 **Workorder:** WO-WORKFLOW-SCANNER-INTEGRATION-001
 **Session:** WO-SCANNER-COMPLETE-INTEGRATION-001
 **Agent:** coderef-workflow
-**Status:** IN PROGRESS (9/18 tasks complete - 50%)
+**Status:** IN PROGRESS (12/18 tasks complete - 67%)
 **Created:** 2026-01-16
-**Last Updated:** 2026-01-16 17:00:00
+**Last Updated:** 2026-01-16 19:30:00
 
 ---
 
 ## Executive Summary
 
-Successfully integrated Phase 1 scanner improvements (95% AST accuracy, relationship tracking, complexity metrics) into coderef-workflow's planning and impact analysis workflows. Completed **9 of 18 tasks across 3 phases**, achieving full type coverage in planning and automated impact analysis with transitive dependency graphs.
+Successfully integrated Phase 1 scanner improvements (95% AST accuracy, relationship tracking, complexity metrics) into coderef-workflow's planning, impact analysis, and execution tracking workflows. Completed **12 of 18 tasks across 4 phases (67%)**, achieving full type coverage in planning, automated impact analysis with transitive dependency graphs, and complexity-driven effort estimation.
 
 ### Key Achievements
 
+**Phase 1: Planning Workflows (3/3 tasks complete)**
 - ✅ **Full Type Coverage:** Planning workflows now detect interfaces, decorators, and type aliases (95%+ code coverage)
+- ✅ **Type-Aware Complexity:** Plans consider type system complexity (>10 interfaces or >5 decorators increases complexity)
+
+**Phase 2: Impact Analysis (4/4 tasks complete)**
 - ✅ **Automated Impact Analysis:** Transitive dependency traversal with risk categorization (low/medium/high/critical)
-- ✅ **Enhanced Complexity Estimation:** Plans consider type system complexity for better effort estimation
 - ✅ **Relationship Graph Integration:** Uses ElementData.dependencies and ElementData.calledBy for impact analysis
+- ✅ **Visual Dependency Graphs:** Mermaid diagrams show dependency trees up to depth 3
+
+**Phase 3: Execution Tracking (4/4 tasks complete)**
+- ✅ **Complexity-Based Planning:** Data-driven effort estimates using actual code complexity scores
+- ✅ **Refactoring Candidate Flagging:** Automatic detection of high-complexity elements (score >7) needing refactoring
+- ✅ **Multi-Level Complexity:** Support for low/medium/high/very_high complexity levels (no time estimates per no-timeline constraint)
+- ✅ **Deliverables Integration:** Complexity metrics included in DELIVERABLES.md for progress tracking
 
 ---
 
-## Tasks Completed (9/18)
+## Tasks Completed (12/18)
 
 ### Phase 0: Preparation (2/2 tasks) ✅
 
@@ -274,6 +284,162 @@ async def analyze_change_impact(self, element_names, max_depth=3):
 
 ---
 
+### Phase 3: Execution Tracking (4/4 tasks) ✅
+
+#### IMPL-008: Add complexity calculation to task breakdown
+**Status:** ✅ Complete
+**Commit:** b42d08f, ec00a14
+
+**Implementation:**
+- Created `utils/complexity_estimator.py` (212 lines) with ComplexityEstimator class
+- Heuristic-based complexity scoring: element type, parameter count, function calls
+- Risk levels: low (score ≤3), medium (4-6), high (7-8), critical (>8)
+- Methods: estimate_element_complexity(), estimate_task_complexity()
+
+**Code Changes:**
+```python
+class ComplexityEstimator:
+    def estimate_element_complexity(self, element_name: str) -> Optional[Dict]:
+        """Estimate complexity using heuristics."""
+        # Base complexity by type (class=3, component=4, function=2)
+        # +1-3 points for parameter count (>3, >5)
+        # +1-2 points for function call count (>5, >10)
+        return {'complexity_score': score, 'risk_level': risk_level, ...}
+```
+
+**Integration:**
+- Enhanced planning_generator.py with _calculate_phase_complexity() method
+- Each phase in plan.json now includes complexity_metrics field
+- Metrics: avg_complexity_score, max_complexity_score, total_estimated_loc, high_complexity_elements, complexity_distribution
+
+**Files Created:**
+- `utils/complexity_estimator.py` (212 lines)
+
+**Files Modified:**
+- `generators/planning_generator.py` (+117 lines for complexity calculation)
+
+**Outcome:** Plans include data-driven complexity metrics for each implementation phase
+
+---
+
+#### IMPL-009: Flag high-complexity refactoring candidates
+**Status:** ✅ Complete
+**Commit:** 90a8b43
+
+**Implementation:**
+- Added flag_refactoring_candidates() method to planning_generator.py
+- Scans all phases for high-complexity elements (score > 7)
+- Creates refactoring_candidates section in plan.json
+- Adds warnings to phase notes for visibility
+
+**Code Changes:**
+```python
+def flag_refactoring_candidates(self, plan, analysis):
+    """Flag high-complexity elements as refactoring candidates."""
+    for phase in phases:
+        high_complexity_elements = phase.get('complexity_metrics', {}).get('high_complexity_elements', [])
+        for elem in high_complexity_elements:
+            if score > 7:
+                # Add warning to phase notes
+                warning = f"⚠️ High complexity detected: {elem_name} (complexity: {score}, risk: {risk_level})"
+                phase['notes'].append(warning)
+```
+
+**Refactoring Candidates Section:**
+- total_count: Number of high-complexity elements
+- candidates: List with element name, score, risk level, affected phase, recommendation
+- recommendations: General best practices for refactoring
+
+**Files Modified:**
+- `generators/planning_generator.py` (+148 lines)
+
+**Outcome:** Plans automatically identify and warn about code needing refactoring before modification
+
+---
+
+#### IMPL-010: Adjust effort estimates based on complexity
+**Status:** ✅ Complete
+**Commit:** ec00a14 (included in IMPL-006 commit from coderef-docs)
+
+**Implementation:**
+- Enhanced _generate_risk_assessment() in planning_generator.py
+- Replaced heuristic complexity estimation with data-driven approach
+- Maps complexity scores to levels: low (≤5), medium (6-8), high (9-10), very_high (>10)
+- NO time estimates per no-timeline constraint
+
+**Code Changes:**
+```python
+def _generate_risk_assessment(self, context, analysis):
+    """Enhanced with data-driven complexity estimation."""
+    avg_complexity_score = self._calculate_average_complexity(analysis)
+
+    if avg_complexity_score <= 5:
+        complexity_level = "low"
+        scope_description = "estimated 3-5 files, straightforward implementation"
+        overall_risk = "low"
+    elif avg_complexity_score <= 8:
+        complexity_level = "medium"
+        # ... medium/high/very_high levels
+```
+
+**Added Helper Method:**
+- _calculate_average_complexity(analysis) - Extracts patterns, calculates average score via ComplexityEstimator
+
+**Complexity Mapping:**
+- Low (≤5): "estimated 3-5 files, straightforward implementation"
+- Medium (6-8): "estimated 5-15 files, moderate complexity"
+- High (9-10): "estimated 15+ files, significant complexity"
+- Very High (>10): "estimated 20+ files, critical complexity requiring careful planning"
+
+**Files Modified:**
+- `generators/planning_generator.py` (+65 lines for data-driven estimation)
+
+**Outcome:** Risk assessments use actual complexity scores instead of generic heuristics
+
+---
+
+#### IMPL-011: Add complexity metrics to deliverables
+**Status:** ✅ Complete
+**Commit:** eca43e4
+
+**Implementation:**
+- Added _extract_complexity_metrics() helper function to tool_handlers.py
+- Aggregates complexity data from all plan phases
+- Integrates into _generate_enhanced_deliverables() function
+- Adds 'complexity' field to DELIVERABLES template context
+
+**Code Changes:**
+```python
+def _extract_complexity_metrics(plan):
+    """Extract complexity metrics from plan.json for DELIVERABLES.md."""
+    # Aggregate metrics from all phases
+    for phase in phases:
+        complexity_metrics = phase.get('complexity_metrics', {})
+        scores.append(complexity_metrics.get('avg_complexity_score', 0))
+        high_elements = complexity_metrics.get('high_complexity_elements', [])
+
+    return {
+        'total_elements': total_elements,
+        'avg_complexity_score': avg_complexity,
+        'max_complexity_score': max_complexity,
+        'high_complexity_count': high_complexity_count,
+        'refactoring_recommendations': recommendations[:3],
+        'complexity_distribution': distribution
+    }
+```
+
+**Integration:**
+- Called after plan data collection in _generate_enhanced_deliverables()
+- Adds complexity data to template context
+- DELIVERABLES template can access {{ complexity.* }} variables
+
+**Files Modified:**
+- `tool_handlers.py` (+74 lines)
+
+**Outcome:** DELIVERABLES.md context includes comprehensive complexity summary for reporting
+
+---
+
 ## Technical Implementation Details
 
 ### Architecture Enhancements
@@ -379,15 +545,7 @@ Tested on coderef-workflow project itself:
 
 ---
 
-## Remaining Work (9/18 tasks)
-
-### Phase 3: Execution Tracking (0/4 tasks)
-- **IMPL-008:** Add complexity calculation to task breakdown
-- **IMPL-009:** Flag high-complexity refactoring candidates
-- **IMPL-010:** Adjust effort estimates based on complexity
-- **IMPL-011:** Add complexity metrics to deliverables
-
-**Estimated Scope:** 30-35% of total implementation
+## Remaining Work (6/18 tasks)
 
 ### Phase 4: Testing (0/5 tasks)
 - **TEST-001:** Create test fixtures with full scanner data
@@ -499,8 +657,9 @@ Remaining work focuses on **execution tracking** (complexity metrics in task bre
 
 ---
 
-**Status:** ✅ Phase 0, 1, 2 Complete | ⏳ Phase 3, 4, 5 Pending
-**Next Milestone:** Phase 3 Execution Tracking (4 tasks)
+**Status:** ✅ Phase 0, 1, 2, 3 Complete | ⏳ Phase 4, 5 Pending
+**Next Milestone:** Phase 4 Testing (5 tasks)
+**Current Progress:** 67% (12/18 tasks)
 **Completion Target:** 100% (18/18 tasks)
 
 ---

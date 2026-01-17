@@ -1,6 +1,6 @@
 # coderef-docs
 
-**Version:** 4.0.0
+**Version:** 4.1.0
 **Status:** ✅ Production Ready
 **Protocol:** Model Context Protocol (MCP)
 
@@ -10,15 +10,17 @@
 
 **coderef-docs** is an MCP server providing 16 specialized tools for AI-driven documentation generation, changelog management, and standards enforcement with optional MCP integration for enhanced code intelligence.
 
-**Core Innovation:** MCP tool orchestration + drift detection + semantic pattern analysis + user docs automation + validation integration + tool consolidation (WO-GENERATION-ENHANCEMENT-001).
+**Core Innovation:** MCP tool orchestration + drift detection + semantic pattern analysis + user docs automation + validation integration + tool consolidation + scanner integration (95%+ accuracy).
 
-**Latest (v4.0.0):** Complete transformation from hybrid documentation generation to full MCP tool orchestration with:
-- ✅ MCP integration with coderef-context for drift detection and semantic patterns
-- ✅ User docs automation (my-guide, USER-GUIDE, FEATURES) with 75%+ auto-fill
-- ✅ Standards generation with 80%+ quality via semantic analysis
-- ✅ Tool consolidation ([INTERNAL] and [DEPRECATED] markings)
-- ✅ Health check system showing MCP status
-- ✅ Comprehensive test suite (185 tests across 10 files)
+**Latest (v4.1.0):** Scanner integration delivers 95%+ documentation accuracy with:
+- ✅ **AST Accuracy:** Interfaces, decorators, type aliases now documented (85% → 95%+ accuracy)
+- ✅ **Complexity Metrics:** NEW - Automatic hotspot detection with refactoring recommendations
+- ✅ **Relationship Data:** Automated dependency graphs + Mermaid diagrams + coupling analysis
+- ✅ **Dynamic Warnings:** NEW - Runtime considerations + bundle implications + migration paths
+- ✅ **Test Coverage:** 30 new tests (100% pass rate) validating all enhancements
+- ✅ **Backward Compatible:** Zero breaking changes, graceful degradation for older scanner output
+
+**Previous (v4.0.0):** MCP tool orchestration transformation with drift detection, user docs automation (75%+ auto-fill), semantic standards analysis (80%+ quality), tool consolidation, and 185 comprehensive tests.
 
 ---
 

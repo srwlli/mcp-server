@@ -129,6 +129,20 @@ async def list_tools() -> list[Tool]:
                 "properties": {},
                 "required": []
             }
+        ),
+        Tool(
+            name="validate_communication",
+            description="Validate a communication.json file against communication-schema.json. Checks required fields, agent structure, outputs validation (files_created/files_modified must be arrays, not numbers), and prevents git_metrics objects. Returns validation results with errors and warnings.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Absolute path to communication.json file"
+                    }
+                },
+                "required": ["file_path"]
+            }
         )
     ]
 
@@ -151,6 +165,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         return await validate_schema_completeness(arguments)
     elif name == "validate_all_schemas":
         return await validate_all_schemas(arguments)
+    elif name == "validate_communication":
+        return await validate_communication(arguments)
     else:
         raise ValueError(f"Unknown tool: {name}")
 
@@ -552,6 +568,68 @@ async def validate_all_schemas(arguments: dict) -> list[TextContent]:
         return [TextContent(
             type="text",
             text=f"Error validating schemas: {str(e)}"
+        )]
+
+
+async def validate_communication(arguments: dict) -> list[TextContent]:
+    """Validate a communication.json file."""
+    file_path = Path(arguments["file_path"])
+
+    if not file_path.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: File not found: {file_path}"
+        )]
+
+    # Enforce naming convention
+    if not file_path.name == "communication.json":
+        return [TextContent(
+            type="text",
+            text=f"Error: File must be named 'communication.json'\n\nGot: {file_path.name}\n\nPlease rename the file to communication.json"
+        )]
+
+    try:
+        from papertrail.validators.communication import CommunicationValidator
+        validator = CommunicationValidator()
+
+        # Validate
+        is_valid, errors, warnings = validator.validate_file(file_path)
+
+        # Format response
+        response = f"# Communication Validation: {file_path.parent.name}/communication.json\n\n"
+        response += f"**Valid:** {'Yes ✅ [PASS]' if is_valid else 'No ❌ [FAIL]'}\n\n"
+
+        if errors:
+            response += f"## Errors ({len(errors)})\n\n"
+            for error in errors:
+                response += f"- ❌ {error}\n"
+            response += "\n"
+
+        if warnings:
+            response += f"## Warnings ({len(warnings)})\n\n"
+            for warning in warnings:
+                response += f"- ⚠️  {warning}\n"
+            response += "\n"
+
+        if is_valid:
+            response += "✅ **Communication file is valid!**\n\n"
+            response += "All agents have correct structure:\n"
+            response += "- outputs.files_created[] is an array ✓\n"
+            response += "- outputs.files_modified[] is an array ✓\n"
+            response += "- outputs.workorders_created[] is an array ✓\n"
+            response += "- No git_metrics object ✓\n"
+
+        return [TextContent(type="text", text=response)]
+
+    except FileNotFoundError as e:
+        return [TextContent(
+            type="text",
+            text=f"Error: Schema not found. Make sure communication-schema.json exists.\n\n{str(e)}"
+        )]
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating communication.json: {str(e)}"
         )]
 
 

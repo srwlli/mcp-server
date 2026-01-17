@@ -216,12 +216,22 @@ class PlanningGenerator:
         # Generate plan (with single retry on failure)
         try:
             plan = await self._generate_plan_with_agent(feature_name, context, analysis, template, workorder_id)
+
+            # IMPL-009: Flag refactoring candidates after plan generation
+            logger.debug("Flagging high-complexity refactoring candidates...")
+            self.flag_refactoring_candidates(plan, analysis)
+
             logger.info(f"Plan generated successfully for: {feature_name}")
             return plan
         except Exception as e:
             logger.warning(f"First attempt failed: {str(e)}. Retrying once...")
             try:
                 plan = await self._generate_plan_with_agent(feature_name, context, analysis, template, workorder_id)
+
+                # IMPL-009: Flag refactoring candidates after plan generation
+                logger.debug("Flagging high-complexity refactoring candidates...")
+                self.flag_refactoring_candidates(plan, analysis)
+
                 logger.info(f"Plan generated successfully on retry for: {feature_name}")
                 return plan
             except Exception as retry_error:
@@ -912,6 +922,144 @@ Generate the complete plan now. Be specific, reference actual files, and use the
         return tools_used
 
     # ========== End Validation & Telemetry ==========
+
+    def flag_refactoring_candidates(
+        self,
+        plan: Dict[str, Any],
+        analysis: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Flag high-complexity elements as refactoring candidates.
+
+        IMPL-009: WO-WORKFLOW-SCANNER-INTEGRATION-001
+        Identifies elements with high complexity scores and adds refactoring recommendations.
+
+        Args:
+            plan: Generated plan dict (will be modified in-place)
+            analysis: Optional analysis data with complexity info
+
+        Returns:
+            Dict with refactoring_candidates section containing:
+            - candidates: List[Dict] - Elements needing refactoring
+            - total_count: int
+            - recommendations: List[str]
+
+        Modifies plan in-place to add warnings to task notes.
+        """
+        try:
+            # Initialize complexity estimator
+            estimator = ComplexityEstimator(self.project_path)
+
+            # Collect all high-complexity elements
+            refactoring_candidates = []
+
+            # Get all phases from plan
+            phases = plan.get("UNIVERSAL_PLANNING_STRUCTURE", {}).get("6_implementation_phases", {}).get("phases", [])
+
+            for phase in phases:
+                complexity_metrics = phase.get("complexity_metrics", {})
+
+                # Check for high-complexity elements in this phase
+                high_complexity_elements = complexity_metrics.get("high_complexity_elements", [])
+
+                for elem in high_complexity_elements:
+                    elem_name = elem.get("name")
+                    score = elem.get("score", 0)
+                    risk_level = elem.get("risk_level", "unknown")
+
+                    # Flag elements with score > 7 (high or critical risk)
+                    if score > 7:
+                        candidate = {
+                            "element": elem_name,
+                            "complexity_score": score,
+                            "risk_level": risk_level,
+                            "phase": phase.get("name", f"Phase {phase.get('phase')}"),
+                            "recommendation": self._generate_refactoring_recommendation(elem_name, score, risk_level)
+                        }
+                        refactoring_candidates.append(candidate)
+
+                        # Add warning to phase deliverables
+                        if "notes" not in phase:
+                            phase["notes"] = []
+
+                        warning = (
+                            f"⚠️ High complexity detected: {elem_name} "
+                            f"(complexity: {score}, risk: {risk_level}). "
+                            f"Consider refactoring before modification."
+                        )
+                        phase["notes"].append(warning)
+                        logger.warning(warning)
+
+            # Create refactoring_candidates section
+            refactoring_summary = {
+                "total_count": len(refactoring_candidates),
+                "candidates": refactoring_candidates,
+                "recommendations": [
+                    "Review high-complexity elements before making changes",
+                    "Consider breaking down functions with score >10 into smaller units",
+                    "Add comprehensive tests for critical-risk elements",
+                    "Use dependency injection to reduce coupling in complex classes"
+                ]
+            }
+
+            # Add to plan's META_DOCUMENTATION for visibility
+            if "META_DOCUMENTATION" in plan:
+                plan["META_DOCUMENTATION"]["refactoring_candidates_count"] = len(refactoring_candidates)
+
+            # Add to plan structure
+            if "UNIVERSAL_PLANNING_STRUCTURE" in plan:
+                plan["UNIVERSAL_PLANNING_STRUCTURE"]["refactoring_candidates"] = refactoring_summary
+
+            logger.info(
+                f"Flagged {len(refactoring_candidates)} refactoring candidates "
+                f"across {len(phases)} phases"
+            )
+
+            return refactoring_summary
+
+        except Exception as e:
+            logger.warning(f"Failed to flag refactoring candidates: {str(e)}")
+            return {
+                "total_count": 0,
+                "candidates": [],
+                "recommendations": [],
+                "note": f"Refactoring analysis unavailable: {str(e)}"
+            }
+
+    def _generate_refactoring_recommendation(
+        self,
+        element_name: str,
+        complexity_score: int,
+        risk_level: str
+    ) -> str:
+        """
+        Generate specific refactoring recommendation based on complexity score.
+
+        Args:
+            element_name: Name of the element
+            complexity_score: Complexity score (0-10)
+            risk_level: Risk level (low/medium/high/critical)
+
+        Returns:
+            Refactoring recommendation string
+        """
+        if complexity_score > 8:  # Critical
+            return (
+                f"CRITICAL: {element_name} requires immediate refactoring. "
+                f"Break into smaller functions, reduce parameter count, simplify logic."
+            )
+        elif complexity_score > 7:  # High
+            return (
+                f"HIGH PRIORITY: {element_name} should be refactored. "
+                f"Consider extracting helper functions, reducing dependencies."
+            )
+        else:  # Medium
+            return (
+                f"MODERATE: {element_name} has elevated complexity. "
+                f"Review for simplification opportunities."
+            )
+
+    # ========== End Refactoring Candidate Flagging ==========
 
     def _generate_preparation_section(
         self,

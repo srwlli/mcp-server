@@ -1922,6 +1922,20 @@ async def handle_generate_resource_sheet(arguments: dict) -> list[TextContent]:
             validate_against_code=validate_against_code,
         )
 
+        # WO-DOCS-SCANNER-INTEGRATION-001: IMPL-004 - Calculate complexity stats
+        # Read .coderef/index.json and calculate complexity for the element
+        complexity_stats = None
+        coderef_index = Path(project_path) / ".coderef" / "index.json"
+        if coderef_index.exists():
+            import json
+            try:
+                with open(coderef_index) as f:
+                    elements = json.load(f)
+                # Calculate complexity stats for all elements
+                complexity_stats = generator.calculate_complexity_stats(elements)
+            except Exception as e:
+                logger.warning(f"Could not calculate complexity stats: {e}")
+
         # Format response
         response = {
             "success": True,
@@ -1934,11 +1948,49 @@ async def handle_generate_resource_sheet(arguments: dict) -> list[TextContent]:
             "characteristics_detected": len([k for k, v in result["characteristics"].items() if v]),
             "warnings": result.get("warnings", []),
             "generated_at": result["generated_at"],
+            "complexity_stats": complexity_stats,  # WO-DOCS-SCANNER-INTEGRATION-001
         }
 
         logger.info(f"Resource sheet generated: {result['outputs']['markdown']}")
 
-        return [TextContent(type="text", text=json.dumps(response, indent=2))]
+        # WO-DOCS-SCANNER-INTEGRATION-001: IMPL-004 - Add complexity guidance
+        response_text = json.dumps(response, indent=2)
+
+        # Add complexity analysis instructions if stats available
+        if complexity_stats and complexity_stats.get('has_complexity_data'):
+            complexity_guidance = "\n\n" + "=" * 60 + "\n"
+            complexity_guidance += "COMPLEXITY ANALYSIS AVAILABLE (v4.1.0)\n"
+            complexity_guidance += "=" * 60 + "\n\n"
+            complexity_guidance += f"Complexity metrics detected for {complexity_stats['elements_with_complexity']} elements:\n"
+            complexity_guidance += f"  • Average Complexity: {complexity_stats['avg']:.1f}\n"
+            complexity_guidance += f"  • Max Complexity: {complexity_stats['max']}\n"
+            complexity_guidance += f"  • Hotspots (>10): {len(complexity_stats['hotspots'])}\n\n"
+
+            if complexity_stats['hotspots']:
+                complexity_guidance += "REFACTORING CANDIDATES:\n"
+                for hotspot in complexity_stats['hotspots'][:5]:  # Top 5
+                    complexity_guidance += f"  • {hotspot['name']} (complexity: {hotspot['complexity']}) - {hotspot['recommendation']}\n"
+                complexity_guidance += "\n"
+
+            complexity_guidance += "RECOMMENDED SECTION FOR RESOURCE SHEET:\n"
+            complexity_guidance += "Add a '## Complexity Analysis' section after the main documentation:\n\n"
+            complexity_guidance += "```markdown\n"
+            complexity_guidance += "## Complexity Analysis\n\n"
+            complexity_guidance += f"- **Average Complexity:** {complexity_stats['avg']:.1f}\n"
+            complexity_guidance += f"- **Max Complexity:** {complexity_stats['max']}\n"
+            complexity_guidance += f"- **Hotspots (complexity > 10):** {len(complexity_stats['hotspots'])} elements\n\n"
+
+            if complexity_stats['hotspots']:
+                complexity_guidance += "### Refactoring Candidates\n\n"
+                complexity_guidance += "| Element | Complexity | Location | Recommendation |\n"
+                complexity_guidance += "|---------|------------|----------|----------------|\n"
+                for hotspot in complexity_stats['hotspots']:
+                    complexity_guidance += f"| {hotspot['name']} | {hotspot['complexity']} | {hotspot['file']}:{hotspot['line']} | {hotspot['recommendation']} |\n"
+
+            complexity_guidance += "```\n"
+            response_text += complexity_guidance
+
+        return [TextContent(type="text", text=response_text)]
 
     except Exception as e:
         logger.error(f"generate_resource_sheet failed: {e}", exc_info=True)

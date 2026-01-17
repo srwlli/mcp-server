@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from constants import Paths, Files
 from logger_config import logger, log_error, log_security_event
 from uds_helpers import get_server_version
+from utils.complexity_estimator import ComplexityEstimator  # IMPL-008: WO-WORKFLOW-SCANNER-INTEGRATION-001
 
 
 class PlanningGenerator:
@@ -409,7 +410,7 @@ class PlanningGenerator:
                 "3_current_state_analysis": self._generate_current_state(analysis),
                 "4_key_features": self._generate_key_features(context),
                 "5_task_id_system": self._generate_tasks(context, analysis),
-                "6_implementation_phases": self._generate_phases(),
+                "6_implementation_phases": self._generate_phases(analysis),  # IMPL-008: Pass analysis for complexity
                 "7_testing_strategy": self._generate_testing_strategy(),
                 "8_success_criteria": self._generate_success_criteria(context),
                 "9_implementation_checklist": self._generate_checklist()
@@ -1121,40 +1122,124 @@ Generate the complete plan now. Be specific, reference actual files, and use the
 
         return {"tasks": tasks}
 
-    def _generate_phases(self) -> Dict[str, Any]:
-        """Generate Section 6: Implementation Phases with NEW schema format."""
-        return {
-            "phases": [
-                {
-                    "phase": 1,
-                    "name": "Phase 1: Foundation",
-                    "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
-                    "tasks": ["SETUP-001"],
-                    "deliverables": ["All files exist", "Dependencies installed", "Environment configured"]
-                },
-                {
-                    "phase": 2,
-                    "name": "Phase 2: Core Implementation",
-                    "description": "Implement primary features and business logic following existing patterns",
-                    "tasks": ["LOGIC-001"],
-                    "deliverables": ["Happy path works end-to-end", "Core functionality complete"]
-                },
-                {
-                    "phase": 3,
-                    "name": "Phase 3: Testing",
-                    "description": "Comprehensive testing at unit, integration, and end-to-end levels",
-                    "tasks": ["TEST-001"],
-                    "deliverables": ["All tests passing", "Coverage meets requirements"]
-                },
-                {
-                    "phase": 4,
-                    "name": "Phase 4: Documentation",
-                    "description": "Complete documentation for users and developers",
-                    "tasks": ["DOC-001"],
-                    "deliverables": ["All documentation complete", "Examples provided"]
+    def _calculate_phase_complexity(
+        self,
+        phase_tasks: List[str],
+        analysis: Optional[Dict[str, Any]] = None
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Calculate complexity metrics for a phase using ComplexityEstimator.
+
+        IMPL-008: WO-WORKFLOW-SCANNER-INTEGRATION-001
+        Integrates scanner-derived complexity metrics into task breakdown.
+
+        Args:
+            phase_tasks: List of task IDs in this phase (e.g., ["SETUP-001", "IMPL-001"])
+            analysis: Optional analysis data containing element information
+
+        Returns:
+            Complexity metrics dict with:
+            - avg_complexity_score: float (0-10)
+            - max_complexity_score: int (0-10)
+            - total_estimated_loc: int
+            - high_complexity_elements: List[Dict] (elements with score > 7)
+            - complexity_distribution: Dict[str, int] (low/medium/high/critical counts)
+
+            Returns None if .coderef/index.json not available.
+        """
+        try:
+            # Initialize complexity estimator
+            estimator = ComplexityEstimator(self.project_path)
+
+            # Extract element names from analysis if available
+            # For now, we'll estimate based on task count as a fallback
+            # TODO: Extract actual element names from tasks when available
+            element_names = []
+
+            if analysis:
+                # Try to extract elements from preparation summary
+                patterns = analysis.get("preparation_summary", {}).get("key_patterns_identified", [])
+                # Use pattern names as proxy for element complexity
+                element_names = patterns[:len(phase_tasks)]  # Limit to phase task count
+
+            # If no elements found, return None (complexity unavailable)
+            if not element_names:
+                logger.debug(f"No elements found for complexity estimation (phase has {len(phase_tasks)} tasks)")
+                return None
+
+            # Estimate complexity for all elements
+            complexity_result = estimator.estimate_task_complexity(element_names)
+
+            logger.info(
+                f"Phase complexity: avg={complexity_result['avg_complexity_score']}, "
+                f"max={complexity_result['max_complexity_score']}, "
+                f"LOC={complexity_result['total_estimated_loc']}"
+            )
+
+            return complexity_result
+
+        except Exception as e:
+            logger.warning(f"Failed to calculate phase complexity: {str(e)}")
+            return None
+
+    def _generate_phases(self, analysis: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Generate Section 6: Implementation Phases with NEW schema format.
+
+        IMPL-008: Enhanced with complexity metrics from ComplexityEstimator.
+
+        Args:
+            analysis: Optional analysis data for complexity calculation
+
+        Returns:
+            Phases dict with complexity_metrics for each phase
+        """
+        phases_data = [
+            {
+                "phase": 1,
+                "name": "Phase 1: Foundation",
+                "description": "Setup and scaffolding - create initial structure, install dependencies, configure environment",
+                "tasks": ["SETUP-001"],
+                "deliverables": ["All files exist", "Dependencies installed", "Environment configured"]
+            },
+            {
+                "phase": 2,
+                "name": "Phase 2: Core Implementation",
+                "description": "Implement primary features and business logic following existing patterns",
+                "tasks": ["LOGIC-001"],
+                "deliverables": ["Happy path works end-to-end", "Core functionality complete"]
+            },
+            {
+                "phase": 3,
+                "name": "Phase 3: Testing",
+                "description": "Comprehensive testing at unit, integration, and end-to-end levels",
+                "tasks": ["TEST-001"],
+                "deliverables": ["All tests passing", "Coverage meets requirements"]
+            },
+            {
+                "phase": 4,
+                "name": "Phase 4: Documentation",
+                "description": "Complete documentation for users and developers",
+                "tasks": ["DOC-001"],
+                "deliverables": ["All documentation complete", "Examples provided"]
+            }
+        ]
+
+        # IMPL-008: Add complexity metrics to each phase
+        for phase in phases_data:
+            complexity_metrics = self._calculate_phase_complexity(phase["tasks"], analysis)
+            if complexity_metrics:
+                phase["complexity_metrics"] = complexity_metrics
+            else:
+                # Fallback: basic complexity estimate based on task count
+                task_count = len(phase["tasks"])
+                phase["complexity_metrics"] = {
+                    "estimated_complexity": "low" if task_count <= 2 else "medium" if task_count <= 5 else "high",
+                    "task_count": task_count,
+                    "note": "Complexity metrics unavailable - .coderef/index.json not found"
                 }
-            ]
-        }
+
+        return {"phases": phases_data}
 
     def _generate_testing_strategy(self) -> Dict[str, Any]:
         """Generate Section 7: Testing Strategy."""

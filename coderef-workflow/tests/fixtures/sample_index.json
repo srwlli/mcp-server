@@ -1,0 +1,310 @@
+[
+  {
+    "name": "IAuthService",
+    "type": "interface",
+    "file": "src/services/auth.ts",
+    "line": 15,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["AuthController", "UserService"],
+    "imports": []
+  },
+  {
+    "name": "IUserRepository",
+    "type": "interface",
+    "file": "src/repositories/user.ts",
+    "line": 8,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["UserService", "AuthService"],
+    "imports": []
+  },
+  {
+    "name": "ILogger",
+    "type": "interface",
+    "file": "src/utils/logger.ts",
+    "line": 3,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["AuthService", "UserService", "ApiController"],
+    "imports": []
+  },
+  {
+    "name": "ApiResponse",
+    "type": "interface",
+    "file": "src/types/api.ts",
+    "line": 12,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["ApiController", "AuthController"],
+    "imports": []
+  },
+  {
+    "name": "ConfigOptions",
+    "type": "interface",
+    "file": "src/config/types.ts",
+    "line": 5,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["ConfigService"],
+    "imports": []
+  },
+  {
+    "name": "UserId",
+    "type": "type",
+    "file": "src/types/user.ts",
+    "line": 3,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["UserService", "AuthService"],
+    "imports": []
+  },
+  {
+    "name": "Token",
+    "type": "type",
+    "file": "src/types/auth.ts",
+    "line": 5,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": ["AuthService", "JwtService"],
+    "imports": []
+  },
+  {
+    "name": "@Injectable",
+    "type": "decorator",
+    "file": "src/decorators/injectable.ts",
+    "line": 8,
+    "parameters": [],
+    "calls": [],
+    "dependencies": [],
+    "calledBy": [],
+    "imports": [],
+    "target": "class"
+  },
+  {
+    "name": "@Authorized",
+    "type": "decorator",
+    "file": "src/decorators/auth.ts",
+    "line": 12,
+    "parameters": ["roles"],
+    "calls": [],
+    "dependencies": ["AuthService"],
+    "calledBy": [],
+    "imports": [],
+    "target": "method"
+  },
+  {
+    "name": "@Log",
+    "type": "decorator",
+    "file": "src/decorators/log.ts",
+    "line": 5,
+    "parameters": [],
+    "calls": ["Logger.log"],
+    "dependencies": ["Logger"],
+    "calledBy": [],
+    "imports": [],
+    "target": "method"
+  },
+  {
+    "name": "authenticateUser",
+    "type": "function",
+    "file": "src/services/auth.ts",
+    "line": 42,
+    "parameters": ["username", "password"],
+    "calls": ["validateCredentials", "generateToken", "logAuthAttempt"],
+    "dependencies": ["UserRepository", "JwtService", "Logger"],
+    "calledBy": ["AuthController"],
+    "imports": [
+      {"source": "./validators", "specifier": "validateCredentials"},
+      {"source": "./jwt", "specifier": "JwtService"},
+      {"source": "../utils/logger", "specifier": "Logger"}
+    ]
+  },
+  {
+    "name": "validateCredentials",
+    "type": "function",
+    "file": "src/services/validators.ts",
+    "line": 15,
+    "parameters": ["username", "password"],
+    "calls": ["hashPassword", "compareHash"],
+    "dependencies": ["CryptoService"],
+    "calledBy": ["authenticateUser", "resetPassword"],
+    "imports": [
+      {"source": "../crypto/hash", "specifier": "hashPassword"},
+      {"source": "../crypto/hash", "specifier": "compareHash"}
+    ]
+  },
+  {
+    "name": "generateToken",
+    "type": "function",
+    "file": "src/services/jwt.ts",
+    "line": 28,
+    "parameters": ["userId", "expiresIn"],
+    "calls": ["jwt.sign", "getSecretKey"],
+    "dependencies": ["ConfigService"],
+    "calledBy": ["authenticateUser", "refreshToken"],
+    "imports": [
+      {"source": "jsonwebtoken", "specifier": "jwt"},
+      {"source": "../config", "specifier": "ConfigService"}
+    ]
+  },
+  {
+    "name": "logAuthAttempt",
+    "type": "function",
+    "file": "src/utils/logger.ts",
+    "line": 52,
+    "parameters": ["userId", "success"],
+    "calls": ["Logger.info", "AuditService.record"],
+    "dependencies": ["AuditService"],
+    "calledBy": ["authenticateUser"],
+    "imports": [
+      {"source": "../services/audit", "specifier": "AuditService"}
+    ]
+  },
+  {
+    "name": "getUserById",
+    "type": "function",
+    "file": "src/repositories/user.ts",
+    "line": 35,
+    "parameters": ["userId"],
+    "calls": ["db.query", "mapUserEntity"],
+    "dependencies": ["Database"],
+    "calledBy": ["UserService", "AuthController"],
+    "imports": [
+      {"source": "../db/connection", "specifier": "Database"}
+    ]
+  },
+  {
+    "name": "createUser",
+    "type": "function",
+    "file": "src/repositories/user.ts",
+    "line": 58,
+    "parameters": ["userData"],
+    "calls": ["validateUserData", "db.insert", "hashPassword"],
+    "dependencies": ["Database", "CryptoService"],
+    "calledBy": ["UserService"],
+    "imports": [
+      {"source": "../db/connection", "specifier": "Database"},
+      {"source": "../crypto/hash", "specifier": "hashPassword"}
+    ]
+  },
+  {
+    "name": "updateUser",
+    "type": "function",
+    "file": "src/repositories/user.ts",
+    "line": 82,
+    "parameters": ["userId", "updates"],
+    "calls": ["validateUpdates", "db.update", "getUserById"],
+    "dependencies": ["Database"],
+    "calledBy": ["UserService"],
+    "imports": [
+      {"source": "../db/connection", "specifier": "Database"}
+    ]
+  },
+  {
+    "name": "deleteUser",
+    "type": "function",
+    "file": "src/repositories/user.ts",
+    "line": 105,
+    "parameters": ["userId"],
+    "calls": ["db.delete", "logDeletion"],
+    "dependencies": ["Database", "AuditService"],
+    "calledBy": ["UserService"],
+    "imports": [
+      {"source": "../db/connection", "specifier": "Database"},
+      {"source": "../services/audit", "specifier": "AuditService"}
+    ]
+  },
+  {
+    "name": "refreshToken",
+    "type": "function",
+    "file": "src/services/jwt.ts",
+    "line": 68,
+    "parameters": ["oldToken"],
+    "calls": ["verifyToken", "generateToken"],
+    "dependencies": ["ConfigService"],
+    "calledBy": ["AuthController"],
+    "imports": [
+      {"source": "jsonwebtoken", "specifier": "jwt"},
+      {"source": "../config", "specifier": "ConfigService"}
+    ]
+  },
+  {
+    "name": "resetPassword",
+    "type": "function",
+    "file": "src/services/auth.ts",
+    "line": 125,
+    "parameters": ["userId", "newPassword"],
+    "calls": ["validateCredentials", "hashPassword", "updateUser", "sendPasswordResetEmail"],
+    "dependencies": ["UserRepository", "CryptoService", "EmailService"],
+    "calledBy": ["AuthController"],
+    "imports": [
+      {"source": "./validators", "specifier": "validateCredentials"},
+      {"source": "../crypto/hash", "specifier": "hashPassword"},
+      {"source": "../repositories/user", "specifier": "UserRepository"},
+      {"source": "../services/email", "specifier": "EmailService"}
+    ]
+  },
+  {
+    "name": "AuthService",
+    "type": "class",
+    "file": "src/services/auth.ts",
+    "line": 20,
+    "parameters": [],
+    "calls": [],
+    "dependencies": ["IAuthService", "UserRepository", "JwtService", "Logger"],
+    "calledBy": ["AuthController", "ApiGateway"],
+    "imports": []
+  },
+  {
+    "name": "UserService",
+    "type": "class",
+    "file": "src/services/user.ts",
+    "line": 12,
+    "parameters": [],
+    "calls": [],
+    "dependencies": ["IUserRepository", "Logger"],
+    "calledBy": ["UserController", "AuthService"],
+    "imports": []
+  },
+  {
+    "name": "AuthController",
+    "type": "class",
+    "file": "src/controllers/auth.ts",
+    "line": 8,
+    "parameters": [],
+    "calls": [],
+    "dependencies": ["AuthService", "ILogger"],
+    "calledBy": ["Router"],
+    "imports": []
+  },
+  {
+    "name": "UserController",
+    "type": "class",
+    "file": "src/controllers/user.ts",
+    "line": 6,
+    "parameters": [],
+    "calls": [],
+    "dependencies": ["UserService", "ILogger"],
+    "calledBy": ["Router"],
+    "imports": []
+  },
+  {
+    "name": "ConfigService",
+    "type": "class",
+    "file": "src/config/service.ts",
+    "line": 10,
+    "parameters": [],
+    "calls": [],
+    "dependencies": ["ConfigOptions"],
+    "calledBy": ["AuthService", "JwtService", "DatabaseConnection"],
+    "imports": []
+  }
+]

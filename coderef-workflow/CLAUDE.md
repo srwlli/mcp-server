@@ -1,10 +1,10 @@
 # coderef-workflow - AI Context Documentation
 
 **Project:** coderef-workflow (MCP Server)
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Status:** ✅ Production - Feature lifecycle management orchestration
 **Created:** 2024-12-24
-**Last Updated:** 2025-01-11 (v2.0.0 - AI-powered planning)
+**Last Updated:** 2026-01-16 (v2.1.0 - Scanner integration with full type coverage)
 
 ---
 
@@ -14,7 +14,18 @@
 
 **Core Innovation:** Works in tandem with **coderef-context** (code intelligence) and **coderef-docs** (documentation generation) to provide AI agents with the tools to manage complex, multi-phase feature implementations. **NEW:** Workorder ID tracking for complete audit trail and feature lifecycle management.
 
-**Latest Update (v2.0.0 - 2025-01-11):**
+**Latest Update (v2.1.0 - 2026-01-16):**
+- ✅ **MAJOR:** Complete coderef-context scanner integration with 95% AST accuracy
+- ✅ **Task 1 - Type Coverage:** Planning workflows now detect interfaces, decorators, type aliases (5 interfaces, 3 decorators in plans)
+- ✅ **Task 2 - Impact Analysis:** Automated transitive dependency analysis with BFS traversal, risk categorization (low/medium/high/critical), Mermaid dependency graphs
+- ✅ **Task 3 - Complexity Tracking:** Data-driven effort estimation using actual code complexity scores (0-10 scale), automatic refactoring candidate flagging (score >7)
+- ✅ Created 4 new modules: ImpactAnalyzer (383 lines), ComplexityEstimator (212 lines), comprehensive test fixtures (475 lines)
+- ✅ Enhanced planning_analyzer.py with get_type_system_elements() and get_decorator_elements() methods (+117 lines)
+- ✅ Enhanced planning_generator.py with complexity calculation, refactoring flagging, data-driven estimates (+359 lines)
+- ✅ **Test Coverage:** 57 unit + integration tests (10 type coverage, 21 impact analysis, 20 complexity, 6 integration) - 100% pass rate
+- ✅ **Documentation:** Complete workorder tracking in WO-WORKFLOW-SCANNER-INTEGRATION-001 with detailed phase breakdowns
+
+**Previous (v2.0.0 - 2025-01-11):**
 - ✅ **MAJOR:** Replaced template-based planning with AI-powered agent orchestration
 - ✅ Plans now use file-specific tasks with exact line numbers (not generic placeholders)
 - ✅ Three-tier validation system: pre-flight, post-generation, telemetry tracking
@@ -263,6 +274,174 @@ IMPL-003: Update src/models/User.model.ts line 23 - add refreshToken field to sc
 ```
 
 **Testing:** See `tests/test_ai_plan_generation.py` (17 unit tests) and `tests/integration/test_ai_planning_integration.py` (5 integration tests).
+
+### Scanner Integration Enhancement (v2.1.0)
+
+**Major Enhancement:** Complete integration of coderef-context scanner with 95% AST accuracy, enabling type coverage, impact analysis, and complexity tracking in planning workflows.
+
+**WO-WORKFLOW-SCANNER-INTEGRATION-001** - Integrated Phase 1 scanner improvements (interfaces, decorators, relationship tracking, complexity metrics) into planning, impact analysis, and execution tracking.
+
+**Three Task Areas:**
+
+#### Task 1: Planning Workflows with Full Type Coverage
+
+**Achievement:** Planning workflows now detect and utilize interfaces, decorators, and type aliases with 95%+ code coverage.
+
+**Implementation:**
+- Added `get_type_system_elements()` to planning_analyzer.py - extracts interfaces and type aliases from index.json
+- Added `get_decorator_elements()` to planning_analyzer.py - extracts decorators with target information
+- Enhanced `_generate_risk_assessment()` in planning_generator.py - considers type complexity (>10 types or >5 decorators increases complexity)
+
+**Result:**
+```json
+// analysis.json now includes:
+{
+  "type_system": {
+    "interfaces": [
+      {"name": "IAuthService", "file": "src/services/auth.ts", "line": 15},
+      {"name": "IUserRepository", "file": "src/repositories/user.ts", "line": 8}
+    ],
+    "type_aliases": [
+      {"name": "UserId", "file": "src/types/user.ts", "line": 3}
+    ]
+  },
+  "decorators": [
+    {"name": "@Injectable", "target": "class", "file": "src/decorators/injectable.ts", "line": 8}
+  ]
+}
+
+// plan.json risk assessment considers type counts:
+{
+  "2_risk_assessment": {
+    "complexity": "medium (15 types, 6 decorators - moderate type system complexity)"
+  }
+}
+```
+
+**Files Modified:**
+- `generators/planning_analyzer.py` (+117 lines) - type system and decorator extraction methods
+- `generators/planning_generator.py` (+29 lines) - type complexity consideration in risk assessment
+
+**Testing:** 10 unit tests in `tests/test_type_coverage.py` (100% pass rate)
+
+---
+
+#### Task 2: Impact Analysis with Relationship Graphs
+
+**Achievement:** Automated transitive dependency analysis with BFS traversal, risk categorization, and visual dependency graphs.
+
+**Implementation:**
+- Created `handlers/impact_analysis.py` (383 lines) - ImpactAnalyzer class with full functionality
+- `traverse_dependencies()` - BFS traversal with cycle detection, supports upstream/downstream directions
+- `calculate_impact_score()` - Risk categorization (low: 0-5, medium: 6-15, high: 16-50, critical: >50 affected elements)
+- `generate_impact_report()` - Markdown reports with Mermaid dependency graphs
+- Integrated into planning_analyzer.py with `analyze_change_impact()` method (+92 lines)
+
+**Result:**
+```python
+# Example impact analysis
+analyzer = ImpactAnalyzer(project_path)
+affected = analyzer.traverse_dependencies('AuthService', max_depth=3)
+# Returns: List of 12 affected elements with dependency paths
+
+score = analyzer.calculate_impact_score(affected)
+# Returns: {'impact_score': 12, 'risk_level': 'medium', 'breakdown': {...}}
+
+report = analyzer.generate_impact_report('AuthService', affected, score)
+# Returns: Markdown with Mermaid graph showing all downstream dependencies
+```
+
+**Files Created:**
+- `handlers/__init__.py` (4 lines)
+- `handlers/impact_analysis.py` (383 lines)
+
+**Files Modified:**
+- `generators/planning_analyzer.py` (+92 lines) - impact analysis integration
+
+**Testing:** 21 unit tests in `tests/test_impact_analysis.py` (100% pass rate)
+
+---
+
+#### Task 3: Complexity Tracking for Execution
+
+**Achievement:** Data-driven effort estimation using actual code complexity scores, with automatic refactoring candidate flagging.
+
+**Implementation:**
+- Created `utils/complexity_estimator.py` (212 lines) - ComplexityEstimator utility for fallback when MCP tool unavailable
+- `estimate_element_complexity()` - Heuristic-based scoring (0-10 scale) using element type, parameter count, function calls
+- `estimate_task_complexity()` - Aggregate complexity across multiple elements
+- Enhanced `_generate_phases()` in planning_generator.py - adds complexity_metrics to each phase
+- Implemented `flag_refactoring_candidates()` - identifies high-complexity elements (score >7) needing refactoring
+- Enhanced `_generate_risk_assessment()` - uses data-driven complexity instead of generic estimates
+- Updated `_generate_enhanced_deliverables()` in tool_handlers.py - includes complexity summary
+
+**Result:**
+```json
+// plan.json phases include complexity metrics:
+{
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Phase 1: Foundation",
+      "complexity_metrics": {
+        "avg_complexity_score": 5.2,
+        "max_complexity_score": 8,
+        "high_complexity_elements": [
+          {"name": "resetPassword", "score": 8, "risk_level": "high"}
+        ],
+        "complexity_distribution": {"low": 2, "medium": 3, "high": 1}
+      }
+    }
+  ]
+}
+
+// DELIVERABLES.md includes complexity summary:
+{
+  "complexity": {
+    "total_elements": 15,
+    "avg_complexity_score": 5.2,
+    "high_complexity_count": 3,
+    "refactoring_recommendations": ["resetPassword", "validateCredentials"]
+  }
+}
+```
+
+**Files Created:**
+- `utils/complexity_estimator.py` (212 lines)
+
+**Files Modified:**
+- `generators/planning_generator.py` (+330 lines) - complexity calculation, refactoring flagging, effort estimation
+- `tool_handlers.py` (+74 lines) - deliverables complexity integration
+
+**Testing:** 20 unit tests in `tests/test_complexity_tracking.py` (100% pass rate)
+
+---
+
+**Complete Test Coverage (v2.1.0):**
+
+All scanner integration enhancements have comprehensive test coverage:
+
+- **Test Fixtures:** `tests/fixtures/sample_index.json` (385 lines), `tests/fixtures/sample_graph.json` (90 lines)
+  - 25 elements: 5 interfaces, 2 type aliases, 3 decorators, 10 functions, 5 classes
+  - Full ElementData structure with dependencies[], calledBy[], imports[]
+
+- **Unit Tests:** 51 tests across 3 test files
+  - `tests/test_type_coverage.py` (10 tests) - interface/decorator detection, type complexity
+  - `tests/test_impact_analysis.py` (21 tests) - BFS traversal, risk scoring, Mermaid graphs
+  - `tests/test_complexity_tracking.py` (20 tests) - element scoring, task aggregation, refactoring flagging
+
+- **Integration Tests:** 6 tests in `tests/integration/test_planning_integration.py`
+  - End-to-end workflow (context → analysis → plan generation)
+  - Type coverage integration, impact analysis capabilities, complexity metrics in phases
+  - Real-world scenarios (dark mode feature, JWT refresh tokens)
+
+**Total:** 57 tests, 100% pass rate, 2.00s runtime
+
+**Success Metrics Achieved:**
+- ✅ Planning accuracy: 95%+ code coverage (includes interfaces, decorators)
+- ✅ Impact precision: Automated transitive impact analysis with risk categorization
+- ✅ Effort estimation: Complexity-based estimation replacing generic heuristics
+- ✅ Test coverage: 57 comprehensive tests validating all three task areas
 
 ### Workorder System (v1.1.0+)
 

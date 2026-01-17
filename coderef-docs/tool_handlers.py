@@ -228,6 +228,86 @@ async def handle_get_template(arguments: dict) -> list[TextContent]:
     return [TextContent(type="text", text=result)]
 
 
+# WO-DOCS-SCANNER-INTEGRATION-001: IMPL-005 - Relationship aggregation helpers
+def aggregate_imports(elements: list[dict]) -> dict[str, int]:
+    """
+    Aggregate import usage counts across all elements.
+
+    Reads ElementData.imports field (from Phase 1 scanner task_5) and counts
+    how many times each module is imported across the codebase.
+
+    Args:
+        elements: List of ElementData dicts with optional 'imports' field
+
+    Returns:
+        Dict mapping module source to usage count
+        Example: {'acorn': 12, 'typescript': 8, 'fs/promises': 15}
+    """
+    import_counts = {}
+
+    for element in elements:
+        imports = element.get('imports', [])
+        for imp in imports:
+            source = imp.get('source')
+            if source:
+                import_counts[source] = import_counts.get(source, 0) + 1
+
+    return import_counts
+
+
+def aggregate_exports(elements: list[dict]) -> dict[str, list[dict]]:
+    """
+    Aggregate exports grouped by file.
+
+    Reads ElementData.exports field (from Phase 1 scanner task_5) and groups
+    export declarations by their source file.
+
+    Args:
+        elements: List of ElementData dicts with optional 'exports' field
+
+    Returns:
+        Dict mapping file path to list of export dicts
+        Example: {'types.ts': [{'name': 'ElementData', 'type': 'interface'}]}
+    """
+    exports_by_file = {}
+
+    for element in elements:
+        file_path = element.get('file')
+        exports = element.get('exports', [])
+
+        if file_path and exports:
+            if file_path not in exports_by_file:
+                exports_by_file[file_path] = []
+            exports_by_file[file_path].extend(exports)
+
+    return exports_by_file
+
+
+def identify_high_coupling(import_counts: dict[str, int], threshold: int = 5) -> dict[str, int]:
+    """
+    Identify high-dependency modules based on usage threshold.
+
+    Filters import counts to find modules used >= threshold times,
+    indicating high coupling/dependency.
+
+    Args:
+        import_counts: Dict of module to usage count
+        threshold: Minimum usage count to be considered high coupling (default: 5)
+
+    Returns:
+        Dict of high-dependency modules with usage counts, sorted descending
+        Example: {'fs/promises': 15, 'acorn': 12, 'typescript': 8}
+    """
+    high_deps = {
+        module: count
+        for module, count in import_counts.items()
+        if count >= threshold
+    }
+
+    # Sort by count descending
+    return dict(sorted(high_deps.items(), key=lambda x: x[1], reverse=True))
+
+
 @log_invocation
 @mcp_error_handler
 async def handle_generate_foundation_docs(arguments: dict) -> list[TextContent]:

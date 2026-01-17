@@ -21,6 +21,75 @@ TOOL_TEMPLATES_DIR = None
 # Feature flag for enhanced deliverables (WO-DELIVERABLES-ENHANCEMENT-001)
 ENHANCED_DELIVERABLES_ENABLED = os.getenv("ENHANCED_DELIVERABLES_ENABLED", "true").lower() == "true"
 
+
+def _extract_complexity_metrics(plan: dict) -> dict:
+    """
+    Extract complexity metrics from plan.json for DELIVERABLES.md.
+
+    IMPL-011: WO-WORKFLOW-SCANNER-INTEGRATION-001
+    Aggregates complexity data across all phases for deliverables reporting.
+
+    Args:
+        plan: Plan dict with UNIVERSAL_PLANNING_STRUCTURE
+
+    Returns:
+        Dict with:
+        - total_elements: int
+        - avg_complexity_score: float
+        - max_complexity_score: int
+        - high_complexity_count: int (elements with score > 7)
+        - refactoring_recommendations: List[str]
+        - complexity_distribution: Dict[str, int] (low/medium/high/critical)
+    """
+    structure = plan.get('UNIVERSAL_PLANNING_STRUCTURE', {})
+    phases = structure.get('6_implementation_phases', {}).get('phases', [])
+    refactoring_section = structure.get('refactoring_candidates', {})
+
+    total_elements = 0
+    scores = []
+    high_complexity_count = 0
+    distribution = {'low': 0, 'medium': 0, 'high': 0, 'critical': 0}
+
+    # Aggregate metrics from all phases
+    for phase in phases:
+        complexity_metrics = phase.get('complexity_metrics', {})
+
+        # Check if this has full metrics (from ComplexityEstimator)
+        if 'avg_complexity_score' in complexity_metrics:
+            avg_score = complexity_metrics.get('avg_complexity_score', 0)
+            scores.append(avg_score)
+
+            # Get distribution if available
+            phase_dist = complexity_metrics.get('complexity_distribution', {})
+            for level, count in phase_dist.items():
+                if level in distribution:
+                    distribution[level] += count
+
+            # Count high-complexity elements
+            high_elements = complexity_metrics.get('high_complexity_elements', [])
+            high_complexity_count += len(high_elements)
+            total_elements += complexity_metrics.get('elements_analyzed', 0)
+
+    # Calculate overall average
+    avg_complexity = round(sum(scores) / len(scores), 1) if scores else 0.0
+    max_complexity = max(scores) if scores else 0
+
+    # Get refactoring recommendations
+    refactoring_recommendations = refactoring_section.get('recommendations', [])
+    refactoring_count = refactoring_section.get('total_count', 0)
+
+    return {
+        'total_elements': total_elements,
+        'avg_complexity_score': avg_complexity,
+        'max_complexity_score': max_complexity,
+        'high_complexity_count': high_complexity_count,
+        'refactoring_recommendations_count': refactoring_count,
+        'refactoring_recommendations': refactoring_recommendations[:3],  # Top 3 recommendations
+        'complexity_distribution': distribution,
+        'has_data': total_elements > 0
+    }
+
+
 # Import dependencies
 from typing import Any
 from generators import BaseGenerator, ChangelogGenerator, StandardsGenerator, AuditGenerator
@@ -1726,6 +1795,10 @@ async def _generate_enhanced_deliverables(
         'source': str((feature_dir / 'plan.json').relative_to(project_path))
     }
 
+    # IMPL-011: Collect complexity metrics from plan
+    complexity_data = _extract_complexity_metrics(plan)
+    logger.info(f"Complexity summary: {complexity_data['total_elements']} elements, avg score: {complexity_data['avg_complexity_score']}")
+
     # Build template context
     context = {
         'feature_name': feature_name,
@@ -1739,6 +1812,7 @@ async def _generate_enhanced_deliverables(
         'git': git_data,
         'coderef': coderef_data,
         'plan': plan_data,
+        'complexity': complexity_data,  # IMPL-011: Add complexity metrics to template context
         'validation': {'status': 'Pending', 'score': 0, 'issues': []},
         'health': {'overall_score': 0, 'traceability': 0, 'completeness': 0, 'freshness': 0, 'validation': 0},
         'success_criteria': {'functional': [], 'quality': []}

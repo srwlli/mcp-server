@@ -498,6 +498,101 @@ coderef-docs Tools (documentation)
     └─ Generate standards documentation
 ```
 
+### CSV Automation (v2.1.0 - Phase 3 Task 2)
+
+**Automated CSV Maintenance** - coderef-workflow tools automatically update tools-and-commands.csv when creating/archiving resources.
+
+**Goal:** Make CSV a living document that updates without manual intervention.
+
+**Implementation:** `csv_manager.py` utility module provides thread-safe CSV operations:
+
+```python
+from csv_manager import add_csv_entry, update_csv_status, check_csv_exists
+
+# Add new resource to CSV
+add_csv_entry(
+    type="Command",
+    server="coderef-workflow",
+    category="Planning",
+    name="/new-command",
+    description="Description",
+    status="active",
+    path="C:\\path\\to\\command.md"
+)
+
+# Update resource status
+update_csv_status(
+    resource_name="/archived-command",
+    new_status="archived",
+    server="coderef-workflow"
+)
+
+# Check if resource exists
+if check_csv_exists("/my-command", "coderef-workflow"):
+    print("Already in CSV")
+```
+
+**What Gets Tracked in CSV:**
+- ✅ **Tools** (from server.py) - The MCP tools themselves
+- ✅ **Commands** (from .claude/commands/) - The slash commands
+- ✅ **Scripts** (from scripts/) - Automation scripts
+- ❌ **Outputs** (plan.json, DELIVERABLES.md, etc.) - NOT tracked
+
+**Integrated Workflows:**
+
+1. **`archive_feature`** - Updates workorder status to "archived" (if workorder tracked as workflow)
+   - Only updates workorder entries, NOT individual output files
+   - Non-fatal: Logs warning if CSV update fails but archive succeeds
+
+**CSV Manager Features:**
+- ✅ Thread-safe operations (file locking)
+- ✅ Automatic timestamp generation (Created, LastUpdated)
+- ✅ Duplicate prevention
+- ✅ Backup on write
+- ✅ Bulk operations support
+- ✅ Statistics and querying
+
+**CSV Location:** `C:\Users\willh\Desktop\coderef-dashboard\packages\dashboard\src\app\resources\coderef\tools-and-commands.csv`
+
+**Testing:** 8 unit tests in `tests/test_csv_manager.py` (100% passing)
+
+**Related:** WO-CSV-ECOSYSTEM-SYNC-001 Phase 3 Task 2
+
+#### CSV Sync Utility (`csv_sync_utility.py`)
+
+**Automatic Drift Detection & Reconciliation** - Scans project for resources and syncs with CSV.
+
+**Usage:**
+```python
+from csv_sync_utility import sync_csv_for_server
+from pathlib import Path
+
+# Sync coderef-workflow
+stats, report = sync_csv_for_server(
+    Path("C:/Users/willh/.mcp-servers/coderef-workflow"),
+    "coderef-workflow",
+    dry_run=True  # Preview changes first
+)
+
+print(report)  # Shows drift: missing resources, deleted resources, metadata mismatches
+print(stats)   # {'added': 0, 'marked_deleted': 32, 'updated': 21, 'errors': 0}
+```
+
+**Features:**
+- Scans server.py for tools, .claude/commands/ for commands, scripts/ for scripts
+- Detects 3 types of drift: missing from CSV, missing from project, metadata mismatches
+- Auto-reconciles: adds missing, marks deleted, fixes metadata
+- Dry run mode for safe previewing
+- Slash command: `/sync-csv` (global command)
+
+**What It Detects:**
+1. **Missing from CSV** - Resources in project but not in CSV → Add them
+2. **Missing from Project** - Resources in CSV but not in project → Mark as 'deleted'
+3. **Metadata Mismatches** - Type/Category/Path differences → Fix them
+
+**Integrated Workflows:**
+- `archive_feature` - Updates workorder status to "archived" (if tracked as workflow)
+
 ---
 
 ## Tech Stack
@@ -779,7 +874,37 @@ ruff check src/
 
 ---
 
-## Recent Changes (v1.3.0 - 2025-01-02)
+## Recent Changes (v2.2.0 - 2026-01-17)
+
+**WO-CSV-ECOSYSTEM-SYNC-001 Phase 3 Task 2 ENHANCED - Complete CSV Automation** - ✅ **COMPLETE**
+
+**Achievement:** Full CSV automation with drift detection and auto-reconciliation
+- ✅ Created `csv_manager.py` utility module (13 functions, thread-safe, backup on write)
+- ✅ Created `csv_sync_utility.py` drift detection module (400+ lines)
+- ✅ Integrated CSV automation into `archive_feature` (updates workorder status)
+- ✅ Created `/sync-csv` command for manual drift reconciliation
+- ✅ Added 8 unit tests (100% passing, 0.21s runtime)
+- ✅ Drift detection: scans projects for tools/commands/scripts, auto-syncs CSV
+
+**Files Created:**
+- `csv_manager.py` (13 functions, 460 lines)
+- `csv_sync_utility.py` (400+ lines, drift detection & reconciliation)
+- `tests/test_csv_manager.py` (8 tests, 230 lines)
+- `~/.claude/commands/sync-csv.md` (global command)
+
+**Files Modified:**
+- `tool_handlers.py` (+30 lines in archive_feature for workorder status updates)
+- `CLAUDE.md` (+95 lines CSV documentation)
+
+**Impact:**
+- CSV tracks tools, commands, and scripts (NOT outputs like plan.json)
+- Drift detection finds resources in code but not CSV (and vice versa)
+- One command (`/sync-csv`) syncs entire ecosystem across all MCP servers
+- Eliminates manual CSV maintenance for tools/commands
+
+---
+
+## Previous Changes (v1.3.0 - 2025-01-02)
 
 **Major Feature - .coderef/ Integration for 5-10x Faster Planning**
 

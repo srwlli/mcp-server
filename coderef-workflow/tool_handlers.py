@@ -3042,6 +3042,35 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
                 extra={'workorder_id': workorder_id, 'feature_name': feature_name}
             )
 
+    # CSV automation: update workorder status to 'archived' (if workorder tracked in CSV)
+    # NOTE: Only updates workorder entries, NOT individual outputs (plan.json, etc.)
+    csv_update_result = None
+    try:
+        from csv_manager import update_csv_status, check_csv_exists
+
+        # Update workorder status if it exists in CSV
+        # This is for tracking workorders themselves as resources (e.g., workflows)
+        if workorder_id and check_csv_exists(workorder_id):
+            updated_count = update_csv_status(
+                resource_name=workorder_id,
+                new_status='archived'
+            )
+            csv_update_result = f"Updated {updated_count} CSV entries to archived"
+            logger.info(
+                f"CSV updated: {updated_count} entries marked as archived",
+                extra={'workorder_id': workorder_id, 'feature_name': feature_name}
+            )
+        else:
+            csv_update_result = "No workorder entry in CSV (expected for most features)"
+            logger.debug("No workorder entry found in CSV to update")
+    except Exception as e:
+        # Non-fatal: log warning but don't fail archive
+        logger.warning(
+            f"Failed to update CSV (archive succeeded): {e}",
+            extra={'workorder_id': workorder_id, 'feature_name': feature_name}
+        )
+        csv_update_result = f"CSV update failed: {str(e)}"
+
     # Git automation: commit and push archive operation
     from handler_helpers import git_commit_and_push, format_archive_commit_message
 
@@ -3066,12 +3095,15 @@ async def handle_archive_feature(arguments: dict) -> list[TextContent]:
         'index_updated': True,
         'workorder_logged': workorder_logged,
         'workorder_id': workorder_id,
+        'csv_updated': csv_update_result,  # NEW: CSV automation result
         'git_commit': git_result.get('commit_hash') if git_result.get('success') else None,
         'git_pushed': git_result.get('pushed', False),
         'git_error': git_result.get('error')
     }
 
     message = f"✅ Feature '{feature_name}' archived successfully to coderef/archived/{feature_name}"
+    if csv_update_result and not csv_update_result.startswith('CSV update failed'):
+        message += f"\n📊 CSV updated: {csv_update_result}"
     if git_result.get('success'):
         if git_result.get('pushed'):
             message += f"\n📤 Changes committed ({git_result['commit_hash']}) and pushed to remote"

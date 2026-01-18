@@ -2,7 +2,7 @@
   "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001",
   "feature_name": "csv-ecosystem-sync",
   "created": "2026-01-17",
-  "status": "phase_1_complete",
+  "status": "phase_2_complete",
   "description": "Establish tools-and-commands.csv as single source of truth. All agents audit their projects against CSV, report discrepancies/additions, implement dynamic dashboard, and update ecosystem instructions to maintain CSV as living document.",
   "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\csv-ecosystem-sync\\instructions.json",
 
@@ -22,8 +22,8 @@
     },
     "phase_2": {
       "name": "CSV Integration & Updates",
-      "status": "ready",
-      "progress": "0/13 tasks complete (0%)",
+      "status": "complete",
+      "progress": "13/13 tasks complete (100%)",
       "lead_agents": ["coderef-docs"],
       "support_agents": ["coderef-dashboard"],
       "dependencies": ["phase_1"],
@@ -46,15 +46,21 @@
     },
     "phase_3": {
       "name": "Dynamic Dashboard & Ecosystem Instructions",
-      "status": "not_started",
-      "progress": "0/2 tasks complete (0%)",
+      "status": "in_progress",
+      "progress": "0/3 tasks complete (0%)",
       "lead_agents": ["coderef-dashboard", "coderef-workflow"],
       "dependencies": ["phase_2"],
+      "tasks": [
+        "Dynamic Resources page (real-time CSV reading)",
+        "Automated CSV maintenance workflows",
+        "New page structure standard (CLAUDE.md + coderef/ rollout)"
+      ],
       "gate_criteria": [
-        "Resources page reads CSV dynamically",
-        "Real-time updates implemented",
-        "All MCP servers updated with CSV maintenance instructions",
-        "Automation scripts integrated into workflows"
+        "Resources page reads CSV dynamically with file watching or polling",
+        "Real-time updates implemented (no hardcoded data)",
+        "All workflows update CSV automatically (/create-workorder, /archive-feature, generate_foundation_docs, generate_resource_sheet)",
+        "New page structure standard applied to 6 pages (resources, explorer, workflows, personas, documentation, testing)",
+        "Documentation created for CSV maintenance patterns"
       ]
     }
   },
@@ -64,8 +70,8 @@
     "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
     "role": "Coordinate 3-phase CSV ecosystem synchronization. Validate phase gates, synthesize audit results, aggregate recommendations, ensure CSV remains single source of truth.",
     "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\csv-ecosystem-sync\\orchestrator-synthesis.md",
-    "status": "phase_2_ready",
-    "notes": "Phase 1 complete. All 4 critical decisions approved by user. Phase 2 handoff prepared. Ready to begin CSV integration.",
+    "status": "monitoring_phase_3",
+    "notes": "Phase 3 in progress. Task 1 (coderef-dashboard) and Task 2 (coderef-workflow) executing in parallel. Monitoring for completion reports.",
     "decisions": {
       "global_commands": "YES - All 67 commands are global",
       "archive_file_ownership": "Move to global, server=coderef-workflow",

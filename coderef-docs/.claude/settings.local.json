@@ -20,7 +20,8 @@
       "Bash(mkdir:*)",
       "Bash(ls \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\"\" 2>&1 || ls \"C:Userswillh.claudecommands\"\")",
       "Bash(test -d \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\")",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(git rev-parse:*)"
     ],
     "deny": [],
     "ask": []

@@ -40,7 +40,8 @@
       "mcp__coderef-context__coderef_scan",
       "SlashCommand(/create-workorder)",
       "Bash(if not exist \"coderef\\workorder\\workflow-scanner-integration\" mkdir \"coderef\\workorder\\workflow-scanner-integration\")",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(git check-ignore:*)"
     ],
     "deny": [],
     "ask": []

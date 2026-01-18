@@ -19,7 +19,8 @@
       "mcp__coderef-docs__generate_quickref_interactive",
       "Bash(mkdir:*)",
       "Bash(ls \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\"\" 2>&1 || ls \"C:Userswillh.claudecommands\"\")",
-      "Bash(test -d \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\")"
+      "Bash(test -d \"C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\")",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

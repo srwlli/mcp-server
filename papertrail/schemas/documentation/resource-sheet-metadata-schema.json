@@ -112,6 +112,63 @@
       "description": "Optional: Documentation status lifecycle",
       "enum": ["DRAFT", "REVIEW", "APPROVED", "ARCHIVED"],
       "examples": ["DRAFT", "APPROVED"]
+    },
+    "_comment_workorder_fields": "TEMPORARY SOLUTION: Fields below added as optional to unblock Phase 2 validation. FUTURE: Split into rsms-workorder-v2.0.json extended schema variant (see WO-RSMS-EXTENSION-001)",
+    "workorder_id": {
+      "type": "string",
+      "description": "Optional: Workorder ID tracking this feature implementation (TEMPORARY: Will move to extended schema)",
+      "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+      "examples": ["WO-EXPLORER-SIDEBAR-UX-001"]
+    },
+    "feature_id": {
+      "type": "string",
+      "description": "Optional: Feature identifier for multi-agent coordination (TEMPORARY: Will move to extended schema)",
+      "examples": ["explorer-sidebar-ux-improvements"]
+    },
+    "phase": {
+      "type": "string",
+      "description": "Optional: Development phase for phased workorders (TEMPORARY: Will move to extended schema)",
+      "enum": ["phase_1", "phase_2", "phase_3"],
+      "examples": ["phase_2"]
+    },
+    "complexity": {
+      "type": "string",
+      "description": "Optional: Code complexity rating (TEMPORARY: Will move to extended schema)",
+      "enum": ["trivial", "low", "medium", "high", "very_high"],
+      "examples": ["medium"]
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Optional: Package/library dependencies, not source file paths (TEMPORARY: Will move to extended schema)",
+      "items": { "type": "string" },
+      "examples": [["React", "lucide-react", "tailwindcss"]]
+    },
+    "related_sheets": {
+      "type": "array",
+      "description": "Optional: Related resource sheet documentation files (TEMPORARY: Will move to extended schema)",
+      "items": {
+        "type": "string",
+        "pattern": "^.*-RESOURCE-SHEET\\.md$"
+      },
+      "examples": [["FileTree-RESOURCE-SHEET.md", "CodeRef-Explorer-Widget-RESOURCE-SHEET.md"]]
+    },
+    "created": {
+      "type": "string",
+      "description": "Optional: Creation date in YYYY-MM-DD format (TEMPORARY: Will move to extended schema)",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-01-17"]
+    },
+    "updated": {
+      "type": "string",
+      "description": "Optional: Last update date in YYYY-MM-DD format (TEMPORARY: Will move to extended schema)",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-01-17"]
+    },
+    "loc": {
+      "type": "integer",
+      "description": "Optional: Lines of code in the component (TEMPORARY: Will move to extended schema)",
+      "minimum": 0,
+      "examples": [118, 320, 1500]
     }
   },
   "additionalProperties": false,

@@ -1,0 +1,54 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF_CORE",
+  "parent_session": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "agent_id": "coderef-core",
+  "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+  "role": "Phase 1: Audit coderef-core package ONLY (dashboard agent handles rest of dashboard project). Report discrepancies vs CSV.",
+  "status": "complete",
+  "scope": "coderef-core package ONLY (NOT full dashboard project)",
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Scan coderef-core package ONLY (NOT full dashboard project) for all resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Compare findings against CSV",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Document discrepancies and new resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create audit report in outputs/",
+      "status": "complete"
+    }
+  ],
+  "success_metrics": {
+    "audit_completeness": {
+      "baseline": "Unknown resources in coderef-core package ONLY (NOT full dashboard project)",
+      "target": "100% of coderef-core package ONLY (NOT full dashboard project) resources cataloged",
+  "status": "Complete - 3 new resources identified (100% coverage)"
+    }
+  },
+  "resources": {
+    "index": "resources/index.md"
+  },
+  "outputs": {
+    "primary_output": "outputs/coderef-core-audit-report.json",
+    "format": "json"
+  },
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 4 tasks complete",
+      "Audit report created",
+      "communication.json updated"
+    ]
+  },
+  "notes": "Scope: coderef-core package only. Dashboard agent handles rest of coderef-dashboard project."
+}

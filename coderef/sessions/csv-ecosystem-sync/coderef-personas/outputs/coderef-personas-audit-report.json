@@ -1,0 +1,295 @@
+{
+  "agent_id": "coderef-personas",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Tool", "Command", "Script", "Schema", "Validator", "Workflow", "Output", "ResourceSheet", "Tab"],
+    "coderef_personas_resources_in_csv": 21,
+    "breakdown": {
+      "tools": 8,
+      "commands": 13,
+      "other": 0
+    }
+  },
+  "audit_results": {
+    "resources_found": 23,
+    "breakdown": {
+      "tools": 8,
+      "commands": 0,
+      "persona_files": 15
+    },
+    "discrepancies": [
+      {
+        "type": "missing_from_project",
+        "resource_name": "/create-persona",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Management, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory (directory is empty)",
+        "recommendation": "CRITICAL: All 13 slash commands listed in CSV are missing from .claude/commands/ directory. Directory exists but is empty. Commands need to be created or CSV entries need to be removed."
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/debug-ui",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Management, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\debug-ui.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/fix",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Management, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\fix.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/use-persona",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Management, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\use-persona.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/ava",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\ava.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-assistant",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-assistant.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-context-agent",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-context-agent.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-docs-agent",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-docs-agent.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-mcp-lead",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-mcp-lead.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-personas-agent",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-personas-agent.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/coderef-testing-agent",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\coderef-testing-agent.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/lloyd",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\lloyd.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/marcus",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\marcus.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/quinn",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\quinn.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/research-scout",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\research-scout.md"
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "/taylor",
+        "current_csv_value": "Command exists in CSV (Type=Command, Category=Personas, Server=coderef-personas)",
+        "actual_value": "File does not exist in .claude/commands/ directory",
+        "recommendation": "Remove from CSV or create command file at C:\\Users\\willh\\.mcp-servers\\coderef-personas\\.claude\\commands\\taylor.md"
+      }
+    ],
+    "new_resources": [
+      {
+        "type": "PersonaFile",
+        "name": "ava.json",
+        "description": "Ava persona definition (Frontend Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\ava.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-assistant.json",
+        "description": "CodeRef Assistant persona definition (Orchestrator)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\coderef-assistant.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "lloyd.json",
+        "description": "Lloyd persona definition (Multi-Agent Coordinator)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\lloyd.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "marcus.json",
+        "description": "Marcus persona definition (Backend Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\marcus.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "quinn.json",
+        "description": "Quinn persona definition (Testing Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\quinn.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "taylor.json",
+        "description": "Taylor persona definition (General Purpose Agent)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\base\\taylor.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-context-agent.json",
+        "description": "CodeRef Context Agent persona definition (Code Intelligence Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\coderef-personas\\coderef-context-agent.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-docs-agent.json",
+        "description": "CodeRef Docs Agent persona definition (Documentation Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\coderef-personas\\coderef-docs-agent.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-mcp-lead.json",
+        "description": "CodeRef MCP Lead persona definition (Lead System Architect)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\coderef-personas\\coderef-mcp-lead.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-personas-agent.json",
+        "description": "CodeRef Personas Agent persona definition (Personas Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\coderef-personas\\coderef-personas-agent.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "coderef-testing-agent.json",
+        "description": "CodeRef Testing Agent persona definition (Testing Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\coderef-personas\\coderef-testing-agent.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "research-scout.json",
+        "description": "Research Scout persona definition (Research & Discovery Specialist)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\custom\\research-scout.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Persona files are internal data files, not user-facing resources. May not need CSV tracking."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "integration-test.json",
+        "description": "Integration test persona (test fixture)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\custom\\integration-test.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Test fixture - should NOT be tracked in production CSV."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "nfl-scraper-expert-v1.2.0-20251020.json",
+        "description": "NFL scraper expert persona backup (v1.2.0)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\backups\\nfl-scraper-expert-v1.2.0-20251020.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Backup file - should NOT be tracked in production CSV."
+      },
+      {
+        "type": "PersonaFile",
+        "name": "nfl-scraper-expert-v1.3.0-20251020-pre-navigation.json",
+        "description": "NFL scraper expert persona backup (v1.3.0 pre-navigation)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas\\personas\\backups\\nfl-scraper-expert-v1.3.0-20251020-pre-navigation.json",
+        "server": "coderef-personas",
+        "category": "Persona Definitions",
+        "note": "Backup file - should NOT be tracked in production CSV."
+      }
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 13,
+    "total_new_resources": 15,
+    "csv_update_required": true,
+    "critical_issues": [
+      "All 13 slash commands listed in CSV are missing from project (.claude/commands/ directory is empty)",
+      "15 persona JSON files found in project but not tracked in CSV (decision needed: should internal data files be tracked?)"
+    ],
+    "recommendations": [
+      "URGENT: Remove all 13 command entries from CSV or create the missing command files",
+      "DECISION REQUIRED: Should persona JSON files be tracked in CSV? They are internal data files, not user-facing resources.",
+      "If persona files should be tracked, add 12 production persona files to CSV (exclude test fixtures and backups)",
+      "Verify if commands were deleted intentionally or if CSV is outdated",
+      "Check CLAUDE.md references to these commands - may need documentation updates if commands are removed"
+    ],
+    "validation_notes": [
+      "Tools validation: ✅ PASS - All 8 tools match between CSV and server.py",
+      "Commands validation: ❌ FAIL - 13 commands in CSV, 0 in project (100% discrepancy)",
+      "Persona files: DECISION NEEDED - 15 files found, none tracked in CSV"
+    ]
+  }
+}

@@ -1,0 +1,232 @@
+{
+  "workorder_id": "WO-DOCS-SCANNER-INTEGRATION-001",
+  "feature_name": "docs-scanner-integration",
+  "analyzed_at": "2026-01-16T00:00:00.000Z",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+
+  "project_overview": {
+    "name": "coderef-docs",
+    "type": "MCP Server - Documentation Generation",
+    "purpose": "Documentation generation server with 16 specialized tools for foundation docs, changelog management, standards enforcement, and user docs automation",
+    "version": "4.0.0",
+    "status": "Production"
+  },
+
+  "technology_stack": {
+    "language": "Python 3.10+",
+    "framework": "MCP (Model Context Protocol) 1.0+",
+    "async": "asyncio (fully async/await)",
+    "validation": "jsonschema 4.0+",
+    "testing": "pytest 8.0+",
+    "external_integration": "@coderef/core CLI (optional)",
+    "package_manager": "uv or pip"
+  },
+
+  "codebase_structure": {
+    "total_elements": 145,
+    "key_files": {
+      "server_entry": "server.py (450+ lines)",
+      "tool_handlers": "tool_handlers.py (1,200+ lines, 16 tool handlers)",
+      "mcp_orchestrator": "mcp_orchestrator.py (200 lines)",
+      "mcp_integration": "mcp_integration.py (300 lines)",
+      "generators": "generators/ (foundation, user_guide, changelog, standards, audit, resource_sheet)"
+    },
+    "test_coverage": {
+      "total_tests": 185,
+      "test_files": 10,
+      "pass_rate": "95%+"
+    }
+  },
+
+  "key_integration_points": {
+    "foundation_docs_handler": {
+      "file": "tool_handlers.py",
+      "lines": "233-450",
+      "function": "handle_generate_foundation_docs",
+      "current_capabilities": [
+        "Sequential generation with .coderef/ integration",
+        "Drift detection (MCP orchestrator)",
+        ".coderef/ resource checking",
+        "Template-specific context mapping"
+      ],
+      "integration_needed": [
+        "Filter by new ElementData types (interface, decorator, type)",
+        "Add sections for interfaces/type aliases/decorators in generated docs"
+      ]
+    },
+    "resource_sheet_generator": {
+      "file": "generators/resource_sheet_generator.py",
+      "function": "ResourceSheetGenerator",
+      "current_capabilities": [
+        "Module-based resource sheet system",
+        "Reads .coderef/index.json for element data",
+        "Auto-detection of code characteristics"
+      ],
+      "integration_needed": [
+        "Read ElementData.complexity field",
+        "Calculate complexity statistics (avg, max, hotspots)",
+        "Generate refactoring recommendations"
+      ]
+    },
+    "mcp_integration": {
+      "file": "mcp_integration.py",
+      "functions": [
+        "check_coderef_resources",
+        "get_context_instructions",
+        "get_template_context_files",
+        "format_missing_resources_warning"
+      ],
+      "current_capabilities": [
+        "Template-specific .coderef/ file mapping",
+        "Resource availability checking",
+        "Missing resource warnings"
+      ],
+      "integration_needed": [
+        "Add import/export analysis instructions",
+        "Add dynamic import detection instructions",
+        "Add complexity analysis instructions"
+      ]
+    }
+  },
+
+  "phase_1_scanner_enhancements": {
+    "source": "WO-SCANNER-COMPLETE-INTEGRATION-001 (coderef-core Phase 1)",
+    "status": "✅ COMPLETE - All 7 tasks verified",
+    "available_fields": {
+      "type_extensions": {
+        "description": "New element types from AST scanner",
+        "values": ["interface", "decorator", "type", "property"],
+        "source": "Phase 1 task_1 (AST integration)"
+      },
+      "complexity": {
+        "description": "Cyclomatic complexity score (McCabe metric)",
+        "type": "number",
+        "source": "Phase 1 task_5 (relationship tracking)"
+      },
+      "imports": {
+        "description": "Import statements with source/specifiers/dynamic flag",
+        "type": "Array<{source, specifiers, default, namespace, dynamic, line}>",
+        "source": "Phase 1 task_5 (relationship tracking)"
+      },
+      "exports": {
+        "description": "Export declarations",
+        "type": "Array<{name, type, line}>",
+        "source": "Phase 1 task_5 (relationship tracking)"
+      },
+      "dependencies": {
+        "description": "Resolved module dependencies",
+        "type": "string[]",
+        "source": "Phase 1 task_5 (relationship tracking)"
+      },
+      "dynamicImports": {
+        "description": "Dynamic import patterns (import(), require())",
+        "type": "Array<{pattern, location, line}>",
+        "source": "Phase 1 task_6 (dynamic code detection)"
+      }
+    }
+  },
+
+  "coding_patterns": {
+    "handler_pattern": "Async functions with @mcp_error_handler and @log_invocation decorators",
+    "validation_pattern": "Input validation at boundaries using validation.py helpers",
+    "error_handling": "ErrorResponse class for consistent error formatting",
+    "mcp_tool_calling": "MCP orchestrator layer with caching for external tool calls",
+    "backward_compatibility": "Graceful degradation with .get() and default values"
+  },
+
+  "test_infrastructure": {
+    "test_framework": "pytest with pytest-asyncio",
+    "test_files": [
+      "tests/test_mcp_orchestrator.py (16 tests)",
+      "tests/test_drift_detection.py (20 tests)",
+      "tests/test_foundation_docs_mcp.py (20 tests)",
+      "tests/test_user_docs_integration.py (20 tests)",
+      "tests/test_standards_semantic.py (20 tests)",
+      "tests/test_tool_consolidation.py (20 tests)",
+      "tests/test_health_check.py (20 tests)",
+      "tests/test_edge_cases.py (20 tests)",
+      "tests/test_full_workflow_integration.py (5 tests)"
+    ],
+    "coverage_target": "95%+",
+    "current_status": "185 tests, 95%+ pass rate"
+  },
+
+  "risks_identified": [
+    {
+      "risk": "Backward compatibility with pre-Phase 1 scanner output",
+      "severity": "medium",
+      "mitigation": "Use .get() with defaults, check field existence before processing"
+    },
+    {
+      "risk": "Performance impact of complexity analysis on large codebases",
+      "severity": "low",
+      "mitigation": "Complexity field already calculated by scanner, just read and display"
+    },
+    {
+      "risk": "Complexity of relationship graph visualization",
+      "severity": "medium",
+      "mitigation": "Use existing Mermaid diagram patterns, limit to top N dependencies"
+    }
+  ],
+
+  "existing_patterns_to_follow": {
+    "type_filtering": "Use list comprehensions: [e for e in elements if e['type'] == 'interface']",
+    "field_access": "Use .get() with defaults: element.get('complexity', None)",
+    "graceful_degradation": "Check field existence before processing, provide fallback messages",
+    "section_generation": "Use markdown templates with f-strings for dynamic content",
+    "validation": "Check data availability, warn user if missing, continue with available data"
+  },
+
+  "foundation_docs_available": {
+    "README.md": true,
+    "ARCHITECTURE.md": false,
+    "API.md": false,
+    "SCHEMA.md": false,
+    "COMPONENTS.md": false,
+    "USER-GUIDE.md": false,
+    "CLAUDE.md": true
+  },
+
+  "gaps_and_opportunities": {
+    "documentation_gaps": [
+      "No interfaces documented in API.md (85% accuracy)",
+      "No decorators documented in ARCHITECTURE.md",
+      "No complexity metrics in resource sheets",
+      "No automated dependency graphs",
+      "No dynamic import warnings"
+    ],
+    "quality_improvements": [
+      "95%+ accuracy with interface/decorator coverage (up from 85%)",
+      "Complexity-guided refactoring recommendations",
+      "Visual dependency graphs from scanner data",
+      "Runtime consideration warnings for dynamic code"
+    ]
+  },
+
+  "recommended_approach": {
+    "phase_1_foundation_docs": {
+      "task": "Task 1 - AST Accuracy Integration",
+      "files": ["tool_handlers.py lines 233-450"],
+      "effort": "2-3 hours",
+      "priority": "high"
+    },
+    "phase_2_complexity": {
+      "task": "Task 2 - Complexity Integration",
+      "files": ["generators/resource_sheet_generator.py"],
+      "effort": "3-4 hours",
+      "priority": "high"
+    },
+    "phase_3_relationships": {
+      "task": "Task 3 - Relationship Integration",
+      "files": ["tool_handlers.py (ARCHITECTURE.md generation)", "mcp_integration.py"],
+      "effort": "4-5 hours",
+      "priority": "high"
+    },
+    "phase_4_dynamic_imports": {
+      "task": "Task 4 - Dynamic Import Warnings",
+      "files": ["tool_handlers.py (API.md and ARCHITECTURE.md generation)"],
+      "effort": "2-3 hours",
+      "priority": "medium"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+  "feature_name": "explorer-sidebar-documentation-updates",
+  "created": "2026-01-17",
+  "description": "Update documentation to reflect new Explorer sidebar UX improvements including resizable sidebar, scroll container, persistence, and visual hierarchy enhancements",
+  "goal": "Ensure developers understand the new sidebar features and can maintain/extend them properly through comprehensive resource sheets and CLAUDE.md updates",
+  "requirements": [
+    "Update existing resource sheets with new sidebar features",
+    "Create new ResizableSidebar resource sheet",
+    "Update CLAUDE.md with customization guidance",
+    "Update resource sheet index"
+  ],
+  "out_of_scope": [],
+  "constraints": [
+    "Follow RSMS v2.0 format for resource sheets",
+    "Validate against UDS standards (Papertrail)",
+    "Maintain existing documentation style and tone",
+    "Use snake_case for frontmatter fields"
+  ],
+  "target_files": [
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\resource-sheet-index.md",
+    "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md"
+  ],
+  "_uds": {
+    "generated_by": "coderef-docs agent",
+    "document_type": "Feature Context",
+    "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+    "feature_id": "explorer-sidebar-documentation-updates",
+    "last_updated": "2026-01-17",
+    "ai_assistance": true,
+    "status": "DRAFT",
+    "next_review": "2026-02-16"
+  }
+}

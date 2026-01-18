@@ -1,0 +1,196 @@
+{
+  "agent_id": "coderef-context",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "coderef_context_resources_in_csv": 16,
+    "resource_types": ["Tool", "Output"]
+  },
+  "audit_results": {
+    "resources_found": 16,
+    "resource_breakdown": {
+      "tools": 14,
+      "commands": 0,
+      "scripts": 0,
+      "outputs": 2,
+      "schemas": 0,
+      "validators": 0
+    },
+    "discrepancies": [
+      {
+        "type": "incorrect_description",
+        "resource_name": "coderef_context",
+        "current_csv_value": "Generate comprehensive codebase context with visual architecture diagram. Returns project metadata",
+        "actual_value": "Generate comprehensive codebase context with visual architecture diagram. Returns project metadata, stats, and ready-to-render Mermaid diagram in single call.",
+        "recommendation": "Update CSV description to include full description without truncation. CSV parser may be truncating due to embedded commas. Consider escaping commas or using quotes."
+      },
+      {
+        "type": "incorrect_description",
+        "resource_name": "coderef_export",
+        "current_csv_value": "Export coderef data in various formats (JSON",
+        "actual_value": "Export coderef data in various formats (JSON, JSON-LD, Mermaid, DOT)",
+        "recommendation": "Update CSV description to include all format types. Ensure commas in parenthetical lists are properly escaped."
+      },
+      {
+        "type": "incorrect_description",
+        "resource_name": "coderef_incremental_scan",
+        "current_csv_value": "Perform incremental scan (only re-scan files with detected drift",
+        "actual_value": "Perform incremental scan (only re-scan files with detected drift, merge with existing index)",
+        "recommendation": "Update CSV description to include complete functionality description."
+      },
+      {
+        "type": "incorrect_description",
+        "resource_name": "coderef_query",
+        "current_csv_value": "Query code relationships (what-calls",
+        "actual_value": "Query code relationships (what-calls, what-imports, shortest-path, etc)",
+        "recommendation": "Update CSV description to list all query types available."
+      },
+      {
+        "type": "incorrect_description",
+        "resource_name": "coderef_scan",
+        "current_csv_value": "Scan project and discover all code elements (functions",
+        "actual_value": "Scan project and discover all code elements (functions, classes, components, hooks)",
+        "recommendation": "Update CSV description to list all element types discovered."
+      }
+    ],
+    "new_resources": [],
+    "resources_validated": {
+      "tools": {
+        "coderef_scan": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_query": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_impact": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_complexity": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_patterns": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_coverage": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_context": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_validate": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_drift": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_incremental_scan": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_diagram": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_tag": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "coderef_export": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        },
+        "validate_coderef_outputs": {
+          "in_csv": true,
+          "in_server": true,
+          "category": "Code Intelligence",
+          "status": "active"
+        }
+      },
+      "outputs": {
+        "DOT": {
+          "in_csv": true,
+          "in_codebase": true,
+          "category": "Visualization",
+          "format": ".dot",
+          "generated_by": "coderef_export, coderef_diagram"
+        },
+        "Mermaid": {
+          "in_csv": true,
+          "in_codebase": true,
+          "category": "Visualization",
+          "format": ".mmd",
+          "generated_by": "coderef_export, coderef_diagram, coderef_context"
+        }
+      }
+    }
+  },
+  "summary": {
+    "total_discrepancies": 5,
+    "total_new_resources": 0,
+    "csv_update_required": true,
+    "update_type": "description_fixes",
+    "accuracy_percentage": 96.875,
+    "notes": [
+      "All 14 tools exist in CSV with correct names and categories",
+      "No commands or scripts directories exist (correctly not in CSV)",
+      "Output formats (DOT, Mermaid) correctly listed in CSV",
+      "5 tool descriptions truncated - likely CSV parsing issue with embedded commas",
+      "Recommend: Escape or quote descriptions containing commas in parenthetical lists"
+    ]
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Fix CSV description truncation for 5 tools",
+      "details": "Update tools-and-commands.csv with full descriptions. Ensure CSV parser properly handles commas in quoted fields.",
+      "affected_resources": [
+        "coderef_context",
+        "coderef_export",
+        "coderef_incremental_scan",
+        "coderef_query",
+        "coderef_scan"
+      ]
+    },
+    {
+      "priority": "LOW",
+      "action": "Add CSV validation test",
+      "details": "Create automated test to compare CSV descriptions against server.py tool definitions to detect future truncation issues."
+    }
+  ]
+}

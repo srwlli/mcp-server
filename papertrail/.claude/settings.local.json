@@ -26,7 +26,8 @@
       "Bash(cat:*)",
       "mcp__coderef-context__coderef_scan",
       "mcp__papertrail__validate_resource_sheet",
-      "mcp__papertrail__validate_document"
+      "mcp__papertrail__validate_document",
+      "Bash(/dev/null)"
     ]
   },
   "enableAllProjectMcpServers": true,

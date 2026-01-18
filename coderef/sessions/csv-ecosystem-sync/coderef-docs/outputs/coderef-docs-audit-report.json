@@ -1,0 +1,221 @@
+{
+  "agent_id": "coderef-docs",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Tool", "Command", "Script", "Validator", "Schema", "Workflow"],
+    "coderef_docs_resources_in_csv": 47
+  },
+  "audit_results": {
+    "resources_found": 54,
+    "discrepancies": [
+      {
+        "type": "incorrect_path",
+        "resource_name": "/audit-codebase",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\audit-codebase.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\audit-codebase.md (global)",
+        "recommendation": "Update CSV with correct global path: C:\\Users\\willh\\.claude\\commands\\audit-codebase.md"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/check-consistency",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\check-consistency.md",
+        "actual_value": "Does not exist in either location",
+        "recommendation": "Remove from CSV or verify if command exists"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/create-resource-sheet",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\create-resource-sheet.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\create-resource-sheet.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/establish-standards",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\establish-standards.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\establish-standards.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/generate-docs",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\generate-docs.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\generate-docs.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/generate-user-docs",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\generate-user-docs.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\generate-user-docs.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/get-template",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\get-template.md",
+        "actual_value": "Does not exist in CSV but exists globally",
+        "recommendation": "Add to CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/list-templates",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\list-templates.md",
+        "actual_value": "Does not exist in CSV but exists globally",
+        "recommendation": "Add to CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/record-changes",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\record-changes.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\record-changes.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/resource-sheet-catalog",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\resource-sheet-catalog.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\resource-sheet-catalog.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/update-docs",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\update-docs.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\update-docs.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "/update-foundation-docs",
+        "current_csv_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\.claude\\commands\\update-foundation-docs.md",
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\update-foundation-docs.md (global)",
+        "recommendation": "Update CSV with correct global path"
+      },
+      {
+        "type": "misattribution",
+        "resource_name": "/audit-plans",
+        "current_csv_value": "Listed under coderef-docs server in CSV",
+        "actual_value": "Exists in global commands but belongs to coderef-workflow (planning audit)",
+        "recommendation": "Re-attribute to coderef-workflow server"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "/coderef-foundation-docs",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\coderef-foundation-docs.md (global)",
+        "recommendation": "Add to CSV with Type=Command, Category=Documentation, Status=deprecated (tool is deprecated)"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "/features-inventory",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.claude\\commands\\features-inventory.md (global)",
+        "recommendation": "Add to CSV with Type=Command, Category=Documentation"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "consistency_checker.py",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\consistency_checker.py",
+        "recommendation": "Add to CSV with Type=Script, Category=Utilities"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validation_pipeline.py",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\validation_pipeline.py",
+        "recommendation": "Add to CSV with Type=Script, Category=Utilities"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "user_guide_generator.py",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\user_guide_generator.py",
+        "recommendation": "Add to CSV with Type=Script, Category=Utilities"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "remove-emojis.py",
+        "current_csv_value": null,
+        "actual_value": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\scripts\\remove-emojis.py",
+        "recommendation": "Add to CSV with Type=Script, Category=Utilities"
+      }
+    ],
+    "new_resources": [
+      {
+        "type": "Command",
+        "name": "/coderef-foundation-docs",
+        "description": "Generate foundation documentation using deprecated tool (use /generate-docs instead)",
+        "path": "C:\\Users\\willh\\.claude\\commands\\coderef-foundation-docs.md",
+        "server": "coderef-docs",
+        "category": "Documentation",
+        "status": "deprecated"
+      },
+      {
+        "type": "Command",
+        "name": "/features-inventory",
+        "description": "Generate FEATURES.md inventory with workorder tracking",
+        "path": "C:\\Users\\willh\\.claude\\commands\\features-inventory.md",
+        "server": "coderef-docs",
+        "category": "Documentation",
+        "status": "active"
+      },
+      {
+        "type": "Script",
+        "name": "consistency_checker.py",
+        "description": "Consistency checking module for standards enforcement",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\consistency_checker.py",
+        "server": "coderef-docs",
+        "category": "Utilities",
+        "status": "active"
+      },
+      {
+        "type": "Script",
+        "name": "validation_pipeline.py",
+        "description": "Validation pipeline for document health checks",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\validation_pipeline.py",
+        "server": "coderef-docs",
+        "category": "Utilities",
+        "status": "active"
+      },
+      {
+        "type": "Script",
+        "name": "user_guide_generator.py",
+        "description": "Generator for comprehensive USER-GUIDE.md documentation",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\generators\\user_guide_generator.py",
+        "server": "coderef-docs",
+        "category": "Utilities",
+        "status": "active"
+      },
+      {
+        "type": "Script",
+        "name": "remove-emojis.py",
+        "description": "Utility script to remove emoji characters from documentation",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\scripts\\remove-emojis.py",
+        "server": "coderef-docs",
+        "category": "Utilities",
+        "status": "active"
+      }
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 19,
+    "total_new_resources": 6,
+    "csv_update_required": true,
+    "critical_findings": [
+      "ALL command paths in CSV are incorrect (point to local .claude/commands/ instead of global ~/.claude/commands/)",
+      "/audit-plans command misattributed to coderef-docs (belongs to coderef-workflow)",
+      "3 generator scripts missing from CSV inventory (consistency_checker, validation_pipeline, user_guide_generator)",
+      "2 commands missing from CSV (/coderef-foundation-docs, /features-inventory)"
+    ],
+    "recommendations": [
+      "Phase 2: Update all 12 command paths in CSV to use global path (C:\\Users\\willh\\.claude\\commands\\)",
+      "Phase 2: Re-attribute /audit-plans to coderef-workflow server",
+      "Phase 2: Add 6 new resources (2 commands, 4 scripts) to CSV",
+      "Phase 2: Verify /check-consistency command existence or remove from CSV"
+    ]
+  }
+}

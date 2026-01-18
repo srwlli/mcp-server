@@ -1,0 +1,88 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-DOCS",
+  "parent_session": "WO-EXPLORER-SIDEBAR-UX-001",
+  "agent_id": "coderef-docs",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "phase": "phase_1",
+  "role": "Update resource sheets and documentation to reflect new sidebar features",
+  "status": "complete",
+  "started_at": "2026-01-17T00:00:00Z",
+  "completed_at": "2026-01-17T00:40:00Z",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Update CodeRef-Explorer-Widget-RESOURCE-SHEET.md with ResizableSidebar documentation",
+      "status": "complete",
+      "completed_at": "2026-01-17T00:15:00Z"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Update explorer/CLAUDE.md with sidebar resize instructions",
+      "status": "complete",
+      "completed_at": "2026-01-17T00:20:00Z"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Update resource-sheet-index.md with new components and features",
+      "status": "complete",
+      "completed_at": "2026-01-17T00:25:00Z"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create ResizableSidebar-RESOURCE-SHEET.md for new component",
+      "status": "complete",
+      "completed_at": "2026-01-17T00:35:00Z"
+    }
+  ],
+
+  "success_metrics": {
+    "documentation_completeness": {
+      "baseline": "No mention of resizable sidebar",
+      "target": "Complete documentation of resize feature, hook, persistence",
+      "status": "✅ Achieved - All aspects documented comprehensively"
+    },
+    "resource_sheet_accuracy": {
+      "baseline": "Resource sheets reflect old fixed-width sidebar",
+      "target": "Resource sheets updated with new components and UX patterns",
+      "status": "✅ Achieved - All sheets reflect new resizable architecture"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "workorders_created": [
+      {
+        "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+        "location": "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\explorer-sidebar-documentation-updates",
+        "files": ["context.json", "plan.json"]
+      }
+    ],
+    "files_created": [
+      "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\explorer-sidebar-documentation-updates\\context.json",
+      "C:\\Users\\willh\\.mcp-servers\\coderef-docs\\coderef\\workorder\\explorer-sidebar-documentation-updates\\plan.json",
+      "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md"
+    ],
+    "files_modified": [
+      "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+      "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\resource-sheet-index.md"
+    ],
+    "primary_output": "outputs/coderef-docs-phase1-output.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All tasks complete (status='complete')",
+      "Resource sheets updated with new sidebar features",
+      "CLAUDE.md reflects resize instructions",
+      "New component resource sheet created and indexed",
+      "All documentation validates against UDS standards (Papertrail)"
+    ]
+  }
+}

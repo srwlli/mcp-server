@@ -1,0 +1,116 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-PAPERTRAIL",
+  "parent_session": "WO-EXPLORER-SIDEBAR-UX-001",
+  "validation_date": "2026-01-17",
+  "validator": "papertrail",
+  "phase": "phase_1",
+
+  "summary": {
+    "total_documents": 3,
+    "passed": 0,
+    "failed": 2,
+    "not_found": 1,
+    "average_score": 18.67,
+    "critical_errors": 1,
+    "major_errors": 2,
+    "warnings": 2
+  },
+
+  "documents": [
+    {
+      "file": "CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "validation_standard": "RSMS v2.0",
+      "score": 56,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format 'CodeRef-Explorer-Widget' - use PascalCase-with-hyphens (e.g., 'Auth-Service', 'Widget-System', 'File-Api-Route')"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename component 'CodeRef-Explorer-Widget' doesn't match subject 'CodeRef Explorer Widget' (expected: 'Coderef-Explorer-Widget-RESOURCE-SHEET.md')"
+      ],
+      "recommendations": [
+        "Move file to 'coderef/resources-sheets/' directory (remove 'components/' subdirectory)",
+        "Rename file to match PascalCase-with-hyphens pattern",
+        "Add missing recommended sections: Audience & Intent, Quick Reference, Usage"
+      ]
+    },
+    {
+      "file": "ResizableSidebar-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "validation_standard": "RSMS v2.0",
+      "score": 0,
+      "status": "not_found",
+      "errors": [],
+      "warnings": [],
+      "note": "File does not exist - not yet created by coderef-docs agent",
+      "recommendations": [
+        "Create ResizableSidebar-RESOURCE-SHEET.md as part of Phase 1 documentation deliverables",
+        "Ensure RSMS v2.0 compliance when creating the file",
+        "Include all required frontmatter fields: subject, parent_project, category, version"
+      ]
+    },
+    {
+      "file": "CLAUDE.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+      "type": "system_documentation",
+      "validation_standard": "UDS v1.0",
+      "score": 0,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "CRITICAL",
+          "field": "frontmatter",
+          "message": "Missing or invalid YAML frontmatter (must start with --- and end with ---)"
+        }
+      ],
+      "warnings": [],
+      "recommendations": [
+        "Add YAML frontmatter at the top of the file with required UDS fields: agent, date, task",
+        "Include system documentation fields: project, version, status",
+        "Follow UDS Tier 1 + Tier 2 (System Docs) requirements"
+      ]
+    }
+  ],
+
+  "recommendations": [
+    "BLOCKING: explorer/CLAUDE.md requires YAML frontmatter to meet UDS standards",
+    "BLOCKING: ResizableSidebar-RESOURCE-SHEET.md must be created before Phase 1 completion",
+    "HIGH: Fix CodeRef-Explorer-Widget-RESOURCE-SHEET.md file location and naming issues",
+    "MEDIUM: Add recommended sections to CodeRef-Explorer-Widget resource sheet for better documentation quality"
+  ],
+
+  "phase_gate_status": {
+    "all_tasks_complete": true,
+    "all_validations_pass": false,
+    "no_critical_errors": false,
+    "validation_report_generated": true,
+    "recommendations_provided": true,
+    "overall_status": "BLOCKED",
+    "blocking_issues": [
+      "CLAUDE.md missing YAML frontmatter (CRITICAL)",
+      "ResizableSidebar-RESOURCE-SHEET.md does not exist",
+      "CodeRef-Explorer-Widget-RESOURCE-SHEET.md has MAJOR errors (score 56/100)"
+    ]
+  },
+
+  "next_steps": [
+    "1. coderef-docs agent must add YAML frontmatter to explorer/CLAUDE.md",
+    "2. coderef-docs agent must create ResizableSidebar-RESOURCE-SHEET.md",
+    "3. Fix CodeRef-Explorer-Widget-RESOURCE-SHEET.md file location and naming",
+    "4. Re-validate all documents after fixes",
+    "5. Achieve minimum score of 80/100 for all documents"
+  ]
+}

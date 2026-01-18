@@ -1,0 +1,53 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-PAPERTRAIL",
+  "parent_session": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "agent_id": "papertrail",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "role": "Phase 1: Audit papertrail MCP server for tools, validators, schemas. Report discrepancies vs CSV.",
+  "status": "complete",
+  "scope": "papertrail MCP server",
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Scan papertrail MCP server for all resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Compare findings against CSV",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Document discrepancies and new resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create audit report in outputs/",
+      "status": "complete"
+    }
+  ],
+  "success_metrics": {
+    "audit_completeness": {
+      "baseline": "Unknown resources in papertrail MCP server",
+      "target": "100% of papertrail MCP server resources cataloged",
+      "status": "Complete - 66 resources found, 16 missing from CSV (33% gap)"
+    }
+  },
+  "resources": {
+    "index": "resources/index.md"
+  },
+  "outputs": {
+    "primary_output": "outputs/papertrail-audit-report.json",
+    "format": "json"
+  },
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 4 tasks complete",
+      "Audit report created",
+      "communication.json updated"
+    ]
+  }
+}

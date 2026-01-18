@@ -1,0 +1,240 @@
+{
+  "agent_id": "coderef-testing",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Command", "Output", "ResourceSheet", "Schema", "Script", "Tab", "Tool", "Validator", "Workflow"],
+    "coderef_testing_resources_in_csv": 29
+  },
+  "audit_results": {
+    "resources_found": 15,
+    "discrepancies": [
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/compare-runs",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\compare-runs.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/detect-flaky",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\detect-flaky.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/discover-tests",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\discover-tests.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/list-frameworks",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\list-frameworks.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/run-by-pattern",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\run-by-pattern.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/run-parallel",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\run-parallel.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/run-test-file",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\run-test-file.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/run-tests",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\run-tests.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-coverage",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-coverage.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-health",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-health.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-performance",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-performance.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-report",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-report.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-results",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-results.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/test-trends",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\test-trends.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "stale_in_csv",
+        "resource_name": "/testing-proof",
+        "current_csv_value": "Command exists in CSV at C:\\Users\\willh\\.mcp-servers\\coderef-testing\\.claude\\commands\\testing-proof.md",
+        "actual_value": "File does not exist - .claude/commands/ directory is empty",
+        "recommendation": "Remove from CSV or create missing command file"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "analyze_coverage",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "analyze_test_performance",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "detect_flaky_tests",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "validate_test_health",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "discover_tests",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "list_test_frameworks",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "run_all_tests",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "run_test_category",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "run_test_file",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "run_tests_in_parallel",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "aggregate_results",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "compare_test_runs",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "generate_test_report",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      },
+      {
+        "type": "incorrect_path",
+        "resource_name": "get_test_results",
+        "current_csv_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\src\\coderef_testing\\server.py",
+        "actual_value": "Path: C:\\Users\\willh\\.mcp-servers\\coderef-testing\\server.py",
+        "recommendation": "Update CSV path to correct location (remove src\\coderef_testing\\ subdirectory)"
+      }
+    ],
+    "new_resources": [
+      {
+        "type": "Persona",
+        "name": "testing-expert",
+        "description": "Expert in test planning, automation, analysis, and optimization across all major test frameworks (pytest, jest, cargo, mocha, vitest)",
+        "path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing\\personas\\testing-expert.json",
+        "server": "coderef-testing",
+        "category": "Personas"
+      }
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 29,
+    "stale_commands_in_csv": 15,
+    "incorrect_tool_paths": 14,
+    "total_new_resources": 1,
+    "csv_update_required": true,
+    "critical_findings": [
+      "All 15 commands listed in CSV do not exist in the project - .claude/commands/ directory is empty",
+      "All 14 tools have incorrect paths in CSV (includes non-existent src/coderef_testing subdirectory)",
+      "1 persona (testing-expert.json) exists but is not in CSV"
+    ]
+  }
+}

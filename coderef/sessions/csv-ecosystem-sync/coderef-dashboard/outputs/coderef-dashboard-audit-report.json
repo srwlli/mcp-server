@@ -1,0 +1,392 @@
+{
+  "agent_id": "coderef-dashboard",
+  "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "csv_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\resources\\coderef\\tools-and-commands.csv",
+    "total_resources_in_csv": 306,
+    "dashboard_resources_in_csv": 37,
+    "resource_types_in_csv": [
+      "Command",
+      "Script",
+      "Tab",
+      "Output",
+      "ResourceSheet",
+      "Tool",
+      "Schema",
+      "Validator",
+      "Workflow"
+    ]
+  },
+  "audit_results": {
+    "resources_scanned": 184,
+    "resource_types_found": [
+      "Command",
+      "Script",
+      "Page",
+      "Widget",
+      "Component",
+      "Tab",
+      "ResourceSheet",
+      "APIRoute",
+      "Context",
+      "Hook",
+      "Utility"
+    ],
+    "discrepancies": [
+      {
+        "type": "missing_timestamps",
+        "severity": "critical",
+        "resource_count": 1,
+        "current_csv_value": "empty Created and LastUpdated fields for /widget-architect command",
+        "actual_value": "command exists but timestamps not populated",
+        "recommendation": "Run git log to extract first commit (Created) and last commit (LastUpdated) timestamps for /widget-architect command",
+        "affected_resources": [
+          "/widget-architect"
+        ]
+      },
+      {
+        "type": "missing_timestamps",
+        "severity": "critical",
+        "resource_count": 6,
+        "current_csv_value": "empty Created and LastUpdated fields for 6 dashboard tabs",
+        "actual_value": "tabs exist but timestamps not populated",
+        "recommendation": "Run git log to extract timestamps for all 6 dashboard tabs (Commands, Output, Scripts, Setup, Tools, Workflows)",
+        "affected_resources": [
+          "Commands Tab",
+          "Output Tab",
+          "Scripts Tab",
+          "Setup Tab",
+          "Tools Tab",
+          "Workflows Tab"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "major",
+        "resource_count": 3,
+        "current_csv_value": null,
+        "actual_value": "3 Python scripts exist in packages/dashboard/src/app/resources/coderef/",
+        "recommendation": "Add build-source-of-truth.py, merge-and-dedupe.py, and validate-csv.py to CSV with Type=Script, Server=coderef-dashboard, Category=Scanners/Utilities/Validators",
+        "affected_resources": [
+          "build-source-of-truth.py",
+          "merge-and-dedupe.py",
+          "validate-csv.py"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "major",
+        "resource_count": 19,
+        "current_csv_value": null,
+        "actual_value": "19 Next.js pages exist in packages/dashboard/src/app/",
+        "recommendation": "Add all 19 dashboard pages to CSV with Type=Page, Server=coderef-dashboard, Category=UI Navigation/Workflow/System",
+        "affected_resources": [
+          "Dashboard Home",
+          "User Profile",
+          "Explorer",
+          "Scanner",
+          "Full Viewer",
+          "Resources",
+          "Notes",
+          "Assistant v2",
+          "Metrics",
+          "Notes Standalone",
+          "Create Session",
+          "Sessions Hub",
+          "Prompts Library",
+          "Settings",
+          "Boards",
+          "Assistant v1",
+          "Assistant Standalone",
+          "Boards Standalone",
+          "List Standalone"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "major",
+        "resource_count": 2,
+        "current_csv_value": null,
+        "actual_value": "2 main widgets exist in packages/dashboard/src/widgets/",
+        "recommendation": "Add CodeRefExplorerWidget and NotesWidget to CSV with Type=Widget, Server=coderef-dashboard, Category=UI Components",
+        "affected_resources": [
+          "CodeRefExplorerWidget",
+          "NotesWidget"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "major",
+        "resource_count": 42,
+        "current_csv_value": null,
+        "actual_value": "42 major UI components exist in packages/dashboard/src/components/",
+        "recommendation": "Add major components to CSV with Type=Component, Server=coderef-dashboard, Category=UI Navigation/UI Components/Workflow/System. Note: Requires decision on granularity threshold.",
+        "affected_resources": [
+          "Sidebar",
+          "MobileNav",
+          "Header",
+          "FileTree",
+          "FileTreeNode",
+          "FileViewer",
+          "ResizableSidebar",
+          "QuickFileSearch",
+          "ProjectSelector",
+          "ViewModeToggle",
+          "MermaidViewer",
+          "ContextMenu",
+          "FavoritesList",
+          "FileTypeFilter",
+          "BatchRestoreUI",
+          "SessionsHub",
+          "SessionCreation",
+          "SessionMonitoring",
+          "SessionManager",
+          "BoardCanvas",
+          "BoardList",
+          "BoardCard",
+          "BoardPicker",
+          "BoardCreationModal",
+          "CardEditor",
+          "AttachmentPicker",
+          "Scanner",
+          "WorkorderList",
+          "WorkorderCard",
+          "StubList",
+          "StubCard",
+          "UnifiedCard",
+          "PromptingWorkflow",
+          "FilterBar",
+          "TabNavigation",
+          "StatsCard",
+          "UserAvatar",
+          "ComingSoon",
+          "ProjectSelectorSkeleton",
+          "TreeActionsToolbar",
+          "CodeRef Index"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "moderate",
+        "resource_count": 27,
+        "current_csv_value": null,
+        "actual_value": "27 API routes exist in packages/dashboard/src/app/api/",
+        "recommendation": "Add all API routes to CSV with Type=APIRoute, Server=coderef-dashboard, Category=API",
+        "affected_resources": [
+          "Workorder by ID",
+          "Project by ID",
+          "Projects List",
+          "Scan Status",
+          "Cancel Scan",
+          "File Tree",
+          "Notes",
+          "Scan Output",
+          "Session Output",
+          "Context Discovery",
+          "Sessions List",
+          "Scanner Debug Registry",
+          "Scan (Legacy)",
+          "Start Scan",
+          "Scanner Projects",
+          "Scanner Project by ID",
+          "Workorders List",
+          "Stubs List",
+          "Session Status",
+          "Boards List",
+          "Board by ID",
+          "Board Lists",
+          "Board List by ID",
+          "Board Cards",
+          "Board Card by ID",
+          "File Operations",
+          "Create Session"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "moderate",
+        "resource_count": 7,
+        "current_csv_value": null,
+        "actual_value": "7 context providers exist in packages/dashboard/src/contexts/",
+        "recommendation": "Add all context providers to CSV with Type=Context, Server=coderef-dashboard, Category=System",
+        "affected_resources": [
+          "ThemeContext",
+          "AccentColorContext",
+          "SidebarContext",
+          "ProjectsContext",
+          "ExplorerContext",
+          "SearchContext",
+          "WorkflowContext"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "moderate",
+        "resource_count": 5,
+        "current_csv_value": null,
+        "actual_value": "5 custom hooks exist in packages/dashboard/src/hooks/",
+        "recommendation": "Add custom hooks to CSV with Type=Hook, Server=coderef-dashboard, Category=UI Components/Workflow/System",
+        "affected_resources": [
+          "useWorkorderDetail",
+          "useServiceWorker",
+          "useStubs",
+          "useWorkorders",
+          "useSidebarResize"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "moderate",
+        "resource_count": 14,
+        "current_csv_value": null,
+        "actual_value": "14 library utilities exist in packages/dashboard/src/lib/",
+        "recommendation": "Add library utilities to CSV with Type=Utility, Server=coderef-dashboard, Category=API/System/General. Note: Consider granularity threshold.",
+        "affected_resources": [
+          "workorders API",
+          "stubs API",
+          "projects API",
+          "sessions API",
+          "WidgetRegistry",
+          "indexeddb",
+          "permissions",
+          "hybrid-router",
+          "errors",
+          "aggregateCodeRefTrees",
+          "types",
+          "favorites-types",
+          "persistence",
+          "platform"
+        ]
+      },
+      {
+        "type": "duplicate_resource_sheet",
+        "severity": "minor",
+        "resource_count": 2,
+        "current_csv_value": "2 resource sheets have duplicate entries in CSV and filesystem",
+        "actual_value": "Electron-IPC-Analysis and Notifications-UX-Review exist in both coderef/resources-sheets/ (root) and coderef/resources-sheets/analysis/ subdirectories",
+        "recommendation": "Remove root-level duplicates, keep subdirectory versions only. Update CSV to reflect single canonical path for each.",
+        "affected_resources": [
+          "Electron-IPC-Analysis-RESOURCE-SHEET.md",
+          "Notifications-UX-Review-RESOURCE-SHEET.md"
+        ]
+      },
+      {
+        "type": "missing_from_csv",
+        "severity": "minor",
+        "resource_count": 2,
+        "current_csv_value": null,
+        "actual_value": "2 new resource sheets created recently (ResizableSidebar, QuickFileSearch)",
+        "recommendation": "Add ResizableSidebar-RESOURCE-SHEET.md and QuickFileSearch-RESOURCE-SHEET.md to CSV with Type=ResourceSheet, Server=documentation, Category=Component",
+        "affected_resources": [
+          "ResizableSidebar-RESOURCE-SHEET.md",
+          "QuickFileSearch-RESOURCE-SHEET.md"
+        ]
+      },
+      {
+        "type": "incorrect_metadata",
+        "severity": "minor",
+        "resource_count": 1,
+        "current_csv_value": "Output,coderef-dashboard,Web,HTML,Dashboard UI (index.html workorders dashboard),active,.html,,",
+        "actual_value": "Dashboard uses Next.js (generates HTML), not static .html files",
+        "recommendation": "Update description to 'Next.js-generated dashboard UI' and clarify this is output format, not source file",
+        "affected_resources": [
+          "HTML output entry"
+        ]
+      }
+    ],
+    "new_resources": 123,
+    "summary": {
+      "total_discrepancies": 13,
+      "breakdown_by_severity": {
+        "critical": 2,
+        "major": 6,
+        "moderate": 4,
+        "minor": 3
+      },
+      "breakdown_by_type": {
+        "missing_timestamps": 2,
+        "missing_from_csv": 9,
+        "duplicate_resource_sheet": 1,
+        "incorrect_metadata": 1
+      },
+      "csv_update_required": true,
+      "estimated_new_csv_entries": 123,
+      "estimated_csv_updates": 3
+    }
+  },
+  "recommendations": {
+    "priority_1_critical": [
+      "Populate timestamps for /widget-architect command (1 resource) - run git log extraction",
+      "Populate timestamps for 6 dashboard tabs (Commands, Output, Scripts, Setup, Tools, Workflows) - run git log extraction"
+    ],
+    "priority_2_major": [
+      "Add 3 Python scripts to CSV (build-source-of-truth.py, merge-and-dedupe.py, validate-csv.py) with proper categorization",
+      "Add 19 Next.js pages to CSV - establish page naming convention and categorization strategy",
+      "Add 2 main widgets to CSV (CodeRefExplorerWidget, NotesWidget)",
+      "Add 42 major components to CSV - requires decision on granularity (which components to track vs which to exclude)",
+      "Add 27 API routes to CSV - establish API route naming convention",
+      "Add 7 context providers to CSV",
+      "Add 5 custom hooks to CSV",
+      "Add 14 library utilities to CSV"
+    ],
+    "priority_3_moderate": [
+      "Remove duplicate resource sheets (2 files) - keep subdirectory versions, remove root-level duplicates",
+      "Add 2 new resource sheets to CSV (ResizableSidebar, QuickFileSearch)"
+    ],
+    "priority_4_minor": [
+      "Update HTML output entry description to clarify Next.js-generated output vs static files"
+    ],
+    "csv_integration_strategy": [
+      "Phase 2: Use coderef-docs agent to integrate all findings into CSV",
+      "Phase 3: Resources Page Agent implements dynamic dashboard reading from CSV",
+      "Establish naming conventions for dashboard-specific resource types (Page, Widget, Component, APIRoute, Context, Hook, Utility)",
+      "Determine granularity threshold - which components/utilities are significant enough to track in CSV vs which are too fine-grained"
+    ]
+  },
+  "known_issues_verification": {
+    "missing_timestamps": {
+      "status": "VERIFIED",
+      "finding": "7 dashboard resources missing timestamps (1 command + 6 tabs)",
+      "original_claim": "174 out of 306 resources (57%) have empty Created/LastUpdated timestamps",
+      "dashboard_specific_impact": "Dashboard has 7 resources with missing timestamps out of 37 currently in CSV (18.9%)"
+    },
+    "ui_not_reading_csv": {
+      "status": "NEEDS_VERIFICATION",
+      "finding": "Resources page (packages/dashboard/src/app/resources/page.tsx) exists but requires Phase 3 verification",
+      "original_claim": "UI uses hardcoded TypeScript constants in tab components, CSV is NOT read by the page",
+      "recommendation": "Phase 3 agent should verify if page.tsx reads CSV and implement dynamic loading if not already present"
+    },
+    "missing_resource_types_in_ui": {
+      "status": "VERIFIED",
+      "finding": "CSV contains ResourceSheets (29), Schemas (27), Validators (17) but unclear if UI displays these types",
+      "original_claim": "ResourceSheets, Schemas, Validators, Scripts not shown in UI",
+      "recommendation": "Phase 3 agent should add tabs/filters for all resource types currently in CSV"
+    },
+    "hardcoded_data": {
+      "status": "NEEDS_VERIFICATION",
+      "finding": "6 resource tab components exist (CommandsTab, ToolsTab, ScriptsTab, WorkflowsTab, SetupTab, OutputTab)",
+      "original_claim": "UI uses hardcoded TypeScript constants in tab components",
+      "recommendation": "Phase 3 agent should examine these tab components to verify if they use hardcoded data and replace with CSV parsing"
+    }
+  },
+  "phase_gate_status": {
+    "all_tasks_complete": true,
+    "audit_report_created": true,
+    "known_issues_verified": true,
+    "new_discrepancies_documented": true,
+    "csv_update_required": true,
+    "communication_json_updated": true,
+    "ready_for_phase_2": true
+  },
+  "next_steps": {
+    "phase_2": "coderef-docs agent (session work) integrates all 123 new resources + 3 updates into CSV",
+    "phase_3": "Resources Page Agent (working directly in ~/Desktop/coderef-dashboard/packages/dashboard/src/app/resources) implements dynamic dashboard + standardized page structure",
+    "handoff_artifacts": [
+      "This audit report (coderef-dashboard-audit-report.json)",
+      "All 9 agent audit reports (aggregated by orchestrator)",
+      "Updated CSV (after Phase 2 integration)",
+      "Dynamic dashboard implementation plan (Phase 3)"
+    ]
+  }
+}

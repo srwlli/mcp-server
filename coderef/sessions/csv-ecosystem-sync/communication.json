@@ -1,0 +1,175 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "feature_name": "csv-ecosystem-sync",
+  "created": "2026-01-17",
+  "status": "phase_1_complete",
+  "description": "Establish tools-and-commands.csv as single source of truth. All agents audit their projects against CSV, report discrepancies/additions, implement dynamic dashboard, and update ecosystem instructions to maintain CSV as living document.",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\csv-ecosystem-sync\\instructions.json",
+
+  "phases": {
+    "phase_1": {
+      "name": "Project Audit",
+      "status": "complete",
+      "progress": "9/9 agents complete (100%)",
+      "lead_agents": ["all"],
+      "gate_criteria": [
+        "All 9 agents complete project audit",
+        "Each agent creates audit report in outputs/",
+        "Discrepancies documented",
+        "Missing resources identified",
+        "Recommendations provided"
+      ]
+    },
+    "phase_2": {
+      "name": "CSV Integration & Updates",
+      "status": "ready",
+      "progress": "0/13 tasks complete (0%)",
+      "lead_agents": ["coderef-docs"],
+      "support_agents": ["coderef-dashboard"],
+      "dependencies": ["phase_1"],
+      "expected_additions": "+40 resources (NOT +123, UI components excluded)",
+      "expected_updates": "119 path corrections, 174 timestamps, 5 descriptions",
+      "handoff_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\csv-ecosystem-sync\\PHASE-2-HANDOFF.md",
+      "gate_criteria": [
+        "Move /archive-file to global commands",
+        "Update 68 command paths to global",
+        "Fix 51 MCP tool paths",
+        "Add 40 new resources (16 papertrail, 3 dashboard, 3 coderef-core, 6 coderef-docs, 12 personas)",
+        "Fix 5 truncated descriptions",
+        "Populate 174 timestamps from git log",
+        "Re-attribute /audit-plans to coderef-workflow",
+        "Remove 2 duplicate resource sheets",
+        "Verify 43 stale commands",
+        "Run validate-csv.py (100% pass)",
+        "Create CSV change log"
+      ]
+    },
+    "phase_3": {
+      "name": "Dynamic Dashboard & Ecosystem Instructions",
+      "status": "not_started",
+      "progress": "0/2 tasks complete (0%)",
+      "lead_agents": ["coderef-dashboard", "coderef-workflow"],
+      "dependencies": ["phase_2"],
+      "gate_criteria": [
+        "Resources page reads CSV dynamically",
+        "Real-time updates implemented",
+        "All MCP servers updated with CSV maintenance instructions",
+        "Automation scripts integrated into workflows"
+      ]
+    }
+  },
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Coordinate 3-phase CSV ecosystem synchronization. Validate phase gates, synthesize audit results, aggregate recommendations, ensure CSV remains single source of truth.",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\csv-ecosystem-sync\\orchestrator-synthesis.md",
+    "status": "phase_2_ready",
+    "notes": "Phase 1 complete. All 4 critical decisions approved by user. Phase 2 handoff prepared. Ready to begin CSV integration.",
+    "decisions": {
+      "global_commands": "YES - All 67 commands are global",
+      "archive_file_ownership": "Move to global, server=coderef-workflow",
+      "persona_json_tracking": "YES - Add all 12 production personas",
+      "ui_resource_granularity": "NO - CSV for files/tools/scripts/logic/documents only, NOT UI components"
+    }
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-assistant",
+      "agent_path": "C:\\Users\\willh\\Desktop\\assistant",
+      "role": "Phase 1: Audit assistant project for commands, scripts, workflows. Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-context",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+      "role": "Phase 1: Audit coderef-context MCP server for tools, commands, scripts. Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-workflow",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+      "role": "Phase 1: Audit coderef-workflow MCP server. Phase 3: Update workflow instructions to maintain CSV.",
+      "phases": ["phase_1", "phase_3"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Phase 1: Audit coderef-docs MCP server. Phase 2: Integrate audit results into CSV, validate updates.",
+      "phases": ["phase_1", "phase_2"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-personas",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+      "role": "Phase 1: Audit coderef-personas MCP server for tools, commands, persona definitions. Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-testing",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-testing",
+      "role": "Phase 1: Audit coderef-testing MCP server for tools, commands, test scripts. Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "role": "Phase 1: Audit papertrail MCP server for tools, validators, schemas. Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-core",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+      "role": "Phase 1: Audit coderef-core package ONLY (dashboard agent handles rest of dashboard project). Report discrepancies vs CSV.",
+      "phases": ["phase_1"],
+      "status": "not_started",
+      "notes": "Scope: coderef-core package only. Dashboard agent handles rest of coderef-dashboard project."
+    },
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Phase 1: Audit dashboard project (EXCEPT coderef-core/). Phase 2: Update CSV with audit results. Phase 3: Implement dynamic Resources page with real-time CSV updates.",
+      "phases": ["phase_1", "phase_2", "phase_3"],
+      "status": "not_started",
+      "notes": "Scope: All of coderef-dashboard EXCEPT packages/coderef-core/ (coderef-core agent handles that)."
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 9,
+    "completed": 9,
+    "pending": 0,
+    "in_progress": 0,
+    "not_started": 0,
+    "phase_1_agents": 9,
+    "phase_2_agents": 2,
+    "phase_3_agents": 2,
+    "total_resources_scanned": 402,
+    "total_discrepancies": 77,
+    "total_new_resources": 148,
+    "overall_accuracy": "73.2%"
+  },
+
+  "csv_location": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\resources\\coderef\\tools-and-commands.csv",
+  "csv_current_state": {
+    "total_resources": 306,
+    "resource_types": 9,
+    "servers_covered": 7,
+    "data_quality": "100%",
+    "last_updated": "2026-01-17"
+  }
+}

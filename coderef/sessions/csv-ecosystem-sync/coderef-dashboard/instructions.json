@@ -1,0 +1,102 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF-DASHBOARD",
+  "agent_id": "coderef-dashboard",
+  "phase": "phase_1",
+  "role": "Audit dashboard project (EXCEPT coderef-core/). Report all discrepancies and new resources. NOTE: This is Phase 1 audit only. Phase 2/3 implementation will be handled by separate agent working directly in resources folder.",
+
+  "context": {
+    "problem": "CSV is static and manually maintained. No guarantee it stays synchronized with actual ecosystem resources. Dashboard pages inconsistently organized.",
+    "solution": "Phase 1: Audit dashboard. Phase 2: Automated CSV integration. Phase 3: Dynamic dashboard + standardized page structure.",
+    "impact": "CSV becomes living document, automatically maintained, serves as definitive source of truth for entire ecosystem."
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access CSV, known issues, and session documents",
+    "step_2": "READ communication.json for 4 audit tasks",
+    "step_3": "Execute Task 1: Scan packages/dashboard/ for all resources (EXCEPT coderef-core/)",
+    "step_4": "Execute Task 2: Compare findings against CSV",
+    "step_5": "Execute Task 3: Document discrepancies (verify known issues + discover new ones)",
+    "step_6": "Execute Task 4: Create comprehensive audit report in outputs/",
+    "step_7": "UPDATE communication.json after EACH task completion",
+    "step_8": "VALIDATE phase gate criteria before marking complete"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Scan packages/dashboard/ for all resources (commands, scripts, tabs, pages, components)",
+      "implementation": {
+        "directories_to_scan": [
+          "packages/dashboard/src/app/ (pages, tabs)",
+          "packages/dashboard/.claude/commands/ (slash commands)",
+          "packages/dashboard/scripts/ (automation scripts)",
+          "packages/dashboard/src/components/ (React components)",
+          "packages/dashboard/src/widgets/ (dashboard widgets)"
+        ],
+        "exclude": "packages/coderef-core/ (coderef-core agent handles this)",
+        "method": "Use existing build-source-of-truth.py script with dashboard-specific paths"
+      },
+      "validation": "Scanned resources list matches actual project structure"
+    },
+    "task_2": {
+      "description": "Compare findings against current CSV",
+      "implementation": {
+        "csv_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\resources\\coderef\\tools-and-commands.csv",
+        "comparison_fields": ["Type", "Server", "Name", "Path"],
+        "identify": [
+          "Resources in CSV but not in project (outdated)",
+          "Resources in project but not in CSV (missing)",
+          "Resources with incorrect metadata (category, description, path)"
+        ]
+      },
+      "validation": "Discrepancies documented with current vs actual values"
+    },
+    "task_3": {
+      "description": "Document discrepancies and new resources",
+      "implementation": {
+        "format": "JSON (follow phase_1_output_template from session instructions.json)",
+        "structure": {
+          "discrepancies": "Array of {type, resource_name, current_csv_value, actual_value, recommendation}",
+          "new_resources": "Array of {type, name, description, path, server, category}"
+        }
+      },
+      "validation": "All discrepancies have recommendations, all new resources have complete metadata"
+    },
+    "task_4": {
+      "description": "Create audit report in outputs/",
+      "implementation": {
+        "file": "outputs/coderef-dashboard-audit-report.json",
+        "include": [
+          "Summary (total discrepancies, total new resources)",
+          "Detailed discrepancies list",
+          "Detailed new resources list",
+          "Recommendations for CSV updates"
+        ]
+      },
+      "validation": "JSON valid, complete, follows template"
+    }
+  },
+
+  "success_criteria": {
+    "audit_completeness": "All dashboard resources scanned and compared against CSV",
+    "known_issues_verification": "All known issues (timestamps, UI integration, hardcoded data) verified",
+    "new_discoveries": "Any new discrepancies documented with recommendations"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-dashboard-audit-report.json",
+    "format": "json",
+    "template": "See phase_1_output_template in session instructions.json"
+  },
+
+  "phase_gate_checklist": [
+    "All 4 tasks status='complete'",
+    "Audit report created and validated",
+    "Known issues verified (timestamps, UI integration, hardcoded data)",
+    "New discrepancies documented",
+    "Recommendations provided for CSV updates",
+    "communication.json updated"
+  ],
+
+  "handoff_note": "After Phase 1 complete, this audit report will be used by: (1) Orchestrator to synthesize findings, (2) coderef-docs agent to integrate into CSV (Phase 2), (3) Resources Page Agent working directly in ~/Desktop/coderef-dashboard/packages/dashboard/src/app/resources to implement dynamic dashboard (Phase 3)."
+}
+}

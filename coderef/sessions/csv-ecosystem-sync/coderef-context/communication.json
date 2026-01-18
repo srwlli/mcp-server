@@ -1,0 +1,53 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF_CONTEXT",
+  "parent_session": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "agent_id": "coderef-context",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-context",
+  "role": "Phase 1: Audit coderef-context MCP server for tools, commands, scripts. Report discrepancies vs CSV.",
+  "status": "complete",
+  "scope": "coderef-context MCP server",
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Scan coderef-context MCP server for all resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Compare findings against CSV",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Document discrepancies and new resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create audit report in outputs/",
+      "status": "complete"
+    }
+  ],
+  "success_metrics": {
+    "audit_completeness": {
+      "baseline": "Unknown resources in coderef-context MCP server",
+      "target": "100% of coderef-context MCP server resources cataloged",
+      "status": "Complete - 16 resources audited, 96.875% accuracy"
+    }
+  },
+  "resources": {
+    "index": "resources/index.md"
+  },
+  "outputs": {
+    "primary_output": "outputs/coderef-context-audit-report.json",
+    "format": "json"
+  },
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 4 tasks complete",
+      "Audit report created",
+      "communication.json updated"
+    ]
+  }
+}

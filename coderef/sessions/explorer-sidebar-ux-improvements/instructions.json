@@ -1,0 +1,64 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001",
+  "task": "Explorer Sidebar UX Improvements",
+  "description": "Implement Phase 1 UX improvements to the CodeRef Explorer sidebar widget to enhance usability, navigation, and visual clarity",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate multi-phase implementation across 4 agents, synthesize outputs, validate phase gates before proceeding to next phase",
+    "steps": {
+      "step_1": "READ communication.json to understand agent assignments and phase structure",
+      "step_2": "MONITOR agent subdirectories for completion status in each agent's communication.json",
+      "step_3": "VALIDATE phase_gate criteria for each agent before marking phase complete",
+      "step_4": "SYNTHESIZE outputs from all agents into orchestrator-synthesis.md (implementation summary, test results, documentation updates, validation report)",
+      "step_5": "UPDATE communication.json phases.phase_1.status='complete' when all agents complete",
+      "step_6": "PROVIDE go/no-go recommendation for Phase 2 based on phase gate validation"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Each agent implements their assigned tasks in isolated subdirectory, following hierarchical session pattern",
+    "steps": {
+      "step_1": "NAVIGATE to your agent subdirectory: {session}/{ agent-id}/",
+      "step_2": "READ resources/index.md to access all source documents and specifications",
+      "step_3": "READ instructions.json for detailed execution steps and task breakdown",
+      "step_4": "CREATE workorder in agent home project using /create-workorder with context_json_template from instructions.json",
+      "step_5": "UPDATE communication.json: Add workorder details to outputs.workorders_created[] and set status='in_progress'",
+      "step_6": "FOR EACH TASK: Implement → Update communication.json (add to files_created/files_modified) → Mark task.status='complete'",
+      "step_7": "RUN tests and validate all success metrics",
+      "step_8": "VERIFY file tracking: Compare git diff vs communication.json arrays, add any missing files",
+      "step_9": "CREATE final output in outputs/ directory",
+      "step_10": "UPDATE communication.json: status='complete', completion timestamp, final metrics",
+      "step_11": "VALIDATE phase_gate_checklist - all criteria must pass"
+    }
+  },
+
+  "output_format": "Mixed (TypeScript components + JSON validation + Markdown documentation)",
+
+  "quality_standards": {
+    "completeness": "All Phase 1 features implemented and tested (resizable sidebar, scroll container, persistence, visual hierarchy)",
+    "accuracy": "Components follow existing CodeRef Dashboard patterns (Tailwind ind-* tokens, TypeScript strict mode, React hooks best practices)",
+    "format": "TypeScript code follows project conventions, documentation updated in resource sheets, tests achieve 80%+ coverage"
+  },
+
+  "success_criteria": {
+    "coderef-dashboard": "All components implemented, tests pass, TypeScript compiles without errors",
+    "coderef-docs": "Resource sheets updated with new sidebar features, CLAUDE.md reflects changes",
+    "coderef-testing": "Test suite covers resize, scroll, persistence, visual changes",
+    "papertrail": "All deliverables validate against UDS schemas, no critical issues"
+  },
+
+  "phase_gates": {
+    "phase_1_to_phase_2": {
+      "criteria": [
+        "All Phase 1 tasks complete across all agents",
+        "All tests passing (coderef-testing validation)",
+        "Documentation updated (coderef-docs validation)",
+        "No critical validation errors (papertrail validation)",
+        "User can resize sidebar, width persists across sessions",
+        "FileTree has dedicated scroll container",
+        "Visual hierarchy improvements visible"
+      ],
+      "decision": "Orchestrator provides go/no-go recommendation in synthesis report"
+    }
+  }
+}

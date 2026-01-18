@@ -1,0 +1,291 @@
+{
+  "agent_id": "papertrail",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Tool", "Command", "Script", "Schema", "Validator", "Output", "ResourceSheet", "Tab", "Workflow"],
+    "papertrail_in_csv": {
+      "tools": 4,
+      "schemas": 27,
+      "validators": 17,
+      "scripts": 1,
+      "total": 49
+    }
+  },
+  "audit_results": {
+    "resources_found": 66,
+    "breakdown": {
+      "tools": 8,
+      "schemas": 29,
+      "validators_python": 18,
+      "validators_powershell": 2,
+      "validator_scripts": 5,
+      "scripts": 1,
+      "total_validators": 25
+    },
+    "discrepancies": [
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validate_stub",
+        "current_csv_value": null,
+        "actual_value": "MCP Tool in server.py (line 27)",
+        "recommendation": "Add to CSV: Type=Tool, Category=UDS Validation, Description='Validate a stub.json file against stub-schema.json'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validate_schema_completeness",
+        "current_csv_value": null,
+        "actual_value": "MCP Tool in server.py (line 111)",
+        "recommendation": "Add to CSV: Type=Tool, Category=UDS Validation, Description='Validate that a JSON schema has required_sections defined for all doc_types'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validate_all_schemas",
+        "current_csv_value": null,
+        "actual_value": "MCP Tool in server.py (line 124)",
+        "recommendation": "Add to CSV: Type=Tool, Category=UDS Validation, Description='Validate all JSON schemas in schemas/documentation/ directory'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validate_communication",
+        "current_csv_value": null,
+        "actual_value": "MCP Tool in server.py (line 134)",
+        "recommendation": "Add to CSV: Type=Tool, Category=UDS Validation, Description='Validate a communication.json file against communication-schema.json'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "schemas/communication-schema.json",
+        "current_csv_value": null,
+        "actual_value": "Schema file at root of schemas/",
+        "recommendation": "Add to CSV: Type=Schema, Category=Sessions, Description='Agent roster and status tracking for multi-agent sessions. Already exists but different path than CSV entry at row 132'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "schemas/planning/plan.schema.json",
+        "current_csv_value": null,
+        "actual_value": "Schema file in schemas/planning/",
+        "recommendation": "Add to CSV: Type=Schema, Category=Planning, Description='JSON schema for plan.json structure (10-section implementation plan)'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/communication.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator module",
+        "recommendation": "Add to CSV: Type=Validator, Category=Session, Name='CommunicationValidator', Description='Validates communication.json files for multi-agent sessions'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/emoji_checker.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator module",
+        "recommendation": "Add to CSV: Type=Validator, Category=Core, Name='EmojiChecker', Description='Detects and reports emoji usage in documentation (enforces no-emoji policy)'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/factory.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator module",
+        "recommendation": "Add to CSV: Type=Validator, Category=Core, Name='ValidatorFactory', Description='Auto-detects document type and returns appropriate validator (30+ path patterns)'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/resource-sheets/validate.ps1",
+        "current_csv_value": null,
+        "actual_value": "PowerShell validator script",
+        "recommendation": "Add to CSV: Type=Validator, Category=Documentation, Name='Resource Sheet PowerShell Validator', Description='RSMS v2.0 compliance validation (snake_case fields, required metadata)'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/sessions/validate.ps1",
+        "current_csv_value": null,
+        "actual_value": "PowerShell validator script",
+        "recommendation": "Add to CSV: Type=Validator, Category=Session, Name='Session PowerShell Validator', Description='Validates multi-agent session communication files against JSON schema'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/sessions/validate-agent-resources.ps1",
+        "current_csv_value": null,
+        "actual_value": "PowerShell validator script",
+        "recommendation": "Add to CSV: Type=Validator, Category=Session, Name='Agent Resources Validator', Description='Validates agent resource allocation in session files'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/plans/validate.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator script",
+        "recommendation": "Add to CSV: Type=Validator, Category=Workflow, Name='Plan Validator Script', Description='Command-line validator for plan.json files'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/plans/plan_format_validator.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator module",
+        "recommendation": "Add to CSV: Type=Validator, Category=Workflow, Name='PlanFormatValidator', Description='Format validation for plan.json structure and required sections'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/plans/schema_validator.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator module",
+        "recommendation": "Add to CSV: Type=Validator, Category=Workflow, Name='PlanSchemaValidator', Description='JSON schema validation for plan.json against plan.schema.json'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "validators/scripts/validate.py",
+        "current_csv_value": null,
+        "actual_value": "Python validator script",
+        "recommendation": "Add to CSV: Type=Validator, Category=Documentation, Name='Script Frontmatter Validator', Description='Triangular bidirectional reference validation (resource sheet ↔ script ↔ test)'"
+      }
+    ],
+    "new_resources": [
+      {
+        "type": "Tool",
+        "name": "validate_stub",
+        "description": "Validate a stub.json file against stub-schema.json. Checks required fields, format validation (stub_id, feature_name, dates), and optionally auto-fills missing fields with defaults.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\server.py",
+        "server": "papertrail",
+        "category": "UDS Validation"
+      },
+      {
+        "type": "Tool",
+        "name": "validate_schema_completeness",
+        "description": "Validate that a JSON schema has required_sections defined for all doc_types. Reports completeness, issues, and section counts per doc_type.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\server.py",
+        "server": "papertrail",
+        "category": "UDS Validation"
+      },
+      {
+        "type": "Tool",
+        "name": "validate_all_schemas",
+        "description": "Validate all JSON schemas in schemas/documentation/ directory. Returns summary report with pass/fail counts and lists issues for each schema.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\server.py",
+        "server": "papertrail",
+        "category": "UDS Validation"
+      },
+      {
+        "type": "Tool",
+        "name": "validate_communication",
+        "description": "Validate a communication.json file against communication-schema.json. Checks required fields, agent structure, outputs validation.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\server.py",
+        "server": "papertrail",
+        "category": "UDS Validation"
+      },
+      {
+        "type": "Schema",
+        "name": "communication-schema.json",
+        "description": "Agent roster and status tracking for multi-agent sessions in the CodeRef ecosystem. Supports 1-N agents (flexible agent count, not fixed roster).",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\schemas\\communication-schema.json",
+        "server": "papertrail",
+        "category": "Sessions"
+      },
+      {
+        "type": "Schema",
+        "name": "plan.schema.json",
+        "description": "JSON schema for plan.json structure - validates 10-section implementation plan format with META_DOCUMENTATION, PREPARATION, EXECUTIVE_SUMMARY, etc.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\schemas\\planning\\plan.schema.json",
+        "server": "papertrail",
+        "category": "Planning"
+      },
+      {
+        "type": "Validator",
+        "name": "CommunicationValidator",
+        "description": "Validates communication.json files for multi-agent sessions. Checks agent structure, status enums, and workorder tracking.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\validators\\communication.py",
+        "server": "papertrail",
+        "category": "Session"
+      },
+      {
+        "type": "Validator",
+        "name": "EmojiChecker",
+        "description": "Detects and reports emoji usage in documentation. Enforces no-emoji policy across CodeRef ecosystem per global standards.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\validators\\emoji_checker.py",
+        "server": "papertrail",
+        "category": "Core"
+      },
+      {
+        "type": "Validator",
+        "name": "ValidatorFactory",
+        "description": "Auto-detects document type and returns appropriate validator. Uses 30+ path patterns and frontmatter analysis for automatic validator selection.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\papertrail\\validators\\factory.py",
+        "server": "papertrail",
+        "category": "Core"
+      },
+      {
+        "type": "Validator",
+        "name": "Resource Sheet PowerShell Validator",
+        "description": "RSMS v2.0 compliance validation for resource sheets. Checks snake_case frontmatter, required fields, naming conventions, and UDS section headers.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\resource-sheets\\validate.ps1",
+        "server": "papertrail",
+        "category": "Documentation"
+      },
+      {
+        "type": "Validator",
+        "name": "Session PowerShell Validator",
+        "description": "Validates multi-agent session communication files against JSON schema. Auto-fixes common status typos (completed → complete, etc.).",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\sessions\\validate.ps1",
+        "server": "papertrail",
+        "category": "Session"
+      },
+      {
+        "type": "Validator",
+        "name": "Agent Resources Validator",
+        "description": "Validates agent resource allocation and tracking in multi-agent session files. Ensures proper agent workspace structure.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\sessions\\validate-agent-resources.ps1",
+        "server": "papertrail",
+        "category": "Session"
+      },
+      {
+        "type": "Validator",
+        "name": "Plan Validator Script",
+        "description": "Command-line validator for plan.json files. Provides standalone validation outside MCP server context.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\plans\\validate.py",
+        "server": "papertrail",
+        "category": "Workflow"
+      },
+      {
+        "type": "Validator",
+        "name": "PlanFormatValidator",
+        "description": "Format validation for plan.json structure. Checks required sections, task structure, and complexity field (no time estimates).",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\plans\\plan_format_validator.py",
+        "server": "papertrail",
+        "category": "Workflow"
+      },
+      {
+        "type": "Validator",
+        "name": "PlanSchemaValidator",
+        "description": "JSON schema validation for plan.json against plan.schema.json. Validates metadata, phase structure, and task definitions.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\plans\\schema_validator.py",
+        "server": "papertrail",
+        "category": "Workflow"
+      },
+      {
+        "type": "Validator",
+        "name": "Script Frontmatter Validator",
+        "description": "Triangular bidirectional reference validation. Ensures resource sheet ↔ script ↔ test references are consistent and all files exist.",
+        "path": "C:\\Users\\willh\\.mcp-servers\\papertrail\\validators\\scripts\\validate.py",
+        "server": "papertrail",
+        "category": "Documentation"
+      }
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 16,
+    "total_new_resources": 16,
+    "csv_update_required": true,
+    "impact": "High - CSV is missing 4 MCP tools, 2 schemas, and 10 validators. This represents 33% of papertrail's validation infrastructure.",
+    "priority_additions": [
+      "4 missing MCP tools (validate_stub, validate_schema_completeness, validate_all_schemas, validate_communication)",
+      "ValidatorFactory - critical infrastructure for auto-detection",
+      "EmojiChecker - enforces ecosystem-wide no-emoji policy",
+      "CommunicationValidator - validates multi-agent session coordination",
+      "3 PowerShell validators for resource sheets and sessions"
+    ]
+  },
+  "recommendations": [
+    "Add all 16 missing resources to CSV with correct categorization",
+    "Consider adding resource Type='Validator Script' to distinguish PowerShell validators from Python validator classes",
+    "Update Category values: 'UDS Validation' for all 8 tools (consistency with existing 4)",
+    "Review other MCP servers for similar gaps (validators and scripts may be underrepresented across ecosystem)"
+  ]
+}

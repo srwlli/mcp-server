@@ -1,0 +1,138 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-PAPERTRAIL",
+  "agent_id": "papertrail",
+  "phase": "phase_1",
+  "role": "Validate documentation deliverables against UDS and RSMS standards",
+
+  "context": {
+    "problem": "Need to ensure all documentation updates meet UDS standards and RSMS v2.0 schema requirements",
+    "solution": "Run Papertrail validation tools on all updated/created documentation files",
+    "impact": "High-quality, standards-compliant documentation that validates correctly"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access validation schemas and documentation files",
+    "step_2": "READ coderef-docs agent outputs/ to identify all files to validate",
+    "step_3": "RUN /create-workorder in C:\\Users\\willh\\.mcp-servers\\papertrail using context_json_template",
+    "step_4": "UPDATE communication.json: Add workorder, set status='in_progress'",
+    "step_5": "TASK 1 - Validate CodeRef-Explorer-Widget resource sheet → UPDATE communication.json → Mark complete",
+    "step_6": "TASK 2 - Validate ResizableSidebar resource sheet → UPDATE communication.json → Mark complete",
+    "step_7": "TASK 3 - Validate explorer/CLAUDE.md → UPDATE communication.json → Mark complete",
+    "step_8": "TASK 4 - Generate validation report → UPDATE communication.json → Mark complete",
+    "step_9": "UPDATE communication.json: status='complete', validation metrics",
+    "step_10": "CREATE outputs/papertrail-validation-report.json",
+    "step_11": "VALIDATE phase_gate_checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Validate CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "implementation": {
+        "tool": "mcp__papertrail__validate_resource_sheet",
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+        "validations": [
+          "Snake_case frontmatter fields",
+          "Required fields present (subject, parent_project, category)",
+          "Filename ends with -RESOURCE-SHEET.md",
+          "Recommended sections present",
+          "Score 0-100 calculated"
+        ]
+      },
+      "validation": "Validation score >= 80, no critical errors"
+    },
+    "task_2": {
+      "description": "Validate ResizableSidebar-RESOURCE-SHEET.md",
+      "implementation": {
+        "tool": "mcp__papertrail__validate_resource_sheet",
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md",
+        "validations": [
+          "RSMS v2.0 format compliance",
+          "All required frontmatter fields",
+          "Proper naming convention",
+          "Complete architecture documentation",
+          "Integration points documented"
+        ]
+      },
+      "validation": "Validation score >= 80, no critical errors"
+    },
+    "task_3": {
+      "description": "Validate explorer/CLAUDE.md",
+      "implementation": {
+        "checks": [
+          "No broken internal links",
+          "Proper markdown formatting",
+          "Code blocks have language tags",
+          "Resource sheet references accurate",
+          "Index reference updated"
+        ]
+      },
+      "validation": "All links valid, formatting correct"
+    },
+    "task_4": {
+      "description": "Generate comprehensive validation report",
+      "implementation": {
+        "output_file": "outputs/papertrail-validation-report.json",
+        "report_structure": {
+          "summary": {
+            "total_documents": 3,
+            "passed": 0,
+            "failed": 0,
+            "average_score": 0
+          },
+          "documents": [
+            {
+              "file": "CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+              "score": 0,
+              "errors": [],
+              "warnings": [],
+              "status": "pass|fail"
+            }
+          ],
+          "recommendations": []
+        }
+      },
+      "validation": "Report generated with scores and recommendations"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-EXPLORER-SIDEBAR-VALIDATION-001",
+    "feature_name": "explorer-sidebar-validation",
+    "requirements": [
+      "Validate all updated resource sheets against RSMS v2.0",
+      "Validate CLAUDE.md updates",
+      "Generate validation report with scores",
+      "Provide recommendations for improvements"
+    ],
+    "constraints": [
+      "Use Papertrail MCP validation tools",
+      "No manual schema validation (use automated tools)",
+      "Report must be JSON format for machine readability"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "CodeRef-Explorer-Widget resource sheet validates with score >= 80",
+    "task_2": "ResizableSidebar resource sheet validates with score >= 80",
+    "task_3": "CLAUDE.md has no broken links or formatting errors",
+    "task_4": "Validation report generated with complete results"
+  },
+
+  "output_requirements": {
+    "file": "outputs/papertrail-validation-report.json",
+    "format": "json",
+    "schema": {
+      "summary": "object",
+      "documents": "array",
+      "recommendations": "array"
+    }
+  },
+
+  "phase_gate_checklist": [
+    "All tasks status='complete'",
+    "All resource sheets validate (score >= 80)",
+    "No critical errors in any document",
+    "Validation report complete",
+    "communication.json updated"
+  ]
+}

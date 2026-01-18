@@ -1,0 +1,133 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-DOCS",
+  "agent_id": "coderef-docs",
+  "phase": "phase_1",
+  "role": "Update documentation to reflect new sidebar UX features",
+
+  "context": {
+    "problem": "Documentation doesn't reflect new resizable sidebar, scroll container, or visual hierarchy improvements",
+    "solution": "Update resource sheets, CLAUDE.md, and create new component documentation",
+    "impact": "Developers understand new sidebar features, can maintain/extend them properly"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access existing documentation files",
+    "step_2": "READ communication.json for task breakdown",
+    "step_3": "READ coderef-dashboard agent outputs/ to understand implemented features",
+    "step_4": "RUN /create-workorder in C:\\Users\\willh\\.mcp-servers\\coderef-docs using context_json_template",
+    "step_5": "UPDATE communication.json: Add workorder to outputs.workorders_created[], set status='in_progress'",
+    "step_6": "TASK 1 - Update CodeRef-Explorer-Widget resource sheet → UPDATE communication.json → Mark task_1.status='complete'",
+    "step_7": "TASK 2 - Update explorer/CLAUDE.md → UPDATE communication.json → Mark task_2.status='complete'",
+    "step_8": "TASK 3 - Update resource-sheet-index.md → UPDATE communication.json → Mark task_3.status='complete'",
+    "step_9": "TASK 4 - Create ResizableSidebar resource sheet → UPDATE communication.json → Mark task_4.status='complete'",
+    "step_10": "VALIDATE all updated docs with Papertrail (check against UDS schemas)",
+    "step_11": "UPDATE communication.json: status='complete', completion timestamp",
+    "step_12": "CREATE outputs/coderef-docs-phase1-output.md with documentation update summary",
+    "step_13": "VALIDATE phase_gate_checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Update CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+        "changes": [
+          "Add new section: 'Resizable Sidebar' under 'Component Hierarchy'",
+          "Document ResizableSidebar wrapper component integration",
+          "Add useSidebarResize hook to 'Dependencies' section",
+          "Update 'State Management' section with sidebar width state",
+          "Add localStorage key 'coderef-explorer-sidebar-width' to 'LocalStorage Persistence' section",
+          "Update 'Performance Considerations' with resize performance notes"
+        ]
+      },
+      "validation": "Resource sheet accurately reflects new sidebar architecture"
+    },
+    "task_2": {
+      "description": "Update explorer/CLAUDE.md with sidebar instructions",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+        "changes": [
+          "Add 'Resizable Sidebar' section under 'Component Reference'",
+          "Document how to adjust min/max width constraints",
+          "Add localStorage key documentation",
+          "Update 'Common Tasks' with 'Changing Sidebar Width Constraints' example",
+          "Add keyboard accessibility notes (if implemented)"
+        ]
+      },
+      "validation": "CLAUDE.md provides clear guidance on sidebar customization"
+    },
+    "task_3": {
+      "description": "Update resource-sheet-index.md",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\resource-sheet-index.md",
+        "changes": [
+          "Add ResizableSidebar-RESOURCE-SHEET.md to 'Core Explorer Components' section",
+          "Update 'Recent Updates' section with sidebar improvements and date",
+          "Add useSidebarResize hook to component dependency graph",
+          "Update summary table with new component"
+        ]
+      },
+      "validation": "Index includes new component with accurate metadata"
+    },
+    "task_4": {
+      "description": "Create ResizableSidebar-RESOURCE-SHEET.md",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md",
+        "changes": [
+          "Create new resource sheet following RSMS v2.0 format",
+          "Document component props (defaultWidth, minWidth, maxWidth, storageKey, children)",
+          "Document useSidebarResize hook API",
+          "Add architecture overview (drag handle, resize logic, persistence)",
+          "Add integration points (CodeRefExplorerWidget)",
+          "Add performance considerations (resize throttling, localStorage writes)",
+          "Add testing strategy (resize bounds, persistence, drag interactions)"
+        ]
+      },
+      "validation": "Resource sheet validates against Papertrail RSMS schema"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+    "feature_name": "explorer-sidebar-documentation-updates",
+    "requirements": [
+      "Update existing resource sheets with new sidebar features",
+      "Create new ResizableSidebar resource sheet",
+      "Update CLAUDE.md with customization guidance",
+      "Update resource sheet index"
+    ],
+    "constraints": [
+      "Follow RSMS v2.0 format for resource sheets",
+      "Validate against UDS standards (Papertrail)",
+      "Maintain existing documentation style and tone",
+      "Use snake_case for frontmatter fields"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "CodeRef-Explorer-Widget resource sheet includes ResizableSidebar section",
+    "task_2": "CLAUDE.md documents sidebar customization clearly",
+    "task_3": "Index includes new component with accurate metadata",
+    "task_4": "ResizableSidebar resource sheet validates against RSMS schema"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-docs-phase1-output.md",
+    "format": "markdown",
+    "sections": [
+      "## Documentation Updates Summary",
+      "## Files Modified (with change descriptions)",
+      "## Files Created (new resource sheets)",
+      "## Validation Results (Papertrail)",
+      "## Phase Gate Checklist"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All tasks status='complete'",
+    "All resource sheets validate against UDS/RSMS schemas",
+    "CLAUDE.md updated with sidebar guidance",
+    "Index updated with new components",
+    "communication.json updated with all files modified/created"
+  ]
+}

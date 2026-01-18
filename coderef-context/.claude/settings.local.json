@@ -32,7 +32,8 @@
       "Bash(test:*)",
       "Bash(\"C:\\Users\\willh\\.mcp-servers\\coderef-context\\server_clean.py\")",
       "Bash(timeout 5 python:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(/dev/null)"
     ]
   },
   "enableAllProjectMcpServers": true,

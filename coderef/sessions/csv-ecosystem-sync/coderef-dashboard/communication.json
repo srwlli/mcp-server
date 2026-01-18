@@ -1,0 +1,78 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF-DASHBOARD",
+  "parent_session": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "agent_id": "coderef-dashboard",
+  "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+  "role": "Phase 1 ONLY: Audit dashboard project (EXCEPT coderef-core/). Report findings. NOTE: Phase 2/3 implementation will be done by separate agent working directly in resources folder.",
+  "status": "complete",
+  "scope": "All of coderef-dashboard project EXCEPT packages/coderef-core/ (coderef-core agent handles that package)",
+  "handoff_note": "This session agent does Phase 1 audit only. Phase 2/3 CSV updates and dynamic dashboard implementation will be handled by a separate agent working directly in ~/Desktop/coderef-dashboard/packages/dashboard/src/app/resources with full codebase context.",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Scan packages/dashboard/ for all commands, scripts, tabs, pages",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Compare findings against CSV (tools-and-commands.csv)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Document discrepancies and new resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create comprehensive audit report in outputs/",
+      "status": "complete",
+      "note": "Comprehensive audit report created with 13 discrepancies and 123 new resources documented"
+    }
+  ],
+
+  "success_metrics": {
+    "audit_completeness": {
+      "baseline": "Unknown resources in dashboard project",
+      "target": "100% of dashboard resources cataloged and compared against CSV",
+      "status": "Complete - 184 resources scanned and cataloged"
+    },
+    "discrepancy_accuracy": {
+      "baseline": "Known issues documented (timestamps, UI integration, hardcoded data)",
+      "target": "All discrepancies verified and new issues discovered",
+      "status": "Complete - 13 discrepancies found, 4 known issues verified, 123 new resources discovered"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "primary_output": "outputs/coderef-dashboard-audit-report.json",
+    "format": "json"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 4 tasks complete",
+      "Audit report created with comprehensive findings",
+      "Known issues verified (timestamps, UI integration, hardcoded data)",
+      "New discrepancies documented",
+      "communication.json updated"
+    ]
+  },
+
+  "phase_2_3_handoff": {
+    "note": "Phase 2 CSV integration will be done by coderef-docs agent (session work). Phase 3 dynamic dashboard implementation will be done by Resources Page Agent working directly in ~/Desktop/coderef-dashboard/packages/dashboard/src/app/resources with full codebase context.",
+    "handoff_location": "~/Desktop/coderef-dashboard/packages/dashboard/src/app/resources",
+    "handoff_artifacts": [
+      "This audit report (outputs/coderef-dashboard-audit-report.json)",
+      "All 9 agent audit reports (aggregated by orchestrator)",
+      "Updated CSV (after Phase 2)",
+      "Implementation instructions for dynamic dashboard + page structure"
+    ]
+  }
+}

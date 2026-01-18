@@ -1,0 +1,89 @@
+{
+  "agent_id": "coderef-core",
+  "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Tool", "Command", "Script", "Validator", "Schema", "Workflow", "Output", "ResourceSheet", "Tab"],
+    "coderef_core_entries_in_csv": 0
+  },
+  "audit_results": {
+    "resources_found": 3,
+    "discrepancies": [
+      {
+        "type": "missing_from_csv",
+        "resource_name": "setup_coderef_dirs.py",
+        "current_csv_value": null,
+        "actual_value": "exists in scripts/setup-coderef-dir/",
+        "recommendation": "Add to CSV with Type=Script, Server=coderef-core, Category=Setup, Description='Creates .coderef/ directory structure with Phase 0 initialization'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "test_setup_coderef_dirs.py",
+        "current_csv_value": null,
+        "actual_value": "exists in scripts/setup-coderef-dir/",
+        "recommendation": "Add to CSV with Type=Script, Server=coderef-core, Category=Testing, Description='Unit tests for setup_coderef_dirs.py with 100% test coverage'"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "scan.cjs",
+        "current_csv_value": null,
+        "actual_value": "exists in scripts/scan-cli/",
+        "recommendation": "Add to CSV with Type=Script, Server=coderef-core, Category=Scanners, Description='CLI scanner implementation for CodeRef analysis (CommonJS)'"
+      }
+    ],
+    "new_resources": [
+      {
+        "type": "Script",
+        "name": "setup_coderef_dirs.py",
+        "description": "Creates .coderef/ directory structure with Phase 0 initialization (directories, schemas, templates)",
+        "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\scripts\\setup-coderef-dir\\setup_coderef_dirs.py",
+        "server": "coderef-core",
+        "category": "Setup",
+        "status": "active",
+        "notes": "Phase 0 of scanner workflow. Creates 8 directories (.coderef/reports, .coderef/diagrams, etc.). Used via CLI: py setup_coderef_dirs.py <project_path>"
+      },
+      {
+        "type": "Script",
+        "name": "test_setup_coderef_dirs.py",
+        "description": "Unit tests for setup_coderef_dirs.py with 100% test coverage",
+        "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\scripts\\setup-coderef-dir\\test_setup_coderef_dirs.py",
+        "server": "coderef-core",
+        "category": "Testing",
+        "status": "active",
+        "notes": "Tests all 8 directories creation, validation logic, and error handling. Part of coderef-core testing suite."
+      },
+      {
+        "type": "Script",
+        "name": "scan.cjs",
+        "description": "CLI scanner implementation for CodeRef analysis (CommonJS)",
+        "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\coderef-core\\scripts\\scan-cli\\scan.cjs",
+        "server": "coderef-core",
+        "category": "Scanners",
+        "status": "active",
+        "notes": "Standalone CLI tool for running CodeRef scans. Uses TypeScript scanner engine (src/scanner/scanner.ts). Part of scan-cli workflow."
+      }
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 3,
+    "total_new_resources": 3,
+    "csv_update_required": true,
+    "findings_overview": "The coderef-core package has 3 scripts that are NOT in the CSV. All 3 are production-ready and actively used (setup_coderef_dirs.py has 100% test coverage). These are critical scripts for the CodeRef scanning workflow.",
+    "impact": "Missing these 3 scripts from the CSV means the Resources page cannot display setup/scanner utilities from coderef-core. Users won't discover the Phase 0 setup script or CLI scanner."
+  },
+  "metadata": {
+    "scan_duration_ms": 2500,
+    "scan_timestamp": "2026-01-17T18:30:00-05:00",
+    "total_files_scanned": 95,
+    "total_scripts_found": 3,
+    "total_src_files_scanned": 92
+  },
+  "notes": [
+    "Scope: coderef-core package ONLY (NOT full dashboard project)",
+    "Dashboard agent will handle the rest of coderef-dashboard project",
+    "All 3 scripts are Python (.py) or CommonJS (.cjs) - no TypeScript scripts",
+    "No Tools, Commands, Validators, or Schemas found in coderef-core scope",
+    "src/ directory contains TypeScript modules (scanner engine, file generation, etc.) but NOT slash commands or MCP tools"
+  ]
+}

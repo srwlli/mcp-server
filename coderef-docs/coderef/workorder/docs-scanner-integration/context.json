@@ -1,0 +1,40 @@
+{
+  "workorder_id": "WO-DOCS-SCANNER-INTEGRATION-001",
+  "feature_name": "docs-scanner-integration",
+  "created_at": "2026-01-16T00:00:00.000Z",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+
+  "description": "Integrate Phase 1 scanner improvements (95% AST accuracy, complexity metrics, relationship data, dynamic import detection) into coderef-docs documentation generation workflows. Phase 1 (coderef-core) has completed all 7 tasks, providing enhanced ElementData fields for documentation enhancement.",
+
+  "goal": "Leverage enhanced scanner outputs to generate more accurate and insightful documentation: (1) Foundation docs with complete type coverage (interfaces, decorators, type aliases), (2) Resource sheets with complexity analysis and refactoring guidance, (3) Architecture docs with automated dependency graphs, (4) Dynamic import warnings for runtime considerations.",
+
+  "requirements": [
+    "Foundation doc generation includes interfaces/decorators/type aliases from AST (Task 1)",
+    "Resource sheet generation includes complexity metrics with hotspot identification and refactoring recommendations (Task 2)",
+    "Architecture doc generation includes dependency graphs, module coupling analysis, and export/import analysis from relationship data (Task 3)",
+    "Dynamic import detection warnings appear in API.md and ARCHITECTURE.md where applicable (Task 4)",
+    "All changes backward compatible with old scanner output (pre-Phase 1)",
+    "Graceful degradation when new fields missing"
+  ],
+
+  "out_of_scope": [
+    "Changes to scanner implementation (Phase 1 complete)",
+    "New documentation types beyond foundation docs and resource sheets",
+    "UI/dashboard changes",
+    "CLI modifications",
+    "Template format changes"
+  ],
+
+  "constraints": [
+    "Maintain backward compatibility with pre-Phase 1 scanner output",
+    "Handle missing ElementData fields gracefully (complexity, exports, dynamicImports)",
+    "No breaking changes to existing doc generation API",
+    "Maintain existing doc quality for non-enhanced data",
+    "All 4 tasks depend on Phase 1 completion (verified complete)"
+  ],
+
+  "context_source": "Multi-agent session WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+  "phase": "phase_2",
+  "agent_id": "coderef-docs"
+}

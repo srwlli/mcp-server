@@ -1,0 +1,165 @@
+{
+  "META_DOCUMENTATION": {
+    "version": "2.0.0",
+    "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+    "feature_name": "explorer-sidebar-documentation-updates",
+    "status": "DRAFT",
+    "created": "2026-01-17",
+    "last_updated": "2026-01-17",
+    "parent_session": "WO-EXPLORER-SIDEBAR-UX-001",
+    "agent_id": "coderef-docs",
+    "_uds": {
+      "generated_by": "coderef-docs agent",
+      "document_type": "Implementation Plan",
+      "workorder_id": "WO-EXPLORER-SIDEBAR-DOCS-001",
+      "feature_id": "explorer-sidebar-documentation-updates",
+      "last_updated": "2026-01-17",
+      "ai_assistance": true,
+      "status": "DRAFT",
+      "next_review": "2026-02-16"
+    }
+  },
+  "1_EXECUTIVE_SUMMARY": {
+    "what": "Update documentation artifacts to reflect Phase 1 Explorer sidebar UX improvements",
+    "why": "Developers need accurate documentation to understand, maintain, and extend the new resizable sidebar features",
+    "impact": "Improved developer experience, reduced support burden, better knowledge transfer"
+  },
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": false,
+    "security_implications": "None - documentation only",
+    "performance_impact": "None - documentation only",
+    "mitigation_strategies": [
+      "Validate all resource sheets against RSMS v2.0 schema",
+      "Use Papertrail validation to ensure UDS compliance",
+      "Maintain existing documentation style for consistency"
+    ]
+  },
+  "3_CURRENT_STATE_ANALYSIS": {
+    "existing_architecture": "Resource sheets exist for CodeRefExplorerWidget and FileTree components",
+    "patterns_to_follow": "RSMS v2.0 format with snake_case frontmatter, POWER framework structure",
+    "gaps": [
+      "No documentation for ResizableSidebar component",
+      "CodeRefExplorerWidget resource sheet doesn't reflect new wrapper architecture",
+      "CLAUDE.md missing sidebar customization instructions",
+      "Resource sheet index doesn't include new component"
+    ]
+  },
+  "4_KEY_FEATURES": {
+    "must_have": [
+      "ResizableSidebar-RESOURCE-SHEET.md created following RSMS v2.0",
+      "CodeRef-Explorer-Widget resource sheet updated with ResizableSidebar section",
+      "CLAUDE.md updated with sidebar width customization instructions",
+      "resource-sheet-index.md updated with new component entry"
+    ],
+    "nice_to_have": [],
+    "explicitly_excluded": [
+      "Implementation code changes",
+      "Test suite creation",
+      "Performance optimization documentation"
+    ]
+  },
+  "5_TASK_ID_SYSTEM": {
+    "prefix": "DOC",
+    "format": "DOC-{CATEGORY}-{NUMBER}",
+    "categories": ["UPDATE", "CREATE", "VALIDATE"]
+  },
+  "6_IMPLEMENTATION_PHASES": {
+    "phase_1": {
+      "name": "Update Existing Documentation",
+      "complexity": "low",
+      "tasks": [
+        {
+          "task_id": "DOC-UPDATE-001",
+          "description": "Update CodeRef-Explorer-Widget-RESOURCE-SHEET.md with ResizableSidebar integration",
+          "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+          "changes": [
+            "Add 'Resizable Sidebar' section under 'Component Hierarchy'",
+            "Document ResizableSidebar wrapper component",
+            "Add useSidebarResize hook to Dependencies",
+            "Update State Management with sidebar width state",
+            "Add localStorage key documentation",
+            "Update Performance Considerations"
+          ]
+        },
+        {
+          "task_id": "DOC-UPDATE-002",
+          "description": "Update explorer/CLAUDE.md with sidebar customization guidance",
+          "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+          "changes": [
+            "Add 'Resizable Sidebar' section under Component Reference",
+            "Document min/max width constraint adjustment",
+            "Add localStorage key documentation",
+            "Add 'Changing Sidebar Width Constraints' to Common Tasks",
+            "Include keyboard accessibility notes if applicable"
+          ]
+        },
+        {
+          "task_id": "DOC-UPDATE-003",
+          "description": "Update resource-sheet-index.md with new component",
+          "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\resource-sheet-index.md",
+          "changes": [
+            "Add ResizableSidebar-RESOURCE-SHEET.md to Core Explorer Components",
+            "Update Recent Updates section with date",
+            "Add useSidebarResize to dependency graph",
+            "Update summary table"
+          ]
+        }
+      ],
+      "dependencies": []
+    },
+    "phase_2": {
+      "name": "Create New Documentation",
+      "complexity": "medium",
+      "tasks": [
+        {
+          "task_id": "DOC-CREATE-001",
+          "description": "Create ResizableSidebar-RESOURCE-SHEET.md",
+          "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md",
+          "sections": [
+            "Frontmatter (RSMS v2.0 format with snake_case)",
+            "Purpose section",
+            "Component API (props documentation)",
+            "useSidebarResize hook API",
+            "Architecture overview (drag handle, resize logic, persistence)",
+            "Integration points (CodeRefExplorerWidget)",
+            "Performance considerations (throttling, localStorage)",
+            "Testing strategy (resize bounds, persistence, drag interactions)"
+          ]
+        }
+      ],
+      "dependencies": ["phase_1"]
+    },
+    "phase_3": {
+      "name": "Validation",
+      "complexity": "low",
+      "tasks": [
+        {
+          "task_id": "DOC-VALIDATE-001",
+          "description": "Validate all updated resource sheets with Papertrail",
+          "validation_targets": [
+            "CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+            "ResizableSidebar-RESOURCE-SHEET.md",
+            "resource-sheet-index.md"
+          ],
+          "criteria": [
+            "RSMS v2.0 schema compliance",
+            "UDS standards compliance",
+            "snake_case frontmatter fields",
+            "All required sections present"
+          ]
+        }
+      ],
+      "dependencies": ["phase_2"]
+    }
+  },
+  "7_TESTING_STRATEGY": {
+    "documentation_tests": "Papertrail validation against RSMS and UDS schemas",
+    "manual_review": "Verify clarity, completeness, and consistency with existing docs"
+  },
+  "8_SUCCESS_CRITERIA": {
+    "task_completion": "All 5 tasks status='complete'",
+    "validation": "All resource sheets pass Papertrail validation (score >= 90)",
+    "quality": "Documentation accurately reflects implementation, follows RSMS v2.0 format",
+    "integration": "Resource sheet index updated, all cross-references valid"
+  }
+}

@@ -1,12 +1,51 @@
 # CodeRef Sessions Index
 
-**Last Updated:** 2026-01-02
+**Last Updated:** 2026-01-17
 
 This index tracks all session workorders and supporting documentation created for the CodeRef ecosystem multi-agent coordination system.
 
 ---
 
 ## Active Sessions
+
+### CSV Ecosystem Sync (3-Phase Hierarchical)
+
+**WO-CSV-ECOSYSTEM-SYNC-001** - Establish tools-and-commands.csv as Single Source of Truth
+- **Created:** 2026-01-17
+- **Status:** 🆕 Not Started
+- **Orchestrator:** coderef agent
+- **Participants:** 9 agents (all)
+- **Pattern:** Hierarchical (agent subdirectories with isolated workspaces)
+- **Session Path:** `sessions/csv-ecosystem-sync/`
+- **Communication:** `sessions/csv-ecosystem-sync/communication.json`
+- **Instructions:** `sessions/csv-ecosystem-sync/instructions.json`
+
+**Phases:**
+1. **Phase 1: Project Audit** (0/9 agents complete)
+   - All agents audit their projects against CSV
+   - Report discrepancies, missing resources, new discoveries
+   - Outputs: 9 audit reports in `{agent-id}/outputs/`
+
+2. **Phase 2: CSV Integration** (0/2 agents started)
+   - Lead: coderef-docs, coderef-dashboard
+   - Update CSV with all audit findings
+   - Validate 100% data quality
+   - Dependencies: Phase 1 complete
+
+3. **Phase 3: Dynamic Dashboard & Ecosystem Instructions** (0/2 agents started)
+   - Lead: coderef-dashboard, coderef-workflow
+   - Implement dynamic Resources page (real-time CSV updates)
+   - Establish new page structure standard (CLAUDE.md + coderef/)
+   - Update workflow instructions to maintain CSV automatically
+   - Dependencies: Phase 2 complete
+
+**Objectives:**
+- CSV becomes living document, automatically maintained
+- Dashboard displays CSV dynamically (no hardcoded data)
+- All pages follow standardized structure
+- Workflows updated to maintain CSV as agents work
+
+---
 
 ### Document Intelligence (6-Phase Workflow)
 
@@ -54,6 +93,37 @@ This index tracks all session workorders and supporting documentation created fo
 - Assigned: coderef orchestrator
 - Instructions: `sessions/document-effectiveness/improvement-roadmap/instructions.json`
 - Output: `sessions/document-effectiveness/improvement-roadmap/implementation-plan.md`
+
+---
+
+### CodeRef Dashboard - Explorer Sidebar UX Improvements
+
+**WO-EXPLORER-SIDEBAR-UX-001** - Hierarchical Multi-Phase Session
+- Status: ⏳ Not Started (Phase 1 pending)
+- Created: 2026-01-17
+- Pattern: Hierarchical (4 agent subdirectories with isolated workspaces)
+- Participants: 4 agents (coderef-dashboard, coderef-docs, coderef-testing, papertrail)
+- Communication: `sessions/explorer-sidebar-ux-improvements/communication.json`
+- Instructions: `sessions/explorer-sidebar-ux-improvements/instructions.json`
+- Orchestrator Output: `sessions/explorer-sidebar-ux-improvements/orchestrator-synthesis.md`
+
+**Phase 1: Foundation (Quick Wins)**
+- Lead Agent: coderef-dashboard
+- Status: ⏳ Not Started
+- Tasks:
+  - **coderef-dashboard** (WO-EXPLORER-SIDEBAR-UX-001-DASHBOARD): Implement ResizableSidebar component, useSidebarResize hook, scroll container, visual hierarchy improvements
+  - **coderef-docs** (WO-EXPLORER-SIDEBAR-UX-001-DOCS): Update resource sheets, create ResizableSidebar-RESOURCE-SHEET.md, update CLAUDE.md
+  - **coderef-testing** (WO-EXPLORER-SIDEBAR-UX-001-TESTING): Create test suite for resize, scroll, persistence features
+  - **papertrail** (WO-EXPLORER-SIDEBAR-UX-001-PAPERTRAIL): Validate all documentation against UDS/RSMS standards
+- Deliverables: Resizable sidebar (240px-600px), dedicated scroll container, localStorage persistence, visual hierarchy, updated docs, test suite, validation report
+
+**Phase 2: Navigation Enhancements** (Pending Phase 1 completion)
+- Quick file search, tree actions toolbar, collapsible sidebar toggle
+
+**Phase 3: Polish** (Optional)
+- Keyboard navigation, breadcrumbs, loading states
+
+**Purpose:** Enhance Explorer sidebar UX for better usability, navigation, and visual clarity through iterative multi-phase improvements
 
 ---
 

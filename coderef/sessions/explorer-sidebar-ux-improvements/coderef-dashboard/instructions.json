@@ -1,0 +1,155 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-DASHBOARD",
+  "agent_id": "coderef-dashboard",
+  "phase": "phase_1",
+  "role": "Implement React components for Explorer sidebar UX improvements",
+
+  "context": {
+    "problem": "Explorer sidebar has fixed 320px width, ambiguous scroll boundaries, no persistence, and flat visual hierarchy",
+    "solution": "Create ResizableSidebar component with drag handle, dedicated scroll container, localStorage persistence, and visual hierarchy improvements",
+    "impact": "Better UX for users with varying screen sizes and deep directory trees, faster navigation, clearer interface structure"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access Explorer widget source code and resource sheets",
+    "step_2": "READ communication.json for task breakdown and success metrics",
+    "step_3": "RUN /create-workorder in C:\\Users\\willh\\Desktop\\coderef-dashboard to create workorder using context_json_template below",
+    "step_3b": "UPDATE communication.json: (1) Add workorder to outputs.workorders_created[] with workorder_id, feature_name, location, plan_path, status='in_progress', created_at, (2) Set status='in_progress'",
+    "step_4": "TASK 1 - Create ResizableSidebar wrapper component → UPDATE communication.json (add to files_created[]) → Mark task_1.status='complete'",
+    "step_5": "TASK 2 - Create useSidebarResize hook → UPDATE communication.json (add to files_created[]) → Mark task_2.status='complete'",
+    "step_6": "TASK 3 - Add scroll container for FileTree → UPDATE communication.json (add to files_modified[]) → Mark task_3.status='complete'",
+    "step_7": "TASK 4 - Implement visual hierarchy improvements → UPDATE communication.json (add to files_modified[]) → Mark task_4.status='complete'",
+    "step_8": "TASK 5 - Update CodeRefExplorerWidget → UPDATE communication.json (add to files_modified[]) → Mark task_5.status='complete'",
+    "step_9": "RUN npm test -- coderef-explorer and npm run type-check",
+    "step_10": "VERIFY file tracking: Run 'git diff --name-only' in dashboard project, compare vs communication.json arrays, add any missing files",
+    "step_11": "UPDATE communication.json: status='complete', completion timestamp, final metrics (total_lines_added, total_functions_added, typescript_compilation='success')",
+    "step_12": "CREATE outputs/coderef-dashboard-phase1-output.md with implementation summary",
+    "step_13": "VALIDATE phase_gate_checklist - all criteria must pass"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Create ResizableSidebar wrapper component with drag handle",
+      "implementation": {
+        "file": "packages/dashboard/src/components/coderef/ResizableSidebar.tsx",
+        "changes": [
+          "Create client component with 'use client' directive",
+          "Accept children, defaultWidth, minWidth, maxWidth, storageKey props",
+          "Render sidebar container with drag handle on right edge",
+          "Use GripVertical icon from lucide-react for drag handle",
+          "Apply Tailwind classes: border-r border-ind-border, bg-ind-panel",
+          "Export component and props interface"
+        ]
+      },
+      "validation": "Component renders with drag handle visible on right edge"
+    },
+    "task_2": {
+      "description": "Create useSidebarResize custom hook for resize logic and localStorage persistence",
+      "implementation": {
+        "file": "packages/dashboard/src/hooks/useSidebarResize.ts",
+        "changes": [
+          "Accept defaultWidth, minWidth, maxWidth, storageKey parameters",
+          "useState for current width, load from localStorage on mount",
+          "useEffect to persist width changes to localStorage",
+          "Implement onMouseDown handler for drag handle",
+          "Add mousemove listener to update width during drag",
+          "Add mouseup listener to stop dragging",
+          "Cleanup listeners on unmount",
+          "Return { width, handleMouseDown } for component to use",
+          "Validate width constraints (clamp between min/max)"
+        ]
+      },
+      "validation": "Hook persists width to localStorage, enforces min/max constraints"
+    },
+    "task_3": {
+      "description": "Add dedicated scroll container for FileTree component",
+      "implementation": {
+        "file": "packages/dashboard/src/widgets/coderef-explorer/CodeRefExplorerWidget.tsx",
+        "changes": [
+          "Wrap <FileTree> component in div with overflow-y-auto overflow-x-hidden",
+          "Add flex-1 className to scroll container div",
+          "Keep controls section (ProjectSelector + ViewModeToggle) outside scroll container",
+          "Ensure controls have flex-shrink-0 sticky top-0 z-10 to stay visible"
+        ]
+      },
+      "validation": "Controls stay fixed at top, only FileTree scrolls"
+    },
+    "task_4": {
+      "description": "Implement visual hierarchy improvements",
+      "implementation": {
+        "file": "packages/dashboard/src/widgets/coderef-explorer/CodeRefExplorerWidget.tsx",
+        "changes": [
+          "Add border-b border-ind-border to controls section for separation",
+          "Add subtle bg-ind-panel/80 backdrop-blur-sm to controls sticky header",
+          "Add drop shadow on controls when scrolling (conditional className based on scroll position)",
+          "Increase padding on controls section from p-4 to p-4 for better spacing"
+        ]
+      },
+      "validation": "Clear visual separation between controls and tree"
+    },
+    "task_5": {
+      "description": "Update CodeRefExplorerWidget to use ResizableSidebar wrapper",
+      "implementation": {
+        "file": "packages/dashboard/src/widgets/coderef-explorer/CodeRefExplorerWidget.tsx",
+        "changes": [
+          "Import ResizableSidebar from '@/components/coderef/ResizableSidebar'",
+          "Replace static width div (w-80 min-w-80 max-w-80) with <ResizableSidebar>",
+          "Pass props: defaultWidth={320}, minWidth={240}, maxWidth={600}, storageKey='coderef-explorer-sidebar-width'",
+          "Keep all existing sidebar content (controls, FileTree) as children",
+          "Remove fixed width classes, let ResizableSidebar control width"
+        ]
+      },
+      "validation": "Sidebar renders with resizable width, persists on reload"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-EXPLORER-SIDEBAR-RESIZE-001",
+    "feature_name": "explorer-sidebar-resize-improvements",
+    "requirements": [
+      "Resizable sidebar with drag handle (240px-600px range)",
+      "Dedicated scroll container for FileTree (controls always visible)",
+      "localStorage persistence for sidebar width",
+      "Visual hierarchy improvements (borders, backgrounds, shadows)"
+    ],
+    "constraints": [
+      "Maintain existing CodeRef Dashboard design tokens (ind-* classes)",
+      "Follow existing component patterns (client components, hooks)",
+      "TypeScript strict mode compliance",
+      "No breaking changes to existing FileTree/FileViewer APIs"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "ResizableSidebar component renders with visible drag handle",
+    "task_2": "useSidebarResize hook persists width and enforces constraints",
+    "task_3": "FileTree scrolls independently, controls stay fixed",
+    "task_4": "Visual hierarchy clear (borders, shadows, separation)",
+    "task_5": "CodeRefExplorerWidget uses ResizableSidebar, width persists across reloads"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-dashboard-phase1-output.md",
+    "format": "markdown",
+    "sections": [
+      "## Implementation Summary",
+      "## Files Created (with line counts)",
+      "## Files Modified (with descriptions)",
+      "## TypeScript Compilation Status",
+      "## Test Results",
+      "## Success Metrics Validation",
+      "## Phase Gate Checklist"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All tasks status='complete'",
+    "TypeScript compilation succeeds (npm run type-check)",
+    "All tests passing (npm test -- coderef-explorer)",
+    "Sidebar resizable with mouse drag",
+    "Width persists across page reloads (localStorage check)",
+    "FileTree scroll independent of controls",
+    "Visual hierarchy improvements visible",
+    "communication.json updated with all files created/modified"
+  ]
+}

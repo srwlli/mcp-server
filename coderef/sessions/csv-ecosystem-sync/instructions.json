@@ -1,0 +1,112 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "task": "CSV Ecosystem Synchronization",
+  "description": "Establish tools-and-commands.csv as the single source of truth for the entire CodeRef ecosystem. Audit all projects, integrate findings, implement dynamic dashboard, and update instructions to maintain CSV as living document.",
+
+  "orchestrator_instructions": {
+    "role": "Coordinate 3-phase synchronization across 9 agents. Validate phase gates, synthesize audit results, aggregate recommendations for CSV updates and dynamic dashboard implementation.",
+    "steps": {
+      "step_1": "READ all agent outputs from {agent-id}/outputs/ directories after Phase 1 complete",
+      "step_2": "ANALYZE discrepancies: group by type (missing resources, incorrect categorization, outdated paths, new discoveries)",
+      "step_3": "SYNTHESIZE recommendations: prioritize CSV updates, identify common patterns, flag breaking changes",
+      "step_4": "VALIDATE Phase 2: Ensure CSV integrates all audit findings with 100% data quality",
+      "step_5": "VALIDATE Phase 3: Ensure dynamic dashboard implemented and ecosystem instructions updated",
+      "step_6": "CREATE orchestrator-synthesis.md with complete audit summary, CSV update log, and next steps"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Each agent audits their assigned project against CSV, reports discrepancies, and (if assigned to Phase 2/3) implements updates.",
+    "steps": {
+      "step_1": "NAVIGATE to your agent subdirectory: csv-ecosystem-sync/{agent-id}/",
+      "step_2": "READ resources/index.md to access CSV and reference docs",
+      "step_3": "READ instructions.json for your specific tasks",
+      "step_4": "PHASE 1: Audit your project against CSV (scan tools, commands, scripts, validators, schemas, etc.)",
+      "step_5": "PHASE 1: CREATE outputs/{agent-id}-audit-report.json with findings",
+      "step_6": "UPDATE communication.json status after each task",
+      "step_7": "PHASE 2 (coderef-docs, coderef-dashboard only): Integrate audit results into CSV",
+      "step_8": "PHASE 3 (coderef-dashboard, coderef-workflow only): Implement dynamic dashboard, automated CSV updates, and new page structure standard"
+    }
+  },
+
+  "phase_3_requirements": {
+    "dynamic_dashboard": {
+      "description": "Resources page reads CSV in real-time and updates automatically when agents make changes",
+      "implementation": "coderef-dashboard agent implements dynamic CSV reading with file watching or polling",
+      "output": "Updated page.tsx component with live CSV integration"
+    },
+    "automated_csv_updates": {
+      "description": "All workflows and tools updated to automatically update CSV when agents add/modify resources",
+      "implementation": "coderef-workflow agent updates planning/execution workflows to call CSV update scripts",
+      "affected_tools": [
+        "/create-workorder (add CSV update step)",
+        "/archive-feature (update CSV when archiving)",
+        "/create-plan (check CSV for existing resources)",
+        "generate_foundation_docs (update CSV with new docs)",
+        "generate_resource_sheet (add to CSV automatically)"
+      ],
+      "output": "Updated workflow instructions + automated CSV maintenance scripts"
+    },
+    "page_structure_standard": {
+      "description": "Establish standard: each dashboard page has CLAUDE.md + coderef/ folder with resource sheet index",
+      "implementation": "coderef-dashboard agent creates template structure and updates existing pages",
+      "structure": {
+        "page_directory": [
+          "page.tsx",
+          "CLAUDE.md (AI context for this page)",
+          "coderef/ (folder)",
+          "  ├── resource-sheet-index.md",
+          "  ├── {page-name}-RESOURCE-SHEET.md",
+          "  └── {related-resource-sheets}.md"
+        ]
+      },
+      "rollout": "Apply to resources/, explorer/, workflows/, personas/, documentation/, testing/ pages",
+      "output": "Updated page structure across dashboard + documentation of new standard"
+    }
+  },
+
+  "output_format": "json + markdown",
+
+  "phase_1_output_template": {
+    "agent_id": "{agent-id}",
+    "project_path": "{project-path}",
+    "audit_date": "2026-01-17",
+    "csv_baseline": {
+      "resources_in_csv": "{count}",
+      "resource_types": ["{type1}", "{type2}"]
+    },
+    "audit_results": {
+      "resources_found": "{count}",
+      "discrepancies": [
+        {
+          "type": "missing_from_csv|incorrect_category|outdated_path",
+          "resource_name": "{name}",
+          "current_csv_value": "{value-in-csv}",
+          "actual_value": "{value-found}",
+          "recommendation": "{action-to-take}"
+        }
+      ],
+      "new_resources": [
+        {
+          "type": "{Tool|Command|Script|etc}",
+          "name": "{name}",
+          "description": "{description}",
+          "path": "{absolute-path}",
+          "server": "{server-name}",
+          "category": "{category}"
+        }
+      ]
+    },
+    "summary": {
+      "total_discrepancies": "{count}",
+      "total_new_resources": "{count}",
+      "csv_update_required": true
+    }
+  },
+
+  "quality_standards": {
+    "completeness": "All resources in project scope scanned. No tools/commands/scripts/validators/schemas missed.",
+    "accuracy": "Discrepancies accurately reflect actual vs CSV values. New resources have complete metadata.",
+    "format": "JSON output follows phase_1_output_template. Markdown summary for human readability."
+  }
+}

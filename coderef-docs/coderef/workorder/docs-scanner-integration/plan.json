@@ -1,0 +1,714 @@
+{
+  "workorder_id": "WO-DOCS-SCANNER-INTEGRATION-001",
+  "feature_name": "docs-scanner-integration",
+  "version": "1.0.0",
+  "created_at": "2026-01-16T00:00:00.000Z",
+  "updated_at": "2026-01-16T00:00:00.000Z",
+  "status": "planning",
+
+  "META_DOCUMENTATION": {
+    "purpose": "Integrate Phase 1 scanner improvements (AST accuracy, complexity metrics, relationship data, dynamic imports) into coderef-docs documentation generation workflows",
+    "scope": "Documentation generation enhancements only - 4 tasks across foundation docs, resource sheets, and architecture docs",
+    "constraints": [
+      "Maintain backward compatibility with pre-Phase 1 scanner output",
+      "Handle missing ElementData fields gracefully",
+      "No breaking changes to existing doc generation API",
+      "All changes must degrade gracefully if new fields unavailable"
+    ],
+    "success_criteria": {
+      "accuracy": "95%+ documentation accuracy (up from 85%) with complete type coverage",
+      "complexity": "Complexity analysis sections in resource sheets with refactoring guidance",
+      "relationships": "Automated dependency graphs in ARCHITECTURE.md from scanner data",
+      "warnings": "Dynamic import warnings in API.md and ARCHITECTURE.md where applicable",
+      "compatibility": "Zero breaking changes, graceful degradation with old scanner output"
+    },
+    "parent_session": "WO-SCANNER-COMPLETE-INTEGRATION-001",
+    "phase": "phase_2",
+    "agent_id": "coderef-docs"
+  },
+
+  "0_PREPARATION": {
+    "discovery": {
+      "phase_1_verification": {
+        "status": "✅ COMPLETE",
+        "tasks_complete": 7,
+        "fields_available": [
+          "type: 'interface' | 'decorator' | 'type' | 'property'",
+          "complexity: number",
+          "imports: Array<{source, specifiers, dynamic, line}>",
+          "exports: Array<{name, type, line}>",
+          "dependencies: string[]",
+          "dynamicImports: Array<{pattern, location, line}>"
+        ]
+      },
+      "integration_points_identified": [
+        "tool_handlers.py lines 233-450 (handle_generate_foundation_docs)",
+        "generators/resource_sheet_generator.py (ResourceSheetGenerator)",
+        "mcp_integration.py (context instructions)"
+      ],
+      "test_infrastructure": "185 tests across 10 files, 95%+ pass rate"
+    },
+    "analysis_complete": true,
+    "context_gathered": true,
+    "blockers": "none"
+  },
+
+  "1_EXECUTIVE_SUMMARY": [
+    "Integrate Phase 1 scanner improvements to increase documentation accuracy from 85% to 95%+ with complete type coverage (interfaces, decorators, type aliases)",
+    "Add complexity analysis to resource sheets with hotspot identification and refactoring recommendations based on cyclomatic complexity scores",
+    "Generate automated dependency graphs in ARCHITECTURE.md using import/export/dependency data from scanner relationship tracking",
+    "Add dynamic import detection warnings in API.md and ARCHITECTURE.md to flag runtime considerations and bundling implications"
+  ],
+
+  "2_RISK_ASSESSMENT": {
+    "breaking_changes": {
+      "risk_level": "low",
+      "description": "All changes use optional field access with .get() and defaults",
+      "mitigation": "Comprehensive backward compatibility testing with pre-Phase 1 scanner output"
+    },
+    "performance_impact": {
+      "risk_level": "very_low",
+      "description": "Reading pre-computed fields from .coderef/ (< 50ms per file)",
+      "mitigation": "No additional computation needed - fields calculated by scanner"
+    },
+    "complexity": {
+      "risk_level": "medium",
+      "description": "Dependency graph generation for large codebases may produce complex Mermaid diagrams",
+      "mitigation": "Limit to top 10-15 dependencies, provide summary statistics"
+    },
+    "testing": {
+      "risk_level": "low",
+      "description": "Need to verify graceful degradation with old scanner output",
+      "mitigation": "Add tests with both enhanced and legacy ElementData formats"
+    }
+  },
+
+  "3_CURRENT_STATE_ANALYSIS": {
+    "documentation_accuracy": {
+      "current": "85%",
+      "gaps": [
+        "Interfaces not detected (regex can't parse TS interfaces)",
+        "Decorators not detected (regex misses @ patterns in comments)",
+        "Type aliases not detected (regex confuses with variable assignments)"
+      ]
+    },
+    "resource_sheets": {
+      "current": "No complexity metrics",
+      "limitation": "Cannot identify refactoring candidates or hotspots"
+    },
+    "architecture_docs": {
+      "current": "Manual dependency analysis",
+      "limitation": "No automated import/export/dependency graphs"
+    },
+    "dynamic_code": {
+      "current": "No detection",
+      "limitation": "Runtime considerations and bundling implications not flagged"
+    },
+    "existing_patterns": {
+      "drift_detection": "MCP orchestrator with caching (WO-GENERATION-ENHANCEMENT-001)",
+      "resource_checking": ".coderef/ validation before doc generation",
+      "backward_compatibility": "Graceful degradation pattern established",
+      "type_filtering": "List comprehensions for element filtering"
+    }
+  },
+
+  "4_KEY_FEATURES": [
+    {
+      "feature_id": "F1",
+      "name": "AST Accuracy Integration",
+      "description": "Foundation docs include interfaces, decorators, and type aliases",
+      "user_story": "As a developer, I want to see all TypeScript interfaces and decorators documented in API.md and ARCHITECTURE.md so I understand the complete API surface",
+      "acceptance_criteria": [
+        "API.md includes 'Interfaces' section with all interface definitions",
+        "API.md includes 'Type Aliases' section with all type alias definitions",
+        "ARCHITECTURE.md includes 'Decorators' section with decorator usage patterns",
+        "Gracefully handles old scanner output without 'interface' type",
+        "Test coverage >= 95%"
+      ]
+    },
+    {
+      "feature_id": "F2",
+      "name": "Complexity Integration",
+      "description": "Resource sheets show complexity metrics with refactoring guidance",
+      "user_story": "As a developer, I want to see complexity metrics and refactoring recommendations in resource sheets so I can identify code hotspots",
+      "acceptance_criteria": [
+        "Resource sheets include 'Complexity Analysis' section",
+        "Display average, max, and hotspot elements (complexity > 10)",
+        "Provide refactoring recommendations based on thresholds (>10 medium, >15 high)",
+        "Gracefully handles missing complexity field",
+        "Test coverage >= 95%"
+      ]
+    },
+    {
+      "feature_id": "F3",
+      "name": "Relationship Integration",
+      "description": "Architecture docs show dependency graphs from relationship data",
+      "user_story": "As a developer, I want to see automated dependency graphs in ARCHITECTURE.md so I understand module coupling and dependencies",
+      "acceptance_criteria": [
+        "ARCHITECTURE.md includes 'Module Dependencies' section",
+        "Display import analysis with usage counts",
+        "Show coupling analysis for high-dependency modules (>= 5 usages)",
+        "Generate Mermaid dependency diagram (top 10-15 dependencies)",
+        "Include export analysis showing public API surface",
+        "Gracefully handles missing exports field",
+        "Test coverage >= 95%"
+      ]
+    },
+    {
+      "feature_id": "F4",
+      "name": "Dynamic Import Warnings",
+      "description": "API and architecture docs show dynamic import warnings",
+      "user_story": "As a developer, I want to see warnings about dynamic imports so I understand runtime considerations and bundling implications",
+      "acceptance_criteria": [
+        "API.md includes '⚠️ Dynamic Imports' warning section when detected",
+        "ARCHITECTURE.md includes 'Runtime Considerations' section when detected",
+        "List dynamic import patterns (import(), require(), etc.) with locations",
+        "Flag implications: tree-shaking, static analysis, bundling",
+        "Gracefully handles missing dynamicImports field",
+        "Test coverage >= 95%"
+      ]
+    }
+  ],
+
+  "5_TASK_ID_SYSTEM": {
+    "format": "{CATEGORY}-{SEQUENCE}",
+    "categories": {
+      "SETUP": "Environment setup, dependencies, configuration",
+      "IMPL": "Core implementation tasks",
+      "TEST": "Testing tasks (unit, integration, e2e)",
+      "DOC": "Documentation updates",
+      "VAL": "Validation and quality assurance"
+    },
+    "example": "IMPL-001, IMPL-002, TEST-001, etc."
+  },
+
+  "6_IMPLEMENTATION_PHASES": [
+    {
+      "phase": "Phase 1: AST Accuracy Integration",
+      "feature_id": "F1",
+      "complexity": "medium",
+      "tasks": [
+        {
+          "task_id": "IMPL-001",
+          "title": "Add type filtering for interfaces, decorators, type aliases",
+          "description": "Modify handle_generate_foundation_docs in tool_handlers.py to filter ElementData by new types (interface, decorator, type). Add list comprehensions to extract these elements from .coderef/index.json.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "location": "tool_handlers.py lines 233-450 (handle_generate_foundation_docs)",
+            "changes": [
+              "After reading .coderef/index.json elements, add type filtering:",
+              "interfaces = [e for e in elements if e.get('type') == 'interface']",
+              "type_aliases = [e for e in elements if e.get('type') == 'type']",
+              "decorators = [e for e in elements if e.get('type') == 'decorator']"
+            ]
+          },
+          "acceptance_criteria": [
+            "Type filtering code added to handle_generate_foundation_docs",
+            "Handles missing 'type' field gracefully with .get()",
+            "Returns empty list if old scanner output (no interfaces)"
+          ]
+        },
+        {
+          "task_id": "IMPL-002",
+          "title": "Update foundation doc instructions to include new sections",
+          "description": "Enhance the instructions output in handle_generate_foundation_docs and handle_generate_individual_doc to tell Claude to include Interfaces, Type Aliases, and Decorators sections in generated docs.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "location": "tool_handlers.py lines 340-385 (instructions section)",
+            "changes": [
+              "Add to API.md template instructions:",
+              "'- Include Interfaces section listing all interface definitions'",
+              "'- Include Type Aliases section listing all type alias definitions'",
+              "Add to ARCHITECTURE.md template instructions:",
+              "'- Include Decorators section showing decorator usage patterns'"
+            ]
+          },
+          "acceptance_criteria": [
+            "Instructions updated for api, schema, architecture templates",
+            "Claude receives clear guidance on where to include new sections",
+            "Instructions mention to check element types before adding sections"
+          ]
+        },
+        {
+          "task_id": "TEST-001",
+          "title": "Add tests for AST accuracy integration",
+          "description": "Create test_ast_accuracy_integration.py to verify interface/decorator/type filtering and graceful degradation with old scanner output.",
+          "files_to_create": [
+            "tests/test_ast_accuracy_integration.py"
+          ],
+          "implementation_details": {
+            "test_cases": [
+              "test_interface_filtering() - Verify interfaces extracted correctly",
+              "test_decorator_filtering() - Verify decorators extracted correctly",
+              "test_type_alias_filtering() - Verify type aliases extracted correctly",
+              "test_graceful_degradation_old_scanner() - Verify empty lists with old output",
+              "test_missing_type_field() - Verify .get() handles missing field"
+            ],
+            "mock_data": {
+              "enhanced_scanner": "ElementData with type='interface'",
+              "old_scanner": "ElementData without type field or type='function'"
+            }
+          },
+          "acceptance_criteria": [
+            "5+ test cases covering filtering and degradation",
+            "Tests pass with both enhanced and legacy ElementData",
+            "Coverage >= 95% for modified code"
+          ]
+        }
+      ],
+      "dependencies": [],
+      "estimated_duration": "2-3 hours"
+    },
+    {
+      "phase": "Phase 2: Complexity Integration",
+      "feature_id": "F2",
+      "complexity": "medium",
+      "tasks": [
+        {
+          "task_id": "IMPL-003",
+          "title": "Add complexity field reading to ResourceSheetGenerator",
+          "description": "Modify generators/resource_sheet_generator.py to read ElementData.complexity field and calculate statistics (avg, max, hotspots).",
+          "files_to_modify": [
+            "generators/resource_sheet_generator.py"
+          ],
+          "implementation_details": {
+            "location": "ResourceSheetGenerator class",
+            "changes": [
+              "Add method calculate_complexity_stats(elements):",
+              "  complexities = [e.get('complexity', 0) for e in elements if e.get('complexity')]",
+              "  avg = sum(complexities) / len(complexities) if complexities else 0",
+              "  max_complexity = max(complexities) if complexities else 0",
+              "  hotspots = [e for e in elements if e.get('complexity', 0) > 10]",
+              "  return {'avg': avg, 'max': max_complexity, 'hotspots': hotspots}"
+            ]
+          },
+          "acceptance_criteria": [
+            "calculate_complexity_stats() method added",
+            "Handles missing complexity field gracefully",
+            "Returns sensible defaults for old scanner output"
+          ]
+        },
+        {
+          "task_id": "IMPL-004",
+          "title": "Generate Complexity Analysis section in resource sheets",
+          "description": "Add markdown generation for Complexity Analysis section with hotspot identification and refactoring recommendations.",
+          "files_to_modify": [
+            "generators/resource_sheet_generator.py"
+          ],
+          "implementation_details": {
+            "section_format": [
+              "## Complexity Analysis",
+              "- **Average Complexity:** {avg:.1f}",
+              "- **Max Complexity:** {max_complexity}",
+              "- **Hotspots (complexity > 10):** {len(hotspots)} elements",
+              "",
+              "### Refactoring Candidates",
+              "| Element | Complexity | Location | Recommendation |",
+              "|---------|------------|----------|----------------|",
+              "{hotspot rows with recommendations based on thresholds}"
+            ],
+            "recommendations": {
+              "complexity_10_15": "MEDIUM - Consider simplifying control flow",
+              "complexity_15_plus": "HIGH - Refactor into smaller functions"
+            }
+          },
+          "acceptance_criteria": [
+            "Complexity Analysis section generated when complexity data available",
+            "Provides actionable refactoring recommendations",
+            "Omits section gracefully if no complexity data"
+          ]
+        },
+        {
+          "task_id": "TEST-002",
+          "title": "Add tests for complexity integration",
+          "description": "Create test_complexity_integration.py to verify complexity statistics calculation and section generation.",
+          "files_to_create": [
+            "tests/test_complexity_integration.py"
+          ],
+          "implementation_details": {
+            "test_cases": [
+              "test_complexity_stats_calculation() - Verify avg, max, hotspots",
+              "test_complexity_section_generation() - Verify markdown format",
+              "test_refactoring_recommendations() - Verify thresholds (>10, >15)",
+              "test_graceful_degradation_no_complexity() - Verify section omitted",
+              "test_edge_case_all_zero_complexity() - Verify handles all 0"
+            ]
+          },
+          "acceptance_criteria": [
+            "5+ test cases covering stats and generation",
+            "Tests verify graceful degradation",
+            "Coverage >= 95% for modified code"
+          ]
+        }
+      ],
+      "dependencies": [],
+      "estimated_duration": "3-4 hours"
+    },
+    {
+      "phase": "Phase 3: Relationship Integration",
+      "feature_id": "F3",
+      "complexity": "high",
+      "tasks": [
+        {
+          "task_id": "IMPL-005",
+          "title": "Add import/export/dependency aggregation",
+          "description": "Add helper functions to aggregate import/export/dependency data from ElementData arrays and calculate module coupling metrics.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "location": "Add new helper functions before handle_generate_foundation_docs",
+            "functions": [
+              "aggregate_imports(elements) -> dict[str, int]: Count imports per module",
+              "aggregate_exports(elements) -> dict[str, list]: Group exports by file",
+              "identify_high_coupling(imports, threshold=5) -> dict: Find high-dependency modules"
+            ],
+            "example_output": {
+              "all_imports": "{'acorn': 12, 'typescript': 8, 'fs/promises': 15}",
+              "high_deps": "{'fs/promises': 15, 'acorn': 12} (>= 5 usages)"
+            }
+          },
+          "acceptance_criteria": [
+            "aggregate_imports() counts import usage across all elements",
+            "identify_high_coupling() filters by threshold",
+            "Handles missing imports/exports fields gracefully"
+          ]
+        },
+        {
+          "task_id": "IMPL-006",
+          "title": "Generate Module Dependencies section in ARCHITECTURE.md",
+          "description": "Update ARCHITECTURE.md generation instructions to include Module Dependencies section with import analysis and coupling metrics.",
+          "files_to_modify": [
+            "tool_handlers.py",
+            "mcp_integration.py"
+          ],
+          "implementation_details": {
+            "section_format": [
+              "## Module Dependencies",
+              "",
+              "### Import Analysis",
+              "- Total unique modules imported: {len(all_imports)}",
+              "- High-dependency modules (>= 5 usages): {len(high_deps)}",
+              "",
+              "### Coupling Analysis",
+              "| Module | Usage Count | Category |",
+              "|--------|-------------|----------|",
+              "{high_deps table}",
+              "",
+              "### Export Analysis",
+              "- Total exports: {total_exports}",
+              "- Public API surface: {exported_elements}"
+            ]
+          },
+          "acceptance_criteria": [
+            "Module Dependencies section added to ARCHITECTURE.md instructions",
+            "Import and export analysis both included",
+            "Coupling metrics calculated correctly"
+          ]
+        },
+        {
+          "task_id": "IMPL-007",
+          "title": "Generate Mermaid dependency diagram",
+          "description": "Add Mermaid diagram generation for dependency relationships, limiting to top 10-15 dependencies to avoid diagram complexity.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "function": "generate_dependency_mermaid(imports, limit=10) -> str",
+            "format": [
+              "```mermaid",
+              "graph TD",
+              "  MainFile --> Dependency1",
+              "  MainFile --> Dependency2",
+              "  Dependency1 --> SubDep",
+              "```"
+            ],
+            "notes": "Limit to top N by usage count to keep diagram readable"
+          },
+          "acceptance_criteria": [
+            "Mermaid diagram generated from import data",
+            "Limited to top 10-15 dependencies",
+            "Valid Mermaid syntax"
+          ]
+        },
+        {
+          "task_id": "TEST-003",
+          "title": "Add tests for relationship integration",
+          "description": "Create test_relationship_integration.py to verify import/export aggregation, coupling metrics, and diagram generation.",
+          "files_to_create": [
+            "tests/test_relationship_integration.py"
+          ],
+          "implementation_details": {
+            "test_cases": [
+              "test_import_aggregation() - Verify import counting",
+              "test_export_aggregation() - Verify export grouping",
+              "test_high_coupling_identification() - Verify threshold filtering",
+              "test_mermaid_diagram_generation() - Verify valid Mermaid syntax",
+              "test_graceful_degradation_missing_fields() - Verify handles missing imports/exports"
+            ]
+          },
+          "acceptance_criteria": [
+            "5+ test cases covering aggregation and generation",
+            "Tests verify Mermaid diagram validity",
+            "Coverage >= 95% for modified code"
+          ]
+        }
+      ],
+      "dependencies": [],
+      "estimated_duration": "4-5 hours"
+    },
+    {
+      "phase": "Phase 4: Dynamic Import Warnings",
+      "feature_id": "F4",
+      "complexity": "low",
+      "tasks": [
+        {
+          "task_id": "IMPL-008",
+          "title": "Add dynamic import detection check",
+          "description": "Add function to check ElementData.dynamicImports field and identify elements using dynamic code patterns.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "function": "detect_dynamic_imports(elements) -> list[dict]",
+            "logic": [
+              "dynamic_elements = []",
+              "for e in elements:",
+              "    if e.get('dynamicImports'):",
+              "        dynamic_elements.append({",
+              "            'element': e['name'],",
+              "            'patterns': e['dynamicImports'],",
+              "            'file': e['file'],",
+              "            'line': e['line']",
+              "        })",
+              "return dynamic_elements"
+            ]
+          },
+          "acceptance_criteria": [
+            "detect_dynamic_imports() returns list of elements with dynamic imports",
+            "Handles missing dynamicImports field gracefully",
+            "Returns empty list for old scanner output"
+          ]
+        },
+        {
+          "task_id": "IMPL-009",
+          "title": "Generate dynamic import warning sections",
+          "description": "Update API.md and ARCHITECTURE.md generation to include warning sections when dynamic imports detected.",
+          "files_to_modify": [
+            "tool_handlers.py"
+          ],
+          "implementation_details": {
+            "api_section": [
+              "## ⚠️ Dynamic Imports Detected",
+              "",
+              "The following elements use dynamic code loading:",
+              "| Element | Pattern | Location |",
+              "|---------|---------|----------|",
+              "{dynamic imports table}",
+              "",
+              "**Implications:**",
+              "- Tree-shaking and dead code elimination limited",
+              "- Static analysis and type checking limited",
+              "- Bundler optimization may be affected"
+            ],
+            "architecture_section": [
+              "## Runtime Considerations",
+              "",
+              "### Dynamic Code Patterns",
+              "This project uses {count} elements with dynamic code loading.",
+              "",
+              "**Patterns detected:**",
+              "- import(): {count}",
+              "- require(): {count}",
+              "",
+              "**Implications:** Potential runtime failures if modules not available"
+            ]
+          },
+          "acceptance_criteria": [
+            "Warning sections added to API.md and ARCHITECTURE.md instructions",
+            "Sections only included when dynamic imports detected",
+            "Clear implications listed for developers"
+          ]
+        },
+        {
+          "task_id": "TEST-004",
+          "title": "Add tests for dynamic import warnings",
+          "description": "Create test_dynamic_import_warnings.py to verify detection and warning generation.",
+          "files_to_create": [
+            "tests/test_dynamic_import_warnings.py"
+          ],
+          "implementation_details": {
+            "test_cases": [
+              "test_dynamic_import_detection() - Verify detection works",
+              "test_warning_section_generation() - Verify markdown format",
+              "test_pattern_counting() - Verify pattern counts (import(), require())",
+              "test_graceful_degradation_no_dynamic() - Verify section omitted",
+              "test_missing_dynamicImports_field() - Verify handles missing field"
+            ]
+          },
+          "acceptance_criteria": [
+            "5+ test cases covering detection and generation",
+            "Tests verify graceful degradation",
+            "Coverage >= 95% for modified code"
+          ]
+        }
+      ],
+      "dependencies": [],
+      "estimated_duration": "2-3 hours"
+    },
+    {
+      "phase": "Phase 5: Integration Testing & Validation",
+      "feature_id": "ALL",
+      "complexity": "medium",
+      "tasks": [
+        {
+          "task_id": "TEST-005",
+          "title": "Create end-to-end integration tests",
+          "description": "Add test_scanner_integration_e2e.py to verify all 4 tasks work together with real scanner output.",
+          "files_to_create": [
+            "tests/test_scanner_integration_e2e.py"
+          ],
+          "implementation_details": {
+            "test_scenarios": [
+              "test_full_integration_enhanced_scanner() - All features with Phase 1 output",
+              "test_backward_compatibility_old_scanner() - Graceful degradation",
+              "test_mixed_scanner_output() - Some fields present, some missing",
+              "test_large_codebase() - Performance with 1000+ elements",
+              "test_empty_codebase() - Handles no elements gracefully"
+            ]
+          },
+          "acceptance_criteria": [
+            "5+ end-to-end test scenarios",
+            "Tests use real .coderef/ structure",
+            "All tests pass with 95%+ success rate"
+          ]
+        },
+        {
+          "task_id": "VAL-001",
+          "title": "Generate sample docs with all enhancements",
+          "description": "Generate foundation docs and resource sheets for coderef-core project (has all enhancement fields) and verify all new sections appear.",
+          "validation_steps": [
+            "Run coderef scan on coderef-core project (Phase 1 scanner)",
+            "Generate foundation docs with handle_generate_foundation_docs",
+            "Verify API.md includes Interfaces and Type Aliases sections",
+            "Verify ARCHITECTURE.md includes Decorators and Module Dependencies sections",
+            "Generate resource sheet for scanner.ts",
+            "Verify resource sheet includes Complexity Analysis section",
+            "Verify dynamic import warnings appear if applicable"
+          ],
+          "acceptance_criteria": [
+            "All 4 enhancements visible in generated docs",
+            "No errors or warnings during generation",
+            "Docs quality visually improved vs baseline"
+          ]
+        },
+        {
+          "task_id": "DOC-001",
+          "title": "Update integration report with results",
+          "description": "Update outputs/coderef-docs-phase2-integration.md with completion status, sample outputs, and before/after comparisons.",
+          "files_to_modify": [
+            "outputs/coderef-docs-phase2-integration.md"
+          ],
+          "sections_to_update": [
+            "Executive Summary - Mark all tasks complete",
+            "Task-by-Task Integration Status - Add completion dates",
+            "Sample Outputs - Add before/after doc snippets",
+            "Success Metrics Achieved - Update with actual results",
+            "Phase Gate Checklist - Mark all criteria complete"
+          ],
+          "acceptance_criteria": [
+            "Integration report updated with completion status",
+            "Before/after comparisons included",
+            "Success metrics documented"
+          ]
+        }
+      ],
+      "dependencies": ["Phase 1", "Phase 2", "Phase 3", "Phase 4"],
+      "estimated_duration": "2-3 hours"
+    }
+  ],
+
+  "7_TESTING_STRATEGY": {
+    "unit_tests": {
+      "coverage_target": "95%+",
+      "files": [
+        "tests/test_ast_accuracy_integration.py (5 tests)",
+        "tests/test_complexity_integration.py (5 tests)",
+        "tests/test_relationship_integration.py (5 tests)",
+        "tests/test_dynamic_import_warnings.py (5 tests)"
+      ],
+      "focus": "Individual function/method testing with mock data"
+    },
+    "integration_tests": {
+      "coverage_target": "90%+",
+      "files": [
+        "tests/test_scanner_integration_e2e.py (5 tests)"
+      ],
+      "focus": "Full workflow testing with real .coderef/ structure"
+    },
+    "backward_compatibility_tests": {
+      "coverage_target": "100%",
+      "scenarios": [
+        "Old scanner output (no new fields)",
+        "Partial scanner output (some fields missing)",
+        "Enhanced scanner output (all fields present)"
+      ],
+      "focus": "Graceful degradation, no errors with old data"
+    },
+    "performance_tests": {
+      "target": "< 100ms additional overhead per doc generation",
+      "scenarios": [
+        "Small codebase (< 100 elements)",
+        "Medium codebase (100-500 elements)",
+        "Large codebase (500-1000+ elements)"
+      ]
+    }
+  },
+
+  "8_SUCCESS_CRITERIA": {
+    "task_1_ast_accuracy": [
+      "API.md includes Interfaces section with all interface definitions",
+      "API.md includes Type Aliases section with all type alias definitions",
+      "ARCHITECTURE.md includes Decorators section with usage patterns",
+      "Handles old scanner output gracefully (empty sections)",
+      "Test coverage >= 95%",
+      "Documentation accuracy increases from 85% to 95%+"
+    ],
+    "task_2_complexity": [
+      "Resource sheets include Complexity Analysis section",
+      "Average, max, and hotspot metrics calculated correctly",
+      "Refactoring recommendations provided (>10 medium, >15 high)",
+      "Handles missing complexity field gracefully",
+      "Test coverage >= 95%"
+    ],
+    "task_3_relationships": [
+      "ARCHITECTURE.md includes Module Dependencies section",
+      "Import analysis with usage counts displayed",
+      "Coupling analysis shows high-dependency modules (>= 5 usages)",
+      "Export analysis shows public API surface",
+      "Mermaid dependency diagram generated (top 10-15)",
+      "Handles missing exports field gracefully",
+      "Test coverage >= 95%"
+    ],
+    "task_4_dynamic_imports": [
+      "API.md includes Dynamic Imports warning section when detected",
+      "ARCHITECTURE.md includes Runtime Considerations section when detected",
+      "Dynamic import patterns listed with locations",
+      "Implications clearly stated (tree-shaking, bundling, static analysis)",
+      "Handles missing dynamicImports field gracefully",
+      "Test coverage >= 95%"
+    ],
+    "overall_integration": [
+      "All 4 tasks complete with passing tests",
+      "Sample docs generated showing all enhancements",
+      "Backward compatibility verified with old scanner output",
+      "Integration report updated with before/after comparisons",
+      "Communication.json marked status='complete'",
+      "Zero breaking changes to existing doc generation API"
+    ]
+  }
+}

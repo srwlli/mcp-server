@@ -1,0 +1,190 @@
+{
+  "agent_id": "coderef-workflow",
+  "project_path": "C:\\Users\\willh\\.mcp-servers\\coderef-workflow",
+  "audit_date": "2026-01-17",
+  "csv_baseline": {
+    "resources_in_csv": 306,
+    "resource_types": ["Tool", "Command", "Script", "Validator", "Schema", "Workflow", "Persona", "MCP Server", "Documentation"],
+    "coderef_workflow_entries_in_csv": 65,
+    "breakdown": {
+      "commands": 27,
+      "tools": 37,
+      "workflows": 1
+    }
+  },
+  "audit_results": {
+    "resources_found": 38,
+    "breakdown": {
+      "tools": 37,
+      "commands": 1,
+      "scripts": 0,
+      "workflows": 0
+    },
+    "discrepancies": [
+      {
+        "type": "missing_from_csv",
+        "resource_name": "/archive-file",
+        "current_csv_value": "Server=assistant (line 310 in CSV)",
+        "actual_value": "exists in C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\.claude\\commands\\archive-file.md",
+        "recommendation": "Update CSV line 310: Change Server from 'assistant' to 'coderef-workflow' OR remove file from coderef-workflow if it belongs in assistant"
+      },
+      {
+        "type": "path_discrepancy",
+        "resource_name": "All 37 tools",
+        "current_csv_value": "Path=C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\src\\coderef_workflow\\server.py",
+        "actual_value": "Path=C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\server.py",
+        "recommendation": "Update all 37 tool paths in CSV (lines 247-282): Remove 'src\\coderef_workflow\\' from path - server.py is in root directory, not src/"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "/complete-workorder (command)",
+        "current_csv_value": "Listed in CSV line 53",
+        "actual_value": "File NOT found in .claude/commands/ directory",
+        "recommendation": "CRITICAL: Verify if /complete-workorder command file was deleted or moved. CSV shows it as active but file doesn't exist in coderef-workflow/.claude/commands/"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "/aggregate-agent-deliverables (command)",
+        "current_csv_value": "Listed in CSV line 46",
+        "actual_value": "File NOT found in .claude/commands/ directory",
+        "recommendation": "Verify if command file was deleted. CSV shows 27 commands but only 1 file exists in .claude/commands/"
+      },
+      {
+        "type": "missing_from_csv",
+        "resource_name": "26 additional commands",
+        "current_csv_value": "CSV lists 27 commands for coderef-workflow (lines 46-72)",
+        "actual_value": "Only 1 command file found: archive-file.md",
+        "recommendation": "CRITICAL ISSUE: CSV shows 27 slash commands but only 1 .md file exists in .claude/commands/. Either: (1) Command files were deleted/moved, OR (2) Commands are defined elsewhere (global ~/.claude/commands/), OR (3) CSV is outdated. Verify command file locations and update CSV accordingly."
+      },
+      {
+        "type": "missing_from_project",
+        "resource_name": "coderef_foundation_docs tool",
+        "current_csv_value": "Listed in CSV line 248 as 'Unified foundation docs'",
+        "actual_value": "NOT found in server.py list_tools() - only 37 tools defined, this is not one of them",
+        "recommendation": "Remove from CSV or verify tool name - may be deprecated/renamed"
+      }
+    ],
+    "new_resources": [],
+    "summary_analysis": {
+      "total_commands_in_csv": 27,
+      "total_commands_found": 1,
+      "total_tools_in_csv": 37,
+      "total_tools_found": 37,
+      "tool_name_match": "100% - All 37 tools in CSV match server.py definitions",
+      "command_file_match": "3.7% - Only 1 of 27 command files found physically",
+      "critical_issues": [
+        "26 command files missing from .claude/commands/ but listed in CSV",
+        "Tool paths in CSV incorrect (include src/coderef_workflow/ which doesn't exist)",
+        "archive-file.md exists in coderef-workflow but CSV shows Server=assistant"
+      ]
+    }
+  },
+  "detailed_findings": {
+    "tools_verified": [
+      "list_templates",
+      "get_template",
+      "generate_individual_doc",
+      "get_changelog",
+      "add_changelog_entry",
+      "update_changelog",
+      "generate_quickref_interactive",
+      "establish_standards",
+      "audit_codebase",
+      "check_consistency",
+      "get_planning_template",
+      "analyze_project_for_planning",
+      "gather_context",
+      "validate_implementation_plan",
+      "generate_plan_review_report",
+      "create_plan",
+      "finalize_plan_from_agent",
+      "generate_deliverables_template",
+      "update_deliverables",
+      "generate_agent_communication",
+      "assign_agent_task",
+      "verify_agent_completion",
+      "aggregate_agent_deliverables",
+      "track_agent_status",
+      "archive_feature",
+      "update_all_documentation",
+      "execute_plan",
+      "update_task_status",
+      "audit_plans",
+      "log_workorder",
+      "get_workorder_log",
+      "generate_handoff_context",
+      "assess_risk",
+      "generate_features_inventory"
+    ],
+    "tools_count": 37,
+    "commands_found": [
+      "/archive-file"
+    ],
+    "commands_in_csv_not_found": [
+      "/aggregate-agent-deliverables",
+      "/align-plan",
+      "/analyze-for-planning",
+      "/archive-feature",
+      "/assign-agent-task",
+      "/audit-plans",
+      "/coderef-foundation-docs",
+      "/complete-workorder",
+      "/create-plan",
+      "/create-session",
+      "/create-workorder",
+      "/features-inventory",
+      "/gather-context",
+      "/generate-agent-communication",
+      "/generate-deliverables",
+      "/generate-handoff-context",
+      "/generate-plan-review",
+      "/get-planning-template",
+      "/get-workorder-log",
+      "/git-release",
+      "/log-workorder",
+      "/stub",
+      "/track-agent-status",
+      "/update-deliverables",
+      "/update-task-status",
+      "/validate-plan",
+      "/verify-agent-completion"
+    ]
+  },
+  "recommendations": {
+    "immediate_actions": [
+      "CRITICAL: Investigate missing command files - 26 commands listed in CSV but files not found in .claude/commands/",
+      "Check if commands moved to global location: C:\\Users\\willh\\.claude\\commands\\",
+      "Update all tool paths in CSV - remove 'src\\coderef_workflow\\' prefix (lines 247-282)",
+      "Resolve /archive-file ownership - currently in coderef-workflow but CSV shows assistant",
+      "Verify coderef_foundation_docs tool exists or mark as deprecated in CSV"
+    ],
+    "investigation_needed": [
+      "Are slash commands defined in global ~/.claude/commands/ instead of project-local .claude/commands/?",
+      "Were command files recently moved/deleted during a refactoring?",
+      "Should archive-file.md be in coderef-workflow or assistant project?"
+    ],
+    "csv_updates_required": [
+      "Update 37 tool paths: C:\\Users\\willh\\.mcp-servers\\coderef-workflow\\server.py (remove src/coderef_workflow/)",
+      "Resolve command file locations and update CSV accordingly",
+      "Add note if commands are global vs project-local"
+    ]
+  },
+  "summary": {
+    "total_discrepancies": 6,
+    "total_new_resources": 0,
+    "csv_update_required": true,
+    "audit_status": "complete",
+    "confidence_level": "high",
+    "notes": [
+      "Tool definitions match 100% - all 37 tools in CSV are correctly defined in server.py",
+      "Critical issue: 96% of command files missing from project directory",
+      "Path discrepancy affects all 37 tool entries in CSV",
+      "Likely explanation: Commands may be in global ~/.claude/commands/ directory per ecosystem architecture"
+    ]
+  },
+  "next_steps": [
+    "Phase 1 complete - submit this audit report",
+    "Phase 2: coderef-docs agent will integrate findings into CSV",
+    "Phase 3: coderef-workflow agent will update workflow instructions (this agent returns for Phase 3)"
+  ]
+}

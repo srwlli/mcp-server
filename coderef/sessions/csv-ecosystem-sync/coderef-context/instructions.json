@@ -1,0 +1,54 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF_CONTEXT",
+  "agent_id": "coderef-context",
+  "phases": [
+    "phase_1"
+  ],
+  "role": "Phase 1: Audit coderef-context MCP server for tools, commands, scripts. Report discrepancies vs CSV.",
+  "context": {
+    "problem": "CSV may not accurately reflect current state of ecosystem resources",
+    "solution": "Audit coderef-context MCP server and report all discrepancies",
+    "impact": "CSV becomes accurate single source of truth"
+  },
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access CSV and session documents",
+    "step_2": "READ communication.json for task list",
+    "step_3": "SCAN coderef-context MCP server for all resources: server.py (tools), .claude/commands/, scripts/",
+    "step_4": "COMPARE findings against CSV",
+    "step_5": "DOCUMENT discrepancies (missing, outdated, incorrect) and new resources",
+    "step_6": "CREATE outputs/coderef-context-audit-report.json",
+    "step_7": "UPDATE communication.json after each task"
+  },
+  "audit_scope": {
+    "scan_targets": [
+      "server.py (tools)",
+      ".claude/commands/",
+      "scripts/"
+    ],
+    "resource_types": [
+      "Tool",
+      "Command",
+      "Script",
+      "Validator",
+      "Schema",
+      "Workflow"
+    ],
+    "comparison_fields": [
+      "Type",
+      "Server",
+      "Name",
+      "Path",
+      "Description"
+    ]
+  },
+  "output_requirements": {
+    "file": "outputs/coderef-context-audit-report.json",
+    "format": "json",
+    "template": "See phase_1_output_template in session instructions.json"
+  },
+  "phase_gate_checklist": [
+    "All 4 tasks status='complete'",
+    "Audit report created and validated",
+    "communication.json updated"
+  ]
+}

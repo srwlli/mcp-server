@@ -1,0 +1,138 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-TESTING",
+  "agent_id": "coderef-testing",
+  "phase": "phase_1",
+  "role": "Create test suite for new sidebar features",
+
+  "context": {
+    "problem": "New sidebar features lack test coverage - resize, persistence, scroll behavior untested",
+    "solution": "Create comprehensive test suite using Jest + React Testing Library",
+    "impact": "Confidence in feature reliability, prevent regressions, enable safe refactoring"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access implementation files",
+    "step_2": "READ coderef-dashboard agent outputs/ to understand implementation details",
+    "step_3": "RUN /create-workorder in C:\\Users\\willh\\.mcp-servers\\coderef-testing using context_json_template",
+    "step_4": "UPDATE communication.json: Add workorder, set status='in_progress'",
+    "step_5": "TASK 1 - Create ResizableSidebar.test.tsx → UPDATE communication.json → Mark complete",
+    "step_6": "TASK 2 - Create useSidebarResize.test.ts → UPDATE communication.json → Mark complete",
+    "step_7": "TASK 3 - Add CodeRefExplorerWidget integration tests → UPDATE communication.json → Mark complete",
+    "step_8": "TASK 4 - Add visual regression tests → UPDATE communication.json → Mark complete",
+    "step_9": "RUN npm test -- --coverage to verify coverage targets",
+    "step_10": "UPDATE communication.json: status='complete', coverage metrics",
+    "step_11": "CREATE outputs/coderef-testing-phase1-output.md with test results",
+    "step_12": "VALIDATE phase_gate_checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Create ResizableSidebar.test.tsx",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\components\\coderef\\__tests__\\ResizableSidebar.test.tsx",
+        "test_cases": [
+          "renders with default width",
+          "renders drag handle",
+          "initiates resize on mousedown",
+          "updates width during mousemove",
+          "stops resize on mouseup",
+          "enforces min width constraint (240px)",
+          "enforces max width constraint (600px)",
+          "persists width to localStorage on change",
+          "loads initial width from localStorage"
+        ]
+      },
+      "validation": "All test cases pass"
+    },
+    "task_2": {
+      "description": "Create useSidebarResize.test.ts",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\hooks\\__tests__\\useSidebarResize.test.ts",
+        "test_cases": [
+          "returns default width on first mount",
+          "loads width from localStorage if available",
+          "returns handleMouseDown function",
+          "updates width on drag",
+          "clamps width to min constraint",
+          "clamps width to max constraint",
+          "persists width to localStorage after drag",
+          "handles localStorage quota exceeded gracefully"
+        ]
+      },
+      "validation": "All hook tests pass with proper cleanup"
+    },
+    "task_3": {
+      "description": "Add CodeRefExplorerWidget integration tests",
+      "implementation": {
+        "file": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\widgets\\coderef-explorer\\__tests__\\CodeRefExplorerWidget.scroll.test.tsx",
+        "test_cases": [
+          "controls section stays fixed on scroll",
+          "FileTree has dedicated scroll container",
+          "scroll does not affect controls visibility",
+          "visual hierarchy visible (borders, shadows)",
+          "sidebar integrates with ResizableSidebar wrapper"
+        ]
+      },
+      "validation": "Integration tests validate scroll and layout behavior"
+    },
+    "task_4": {
+      "description": "Add visual regression tests",
+      "implementation": {
+        "approach": "Use jest-axe for accessibility, snapshot tests for layout",
+        "test_cases": [
+          "sidebar layout matches snapshot",
+          "controls section layout matches snapshot",
+          "drag handle is keyboard accessible",
+          "no accessibility violations in ResizableSidebar"
+        ]
+      },
+      "validation": "Visual regression tests catch layout changes"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-EXPLORER-SIDEBAR-TESTS-001",
+    "feature_name": "explorer-sidebar-test-suite",
+    "requirements": [
+      "Unit tests for ResizableSidebar component",
+      "Unit tests for useSidebarResize hook",
+      "Integration tests for scroll behavior",
+      "Visual regression/snapshot tests",
+      "80%+ code coverage target"
+    ],
+    "constraints": [
+      "Use Jest + React Testing Library (existing test framework)",
+      "Follow existing test patterns in __tests__/ directories",
+      "Mock localStorage for persistence tests",
+      "Clean up event listeners in tests"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "ResizableSidebar tests cover all drag interactions and constraints",
+    "task_2": "useSidebarResize tests cover hook logic and persistence",
+    "task_3": "Integration tests validate scroll and layout behavior",
+    "task_4": "Visual tests catch layout regressions"
+  },
+
+  "output_requirements": {
+    "file": "outputs/coderef-testing-phase1-output.md",
+    "format": "markdown",
+    "sections": [
+      "## Test Suite Summary",
+      "## Test Files Created",
+      "## Test Coverage Report",
+      "## Test Execution Results",
+      "## Failed Tests (if any)",
+      "## Phase Gate Checklist"
+    ]
+  },
+
+  "phase_gate_checklist": [
+    "All tasks status='complete'",
+    "All tests passing (npm test)",
+    "80%+ code coverage achieved",
+    "No accessibility violations",
+    "communication.json updated"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "workorder_id": "WO-CSV-ECOSYSTEM-SYNC-001-CODEREF_PERSONAS",
+  "parent_session": "WO-CSV-ECOSYSTEM-SYNC-001",
+  "agent_id": "coderef-personas",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-personas",
+  "role": "Phase 1: Audit coderef-personas MCP server for tools, commands, persona definitions. Report discrepancies vs CSV.",
+  "status": "complete",
+  "scope": "coderef-personas MCP server",
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Scan coderef-personas MCP server for all resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Compare findings against CSV",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Document discrepancies and new resources",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Create audit report in outputs/",
+      "status": "complete"
+    }
+  ],
+  "success_metrics": {
+    "audit_completeness": {
+      "baseline": "Unknown resources in coderef-personas MCP server",
+      "target": "100% of coderef-personas MCP server resources cataloged",
+      "status": "Not started"
+    }
+  },
+  "resources": {
+    "index": "resources/index.md"
+  },
+  "outputs": {
+    "primary_output": "outputs/coderef-personas-audit-report.json",
+    "format": "json"
+  },
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 4 tasks complete",
+      "Audit report created",
+      "communication.json updated"
+    ]
+  }
+}

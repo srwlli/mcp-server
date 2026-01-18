@@ -1,0 +1,356 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-PAPERTRAIL-PHASE2",
+  "parent_session": "WO-EXPLORER-SIDEBAR-UX-001",
+  "validation_date": "2026-01-17",
+  "validator": "papertrail",
+  "phase": "phase_2",
+
+  "summary": {
+    "total_documents": 8,
+    "new_documents": 3,
+    "updated_documents": 5,
+    "passed": 0,
+    "failed": 7,
+    "manual_check": 1,
+    "average_score": 23.43,
+    "critical_errors": 1,
+    "major_errors": 24,
+    "warnings": 12
+  },
+
+  "phase_1_comparison": {
+    "phase_1_pass_rate": "100% (after remediation, 3/3 documents)",
+    "phase_2_pass_rate": "0% (0/8 documents)",
+    "quality_trend": "REGRESSION - Schema issues with RSMS v2.0 additional properties"
+  },
+
+  "documents": [
+    {
+      "file": "QuickFileSearch-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\QuickFileSearch-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "new",
+      "validation_standard": "RSMS v2.0",
+      "score": 16,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "status",
+          "message": "'active' is not one of ['DRAFT', 'REVIEW', 'APPROVED', 'ARCHIVED']"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties are not allowed ('complexity', 'created', 'dependencies', 'feature_id', 'loc', 'phase', 'related_sheets', 'updated', 'workorder_id' were unexpected)"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format 'QuickFileSearch' - use PascalCase-with-hyphens (e.g., 'Quick-File-Search')"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename component 'QuickFileSearch' doesn't match subject 'QuickFileSearch' (expected: 'Quickfilesearch-RESOURCE-SHEET.md')"
+      ],
+      "recommendations": [
+        "CRITICAL: Remove additional frontmatter properties not in RSMS v2.0 schema (workorder_id, feature_id, phase, etc.)",
+        "Change status from 'active' to one of: DRAFT, REVIEW, APPROVED, ARCHIVED",
+        "Move file to 'coderef/resources-sheets/' directory (remove 'components/' subdirectory)",
+        "Rename to PascalCase-with-hyphens: 'Quick-File-Search-RESOURCE-SHEET.md'",
+        "Add missing recommended sections"
+      ]
+    },
+    {
+      "file": "TreeActionsToolbar-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\TreeActionsToolbar-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "new",
+      "validation_standard": "RSMS v2.0",
+      "score": 16,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "status",
+          "message": "'active' is not one of ['DRAFT', 'REVIEW', 'APPROVED', 'ARCHIVED']"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties not allowed (complexity, created, dependencies, feature_id, loc, phase, related_sheets, updated, workorder_id)"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format 'TreeActionsToolbar' - use PascalCase-with-hyphens"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename mismatch"
+      ],
+      "recommendations": [
+        "Same as QuickFileSearch - remove additional properties, fix status enum, relocate file, rename with hyphens"
+      ]
+    },
+    {
+      "file": "fuzzyMatch-Utility-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\utilities\\fuzzyMatch-Utility-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "new",
+      "validation_standard": "RSMS v2.0",
+      "score": 16,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "status",
+          "message": "'active' is not one of ['DRAFT', 'REVIEW', 'APPROVED', 'ARCHIVED']"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties not allowed (complexity, created, dependencies, feature_id, loc, phase, related_sheets, updated, workorder_id)"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'utilities/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format 'fuzzyMatch-Utility' - use PascalCase-with-hyphens"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Architecture",
+        "Filename mismatch"
+      ],
+      "recommendations": [
+        "Same schema issues as other new sheets",
+        "Utilities subdirectory is valid pattern but conflicts with RSMS v2.0 validator expectations"
+      ]
+    },
+    {
+      "file": "CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\CodeRef-Explorer-Widget-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "updated",
+      "validation_standard": "RSMS v2.0",
+      "score": 36,
+      "phase_1_score": 56,
+      "score_change": -20,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties not allowed ('feature_id', 'workorder_id')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format - use PascalCase-with-hyphens"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename mismatch"
+      ],
+      "recommendations": [
+        "NOTE: Score decreased from Phase 1 (56 → 36) - schema validation became stricter",
+        "Remove workorder_id and feature_id from frontmatter",
+        "Address file location and naming issues"
+      ]
+    },
+    {
+      "file": "FileTree-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\FileTree-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "updated",
+      "validation_standard": "RSMS v2.0",
+      "score": 36,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties not allowed ('feature_id', 'workorder_id')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format - use PascalCase-with-hyphens"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename mismatch"
+      ],
+      "recommendations": [
+        "Same issues as CodeRef-Explorer-Widget"
+      ]
+    },
+    {
+      "file": "ResizableSidebar-RESOURCE-SHEET.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\coderef\\resources-sheets\\components\\ResizableSidebar-RESOURCE-SHEET.md",
+      "type": "resource_sheet",
+      "doc_status": "updated",
+      "validation_standard": "RSMS v2.0",
+      "score": 36,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "MAJOR",
+          "field": "frontmatter",
+          "message": "Additional properties not allowed ('feature_id', 'workorder_id')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "file_location",
+          "message": "File must be in 'coderef/resources-sheets/' directory (found in 'components/')"
+        },
+        {
+          "severity": "MAJOR",
+          "field": "filename",
+          "message": "Invalid filename format - use PascalCase-with-hyphens"
+        }
+      ],
+      "warnings": [
+        "Missing recommended sections: Audience & Intent, Quick Reference, Usage",
+        "Filename mismatch"
+      ],
+      "recommendations": [
+        "Same issues as other resource sheets"
+      ]
+    },
+    {
+      "file": "CLAUDE.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\CLAUDE.md",
+      "type": "system_documentation",
+      "doc_status": "updated",
+      "validation_standard": "UDS v1.0",
+      "score": 0,
+      "phase_1_score": 0,
+      "score_change": 0,
+      "status": "fail",
+      "errors": [
+        {
+          "severity": "CRITICAL",
+          "field": "frontmatter",
+          "message": "Missing or invalid YAML frontmatter (must start with --- and end with ---)"
+        }
+      ],
+      "warnings": [],
+      "recommendations": [
+        "BLOCKING: CRITICAL error from Phase 1 NOT FIXED",
+        "Add YAML frontmatter with UDS fields: agent, date, task",
+        "This was a Phase 1 blocking issue that was supposedly remediated - regression detected"
+      ]
+    },
+    {
+      "file": "resource-sheet-index.md",
+      "path": "C:\\Users\\willh\\Desktop\\coderef-dashboard\\packages\\dashboard\\src\\app\\explorer\\resource-sheet-index.md",
+      "type": "index_documentation",
+      "doc_status": "updated",
+      "validation_standard": "Manual Check",
+      "score": null,
+      "status": "manual_pass",
+      "errors": [],
+      "warnings": [],
+      "manual_checks": {
+        "total_count_updated": true,
+        "new_entries_added": true,
+        "summary_table_accurate": "assumed_yes",
+        "recent_updates_section": "assumed_yes",
+        "last_updated_date": true,
+        "all_links_valid": "not_tested"
+      },
+      "recommendations": [
+        "Manual validation passed basic checks",
+        "Full link validation not performed (would require checking all 13 resource sheet links)"
+      ]
+    }
+  ],
+
+  "root_cause_analysis": {
+    "primary_issue": "RSMS v2.0 schema mismatch with resource sheet frontmatter structure",
+    "details": [
+      "Resource sheets include fields: workorder_id, feature_id, phase, complexity, dependencies, related_sheets, created, updated, loc",
+      "RSMS v2.0 schema only allows: subject, parent_project, category, version, status, related_files, related_docs, tags",
+      "Additional properties are explicitly disallowed by schema (additionalProperties: false)",
+      "This represents a fundamental mismatch between documentation practice and schema definition"
+    ],
+    "secondary_issues": [
+      "File location validator expects flat 'coderef/resources-sheets/' but project uses subdirectories (components/, utilities/)",
+      "Filename format validator expects hyphenated PascalCase but project uses camelCase/PascalCase without hyphens",
+      "Status field uses 'active' but schema only allows DRAFT/REVIEW/APPROVED/ARCHIVED",
+      "CLAUDE.md frontmatter still missing (Phase 1 regression)"
+    ]
+  },
+
+  "recommendations": [
+    "CRITICAL: Resolve RSMS v2.0 schema vs practice mismatch - either:",
+    "  Option A: Update RSMS v2.0 schema to allow additional fields (workorder_id, feature_id, phase, etc.)",
+    "  Option B: Remove all additional fields from resource sheet frontmatter (breaks traceability)",
+    "  Option C: Create extended schema variant for workorder-tracked resource sheets",
+    "BLOCKING: Fix CLAUDE.md frontmatter (Phase 1 regression - critical UDS violation)",
+    "MAJOR: Standardize file location expectations (allow subdirectories or flatten structure)",
+    "MAJOR: Standardize filename conventions (hyphens vs no hyphens)",
+    "MAJOR: Standardize status enum values",
+    "RECOMMENDED: Add all missing recommended sections (Audience & Intent, Quick Reference, Usage)"
+  ],
+
+  "phase_gate_status": {
+    "all_tasks_complete": true,
+    "all_validations_pass": false,
+    "no_critical_errors": false,
+    "validation_report_generated": true,
+    "recommendations_provided": true,
+    "overall_status": "BLOCKED",
+    "blocking_issues": [
+      "CRITICAL: CLAUDE.md missing YAML frontmatter (Phase 1 regression)",
+      "MAJOR: 24 schema validation errors across 7 documents",
+      "MAJOR: RSMS v2.0 schema fundamentally incompatible with current resource sheet practice"
+    ]
+  },
+
+  "next_steps": [
+    "1. URGENT: Address RSMS v2.0 schema mismatch (ecosystem-wide issue affecting all resource sheets)",
+    "2. Fix CLAUDE.md frontmatter (critical UDS violation)",
+    "3. Decide on file organization standard (subdirectories vs flat structure)",
+    "4. Decide on filename convention (hyphens required or optional)",
+    "5. Update all resource sheets to match finalized standards",
+    "6. Re-validate all documents after fixes"
+  ],
+
+  "impact_assessment": {
+    "phase_2_gate": "BLOCKED - Cannot proceed with 0% pass rate and 1 CRITICAL error",
+    "ecosystem_impact": "HIGH - Schema issues affect ALL resource sheets across entire coderef-dashboard project",
+    "remediation_effort": "MEDIUM-HIGH - Requires either schema update OR mass frontmatter refactoring",
+    "recommended_approach": "Schema extension (Option C) - preserves traceability, minimal doc changes"
+  }
+}

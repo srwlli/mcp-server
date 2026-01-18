@@ -1,0 +1,119 @@
+{
+  "workorder_id": "WO-EXPLORER-SIDEBAR-UX-001-PAPERTRAIL",
+  "parent_session": "WO-EXPLORER-SIDEBAR-UX-001",
+  "agent_id": "papertrail",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "phase": "phase_2",
+  "role": "Validate all deliverables against UDS standards and RSMS v2.0 schema",
+  "status": "complete",
+  "phase_1_completed_at": "2026-01-17T16:40:00Z",
+  "phase_2_started_at": "2026-01-17T18:30:00Z",
+  "phase_2_completed_at": "2026-01-17T18:45:00Z",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Validate updated CodeRef-Explorer-Widget-RESOURCE-SHEET.md against RSMS schema",
+      "status": "complete",
+      "validation_score": 56,
+      "errors": 2,
+      "warnings": 2
+    },
+    {
+      "task_id": "task_2",
+      "description": "Validate new ResizableSidebar-RESOURCE-SHEET.md against RSMS schema",
+      "status": "complete",
+      "validation_score": 0,
+      "note": "File does not exist - not yet created by coderef-docs agent"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Validate updated explorer/CLAUDE.md formatting and links",
+      "status": "complete",
+      "validation_score": 0,
+      "errors": 1,
+      "critical_issue": "Missing YAML frontmatter required by UDS standards"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Generate validation report with scores and recommendations",
+      "status": "complete",
+      "output_file": "outputs/papertrail-validation-report.json"
+    }
+  ],
+
+  "success_metrics": {
+    "validation_pass_rate": {
+      "baseline": "0 documents validated",
+      "target": "100% pass rate for all updated/created docs",
+      "actual": "0% pass rate (0/3 documents passed)",
+      "status": "Failed - blocking issues identified"
+    },
+    "critical_errors": {
+      "baseline": "Unknown",
+      "target": "0 critical validation errors",
+      "actual": "1 critical error (CLAUDE.md missing frontmatter)",
+      "status": "Failed - CRITICAL error blocking Phase 1"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "workorders_created": ["WO-EXPLORER-SIDEBAR-VALIDATION-001", "WO-EXPLORER-SIDEBAR-VALIDATION-PHASE2-001"],
+    "files_created": [
+      "outputs/papertrail-validation-report.json",
+      "outputs/VALIDATION-SUMMARY.md",
+      "outputs/papertrail-phase2-validation-report.json",
+      "outputs/PHASE-2-VALIDATION-SUMMARY.md"
+    ],
+    "files_modified": ["communication.json"],
+    "primary_output": "outputs/papertrail-phase2-validation-report.json",
+    "format": "json",
+    "phase_1_validation_summary": {
+      "total_documents": 3,
+      "passed": 0,
+      "failed": 2,
+      "not_found": 1,
+      "average_score": 18.67,
+      "blocking_issues": 3,
+      "remediation_status": "All 3 blocking issues resolved by coderef-docs"
+    },
+    "phase_2_validation_summary": {
+      "total_documents": 8,
+      "passed": 0,
+      "failed": 7,
+      "manual_pass": 1,
+      "average_score": 23.43,
+      "critical_errors": 1,
+      "major_errors": 24,
+      "blocking_issues": 3
+    }
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All tasks complete (status='complete')",
+      "All resource sheets validate successfully",
+      "No critical errors in any document",
+      "Validation report generated with scores",
+      "Recommendations provided for any warnings"
+    ],
+    "validation_results": {
+      "all_tasks_complete": true,
+      "all_validations_pass": false,
+      "no_critical_errors": false,
+      "report_generated": true,
+      "recommendations_provided": true,
+      "overall_status": "BLOCKED",
+      "blocking_issues": [
+        "CRITICAL: explorer/CLAUDE.md missing YAML frontmatter",
+        "MAJOR: ResizableSidebar-RESOURCE-SHEET.md does not exist",
+        "MAJOR: CodeRef-Explorer-Widget-RESOURCE-SHEET.md validation score 56/100 (below 80 threshold)"
+      ]
+    }
+  }
+}

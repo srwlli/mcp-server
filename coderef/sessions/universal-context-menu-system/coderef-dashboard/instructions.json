@@ -1,0 +1,322 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-DASHBOARD",
+  "agent_id": "coderef-dashboard",
+  "phase": "phase_1",
+  "role": "Implement universal context menu system with pluggable target adapters and multi-target converters",
+
+  "context": {
+    "problem": "3+ fragmented context menu implementations with inconsistent caching, eager loading, missing card-level actions, code duplication. Board-only design limits extensibility to prompts, notes, sessions, favorites.",
+    "solution": "EntityContextMenu<TEntity, TTarget> component + EntityConverter<TEntity, TTarget> interface + TargetAdapter pattern. Supports ANY target (boards, prompts, notes, sessions, favorites) through pluggable adapters.",
+    "impact": "Type-safe integration for ANY entity to ANY target, future-proof design, eliminates 400+ lines of duplicate code, enables multi-target workflows"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access analysis (ANALYSIS.md) and existing implementations",
+    "step_2": "READ this instructions.json for detailed task specifications and context_json_template",
+    "step_3": "RUN /create-workorder in coderef-dashboard home using context_json_template below (creates coderef/workorder/universal-context-menu-system/)",
+    "step_3b": "UPDATE communication.json: Add workorder details to outputs.workorders_created[] array",
+    "step_4": "FOR EACH TASK (task_1 through task_14): Execute implementation, update communication.json task status, track files in outputs.files_created[] and outputs.files_modified[] arrays",
+    "step_5": "AFTER ALL TASKS: Run tests (npm test), validate no regressions, verify file tracking with git diff",
+    "step_5b": "VALIDATE communication.json with mcp__papertrail__validate_communication, fix any errors",
+    "step_6": "CREATE outputs/implementation-report.md with summary of changes, metrics, test results",
+    "step_7": "VALIDATE phase_gate_checklist - all criteria must pass"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Create EntityContextMenu<TEntity, TTarget> component (target-agnostic design)",
+      "implementation": {
+        "file": "packages/dashboard/src/components/coderef/EntityContextMenu.tsx",
+        "changes": [
+          "Define EntityContextMenuProps<TEntity, TTarget> interface with entity, targetAdapter, converter, position, callbacks",
+          "Implement component that delegates to targetAdapter for fetching targets/items",
+          "Build dynamic menu structure based on targetAdapter.getMenuStructure()",
+          "Use ContextMenu base component for rendering",
+          "Add loading states from targetAdapter.loadingStates",
+          "Add empty states from targetAdapter.emptyStates",
+          "Implement success/error callbacks",
+          "Target-agnostic: NO hardcoded board logic, all logic delegated to adapter"
+        ]
+      },
+      "validation": "Component compiles, accepts generic TEntity and TTarget types, works with ANY TargetAdapter"
+    },
+    "task_2": {
+      "description": "Create EntityConverter<TEntity, TTarget> interface in entity-converters.ts",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/entity-converters.ts",
+        "changes": [
+          "Define EntityConverter<TEntity, TTarget> interface with convert() method",
+          "Method signature: convert(entity: TEntity, targetType: string) => TTarget",
+          "Support targetType values: 'board', 'list', 'card', 'attachment' (for boards), 'prompt', 'note', 'session', 'favorite'",
+          "Add JSDoc comments explaining converter purpose and multi-target support",
+          "Export interface for external use"
+        ]
+      },
+      "validation": "Interface compiles, supports multiple target types"
+    },
+    "task_3": {
+      "description": "Create TargetAdapter interface in target-adapters.ts",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Define TargetAdapter<TTarget> interface with methods: fetchTargets(), fetchItems(targetId), getMenuStructure(), addToTarget(target, item), loadingStates, emptyStates",
+          "fetchTargets(): Promise<TTarget[]> - Fetch all available targets (boards, prompts, notes, etc.)",
+          "fetchItems(targetId): Promise<TTarget[]> - Fetch nested items (lists in a board, tags in a note, etc.)",
+          "getMenuStructure(): { levels: number, labels: string[] } - Define menu hierarchy",
+          "addToTarget(target, item): Promise<void> - Add entity to target",
+          "Add JSDoc comments explaining adapter pattern",
+          "Export interface for external use"
+        ]
+      },
+      "validation": "Interface compiles, supports pluggable target implementations"
+    },
+    "task_4": {
+      "description": "Implement BoardTargetAdapter (full implementation with useBoards + useBoardHierarchy)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Implement BoardTargetAdapter: TargetAdapter<Board>",
+          "fetchTargets(): Use useBoards hook (30s cache)",
+          "fetchItems(boardId): Use useBoardHierarchy(boardId, { autoFetch: false }) for lists",
+          "getMenuStructure(): Return { levels: 4, labels: ['Action Type', 'Board', 'List', 'Card'] }",
+          "addToTarget(): Support 4 actions (Add as Board, Add as List, Add as Card, Add to Existing Card)",
+          "loadingStates: { boards: 'Loading boards...', lists: 'Loading lists...', cards: 'Loading cards...' }",
+          "emptyStates: { boards: 'No boards found', lists: 'No lists in this board', cards: 'No cards in this list' }",
+          "Export BoardTargetAdapter instance"
+        ]
+      },
+      "validation": "BoardTargetAdapter works with boards, lists, cards; uses existing hooks"
+    },
+    "task_5": {
+      "description": "Implement PromptTargetAdapter (proof of concept with mock data)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Implement PromptTargetAdapter: TargetAdapter<Prompt>",
+          "fetchTargets(): Return mock prompt list (e.g., ['Claude', 'GPT-4', 'Gemini'])",
+          "fetchItems(): Return empty array (prompts have no nested items)",
+          "getMenuStructure(): Return { levels: 1, labels: ['Prompt'] }",
+          "addToTarget(): Log to console (proof of concept, no real implementation)",
+          "loadingStates: { prompts: 'Loading prompts...' }",
+          "emptyStates: { prompts: 'No prompts found' }",
+          "Export PromptTargetAdapter instance"
+        ]
+      },
+      "validation": "PromptTargetAdapter compiles, returns mock data, demonstrates pattern"
+    },
+    "task_6": {
+      "description": "Implement SessionTargetAdapter (proof of concept with mock data)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Implement SessionTargetAdapter: TargetAdapter<Session>",
+          "fetchTargets(): Return mock session list (e.g., ['universal-context-menu', 'authentication-system'])",
+          "fetchItems(): Return empty array (sessions have no nested items)",
+          "getMenuStructure(): Return { levels: 1, labels: ['Session'] }",
+          "addToTarget(): Log to console (proof of concept)",
+          "Export SessionTargetAdapter instance"
+        ]
+      },
+      "validation": "SessionTargetAdapter compiles, demonstrates multi-target pattern"
+    },
+    "task_7": {
+      "description": "Implement NoteTargetAdapter (proof of concept with mock data)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Implement NoteTargetAdapter: TargetAdapter<Note>",
+          "fetchTargets(): Return mock note list",
+          "fetchItems(noteId): Return mock tags for note",
+          "getMenuStructure(): Return { levels: 2, labels: ['Note', 'Tag'] }",
+          "addToTarget(): Log to console (proof of concept)",
+          "Export NoteTargetAdapter instance"
+        ]
+      },
+      "validation": "NoteTargetAdapter compiles, demonstrates nested items pattern"
+    },
+    "task_8": {
+      "description": "Implement FavoriteTargetAdapter (proof of concept with mock data)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/target-adapters.ts",
+        "changes": [
+          "Implement FavoriteTargetAdapter: TargetAdapter<Favorite>",
+          "fetchTargets(): Return mock favorite categories",
+          "fetchItems(): Return empty array",
+          "getMenuStructure(): Return { levels: 1, labels: ['Favorite'] }",
+          "addToTarget(): Log to console (proof of concept)",
+          "Export FavoriteTargetAdapter instance"
+        ]
+      },
+      "validation": "FavoriteTargetAdapter compiles, completes 5-adapter target system"
+    },
+    "task_9": {
+      "description": "Create multi-target converters: fileToBoard, fileToPrompt, stubToBoard, stubToSession, workorderToBoard, workorderToSession",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/entity-converters.ts",
+        "changes": [
+          "Implement fileToBoard: EntityConverter<FileData, Board> (extract logic from file-to-board-helpers.ts)",
+          "Implement fileToPrompt: EntityConverter<FileData, Prompt> (NEW - convert file to prompt context)",
+          "Implement stubToBoard: EntityConverter<Stub, Board> (NEW - format stub as board entity)",
+          "Implement stubToSession: EntityConverter<Stub, Session> (NEW - convert stub to session)",
+          "Implement workorderToBoard: EntityConverter<Workorder, Board> (NEW - format workorder as board entity)",
+          "Implement workorderToSession: EntityConverter<Workorder, Session> (NEW - convert workorder to session)",
+          "Each converter implements convert(entity, targetType) method",
+          "Export all converters"
+        ]
+      },
+      "validation": "All 6 converters compile, support multiple target types"
+    },
+    "task_10": {
+      "description": "Refactor AddFileToBoardMenu to use EntityContextMenu with BoardTargetAdapter (backward compatible wrapper)",
+      "implementation": {
+        "file": "packages/dashboard/src/components/coderef/AddFileToBoardMenu.tsx",
+        "changes": [
+          "Replace internal implementation with EntityContextMenu",
+          "Keep existing AddFileToBoardMenuProps interface unchanged (backward compatibility)",
+          "Pass BoardTargetAdapter and fileToBoard converter to EntityContextMenu",
+          "Maintain existing callbacks (onSuccess, onError)"
+        ]
+      },
+      "validation": "File Explorer right-click still works, no regressions"
+    },
+    "task_11": {
+      "description": "Update StubCard component with right-click → EntityContextMenu integration (board + session targets)",
+      "implementation": {
+        "file": "packages/dashboard/src/components/StubCard/index.tsx",
+        "changes": [
+          "Add onContextMenu handler to card element",
+          "Store context menu position state",
+          "Render EntityContextMenu when right-clicked",
+          "Support 2 targets: BoardTargetAdapter (stubToBoard converter) and SessionTargetAdapter (stubToSession converter)",
+          "Add target selection submenu if multiple targets configured",
+          "Add success toast on card creation"
+        ]
+      },
+      "validation": "Right-click stub card shows menu, can add to boards AND sessions"
+    },
+    "task_12": {
+      "description": "Update WorkorderCard component with right-click → EntityContextMenu integration (board + session targets)",
+      "implementation": {
+        "file": "packages/dashboard/src/components/WorkorderCard/index.tsx",
+        "changes": [
+          "Add onContextMenu handler to card element",
+          "Store context menu position state",
+          "Render EntityContextMenu when right-clicked",
+          "Support 2 targets: BoardTargetAdapter (workorderToBoard) and SessionTargetAdapter (workorderToSession)",
+          "Add target selection submenu if multiple targets configured",
+          "Add success toast on card creation"
+        ]
+      },
+      "validation": "Right-click workorder card shows menu, can add to boards AND sessions"
+    },
+    "task_13": {
+      "description": "Create entity-converters.test.ts unit tests (converters + adapters, 80%+ coverage)",
+      "implementation": {
+        "file": "packages/dashboard/src/lib/boards/entity-converters.test.ts",
+        "changes": [
+          "Test all 6 converters: fileToBoard, fileToPrompt, stubToBoard, stubToSession, workorderToBoard, workorderToSession",
+          "Test each converter's convert() method with different targetType values",
+          "Test BoardTargetAdapter: fetchTargets, fetchItems, getMenuStructure, addToTarget",
+          "Test proof-of-concept adapters: PromptTargetAdapter, SessionTargetAdapter, NoteTargetAdapter, FavoriteTargetAdapter",
+          "Test edge cases (undefined fields, missing data)",
+          "Verify output formats match expected schemas"
+        ]
+      },
+      "validation": "npm test passes, coverage >= 80% for converters and adapters"
+    },
+    "task_14": {
+      "description": "Deprecate BoardContextMenu and useBoardsCache (add deprecation warnings)",
+      "implementation": {
+        "file": "packages/dashboard/src/components/BoardContextMenu/index.tsx AND packages/dashboard/src/hooks/useBoardsCache.ts",
+        "changes": [
+          "Add JSDoc @deprecated comments to both files",
+          "Add console.warn() on component/hook use: 'BoardContextMenu is deprecated, use EntityContextMenu with BoardTargetAdapter'",
+          "DO NOT remove files yet (future cleanup)"
+        ]
+      },
+      "validation": "Deprecation warnings appear in console when old components used"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-UNIVERSAL-CTX-MENU-001",
+    "feature_name": "universal-context-menu-system",
+    "description": "Consolidate 3+ right-click context menu implementations into truly universal system that works with ANY target (boards, prompts, notes, sessions, favorites) using pluggable TargetAdapter pattern",
+    "requirements": [
+      "Create EntityContextMenu<TEntity, TTarget> component (target-agnostic)",
+      "Create EntityConverter<TEntity, TTarget> interface",
+      "Create TargetAdapter interface for pluggable targets",
+      "Implement BoardTargetAdapter (full implementation)",
+      "Implement 4 proof-of-concept adapters (PromptTargetAdapter, SessionTargetAdapter, NoteTargetAdapter, FavoriteTargetAdapter)",
+      "Implement 6 multi-target converters (fileToBoard, fileToPrompt, stubToBoard, stubToSession, workorderToBoard, workorderToSession)",
+      "Refactor AddFileToBoardMenu as backward-compatible wrapper using BoardTargetAdapter",
+      "Add multi-target right-click menus to StubCard and WorkorderCard (boards + sessions)",
+      "Unit tests for converters and adapters (80%+ coverage)",
+      "Deprecate BoardContextMenu and useBoardsCache"
+    ],
+    "constraints": [
+      "Must not break existing file-to-board functionality",
+      "Must maintain 30s cache TTL from useBoards",
+      "Must support lazy loading (autoFetch: false)",
+      "Type-safe converter and adapter system",
+      "No external dependencies beyond existing stack",
+      "BoardTargetAdapter must be fully functional, other adapters can be proof-of-concept with mock data"
+    ],
+    "technical_context": {
+      "existing_hooks": {
+        "useBoards": "30s cache, global cache, loading states - KEEP AND USE",
+        "useBoardHierarchy": "Lazy loading, board-specific - KEEP AND USE",
+        "useBoardsCache": "Monolithic, eager loading - DEPRECATE"
+      },
+      "existing_components": {
+        "ContextMenu": "Base component with nested submenu support - REUSE",
+        "AddFileToBoardMenu": "486 lines, file-specific - REFACTOR TO WRAPPER",
+        "BoardContextMenu": "192 lines, stub/workorder - DEPRECATE"
+      },
+      "target_types": {
+        "boards": "Full implementation required (BoardTargetAdapter with real hooks)",
+        "prompts": "Proof of concept (mock data, console logs)",
+        "sessions": "Proof of concept (mock data, console logs)",
+        "notes": "Proof of concept (mock data, console logs)",
+        "favorites": "Proof of concept (mock data, console logs)"
+      }
+    }
+  },
+
+  "success_criteria": {
+    "task_1": "EntityContextMenu component compiles, works with ANY TargetAdapter",
+    "task_2": "EntityConverter<TEntity, TTarget> interface exported and type-checks",
+    "task_3": "TargetAdapter interface exported and type-checks",
+    "task_4": "BoardTargetAdapter fully functional with useBoards + useBoardHierarchy",
+    "task_5": "PromptTargetAdapter compiles and returns mock data",
+    "task_6": "SessionTargetAdapter compiles and returns mock data",
+    "task_7": "NoteTargetAdapter compiles and demonstrates nested items",
+    "task_8": "FavoriteTargetAdapter compiles, completing 5-adapter system",
+    "task_9": "All 6 multi-target converters implemented and pass type-checking",
+    "task_10": "AddFileToBoardMenu refactored with BoardTargetAdapter, file-to-board still works",
+    "task_11": "StubCard right-click menu functional with boards + sessions",
+    "task_12": "WorkorderCard right-click menu functional with boards + sessions",
+    "task_13": "Unit tests pass with 80%+ coverage for converters and adapters",
+    "task_14": "Deprecation warnings appear in console for BoardContextMenu"
+  },
+
+  "output_requirements": {
+    "file": "outputs/implementation-report.md",
+    "format": "markdown",
+    "template": "## Implementation Summary\n\n### Files Created\n- {list files with line counts}\n\n### Files Modified\n- {list files with changes}\n\n### Test Results\n- Total tests: {N}\n- Passing: {N}\n- Coverage: {%}\n\n### Metrics\n- Code consolidation: {before} → {after}\n- Lines eliminated: {N}\n- New converters: {N}\n\n### Regressions\n- {NONE or list issues}\n\n### Phase Gate Status\n- {✅ or ❌ for each criterion}"
+  },
+
+  "phase_gate_checklist": [
+    "All 14 tasks status='complete'",
+    "npm test passes (75+ tests, no failures)",
+    "TypeScript compilation successful (no errors)",
+    "File-to-board functionality verified (no regressions)",
+    "BoardTargetAdapter fully functional (replaces useBoardsCache)",
+    "At least 2 proof-of-concept adapters working (PromptTargetAdapter, SessionTargetAdapter minimum)",
+    "Multi-target converters tested (file→board, file→prompt, stub→board, stub→session, workorder→board, workorder→session)",
+    "StubCard and WorkorderCard support multi-target right-click (boards + sessions minimum)",
+    "Success metrics met (code consolidation, test coverage, multi-target proof)",
+    "communication.json validated with Papertrail",
+    "outputs/implementation-report.md created"
+  ]
+}

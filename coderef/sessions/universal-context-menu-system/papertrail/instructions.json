@@ -1,0 +1,90 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-PAPERTRAIL",
+  "agent_id": "papertrail",
+  "phase": "phase_2",
+  "role": "Validate all session outputs against schemas and standards",
+
+  "context": {
+    "problem": "Need to ensure implementation and documentation meet quality standards",
+    "solution": "Run Papertrail validation tools on all outputs",
+    "impact": "Catch errors early, ensure schema compliance"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to locate all validation targets",
+    "step_2": "VALIDATE coderef-dashboard/communication.json using mcp__papertrail__validate_communication",
+    "step_3": "VALIDATE coderef-docs/communication.json using mcp__papertrail__validate_communication",
+    "step_4": "VALIDATE this (papertrail) communication.json using mcp__papertrail__validate_communication",
+    "step_5": "VALIDATE generated resource sheets using mcp__papertrail__validate_resource_sheet",
+    "step_6": "RUN TypeScript compilation check: cd coderef-dashboard && npm run type-check",
+    "step_7": "CREATE outputs/validation-report.md with all results",
+    "step_8": "VALIDATE phase_gate checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Validate all agent communication.json files",
+      "implementation": {
+        "tool": "mcp__papertrail__validate_communication",
+        "targets": [
+          "coderef-dashboard/communication.json",
+          "coderef-docs/communication.json",
+          "papertrail/communication.json"
+        ]
+      },
+      "validation": "All files pass validation (no errors)"
+    },
+    "task_2": {
+      "description": "Validate generated resource sheets",
+      "implementation": {
+        "tool": "mcp__papertrail__validate_resource_sheet",
+        "targets": [
+          "coderef-dashboard/packages/dashboard/docs/UniversalContextMenu-RESOURCE-SHEET.md",
+          "coderef-dashboard/packages/dashboard/docs/EntityToBoardConverter-RESOURCE-SHEET.md"
+        ]
+      },
+      "validation": "All resource sheets pass validation"
+    },
+    "task_3": {
+      "description": "Run TypeScript compilation check",
+      "implementation": {
+        "command": "cd C:\\Users\\willh\\Desktop\\coderef-dashboard && npm run type-check",
+        "expected": "Exit code 0 (no errors)"
+      },
+      "validation": "TypeScript compilation successful"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-UNIVERSAL-CTX-MENU-VALIDATION-001",
+    "feature_name": "universal-context-menu-validation",
+    "requirements": [
+      "Validate all communication.json files",
+      "Validate resource sheets",
+      "Verify TypeScript compilation"
+    ],
+    "constraints": [
+      "Must use Papertrail MCP tools",
+      "Must report all errors found"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "All communication.json files valid (0 errors)",
+    "task_2": "All resource sheets valid (score >= 80)",
+    "task_3": "TypeScript compilation successful (exit code 0)"
+  },
+
+  "output_requirements": {
+    "file": "outputs/validation-report.md",
+    "format": "markdown",
+    "template": "## Validation Report\n\n### Communication Files\n- coderef-dashboard: {✅ PASS | ❌ FAIL}\n- coderef-docs: {✅ PASS | ❌ FAIL}\n- papertrail: {✅ PASS | ❌ FAIL}\n\n### Resource Sheets\n- UniversalContextMenu-RESOURCE-SHEET.md: {score}/100\n- EntityToBoardConverter-RESOURCE-SHEET.md: {score}/100\n\n### TypeScript Compilation\n- Status: {✅ SUCCESS | ❌ FAILED}\n- Errors: {N}\n\n### Summary\n- Total files validated: {N}\n- Pass rate: {%}\n- Issues found: {N}"
+  },
+
+  "phase_gate_checklist": [
+    "All communication.json files validated (3/3 pass)",
+    "All resource sheets validated (2/2 pass)",
+    "TypeScript compilation successful",
+    "outputs/validation-report.md created"
+  ]
+}

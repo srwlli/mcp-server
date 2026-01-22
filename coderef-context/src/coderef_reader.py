@@ -6,9 +6,14 @@ Used by MCP server tools to provide code intelligence.
 """
 
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from .schema_utils import normalize_index_data, normalize_graph_data
+
+logger = logging.getLogger(__name__)
 
 
 class CodeRefReader:
@@ -38,11 +43,15 @@ class CodeRefReader:
 
     def get_index(self) -> List[Dict[str, Any]]:
         """Get all scanned elements from index.json."""
-        return self._load_json("index.json")
+        data = self._load_json("index.json")
+        # Normalize to v1.0.0 format (flat array)
+        return normalize_index_data(data)
 
     def get_graph(self) -> Dict[str, Any]:
         """Get dependency graph from graph.json."""
-        return self._load_json("graph.json")
+        data = self._load_json("graph.json")
+        # Normalize to v1.0.0 format (nodes as dict)
+        return normalize_graph_data(data)
 
     def get_context(self, format: str = "json") -> Any:
         """Get project context (json or markdown)."""

@@ -1,0 +1,131 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-DASHBOARD",
+  "parent_session": "WO-UNIVERSAL-CTX-MENU-001",
+  "agent_id": "coderef-dashboard",
+  "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+  "phase": "phase_1",
+  "role": "Implement EntityContextMenu component with universal target support, pluggable TargetAdapters, multi-target converters, refactor existing menus",
+  "status": "complete",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Create EntityContextMenu<TEntity, TTarget> component (target-agnostic design)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Create EntityConverter<TEntity, TTarget> interface in entity-converters.ts",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Create TargetAdapter interface in target-adapters.ts",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Implement BoardTargetAdapter (full implementation with useBoards + useBoardHierarchy)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_5",
+      "description": "Implement PromptTargetAdapter (proof of concept with mock data)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_6",
+      "description": "Implement SessionTargetAdapter (proof of concept with mock data)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_7",
+      "description": "Implement NoteTargetAdapter (proof of concept with mock data)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_8",
+      "description": "Implement FavoriteTargetAdapter (proof of concept with mock data)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_9",
+      "description": "Create multi-target converters: fileToBoard, fileToPrompt, stubToBoard, stubToSession, workorderToBoard, workorderToSession",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_10",
+      "description": "Refactor AddFileToBoardMenu to use EntityContextMenu with BoardTargetAdapter (backward compatible wrapper)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_11",
+      "description": "Update StubCard component with right-click → EntityContextMenu integration (board + session targets)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_12",
+      "description": "Update WorkorderCard component with right-click → EntityContextMenu integration (board + session targets)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_13",
+      "description": "Create entity-converters.test.ts unit tests (converters + adapters, 80%+ coverage)",
+      "status": "complete"
+    },
+    {
+      "task_id": "task_14",
+      "description": "Deprecate BoardContextMenu and useBoardsCache (add deprecation warnings)",
+      "status": "complete"
+    }
+  ],
+
+  "success_metrics": {
+    "code_consolidation": {
+      "baseline": "3 separate implementations (AddFileToBoardMenu, BoardContextMenu, inline)",
+      "target": "1 universal system with 5 target adapters + 6 multi-target converters",
+      "status": "Not started"
+    },
+    "test_coverage": {
+      "baseline": "46 tests (file-to-board helpers only)",
+      "target": "75+ tests (converters + adapters + universal menu)",
+      "status": "Not started"
+    },
+    "multi_target_proof": {
+      "baseline": "Board targets only",
+      "target": "Board (full impl) + 4 proof of concepts (prompts, notes, sessions, favorites)",
+      "status": "Not started"
+    },
+    "no_regressions": {
+      "baseline": "AddFileToBoardMenu working",
+      "target": "AddFileToBoardMenu still working after refactor using BoardTargetAdapter",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "files_created": [],
+    "files_modified": [],
+    "workorders_created": [],
+    "primary_output": "outputs/implementation-report.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": true,
+    "criteria": [
+      "All 14 tasks complete",
+      "Tests passing (npm test) with 75+ tests",
+      "TypeScript compilation successful",
+      "No regressions in file-to-board functionality",
+      "BoardTargetAdapter fully functional (replaces useBoardsCache)",
+      "At least 2 proof-of-concept adapters working (prompts, sessions, notes, or favorites)",
+      "Multi-target converters tested (file→board, file→prompt, stub→board, stub→session, etc.)",
+      "Success metrics met"
+    ]
+  }
+}

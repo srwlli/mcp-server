@@ -18,28 +18,11 @@ def event_loop():
 
 @pytest.fixture
 def test_project_path():
-    """Return path to @coderef/core CLI source (actual code to analyze).
+    """Return path to coderef-context project for testing.
 
-    Note: coderef-context/src is empty, so we use the actual @coderef/core
-    CLI project which has real TypeScript source code for analysis.
+    Note: Tests now use .coderef/ files directly (no CLI dependency).
     """
-    return r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
-
-
-@pytest.fixture
-def cli_path():
-    """Return the coderef CLI path."""
-    default_path = os.path.expandvars(
-        r"C:\Users\willh\Desktop\projects\coderef-system\packages\cli"
-    )
-    return os.environ.get("CODEREF_CLI_PATH", default_path)
-
-
-@pytest.fixture
-def cli_exists(cli_path):
-    """Check if CLI exists at expected path."""
-    cli_bin = os.path.join(cli_path, "dist", "cli.js")
-    return os.path.exists(cli_bin)
+    return Path(__file__).parent.parent
 
 
 class MockTestResults:

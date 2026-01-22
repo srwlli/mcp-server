@@ -633,6 +633,343 @@ async def validate_communication(arguments: dict) -> list[TextContent]:
         )]
 
 
+async def validate_claude_md(arguments: dict) -> list[TextContent]:
+    """Validate a CLAUDE.md file against claude-md-frontmatter-schema.json."""
+    file_path = Path(arguments["file_path"])
+
+    if not file_path.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: File not found: {file_path}"
+        )]
+
+    # Enforce naming convention
+    if not file_path.name == "CLAUDE.md":
+        return [TextContent(
+            type="text",
+            text=f"Error: File must be named 'CLAUDE.md', got: {file_path.name}"
+        )]
+
+    try:
+        from validators.claude_md_helpers import (
+            extract_yaml_frontmatter,
+            count_lines,
+            extract_markdown_headers,
+            get_required_sections,
+            calculate_compliance_score,
+            format_validation_response
+        )
+        import jsonschema
+
+        # Extract YAML frontmatter
+        frontmatter, body = extract_yaml_frontmatter(file_path)
+
+        # Load schema
+        schema_path = Path(__file__).parent / "schemas" / "documentation" / "claude-md-frontmatter-schema.json"
+        with open(schema_path, 'r') as f:
+            schema = json.load(f)
+
+        # Validate frontmatter against schema
+        errors = []
+        warnings = []
+
+        try:
+            jsonschema.validate(instance=frontmatter, schema=schema)
+            is_valid = True
+        except jsonschema.ValidationError as e:
+            is_valid = False
+            errors.append(f"Schema validation failed: {e.message}")
+
+        # Calculate line count
+        line_count = count_lines(file_path)
+
+        # Check line budget based on file_type
+        file_type = frontmatter.get("file_type", "project")
+        if file_type == "project":
+            target_min, target_max = 530, 600
+        else:  # child
+            target_min, target_max = 300, 400
+
+        # Check line budget compliance
+        if line_count < target_min:
+            warnings.append(f"Line count below target: {line_count} < {target_min}")
+        elif line_count > target_max:
+            errors.append(f"Line count exceeds budget: {line_count} > {target_max}")
+
+        # Check required sections (parse markdown headers)
+        required_sections = get_required_sections(file_type)
+        found_sections = extract_markdown_headers(body)
+        missing_sections = set(required_sections) - set(found_sections)
+
+        if missing_sections:
+            for section in missing_sections:
+                errors.append(f"Missing required section: {section}")
+
+        # Calculate compliance score (0-100)
+        score = calculate_compliance_score(
+            line_count=line_count,
+            target_min=target_min,
+            target_max=target_max,
+            sections_found=len(found_sections),
+            sections_required=len(required_sections),
+            errors=len(errors),
+            warnings=len(warnings)
+        )
+
+        # Format response
+        response = format_validation_response(
+            file_path=file_path,
+            is_valid=is_valid,
+            score=score,
+            line_count=line_count,
+            target_range=(target_min, target_max),
+            errors=errors,
+            warnings=warnings,
+            file_type=file_type
+        )
+
+        return [TextContent(type="text", text=response)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating CLAUDE.md: {str(e)}"
+        )]
+
+
+async def check_all_claude_md(arguments: dict) -> list[TextContent]:
+    """Batch validate all CLAUDE.md files in directory."""
+    directory = Path(arguments["directory"])
+
+    if not directory.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: Directory not found: {directory}"
+        )]
+
+    try:
+        # Find all CLAUDE.md files recursively
+        claude_md_files = list(directory.rglob("CLAUDE.md"))
+
+        if not claude_md_files:
+            return [TextContent(
+                type="text",
+                text=f"No CLAUDE.md files found in: {directory}"
+            )]
+
+        # Validate each file
+        from validators.claude_md_helpers import extract_score_from_result
+
+        results = []
+        for file_path in claude_md_files:
+            result = await validate_claude_md({"file_path": str(file_path)})
+            results.append((file_path, result))
+
+        # Calculate summary stats
+        total_files = len(results)
+        passed_files = sum(1 for _, result in results if "[PASS]" in result[0].text)
+        failed_files = total_files - passed_files
+
+        # Calculate average score (parse scores from results)
+        scores = [extract_score_from_result(result[0]) for _, result in results]
+        avg_score = sum(scores) / len(scores) if scores else 0
+
+        # Format summary response
+        response = f"# CLAUDE.md Validation Summary\n\n"
+        response += f"**Directory:** {directory}\n"
+        response += f"**Files Scanned:** {total_files}\n"
+        response += f"**Passed:** {passed_files} ({passed_files/total_files*100:.1f}%)\n"
+        response += f"**Failed:** {failed_files} ({failed_files/total_files*100:.1f}%)\n"
+        response += f"**Average Score:** {avg_score:.1f}/100\n\n"
+
+        # Add detailed results per file
+        response += "## Detailed Results\n\n"
+        for file_path, result in results:
+            try:
+                rel_path = file_path.relative_to(directory)
+            except ValueError:
+                rel_path = file_path
+            response += f"### {rel_path}\n\n"
+            response += result[0].text + "\n\n---\n\n"
+
+        return [TextContent(type="text", text=response)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error batch validating CLAUDE.md files: {str(e)}"
+        )]
+
+
+async def validate_skill(arguments: dict) -> list[TextContent]:
+    """Validate a skill.md file against skill-frontmatter-schema.json."""
+    file_path = Path(arguments["file_path"])
+
+    if not file_path.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: File not found: {file_path}"
+        )]
+
+    # Enforce naming convention (must be .md file)
+    if not file_path.suffix == ".md":
+        return [TextContent(
+            type="text",
+            text=f"Error: Skill file must be .md file, got: {file_path.suffix}"
+        )]
+
+    try:
+        from validators.claude_md_helpers import (
+            extract_yaml_frontmatter,
+            count_lines,
+            is_kebab_case,
+            check_for_step_headers,
+            calculate_skill_compliance_score,
+            format_skill_validation_response
+        )
+        import jsonschema
+
+        # Extract YAML frontmatter
+        frontmatter, body = extract_yaml_frontmatter(file_path)
+
+        # Load schema
+        schema_path = Path(__file__).parent / "schemas" / "documentation" / "skill-frontmatter-schema.json"
+        with open(schema_path, 'r') as f:
+            schema = json.load(f)
+
+        # Validate frontmatter against schema
+        errors = []
+        warnings = []
+
+        try:
+            jsonschema.validate(instance=frontmatter, schema=schema)
+            is_valid = True
+        except jsonschema.ValidationError as e:
+            is_valid = False
+            errors.append(f"Schema validation failed: {e.message}")
+
+        # Check required frontmatter fields
+        if "name" not in frontmatter:
+            errors.append("Missing required field: name")
+        elif not is_kebab_case(frontmatter["name"]):
+            errors.append(f"Skill name must be kebab-case, got: {frontmatter['name']}")
+
+        if "description" not in frontmatter:
+            errors.append("Missing required field: description")
+
+        # Calculate line count
+        line_count = count_lines(file_path)
+        target_min, target_max = 300, 500
+
+        # Check line budget
+        if line_count < target_min:
+            warnings.append(f"Line count below target: {line_count} < {target_min}")
+        elif line_count > target_max:
+            errors.append(f"Line count exceeds budget: {line_count} > {target_max}")
+
+        # Check content structure (has step headers, verification section)
+        has_steps = check_for_step_headers(body)
+        has_verification = "## Verification" in body
+
+        if not has_steps:
+            warnings.append("Content should have step-by-step structure (## Step 1:, ## Step 2:, etc.)")
+        if not has_verification:
+            warnings.append("Missing ## Verification section (how to verify success)")
+
+        # Calculate compliance score
+        score = calculate_skill_compliance_score(
+            line_count=line_count,
+            target_min=target_min,
+            target_max=target_max,
+            has_required_fields=("name" in frontmatter and "description" in frontmatter),
+            has_steps=has_steps,
+            has_verification=has_verification,
+            errors=len(errors),
+            warnings=len(warnings)
+        )
+
+        # Format response
+        response = format_skill_validation_response(
+            file_path=file_path,
+            is_valid=is_valid,
+            score=score,
+            line_count=line_count,
+            target_range=(target_min, target_max),
+            errors=errors,
+            warnings=warnings,
+            frontmatter=frontmatter
+        )
+
+        return [TextContent(type="text", text=response)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error validating skill: {str(e)}"
+        )]
+
+
+async def check_all_skills(arguments: dict) -> list[TextContent]:
+    """Batch validate all skill.md files in .claude/skills/ directory."""
+    directory = Path(arguments["directory"])
+
+    if not directory.exists():
+        return [TextContent(
+            type="text",
+            text=f"Error: Directory not found: {directory}"
+        )]
+
+    try:
+        # Find all .md files in skills directory (not recursive for skills)
+        skill_files = list(directory.glob("*.md"))
+
+        # Also check subdirectories (for skills with directory structure)
+        skill_files.extend(list(directory.glob("*/skill.md")))
+
+        if not skill_files:
+            return [TextContent(
+                type="text",
+                text=f"No skill files found in: {directory}"
+            )]
+
+        # Validate each file
+        from validators.claude_md_helpers import extract_score_from_result
+
+        results = []
+        for file_path in skill_files:
+            result = await validate_skill({"file_path": str(file_path)})
+            results.append((file_path, result))
+
+        # Calculate summary stats
+        total_files = len(results)
+        passed_files = sum(1 for _, result in results if "[PASS]" in result[0].text)
+        failed_files = total_files - passed_files
+        scores = [extract_score_from_result(result[0]) for _, result in results]
+        avg_score = sum(scores) / len(scores) if scores else 0
+
+        # Format summary response
+        response = f"# Skill Validation Summary\n\n"
+        response += f"**Directory:** {directory}\n"
+        response += f"**Skills Scanned:** {total_files}\n"
+        response += f"**Passed:** {passed_files} ({passed_files/total_files*100:.1f}%)\n"
+        response += f"**Failed:** {failed_files} ({failed_files/total_files*100:.1f}%)\n"
+        response += f"**Average Score:** {avg_score:.1f}/100\n\n"
+
+        # Add detailed results per file
+        response += "## Detailed Results\n\n"
+        for file_path, result in results:
+            response += f"### {file_path.name}\n\n"
+            response += result[0].text + "\n\n---\n\n"
+
+        return [TextContent(type="text", text=response)]
+
+    except Exception as e:
+        return [TextContent(
+            type="text",
+            text=f"Error batch validating skills: {str(e)}"
+        )]
+
+
 if __name__ == "__main__":
     import asyncio
     import mcp.server.stdio

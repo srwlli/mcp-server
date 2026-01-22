@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://papertrail/schemas/documentation/claude-md-frontmatter-schema.json",
+  "title": "CLAUDE.md YAML Front Matter Schema",
+  "description": "Validates YAML front matter for CLAUDE.md files (project-level and child). Based on CLAUDE-MD-STANDARDS v1.0.0 and CHILD-CLAUDE-MD-GUIDE v1.0.0. Extends base-frontmatter-schema.json with project metadata and compliance tracking.",
+  "version": "1.0.0",
+  "allOf": [
+    {
+      "$ref": "./base-frontmatter-schema.json"
+    },
+    {
+      "type": "object",
+      "required": ["file_type", "project_name", "version", "status", "created", "last_updated"],
+      "properties": {
+        "file_type": {
+          "type": "string",
+          "description": "Type of CLAUDE.md file (project-level or child)",
+          "enum": ["project", "child"],
+          "examples": [
+            "project",
+            "child"
+          ]
+        },
+        "project_name": {
+          "type": "string",
+          "description": "Name of the project or component",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": [
+            "Assistant",
+            "CodeRef Dashboard",
+            "Universal Context Menu System",
+            "coderef-workflow MCP Server"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "description": "Project/component version (semantic versioning)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "examples": [
+            "1.0.0",
+            "2.1.3",
+            "0.9.0"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "Project status lifecycle",
+          "enum": [
+            "✅ Production",
+            "🚧 Building",
+            "🧪 Experimental",
+            "🗑️ Deprecated",
+            "⏸️ Paused"
+          ],
+          "examples": [
+            "✅ Production",
+            "🚧 Building"
+          ]
+        },
+        "created": {
+          "type": "string",
+          "description": "Date of CLAUDE.md creation (YYYY-MM-DD)",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "examples": [
+            "2025-11-15",
+            "2026-01-10"
+          ]
+        },
+        "last_updated": {
+          "type": "string",
+          "description": "Date of last CLAUDE.md update (YYYY-MM-DD)",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "examples": [
+            "2025-12-28",
+            "2026-01-22"
+          ]
+        },
+        "parent_claude_md": {
+          "type": "string",
+          "description": "Required for child CLAUDE.md: Relative path to parent CLAUDE.md",
+          "pattern": "^\\.\\./.*CLAUDE\\.md$",
+          "examples": [
+            "../../CLAUDE.md",
+            "../CLAUDE.md"
+          ]
+        },
+        "workorder_id": {
+          "type": "string",
+          "description": "Optional: Workorder ID if this CLAUDE.md was part of a feature workorder",
+          "pattern": "^WO-[A-Z0-9-]+-\\d{3}$",
+          "examples": [
+            "WO-ASSISTANT-SETUP-001",
+            "WO-DASHBOARD-INIT-001"
+          ]
+        },
+        "line_count": {
+          "type": "integer",
+          "description": "Optional: Total line count for compliance tracking (project: 530-600, child: 300-400)",
+          "minimum": 200,
+          "maximum": 1200,
+          "examples": [
+            561,
+            340,
+            580
+          ]
+        },
+        "compliance_score": {
+          "type": "integer",
+          "description": "Optional: Validation score from papertrail validator (0-100)",
+          "minimum": 0,
+          "maximum": 100,
+          "examples": [
+            92,
+            88,
+            75
+          ]
+        },
+        "required_sections": {
+          "type": "object",
+          "description": "Required sections based on file_type",
+          "properties": {
+            "project": {
+              "type": "array",
+              "description": "Required sections for project-level CLAUDE.md (9 core + 3 enhanced)",
+              "items": {"type": "string"},
+              "default": [
+                "Quick Summary",
+                "Problem & Vision",
+                "Architecture",
+                "Workflows Catalog",
+                "Core Workflows",
+                "File Structure",
+                "Design Decisions",
+                "Integration Guide",
+                "Essential Commands",
+                "Progressive Disclosure Guide",
+                "Tool Sequencing Patterns",
+                "Subagent Delegation Guide"
+              ]
+            },
+            "child": {
+              "type": "array",
+              "description": "Required sections for child CLAUDE.md (8 core + 2 enhanced optional)",
+              "items": {"type": "string"},
+              "default": [
+                "Quick Summary",
+                "Parent Context",
+                "Component Purpose",
+                "Architecture",
+                "Workflows Catalog",
+                "Core Workflows",
+                "File Structure",
+                "Integration with Parent",
+                "Essential Commands"
+              ]
+            }
+          }
+        },
+        "line_budget_status": {
+          "type": "string",
+          "description": "Optional: Line budget compliance status",
+          "enum": [
+            "✅ Within target",
+            "⚠️ Below target",
+            "⚠️ Slightly over",
+            "❌ Over budget",
+            "🚨 Critical bloat"
+          ],
+          "examples": [
+            "✅ Within target",
+            "❌ Over budget"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "file_type": {"const": "child"}
+            }
+          },
+          "then": {
+            "required": ["parent_claude_md"]
+          }
+        }
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "agent": "CodeRef Assistant",
+      "date": "2025-11-15",
+      "task": "CREATE",
+      "file_type": "project",
+      "project_name": "Assistant",
+      "version": "2.0.0",
+      "status": "✅ Production",
+      "created": "2025-11-15",
+      "last_updated": "2025-12-28",
+      "workorder_id": "WO-ASSISTANT-SETUP-001",
+      "line_count": 561,
+      "compliance_score": 92,
+      "line_budget_status": "✅ Within target"
+    },
+    {
+      "agent": "Ava",
+      "date": "2026-01-20",
+      "task": "CREATE",
+      "file_type": "child",
+      "project_name": "Universal Context Menu System",
+      "parent_claude_md": "../../CLAUDE.md",
+      "version": "1.0.0",
+      "status": "🚧 Building",
+      "created": "2026-01-20",
+      "last_updated": "2026-01-22",
+      "line_count": 340,
+      "compliance_score": 88,
+      "line_budget_status": "✅ Within target"
+    },
+    {
+      "agent": "coderef-docs v2.0.0",
+      "date": "2026-01-10",
+      "timestamp": "2026-01-10T12:00:00Z",
+      "task": "DOCUMENT",
+      "file_type": "project",
+      "project_name": "coderef-workflow MCP Server",
+      "version": "2.1.0",
+      "status": "✅ Production",
+      "created": "2025-10-01",
+      "last_updated": "2026-01-10",
+      "line_count": 1142,
+      "compliance_score": 55,
+      "line_budget_status": "🚨 Critical bloat"
+    }
+  ]
+}

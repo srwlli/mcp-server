@@ -1,0 +1,99 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-DOCS",
+  "agent_id": "coderef-docs",
+  "phase": "phase_2",
+  "role": "Generate comprehensive documentation for universal context menu system",
+
+  "context": {
+    "problem": "New universal system needs migration guide for developers adding new entity types",
+    "solution": "Generate migration guide + 2 resource sheets explaining converter pattern and usage",
+    "impact": "Developers can easily add new entity types (sessions, projects, etc.) following pattern"
+  },
+
+  "execution_steps": {
+    "step_1": "READ resources/index.md to access implementation outputs from coderef-dashboard agent",
+    "step_2": "READ coderef-dashboard/outputs/implementation-report.md for implementation details",
+    "step_3": "GENERATE UNIVERSAL-CONTEXT-MENU.md migration guide using generate_resource_sheet tool",
+    "step_4": "GENERATE UniversalContextMenu-RESOURCE-SHEET.md using generate_resource_sheet tool",
+    "step_5": "GENERATE EntityToBoardConverter-RESOURCE-SHEET.md using generate_resource_sheet tool",
+    "step_6": "UPDATE communication.json after each task with file paths",
+    "step_7": "CREATE outputs/documentation-report.md summarizing generated docs",
+    "step_8": "VALIDATE phase_gate checklist"
+  },
+
+  "tasks": {
+    "task_1": {
+      "description": "Generate UNIVERSAL-CONTEXT-MENU.md migration guide",
+      "implementation": {
+        "tool": "mcp__coderef-docs__generate_resource_sheet",
+        "params": {
+          "element_name": "UniversalContextMenu",
+          "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+          "mode": "reverse-engineer",
+          "output_path": "packages/dashboard/docs/",
+          "validate_against_code": true
+        }
+      },
+      "validation": "File created, validates with Papertrail"
+    },
+    "task_2": {
+      "description": "Generate UniversalContextMenu-RESOURCE-SHEET.md",
+      "implementation": {
+        "tool": "mcp__coderef-docs__generate_resource_sheet",
+        "params": {
+          "element_name": "UniversalContextMenu",
+          "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+          "mode": "reverse-engineer"
+        }
+      },
+      "validation": "Resource sheet created with API examples"
+    },
+    "task_3": {
+      "description": "Generate EntityToBoardConverter-RESOURCE-SHEET.md",
+      "implementation": {
+        "tool": "mcp__coderef-docs__generate_resource_sheet",
+        "params": {
+          "element_name": "EntityToBoardConverter",
+          "project_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+          "mode": "reverse-engineer"
+        }
+      },
+      "validation": "Resource sheet includes converter examples (file, stub, workorder)"
+    }
+  },
+
+  "context_json_template": {
+    "workorder_id": "WO-UNIVERSAL-CTX-MENU-DOCS-001",
+    "feature_name": "universal-context-menu-docs",
+    "requirements": [
+      "Migration guide explaining converter pattern",
+      "Resource sheets for UniversalContextMenu and EntityToBoardConverter",
+      "Examples for all 3 built-in converters (file, stub, workorder)",
+      "Instructions for adding new entity types"
+    ],
+    "constraints": [
+      "Must follow RSMS v2.0 standards",
+      "Must validate with Papertrail",
+      "Must include code examples"
+    ]
+  },
+
+  "success_criteria": {
+    "task_1": "UNIVERSAL-CONTEXT-MENU.md created and validated",
+    "task_2": "UniversalContextMenu-RESOURCE-SHEET.md created",
+    "task_3": "EntityToBoardConverter-RESOURCE-SHEET.md created"
+  },
+
+  "output_requirements": {
+    "file": "outputs/documentation-report.md",
+    "format": "markdown",
+    "template": "## Documentation Summary\n\n### Files Created\n- UNIVERSAL-CONTEXT-MENU.md (migration guide)\n- UniversalContextMenu-RESOURCE-SHEET.md\n- EntityToBoardConverter-RESOURCE-SHEET.md\n\n### Validation Results\n- {Papertrail validation status}\n\n### Key Content\n- Converter pattern explained: {Y/N}\n- Examples for all 3 converters: {Y/N}\n- Instructions for new entity types: {Y/N}"
+  },
+
+  "phase_gate_checklist": [
+    "All 3 tasks complete",
+    "Documentation files created in coderef-dashboard/packages/dashboard/docs/",
+    "Papertrail validation passed",
+    "outputs/documentation-report.md created"
+  ]
+}

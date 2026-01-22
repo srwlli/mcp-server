@@ -8,9 +8,14 @@ Analyzes index.json to extract:
 """
 
 import json
+import logging
 from pathlib import Path
 from collections import Counter
 from typing import Dict, List, Any
+
+from .schema_utils import normalize_index_data
+
+logger = logging.getLogger(__name__)
 
 
 def analyze_patterns(coderef_dir: Path) -> Dict[str, Any]:
@@ -28,7 +33,11 @@ def analyze_patterns(coderef_dir: Path) -> Dict[str, Any]:
         raise FileNotFoundError(f"Index not found: {index_path}")
 
     with open(index_path, 'r', encoding='utf-8') as f:
-        elements = json.load(f)
+        data = json.load(f)
+
+    # Normalize data to v1.0.0 format (flat array)
+    elements = normalize_index_data(data)
+    logger.info(f"Loaded {len(elements)} elements for pattern analysis")
 
     # Initialize pattern containers
     handlers = []

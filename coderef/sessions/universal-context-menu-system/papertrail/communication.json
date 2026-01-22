@@ -1,0 +1,57 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-PAPERTRAIL",
+  "parent_session": "WO-UNIVERSAL-CTX-MENU-001",
+  "agent_id": "papertrail",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+  "phase": "phase_2",
+  "role": "Validate implementation outputs, documentation, and agent communication files against schemas",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Validate all agent communication.json files with validate_communication tool",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Validate generated resource sheets with validate_resource_sheet tool",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Run TypeScript compilation check in coderef-dashboard",
+      "status": "not_started"
+    }
+  ],
+
+  "success_metrics": {
+    "validation_pass_rate": {
+      "baseline": "0 files validated",
+      "target": "100% pass rate (3 communication.json + 2 resource sheets)",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "files_created": [],
+    "files_modified": [],
+    "workorders_created": [],
+    "primary_output": "outputs/validation-report.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": false,
+    "criteria": [
+      "All 3 tasks complete",
+      "All communication.json files valid",
+      "All resource sheets valid",
+      "TypeScript compilation successful"
+    ]
+  }
+}

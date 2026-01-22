@@ -1,0 +1,87 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001",
+  "feature_name": "universal-context-menu-system",
+  "created": "2026-01-20",
+  "status": "not_started",
+  "description": "Consolidate 3+ right-click context menu implementations into a truly universal context menu system that works with ANY target (boards, prompts, notes, sessions, favorites, future targets). Uses EntityConverter pattern with pluggable TargetAdapters for type-safe transformations. Fix eager loading, inconsistent caching, missing card-level actions.",
+  "instructions_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\universal-context-menu-system\\instructions.json",
+
+  "phases": {
+    "phase_1": {
+      "name": "Implementation",
+      "description": "Create EntityContextMenu component with universal target support, pluggable adapters, multi-target converters",
+      "status": "not_started",
+      "agents": ["coderef-dashboard"],
+      "deliverables": [
+        "EntityContextMenu<TEntity, TTarget> component (target-agnostic)",
+        "EntityConverter<TEntity, TTarget> interface",
+        "TargetAdapter interface for pluggable targets",
+        "BoardTargetAdapter (full implementation)",
+        "PromptTargetAdapter (proof of concept)",
+        "SessionTargetAdapter (proof of concept)",
+        "NoteTargetAdapter (proof of concept)",
+        "FavoriteTargetAdapter (proof of concept)",
+        "Multi-target converters: file→board, file→prompt, stub→board, stub→session, workorder→board, workorder→session",
+        "Refactored AddFileToBoardMenu as backward-compatible wrapper using BoardTargetAdapter",
+        "Updated StubCard and WorkorderCard with right-click menus",
+        "Unit tests for converters and target adapters (80%+ coverage)"
+      ]
+    },
+    "phase_2": {
+      "name": "Documentation & Validation",
+      "description": "Generate migration guide with multi-target examples, validate outputs, create resource sheets",
+      "status": "not_started",
+      "agents": ["coderef-docs", "papertrail"],
+      "deliverables": [
+        "UNIVERSAL-CONTEXT-MENU.md migration guide with examples for boards, prompts, notes, sessions, favorites",
+        "EntityContextMenu-RESOURCE-SHEET.md",
+        "EntityConverter-RESOURCE-SHEET.md",
+        "TargetAdapter-RESOURCE-SHEET.md",
+        "Validation report (schema compliance, tests passing, multi-target proof of concepts working)"
+      ]
+    }
+  },
+
+  "orchestrator": {
+    "agent_id": "coderef",
+    "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef",
+    "role": "Phase coordinator and cross-agent synthesis",
+    "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\universal-context-menu-system\\orchestrator-synthesis.md",
+    "status": "not_started",
+    "notes": ""
+  },
+
+  "agents": [
+    {
+      "agent_id": "coderef-dashboard",
+      "agent_path": "C:\\Users\\willh\\Desktop\\coderef-dashboard",
+      "role": "Implement universal context menu system and refactor existing components",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\universal-context-menu-system\\coderef-dashboard\\outputs\\implementation-report.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "coderef-docs",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+      "role": "Generate documentation and migration guide",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\universal-context-menu-system\\coderef-docs\\outputs\\documentation-report.md",
+      "status": "not_started",
+      "notes": ""
+    },
+    {
+      "agent_id": "papertrail",
+      "agent_path": "C:\\Users\\willh\\.mcp-servers\\papertrail",
+      "role": "Validate outputs against schemas and standards",
+      "output_file": "C:\\Users\\willh\\.mcp-servers\\coderef\\sessions\\universal-context-menu-system\\papertrail\\outputs\\validation-report.md",
+      "status": "not_started",
+      "notes": ""
+    }
+  ],
+
+  "aggregation": {
+    "total_agents": 3,
+    "completed": 0,
+    "pending": 0,
+    "not_started": 3
+  }
+}

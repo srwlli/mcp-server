@@ -1,0 +1,68 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001-DOCS",
+  "parent_session": "WO-UNIVERSAL-CTX-MENU-001",
+  "agent_id": "coderef-docs",
+  "agent_path": "C:\\Users\\willh\\.mcp-servers\\coderef-docs",
+  "phase": "phase_2",
+  "role": "Generate migration guide with multi-target examples and resource sheets for EntityContextMenu, EntityConverter, and TargetAdapter",
+  "status": "not_started",
+
+  "tasks": [
+    {
+      "task_id": "task_1",
+      "description": "Generate UNIVERSAL-CONTEXT-MENU.md migration guide with examples for boards, prompts, notes, sessions, favorites",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_2",
+      "description": "Generate EntityContextMenu-RESOURCE-SHEET.md (component documentation)",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_3",
+      "description": "Generate EntityConverter-RESOURCE-SHEET.md (converter interface documentation)",
+      "status": "not_started"
+    },
+    {
+      "task_id": "task_4",
+      "description": "Generate TargetAdapter-RESOURCE-SHEET.md (adapter interface documentation)",
+      "status": "not_started"
+    }
+  ],
+
+  "success_metrics": {
+    "documentation_completeness": {
+      "baseline": "No migration guide exists",
+      "target": "Complete guide with examples for boards, prompts, notes, sessions, favorites + 3 resource sheets",
+      "status": "Not started"
+    },
+    "multi_target_examples": {
+      "baseline": "No examples exist",
+      "target": "Migration guide includes 5 target types (boards, prompts, notes, sessions, favorites) with code examples",
+      "status": "Not started"
+    }
+  },
+
+  "resources": {
+    "index": "resources/index.md"
+  },
+
+  "outputs": {
+    "files_created": [],
+    "files_modified": [],
+    "workorders_created": [],
+    "primary_output": "outputs/documentation-report.md",
+    "format": "markdown"
+  },
+
+  "phase_gate": {
+    "required_for_phase_2": false,
+    "criteria": [
+      "All 4 tasks complete",
+      "Documentation validated with Papertrail",
+      "Migration guide includes examples for all 5 target types (boards, prompts, notes, sessions, favorites)",
+      "Migration guide includes multi-target usage examples (stub→board AND stub→session)",
+      "All 3 resource sheets pass Papertrail validation (EntityContextMenu, EntityConverter, TargetAdapter)"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "workorder_id": "WO-UNIVERSAL-CTX-MENU-001",
+  "task": "Universal Context Menu System Consolidation",
+  "description": "Replace 3+ fragmented context menu implementations with single universal system using entity converter pattern. Fix architectural issues: eager loading, inconsistent caching, missing card-level actions, code duplication.",
+
+  "orchestrator_instructions": {
+    "role": "Phase coordinator - validate agent outputs, synthesize cross-agent insights, manage phase gates",
+    "steps": {
+      "step_1": "READ each agent's outputs/ directory after phase completion",
+      "step_2": "VALIDATE phase gate criteria (all tasks complete, outputs valid, tests passing)",
+      "step_3": "SYNTHESIZE cross-agent insights (implementation + docs + validation)",
+      "step_4": "CREATE orchestrator-synthesis.md with overall status and recommendations",
+      "step_5": "UPDATE session communication.json with phase statuses and aggregation counts"
+    }
+  },
+
+  "agent_instructions": {
+    "role": "Execute phase-specific tasks in isolated workspace following agent subdirectory instructions",
+    "steps": {
+      "step_1": "NAVIGATE to your agent subdirectory: {session}/{ agent-id}/",
+      "step_2": "READ resources/index.md to access all source documents",
+      "step_3": "READ instructions.json for detailed execution steps and context_json_template",
+      "step_4": "RUN /create-workorder in agent home using context_json_template",
+      "step_5": "UPDATE communication.json: Add workorder to outputs.workorders_created[]",
+      "step_6": "EXECUTE tasks - update communication.json after each task",
+      "step_7": "CREATE outputs in outputs/ directory",
+      "step_8": "VALIDATE phase_gate checklist - all criteria must pass",
+      "step_9": "UPDATE communication.json: status='complete'"
+    }
+  },
+
+  "output_format": "Mixed (TypeScript components, JSON converters, Markdown docs)",
+
+  "quality_standards": {
+    "completeness": "All 3 agents complete their phase tasks, phase gates pass",
+    "accuracy": "Type-safe converters, no regressions in AddFileToBoardMenu, tests pass",
+    "format": "TypeScript for code, JSON for converters, Markdown for docs"
+  }
+}

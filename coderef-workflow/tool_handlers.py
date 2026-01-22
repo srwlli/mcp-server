@@ -4600,7 +4600,6 @@ TOOL_HANDLERS = {
     'get_workorder_log': handle_get_workorder_log,
     'generate_handoff_context': handle_generate_handoff_context,
     'assess_risk': handle_assess_risk,
-    'coderef_foundation_docs': handle_coderef_foundation_docs,
     'generate_features_inventory': handle_generate_features_inventory,
 }
 
